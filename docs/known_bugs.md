@@ -82,3 +82,16 @@ purpose. Each is confirmed by C that compiles to the original bytes unless marke
   passed to `EftSmoke_Create`, from byte +76), `HudGauge_UpdateAura` (u16 locals reaching
   memory stores). Visual only; a port should zero these and accept that the PS2's result
   depended on stack junk.
+
+## In-place polygon clipping writes past the caller's array (found 2026-10-06 through the PC port)
+
+Thirteen effect draw functions clip a triangle against five frustum planes with `ClipPoly_ClipPlane`, in the array
+their caller handed over: `EftGfx_DrawPolyAvgZ / FixedZ / AvgZFront / ScaledZ` (eft_a.c),
+`EftSurf_DrawTriClipped / DrawReflectTriClipped / DrawTriOtClipped` (eft_c.c), `EftSprAnim_DrawTriClip` (eft_ae.c),
+`EftSurf_DrawPolyOtClipped` (eft_d.c), `EftMesh_DrawTriClip / DrawNowTriClip` (eft_ad_b.c),
+`EftWater_DrawClippedFan` (eft_e.c), `EftRay_DrawClipped` (eft_s.c). The callers declare three vertices (for
+example `EftRbnVert verts[3]` in `EftRibbon_DrawStrip`, eft_ab_c.c); a triangle clipped by five planes can have up
+to eight. Verified: the code and the array sizes, and that a PC build with another stack layout crashes there
+(return address overwritten) while the attract demo plays. Inferred, not checked on a console: on the PS2 the
+extra vertices land in the caller's other local arrays (texture coordinates, colours), so a clipped piece can
+make the pieces drawn after it in the same call wrong for that frame. Drawing only; the simulation is not involved.
