@@ -58,11 +58,7 @@ A function that does not match yet stays as the original assembly, with the best
 The PC port built on this decompilation is a separate repository, **Tenkaichi3Decomp**. This repository holds
 PS2 code only.
 
-## How this was made
-
-This project was developed with substantial help from AI (Anthropic's Claude, working through Claude Code),
-directed and tested by the maintainer. Results were checked by machine wherever possible: decompiled code by
-compiling it back to the original bytes, the port by comparing it with a fight recorded on the console.
+This project was made with the help of AI.
 
 ## Licence
 
