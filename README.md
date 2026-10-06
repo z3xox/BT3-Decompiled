@@ -58,6 +58,12 @@ A function that does not match yet stays as the original assembly, with the best
 The PC port built on this decompilation is a separate repository, **Tenkaichi3Decomp**. This repository holds
 PS2 code only.
 
+## Licence
+
+What is ours in this repository (the names, comments, documentation, scripts and build configuration, and the
+work of reconstruction) is dedicated to the public domain under [CC0 1.0](LICENSE). That dedication cannot and
+does not cover the game itself: the program this code reproduces belongs to its rights holders.
+
 ## Legal
 
 This project is not affiliated with or endorsed by the game's developers, publishers or rights holders. It
