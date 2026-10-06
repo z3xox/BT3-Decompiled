@@ -100,7 +100,9 @@ Purpose: the same parts again (only those with part flag bit 0), layer 0 with th
 and layer 1 with the model's fade texture looked up by the normal's direction relative to the
 camera. On the GS side (`ObjGs_AddFadeEnv`, `ObjGs_AddFadeTex`) context 1 writes alpha only, behind
 an alpha test against `view->fade`, and context 2 uses ALPHA 0x58 with clamped coordinates. What it
-looks like on screen has not been checked.
+looks like on screen has not been checked here. Port (2026-10-06, a recorded fight): it runs every frame for
+Raditz, 78 calls per frame, and the part it draws is the scouter's lens; so "fade" is the name of the
+view field it uses, not a rare fade-out effect.
 
 Entry points: `[0]` setup, `[15]` batch, `[111]` re-entry after a drawn batch, `[122]` after a
 skipped one.
