@@ -7,13 +7,12 @@
  * event 33 and repeats a string of event 32's file ("mc_lose_text").
  */
 
-/* While SimEv34 is INCLUDE_ASM its jump table comes from the assembly file, which only aligns it to 8: the
-   original object's .rodata was 16-aligned (it starts at 0x3BAFB0, 8 bytes behind the previous object). */
+/* The original object's .rodata was 16-aligned (it starts at 0x3BAFB0, 8 bytes behind the previous object). */
 RODATA_ALIGN16();
 
 static const s32 sSimPopoX[5] = { 76, 150, 224, 298, 372 };
 static const s32 sSimPopoSpeed[3] = { 6, 10, 14 };
-/* A named object because SimEv34 (INCLUDE_ASM) uses it too; it sits where the first literal of the pool was. */
+/* A named object (it dates from when SimEv34 was assembly); it sits where the first literal of the pool was. */
 static const char sSimPopoClip[] __attribute__((aligned(8))) = "mc_popo%02d";
 
 /* Swaps two of the five figures: down, across, up. Returns 1 when the swap is over. */
@@ -97,40 +96,15 @@ void SimPopo_CursorOff(USimDay *day) {
  * (gamePressed 0x200). Right = points and defence (USimTrain.points / gain), wrong = USimTrain.loss on defence.
  * After the switch every frame places the mark and sets each figure's pictures.
  *
- * NOT MATCHING: 15 of 551 instructions, all in case 6 (0x3922EC..0x392328): the same instructions with other
- * registers and another order of the five stores (the original keeps the Rand_Range result in $v0 until the index
- * arithmetic is done and gives the three other address registers $a2 / $a3 / $a1; this attempt stores the result
- * at once). Every statement order, a temporary for the result, a split load of the speed and chained zero stores
- * were tried (build/scratch_menu_u/perm3.py .. perm6.py). Everything else, including the jump table and the
- * strings, is identical with every relocation applied (build/scratch_menu_u/linkcheck.py). The attempt is
- * behaviourally exact. Verified by enabling it; fdiff then reports the 15 instructions.
- *
- * Cleanup notes (build/scratch_cleanup2_I/ev*.py, rtl/ud.*): the high halves of the five addresses are not
- * local to case 6. The global CSE pass makes `%hi(gSimPopoTarget)` one register for the whole function and
- * copies it into every case that reaches the code behind the switch, so the place of that `lui` in case 6
- * follows from the whole function, and a change in case 6 moves registers in case 16 (0x392450). With the
- * result in a temporary and the order Count, Speed, Won, Target the three other `lui` come out as in the
- * original (a2 / a3 / a1, in that order) but the store of the target then follows the two zero stores (10
- * instructions, two of them in case 16); chained zero stores and a pointer to the table row change nothing.
- * The original has the target's `lui` last and its store first.
- *
- * 2026-10-08 (build/scratch_shell_burst/try34*.py, viz.sh; scheduler traces in rtl/): what the original's order
- * requires, measured on the first scheduling pass. The statement order is Count, Speed, Won with the Rand_Range
- * result held in a temporary (then rank is in $a0, the index in $v1, the three other `lui` in $a2 / $a3 / $a1 as
- * in the original), and the store of the target has to be issued between the `addu` of the index and the load of
- * the speed, so that reload gives its `lui` the register rank has just left ($a0) and the speed gets $v0. It
- * cannot be, in any form tried: gcse's shared register for `%hi(gSimPopoTarget)` (r580, set in every case) has
- * no known base address, so the scheduler makes the store conflict with the load of gSimTrain2[].speed; written
- * in front of that load the store gets the block's highest priority and is issued at once (this attempt, 15
- * instructions), written behind it the store follows the load (10 instructions). With an address the
- * scheduler can resolve the store has the priority of the two zero stores and lands exactly where the original
- * has it (probe: the same store through `extern s32 gT6 __asm__("gSimPopoTarget")`, which gcse treats as another
- * symbol), but its `lui` is then an ordinary block-local register that overlaps rank ($a0 / $a1 exchanged, 10 and
- * 7 instructions). So the original needs both: the shared, rematerialised high part AND no conflict with the
- * table load. Not found; temporaries of every integer type, pointers to the global and all 24 statement orders
- * give one of the three results above.
+ * Case 6: the training table is `const` (it is defined so in sim_day.c). A load from a const object cannot
+ * conflict with a store, so the scheduler is free to put the store of the target behind the index arithmetic;
+ * with the non-const declaration of menu_u.h the store was tied to the load and 15 instructions differed. The
+ * statement order there is Count, Speed, Won (Won, Speed, Count matches as well).
  */
-#if 0
+/* The const view of the table: menu_u.h declares it without `const`, which this file cannot redeclare. The same
+   symbol; to be replaced by a `const` in the header. */
+extern const USimTrain sSimPopoTrain[5] __asm__("gSimTrain2");
+
 s32 SimEv34(USimDay *day) {
     MFlashRef ref;
     MFlashUv uv;
@@ -191,8 +165,8 @@ s32 SimEv34(USimDay *day) {
             gSimPopoRank = day->rank[2];
             gSimPopoTarget = Rand_Range(5);
             gSimPopoCount = 0;
+            gSimPopoSpeed = sSimPopoTrain[gSimPopoRank].speed;
             gSimPopoWon = 0;
-            gSimPopoSpeed = gSimTrain2[gSimPopoRank].speed;
             day->seq++;
             day->seqTimer = 0;
         }
@@ -245,7 +219,7 @@ s32 SimEv34(USimDay *day) {
         }
         break;
     case 14:
-        if (gSimPopoCount >= gSimTrain2[gSimPopoRank].param) {
+        if (gSimPopoCount >= sSimPopoTrain[gSimPopoRank].param) {
             day->seq = 16;
             day->seqTimer = 0;
             SimPopo_CursorOn(day);
@@ -342,8 +316,8 @@ s32 SimEv34(USimDay *day) {
         break;
     case 21:
         day->msgLine = 0xCB;
-        SimDay_AddChange(1, gSimTrain2[gSimPopoRank].gain);
-        SimDay_AddChange(3, gSimTrain2[gSimPopoRank].points);
+        SimDay_AddChange(1, sSimPopoTrain[gSimPopoRank].gain);
+        SimDay_AddChange(3, sSimPopoTrain[gSimPopoRank].points);
         SimDay_Cmd(0x1A);
         day->flags |= 0x80;
         day->seqTimer = 0;
@@ -357,7 +331,7 @@ s32 SimEv34(USimDay *day) {
         break;
     case 23:
         day->msgLine = 0xCD;
-        SimDay_AddChange(1, gSimTrain2[gSimPopoRank].loss);
+        SimDay_AddChange(1, sSimPopoTrain[gSimPopoRank].loss);
         SimDay_Cmd(0x1A);
         day->flags |= 0x80;
         day->seqTimer = 0;
@@ -433,6 +407,3 @@ s32 SimEv34(USimDay *day) {
     }
     return done;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu/sim_event_shell", SimEv34);
-#endif
