@@ -665,7 +665,7 @@ segments:
       - [0x1FE764, .lit4, sys/math3d]
       - [0x1FE794, .lit4, battle/btl_script_cmd]
       - [0x1FE7A4, .lit4, ui/char_viewer]
-      - [0x1FE7AC, lit4, cod/1FE7AC]
+      - [0x1FE7AC, .lit4, ui/shen_scene]
       - [0x1FE7B4, .lit4, sys/loading]
       - [0x1FE7C0, .lit4, sys/adx]
       - [0x1FE7C4, .lit4, sys/rigid]

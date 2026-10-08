@@ -119,35 +119,11 @@ ShenScene *gShenScene = NULL;
      5  when that camera ends: fade out (1 s)
      6  until the fade is done
    Sounds 0x3D..0x40 of bank mask 2 follow the steps.
-
-   NOT MATCHING: kept as INCLUDE_ASM. 618 instructions against 622; the attempt below is behaviourally exact and
-   differs in ONE place, the second float-to-unsigned conversion of step 1 (0x2620D8..0x26211C, 10 lines of an
-   aligned listing): the original keeps the whole sequence for the constant 0.0 (`sub.s / lui / trunc.w.s / mfc1 /
-   or` in the >= 2^31 arm) with 0.0 in $f0 and 2^31 in $f1; here the arm is folded to `lui t0,0x8000` and the two
-   float registers are exchanged (a consequence of the shorter life of the 0.0). Everything else, the jump table,
-   the four tables and the two .lit4 constants (pi 0x2FE7AC, 3.8f 0x2FE7B0) are the original's. */
-/* What the 2026-10-08 round established (build/scratch_shell_burst/s_*.py, dumps in rtl/sv_*):
-   - The blur call of step 1 is `SetBlur((u32)(hi * 64.0f), (u32)lo, (u32)lo, (u32)(hi * 128.0f))` with
-     `lo = 0.0f; hi = 1.0f;` assigned INSIDE the `if`: all four arguments are conversions. cse1 folds the first
-     (it knows hi), which leaves a label behind; cse2 folds the second ((u32)lo, now in the block of the
-     assignment); the third (u32)lo and the multiply of the fourth survive, and `hi`, left with one use, has its
-     load moved to that use. This alone gives the original's order of the four StgBlur_SetColor calls
-     (`li t0,64` and `move t0,zero` first, `li a3` in the delay slot), which literal 0x40 / 0 do not.
-   - ScrXfade_Start takes the float first (`mov.s $f12` in front of the jal, `li a0,1` in the delay slot).
-   - `zero = 0.0f; half = 0.5f;` of step 2 stand behind the BtlObjAnim_PlayModel call (`li a1,1` in front of
-     `mtc1 zero,$f20`).
-   - What is left: gcse's constant propagation knows `lo` in the >= 2^31 arm of the third conversion and leaves
-     a REG_EQUAL note on its `lo - 2^31` (insn `minus`), from which cse2 folds the arm; the compare / trunc in
-     front are kept (as in the original). The original has no such note: at gcse time no constant assignment
-     of the converted value reached that arm, yet the final code loads 0.0 with `mtc1 zero,$f0` right there.
-     `hi * 128.0f` escapes the same propagation only because its note `1.0 * x` simplifies to a register and is
-     dropped. Tried without effect (all give this same code or fold more): the assignments in either order, in
-     front of / behind `center = c`, as block-scope initialisers, an inline `(u32)` helper per argument, a copy
-     of `lo` for the third argument, `(u32)(lo * hi)`, `(u32)(hi * 0.0f)` for the second, statement-wise u8
-     locals, the variable shared with `shake` of step 3. Reading the two values from the constant table
-     (`c.x`, `c.z * 128.0f`) gives the original's instructions and length (622) with `lwc1` in place of the
-     two immediate loads, i.e. the original compiler did not know the value in that arm. */
-#if 0
+   Step 1's blur call is step 3's with the strength fixed at 1: all four arguments are float-to-unsigned
+   conversions of `hi * k` (k = 64, 0, 0, 128). The compiler folds the first two and keeps the third (`hi * 0.0f`
+   becomes a plain 0.0 it no longer knows as a constant in the >= 2^31 arm) and the multiply of the fourth.
+   ScrXfade_Start takes the float first; `zero = 0.0f; half = 0.5f;` of step 2 stand behind the
+   BtlObjAnim_PlayModel call. */
 /* A sound of bank mask 2, queued twice. */
 static inline void ShenScene_PlaySe(s32 id, s32 volume) {
     Snd_PlaySeEx(2, id, volume, 0, 0);
@@ -168,7 +144,6 @@ static inline void ShenScene_SetBlur(u8 a3, u8 a0, u8 a1, u8 a2) {
 s32 ShenScene_StepSeq(ShenSeq *seq) {
     Mtx44 m;
     ShenVec center;
-    f32 lo;
     f32 hi;
     ShenActor *actor;
     Ramp *ramp;
@@ -217,10 +192,9 @@ s32 ShenScene_StepSeq(ShenSeq *seq) {
         if (DemoCam_GetTime() >= 354.0f) {
             static const ShenVec c = {0.0f, 0.0f, 1.0f, 1.0f};
 
-            lo = 0.0f;
             hi = 1.0f;
             center = c;
-            ShenScene_SetBlur((u32)(hi * 64.0f), (u32)lo, (u32)lo, (u32)(hi * 128.0f));
+            ShenScene_SetBlur((u32)(hi * 64.0f), (u32)(hi * 0.0f), (u32)(hi * 0.0f), (u32)(hi * 128.0f));
             StgBlur_SetCenter(0, &center, 0);
         }
         if (!ShenScene_IsCamEnd()) {
@@ -350,14 +324,6 @@ s32 ShenScene_StepSeq(ShenSeq *seq) {
     }
     return 0;
 }
-#else
-RODATA_ALIGN16(); /* the object has a jump table: its .rodata is 16-byte aligned (0x2F33D0) */
-INCLUDE_RODATA("asm/nonmatchings/ui/shen_scene", D_002F33D0);
-INCLUDE_RODATA("asm/nonmatchings/ui/shen_scene", D_002F33E0);
-INCLUDE_RODATA("asm/nonmatchings/ui/shen_scene", D_002F3410);
-INCLUDE_RODATA("asm/nonmatchings/ui/shen_scene", D_002F3440);
-INCLUDE_ASM("asm/nonmatchings/ui/shen_scene", ShenScene_StepSeq);
-#endif
 
 /* Load job: requests the backdrop and the two models of this dragon, then creates their objects. */
 s32 ShenScene_StepLoad(ShenJob *job) {
