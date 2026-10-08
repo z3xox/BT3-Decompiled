@@ -1,4 +1,9 @@
-# Draft: names for the headers
+# Names for the headers
+
+> **Applied on the branch `headers`, 2026-10-08** (local). Both outputs still equal the disc's from a fresh tree.
+> The list as applied is `docs/header_rename_map.txt`; `scripts/rename_headers.py` renames from such a list and
+> folds one header into another (`--fold EXTRA TARGET`). What was done is at the end; the draft follows as written.
+
 
 A proposal only (2026-10-08). Nothing here is applied. The C files were renamed on the branch `rename`; a header was renamed with its C file only where both had the same name. This is the rest.
 
@@ -122,3 +127,28 @@ These took their C file's new name, and other files include them too. The name i
 | `sys/vu1_packet` | stg_model_anim, stg_model_draw |
 | `ui/reward_window` | message_window, icon_window, char_viewer, menu_util_1 |
 | `ui/shen_wish` | shen_confirm, shen_save |
+
+## What was applied (2026-10-08)
+
+The user's decisions: fold the extra headers where it works; split the headers that hold two things, but not the
+bracket one ("it serves tournament mode in general"); delete nothing.
+
+- **48 renames** as in the table, with these differences: `btl_ai_seq_a.h` -> `btl_ai_seq.h` and `eft_ac.h` ->
+  `eft_ribbon.h` (the files had no header of their own name); `eft_v.h`, which nothing includes, is kept as
+  `eft_particle_unused.h`; `menu_l.h` -> `tournament.h`, not split (it also holds the solo select's
+  declarations); `lib_a.h` is kept as it is.
+- **Folded into the file's main header** (each kept only with the build identical): `btl_act_1`, `btl_act_2` (two
+  headers), `btl_act_super`, `btl_act_change`, `btl_char_api_2`, `eft_aura`, `team_select`, and `flash` (two
+  headers): 11 headers gone into 8.
+- **Not foldable**: `btl_obj_anim_part2.h` (`btl_obj_chain.c` includes it and its declarations clash with those of
+  the main header there) and `eft_water_part2.h` (`gEftDust` is declared with two types). They keep `_part2`.
+- **Split**:
+  - `sim_event_evo_z.h` (eight users) -> `sim_events.h` (the Sim Dragon events) and `evo_z.h`. The Evolution Z
+    files had been taking `Flash_ClipSetOffset` from the Sim half; without it one function compiled differently
+    (five instructions), so `evo_z.h` declares it too.
+  - `evo_top_option.h` -> `evo_top.h`; the options into the existing `option.h`, in front of what it had; and
+    what both need (more of the main executable, the pad bits, the save helper) into `overlay_extra.h`.
+- `include/ui/` exists now (`menu_support.h` joined `reward_window.h`); the other headers of `src/ui/` files are
+  still in `include/battle/` and `include/sys/`.
+- Left: the second table above (renamed headers that several files share), `config/symbols/*.txt`, and the
+  mentions of old names in the other documents.
