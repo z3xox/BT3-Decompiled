@@ -102,7 +102,7 @@ typedef struct Progress {
     /* 0x10 */ LoadSprite *loadSprites; /* room for LOAD_SPRITE_COUNT sprites */
     /* 0x14 */ s32 flags;
     /* 0x18 */ s32 mode;
-    /* 0x1C */ s32 unk1C;
+    /* 0x1C */ s32 prevMode;
     /* 0x20 */ s32 lastLoadType;     /* type of the previous loading screen + 1, so it is not repeated */
 } Progress;
 

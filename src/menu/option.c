@@ -1855,14 +1855,14 @@ void Option_Draw(void) {
             uv.x0 = 0;
             uv.x1 = 0x200;
             uv.y1 = bgmY + 0x20;
-            uv.unk10 = gOption->bgmIds[gOption->bgmTop + i] / 8;
+            uv.tex = gOption->bgmIds[gOption->bgmTop + i] / 8;
             sprintf(name, "mc_bgm_plate_%d", i + 1);
             Flash_FindLabel(flash, name, "mc_bgm_text_off", &ref);
             Flash_ClipSetUv(flash, &ref, &uv);
-            Flash_ClipSetTex(flash, &ref, uv.unk10);
+            Flash_ClipSetTex(flash, &ref, uv.tex);
             Flash_FindLabel(flash, name, "mc_bgm_text_on", &ref);
             Flash_ClipSetUv(flash, &ref, &uv);
-            Flash_ClipSetTex(flash, &ref, uv.unk10);
+            Flash_ClipSetTex(flash, &ref, uv.tex);
         }
         Flash_FindLabel(flash, NULL, "mc_bgm_plate_7", &ref);
         Flash_ClipSetCallbackA(flash, &ref, Option_SetBgmScissor, NULL);
@@ -1873,13 +1873,13 @@ void Option_Draw(void) {
         uv.x1 = 0x200;
         uv.y0 = bgmY;
         uv.x0 = 0;
-        uv.unk10 = gOption->bgmIds[gOption->bgmExtra] / 8;
+        uv.tex = gOption->bgmIds[gOption->bgmExtra] / 8;
         Flash_FindLabel(flash, "mc_bgm_plate_7", "mc_bgm_text_off", &ref);
         Flash_ClipSetUv(flash, &ref, &uv);
-        Flash_ClipSetTex(flash, &ref, uv.unk10);
+        Flash_ClipSetTex(flash, &ref, uv.tex);
         Flash_FindLabel(flash, "mc_bgm_plate_7", "mc_bgm_text_on", &ref);
         Flash_ClipSetUv(flash, &ref, &uv);
-        Flash_ClipSetTex(flash, &ref, uv.unk10);
+        Flash_ClipSetTex(flash, &ref, uv.tex);
         len = 7.3f;
         y = 255.49999f / gOption->bgmCount * gOption->bgmTop;
         scale = rows / gOption->bgmCount * len;

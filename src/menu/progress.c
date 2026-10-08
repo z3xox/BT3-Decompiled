@@ -78,7 +78,7 @@ s32 Progress_Main(s32 arg) {
             gProgress->mode = 4;
         } else if (reason & 0x10) {
             if (gProgress->mode >= 38 && gProgress->mode <= 41) {
-                if (gProgress->unk624 != 0) {
+                if (gProgress->battleType != 0) {
                     gProgress->mode = 40;
                 } else {
                     gProgress->mode = 39;
@@ -92,7 +92,7 @@ s32 Progress_Main(s32 arg) {
             gProgress->mode = 6;
         } else if (reason & 0x1000) {
             gProgress->mode = 56;
-            gProgress->unk68C |= 1;
+            gProgress->replayFlags |= 1;
         }
     }
     if (gProgress->mode == 1 || gProgress->mode == 4) {

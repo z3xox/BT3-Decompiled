@@ -172,7 +172,7 @@ typedef struct TeamSel {
     /* 0x3C6C */ s32 faceMask;              /* non-zero while the portraits are hidden */
     /* 0x3C70 */ MTextBox nameBox[TEAMSEL_SIDES];
     /* 0x3D88 */ MTextBox formBox[TEAMSEL_SIDES];
-    /* 0x3EA0 */ void *unk3EA0;             /* common file 4, section 2 */
+    /* 0x3EA0 */ void *items;             /* common file 4, section 2 */
 } TeamSel; /* 0x3EA4 */
 
 #define TEAMSEL_STAGE_CHANGE 0x20  /* the stage under the cursor changed: load its picture */

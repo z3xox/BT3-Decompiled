@@ -26,7 +26,7 @@ typedef struct DialogFlash {
 /* Result of Flash_FindLabel: a clip / label handle, id < 0 when not found. */
 typedef struct DialogFlashRef {
     /* 0x00 */ s32 id;
-    /* 0x04 */ s32 unk4;
+    /* 0x04 */ s32 more;
 } DialogFlashRef;
 
 /* Texture / palette set handed to Flash_Create. */

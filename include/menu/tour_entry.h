@@ -228,9 +228,9 @@ typedef struct TourSession {
 
 /* gProgress as the tournament mode uses it. */
 typedef struct TourProgress {
-    /* 0x000 */ s32 unk0;
+    /* 0x000 */ s32 language;
     /* 0x004 */ s32 baseFile;
-    /* 0x008 */ void *unk8[3];
+    /* 0x008 */ void *loadBuf[3];
     /* 0x014 */ s32 flags;
     /* 0x018 */ s32 mode;
     /* 0x01C */ u8 unk1C[0x60];

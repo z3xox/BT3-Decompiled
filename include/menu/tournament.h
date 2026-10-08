@@ -91,7 +91,7 @@ typedef struct LItemSet {
 /* gSaveData->custom[n] (SaveCustom of include/sys/save.h, with the three item sets as records). */
 typedef struct LSaveCustom {
     /* 0x00 */ LItemSet set[SAVE_CUSTOM_SETS];
-    /* 0x30 */ s32 unk30;
+    /* 0x30 */ s32 exp;
     /* 0x34 */ u16 level;
     /* 0x36 */ u16 unk36;
 } LSaveCustom; /* 0x38 */
@@ -189,9 +189,9 @@ typedef struct LTourMatch {
 
 /* gProgress as the tournament uses it. */
 typedef struct LTourProgress {
-    /* 0x000 */ s32 unk0;
+    /* 0x000 */ s32 language;
     /* 0x004 */ s32 baseFile;
-    /* 0x008 */ void *unk8[3];
+    /* 0x008 */ void *loadBuf[3];
     /* 0x014 */ s32 flags;       /* 0x20 cleared when a round ends */
     /* 0x018 */ s32 mode;
     /* 0x01C */ u8 unk1C[0x68];
@@ -441,9 +441,9 @@ typedef struct SoloSel {
 
 /* gProgress as this screen uses it. */
 typedef struct SoloProgress {
-    /* 0x000 */ s32 unk0;
+    /* 0x000 */ s32 language;
     /* 0x004 */ s32 baseFile;
-    /* 0x008 */ void *unk8[3];
+    /* 0x008 */ void *loadBuf[3];
     /* 0x014 */ s32 flags;
     /* 0x018 */ s32 mode;
     /* 0x01C */ u8 unk1C[0x424];

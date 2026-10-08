@@ -63,8 +63,8 @@ void MisSel_SetupBattle(void) {
     MisSelOpp *opp;
     u16 *item;
 
-    unk10 = def->unk4 != 0;
-    unk1FC = def->unk14 != 0;
+    unk10 = def->stageChange != 0;
+    unk1FC = def->changeAllowed != 0;
     announcer = def->announcer;
     timeLimit = def->timeLimit;
     stage = def->stage;

@@ -19,16 +19,16 @@ typedef struct USimDay {
     /* 0x020 */ MFlash flash[7];    /* [4] = the movie of training 2 and of the mini games */
     /* 0x154 */ u8 unk154[0x3FC];
     /* 0x550 */ s32 flags;
-    /* 0x554 */ s32 unk554;
+    /* 0x554 */ s32 loadState;
     /* 0x558 */ s32 cur[13];
     /* 0x58C */ s32 timer;
     /* 0x590 */ s32 state;
     /* 0x594 */ s32 prevState;
-    /* 0x598 */ s32 unk598[2];
+    /* 0x598 */ s32 talk[2];
     /* 0x5A0 */ s32 msgLine;
     /* 0x5A4 */ s32 menuText;
     /* 0x5A8 */ s32 bgm;
-    /* 0x5AC */ s32 unk5AC;
+    /* 0x5AC */ s32 wait;
     /* 0x5B0 */ s32 day;
     /* 0x5B4 */ s32 preview[5];
     /* 0x5C8 */ u8 unk5C8[0x59C];

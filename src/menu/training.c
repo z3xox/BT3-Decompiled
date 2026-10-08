@@ -692,7 +692,7 @@ void Train_Init(s32 section) {
     gTrain->tbl.noImageNum = *(u32 *)Train_Section(26, TR_HOST "tu_noraml_notexture_PS2_.dat");
     gTrain->imageFile = Heap_Alloc(0xE000, 0x40, 0, 2);
     gTrain->imageRes = Heap_Alloc(0x10800, 0x20, 0, 2);
-    gTrain->unk430 = Heap_Alloc(0x10800, 0x20, 0, 2);
+    gTrain->imageRes2 = Heap_Alloc(0x10800, 0x20, 0, 2);
     for (i = 0; i < 2; i++) {
         gTrain->guide.blink[i] = Rand_Range(0x20);
     }
@@ -716,9 +716,9 @@ void Train_Term(void) {
         Heap_Free(gTrain->imageRes);
         gTrain->imageRes = NULL;
     }
-    if (gTrain->unk430 != NULL) {
-        Heap_Free(gTrain->unk430);
-        gTrain->unk430 = NULL;
+    if (gTrain->imageRes2 != NULL) {
+        Heap_Free(gTrain->imageRes2);
+        gTrain->imageRes2 = NULL;
     }
     MsgWin_Term();
     IconWin_Term();

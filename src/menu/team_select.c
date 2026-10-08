@@ -587,7 +587,7 @@ void TeamSel_Init(s32 section) {
     ItemHelp_Init(MPACK_AT(gTeamSel->res, 51));
     TS_RES(55);
     IconWin_Init(MPACK_AT(gTeamSel->res, 54), res);
-    gTeamSel->unk3EA0 = MPACK_AT(gCommonRes->data[2], 2);
+    gTeamSel->items = MPACK_AT(gCommonRes->data[2], 2);
     gTeamSel->nameText = MPACK_AT(gTeamSel->res, 43);
     gTeamSel->formText = MPACK_AT(gTeamSel->res, 44);
     gTeamSel->chipPack = (u32 *)MPACK_AT(gTeamSel->res, 45);
@@ -843,10 +843,10 @@ void TeamSel_Draw(void) {
     uv.x1 = 0x200;
     uv.y0 = (gTeamSel->stage->stage % 4) * 0x40;
     uv.y1 = uv.y0 + 0x40;
-    uv.unk10 = gTeamSel->stage->stage / 4;
+    uv.tex = gTeamSel->stage->stage / 4;
     Flash_FindLabel(flash, NULL, "mc_map_name", &ref);
     Flash_ClipSetUv(flash, &ref, &uv);
-    Flash_ClipSetTex(flash, &ref, uv.unk10);
+    Flash_ClipSetTex(flash, &ref, uv.tex);
     if (gTeamSel->battleType == 2) {
         for (i = 0; i < TEAMSEL_SIDES; i++) {
             uv.x0 = (gTeamSel->dpLevel % 2) * 0x40;
@@ -882,13 +882,13 @@ void TeamSel_Draw(void) {
     uv.x1 = 0x200;
     uv.y0 = (gTeamSel->bgmIds[gTeamSel->stage->bgmCursor] % 8) * 0x20;
     uv.y1 = uv.y0 + 0x20;
-    uv.unk10 = gTeamSel->bgmIds[gTeamSel->stage->bgmCursor] / 8;
+    uv.tex = gTeamSel->bgmIds[gTeamSel->stage->bgmCursor] / 8;
     Flash_FindLabel(flash, "mc_bgm_now", "mc_bgm_now_text_off", &ref);
     Flash_ClipSetUv(flash, &ref, &uv);
-    Flash_ClipSetTex(flash, &ref, uv.unk10);
+    Flash_ClipSetTex(flash, &ref, uv.tex);
     Flash_FindLabel(flash, "mc_bgm_now", "mc_bgm_now_text_on", &ref);
     Flash_ClipSetUv(flash, &ref, &uv);
-    Flash_ClipSetTex(flash, &ref, uv.unk10);
+    Flash_ClipSetTex(flash, &ref, uv.tex);
     for (i = 0; i < TEAMSEL_SIDES; i++) {
         flash = &gTeamSel->flash[5 + i];
         uv.x0 = (i ^ 1) * 0x20;

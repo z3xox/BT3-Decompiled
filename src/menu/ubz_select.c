@@ -30,8 +30,8 @@ static const s32 sUbzFoeTex[8] = { 15, 18, 19, 20, 21, 22, 23, 24 };
 void UbzSel_SetupBattle(void) {
     u16 items[8];
     NCourse *course = &gUbzSel->course[gUbzSel->cursor[0]];
-    s32 unk4 = course->unk4 != 0;
-    s32 unk14 = course->unk14 != 0;
+    s32 unk4 = course->stageChange != 0;
+    s32 unk14 = course->changeAllowed != 0;
     s32 announcer = course->announcer;
     s32 timeLimit = course->timeLimit;
     s32 stage = course->stage;

@@ -31,8 +31,8 @@ s32 UbResult_MarkCourseCleared(s32 course) {
             count++;
         }
     }
-    if (count == UO_COURSE_NUM && !(gSaveData->unk208 & 0x10)) {
-        gSaveData->unk208 |= 0x10;
+    if (count == UO_COURSE_NUM && !(gSaveData->ubFlags & 0x10)) {
+        gSaveData->ubFlags |= 0x10;
         return 1;
     }
     return 0;

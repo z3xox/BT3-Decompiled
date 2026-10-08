@@ -40,7 +40,7 @@ typedef struct MFlashUv {
     /* 0x04 */ s32 y0;
     /* 0x08 */ s32 x1;
     /* 0x0C */ s32 y1;
-    /* 0x10 */ s32 unk10;
+    /* 0x10 */ s32 tex;
 } MFlashUv; /* 0x14 */
 
 /* Header of a relocated texture list: 0x40-byte entries at tex. */
@@ -56,23 +56,23 @@ typedef struct MTexRes {
 
 /* gProgress (0x7FC bytes, main executable): the fields this file uses. */
 typedef struct MenuProgress {
-    /* 0x000 */ s32 unk0;
+    /* 0x000 */ s32 language;
     /* 0x004 */ s32 baseFile;      /* 0x1C1: file id of the first menu archive */
-    /* 0x008 */ void *unk8[3];
+    /* 0x008 */ void *loadBuf[3];
     /* 0x014 */ s32 flags;         /* MPROG_ */
     /* 0x018 */ s32 mode;          /* the screen Progress_Main dispatches to (1..70) */
     /* 0x01C */ s32 prevMode;      /* guess: tested for 8 / 10 by ModeMenu_Init */
-    /* 0x020 */ s32 unk20;
-    /* 0x024 */ s32 unk24;
+    /* 0x020 */ s32 lastLoadType;
+    /* 0x024 */ s32 demoPick;
     /* 0x028 */ s32 demoCount;     /* attract demos shown since the opening movie (0..2) */
     /* 0x02C */ s32 mainMenuItem;  /* item id the main menu was left on */
     /* 0x030 */ s32 unk30;
     /* 0x034 */ s32 subMenu;       /* which per-mode sub menu ModeMenu shows (0..7) */
     /* 0x038 */ s32 subMenuItem;   /* item the sub menu was left on */
     /* 0x03C */ u8 unk3C[0x5E8];
-    /* 0x624 */ s32 unk624;
+    /* 0x624 */ s32 battleType;
     /* 0x628 */ u8 unk628[0x64];
-    /* 0x68C */ s32 unk68C;
+    /* 0x68C */ s32 replayFlags;
 } MenuProgress;
 
 #define MPROG_NO_SAVE 4        /* "continue without saving" */

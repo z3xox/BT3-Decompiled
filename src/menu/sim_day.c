@@ -95,11 +95,11 @@ void SimDay_SetupBattle(void) {
     s32 round = QPROG->sim.turn / SIM_TURNS;
     SimRound *rd = &gSimDay->round[round];
     s32 announcer = rd->announcer;
-    s32 unk4 = rd->unk4 != 0;
+    s32 unk4 = rd->stageChange != 0;
     s32 timeLimit = rd->timeLimit;
     s32 stage = rd->stage;
     s32 bgm = rd->bgm;
-    s32 unk14 = rd->unk14 != 0;
+    s32 unk14 = rd->changeAllowed != 0;
     SimEnemy *en = &gSimDay->enemy[rd->enemy];
     s32 i;
     s32 n;
@@ -204,7 +204,7 @@ void SimDay_ListItems(void) {
             gSimDay->ownCount++;
         }
     }
-    i = QSAVE->unk20C;
+    i = QSAVE->missionPages;
     all = i == 20;
     if (!all) {
         if (!any) {
@@ -804,8 +804,8 @@ void SimDay_PickEvent(s32 unused) {
     s32 i;
     s32 w;
 
-    gSimDay->unkB68[0] = 0;
-    gSimDay->unkB68[1] = 0;
+    gSimDay->seq[0] = 0;
+    gSimDay->seq[1] = 0;
     switch (gSimDay->cur[SIMDAY_ST_BOARD]) {
     case 0:
         gSimDay->event = gSimDay->cur[SIMDAY_ST_TRAIN];
@@ -1092,7 +1092,7 @@ void SimDay_Init(s32 section) {
     gSimDay->round = (SimRound *)MPACK_AT(gSimDay->res, 25);
     gSimDay->pool = (SimPool *)MPACK_AT(gSimDay->res, 27);
     gSimDay->enemy = (SimEnemy *)MPACK_AT(gSimDay->res, 26);
-    gSimDay->unkB5C = MPACK_AT(gSimDay->res, 29);
+    gSimDay->train = MPACK_AT(gSimDay->res, 29);
     gSimDay->level = (SimLevel *)MPACK_AT(gSimDay->res, 30);
     gSimDay->msgLine = -1;
     gSimDay->lastEvent = -1;

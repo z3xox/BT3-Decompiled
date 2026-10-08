@@ -65,11 +65,11 @@ typedef struct PBattleResult {
     /* 0x0C */ s32 unkC;
     /* 0x10 */ u64 eventSummary; /* bit n: bonus n was earned (48 bits used) */
     /* 0x18 */ s32 frames;
-    /* 0x1C */ s32 unk1C[2];
-    /* 0x24 */ s32 unk24[2];
+    /* 0x1C */ s32 maxComboDamage[2];
+    /* 0x24 */ s32 maxComboHits[2];
     /* 0x2C */ f32 health[2];
     /* 0x34 */ PClock clock;
-    /* 0x44 */ s32 unk44;
+    /* 0x44 */ s32 dragonBallFound;
 } PBattleResult;
 
 extern PBattleResult *BattleResult_GetPtr(void);
@@ -210,9 +210,9 @@ typedef struct UbSaveBestB {
 typedef struct UbSaveBody {
     /* 0x0008 */ u8 unk8[0x200];
     /* 0x0208 */ s32 ubFlags;
-    /* 0x020C */ s32 unk20C;
+    /* 0x020C */ s32 missionPages;
     /* 0x0210 */ UbSaveRank rank[UB_RANK_NUM];
-    /* 0x0288 */ s32 unk288;
+    /* 0x0288 */ s32 simCleared;
     /* 0x028C */ UbSaveBest mission[100];
     /* 0x073C */ UbSaveBestB bestB[5];
     /* 0x0778 */ s32 unk778[2];

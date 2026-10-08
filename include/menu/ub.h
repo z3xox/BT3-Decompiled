@@ -73,9 +73,9 @@ typedef struct UoMember {
 } UoMember; /* 0x30 */
 
 typedef struct UoProgress {
-    /* 0x000 */ s32 unk0;
+    /* 0x000 */ s32 language;
     /* 0x004 */ s32 baseFile;
-    /* 0x008 */ s32 unk8[3];
+    /* 0x008 */ s32 loadBuf[3];
     /* 0x014 */ s32 flags;      /* MPROG_ */
     /* 0x018 */ s32 mode;
     /* 0x01C */ u8 unk1C[0x424];
@@ -87,7 +87,7 @@ typedef struct UoProgress {
     /* 0x644 */ s32 teamSize;   /* fighters the player chooses (>= 2 runs UbTeamSel) */
     /* 0x648 */ s32 dpRule;     /* 0 = no DP limit, 1 / 2 / 3 = limit 10 / 15 / 20 */
     /* 0x64C */ u8 unk64C[0x28];
-    /* 0x674 */ s32 unk674;     /* counted up each time mode 23 goes back to mode 22 */
+    /* 0x674 */ s32 simTurn;     /* counted up each time mode 23 goes back to mode 22 */
     /* 0x678 */ s32 unk678[3];
     /* 0x684 */ s32 discFlags;  /* UB_DISC_; bit 8 is read by the result screen (ub_rank.h: ubFlags, where bit 8 is
                                    NPROG_UB_UPWARD: the place challenged on the ladder is above the player's) */
@@ -102,7 +102,7 @@ typedef struct UoProgress {
 
 /* One mission's record in the save (12 bytes). */
 typedef struct UoMissionRec {
-    /* 0x0 */ u8 unk0;
+    /* 0x0 */ u8 cleared;
     /* 0x1 */ u8 rank;
     /* 0x2 */ u8 time0;         /* best time, shown as three two-digit groups (separate members, not an array:
                                    the code's address arithmetic shows it) */
@@ -129,7 +129,7 @@ typedef struct UoCourseRec {
  */
 typedef struct UoSave {
     /* 0x0000 */ u8 unk0[0x208];
-    /* 0x0208 */ s32 unk208;            /* bit 0x10: the reward for clearing all five courses was given */
+    /* 0x0208 */ s32 ubFlags;            /* bit 0x10: the reward for clearing all five courses was given */
     /* 0x020C */ s32 missionPages;      /* pages of five missions the list shows */
     /* 0x0210 */ u8 unk210[0x7C];
     /* 0x028C */ UoMissionRec mission[100];
@@ -151,7 +151,7 @@ extern UoSave *gSaveData;
 /* The score sheet (filled by UbScore_Fill / 0037F008 / 0037F180 of the next chunk). */
 typedef struct UoScoreRow {
     /* 0x0 */ s32 value;        /* base rows: a percentage; bonus rows: text line - 0x20 */
-    /* 0x4 */ s32 unk4;
+    /* 0x4 */ s32 remain;
     /* 0x8 */ s32 pt;           /* points / 100 */
 } UoScoreRow; /* 0xC */
 
@@ -165,9 +165,9 @@ typedef struct UoScore {
     /* 0x280 */ s32 row[3];     /* bonus rows shown on the current page */
     /* 0x28C */ s32 baseCount;
     /* 0x290 */ s32 bonusCount;
-    /* 0x294 */ s32 unk294;
+    /* 0x294 */ s32 ticks;
     /* 0x298 */ s16 time[3];
-    /* 0x29E */ s16 unk29E;
+    /* 0x29E */ s16 ms;
     /* 0x2A0 */ s32 unk2A0;
     /* 0x2A4 */ s32 rank;       /* 0..4, 4 the best (guess) */
 } UoScore; /* 0x2A8 */
@@ -343,11 +343,11 @@ s32 Ub_Main(void);
 /* Section 10: one mission (0x34 bytes). */
 typedef struct MisSelDef {
     /* 0x00 */ s32 announcer;   /* BattleSetup_SetRule's fifth argument; MISSEL_RANDOM = Rand_Range(8) */
-    /* 0x04 */ s32 unk4;        /* non-zero: rule.unk10 = 1 */
+    /* 0x04 */ s32 stageChange;        /* non-zero: rule.unk10 = 1 */
     /* 0x08 */ s32 timeLimit;
     /* 0x0C */ s32 stage;       /* MISSEL_RANDOM = Rand_Range(35) */
     /* 0x10 */ s32 bgm;         /* MISSEL_RANDOM = 0x18, the "random" music id */
-    /* 0x14 */ s32 unk14;       /* non-zero: side 1's unk1FC = 1 */
+    /* 0x14 */ s32 changeAllowed;       /* non-zero: side 1's unk1FC = 1 */
     /* 0x18 */ s32 kind;        /* 0..10: text line 0x148 + kind; decides the player's team size */
     /* 0x1C */ s32 dpRule;      /* text line 0x156 + dpRule when non-zero */
     /* 0x20 */ s32 opp[5];      /* indices into section 11 */

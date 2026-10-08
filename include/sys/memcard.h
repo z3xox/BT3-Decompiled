@@ -63,9 +63,9 @@ typedef struct McCardFile {
 /* icon.sys as Sony defines it (sceMcIconSys). */
 typedef struct McCardIconSys {
     /* 0x000 */ char head[4];        /* "PS2D" */
-    /* 0x004 */ u16 unk4;
+    /* 0x004 */ u16 reserved1;
     /* 0x006 */ u16 titleBreak;
-    /* 0x008 */ s32 unk8;
+    /* 0x008 */ s32 reserved2;
     /* 0x00C */ s32 transRate;
     /* 0x010 */ s32 bgColor[4][4];
     /* 0x050 */ f32 lightDir[3][4];

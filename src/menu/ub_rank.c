@@ -32,8 +32,8 @@ static const s32 sUbRankChipTex[6] = { 13, 15, 16, 17, 18, 19 };
 void UbRank_SetupBattle(void) {
     u16 items[8];
     NRankRule *rule = gUbRank->curRule;
-    s32 unk14 = rule->unk14 != 0;
-    s32 unk4 = rule->unk4 != 0;
+    s32 unk14 = rule->changeAllowed != 0;
+    s32 unk4 = rule->stageChange != 0;
     s32 announcer = rule->announcer;
     s32 stage = rule->stage;
     s32 bgm = rule->bgm;

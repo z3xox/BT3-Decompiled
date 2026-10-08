@@ -46,7 +46,7 @@ typedef struct TProgress {
 
 typedef struct TSave {
     /* 0x000 */ u8 unk0[0x20C];
-    /* 0x20C */ s32 unk20C;         /* 5 by default, 20 after Save_UnlockAll; event 17 adds one */
+    /* 0x20C */ s32 missionPages;         /* 5 by default, 20 after Save_UnlockAll; event 17 adds one */
 } TSave;
 
 extern TSave *gSaveData;
@@ -72,12 +72,12 @@ typedef struct TSimDay {
     /* 0x020 */ MFlash flash[7];
     /* 0x154 */ u8 unk154[0x3FC];
     /* 0x550 */ s32 flags;          /* SIMEV_ */
-    /* 0x554 */ s32 unk554;
+    /* 0x554 */ s32 loadState;
     /* 0x558 */ s32 cur[13];        /* cursor of each state; [3] = the card under the cursor */
     /* 0x58C */ s32 timer;
     /* 0x590 */ s32 state;
     /* 0x594 */ s32 prevState;
-    /* 0x598 */ s32 unk598[2];
+    /* 0x598 */ s32 talk[2];
     /* 0x5A0 */ s32 msgLine;        /* line of the message window, -1 = none */
     /* 0x5A4 */ u8 unk5A4[0x5B8];
     /* 0xB5C */ SimTrainTbl *train; /* section 29 */

@@ -58,7 +58,7 @@ extern void BattleSetup_Finish(void);
 /* ---- gProgress as these screens use it ---- */
 
 typedef struct NProgress {
-    /* 0x000 */ s32 unk0;
+    /* 0x000 */ s32 language;
     /* 0x004 */ s32 baseFile;
     /* 0x008 */ u8 unk8[0xC];
     /* 0x014 */ s32 flags;
@@ -97,7 +97,7 @@ typedef struct NCourseRec {
 
 typedef struct NSave {
     /* 0x000 */ u8 unk0[0x208];
-    /* 0x208 */ s32 unk208;     /* bit 0x10: the reward for clearing all five courses was given */
+    /* 0x208 */ s32 ubFlags;     /* bit 0x10: the reward for clearing all five courses was given */
     /* 0x20C */ u8 unk20C[0x570];
     /* 0x77C */ s32 rank;       /* the player's place on the ladder: 99 (place 100) by default, 0 = first */
     /* 0x780 */ NCourseRec course[N_COURSE_NUM];
@@ -119,22 +119,22 @@ typedef struct NFoe {
 /* The rules of one course. */
 typedef struct NCourse {
     /* 0x00 */ s32 announcer;   /* N_RANDOM: Rand_Range(8) */
-    /* 0x04 */ s32 unk4;        /* non-zero: BattleSetup_SetRule's last argument is 1 */
+    /* 0x04 */ s32 stageChange;        /* non-zero: BattleSetup_SetRule's last argument is 1 */
     /* 0x08 */ s32 timeLimit;
     /* 0x0C */ s32 stage;       /* N_RANDOM: Rand_Range(35) */
     /* 0x10 */ s32 bgm;         /* N_RANDOM: N_BGM_RANDOM */
-    /* 0x14 */ s32 unk14;       /* non-zero: side 1's unk1FC is 1 */
+    /* 0x14 */ s32 changeAllowed;       /* non-zero: side 1's unk1FC is 1 */
     /* 0x18 */ s32 foe[8];      /* indices into the NFoe table */
 } NCourse; /* 0x38 */
 
 /* The rules of one place of the ladder (or of one intruder). */
 typedef struct NRankRule {
     /* 0x00 */ s32 announcer;   /* N_RANDOM: Rand_Range(8) */
-    /* 0x04 */ s32 unk4;
+    /* 0x04 */ s32 stageChange;
     /* 0x08 */ s32 timeLimit;
     /* 0x0C */ s32 stage;       /* N_RANDOM: Rand_Range(28) */
     /* 0x10 */ s32 bgm;         /* N_RANDOM: one of the eleven ids of the screen's music list */
-    /* 0x14 */ s32 unk14;
+    /* 0x14 */ s32 changeAllowed;
     /* 0x18 */ s32 foe;         /* index into the NFoe table */
 } NRankRule; /* 0x1C */
 

@@ -1526,7 +1526,7 @@ s32 SimEv17(TSimDay *day) {
         day->seqTimer = 0;
         break;
     case 12:
-        gSaveData->unk20C++;
+        gSaveData->missionPages++;
         day->msgLine = 0x7C;
         day->flags |= SIMEV_WAIT_KEY;
         day->seqTimer = 0;

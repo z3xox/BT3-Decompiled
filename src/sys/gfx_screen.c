@@ -496,7 +496,7 @@ void GfxLens_DrawAll(GfxLensView *view, s32 split, s32 side) {
     f32 *w;
 
     Vu0Screen_StoreMtx((Mtx44 *)w2s);
-    Mtx_Transpose((Mtx44 *)rot, &view->mtx40);
+    Mtx_Transpose((Mtx44 *)rot, &view->world2view2);
     for (j = 0; j < 8; j++) {
         f = &gGfxLens.slot[j];
         if (f->life == 0) {
@@ -1101,7 +1101,7 @@ void GfxWater_Draw(void) {
             GfxLensCam *c = gBtlCam;
 
             if (BtlStage_GetWaterLevel(&level)) {
-                Mtx_InverseRT(&cam, &c->views[i].mtx40);
+                Mtx_InverseRT(&cam, &c->views[i].world2view2);
                 if (level < cam.m[3][1]) {
                     GfxWater_DrawView(split, i);
                 }
@@ -1110,7 +1110,7 @@ void GfxWater_Draw(void) {
     } else {
         v = gBtlCamView;
         if (BtlStage_GetWaterLevel(&level)) {
-            Mtx_InverseRT(&cam, &v->mtx40);
+            Mtx_InverseRT(&cam, &v->world2view2);
             if (level < cam.m[3][1]) {
                 GfxWater_DrawView(split, 0);
             }

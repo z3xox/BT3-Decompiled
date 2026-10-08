@@ -1,0 +1,194 @@
+include/menu/overlay_common.h	MFlash	unk14	KEEP	KEEP	never accessed in the overlay; the six words cover speed, ofs[2], root, clips and shapes of sys/flash.h Flash, so one name cannot fit the array
+include/menu/overlay_common.h	MFlashUv	unk10	tex	HIGH	sys/flash.h FlashUv names 0x10 tex (which texture of the image's file); option.c stores a texture number in it and passes it to Flash_ClipSetTex
+include/menu/overlay_common.h	MTexRes	unk0	KEEP	KEEP	four header words of the relocated texture list that no code reads (reward_window.h FlashTexRes leaves them unknown too)
+include/menu/overlay_common.h	MenuProgress	unk0	language	MEDIUM	gProgress word 0 picks the story text file set (0x231 or 0x263 in BtlScriptCmd_LoadText) and is added to HUD file 6; uncertain whether it is the text language or another regional variant
+include/menu/overlay_common.h	MenuProgress	unk8	loadBuf	MEDIUM	sys/loading.h Progress names the three pointers loadPack, loadRes and loadSprites (the loading screen's buffers); here they are one array of three so a common name is proposed and the overlay never touches them
+include/menu/overlay_common.h	MenuProgress	unk20	lastLoadType	HIGH	sys/loading.h Progress names 0x20 lastLoadType (type of the previous loading screen + 1)
+include/menu/overlay_common.h	MenuProgress	unk24	demoPick	HIGH	ui/menu_support.h MenuUtilProgress names 0x24 demoPick (pairing Demo_SetupBattle chose last, -1 at start, which matches reward_window.h saying -1 at start)
+include/menu/overlay_common.h	MenuProgress	unk30	KEEP	KEEP	never accessed by name; first word of the 0x30..0x7C block that Progress_ClearSession clears and no view names it
+include/menu/overlay_common.h	MenuProgress	unk624	battleType	HIGH	team_select.h, duel.h and dc_password_replay.h name 0x624 battleType; Progress_Main picks mode 40 (teams) or 39 (single) from it
+include/menu/overlay_common.h	MenuProgress	unk68C	replayFlags	HIGH	dc_password_replay.h ZaProgress names 0x68C replayFlags (bit 0: the menu was entered from a battle to save its replay); Progress_Main sets bit 0 when going to mode 56
+include/menu/overlay_common.h	MainMenu	unk14C	KEEP	KEEP	no code in main_menu.c reads or writes it
+include/menu/overlay_common.h	Title	unk8	KEEP	KEEP	no code in title.c reads or writes it
+include/menu/shop.h	WItemEntry	unk1	group	HIGH	evo_z_items.h VItemEntry names byte 1 group (two items of the same type and group cannot be in one set); dc_password_replay.h calls the same byte kind with the same meaning; not read by the shop itself
+include/menu/sim_day.h	QSaveBody	unk20C	missionPages	HIGH	ub.h UoSave names 0x20C missionPages (pages of five missions the list shows: 5 by default, 20 when all unlocked); SimDay only tests it for 20
+include/menu/sim_day.h	QSaveBody	unk288	simCleared	MEDIUM	sim_top.h SimSave names the byte at 0x288 simCleared (reward item of a finished ladder was given); uncertain because this view declares an s32 there and never accesses it
+include/menu/sim_day.h	QSaveBody	unk778	KEEP	KEEP	never accessed; word [1] is 0x77C which ub.h and ub_rank.h name rank (place on the ladder) but word [0] at 0x778 is unknown, so the pair cannot take one name
+include/menu/sim_day.h	QMember	unk0	KEEP	KEEP	never accessed here; the six words are col, row, form, recCol, recRow and plate of ub_team_select.h UbMember, so one name cannot fit the array
+include/menu/sim_day.h	SimState	unk14	KEEP	KEEP	gProgress 0x660; no code in the sim screens reads or writes it and no other view names it
+include/menu/sim_day.h	SimState	unk2C	KEEP	KEEP	gProgress 0x678; no code reads or writes it and no other view names it
+include/menu/sim_day.h	QProgress	unk0	language	MEDIUM	same word as MenuProgress.unk0: picks the text file set and the HUD file; uncertain whether it is the text language or another variant; not accessed here
+include/menu/sim_day.h	QProgress	unk8	loadBuf	MEDIUM	sys/loading.h names the three pointers loadPack, loadRes, loadSprites; one array here so a common name is proposed; not accessed here
+include/menu/sim_day.h	SimTrain	unk4	KEEP	KEEP	second parameter of a training rank whose meaning depends on the training (sim_event_card.h calls it seconds, sim_events.h calls it speed); the generic view cannot take either
+include/menu/sim_day.h	SimRound	unk4	stageChange	HIGH	passed (as 0 or 1) as the last argument of BattleSetup_SetRule, which stores it in rule->stageChange
+include/menu/sim_day.h	SimRound	unk14	changeAllowed	HIGH	passed (as 0 or 1) as the fifth argument of BattleSetup_SetSide for side 1, which stores it in side->changeAllowed
+include/menu/sim_day.h	SimDay	unkB5C	train	HIGH	sim_event_card.h TSimDay names 0xB5C train (SimTrainTbl of pack section 29); SimDay_Init stores section 29 there
+include/menu/sim_day.h	SimDay	unkB68	seq	MEDIUM	sim_event_card.h and sim_events.h name 0xB68 seq (step of the running event handler) and 0xB6C seqTimer; here both are one array that SimDay only zeroes, so the name fits element 0 better than element 1
+include/menu/sim_day.h	SimDay	unkB8C	answer	HIGH	sim_event_card.h TSimDay names 0xB8C answer; SimDay sets it to 1 for the first row of the yes / no window and 0 otherwise
+include/menu/sim_event_card.h	TSave	unk20C	missionPages	HIGH	ub.h UoSave names 0x20C missionPages (5 by default, 20 when all unlocked); event 17 adds one page
+include/menu/sim_event_card.h	TSimDay	unk554	loadState	HIGH	sim_day.h SimDay names 0x554 loadState (portrait loader state); not accessed by the handlers
+include/menu/sim_event_card.h	TSimDay	unk598	talk	HIGH	sim_day.h SimDay names 0x598 talk[2] (the guide's closing line to say and the last one said); not accessed by the handlers
+include/menu/sim_events.h	USimDay	unk554	loadState	HIGH	sim_day.h SimDay names 0x554 loadState (portrait loader state); not accessed by the handlers
+include/menu/sim_events.h	USimDay	unk598	talk	HIGH	sim_day.h SimDay names 0x598 talk[2] (guide's closing line to say and the last one said); not accessed by the handlers
+include/menu/sim_events.h	USimDay	unk5AC	wait	HIGH	sim_day.h SimDay names 0x5AC wait (frames the round picture stays); not accessed by the handlers
+include/menu/sim_events.h	USimDay	unkB8C	answer	HIGH	sim_event_card.h TSimDay names 0xB8C answer (what the yes / no window of command 17 returned); the handlers test it after SimDay_Cmd(0x11)
+include/menu/sim_top.h	SimRun	unk14	KEEP	KEEP	gProgress 0x660; no code reads or writes it and sim_day.h SimState leaves it unknown too
+include/menu/sim_top.h	SimRun	unk2C	KEEP	KEEP	gProgress 0x678; no code reads or writes it and sim_day.h SimState leaves it unknown too
+include/menu/sim_top.h	SimProgress	unk0	language	MEDIUM	same word as MenuProgress.unk0: picks the text file set and the HUD file; uncertain whether it is the text language or another variant; not accessed here
+include/menu/sim_top.h	SimProgress	unk8	loadBuf	MEDIUM	sys/loading.h names the three pointers loadPack, loadRes, loadSprites; one array here so a common name is proposed; not accessed here
+include/menu/sim_top.h	SimScore	unkC	KEEP	KEEP	never accessed; ub_score.h UbScore, survival.h SScore and ub.h UoScore leave 0xC unknown too
+include/menu/sim_top.h	SimScore	unk29E	KEEP	KEEP	never accessed; the three s16 are ms, timeLeft and unkE of the battle clock copy (PClock of ub_score.h), so one name cannot fit the array
+include/menu/sim_top.h	SimResult	unk8	KEEP	KEEP	no code reads or writes it; the same slot is unknown in MisResult, SurvResult and UbResult
+include/menu/sim_top.h	SimResult	unk53C	KEEP	KEEP	no code reads or writes the two words between timer and state; the same pair is unknown in every screen of this template
+include/menu/sim_top.h	SimResult	unk558	KEEP	KEEP	no code reads or writes it; by layout it is the slot UbMenu calls talker (between voiceLine and blink) but this screen has one guide and never uses it
+include/menu/survival.h	SProgress	unk0	language	MEDIUM	same word as MenuProgress.unk0: picks the text file set and the HUD file; uncertain whether it is the text language or another variant; not accessed here
+include/menu/survival.h	SProgress	unk8	loadBuf	MEDIUM	sys/loading.h names the three pointers loadPack, loadRes, loadSprites; one array here so a common name is proposed; not accessed here
+include/menu/survival.h	SScore	unkC	KEEP	KEEP	never accessed; every view of the score sheet leaves 0xC unknown
+include/menu/survival.h	SScore	unk29E	KEEP	KEEP	never accessed; the three s16 are ms, timeLeft and unkE of the battle clock copy (PClock of ub_score.h), so one name cannot fit the array
+include/menu/survival.h	SurvCourse	unk4	stageChange	HIGH	passed (as 0 or 1) as the last argument of BattleSetup_SetRule, which stores it in rule->stageChange
+include/menu/survival.h	SurvCourse	unk14	changeAllowed	HIGH	passed (as 0 or 1) as the fifth argument of BattleSetup_SetSide for side 1, which stores it in side->changeAllowed
+include/menu/survival.h	SurvSel	unk300	KEEP	KEEP	no code reads or writes the two words between timer and level; the same pair is unknown in every screen of this template
+include/menu/survival.h	SurvSel	unk31C	KEEP	KEEP	no code reads or writes it; by layout it is the slot UbMenu calls talker but this screen has one guide and never uses it
+include/menu/survival.h	SurvResult	unk8	KEEP	KEEP	no code reads or writes it; the same slot is unknown in the other result screens
+include/menu/survival.h	SurvResult	unk4D0	KEEP	KEEP	never accessed; by layout it is the per-state cursor array that SimResult calls pick (between flags and timer) but nothing here uses it
+include/menu/survival.h	SurvResult	unk504	KEEP	KEEP	no code reads or writes the two words between timer and state
+include/menu/survival.h	SurvResult	unk520	KEEP	KEEP	no code reads or writes it; by layout the talker slot of a two-guide screen, unused here
+include/menu/team_select.h	TeamSelSide	unk144	KEEP	KEEP	81 words at the end of a side's record that no code in team_select.c reads or writes
+include/menu/team_select.h	TeamSelStage	unk38	KEEP	KEEP	no code reads or writes it; char_select.h leaves 0x38 of its stage record unknown too
+include/menu/team_select.h	TeamSelStage	unk48	KEEP	KEEP	no code reads or writes it; char_select.h leaves 0x48 of its stage record unknown too
+include/menu/team_select.h	TeamSel	unk3EA0	items	HIGH	TeamSel_Init stores section 2 of common file 4 (the item table) there; solo_select, entry_select, ub_team_select, shop and item_help name the same pointer items
+include/menu/team_select.h	TsSaveCustom	unk30	KEEP	KEEP	never accessed; the two words cover exp (s32), level (u16) and an unknown u16 of sys/save.h SaveCustom, so one name cannot fit the array
+include/menu/team_select.h	TsSaveRec	unk10	KEEP	KEEP	never accessed; the three words cover an unknown word, level (u16 at 0x14) and chara (0x18) of sys/save.h SaveRec, so one name cannot fit the array
+include/menu/tour_entry.h	ESelGridList	unk4	KEEP	KEEP	three header words between the count and the cells that no code reads
+include/menu/tour_entry.h	TourSaveRec	unk10	KEEP	KEEP	never accessed; covers an unknown word, level (u16 at 0x14) and chara (0x18) of sys/save.h SaveRec, so one name cannot fit the array
+include/menu/tour_entry.h	ESel	unk1DC	KEEP	KEEP	no code in entry_select.c reads or writes it
+include/menu/tour_entry.h	ESel	unk1EC	KEEP	KEEP	no code in entry_select.c reads or writes it
+include/menu/tour_entry.h	TourEntrant	unk2	KEEP	KEEP	never accessed; bracket.h BrkEntrant and tournament.h LTourEntrant leave it unknown too (probably padding after the u16 flags)
+include/menu/tour_entry.h	TourEntrant	unk10	KEEP	KEEP	never accessed here; bracket.h BrkEntrant names the two words pos (s32, place in the tree) and health (f32), so the s32 pair cannot take one name
+include/menu/tour_entry.h	TourSession	unk0	KEEP	KEEP	gProgress 0x7C; no code reads or writes it and no other view names it
+include/menu/tour_entry.h	TourProgress	unk0	language	MEDIUM	same word as MenuProgress.unk0: picks the text file set and the HUD file; uncertain whether it is the text language or another variant; not accessed here
+include/menu/tour_entry.h	TourProgress	unk8	loadBuf	MEDIUM	sys/loading.h names the three pointers loadPack, loadRes, loadSprites; one array here so a common name is proposed; not accessed here
+include/menu/tour_entry.h	TourInfo	unk0	KEEP	KEEP	four words before the prize sums that the menu never reads (tournament.h LTourPrize leaves the same head unknown)
+include/menu/tour_entry.h	TourInfo	unk28	KEEP	KEEP	never read by the menu; tournament.h LTourPrize shows the 0x10..0x64 block is prize[7][3] so these 15 words are prize kinds 2..6 (item, characters, stage), which belong to the prize array and not to a field of their own
+include/menu/tournament.h	LChrGridList	unk4	KEEP	KEEP	three header words between the count and the cells that no code reads
+include/menu/tournament.h	LSaveCustom	unk30	exp	HIGH	evo_z_items.h VSaveCustom names 0x30 exp: EvoZ adds the earned points to it and compares it with the next level's table value
+include/menu/tournament.h	LSaveCustom	unk36	KEEP	KEEP	never accessed; sys/save.h SaveCustom leaves 0x36 unknown too (probably padding)
+include/menu/tournament.h	LTourEntrant	unk2	KEEP	KEEP	never accessed; unknown in bracket.h BrkEntrant too (probably padding after the u16 flags)
+include/menu/tournament.h	LTourProgress	unk0	language	MEDIUM	same word as MenuProgress.unk0: picks the text file set and the HUD file; uncertain whether it is the text language or another variant; not accessed here
+include/menu/tournament.h	LTourProgress	unk8	loadBuf	MEDIUM	sys/loading.h names the three pointers loadPack, loadRes, loadSprites; one array here so a common name is proposed; not accessed here
+include/menu/tournament.h	LTourProgress	unk90	KEEP	KEEP	never accessed here; bracket.h TourProgress2 names the two words round (0x90) and match (0x94), so the pair cannot take one name
+include/menu/tournament.h	LTourPrize	unk0	KEEP	KEEP	four words before the prize table that no code reads
+include/menu/tournament.h	LBracket	unk138	KEEP	KEEP	no code in bracket_logic.c reads or writes it; bracket.h leaves 0x138 unknown too
+include/menu/tournament.h	LBracket	unk144	KEEP	KEEP	no code in bracket_logic.c reads or writes it; bracket.h leaves 0x144 unknown too
+include/menu/tournament.h	SoloSel	unk198	KEEP	KEEP	no code in solo_select.c reads or writes it
+include/menu/tournament.h	SoloProgress	unk0	language	MEDIUM	same word as MenuProgress.unk0: picks the text file set and the HUD file; uncertain whether it is the text language or another variant; not accessed here
+include/menu/tournament.h	SoloProgress	unk8	loadBuf	MEDIUM	sys/loading.h names the three pointers loadPack, loadRes, loadSprites; one array here so a common name is proposed; not accessed here
+include/menu/training.h	TrainGuide	unk0	KEEP	KEEP	never accessed; the header itself says where this structure starts is a guess
+include/menu/training.h	Train	unk3CC	KEEP	KEEP	0x3C bytes whose address is only handed to MsgWin_Init as a fourth argument the function does not take; nothing shows what it was meant to hold
+include/menu/training.h	Train	unk430	imageRes2	MEDIUM	a 0x10800-byte buffer allocated right after imageRes with the same size and alignment and freed at Term; uncertain because nothing ever reads or fills it
+include/menu/training.h	Train	unk46C	KEEP	KEEP	set to 30 by Train_Init and never read
+include/menu/training.h	Train	unk1BDC	KEEP	KEEP	no code reads or writes the last word of the work area
+include/menu/training.h	MenuProgressTrain	unk7D8	KEEP	KEEP	no code reads or writes it
+include/menu/training.h	MenuProgressTrain	unk7F0	KEEP	KEEP	no code reads or writes it
+include/menu/training.h	MenuProgressTrain	unk7F8	KEEP	KEEP	only zeroed when the menu is left for a tutorial; nothing found that reads it
+include/menu/training.h	Logo	unk4	KEEP	KEEP	no code in logo.c reads or writes it
+include/menu/training.h	Logo	unk14	KEEP	KEEP	four words at the end that no code in logo.c reads or writes
+include/menu/ub.h	UoMember	unk0	KEEP	KEEP	never accessed here; the six words are col, row, form, recCol, recRow and plate of ub_team_select.h UbMember, so one name cannot fit the array
+include/menu/ub.h	UoProgress	unk0	language	MEDIUM	same word as MenuProgress.unk0: picks the text file set and the HUD file; uncertain whether it is the text language or another variant; not accessed here
+include/menu/ub.h	UoProgress	unk8	loadBuf	MEDIUM	sys/loading.h names the three pointers loadPack, loadRes, loadSprites; here one array (declared s32) so a common name is proposed; not accessed here
+include/menu/ub.h	UoProgress	unk674	simTurn	HIGH	0x674 is SimRun.turn of sim_top.h (turns played in the mode 22 ladder); ub.c adds 1 each time mode 23 goes back to mode 22, which is what sim_top.h says the mode handler does
+include/menu/ub.h	UoProgress	unk678	KEEP	KEEP	never accessed; covers SimRun.unk2C, wait and off of sim_top.h, so one name cannot fit the array
+include/menu/ub.h	UoMissionRec	unk0	cleared	HIGH	ub_score.h PSaveMission and UbSaveBest name byte 0 of the same 12-byte mission record cleared
+include/menu/ub.h	UoSave	unk208	ubFlags	HIGH	ub_score.h PSave, survival.h SSave and sim_day.h name 0x208 ubFlags; ub_result.c sets bit 0x10 (reward for all five courses given) in it
+include/menu/ub.h	UoScoreRow	unk4	remain	HIGH	ub_score.h UbScoreLine names word 1 of the same 12-byte line remain (points not yet counted into the total)
+include/menu/ub.h	UoScore	unkC	KEEP	KEEP	never accessed; every view of the score sheet leaves 0xC unknown
+include/menu/ub.h	UoScore	unk294	ticks	HIGH	ub_score.h UbScore has the battle clock copy (PClock) at 0x294 whose first word is ticks; sim_top.h and survival.h name it ticks too
+include/menu/ub.h	UoScore	unk29E	ms	HIGH	the s16 after hours, minutes, seconds (time[3] here) of the clock copy at 0x294: PClock.ms in ub_score.h and BtlClock.ms in battle.h
+include/menu/ub.h	UoScore	unk2A0	KEEP	KEEP	never accessed; the word covers the s16 timeLeft and the unknown s16 at 0xE of the clock copy
+include/menu/ub.h	UbResult	unk8	KEEP	KEEP	no code reads or writes it; the same slot is unknown in the other result screens
+include/menu/ub.h	UbResult	unk454	KEEP	KEEP	never accessed; by layout it is the per-state cursor array that SimResult calls pick (between flags and timer) but nothing here uses it
+include/menu/ub.h	UbResult	unk488	KEEP	KEEP	no code reads or writes the two words between timer and step
+include/menu/ub.h	UbResult	unk4A4	KEEP	KEEP	no code reads or writes it; by layout the talker slot of a two-guide screen, unused here
+include/menu/ub.h	DiscFusion	unk1EC	KEEP	KEEP	no code reads or writes the two words between timer and level
+include/menu/ub.h	DiscFusion	unk20C	KEEP	KEEP	no code reads or writes it; by layout (between voiceLine and blink[2]) it is the slot UbMenu and ESel call talker but disc_fusion.c never uses it
+include/menu/ub.h	DiscFusion	unk220	KEEP	KEEP	0x3C bytes whose address is only handed to MsgWin_Init as a fourth argument the function does not take; nothing shows what it was meant to hold
+include/menu/ub.h	DiscFusion	unk268	KEEP	KEEP	only zeroed by DiscFusion_Init and never read
+include/menu/ub.h	MisSelDef	unk4	stageChange	HIGH	passed (as 0 or 1) as the last argument of BattleSetup_SetRule, which stores it in rule->stageChange
+include/menu/ub.h	MisSelDef	unk14	changeAllowed	HIGH	passed (as 0 or 1) as the fifth argument of BattleSetup_SetSide for side 1, which stores it in side->changeAllowed
+include/menu/ub.h	MisSel	unk4D4	KEEP	KEEP	no code reads or writes the two words between timer and level
+include/menu/ub.h	MisSel	unk4F0	KEEP	KEEP	no code reads or writes it; by layout the talker slot of a two-guide screen, unused here
+include/menu/ub_rank.h	NProgress	unk0	language	MEDIUM	same word as MenuProgress.unk0: picks the text file set and the HUD file; uncertain whether it is the text language or another variant; not accessed here
+include/menu/ub_rank.h	NSave	unk208	ubFlags	HIGH	ub_score.h PSave, survival.h SSave and sim_day.h name 0x208 ubFlags; the header's own comment gives bit 0x10 of it
+include/menu/ub_rank.h	NCourse	unk4	stageChange	HIGH	UbzSel passes it (as 0 or 1) as the last argument of BattleSetup_SetRule, which stores it in rule->stageChange
+include/menu/ub_rank.h	NCourse	unk14	changeAllowed	HIGH	UbzSel passes it (as 0 or 1) as the fifth argument of BattleSetup_SetSide for side 1, which stores it in side->changeAllowed
+include/menu/ub_rank.h	NRankRule	unk4	stageChange	HIGH	UbRank passes it (as 0 or 1) as the last argument of BattleSetup_SetRule, which stores it in rule->stageChange
+include/menu/ub_rank.h	NRankRule	unk14	changeAllowed	HIGH	UbRank passes it (as 0 or 1) as the fifth argument of BattleSetup_SetSide for side 1, which stores it in side->changeAllowed
+include/menu/ub_rank.h	UbzSel	unk43C	KEEP	KEEP	no code reads or writes the two words between timer and step
+include/menu/ub_rank.h	UbzSel	unk458	KEEP	KEEP	no code reads or writes it; by layout the talker slot of a two-guide screen, unused here
+include/menu/ub_rank.h	UbRank	unk530	KEEP	KEEP	no code reads or writes the two words between timer and state
+include/menu/ub_rank.h	UbRank	unk54C	KEEP	KEEP	no code reads or writes it; by layout the talker slot of a two-guide screen, unused here
+include/menu/ub_rank.h	UbRank	unk568	KEEP	KEEP	no code in ub_rank.c reads or writes it
+include/menu/ub_score.h	PClock	unkE	KEEP	KEEP	never accessed; battle.h BtlClock leaves 0xE unknown too
+include/menu/ub_score.h	PBattleResult	unkC	KEEP	KEEP	never accessed; battle.h BattleResult leaves 0xC unknown too
+include/menu/ub_score.h	PBattleResult	unk1C	maxComboDamage	HIGH	battle.h BattleResult names 0x1C maxComboDamage[2] (per side); UbScore_Fill takes side 0's as the value of score line 2
+include/menu/ub_score.h	PBattleResult	unk24	maxComboHits	HIGH	battle.h BattleResult names 0x24 maxComboHits[2] (per side); UbScore_Fill takes side 0's as the value of score line 1
+include/menu/ub_score.h	PBattleResult	unk44	dragonBallFound	HIGH	battle.h BattleResult names 0x44 dragonBallFound; not accessed in these files
+include/menu/ub_score.h	UbScore	unkC	KEEP	KEEP	never accessed in ub_score.c or the result screens
+include/menu/ub_score.h	UbScorePrice	unk14	KEEP	KEEP	last word of a price entry that UbScore_CalcPoints never reads
+include/menu/ub_score.h	UbSaveBody	unk20C	missionPages	HIGH	ub.h UoSave names 0x20C missionPages (pages of five missions the list shows); not accessed in these files
+include/menu/ub_score.h	UbSaveBody	unk288	simCleared	MEDIUM	sim_top.h SimSave names the byte at 0x288 simCleared (reward item of a finished ladder was given); uncertain because this view declares an s32 there and never accesses it
+include/menu/ub_score.h	UbSaveBody	unk778	KEEP	KEEP	never accessed; word [1] is 0x77C which ub.h and ub_rank.h name rank (place on the ladder) but word [0] is unknown, so the pair cannot take one name
+include/menu/ub_score.h	MisResult	unk8	KEEP	KEEP	no code reads or writes it; the same slot is unknown in the other result screens
+include/menu/ub_score.h	MisResult	unk51C	KEEP	KEEP	no code reads or writes the two words between timer and state
+include/menu/ub_score.h	MisResult	unk538	KEEP	KEEP	no code reads or writes it; by layout the talker slot of a two-guide screen, unused here
+include/menu/ub_score.h	UbMenu	unk90	KEEP	KEEP	no code reads or writes the two words between timer and level
+include/menu/ub_team_select.h	UbSaveCustom	unk30	KEEP	KEEP	never accessed; the two words cover exp (s32), level (u16) and an unknown u16 of sys/save.h SaveCustom, so one name cannot fit the array
+include/sys/common.h	CommonRes	unk10	KEEP	KEEP	no code reads or writes the word between the file pointers and their sizes
+include/sys/common.h	CommonRes	unk20	battleRes	HIGH	stg.c, stg_parts.c and stg_ambient.c cast its address to BattleRes, and battle_work.h says BattleRes is the 0x50 bytes at gCommonRes + 0x20
+include/sys/dialog.h	DialogFlash	unk0	KEEP	KEEP	never accessed by dialog.c; the two words are data and tex of sys/flash.h Flash, so one name cannot fit the array
+include/sys/dialog.h	DialogFlash	unkC	KEEP	KEEP	never accessed by dialog.c; the eight words are trig, se, speed, ofs[2], root, clips and shapes of sys/flash.h Flash
+include/sys/dialog.h	DialogFlashRef	unk4	more	HIGH	sys/flash.h FlashRef names word 1 more (how many more clip instances share the name); overlay_common.h MFlashRef does too
+include/sys/dialog.h	DialogFlashRes	unkC	KEEP	KEEP	three texture slots of the set that dialog.c never fills
+include/sys/dialog.h	DialogFlashRes	unk28	KEEP	KEEP	last texture slot of the set that dialog.c never fills
+include/sys/dialog.h	Dialog	unk80	KEEP	KEEP	no code in dialog.c reads or writes it
+include/sys/fade.h	Fade	unk5C	KEEP	KEEP	no code reads or writes the last word of a slot (probably padding to 0x60)
+include/sys/file.h	AdxDvdFsParam	unk4	KEEP	KEEP	four words of the ADXPS2_SetupDvdFs argument that are only cleared; the middleware's layout is not known here
+include/sys/flash.h	FlashTag	unk01	KEEP	KEEP	no code in flash.c reads the byte after the tag code
+include/sys/flash.h	FlashTl	unk14	KEEP	KEEP	only zeroed when a timeline is created and never read
+include/sys/flash.h	FlashShapeQuad	unk02	KEEP	KEEP	no code in flash.c reads it (probably padding after the s16 image)
+include/sys/font.h	FontData	unk10	KEEP	KEEP	no code in font.c reads or writes it
+include/sys/font.h	FontData	unk1C	KEEP	KEEP	only copied into FontSlot.unk0C by Font_SetFont; nothing reads the copy, so its meaning cannot be told
+include/sys/font.h	FontSlot	unk0C	KEEP	KEEP	copy of FontData.unk1C that nothing reads
+include/sys/font.h	FontIconDef	unk03	KEEP	KEEP	no code in font.c reads it (probably padding)
+include/sys/gfx_ot.h	Ot	unkC	KEEP	KEEP	no code in gfx_ot.c reads or writes it (probably padding before the u64 members)
+include/sys/gfx_ot.h	Ot	unk44	KEEP	KEEP	no code in gfx_ot.c reads or writes the last word
+include/sys/gfx_post.h	StgPanBlurView	unk8C	KEEP	KEEP	no code in gfx_post.c reads or writes it
+include/sys/gfx_post.h	StgGlare	unk4C0	KEEP	KEEP	no code in gfx_post.c reads or writes it
+include/sys/gfx_post.h	StgGlare	unk4CC	KEEP	KEEP	no code in gfx_post.c reads or writes it
+include/sys/gfx_post.h	StgGlare	unk4D8	KEEP	KEEP	no code in gfx_post.c reads or writes it
+include/sys/gfx_post.h	StgGlare	unk4DC	KEEP	KEEP	only receives a copy of step in three places and is never read, so its purpose cannot be told
+include/sys/gfx_screen.h	GfxLensView	mtx40	world2view2	HIGH	placeholder named by offset; the block is BtlCamView (btl_cam.h) whose View names the matrix at 0x40 world2view2 (the copy of the world-to-view matrix that is read again)
+include/sys/gfx_screen.h	GfxLensView	unk280	split	HIGH	btl_cam.h BtlCamView names 0x280 split (1 = half-screen layout); gfx_screen.c tests it together with Battle_IsSplitScreen
+include/sys/gfx_screen.h	GfxLens	unk28	KEEP	KEEP	two words at the end of a lens slot that no code reads or writes (probably padding to 0x30)
+include/sys/gfx_screen.h	GfxLensWork	unk184	KEEP	KEEP	three words at the end of the work area that no code reads or writes
+include/sys/gsc.h	GscFile	unk8	KEEP	KEEP	never written or read, as the header's own comment says
+include/sys/gsc.h	GscTask	unk8	KEEP	KEEP	never written or read, as the header's own comment says
+include/sys/heap.h	HeapBlock	unk1C	KEEP	KEEP	no code in heap.c or heap_info.c reads or writes the last header word
+include/sys/job.h	Job	unk0	KEEP	KEEP	first word of whatever object is queued as a job; the job code only uses the step function after it
+include/sys/loading.h	Progress	unk0	KEEP	KEEP	the two words are the language / text set number (see MenuProgress.unk0) and baseFile (0x1C1, overlay_common.h); battle_load.c reads only element 0, and one name cannot fit both
+include/sys/loading.h	Progress	unk1C	prevMode	HIGH	overlay_common.h and history.h name 0x1C prevMode; history_outro.c stores gProgress->mode in it before changing the mode and later switches on it
+include/sys/memcard.h	McCardFile	unk4	KEEP	KEEP	never accessed; possibly the second of three icon pointers (iconPath and iconName have three entries and only [0] is used) but nothing confirms it
+include/sys/memcard.h	McCardFile	unk8	KEEP	KEEP	never accessed; possibly the third icon pointer, unconfirmed
+include/sys/memcard.h	McCardFile	unk10	KEEP	KEEP	never accessed; possibly the second icon size, unconfirmed
+include/sys/memcard.h	McCardFile	unk14	KEEP	KEEP	never accessed; possibly the third icon size, unconfirmed
+include/sys/memcard.h	McCardIconSys	unk4	reserved1	HIGH	the structure is Sony's sceMcIconSys (libmc.h), whose member after Head[4] is the reserved u16 Reserv1, followed by OffsLF (titleBreak here)
+include/sys/memcard.h	McCardIconSys	unk8	reserved2	HIGH	Sony's sceMcIconSys has the reserved word Reserv2 between OffsLF and TransRate
+include/sys/memcard_flow.h	McFlowReq	unk004	KEEP	KEEP	never accessed; words 1 and 2 of the card layer's McCardFile, which are unknown there too
+include/sys/memcard_flow.h	McFlowReq	unk418	KEEP	KEEP	never accessed; in memcard.h McCardFile this is where the three 0x40-byte icon names end (0x35C + 0xC0 = 0x41C), so it is the tail of that array and not a field
+include/sys/memcard_flow.h	McFlowSave	unk0	KEEP	KEEP	the whole 0x4000-byte save declared as u64 words only so that it is copied in 8-byte pieces; it is a block and not a field
+include/sys/memcard_flow.h	McFlowReplay	unk0	KEEP	KEEP	the first 0xC0 bytes of the replay's battle setup declared as u64 words for the block copy; not accessed by name
+include/sys/memcard_flow.h	McFlow	unk08	KEEP	KEEP	no code in memcard_flow.c reads or writes it
+include/sys/memcard_flow.h	McFlow	unk10	KEEP	KEEP	no code in memcard_flow.c reads or writes it
+include/sys/memcard_flow.h	McFlow	unk18	KEEP	KEEP	no code in memcard_flow.c reads or writes it
+include/sys/memcard_flow.h	McFlow	unk34	KEEP	KEEP	no code in memcard_flow.c reads or writes it
+include/sys/memcard_flow.h	McFlow	unk39F84	KEEP	KEEP	no code in memcard_flow.c reads or writes it

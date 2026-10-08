@@ -96,9 +96,9 @@ typedef struct QSaveBestB {
 typedef struct QSaveBody {
     /* 0x0008 */ u8 unk8[0x200];
     /* 0x0208 */ s32 ubFlags;
-    /* 0x020C */ s32 unk20C;            /* 20 once everything is unlocked (Save_UnlockAll), 5 by default */
+    /* 0x020C */ s32 missionPages;            /* 20 once everything is unlocked (Save_UnlockAll), 5 by default */
     /* 0x0210 */ QSaveRank rank[Q_RANK_NUM];
-    /* 0x0288 */ s32 unk288;
+    /* 0x0288 */ s32 simCleared;
     /* 0x028C */ QSaveBest mission[100];
     /* 0x073C */ QSaveBestB bestB[5];
     /* 0x0778 */ s32 unk778[2];
@@ -150,9 +150,9 @@ typedef struct SimState {
 } SimState;
 
 typedef struct QProgress {
-    /* 0x000 */ s32 unk0;
+    /* 0x000 */ s32 language;
     /* 0x004 */ s32 baseFile;
-    /* 0x008 */ void *unk8[3];
+    /* 0x008 */ void *loadBuf[3];
     /* 0x014 */ s32 flags;
     /* 0x018 */ s32 mode;
     /* 0x01C */ u8 unk1C[0x424];
@@ -181,11 +181,11 @@ typedef struct SimTrain {
 /* A round of the ladder (pack section 25). 998 = drawn at random, 999 = none. */
 typedef struct SimRound {
     /* 0x00 */ s32 announcer;
-    /* 0x04 */ s32 unk4;        /* BattleSetup_SetRule's last argument (non-zero = 1) */
+    /* 0x04 */ s32 stageChange;        /* BattleSetup_SetRule's last argument (non-zero = 1) */
     /* 0x08 */ s32 timeLimit;
     /* 0x0C */ s32 stage;
     /* 0x10 */ s32 bgm;
-    /* 0x14 */ s32 unk14;       /* BattleSetup_SetSide's unk1FC of the opponent's side (non-zero = 1) */
+    /* 0x14 */ s32 changeAllowed;       /* BattleSetup_SetSide's unk1FC of the opponent's side (non-zero = 1) */
     /* 0x18 */ s32 enemy;       /* index into the enemy table */
 } SimRound; /* 0x1C */
 
@@ -292,10 +292,10 @@ typedef struct SimDay {
     /* 0xB50 */ SimPool *pool;    /* section 27 */
     /* 0xB54 */ SimEnemy *enemy;  /* section 26 */
     /* 0xB58 */ s32 enemyChara;     /* the opponent of the fight set up */
-    /* 0xB5C */ void *unkB5C;       /* section 29 */
+    /* 0xB5C */ void *train;       /* section 29 */
     /* 0xB60 */ SimLevel *level;  /* section 30 */
     /* 0xB64 */ s32 event;          /* what the turn turned into (script number) */
-    /* 0xB68 */ s32 unkB68[2];
+    /* 0xB68 */ s32 seq[2];
     /* 0xB70 */ s32 lastEvent;
     /* 0xB74 */ s32 repeat;         /* times in a row the same event came up, at most 2 */
     /* 0xB78 */ s32 faceA;          /* pictures the monitor goes back to */

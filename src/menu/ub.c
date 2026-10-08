@@ -177,7 +177,7 @@ s32 Ub_Main(void) {
                 UO_PROG->mode = 20;
             } else {
                 UO_PROG->mode = 22;
-                UO_PROG->unk674++;
+                UO_PROG->simTurn++;
             }
             Adx_StopAll();
             break;

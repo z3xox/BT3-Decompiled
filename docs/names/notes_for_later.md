@@ -217,3 +217,17 @@ Group 05 (btl_char_mgr.h .. btl_script.h):
 - Choices: fighter +0x1594 techClass; +0xE14 / +0xE18 skillTimerC / skillTimerD (btl_char_coll.h: noFlinch for +0xE18: group 04 chose that);
   object +0x1660 charaWork (four views: work); object +0xFA0 bodySphere (EftDetObj: bodyPos); object +0x14 res (BObj: slot).
 - DemoCamPose.unk1C sits in the anonymous struct `f` inside the union.
+
+Group 12 (overlay_common.h .. memcard_flow.h; the menu overlay and sys):
+- battle_setup.h:133-134 (and sim_day.h:49-50, survival.h:44-45): the prototype parameters unk10, unk1FC, unk200 are rule->stageChange,
+  side->changeAllowed, side->switchEnabled; the comments "BattleSetup_SetRule's last argument" / "side 1's unk1FC" in sim_day.h:184, 188,
+  survival.h:153, 157, ub.h:346, 350, ub_rank.h:122, 126 are stale.
+- ub_score.h:145: UbScore.line "health, unk24, unk1C, battle time": those are maxComboHits and maxComboDamage of BattleResult.
+- memcard_flow.h:56-61 against memcard.h:47-61 describe the same request block differently (title.text[0x100] + s32 titleBreak against
+  title[0x44], iconName[3][0x40], u16 titleBreak): McFlowReq.unk418 is the tail of iconName[2].
+- tour_entry.h:281-285: TourInfo has prize[2][3] + unk28[15]; tournament.h:216-219 has the same record as prize[7][3].
+- sim_day.h:101 and ub_score.h:215: `s32 unk288` where sim_top.h:114 has `u8 simCleared`; unk778[2] element 1 is 0x77C, the ladder rank.
+- gProgress 0x640 has three names: cursor (ub.h, survival.h), ubKind (ub_rank.h:71), misRow (ub_score.h:122); 0x684 is discFlags / ubFlags.
+- sys/save.h:77, 80: unk208 and unk77C are ubFlags and rank in the menu views; unk20C ("a capacity, guess") is missionPages.
+- gProgress +0x00 `language` is a reading (it picks the story text file set and is added to HUD file 6).
+- McCardIconSys.unk4 / unk8 -> reserved1 / reserved2 rests on the agent's memory of Sony's sceMcIconSys, not on the repo.

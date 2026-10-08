@@ -44,7 +44,7 @@ extern void GetWin_Init(void *pack, s32 lang);
 /* Item entry of common file 4, section 2 (ItemTblEntry in battle/view_b.h; local view). */
 typedef struct WItemEntry {
     /* 0x00 */ u8 type;         /* 0..2: column of the item-kind icon, and the list tab (type + 1) */
-    /* 0x01 */ u8 unk1;
+    /* 0x01 */ u8 group;
     /* 0x02 */ u8 picture;
     /* 0x03 */ u8 slots;        /* how many item slots it takes (0 = no cost icon) */
     /* 0x04 */ s32 price;       /* what the shop asks for it */

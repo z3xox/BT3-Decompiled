@@ -85,9 +85,9 @@ typedef struct SimRun {
 
 /* gProgress as the sim screens use it (QProgress of include/menu/sim_day.h; ub_team_select.h's UbProgress has the selects' part). */
 typedef struct SimProgress {
-    /* 0x000 */ s32 unk0;
+    /* 0x000 */ s32 language;
     /* 0x004 */ s32 baseFile;
-    /* 0x008 */ void *unk8[3];
+    /* 0x008 */ void *loadBuf[3];
     /* 0x014 */ s32 flags;
     /* 0x018 */ s32 mode;
     /* 0x01C */ u8 unk1C[0x440];

@@ -121,7 +121,7 @@ typedef struct Train {
     /* 0x0424 */ f32 cloud;            /* scroll position of the background clouds */
     /* 0x0428 */ void *imageFile;      /* 0xE000 bytes: compressed explanation picture */
     /* 0x042C */ MTexRes *imageRes;    /* 0x10800 bytes: the same unpacked */
-    /* 0x0430 */ void *unk430;         /* 0x10800 bytes, allocated and freed only */
+    /* 0x0430 */ void *imageRes2;         /* 0x10800 bytes, allocated and freed only */
     /* 0x0434 */ void *pageText;       /* section 17: text of the explanation pages */
     /* 0x0438 */ s32 result;           /* Train_Run's result: 0 back, 1 battle or tutorial, 0x2D character select */
     /* 0x043C */ s32 voiceLine;        /* subtitle / text line shown by the message window, -1 = none */

@@ -54,8 +54,8 @@ s32 UbScore_Fill(s32 kind, UbScore *score, s32 *pages) {
         } else {
             score->line[0].value = result->health[0];
         }
-        score->line[1].value = result->unk24[0];
-        score->line[2].value = result->unk1C[0];
+        score->line[1].value = result->maxComboHits[0];
+        score->line[2].value = result->maxComboDamage[0];
         if (kind == 2) {
             score->line[3].value = result->frames;
             score->lineCount = 4;

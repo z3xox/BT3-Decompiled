@@ -703,10 +703,10 @@ void CharSel_Draw(void) {
     uv.x1 = 0x200;
     uv.y0 = (gCharSel->stage->stage % 4) * 0x40;
     uv.y1 = uv.y0 + 0x40;
-    uv.unk10 = gCharSel->stage->stage / 4;
+    uv.tex = gCharSel->stage->stage / 4;
     Flash_FindLabel(f, NULL, "mc_map_name", &ref);
     Flash_ClipSetUv(f, &ref, &uv);
-    Flash_ClipSetTex(f, &ref, uv.unk10);
+    Flash_ClipSetTex(f, &ref, uv.tex);
     Flash_FindLabel(f, NULL, "mc_map_mask", &ref);
     if (gCharSel->stage->mask != 0) {
         Flash_ClipSetFlags(f, &ref, 0x102, 1);
@@ -737,13 +737,13 @@ void CharSel_Draw(void) {
     uv.x1 = 0x200;
     uv.y0 = (gCharSel->bgmIds[gCharSel->stage->bgm] % 8) * 0x20;
     uv.y1 = uv.y0 + 0x20;
-    uv.unk10 = gCharSel->bgmIds[gCharSel->stage->bgm] / 8;
+    uv.tex = gCharSel->bgmIds[gCharSel->stage->bgm] / 8;
     Flash_FindLabel(f, "mc_bgm_now", "mc_bgm_now_text_off", &ref);
     Flash_ClipSetUv(f, &ref, &uv);
-    Flash_ClipSetTex(f, &ref, uv.unk10);
+    Flash_ClipSetTex(f, &ref, uv.tex);
     Flash_FindLabel(f, "mc_bgm_now", "mc_bgm_now_text_on", &ref);
     Flash_ClipSetUv(f, &ref, &uv);
-    Flash_ClipSetTex(f, &ref, uv.unk10);
+    Flash_ClipSetTex(f, &ref, uv.tex);
 
     for (i = 0; i < CHARSEL_SIDES; i++) {
         f = &gCharSel->flash[3 + i];
