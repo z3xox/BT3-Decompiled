@@ -1020,3 +1020,9 @@ More of the same night (the geyser functions):
   and ones that do not are separate variables (sharing one cost a twelfth saved float register).
   (EftBolt_Shape; its `base = &p0;` between two calls is a possible fake, found by the permuter)
 - **An inline function's pointer parameter order** decides which address temporary is born first.
+- **A wrapping `if`, not an early return**: `if (good) { ...; return 1; } return 0;` against `if (bad) return 0;
+  ...; return 1;` differ in where the `return 0` block sits, which changes delay slots far from it (`beqz X,
+  <epilogue> / nop` where we got `beqzl X / ld sN`). (PadWatch_GetMissing: the 2-instruction miss)
+- **`case 3: A; break; case 6: A; break;`** is not `case 3: case 6: A; break;`. Sign: an unlabelled copy of `A`
+  in each of the other cases and both dispatch branches going straight to the switch's end. The matched twin
+  above it was written that way. (BtlScene_IsEffectHidden)
