@@ -70,7 +70,7 @@ typedef struct HudENotice {
     /* 0x08 */ HudENode *node;     /* HUD_NOTICE_NODE_COUNT: [0] root, [1] the announcement, [2] the band, [3] the
                                       replay mark */
     /* 0x0C */ s32 state;          /* step of the running announcement; -1 at rest */
-    /* 0x10 */ s32 unk10;
+    /* 0x10 */ s32 streak;
     /* 0x14 */ Ramp rampA;
     /* 0x2C */ Ramp rampB;
     /* 0x44 */ f32 trail[12];

@@ -100,7 +100,7 @@ typedef struct ZaChrEntry {
 typedef struct ZaItemEntry {
     /* 0x00 */ u8 type;         /* 2: only allowed in the eighth place; 3: fills the character's slots up to 7 */
     /* 0x01 */ u8 kind;         /* two items of the same type and kind exclude each other */
-    /* 0x02 */ u8 unk2;
+    /* 0x02 */ u8 picture;
     /* 0x03 */ u8 slots;        /* item slots it takes */
     /* 0x04 */ u8 unk4[0x10];
     /* 0x14 */ u32 flags;       /* 1, 4: never in a password; 8 / 0x10: refused by a character class */
@@ -109,7 +109,7 @@ typedef struct ZaItemEntry {
 
 /* The main executable's table of common files (CommonRes, sys/common.h); data[2] is common file 4. */
 typedef struct ZaCommonRes {
-    /* 0x00 */ void *unk0;
+    /* 0x00 */ void *boot;
     /* 0x04 */ u32 *data[3];
 } ZaCommonRes;
 

@@ -54,21 +54,21 @@ void BtlStage_Relocate(s32 *base) {
     gBtlStage->base = base;
     if (gBtlStage != NULL) {
         STG_RELOC(StgRelocTimer *, gBtlStage->timers);
-        STG_RELOC(StgRelocA *, gBtlStage->a);
-        STG_RELOC(StgRelocB *, gBtlStage->b);
-        STG_RELOC(void *, gBtlStage->unk2C);
-        STG_RELOC(StgRelocC *, gBtlStage->c);
-        STG_RELOC(StgRelocD *, gBtlStage->d);
-        STG_RELOC(void *, gBtlStage->unk40);
-        STG_RELOC(StgRelocE *, gBtlStage->e);
+        STG_RELOC(StgRelocA *, gBtlStage->mdl);
+        STG_RELOC(StgRelocB *, gBtlStage->always);
+        STG_RELOC(void *, gBtlStage->vis);
+        STG_RELOC(StgRelocC *, gBtlStage->nodes);
+        STG_RELOC(StgRelocD *, gBtlStage->zones);
+        STG_RELOC(void *, gBtlStage->bounds);
+        STG_RELOC(StgRelocE *, gBtlStage->objs);
         STG_RELOC(StgOctNode *, gBtlStage->tree);
         for (i = 0; i < gBtlStage->timerCount; i++) {
             StgRelocTimer *t = &gBtlStage->timers[i];
 
             STG_RELOC(void *, t->ptr);
         }
-        for (i = 0; i < gBtlStage->aCount; i++) {
-            StgRelocA *a = &gBtlStage->a[i];
+        for (i = 0; i < gBtlStage->groupCount; i++) {
+            StgRelocA *a = &gBtlStage->mdl[i];
 
             STG_RELOC(StgRelocA1 *, a->items);
             for (j = 0; j < a->count; j++) {
@@ -80,16 +80,16 @@ void BtlStage_Relocate(s32 *base) {
                 STG_RELOC(StgRelocA2 *, a1->items);
                 for (k = 0; k < a1->count; k++) {
                     StgRelocA2 *a2 = &a1->items[k];
-                    s32 o8 = (s32)a2->ptr8;
-                    s32 oC = (s32)a2->ptrC;
+                    s32 o8 = (s32)a2->chain;
+                    s32 oC = (s32)a2->mtx;
 
-                    a2->ptr8 = base + o8;
-                    a2->ptrC = base + oC;
+                    a2->chain = base + o8;
+                    a2->mtx = base + oC;
                 }
             }
         }
-        for (i = 0; i < gBtlStage->bCount; i++) {
-            StgRelocB *b = &gBtlStage->b[i];
+        for (i = 0; i < gBtlStage->alwaysCount; i++) {
+            StgRelocB *b = &gBtlStage->always[i];
 
             STG_RELOC(StgRelocB1 *, b->items);
             for (j = 0; (u32)j < b->count; j++) {
@@ -104,33 +104,33 @@ void BtlStage_Relocate(s32 *base) {
                 }
             }
         }
-        for (i = 0; i < gBtlStage->cCount; i++) {
-            StgRelocC *c = &gBtlStage->c[i];
+        for (i = 0; i < gBtlStage->nodeCount; i++) {
+            StgRelocC *c = &gBtlStage->nodes[i];
 
-            STG_RELOC(void *, c->ptr44);
+            STG_RELOC(void *, c->keys);
         }
-        for (i = 0; i < gBtlStage->dCount; i++) {
-            StgRelocD *d = &gBtlStage->d[i];
+        for (i = 0; i < gBtlStage->zoneCount; i++) {
+            StgRelocD *d = &gBtlStage->zones[i];
 
             {
-                s32 o04 = (s32)d->ptr04;
-                s32 o0C = (s32)d->ptr0C;
+                s32 o04 = (s32)d->mesh;
+                s32 o0C = (s32)d->near;
                 s32 o10 = (s32)d->ptr10;
                 s32 o18 = (s32)d->items;
 
-                d->ptr04 = base + o04;
-                d->ptr0C = base + o0C;
+                d->mesh = base + o04;
+                d->near = base + o0C;
                 d->ptr10 = base + o10;
                 d->items = (StgRelocD1 *)(base + o18);
             }
             for (j = 0; j < d->count; j++) {
                 StgRelocD1 *d1 = &d->items[j];
 
-                STG_RELOC(void *, d1->ptr8);
+                STG_RELOC(void *, d1->mesh);
             }
         }
-        for (i = 0; i < gBtlStage->eCount; i++) {
-            StgRelocE *e = &gBtlStage->e[i];
+        for (i = 0; i < gBtlStage->objCount; i++) {
+            StgRelocE *e = &gBtlStage->objs[i];
 
             STG_RELOC(void **, e->list);
             for (j = 0; (u32)j < e->count; j++) {

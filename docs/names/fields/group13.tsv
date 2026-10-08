@@ -1,0 +1,137 @@
+include/sys/movie.h	Movie	unkC	KEEP	KEEP	never written after the memset in Movie_Open and never read
+include/sys/movie.h	Movie	unkC8	KEEP	KEEP	never written after the memset and never read
+include/sys/movie.h	Movie	unkF4	KEEP	KEEP	last word of the block; no code touches it
+include/sys/pad.h	Pad	unk140	KEEP	KEEP	only cleared by the pad reset (pad.c:238); never read
+include/sys/pad.h	Pad	unk144	KEEP	KEEP	only cleared by the pad reset (pad.c:239); never read
+include/sys/password_old.h	OldPassChar	unk20	KEEP	KEEP	3-bit password field; PassChk_IsOldValid only rejects values above 2 and PassChk_ConvertOld ignores it, so its meaning in the previous game is not visible
+include/sys/password_old.h	OldPassChar	unk24	KEEP	KEEP	1-bit password field; only packed and unpacked, no reader
+include/sys/password_old.h	OldPassChar	unk28	KEEP	KEEP	4-bit password field (0..6 from the random filler); only packed and unpacked; it sits where ChrPassData has extraSlots but PassChk_ConvertOld computes extraSlots without reading it
+include/sys/password_old.h	OldPassChar	unk2C	KEEP	KEEP	1-bit password field; only packed and unpacked, no reader
+include/sys/password_old.h	OldPassShort	unk04	KEEP	KEEP	not part of the password; decode writes 0 and the random filler 0..128; nothing calls this half
+include/sys/password_old.h	OldPassShort	unk0C	KEEP	KEEP	2-bit field of the uncalled 20-character format; only packed and unpacked
+include/sys/password_old.h	OldPassShort	unk10	KEEP	KEEP	1-bit field of the uncalled 20-character format; only packed and unpacked
+include/sys/password_old.h	OldPassShort	unk14	KEEP	KEEP	4-bit field of the uncalled 20-character format; only packed and unpacked
+include/sys/password_old.h	OldPassShort	unk18	KEEP	KEEP	1-bit field of the uncalled 20-character format; only packed and unpacked
+include/sys/password_old.h	ChrPassData	unk28	KEEP	KEEP	1-bit password field at bit 0x74; ChrPass_Decode/Encode move it but PassChk_IsValid and DcPass_Decode never read it (ZaChrPass keeps it unk28 too)
+include/sys/ramp.h	Ramp	unk0	KEEP	KEEP	never touched by Ramp_Start / Ramp_Stop / Ramp_Step nor by the FadeRamp and BtlSeqTimer users
+include/sys/rigid.h	RigidBody	unkC	KEEP	KEEP	no code reads or writes it (padding after mass before the 16-byte aligned inertia, probably)
+include/sys/rigid.h	RigidBody	unkE0	KEEP	KEEP	no code reads or writes it
+include/sys/rigid.h	RigidBody	unkE8	KEEP	KEEP	no code reads or writes it
+include/sys/rigid.h	RigidBody	unk210	KEEP	KEEP	only cleared by Rigid_BeginFrame (rigid.c:331); never read
+include/sys/rigid.h	RigidBody	unk21C	KEEP	KEEP	no code reads or writes it (tail padding of the 8-byte aligned struct, probably)
+include/sys/save.h	SaveCustom	unk30	exp	HIGH	VSaveCustom (evo_z_items.h) and USaveCustom (evo_z.h) name +0x30 exp; EvoZ_RefreshStatus compares it with ChrTblEntry.exp[level]
+include/sys/save.h	SaveCustom	unk36	KEEP	KEEP	no view names it (CharSelSaveCustom, LSaveCustom, VSaveCustom, USaveCustom all keep unk36) and no code uses it; padding after level, probably
+include/sys/save.h	SaveRec	unk16	KEEP	KEEP	ZSaveRec (dc.h) keeps unk16 too; no code uses it; padding after level, probably
+include/sys/save.h	SaveData	unk0	sumHigh	HIGH	McCard_Checksum (memcard.c:923) stores the high byte of the 16-bit block checksum in word 0; the menu views (MSave, QSave, LSave, VSave) call the pair sum[2]
+include/sys/save.h	SaveData	unk4	sumLow	HIGH	McCard_Checksum stores the low byte of the block checksum in word 1; second word of sum[2] in the menu views
+include/sys/save.h	SaveData	unkC	level	HIGH	MSaveBody (history.h) and LSaveBody (tournament.h) name +0xC level: the difficulty chosen in the history menu, 0..2
+include/sys/save.h	SaveData	unk208	ubFlags	HIGH	PSave (ub_score.h), SSave (survival.h), QSaveBody (sim_day.h) and UbSaveBody name +0x208 ubFlags; ub.h and ub_rank.h still call it unk208 (bit 0x10 = all-courses reward given)
+include/sys/save.h	SaveData	unk20C	missionPages	HIGH	UoSave (ub.h) names +0x20C missionPages: pages of five missions the list shows; 5 by default, 20 after Save_UnlockAll, sim event 17 adds one
+include/sys/save.h	SaveData	unk77C	rank	HIGH	UoSave (ub.h) and NSave (ub_rank.h) name +0x77C rank: the player's place on the ladder, 99 by default
+include/sys/save.h	SaveData	unkA08	tourFlags	HIGH	tour_menu.c: bit n = tournament n sent its invitation (TOUR_INVITE), plus TOUR_SAVE_STARTED and TOUR_SAVE_EXPLAINED; only the tournament menu uses it
+include/sys/save.h	SaveData	unkA0C	tourHour	HIGH	the hour 0..23 of the tournament mode's clock: TourMenu_CheckInvite picks the tournament from it, tour_menu.c:184 draws it as mc_timer, main_menu.c and entry_select.c step it and wrap at 24
+include/sys/save.h	SaveData	unkA10	tourLevel	HIGH	TOUR_INVITE sets it to Rand_Range(3) (the invited tournament's random level); tour_menu.c:448 copies it to cursor[TOURMENU_LV_LEVEL] and line 189 picks the prize column with it
+include/sys/save.h	SaveData	unk1008	shopFlags	HIGH	bit 0 = the shop has new stock to announce (set by Shop_CheckStockLevel and the history outro, cleared when the greeting SHOP_LINE_GREET_NEW is said), bit 1 = the last stock level was given
+include/sys/save.h	SaveData	unk100C	stockLevel	HIGH	shop.c:283 compares it with WItemEntry.stockLevel to decide what is sold; raised by the first completion of a saga and by Shop_CheckStockLevel, capped at 5
+include/sys/save.h	SaveData	unk1208	dcFlags	HIGH	ZSave (dc.h) names +0x1208 dcFlags: bit 0 = the guide's introduction of the Data Center was heard
+include/sys/save.h	SaveData	unk168C	KEEP	KEEP	two words between keyEdit and the camera options; no code or view uses them
+include/sys/save.h	SaveData	unk1694	camDistMode	HIGH	copied through BattleOption.optA to fighter +0x49C, which btl_char_cam.h names distMode (0..2 preset of ChrCam_GetOffset); the option screen shows it as the three-way type with a picture
+include/sys/save.h	SaveData	unk1698	camShakeOff	HIGH	copied through BattleOption.optB to fighter +0x4B8 as (optB == 0), which btl_char_api_2.h names camShakeOn; a two-way on/off picker on the screen page
+include/sys/save.h	ItemFile	unk0	KEEP	KEEP	first offset word of the pack header; section 0 of common file 4 is never fetched (ChrTblFile keeps unk0 too)
+include/sys/snd.h	SndBankFile	unk00	KEEP	KEEP	first word of the bank file; the loader only reads the four offsets after it
+include/sys/vu1_packet.h	Vu1Node	unk30	pivot	MEDIUM	Vu1Node_Animate copies it to +0xD0, which VU1 program 8 subtracts from the vertex position before the node matrix; that it is the node's rest-pose pivot is inferred (docs/systems/vu1/prog2_prog7_prog8.md), the model format was not checked
+include/sys/vu1_packet.h	Vu1Node	unk40	parentPivot	MEDIUM	copied to +0xE0, which program 8 subtracts before the parent (entry) matrix; pivot of the parent is inferred, same doubt as pivot
+include/sys/vu1_packet.h	Vu1Node	unkD0	pivotOut	MEDIUM	copy of +0x30 made by Vu1Node_Animate and sent by Vu1Node_Draw as quadword 8 of program 8 (offset subtracted before matrix A); the name depends on the pivot reading of +0x30
+include/sys/vu1_packet.h	Vu1Node	unkE0	parentPivotOut	MEDIUM	copy of +0x40 sent as quadword 9 of program 8 (offset subtracted before matrix B); the name depends on the pivot reading of +0x40
+include/sys/vu1_packet.h	Vu1Track	unk0C	KEEP	KEEP	Vu1Node_Animate only reads keyCount and the keys; nothing reads this word
+include/ui/menu_support.h	TextBoxFull	unk8	KEEP	KEEP	no TextBox function reads or writes it; TextBox in reward_window.h keeps unk8 too
+include/ui/menu_support.h	TextBoxClipProp	unk3C	KEEP	KEEP	elements m[3] and m[4] of FlashProp.mtx (sys/flash.h: skew and y scale); TextBox_DrawClip only reads the two translations, so the view leaves them
+include/ui/menu_support.h	TextBoxClipProp	unk48	KEEP	KEEP	elements m[6..8] of FlashProp.mtx (sys/flash.h); not read by TextBox_DrawClip
+include/ui/menu_support.h	ChrTblEntry	unk4	KEEP	KEEP	no ChrTbl function reads it and no other view of the 0x3C entry (VChrEntry, ZaChrEntry, MChrTblEntry) names +4
+include/ui/menu_support.h	ChrTblFile	unk0	KEEP	KEEP	offset word of section 0 of common file 4; that section is never fetched (ItemFile in sys/save.h keeps unk0 too)
+include/ui/menu_support.h	LipPack	unk0	KEEP	KEEP	first word of the lip pack; Voice_PlayWithSubtitle only indexes the line pairs after it
+include/ui/menu_support.h	ProgressTeam	unk0	flags	HIGH	same progress +0x69C records as ReplaySlot (dc_password_replay.h) and McFlowSlotInfo (memcard_flow.c), which both name +0 flags: bit 0 = the slot holds a replay
+include/ui/menu_support.h	ShenActor	unk0	KEEP	KEEP	two words before id; shen_scene.c never touches them
+include/ui/menu_support.h	ShenJob	unk0	KEEP	KEEP	first word of the load job; ShenScene_StepLoad only uses step and state
+include/ui/shen_wish.h	ShenWork	unk34	KEEP	KEEP	word between the movie and its texture list; no code touches it
+include/ui/shen_wish.h	ShenWork	unk398	KEEP	KEEP	set to 30 once when the fade-out starts (shen_wish.c:816) and never read; a frame count by the look of it but nothing confirms that
+src/battle/btl_clash.c	BtlClashProgress	unk3C	difficulty	HIGH	BtlScriptCmdProgress (btl_script_cmd.h) names progress +0x3C difficulty (1: CPU level + 6, 2: + 9); the field's own comment says the same
+src/battle/btl_obj_anim.c	BObjProgress	unk00	language	MEDIUM	BtlObj_BindTables adds it to file entry 0x2D to pick the skill-list text stored at object +0xBC, battle_load.c adds it to the HUD file id and BtlScriptCmdProgress comments it as 0 / 1 picking the text file set; no other progress view names +0 yet and the exact meaning (language or region) is a reading
+src/battle/btl_obj_anim.c	BObjCommon	unk00	boot	HIGH	CommonRes (sys/common.h) names +0x00 boot (file 5) with data[] following at +4, which is this view's file3; the type here is s32 where CommonRes has void *
+src/battle/eft_aura.c	EftBoltA	unk0	KEEP	KEEP	a three-word array standing for EftBolt.head, shown and count (eft_aura.h); it cannot take one name and this aligned view only reads flags
+src/battle/eft_burst.c	EftView	unk40	world2view2	HIGH	this is the first EftView of the file (line 65, the transition part; the second one at line 1135 already has the name); View (btl_cam.h) names +0x40 world2view2, as do the EftView views of eft_water.c and others; DrawSprite transposes it to turn the sprite's corners
+src/battle/eft_burst.c	EftStageState	unk0	KEEP	KEEP	two words standing for BtlStage.unk0 and data (stg.h); only flags is read
+src/battle/eft_burst.c	EftSteamScr	unkC	KEEP	KEEP	fourth word Vu0Cur_ProjectPoints writes after x, y, z; the drawing code never reads it
+src/battle/eft_char_parts.c	EftDelaySeArg	s.unk8	KEEP	KEEP	word after the {seId, delay} pair in the argument block; only zeroed by the memset
+src/battle/eft_core.c	EftImpactArg	unk28	KEEP	KEEP	EftImpactArg (eft_particle_unused.h), EftRBlastFx, FxPosArg and BtlMemberHitFxReq all leave +0x28 unknown; callers pass 0
+src/battle/eft_disc.c	EftPHitRec	unk4	KEEP	KEEP	EftHitRec (eft_core.h) keeps unk4 (def->unk6 or atk->unk1B); here it is set to 1, 2, 4 or 6 by the disc kind without a reader in this file
+src/battle/eft_disc.c	EftPHitRec	unk10	origin	HIGH	EftHitRec (eft_core.h) names +0x10 origin; eft_disc.c:238 copies the argument's start position into it
+src/battle/eft_disc.c	EftPHitRec	unk54	KEEP	KEEP	EftHitRec keeps unk54 (technique: bit 1 of def->flags); only cleared here
+src/battle/eft_disc.c	EftPHitRec	unk58	KEEP	KEEP	EftHitRec keeps unk58[2]; not touched here
+src/battle/eft_emit.c	EftEmitRayArg	unk20	life	HIGH	same block as EftEmitLightArg (eft_emit.h) and EftRayArg (eft_draw_modules.h, argument of EftRay_Create), which name +0x20 life
+src/battle/eft_emit.c	EftEmitRayArg	unk24	length	HIGH	EftEmitLightArg / EftRayArg name +0x24 length (scale * 100 or * 800)
+src/battle/eft_emit.c	EftEmitRayArg	unk28	width	HIGH	EftEmitLightArg / EftRayArg name +0x28 width
+src/battle/eft_emit.c	EftEmitRayArg	unk2C	inner	HIGH	EftEmitLightArg / EftRayArg name +0x2C inner: distance of the rays' near end from the centre
+src/battle/eft_emit.c	EftEmitRayArg	unk30	jitter	HIGH	EftEmitLightArg / EftRayArg name +0x30 jitter: random extra distance per ray
+src/battle/eft_emit.c	EftEmitRayArg	unk34	mode	HIGH	EftEmitLightArg / EftRayArg name +0x34 mode (EFT_RAY_MODE_*)
+src/battle/eft_emit.c	EftEmitRayArg	unk38	count	HIGH	EftEmitLightArg / EftRayArg name +0x38 count (rays); the spawner passes part->count
+src/battle/eft_emit.c	EftEmitRayArg	unk40	blend	HIGH	EftEmitLightArg / EftRayArg name +0x40 blend
+src/battle/eft_emit.c	EftEmitRayArg	unk44	space	HIGH	EftEmitLightArg / EftRayArg name +0x44 space (0 world, 1 screen)
+src/battle/eft_emit.c	EftEmitRayArg	unk48	delay	HIGH	EftEmitLightArg / EftRayArg name +0x48 delay; the spawner passes part->delay
+src/battle/eft_emit.c	EftEmitRayArg	unk4C	fadeFrames	HIGH	EftEmitLightArg / EftRayArg name +0x4C fadeFrames; the spawner passes part->hold
+src/battle/eft_emit.c	EftEmitRayArg	unk50	autoKill	HIGH	EftEmitLightArg / EftRayArg name +0x50 autoKill
+src/battle/eft_obj_tech.c	EftRushShotMsg	unk0	anim	HIGH	EftCamArg (eft_core.h, the argument of EftCam_Start) names +0 anim; the only writer stores w->camAnim (EftKCamArg in eft_obj_tech.h calls the same word pack)
+src/battle/eft_obj_tech.c	EftFlashArg	unk10	in	HIGH	EftFlashArg of eft_trail.h (argument of EftFlash_Start) names +0x10 in: seconds to fade in
+src/battle/eft_obj_tech.c	EftFlashArg	unk14	hold	HIGH	EftFlashArg of eft_trail.h names +0x14 hold (seconds, f32 there, s32 in this view; the only value is 0)
+src/battle/eft_obj_tech.c	EftFlashArg	unk18	out	HIGH	EftFlashArg of eft_trail.h names +0x18 out: seconds to fade out
+src/battle/eft_obj_tech.c	EftFlashArg	unk20	wait	HIGH	EftFlashArg of eft_trail.h names +0x20 wait: 1 = hold until the rush finish reaches state 2
+src/battle/eft_orb_tail.c	EftOrbBurstArg	unk24	texIdx	HIGH	EftEmitArgA (eft_emit.h), the block this view copies, names +0x24 texIdx
+src/battle/eft_orb_tail.c	EftOrbBurstArg	unk3C	KEEP	KEEP	last word of the 0x40 block; EftEmitArgA has nothing named there and no code writes it
+src/battle/eft_shot.c	EftStageView	unk0	KEEP	KEEP	two words standing for BtlStage.unk0 and data (stg.h); only flags is read
+src/battle/eft_shot_tech.c	EftJFollowGroup	unk0	KEEP	KEEP	word before the set in the follow manager's work; no code touches it
+src/battle/eft_stage_2.c	EftStageMgrView	unk0	KEEP	KEEP	two words standing for BtlStage.unk0 and data (stg.h); only flags is read
+src/battle/eft_stage_2.c	EftGeyserSmokeInit	unk30	size	HIGH	same block as EftGeyserSmokeArg (eft_stage_2.h) and EftSmokeArg (eft_shot.h), which name +0x30 size; the field's comment says so
+src/battle/eft_stage_2.c	EftGeyserSmokeInit	unk34	alpha	HIGH	EftGeyserSmokeArg / EftSmokeArg name +0x34 alpha
+src/battle/eft_stage_2.c	EftGeyserSmokeInit	unk38	speed	HIGH	EftGeyserSmokeArg / EftSmokeArg name +0x38 speed
+src/battle/eft_stage_2.c	EftGeyserSmokeInit	unk3C	damp	HIGH	EftGeyserSmokeArg / EftSmokeArg name +0x3C damp
+src/battle/eft_stage_2.c	EftGeyserSmokeInit	unk40	lifeBase	HIGH	EftGeyserSmokeArg / EftSmokeArg name +0x40 lifeBase
+src/battle/eft_stage_2.c	EftGeyserSmokeInit	unk44	lifeRange	HIGH	EftGeyserSmokeArg / EftSmokeArg name +0x44 lifeRange
+src/battle/eft_stage_2.c	EftGeyserSmokeInit	unk48	rate	HIGH	EftGeyserSmokeArg / EftSmokeArg name +0x48 rate
+src/battle/eft_stage_2.c	EftGeyserSteamInit	unk10	dir	HIGH	same block as EftGeyserSteamArg (eft_stage_2.h) and EftSteamArg (eft_water.h), which name +0x10 dir
+src/battle/eft_stage_2.c	EftGeyserSteamInit	unk30	speed	HIGH	EftGeyserSteamArg / EftSteamArg name +0x30 speed
+src/battle/eft_stage_2.c	EftGeyserSteamInit	unk38	size	HIGH	EftGeyserSteamArg / EftSteamArg name +0x38 size
+src/battle/eft_stage_2.c	EftGeyserSteamInit	unk3C	life	HIGH	EftGeyserSteamArg / EftSteamArg name +0x3C life
+src/battle/eft_stage_2.c	EftGeyserSteamInit	unk40	posRange	HIGH	EftGeyserSteamArg / EftSteamArg name +0x40 posRange
+src/battle/eft_stage_2.c	EftGeyserSteamInit	unk44	dirRange	HIGH	EftGeyserSteamArg / EftSteamArg name +0x44 dirRange
+src/battle/eft_stage_2.c	EftGeyserSteamInit	unk48	speedRange	HIGH	EftGeyserSteamArg / EftSteamArg name +0x48 speedRange
+src/battle/eft_stage_2.c	EftGeyserSteamInit	unk4C	sizeRange	HIGH	EftGeyserSteamArg / EftSteamArg name +0x4C sizeRange
+src/battle/eft_stage_2.c	EftGeyserSteamInit	unk50	lifeRange	HIGH	EftGeyserSteamArg / EftSteamArg name +0x50 lifeRange
+src/battle/eft_sweep.c	EftIMarkArg	unk28	KEEP	KEEP	same block as EftImpactArg / EftRBlastFx, where +0x28 is unknown everywhere
+src/battle/eft_sweep.c	EftArg10	unk38	texIdxA	HIGH	EftPart10Arg (eft_part10.h, argument of EftPart10_Create) names +0x38 texIdxA; the spawner passes def->unk2
+src/battle/eft_sweep.c	EftArg10	unk3C	texIdxB	HIGH	EftPart10Arg names +0x3C texIdxB; the spawner passes def->unk2 again
+src/battle/eft_sweep.c	EftArg15	unk38	texIdxA	MEDIUM	the spawner passes the same def->unk2 it gives EftPart10Arg.texIdxA, but EftWLinkArg (eft_link_2.h, argument of EftLink_Create) names +0x38 frame; the two readings disagree and the link module's use of the word was not traced
+src/battle/eft_sweep.c	EftArg15	unk3C	texIdxB	HIGH	EftWLinkArg (eft_link_2.h) names +0x3C texIdxB; the spawner passes 0
+src/battle/eft_sweep.c	EftArg12	unk38	texIdx	HIGH	EftZapInit (eft_ribbon.h, the same create function 0x1A6598) names +0x38 texIdx; EftZapArg in eft_zap.h still has unk38
+src/battle/eft_sweep.c	EftArg12	unk40	type	HIGH	EftZapInit (eft_ribbon.h) names the +0x40 byte type (EftZapArg in eft_zap.h has u8 unk40); here it is a one-element u8 array initialised with the spawner's fourth argument
+src/battle/eft_water.c	EftStageState	unk0	KEEP	KEEP	two words standing for BtlStage.unk0 and data (stg.h); only flags is read
+src/battle/eft_water.c	EftSteamScr	unkC	KEEP	KEEP	fourth word Vu0Cur_ProjectPoints writes after x, y, z; never read
+src/battle/hud_gauge_2.c	HudBObj	unkA40	flags	HIGH	object +0xA40 is BtlObjState.flags in every other view (btl_obj_anim.h, btl_char_mgr.h, btl_act_super.h: bit 0x40000 = colour mode / fade bit)
+src/battle/hud_prompt.c	HudPromptObj	unkBC	skillText	HIGH	object +0xBC is skillText (u16 *) in pause_menu.c and skillScript in hud_combo.c; BtlObj_BindTables fills it with the text entry 0x2D + language and BtlMenu_SetScript2 takes a u16 *text, so skillText is the better supported; the type here is s32
+src/battle/stg_model_anim.c	StgAnimTable	unk0	KEEP	KEEP	StgOfsTable (stg.h) keeps unk0; not read
+src/battle/stg_model_anim.c	StgAnimTable	unk4	KEEP	KEEP	StgOfsTable (stg.h) keeps unk4; not read
+src/battle/stg_model_anim.c	StgAnimData	unk0	KEEP	KEEP	StgDataA (stg.h) keeps unk0; not read
+src/battle/stg_model_anim.c	StgAnimData	unk4	KEEP	KEEP	StgDataA (stg.h) keeps unk4; not read
+src/battle/stg_model_anim.c	StgAnimStage	unk0	KEEP	KEEP	BtlStage (stg.h) keeps unk0; not read
+src/menu/item_panel.c	ItemPanelSave	custom.unk30	exp	HIGH	the element is SaveCustom; VSaveCustom (evo_z_items.h) and USaveCustom (evo_z.h) name +0x30 exp
+src/menu/item_panel.c	ItemPanelSave	custom.unk36	KEEP	KEEP	SaveCustom +0x36 is unknown in every view; padding after level, probably
+src/sys/memcard_flow.c	McFlowProgress	unk0	KEEP	KEEP	progress +0 is unnamed in every view; not used in this file (see BObjProgress for the language reading)
+src/sys/memcard_flow.c	McFlowProgress	unk8	KEEP	KEEP	a three-word array standing for loadPack, loadRes and loadSprites (sys/loading.h, reward_window.h); it cannot take one name and this file does not use it
+src/sys/memcard_flow.c	McFlowProgress	unk68C	replayFlags	HIGH	the progress view of dc_password_replay.h names +0x68C replayFlags (bit 0: the menu was entered from a battle to save its replay); here bit 0 picks the retry question of the scan flow
+src/sys/memcard_flow.c	McFlowProgress	unk690	KEEP	KEEP	a three-word array standing for dcVisits, dcCursor and replayCursor (dc_password_replay.h); it cannot take one name and this file does not use it
+src/sys/memcard_flow.c	McCardInfo	unk0	flags	HIGH	same record as McCardPort (sys/memcard.h), which names +0 flags (MCCARD_F_* results of the compare / verify operations)
+src/sys/memcard_flow.c	McCardInfo	unk18	fd	HIGH	McCardPort (sys/memcard.h) names +0x18 fd: the open file
+src/sys/memcard_flow.c	McCardInfo	unk20	buf	HIGH	McCardPort (sys/memcard.h) names +0x20 buf (void * there, s32 in this view): the heap block McCard_LoadFile read the file into
+src/sys/pad_watch.c	PadWatchProgress	unk620	players	HIGH	progress +0x620 is players in team_select.h and char_select.h (1 = pad against pad; duel.h calls it versus); here == 1 means both controllers are needed
+src/ui/char_viewer.c	ChrViewStage	unk0	KEEP	KEEP	two words standing for BtlStage.unk0 and data (stg.h); only flags is read
+src/ui/char_viewer.c	ChrViewCommon	unk0	KEEP	KEEP	first word of the battle resources at gCommonRes + 0x20; BattleRes (battle_work.h) keeps unk0
+src/ui/shen_scene.c	ShenCommon	unk0	KEEP	KEEP	first word of the battle resources at gCommonRes + 0x20; BattleRes (battle_work.h) keeps unk0

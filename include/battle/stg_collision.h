@@ -337,7 +337,7 @@ typedef struct DetAiSeq {
 /* Plan block (BtlAiWork + 0x2E8), the one field used here. */
 typedef struct DetAiPlan {
     /* 0x00 */ u8 unk0[0xA4];
-    /* 0xA4 */ s32 timerA4;    /* set to 90 when action 0x3D is pushed */
+    /* 0xA4 */ s32 cooldown;    /* set to 90 when action 0x3D is pushed */
 } DetAiPlan;
 
 /* BtlAiWork of battle/btl_ai.h. */
@@ -351,7 +351,7 @@ typedef struct DetAiWork {
     /* 0x1E0 */ s32 pathCount; /* move.path.count */
     /* 0x1E4 */ u8 unk1E4[0x104];
     /* 0x2E8 */ u8 plan[0xA4];
-    /* 0x38C */ s32 planTimerA4; /* plan + 0xA4: set to 90 when action 0x3D is pushed */
+    /* 0x38C */ s32 planCooldown; /* plan + 0xA4: set to 90 when action 0x3D is pushed */
 } DetAiWork;
 
 /* AiThRule of battle/btl_ai_think.h: the action part. */

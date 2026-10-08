@@ -31,7 +31,7 @@ typedef struct EftAdTask {
 /* One entry of a texture table: a GS TEX0 value and the image it belongs to. */
 typedef struct EftAdTex {
     /* 0x00 */ u64 tex0;
-    /* 0x08 */ u64 unk8;
+    /* 0x08 */ u64 image;
 } EftAdTex; /* 0x10 */
 
 /* A GS screen position as the projection helpers write it (x, y in 12.4 fixed point). */
@@ -43,7 +43,7 @@ typedef struct EftAdScr {
 typedef struct EftAdTexSet {
     /* 0x000 */ EftAdTex entry[32];
     /* 0x200 */ s32 count;
-    /* 0x204 */ s32 unk204;
+    /* 0x204 */ s32 stepped;
 } EftAdTexSet; /* 0x208 */
 
 /* ---- zap (effect pack part kind 12) ---------------------------------------------------------------------
@@ -119,9 +119,9 @@ typedef struct EftZapArg {
     /* 0x20 */ Vec4 pos;
     /* 0x30 */ f32 size;
     /* 0x34 */ f32 rate;
-    /* 0x38 */ s32 unk38;
+    /* 0x38 */ s32 texIdx;
     /* 0x3C */ s32 objId;
-    /* 0x40 */ u8 unk40;
+    /* 0x40 */ u8 type;
     /* 0x41 */ u8 pad41[0xF];
 } EftZapArg; /* 0x50 */
 
@@ -133,30 +133,30 @@ typedef struct EftZap {
     /* 0x030 */ EftZapArg arg;
     /* 0x080 */ u8 unk80[0x10];
     /* 0x090 */ Vec4 curA;     /* key values in use (EftZap_LoadKey) */
-    /* 0x0A0 */ Vec4 unkA0;
+    /* 0x0A0 */ Vec4 dA;
     /* 0x0B0 */ Vec4 curB;
-    /* 0x0C0 */ Vec4 unkC0;
+    /* 0x0C0 */ Vec4 dB;
     /* 0x0D0 */ Vec4 curC;
-    /* 0x0E0 */ Vec4 unkE0;
+    /* 0x0E0 */ Vec4 dC;
     /* 0x0F0 */ Vec4 curD;
-    /* 0x100 */ Vec4 unk100;
+    /* 0x100 */ Vec4 dD;
     /* 0x110 */ f32 curE[2];
-    /* 0x118 */ f32 unk118[2];
+    /* 0x118 */ f32 dE[2];
     /* 0x120 */ f32 curF[2];
-    /* 0x128 */ f32 unk128[2];
+    /* 0x128 */ f32 dF[2];
     /* 0x130 */ f32 curG[2];
-    /* 0x138 */ f32 unk138[2];
+    /* 0x138 */ f32 dG[2];
     /* 0x140 */ f32 curH;
-    /* 0x144 */ f32 unk144;
+    /* 0x144 */ f32 dH;
     /* 0x148 */ f32 curI;
-    /* 0x14C */ f32 unk14C;
+    /* 0x14C */ f32 dI;
     /* 0x150 */ f32 curJ;
     /* 0x154 */ u8 unk154[0xC];
     /* 0x160 */ f32 delay;     /* frames (set from a part definition byte) */
     /* 0x164 */ f32 fadeDelay; /* frames between stop and the fade; > 0 makes a stop gradual */
     /* 0x168 */ f32 fadeTime;
     /* 0x16C */ f32 fade;      /* > 0 makes a stop gradual */
-    /* 0x170 */ f32 unk170;
+    /* 0x170 */ f32 frame;
     /* 0x174 */ f32 rateFrames; /* rate x 30 */
     /* 0x178 */ u8 texIdx;     /* which image of the texture object */
     /* 0x179 */ u8 pad179[3];

@@ -525,7 +525,7 @@ void ObjDraw_DrawParts(ObjDrawObj *obj, ObjDrawView *view, s32 mode, u64 tex0, u
         Mtx_InverseRT(&facing, &facing);
     }
     if (mode == 2) {
-        Vec4_Copy(&flat, &view->unk30);
+        Vec4_Copy(&flat, &view->shadowColor);
     }
     part = obj->mdl.parts;
     mdl = &obj->mdl;

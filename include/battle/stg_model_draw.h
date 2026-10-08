@@ -138,7 +138,7 @@ typedef struct BtlStageM {
     /* 0x08 */ s32 flags;      /* bit 0: not ready */
     /* 0x0C */ u8 unkC[0x10];
     /* 0x1C */ StgMModel *mdl;
-    /* 0x20 */ s32 unk20;
+    /* 0x20 */ s32 alwaysCount;
     /* 0x24 */ StgMPartList *always; /* parts drawn whatever the camera sees */
     /* 0x28 */ s32 visSize;
     /* 0x2C */ u8 *vis;        /* one byte per mesh: 1 = draw it this pass */
@@ -147,7 +147,7 @@ typedef struct BtlStageM {
     /* 0x48 */ StgMObj *objs;
     /* 0x4C */ f32 size;       /* size of the culling tree's root */
     /* 0x50 */ StgMCell *root;
-    /* 0x54 */ s32 unk54;
+    /* 0x54 */ s32 texOfs;
     /* 0x58 */ TexFile *tex;   /* the stage texture file */
 } BtlStageM;
 

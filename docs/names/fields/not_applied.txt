@@ -5,3 +5,4 @@
   include/battle/eft_emit.h EftShotParam: put back (22 fields): uses not resolved by the compiler loop
   include/battle/eft_ground_dust.h EftGndDustArg: put back (2 fields): uses not resolved by the compiler loop
   include/battle/btl_char_mgr.h BtlMgrObj: put back (1 fields): uses not resolved by the compiler loop
+  include/sys/common.h CommonRes: put back (1 fields): uses not resolved by the compiler loop

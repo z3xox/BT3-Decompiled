@@ -473,7 +473,7 @@ void CharSel_Init(s32 section) {
     ItemHelp_Init(MPACK_AT(gCharSel->res, 51));
     CS_RES(gCharSel->res, 55);
     IconWin_Init(MPACK_AT(gCharSel->res, 54), res);
-    gCharSel->unk3A48 = MPACK_AT(gCommonRes->data[2], 2);
+    gCharSel->items = MPACK_AT(gCommonRes->data[2], 2);
 
     gCharSel->nameText = MPACK_AT(gCharSel->res, 43);
     gCharSel->formText = MPACK_AT(gCharSel->res, 44);

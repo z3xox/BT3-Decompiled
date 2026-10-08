@@ -133,7 +133,7 @@ void HistResult_BuildRewards(void) {
             }
         }
     }
-    id = BattleResult_GetPtr()->unk44 - 1;
+    id = BattleResult_GetPtr()->dragonBallFound - 1;
     if (id >= 0) {
         HR_ADD(9, id);
         MSAVE->unlockFlags |= (s32)(1U << id);

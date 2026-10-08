@@ -67,7 +67,7 @@ typedef struct StgMef {
 typedef struct StgObjDef {
     /* 0x00 */ s32 hp;       /* damage it takes before breaking */
     /* 0x04 */ s32 type;     /* STG_OBJ_* bits */
-    /* 0x08 */ s32 unk8;
+    /* 0x08 */ s32 anim;
     /* 0x0C */ s32 parent;   /* index of the object whose breaking also breaks this one */
     /* 0x10 */ u8 unk10[0x10];
     /* 0x20 */ Vec4 pos;
@@ -137,7 +137,7 @@ typedef struct StgDataA {
 /* A culling / path-finding zone: an axis-aligned rectangle on the ground plane. */
 typedef struct StgZone {
     /* 0x00 */ s32 mark;       /* cleared by BtlStage_ClearZoneMarks */
-    /* 0x04 */ s32 unk4;
+    /* 0x04 */ s32 mesh;
     /* 0x08 */ s32 nearCount;
     /* 0x0C */ s32 *near;      /* indices of the neighbouring zones */
     /* 0x10 */ u8 unk10[0x10];
@@ -171,9 +171,9 @@ typedef struct StgNode {
 
 /* A stage model part. */
 typedef struct StgPart {
-    /* 0x00 */ u16 unk0;
+    /* 0x00 */ u16 count;
     /* 0x02 */ u16 flags;      /* bit 0: drawn (the cull at 0x1156E0 skips parts without it) */
-    /* 0x04 */ s32 unk4;
+    /* 0x04 */ s32 meshes;
     /* 0x08 */ StgNode *node;
     /* 0x0C */ f32 radius;     /* bounding sphere */
     /* 0x10 */ f32 x, y, z;
@@ -255,12 +255,12 @@ typedef struct StgView {
     /* 0x040 */ Mtx44 mtx;
     /* 0x080 */ u8 unk80[0x180];
     /* 0x200 */ s32 x0;
-    /* 0x204 */ s32 unk204;
+    /* 0x204 */ s32 scissorX1;
     /* 0x208 */ s32 x1;
-    /* 0x20C */ s32 unk20C;
+    /* 0x20C */ s32 scissorY1;
     /* 0x210 */ u8 unk210[0x10];
     /* 0x220 */ Vec4 pos;
-    /* 0x230 */ f32 unk230;
+    /* 0x230 */ f32 aspect;
     /* 0x234 */ f32 screenDist;
     /* 0x238 */ u8 unk238[0x18];
     /* 0x250 */ f32 nearZ;

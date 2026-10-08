@@ -112,7 +112,7 @@ typedef struct ObjDrawView {
     /* 0x04 */ u8 unk04[0xC];
     /* 0x10 */ Vec4 lightDir;  /* written by ObjDraw_SetLight */
     /* 0x20 */ Vec4 color;
-    /* 0x30 */ Vec4 unk30;     /* given to VU1 program 2 */
+    /* 0x30 */ Vec4 shadowColor;     /* given to VU1 program 2 */
     /* 0x40 */ f32 fade;
     /* 0x44 */ u8 unk44[0xC];
 } ObjDrawView; /* size 0x50 */

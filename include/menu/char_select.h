@@ -39,7 +39,7 @@ typedef struct CharSelItems {
 /* gSaveData: the two tables this screen copies item sets from (include/sys/save.h has the whole layout). */
 typedef struct CharSelSaveCustom {
     /* 0x00 */ CharSelItems set[3];
-    /* 0x30 */ s32 unk30;
+    /* 0x30 */ s32 exp;
     /* 0x34 */ u16 level;
     /* 0x36 */ u16 unk36;
 } CharSelSaveCustom; /* 0x38: SaveCustom */
@@ -123,7 +123,7 @@ typedef struct CharSelProgress {
         u8 unk30[0xC0];
     } side[CHARSEL_SIDES];     /* 0xF0 each */
     /* 0x620 */ s32 players;   /* copied to CharSel.players; mode 45 forces 0 */
-    /* 0x624 */ s32 unk624;
+    /* 0x624 */ s32 battleType;
     /* 0x628 */ s32 stage;     /* index in the stage grid */
     /* 0x62C */ s32 bgm;       /* id in the music list */
 } CharSelProgress;
@@ -184,7 +184,7 @@ typedef struct CharSel {
     /* 0x3814 */ s32 faceMask;              /* non-zero while the portraits are hidden */
     /* 0x3818 */ MTextBox nameBox[CHARSEL_SIDES];
     /* 0x3930 */ MTextBox formBox[CHARSEL_SIDES];
-    /* 0x3A48 */ void *unk3A48;             /* section 2 of common file 4 (gCommonRes->data[2]); not used in this range */
+    /* 0x3A48 */ void *items;             /* section 2 of common file 4 (gCommonRes->data[2]); not used in this range */
 } CharSel; /* 0x3A4C */
 
 #define CHARSEL_STARTED 2          /* the cursors were lit once */

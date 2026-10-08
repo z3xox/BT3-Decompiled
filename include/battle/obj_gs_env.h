@@ -44,7 +44,7 @@ typedef struct ObjMdlFile {
     /* 0x5C */ s32 cbp;        /* GS block of their CLUTs (0x3C00) */
     /* 0x60 */ s32 cbp2;       /* 0x3D00 */
     /* 0x64 */ s32 tbp2;       /* 0x3D40 */
-    /* 0x68 */ s32 unk68;      /* 0x3E40 */
+    /* 0x68 */ s32 fadeCbp;      /* 0x3E40 */
     /* 0x6C */ s32 meshOfs;    /* byte offset of the mesh list */
 } ObjMdlFile;
 
@@ -186,12 +186,12 @@ typedef struct StgRelocTimer {
 
 typedef struct StgRelocA2 {
     /* 0x00 */ s32 unk00[2];
-    /* 0x08 */ void *ptr8;
-    /* 0x0C */ void *ptrC;
+    /* 0x08 */ void *chain;
+    /* 0x0C */ void *mtx;
 } StgRelocA2; /* size 0x10 */
 
 typedef struct StgRelocA1 {
-    /* 0x00 */ u16 unk00;
+    /* 0x00 */ u16 tex;
     /* 0x02 */ u16 count;
     /* 0x04 */ StgRelocA2 *items;
     /* 0x08 */ void *opt;        /* 0 = none */
@@ -206,7 +206,7 @@ typedef struct StgRelocA {
 
 typedef struct StgRelocB1 {
     /* 0x00 */ u16 count;
-    /* 0x02 */ u16 unk02;
+    /* 0x02 */ u16 flags;
     /* 0x04 */ void **list;
     /* 0x08 */ void *opt;        /* 0 = none */
     /* 0x0C */ u8 unk0C[0x14];
@@ -219,21 +219,21 @@ typedef struct StgRelocB {
 
 typedef struct StgRelocC {
     /* 0x00 */ u8 unk00[0x44];
-    /* 0x44 */ void *ptr44;
+    /* 0x44 */ void *keys;
     /* 0x48 */ u8 unk48[8];
 } StgRelocC; /* size 0x50 */
 
 typedef struct StgRelocD1 {
     /* 0x00 */ s32 unk00[2];
-    /* 0x08 */ void *ptr8;
+    /* 0x08 */ void *mesh;
     /* 0x0C */ s32 unk0C;
 } StgRelocD1; /* size 0x10 */
 
 typedef struct StgRelocD {
-    /* 0x00 */ s32 unk00;
-    /* 0x04 */ void *ptr04;
-    /* 0x08 */ s32 unk08;
-    /* 0x0C */ void *ptr0C;
+    /* 0x00 */ s32 mark;
+    /* 0x04 */ void *mesh;
+    /* 0x08 */ s32 nearCount;
+    /* 0x0C */ void *near;
     /* 0x10 */ void *ptr10;
     /* 0x14 */ s32 count;
     /* 0x18 */ StgRelocD1 *items;
@@ -255,20 +255,20 @@ typedef struct StgRelocHdr {
     /* 0x00 */ u8 unk00[0x10];
     /* 0x10 */ u32 timerCount;
     /* 0x14 */ StgRelocTimer *timers;
-    /* 0x18 */ u32 aCount;
-    /* 0x1C */ StgRelocA *a;
-    /* 0x20 */ u32 bCount;
-    /* 0x24 */ StgRelocB *b;
-    /* 0x28 */ s32 unk28;
-    /* 0x2C */ void *unk2C;
-    /* 0x30 */ u32 cCount;
-    /* 0x34 */ StgRelocC *c;
-    /* 0x38 */ u32 dCount;
-    /* 0x3C */ StgRelocD *d;
-    /* 0x40 */ void *unk40;
-    /* 0x44 */ u32 eCount;
-    /* 0x48 */ StgRelocE *e;
-    /* 0x4C */ s32 unk4C;
+    /* 0x18 */ u32 groupCount;
+    /* 0x1C */ StgRelocA *mdl;
+    /* 0x20 */ u32 alwaysCount;
+    /* 0x24 */ StgRelocB *always;
+    /* 0x28 */ s32 visSize;
+    /* 0x2C */ void *vis;
+    /* 0x30 */ u32 nodeCount;
+    /* 0x34 */ StgRelocC *nodes;
+    /* 0x38 */ u32 zoneCount;
+    /* 0x3C */ StgRelocD *zones;
+    /* 0x40 */ void *bounds;
+    /* 0x44 */ u32 objCount;
+    /* 0x48 */ StgRelocE *objs;
+    /* 0x4C */ s32 size;
     /* 0x50 */ StgOctNode *tree;
     /* 0x54 */ s32 texOfs;       /* texture file, in words from `base` */
     /* 0x58 */ TexFile *tex;     /* set by Res_RelocateOffsets */

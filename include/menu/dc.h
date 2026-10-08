@@ -106,7 +106,7 @@ typedef struct ZProgress {
     /* 0x01C */ u8 unk1C[0x690 - 0x1C];
     /* 0x690 */ s32 dcVisits;      /* times Dc_Main was left since the session was cleared */
     /* 0x694 */ s32 dcCursor;      /* plate the top menu was left on, -1 = the mode was just entered */
-    /* 0x698 */ s32 unk698;        /* cleared by Dc_Main */
+    /* 0x698 */ s32 replayCursor;        /* cleared by Dc_Main */
 } ZProgress;
 
 #define ZPROG ((ZProgress *)gProgress)

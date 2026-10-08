@@ -173,7 +173,7 @@ void BtlObjMdl_BindFiles(ObjMdlObj *obj) {
         mdl->model->cbp = 0x3C00;
         mdl->model->cbp2 = 0x3D00;
         mdl->model->tbp2 = 0x3D40;
-        mdl->model->unk68 = 0x3E40;
+        mdl->model->fadeCbp = 0x3E40;
         mdl->model->alphaRow = BtlObjVis_AllocFreeBit();
         MdlTex_RebaseChain(0, mdl->meshes, mdl->model->tbp, mdl->model->cbp, 0x3D40, mdl->model->cbp2, 0x7FFFFFFF,
                            0x7FFFFFFF);

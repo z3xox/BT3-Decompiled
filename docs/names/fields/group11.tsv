@@ -1,0 +1,261 @@
+include/battle/eft_water_part2.h	EftWaterMist	unk93	KEEP	KEEP	alignment byte before used; never read or written in eft_water.c
+include/battle/eft_water_part2.h	EftWaterView	unk24	KEEP	KEEP	only zeroed at the start of EftWaterSplash_UpdateList (eft_water.c:1481) and never read; sits where trailFading is for trails but nothing counts in it
+include/battle/eft_water_part2.h	EftWaterView	tex.unk8	image	MEDIUM	eft_sprite_anim.h EftAeTex (the owner, EftTexSet_Load32) names the pointer at 0x8 image with unkC after it; uncertain only because this view declares one u64 covering the pointer and the unknown word
+include/battle/eft_zap.h	EftAdTex	unk8	image	MEDIUM	eft_sprite_anim.h EftAeTex names the pointer at 0x8 image and eft_ribbon.h EftAcTex (same module) already calls its u64 image; uncertain only because this view declares one u64 covering the pointer and the unknown word
+include/battle/eft_zap.h	EftAdTexSet	unk204	stepped	HIGH	eft_shot.h / eft_rays.h / eft_disc.h / eft_stage_1.h name 0x204 of the 32-entry texture set stepped (eft_sprite_anim.h calls it kept); EftShockMgr_Update zeroes it every frame
+include/battle/eft_zap.h	EftZapTexObj	unk100	KEEP	KEEP	not read or written in eft_zap.c or eft_ribbon.c; could be the count of a 16-entry texture set (EftAeTexSet16.count) but nothing here shows it
+include/battle/eft_zap.h	EftZapArg	unk38	texIdx	HIGH	eft_ribbon.h EftZapInit (same argument block, first half of the module) names +0x38 texIdx: EftZap_SetTexPair(w, arg.tex, arg.texIdx, arg.texIdx) at eft_ribbon.c:1450
+include/battle/eft_zap.h	EftZapArg	unk40	type	HIGH	eft_ribbon.h EftZapInit names +0x40 type: the effect type given to BtlScene_IsEffectStopped(objId, arg.type) at eft_ribbon.c:1461; EftZap_SetUnk40 writes it
+include/battle/eft_zap.h	EftZap	unkA0	dA	HIGH	eft_ribbon.h EftZapWork names +0xA0 dA: difference of curA over the current key segment
+include/battle/eft_zap.h	EftZap	unkC0	dB	HIGH	eft_ribbon.h EftZapWork names +0xC0 dB (delta of curB)
+include/battle/eft_zap.h	EftZap	unkE0	dC	HIGH	eft_ribbon.h EftZapWork names +0xE0 dC (delta of curC)
+include/battle/eft_zap.h	EftZap	unk100	dD	HIGH	eft_ribbon.h EftZapWork names +0x100 dD (delta of curD)
+include/battle/eft_zap.h	EftZap	unk118	dE	HIGH	eft_ribbon.h EftZapWork has EftZapAnim2 tintR at 0x110: cur[2] then delta[2] at 0x118; named after this view own curE
+include/battle/eft_zap.h	EftZap	unk128	dF	HIGH	eft_ribbon.h EftZapWork tintG.delta[2] at 0x128; named after this view own curF
+include/battle/eft_zap.h	EftZap	unk138	dG	HIGH	eft_ribbon.h EftZapWork tintB.delta[2] at 0x138; named after this view own curG
+include/battle/eft_zap.h	EftZap	unk144	dH	HIGH	eft_ribbon.h EftZapWork tintTime.delta at 0x144; named after this view own curH
+include/battle/eft_zap.h	EftZap	unk14C	dI	HIGH	eft_ribbon.h EftZapWork colorStart.delta at 0x14C; named after this view own curI
+include/battle/eft_zap.h	EftZap	unk170	frame	HIGH	eft_ribbon.h EftZapWork names +0x170 frame: counted up every update and compared with keyTime / keySplit (eft_ribbon.c:1491-1533)
+include/battle/eft_zap.h	EftMeshGroup	unk4	KEEP	KEEP	not read by eft_mesh.c and no other header describes the mesh group
+include/battle/eft_zap.h	EftMeshGroup	unkC	KEEP	KEEP	not read by eft_mesh.c
+include/battle/eft_zap.h	EftMeshData	unk0	KEEP	KEEP	first word of the mesh data, not read by eft_mesh.c
+include/battle/hud.h	HudRes	unk4	KEEP	KEEP	three header words of the sprite sheet between texCount and tex; nothing in the hud sources reads them
+include/battle/hud.h	HudNode	unk8	KEEP	KEEP	two words written only by HudNode_SetUnk8 (hud_sprite.c:646, no caller) and zeroed in hud_notice_2.c; HudNode_Draw does not read them
+include/battle/hud_gauge_3.h	HudCTex	unk2C	KEEP	KEEP	not read or written by the hud sources
+include/battle/hud_gauge_3.h	HudCRes	unk4	KEEP	KEEP	same three unread header words as HudRes.unk4
+include/battle/hud_gauge_3.h	HudCNode	unk8	KEEP	KEEP	same two words as HudNode.unk8: set by a setter without caller and never read
+include/battle/hud_node.h	HudDNode	unk8	KEEP	KEEP	written by HudNode_SetUnk8 (no caller) and zeroed by hud_notice_2.c; never read so the meaning cannot be told
+include/battle/hud_node.h	HudDNode	unkC	KEEP	KEEP	second argument of HudNode_SetUnk8; never read
+include/battle/hud_notice_2.h	HudENode	unk8	KEEP	KEEP	zeroed at hud_notice_2.c:160 and :356 and never read
+include/battle/hud_notice_2.h	HudENode	unkC	KEEP	KEEP	zeroed with unk8 and never read
+include/battle/hud_notice_2.h	HudERes	unk4	KEEP	KEEP	same three unread header words as HudRes.unk4
+include/battle/hud_notice_2.h	HudENotice	unk10	streak	HIGH	hud_node.h HudNotice (same 0x74-byte gHudNotice) names +0x10 streak: frame of the streak animation 0..2; not used in hud_notice_2.c
+include/battle/obj_gs_env.h	ObjMdlFile	unk68	fadeCbp	HIGH	obj_render.h ObjDrawModel names model +0x68 fadeCbp (CLUT block of the fade pass, obj_render.c:768-777); BtlObjMdl_BindFiles sets it to 0x3E40
+include/battle/obj_gs_env.h	ObjMdlMesh	unk04	KEEP	KEEP	unk04 in every view of the record (BtlObjBound and ObjDrawPart) and never read
+include/battle/obj_gs_env.h	ObjMdlPart	unk04	KEEP	KEEP	only zeroed by BtlObjMdl_AllocParts; no view of the part pool element names it
+include/battle/obj_gs_env.h	ObjMdlObj	unk166C	KEEP	KEEP	not read or written; btl_obj.h has it inside unk1664
+include/battle/obj_gs_env.h	ObjShadow	unk2014	KEEP	KEEP	zeroed with count and alpha at the start of ObjShadow_Update (obj_shadow.c:689) and never read
+include/battle/obj_gs_env.h	ObjShadow	unk201C	KEEP	KEEP	not read or written
+include/battle/obj_gs_env.h	StgOctNode	unk00	KEEP	KEEP	a file offset turned into a pointer by StgOctree_Relocate when not 0 but nothing reads the target (StgMCell.unk0 in stg_model_draw.h)
+include/battle/obj_gs_env.h	StgRelocTimer	unk00	KEEP	KEEP	covers the u16 flags and u16 unk2 of StgTimer (stg_ambient.h) in one s32 so one name does not fit; not used here
+include/battle/obj_gs_env.h	StgRelocTimer	unk08	KEEP	KEEP	two words covering StgTimer.time and StgTimer.period (f32) of stg_ambient.h; an array of two cannot take both names
+include/battle/obj_gs_env.h	StgRelocA2	unk00	KEEP	KEEP	two words covering visIdx / unk2 / prog / alpha / unk5 of StgMMesh (stg_model_draw.h); not used here
+include/battle/obj_gs_env.h	StgRelocA2	ptr8	chain	HIGH	StgRelocA2 is the 0x10-byte StgMMesh of stg_model_draw.h whose +0x08 is chain (the VIF chain of the mesh)
+include/battle/obj_gs_env.h	StgRelocA2	ptrC	mtx	HIGH	StgMMesh +0x0C is mtx (matrix loaded before a blended mesh)
+include/battle/obj_gs_env.h	StgRelocA1	unk00	tex	HIGH	StgRelocA1 is the 0x10-byte StgMMat of stg_model_draw.h (u16, u16 count, list, optional pointer): +0x00 is tex, the texture number
+include/battle/obj_gs_env.h	StgRelocA1	unk0C	KEEP	KEEP	covers the u16 cur and u16 unkE of StgMMat in one s32; not used here
+include/battle/obj_gs_env.h	StgRelocA	unk00	KEEP	KEEP	StgMGroup.unk0 in stg_model_draw.h, unread in both
+include/battle/obj_gs_env.h	StgRelocB1	unk02	flags	HIGH	StgRelocB1 is the 0x20-byte StgMPart of stg_model_draw.h (u16 count, u16 flags, meshes, node): +0x02 is flags (bit 0: culled through the tree)
+include/battle/obj_gs_env.h	StgRelocD1	unk00	KEEP	KEEP	two words covering StgColRec.broken and StgColRec.obj (stg_collision.h); an array of two cannot take both names
+include/battle/obj_gs_env.h	StgRelocD1	ptr8	mesh	HIGH	StgRelocD1 is the 0x10-byte StgColRec of stg_collision.h whose +0x08 is mesh
+include/battle/obj_gs_env.h	StgRelocD1	unk0C	KEEP	KEEP	StgColRec.unkC in stg_collision.h, unread
+include/battle/obj_gs_env.h	StgRelocC	ptr44	keys	MEDIUM	records of 0x50 bytes with one pointer at +0x44 match StgNode (stg.h: keyCount 0x40, keys 0x44) and StgMNode; uncertain because nothing here ties table c to the node type except size and offset
+include/battle/obj_gs_env.h	StgRelocD	unk00	mark	HIGH	StgRelocD is the 0x40-byte zone (the table at stage +0x3C is zones in stg.h): StgZone and StgColZone name +0x00 mark
+include/battle/obj_gs_env.h	StgRelocD	ptr04	mesh	HIGH	StgColZone (stg_collision.h) names zone +0x04 mesh: collision mesh of the zone static geometry
+include/battle/obj_gs_env.h	StgRelocD	unk08	nearCount	HIGH	StgZone / StgColZone name zone +0x08 nearCount
+include/battle/obj_gs_env.h	StgRelocD	ptr0C	near	HIGH	StgZone / StgColZone name zone +0x0C near (neighbouring zone indices)
+include/battle/obj_gs_env.h	StgRelocD	ptr10	KEEP	KEEP	relocated as a pointer here but StgColZone has it as s32 unk10 and nothing reads it
+include/battle/obj_gs_env.h	StgRelocE	ptr0C	KEEP	KEEP	with ptr14 and ptr1C the six StgObj.parts[6] pointers of stg.h declared as three pairs; three arrays cannot take the one name
+include/battle/obj_gs_env.h	StgRelocE	ptr14	KEEP	KEEP	StgObj.parts[2..3], see ptr0C
+include/battle/obj_gs_env.h	StgRelocE	ptr1C	KEEP	KEEP	StgObj.parts[4..5], see ptr0C
+include/battle/obj_gs_env.h	StgRelocHdr	aCount	groupCount	MEDIUM	count of the table at +0x1C which stg_model_draw.h calls mdl (StgMModel: StgMGroup grp[7]); no other view names +0x18 so the word group is taken from the element type
+include/battle/obj_gs_env.h	StgRelocHdr	a	mdl	HIGH	BtlStageM (stg_model_draw.h) names stage +0x1C mdl; its StgMGroup / StgMMat / StgMMesh are exactly StgRelocA / A1 / A2
+include/battle/obj_gs_env.h	StgRelocHdr	bCount	alwaysCount	MEDIUM	count of the table at +0x24 which BtlStageM calls always (parts drawn whatever the camera sees); BtlStageM itself has +0x20 as unk20
+include/battle/obj_gs_env.h	StgRelocHdr	b	always	HIGH	BtlStageM names stage +0x24 always (StgMPartList = StgRelocB: count and part list)
+include/battle/obj_gs_env.h	StgRelocHdr	unk28	visSize	HIGH	BtlStageM names stage +0x28 visSize (size of the visibility table)
+include/battle/obj_gs_env.h	StgRelocHdr	unk2C	vis	HIGH	BtlStageM names stage +0x2C vis (one byte per mesh); relocated as a pointer here
+include/battle/obj_gs_env.h	StgRelocHdr	cCount	nodeCount	MEDIUM	count of table c whose 0x50-byte records match StgNode; uncertain for the same reason as StgRelocC.ptr44
+include/battle/obj_gs_env.h	StgRelocHdr	c	nodes	MEDIUM	0x50-byte records with a pointer at +0x44 match StgNode / StgMNode (keys at 0x44); no view names stage +0x34
+include/battle/obj_gs_env.h	StgRelocHdr	dCount	zoneCount	HIGH	BtlStage (stg.h) names stage +0x38 zoneCount
+include/battle/obj_gs_env.h	StgRelocHdr	d	zones	HIGH	BtlStage and StgColStage name stage +0x3C zones
+include/battle/obj_gs_env.h	StgRelocHdr	unk40	bounds	HIGH	BtlStage and StgColStage name stage +0x40 bounds (StgBounds: radius, top, bottom)
+include/battle/obj_gs_env.h	StgRelocHdr	eCount	objCount	HIGH	BtlStage, StgColStage and BtlStageM name stage +0x44 objCount
+include/battle/obj_gs_env.h	StgRelocHdr	e	objs	HIGH	BtlStage, StgColStage and BtlStageM name stage +0x48 objs (0x50-byte StgObj; StgRelocE relocates its parts and pieces)
+include/battle/obj_gs_env.h	StgRelocHdr	unk4C	size	HIGH	BtlStageM names stage +0x4C size (f32 size of the culling tree root; declared s32 here)
+include/battle/obj_render.h	ObjDrawPart	unk04	KEEP	KEEP	unk04 in every view of the record and never read
+include/battle/obj_render.h	ObjDrawPart	unk0E	KEEP	KEEP	not read by obj_render.c (upper half of BtlObjBound.unk0C)
+include/battle/obj_render.h	ObjDrawView	unk30	shadowColor	HIGH	ObjShadowView (obj_gs_env.h) names view +0x30 color: obj_shadow.c writes 128,128,128,128 or BtlObjLight_GetColor into it before ObjDraw_DrawPartsFlat and mode 2 of ObjDraw_DrawParts hands it to VU1 program 2; plain color is taken at +0x20 in this view
+include/battle/obj_render.h	ObjDrawPkt	unk1BC	KEEP	KEEP	zeroed after texReg = 7 in the fade pass (obj_render.c:563); probably the high word of the register address but nothing shows it
+include/battle/screen_fx.h	StgCurveKey	unk30	KEEP	KEEP	not read or written by screen_fx.c
+include/battle/screen_fx.h	StgHazeParam	unk0	flags	HIGH	first word of stage section +0xA0: BtlStage_HasFeature(9) tests its bit 0 for presence (stg_ambient.c:131) exactly like the flags word of the glare / depth tint / water records
+include/battle/screen_fx.h	StgTintWork	unk180	KEEP	KEEP	only zeroed at init (screen_fx.c:722)
+include/battle/screen_fx.h	StgBlur	unk0	KEEP	KEEP	cleared by StgBlur_Reset and never read
+include/battle/stg.h	StgOfsTable	unk0	KEEP	KEEP	header word of the offset table, never read
+include/battle/stg.h	StgOfsTable	unk4	KEEP	KEEP	header word of the offset table, never read
+include/battle/stg.h	StgPath	unkC	KEEP	KEEP	not read by stg.c or stg_parts.c
+include/battle/stg.h	StgPathTable	unk0	KEEP	KEEP	header word, never read
+include/battle/stg.h	StgPathTable	unk4	KEEP	KEEP	header word, never read
+include/battle/stg.h	StgMef	unk4	KEEP	KEEP	word after the MEF0 magic, never read
+include/battle/stg.h	StgObjDef	unk8	anim	HIGH	StgMObjDef (stg_model_draw.h) and StgAnimObjDef (stg_model_anim.c) name +0x08 anim: 1-based animation number
+include/battle/stg.h	StgDataA	unk0	KEEP	KEEP	first word of the stage parameter block, unread in every view (StgMData, StgAnimData)
+include/battle/stg.h	StgDataA	unk4	KEEP	KEEP	second word of the stage parameter block, unread in every view
+include/battle/stg.h	StgDataA	count40	depthTintCount	HIGH	count of the list BtlStage_GetList40(i) returns, read as StgDepthTintParam (gfx_post.c:1691, sys/gfx_post.h: depth tint of one medium)
+include/battle/stg.h	StgDataA	list40	depthTints	HIGH	entries are StgDepthTintParam (gfx_post.h: Entry of stage section +0x40); [0] air, [1] under water
+include/battle/stg.h	StgDataA	count48	glareCount	HIGH	count of the section BtlStage_GetList48 returns, read as StgGlareParam (gfx_post.c:1539)
+include/battle/stg.h	StgDataA	list48	glare	HIGH	StgGlareParam of sys/gfx_post.h (Stage section +0x48)
+include/battle/stg.h	StgDataA	count50	fogCount	HIGH	count of the section handed to StgFog_SetParams (screen_fx.c:601)
+include/battle/stg.h	StgDataA	list50	fog	HIGH	StgFogParams of stg_ambient.h: StgFog_SetParams(BtlStage_GetList50())
+include/battle/stg.h	StgDataA	count58	surfCount	HIGH	count of the section BtlStage_GetList58 returns: StgSurfRec, the record of the reflecting surface (eft_stage_2.c:994)
+include/battle/stg.h	StgDataA	list58	surf	HIGH	StgSurfRec of eft_stage_2.h (The stage record for the reflecting surface)
+include/battle/stg.h	StgDataA	count60	weatherCount	HIGH	count of the section BtlStage_GetList60 returns: StgWeatherRec (eft_stage_2.c:308)
+include/battle/stg.h	StgDataA	list60	weather	HIGH	StgWeatherRec of eft_stage_2.h: wind, size, flags bit 0 weather on
+include/battle/stg.h	StgDataA	count68	dustCount	HIGH	count of the section BtlStage_GetList68 returns: EftGndDustStage, the stage dust record (eft_ground_dust.c:1220)
+include/battle/stg.h	StgDataA	list68	dust	HIGH	EftGndDustStage of eft_ground_dust.h (Stage dust record)
+include/battle/stg.h	StgDataA	count70	flagCount	HIGH	count of the word list stg_ambient.h StgData names flags at +0x74 (n70 != 0 is tested before flags[0])
+include/battle/stg.h	StgDataA	list70	flags	HIGH	StgData (stg_ambient.h) names +0x74 flags: the STG_FLAG_* word
+include/battle/stg.h	StgDataA	count78	lightColorCount	HIGH	count of the list BtlStage_GetLightColors returns
+include/battle/stg.h	StgDataA	list78	lightColors	HIGH	returned by BtlStage_GetLightColors; the header comment says light colours (btl_obj.c)
+include/battle/stg.h	StgDataA	count80	tintCount	MEDIUM	count of the section BtlStage_GetList80 returns; see list80 for the doubt
+include/battle/stg.h	StgDataA	list80	tint	MEDIUM	bytes 0..6 replace the two end colours of StgTint slot 0 (screen_fx.c:827) and byte 7 is a maximum used with the weather colour (eft_stage_2.c:523); uncertain whether tint covers all of the record
+include/battle/stg.h	StgDataA	count88	ambientCount	HIGH	count word before the pointer StgData names ambient
+include/battle/stg.h	StgDataA	list88	ambient	HIGH	StgData (stg_ambient.h) names +0x8C ambient: the r, g, b the ambient colour getter and setter use (stg_ambient.c:379, 404)
+include/battle/stg.h	StgDataA	count90	waterCount	HIGH	count of the section BtlStage_GetList90 returns: GfxWaterStage (sys/gfx_screen.h)
+include/battle/stg.h	StgDataA	list90	water	HIGH	GfxWaterStage: flags bit 0 the stage has water, then r g b a (gfx_screen.c:850, eft_stage_2.c:884)
+include/battle/stg.h	StgDataA	count98	KEEP	KEEP	BtlStage_GetList98 has no caller; only BtlStage_HasFeature(4) tests bit 0 of the first word and nobody asks for feature 4
+include/battle/stg.h	StgDataA	list98	KEEP	KEEP	see count98: no reader of the section
+include/battle/stg.h	StgDataA	countA0	hazeCount	HIGH	count of the section BtlStage_GetListA0 returns: StgHazeParam
+include/battle/stg.h	StgDataA	listA0	haze	HIGH	StgHazeParam of screen_fx.h (Haze section of the stage parameter file): StgHaze_SetParams(BtlStage_GetListA0())
+include/battle/stg.h	StgZone	unk4	mesh	HIGH	StgColZone (stg_collision.h, the same 0x40-byte zone) names +0x04 mesh: collision mesh of the zone static geometry
+include/battle/stg.h	StgKey	unk1C	KEEP	KEEP	not read by stg.c / stg_parts.c
+include/battle/stg.h	StgPart	unk0	count	HIGH	StgMPart (stg_model_draw.h, the same part) names +0x00 count: number of meshes in the list at +0x04
+include/battle/stg.h	StgPart	unk4	meshes	HIGH	StgMPart names +0x04 meshes (StgMMesh **); BtlStage_Relocate relocates the list and each entry
+include/battle/stg.h	StgObj	unk4	KEEP	KEEP	not read by stg.c / stg_parts.c and inside a gap in the other views
+include/battle/stg.h	StgObj	unk3C	KEEP	KEEP	not read by stg.c / stg_parts.c
+include/battle/stg.h	BtlStage	unk0	KEEP	KEEP	first word of the stage object, unread in every view
+include/battle/stg.h	BtlStage	unkC	KEEP	KEEP	unread in every view (BtlStageMgr.unkC)
+include/battle/stg.h	StgBreakInfo	unk1C	KEEP	KEEP	tail padding of the 0x20-byte record, never written
+include/battle/stg.h	StgView	unk204	scissorX1	HIGH	View (btl_cam.h) and ViewScissor (main.h) name +0x204 scissorX1; note this view calls +0x208 x1 which is scissorY0 there
+include/battle/stg.h	StgView	unk20C	scissorY1	HIGH	View (btl_cam.h) names +0x20C scissorY1
+include/battle/stg.h	StgView	unk230	aspect	HIGH	View (btl_cam.h) names +0x230 aspect (1.1666666, passed as aspectY)
+include/battle/stg_ambient.h	StgSec58	unk16	enabled	MEDIUM	StgSurfRec (eft_stage_2.h, the same section +0x58 record) has it as unk16; BtlStage_HasFeature(8) tests it != 0 as the presence of the reflecting surface, which is the only reader
+include/battle/stg_ambient.h	StgData	unk28	startCount	HIGH	StgDataA (stg.h) names +0x28 startCount, the count of the list at +0x2C (place here, starts there)
+include/battle/stg_ambient.h	StgData	n40	depthTintCount	HIGH	same word as StgDataA.count40: count of the StgDepthTintParam list (gfx_post.c:1691)
+include/battle/stg_ambient.h	StgData	sec44	depthTints	HIGH	StgDepthTintParam entries of 0x10 bytes; HasFeature 0 / 1 test bit 0 (enabled) of entry 0 and entry 1
+include/battle/stg_ambient.h	StgData	n48	glareCount	HIGH	same word as StgDataA.count48: StgGlareParam section
+include/battle/stg_ambient.h	StgData	sec4C	glare	HIGH	StgGlareParam (sys/gfx_post.h), flags bit 0 enabled tested by HasFeature(2)
+include/battle/stg_ambient.h	StgData	n50	fogCount	HIGH	same word as StgDataA.count50: the section given to StgFog_SetParams
+include/battle/stg_ambient.h	StgData	sec54	fog	HIGH	StgFogParams of this header; HasFeature(3) gates the fog pass in screen_fx.c:654
+include/battle/stg_ambient.h	StgData	n58	surfCount	HIGH	same word as StgDataA.count58: reflecting surface record
+include/battle/stg_ambient.h	StgData	sec5C	surf	HIGH	StgSurfRec of eft_stage_2.h (BtlStage_GetList58)
+include/battle/stg_ambient.h	StgData	n60	weatherCount	HIGH	same word as StgDataA.count60: weather record
+include/battle/stg_ambient.h	StgData	sec64	weather	HIGH	StgWeatherRec of eft_stage_2.h; HasFeature(6) tests word 4 = its flags bit 0 (weather on)
+include/battle/stg_ambient.h	StgData	n70	flagCount	HIGH	count word of the list this view already names flags
+include/battle/stg_ambient.h	StgData	n90	waterCount	HIGH	same word as StgDataA.count90: GfxWaterStage section
+include/battle/stg_ambient.h	StgData	sec94	water	HIGH	GfxWaterStage (sys/gfx_screen.h): flags bit 0 the stage has water, tested by HasFeature(7)
+include/battle/stg_ambient.h	StgData	n98	KEEP	KEEP	section +0x98 has no reader besides the bit 0 test of HasFeature(4), which nobody asks for
+include/battle/stg_ambient.h	StgData	sec9C	KEEP	KEEP	see n98
+include/battle/stg_ambient.h	StgData	nA0	hazeCount	HIGH	same word as StgDataA.countA0: StgHazeParam section
+include/battle/stg_ambient.h	StgData	secA4	haze	HIGH	StgHazeParam of screen_fx.h; HasFeature(9) gates the haze pass in screen_fx.c:660
+include/battle/stg_ambient.h	StgTimer	unk2	KEEP	KEEP	not read by stg_ambient.c
+include/battle/stg_ambient.h	StgTimer	unk4	KEEP	KEEP	a file offset that BtlStage_Relocate turns into a pointer (StgRelocTimer.ptr) but nothing reads the target
+include/battle/stg_ambient.h	BtlStageMgr	unk0	KEEP	KEEP	first word of the stage object, unread in every view
+include/battle/stg_ambient.h	BtlStageMgr	unkC	KEEP	KEEP	unread in every view
+include/battle/stg_ambient.h	StgFxRes	unk0	KEEP	KEEP	header word of the MEF0 block (StgMef.magic in stg.h is the same word: could be magic but this view never reads it)
+include/battle/stg_ambient.h	StgFxRes	unk4	KEEP	KEEP	StgMef.unk4 in stg.h, unread
+include/battle/stg_ambient.h	StgAmb	unk4	KEEP	KEEP	not read or written by stg_ambient.c
+include/battle/stg_ambient.h	StgAmb	unk10	KEEP	KEEP	two unread words
+include/battle/stg_ambient.h	ScrXfade	unk8	KEEP	KEEP	two unread words (padding before the 16-byte aligned chains)
+include/battle/stg_ambient.h	ScrWarpObj	unk28	KEEP	KEEP	two unread words (padding before the Vec4)
+include/battle/stg_ambient.h	ScrWarpObj	unk58	KEEP	KEEP	two unread words
+include/battle/stg_collision.h	StgColSphere	unk18	KEEP	KEEP	tail padding of the 0x20-byte sphere, never read
+include/battle/stg_collision.h	StgColSweep	unk24	KEEP	KEEP	tail padding after radius, never read
+include/battle/stg_collision.h	StgColPoly	unk4	KEEP	KEEP	not read by stg_collision.c
+include/battle/stg_collision.h	StgColPoly	unk8	KEEP	KEEP	two unread words
+include/battle/stg_collision.h	StgColRec	unkC	KEEP	KEEP	not read by stg_collision.c
+include/battle/stg_collision.h	StgColZone	unk10	KEEP	KEEP	BtlStage_Relocate turns it into a pointer (StgRelocD.ptr10) but nothing reads the target
+include/battle/stg_collision.h	StgColZone	unk1C	KEEP	KEEP	not read
+include/battle/stg_collision.h	StgColSweepCtx	unk74	KEEP	KEEP	padding after length up to the next 16-byte boundary
+include/battle/stg_collision.h	StgColSweepCtx	unk84	KEEP	KEEP	padding after dist
+include/battle/stg_collision.h	StgColCtx	unk84	KEEP	KEEP	padding after dist
+include/battle/stg_collision.h	StgNavNode	unk18	KEEP	KEEP	only zeroed by StgNavNode_Clear (no caller)
+include/battle/stg_collision.h	StgNavData	unk8	KEEP	KEEP	not read by stg_nav.c
+include/battle/stg_collision.h	DetAiPlan	timerA4	cooldown	HIGH	BtlAiPlan (btl_ai.h) and AiThPlan (btl_ai_think.h) name plan +0xA4 cooldown: counted down once per frame; set to 90 here when action 0x3D is pushed
+include/battle/stg_collision.h	DetAiWork	planTimerA4	planCooldown	HIGH	the same word seen from the work block (plan + 0xA4 = BtlAiPlan.cooldown)
+include/battle/stg_collision.h	DetAiRule	unk4	KEEP	KEEP	byte array read past its end as unk4[i + 16] = act[i] only to make BtlAiSeq_PushRule match; the bytes themselves are not identified
+include/battle/stg_collision.h	DetAiRule	unk8	KEEP	KEEP	same trick for arg[i]; the bytes themselves are not identified
+include/battle/stg_model_draw.h	StgMMesh	unk2	KEEP	KEEP	not read by stg_model_draw.c
+include/battle/stg_model_draw.h	StgMMat	unkE	KEEP	KEEP	not read (padding after cur)
+include/battle/stg_model_draw.h	StgMGroup	unk0	KEEP	KEEP	not read; StgRelocA.unk00 in obj_gs_env.h
+include/battle/stg_model_draw.h	StgMPart	unk1C	KEEP	KEEP	not read
+include/battle/stg_model_draw.h	StgMCell	unk0	KEEP	KEEP	StgOctree_Relocate turns it into a pointer when not 0 but nothing reads the target
+include/battle/stg_model_draw.h	StgMData	unk0	KEEP	KEEP	first word of the stage parameter block, unread in every view
+include/battle/stg_model_draw.h	StgMData	unk4	KEEP	KEEP	second word, unread in every view
+include/battle/stg_model_draw.h	BtlStageM	unk0	KEEP	KEEP	first word of the stage object, unread in every view
+include/battle/stg_model_draw.h	BtlStageM	unk20	alwaysCount	MEDIUM	BtlStage_Relocate (stg_reloc.c) loops over this many StgMPartList entries of the table at +0x24 (always); uncertain only in that this view treats always as a single list
+include/battle/stg_model_draw.h	BtlStageM	unk54	texOfs	HIGH	StgRelocHdr (obj_gs_env.h) names stage +0x54 texOfs: the texture file offset in words from the base, relocated into tex at +0x58
+include/battle/stg_rigid_types.h	StgRigidHits	unk4	KEEP	KEEP	padding between count and the 16-byte aligned triangles (StgColTriList in stg_collision.h has nothing there)
+include/battle/stg_rigid_types.h	StgRigidNode	unk234	KEEP	KEEP	tail padding of the 0x240-byte node, never read
+include/cri/adxt.h	ADXT	unk2	KEEP	KEEP	not used by src/cri/adxt.c
+include/menu/bracket.h	BrkEntrant	unk2	KEEP	KEEP	unk2 in every view of the entrant (tournament.h, tour_entry.h) and not used by the bracket sources
+include/menu/bracket.h	TourProgress2	unk0	KEEP	KEEP	first word of gProgress, unknown in every view
+include/menu/bracket.h	TourProgress2	unk8	KEEP	KEEP	three pointers that sys/loading.h Progress names loadPack, loadRes, loadSprites; one array cannot take three names
+include/menu/bracket.h	Bracket	unk138	KEEP	KEEP	not read or written by the bracket sources
+include/menu/bracket.h	Bracket	unk144	KEEP	KEEP	not read or written by the bracket sources
+include/menu/char_reference.h	MChrTblEntry	unk0	KEEP	KEEP	two words covering ChrTblEntry.aiType and ChrTblEntry.unk4 (ui/menu_support.h); an array of two cannot take the one known name and the screen does not read them
+include/menu/char_select.h	CharSelSaveCustom	unk30	exp	HIGH	USaveCustom (evo_z.h) and VSaveCustom (evo_z_items.h) name SaveCustom +0x30 exp: the experience EvoZ compares with the level table
+include/menu/char_select.h	CharSelSaveCustom	unk36	KEEP	KEEP	unk36 in every view of SaveCustom, never read
+include/menu/char_select.h	CharSelSide	unk78	KEEP	KEEP	30 unread words at the end of the side record
+include/menu/char_select.h	CharSelStage	unk38	KEEP	KEEP	not read or written by char_select.c
+include/menu/char_select.h	CharSelStage	unk48	KEEP	KEEP	not read or written by char_select.c
+include/menu/char_select.h	CharSelPick	unk0	KEEP	KEEP	twelve words that are the first 0x30 bytes of CharSelSide (col .. items) copied as a block; one array cannot take those names
+include/menu/char_select.h	CharSelProgress	unk624	battleType	HIGH	DuelProgress (duel.h), ZaProgress (dc_password_replay.h) and team_select.h name gProgress +0x624 battleType
+include/menu/char_select.h	CharSel	unk3A48	items	HIGH	set to MPACK_AT(gCommonRes->data[2], 2), the item table of common file 4, which every other screen stores in a field called items (entry_select.c:267, solo_select.c:215, shop.c:263); not read in this screen
+include/menu/dc.h	ZSaveRec	unk10	KEEP	KEEP	not read by the Data Center sources; inside unk0[0x14] of SaveRec in sys/save.h
+include/menu/dc.h	ZSaveRec	unk16	KEEP	KEEP	unk16 in sys/save.h SaveRec too, never read
+include/menu/dc.h	ZProgress	unk0	KEEP	KEEP	first word of gProgress, unknown in every view
+include/menu/dc.h	ZProgress	unk8	KEEP	KEEP	three pointers that sys/loading.h names loadPack, loadRes, loadSprites; one array cannot take three names
+include/menu/dc.h	ZProgress	unk698	replayCursor	HIGH	ZaProgress (dc_password_replay.h) names gProgress +0x698 replayCursor (slot the replay list was left on); Dc_Main clears it
+include/menu/dc.h	DcStatus	unk14	KEEP	KEEP	not read or written (ItemSet_GetBonus fills the five words before it)
+include/menu/dc.h	DcList	unkC44	KEEP	KEEP	0x3C-byte block only passed as the fourth argument of MsgWin_Init, which takes three; contents never touched
+include/menu/dc.h	DcList	unkE7C	KEEP	KEEP	set to 30 at start (dc_list.c:76) and never read
+include/menu/dc.h	DcMenu	unk88	KEEP	KEEP	0x3C-byte block only passed as the unused fourth argument of MsgWin_Init
+include/menu/dc.h	DcMenu	unkD4	KEEP	KEEP	set to 30 (dc_menu.c:154) and never read
+include/menu/dc.h	DcPassText	unk50	KEEP	KEEP	set to -100 at dc_password.c:888 and never read
+include/menu/dc.h	DcPassText	unk54	KEEP	KEEP	set to -100 at dc_password.c:890 and never read
+include/menu/dc.h	DcPassText	unk58	KEEP	KEEP	set to 1 at dc_password.c:889 and never read
+include/menu/dc.h	DcGridCell	unk4	KEEP	KEEP	eight words covering formCount and form[7] of the grid cell (UChrCell in evo_z.h); one array cannot take both names and only id is used here
+include/menu/dc.h	DcPassView	unk17C	KEEP	KEEP	0x3C-byte block only passed as the unused fourth argument of MsgWin_Init
+include/menu/dc.h	DcPass	unk960	KEEP	KEEP	not read or written by dc_password.c
+include/menu/dc_password_replay.h	ZaOldPass	unk20	KEEP	KEEP	OldPassChar.unk20 in sys/password_old.h (3 bits of the old password); PassChk only rejects values >= 3
+include/menu/dc_password_replay.h	ZaOldPass	unk24	KEEP	KEEP	OldPassChar.unk24 (1 bit), not read
+include/menu/dc_password_replay.h	ZaOldPass	unk28	KEEP	KEEP	OldPassChar.unk28 (4 bits), not read
+include/menu/dc_password_replay.h	ZaOldPass	unk2C	KEEP	KEEP	OldPassChar.unk2C (1 bit), not read
+include/menu/dc_password_replay.h	ZaChrPass	unk28	KEEP	KEEP	ChrPassData.unk28 in sys/password_old.h (1 bit), not read
+include/menu/dc_password_replay.h	ZaItemEntry	unk2	picture	HIGH	VItemEntry (evo_z_items.h, the same 0x28-byte item entry) names +0x02 picture: texture number of the details page; not read by the password check
+include/menu/dc_password_replay.h	ZaCommonRes	unk0	boot	HIGH	CommonRes (sys/common.h) and MCommonRes (char_reference.h) name +0x00 boot (file 5)
+include/menu/dc_password_replay.h	PassOldItem	unk0	KEEP	KEEP	not read by password_check.c
+include/menu/dc_password_replay.h	ZaProgress	unk0	KEEP	KEEP	first word of gProgress, unknown in every view
+include/menu/dc_password_replay.h	ZaProgress	unk8	KEEP	KEEP	three pointers that sys/loading.h names loadPack, loadRes, loadSprites; one array cannot take three names
+include/menu/dc_password_replay.h	ReplayMenu	unkDC	KEEP	KEEP	not read or written by replay_menu.c
+include/menu/dc_password_replay.h	ReplayMenu	unkE4	KEEP	KEEP	not read or written by replay_menu.c
+include/menu/dc_password_replay.h	ReplayMenu	unkEC	KEEP	KEEP	zeroed by the load-done, save-done and scan-done callbacks (replay_menu.c:134, 155, 177) and never read or set
+include/menu/dc_password_replay.h	ReplayMenu	unkFC	KEEP	KEEP	not read or written by replay_menu.c
+include/menu/duel.h	DuelProgress	unk628	KEEP	KEEP	two words that char_select.h / team_select.h name stage (stageCell) and bgm; one array cannot take both names and the duel menu does not use them
+include/menu/evo_z.h	UChrGridList	unk4	KEEP	KEEP	three unread header words between count and the cells
+include/menu/evo_z.h	UPick	unk8	KEEP	KEEP	ten words covering form .. items of the CharSelSide pick record (char_select.h); one array cannot take those names
+include/menu/evo_z.h	UEvoZ	unk230	KEEP	KEEP	cur[0] and cur[1] of the cursor array EvoZ (evo_z_items.h) declares as s32 cur[11] at 0x230; renaming needs the fields merged into that array first
+include/menu/evo_z.h	UEvoZ	unk240	KEEP	KEEP	cur[4] of EvoZ.cur[11]; the role of index 4 is not described there
+include/menu/evo_z.h	UEvoZ	unk248	KEEP	KEEP	cur[6] and cur[7] of EvoZ.cur[11], roles not described
+include/menu/evo_z.h	UEvoZ	unk254	KEEP	KEEP	cur[9] and cur[10] of EvoZ.cur[11], roles not described
+include/menu/evo_z.h	UEvoZ	unk278	lastTab	HIGH	EvoZ (evo_z_items.h, the same work) names +0x278 lastTab: tab the item list was left on
+include/menu/evo_z.h	UEvoZ	unk288	KEEP	KEEP	six words: the first three are EvoZDialog.answer / timer / msg (EvoZ.dialog at 0x284) and the rest EvoZ.unk294; one array cannot take those names
+include/menu/evo_z.h	UEvoZ	unk1A90	KEEP	KEEP	two unread words, unk1A90 in EvoZ as well
+include/menu/evo_z.h	USaveCustom	unk36	KEEP	KEEP	unk36 in every view of SaveCustom, never read
+include/menu/evo_z_items.h	VChrEntry	unk0	KEEP	KEEP	two words covering ChrTblEntry.aiType and ChrTblEntry.unk4 (ui/menu_support.h); not read here
+include/menu/evo_z_items.h	VChrGridList	unk4	KEEP	KEEP	three unread header words between count and the cells
+include/menu/evo_z_items.h	VSaveCustom	unk36	KEEP	KEEP	unk36 in every view of SaveCustom, never read
+include/menu/evo_z_items.h	EvoZSide	unk8	KEEP	KEEP	ten words covering form .. items of the CharSelSide pick record; one array cannot take those names
+include/menu/evo_z_items.h	EvoZ	unk294	KEEP	KEEP	three unread words after the dialog state
+include/menu/evo_z_items.h	EvoZ	unk1A90	KEEP	KEEP	two unread words
+include/menu/history.h	HistProgress	unk0	KEEP	KEEP	first word of gProgress, unknown in every view
+include/menu/history.h	HistProgress	unk8	KEEP	KEEP	three pointers that sys/loading.h names loadPack, loadRes, loadSprites; one array cannot take three names
+include/menu/history.h	HistProgress	unk20	KEEP	KEEP	five words covering unk20, unk24, demoCount, mainMenuItem, unk30 of MenuProgress (overlay_common.h); one array cannot take those names
+include/menu/history.h	MBattleResult	unk44	dragonBallFound	HIGH	BattleResult (battle/battle.h) names +0x44 dragonBallFound; HistResult_BuildRewards reads it 1-based and sets the dragon ball bit of unlockFlags
+include/menu/history.h	HistResult	unk84	KEEP	KEEP	never used (header comment), confirmed by grep
+include/menu/history.h	HistResult	unk8C	KEEP	KEEP	tested by Input but never set, so its meaning cannot be told
+include/menu/mode_menu.h	ModeMenu	unk124	KEEP	KEEP	cleared at every pad action (mode_menu.c:493-530) and never read
+include/menu/mode_menu.h	HistOutro	unkCC	KEEP	KEEP	not read or written; sits where ModeMenu has its cursor but that is position only
+include/menu/mode_menu.h	HistOutro	unk100	KEEP	KEEP	not read or written; the counterpart of ModeMenu.unk124
+include/menu/option.h	Option	unk134	KEEP	KEEP	only zeroed at start (option.c:154)
+include/menu/option.h	Option	unk194	KEEP	KEEP	set to 1 when the save on leaving is started (option.c:322) and cleared by Option_OnSaved; never read so a name would be a guess
+include/menu/option.h	Option	unk1B0	KEEP	KEEP	0x3C-byte block only passed as the unused fourth argument of MsgWin_Init

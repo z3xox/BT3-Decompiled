@@ -145,7 +145,7 @@ typedef struct UEvoZ {
     /* 0x026C */ s32 helpItem;          /* item of the details page */
     /* 0x0270 */ s32 pay;               /* Z points still to be turned into experience */
     /* 0x0274 */ s32 set;               /* item set being edited, 0..2 */
-    /* 0x0278 */ s32 unk278;
+    /* 0x0278 */ s32 lastTab;
     /* 0x027C */ s32 curItem;           /* item id in the slot being changed, 0 = empty */
     /* 0x0280 */ s32 used;              /* item slots the set takes */
     /* 0x0284 */ s32 dialogState;       /* 0 = no dialog */

@@ -78,7 +78,7 @@ typedef struct StgHaze {
 
 /* Haze section of the stage parameter file (returned by BtlStage_GetListA0). */
 typedef struct StgHazeParam {
-    /* 0x00 */ s32 unk0;
+    /* 0x00 */ s32 flags;
     /* 0x04 */ u8 color[4];
     /* 0x08 */ u8 key[6]; /* x0, z0, x1, z1, x2, z2 of the curve */
     /* 0x0E */ u8 cols;

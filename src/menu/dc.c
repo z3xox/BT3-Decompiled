@@ -20,7 +20,7 @@ s32 Dc_Main(void) {
     s32 next;
 
     ZPROG->dcCursor = -1;
-    ZPROG->unk698 = 0;
+    ZPROG->replayCursor = 0;
     done = 0;
     if (gMenuArc8 == NULL) {
         gMenuArc8 = File_LoadSync(gProgress->baseFile + 0xB, NULL, 0);

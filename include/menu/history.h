@@ -88,7 +88,7 @@ typedef struct MSave {
 
 typedef struct MBattleResult {
     /* 0x00 */ u8 unk0[0x44];
-    /* 0x44 */ s32 unk44;
+    /* 0x44 */ s32 dragonBallFound;
 } MBattleResult;
 
 typedef struct HistResultReward {

@@ -72,29 +72,29 @@ s32 BtlStage_HasFeature(u32 kind) {
     }
     switch (kind) {
     case 0:
-        if (d->n40 != 0) {
-            if (d->sec44[0] & 1) {
+        if (d->depthTintCount != 0) {
+            if (d->depthTints[0] & 1) {
                 return 1;
             }
         }
         break;
     case 1:
-        if (d->n40 > 1) {
-            if (d->sec44[4] & 1) {
+        if (d->depthTintCount > 1) {
+            if (d->depthTints[4] & 1) {
                 return 1;
             }
         }
         break;
     case 2:
-        if (d->n48 != 0) {
-            if (d->sec4C[0] & 1) {
+        if (d->glareCount != 0) {
+            if (d->glare[0] & 1) {
                 return 1;
             }
         }
         break;
     case 3:
-        if (d->n50 != 0) {
-            if (d->sec54[0] & 1) {
+        if (d->fogCount != 0) {
+            if (d->fog[0] & 1) {
                 return 1;
             }
         }
@@ -107,49 +107,49 @@ s32 BtlStage_HasFeature(u32 kind) {
         }
         break;
     case 6:
-        if (d->n60 != 0) {
-            if (d->sec64[4] & 1) {
+        if (d->weatherCount != 0) {
+            if (d->weather[4] & 1) {
                 return 1;
             }
         }
         break;
     case 7:
-        if (d->n90 != 0) {
-            if (d->sec94[0] & 1) {
+        if (d->waterCount != 0) {
+            if (d->water[0] & 1) {
                 return 1;
             }
         }
         break;
     case 8:
-        if (d->n58 != 0) {
-            if (d->sec5C->unk16 != 0) {
+        if (d->surfCount != 0) {
+            if (d->surf->enabled != 0) {
                 return 1;
             }
         }
         break;
     case 9:
-        if (d->nA0 != 0) {
-            if (d->secA4[0] & 1) {
+        if (d->hazeCount != 0) {
+            if (d->haze[0] & 1) {
                 return 1;
             }
         }
         break;
     case 10:
-        if (d->n70 != 0) {
+        if (d->flagCount != 0) {
             if (d->flags[0] & STG_FLAG_FX_A) {
                 return 1;
             }
         }
         break;
     case 11:
-        if (d->n70 != 0) {
+        if (d->flagCount != 0) {
             if (d->flags[0] & STG_FLAG_FX_B) {
                 return 1;
             }
         }
         break;
     case 12:
-        if (d->n70 != 0) {
+        if (d->flagCount != 0) {
             if (d->flags[0] & STG_FLAG_FX_C) {
                 return 1;
             }

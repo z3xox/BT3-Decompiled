@@ -362,7 +362,7 @@ s32 EftZap_SetUnk40(EftAdTask *task, s32 value) {
         return 0;
     }
     if (w->flags & EFT_ZAP_ALIVE) {
-        w->arg.unk40 = value;
+        w->arg.type = value;
         return 1;
     }
     return 0;
@@ -519,7 +519,7 @@ void EftShockMgr_Term(EftAdTask *task) {
 void EftShockMgr_Update(EftAdTask *task) {
     EftShockMgr *mgr = task->work;
 
-    mgr->res->tex.unk204 = 0;
+    mgr->res->tex.stepped = 0;
 }
 
 /* Fighter effect request 6: starts the shock effect of this fighter (arg[0] = object id). Returns the task,

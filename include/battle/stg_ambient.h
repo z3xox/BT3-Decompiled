@@ -16,7 +16,7 @@ typedef struct StgInfo {
 /* Section +0x58: only the byte at +0x16 is read here. */
 typedef struct StgSec58 {
     /* 0x00 */ u8 unk0[0x16];
-    /* 0x16 */ u8 unk16;
+    /* 0x16 */ u8 enabled;
 } StgSec58;
 
 /* The loaded stage data (gBtlStage->data). Only what this file reads. */
@@ -26,30 +26,30 @@ typedef struct StgData {
     /* 0x14 */ StgInfo *info;
     /* 0x18 */ u8 unk18[0xC];
     /* 0x24 */ Vec4 *lightDir;
-    /* 0x28 */ s32 unk28;
+    /* 0x28 */ s32 startCount;
     /* 0x2C */ f32 *place;    /* two points 8 bytes apart per coordinate: x0, z0, x1, z1 at [0], [2], [4], [6] */
     /* 0x30 */ u8 unk30[0x10];
-    /* 0x40 */ s32 n40;
-    /* 0x44 */ s32 *sec44;    /* records of 0x10 bytes, bit 0 of the first word = present */
-    /* 0x48 */ s32 n48;
-    /* 0x4C */ s32 *sec4C;
-    /* 0x50 */ s32 n50;
-    /* 0x54 */ s32 *sec54;
-    /* 0x58 */ s32 n58;
-    /* 0x5C */ StgSec58 *sec5C;
-    /* 0x60 */ s32 n60;
-    /* 0x64 */ s32 *sec64;
+    /* 0x40 */ s32 depthTintCount;
+    /* 0x44 */ s32 *depthTints;    /* records of 0x10 bytes, bit 0 of the first word = present */
+    /* 0x48 */ s32 glareCount;
+    /* 0x4C */ s32 *glare;
+    /* 0x50 */ s32 fogCount;
+    /* 0x54 */ s32 *fog;
+    /* 0x58 */ s32 surfCount;
+    /* 0x5C */ StgSec58 *surf;
+    /* 0x60 */ s32 weatherCount;
+    /* 0x64 */ s32 *weather;
     /* 0x68 */ u8 unk68[8];
-    /* 0x70 */ s32 n70;
+    /* 0x70 */ s32 flagCount;
     /* 0x74 */ s32 *flags;    /* STG_FLAG_* */
     /* 0x78 */ u8 unk78[0x14];
     /* 0x8C */ u8 *ambient;   /* r, g, b */
-    /* 0x90 */ s32 n90;
-    /* 0x94 */ s32 *sec94;
+    /* 0x90 */ s32 waterCount;
+    /* 0x94 */ s32 *water;
     /* 0x98 */ s32 n98;
     /* 0x9C */ s32 *sec9C;
-    /* 0xA0 */ s32 nA0;
-    /* 0xA4 */ s32 *secA4;
+    /* 0xA0 */ s32 hazeCount;
+    /* 0xA4 */ s32 *haze;
 } StgData;
 
 #define STG_FLAG_FX_A 1    /* gBtlStageFxRes entry A may be used */

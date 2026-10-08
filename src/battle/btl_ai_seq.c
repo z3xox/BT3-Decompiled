@@ -54,7 +54,7 @@ void BtlAiSeq_PushRule(DetAiWork *ai, DetAiRule *rule) {
             continue;
         }
         if (rule->unk4[i + 16] == 0x3D) {
-            plan->timerA4 = 90;
+            plan->cooldown = 90;
         }
         entry->id = rule->unk4[i + 16];
         entry->arg = rule->unk8[i + 16] + 0x81;

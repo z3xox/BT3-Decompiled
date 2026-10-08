@@ -231,3 +231,20 @@ Group 12 (overlay_common.h .. memcard_flow.h; the menu overlay and sys):
 - sys/save.h:77, 80: unk208 and unk77C are ubFlags and rank in the menu views; unk20C ("a capacity, guess") is missionPages.
 - gProgress +0x00 `language` is a reading (it picks the story text file set and is added to HUD file 6).
 - McCardIconSys.unk4 / unk8 -> reserved1 / reserved2 rests on the agent's memory of Sony's sceMcIconSys, not on the repo.
+
+Group 11 (eft_water_part2.h .. option.h; stage, HUD, object renderer, menu overlay):
+- stg.h:259: StgView.x1 at +0x208: View (btl_cam.h:75-78) and ViewScissor (main.h) have +0x204 scissorX1, +0x208 scissorY0: stg.c:371 and
+  :382 `(view->x1 - view->x0) > 256` compare scissorY0 - scissorX0. A misnamed field, or a bug of the original.
+- eft_zap.h:155-160 against eft_ribbon.h:377-382: the EftZap work block is named differently at four offsets (+0x164 fadeDelay / holdTime,
+  +0x168 fadeTime / fadeFrame, +0x16C fade / fadeTime, +0x174 rateFrames / life), and EftZapArg.rate (+0x34) against EftZapInit.life: the
+  ribbon side has the supporting code (w->life = arg->life * 30, counted down at eft_ribbon.c:1445-1500).
+- eft_zap.h:81-82: EftZapMgr.nodeCur at +0x1EA1; eft_ribbon.h EftZapPool has nextLine at +0x1EA0 and unk1EA1[0xF] (a used byte in the gap).
+- stg_ambient.h:28: StgData.lightDir at +0x24 is StgDataA.points in stg.h:117; BtlStage_GetLightDir reads entry 0 of that list as the light
+  direction, so `points` is probably the misnomer. :29: StgData.place at +0x2C is StgDataA.starts ("one per player").
+- obj_gs_env.h:44-46 against obj_render.h:65-67: model file +0x60 cbp2 / clutTbp, +0x64 tbp2 / fadeTbp (obj_render.h backed by use).
+- obj_gs_env.h:100: ObjShadowView.color at view +0x30 is the flat shadow's colour (BtlObjView / ObjDrawView have `color` at +0x20).
+- dc_password_replay.h:95: ZaChrEntry.slots at +0x0E is baseLevel in ChrTblEntry and VChrEntry.
+- evo_z.h:124 against evo_z_items.h:165: +0xB0 of one work is `bg` in UEvoZ and chipTex in EvoZ; +0x1A64 `fits` has two opposite comments.
+- history_result.c:59 still says "BattleResult.unk44" (dragonBallFound).
+- The 0x3C-byte blocks DcList.unkC44, DcMenu.unk88, DcPassView.unk17C, Option.unk1B0 are only passed as a fourth argument MsgWin_Init does not take.
+- Relocated but never read: StgTimer.unk4, StgColZone.unk10, StgOctNode.unk00 / StgMCell.unk0.
