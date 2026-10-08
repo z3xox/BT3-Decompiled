@@ -492,28 +492,13 @@ void EftBurst_ClearAlphaPlane(void) {
     Dma_EndDirect(p);
 }
 
-#if 0 /* ATTEMPT: not matching: 599 instructions, the original's count; 16 differ, all in ONE place, the copies of
-   the two constant vectors behind the memset of `light` (0x13D620..0x13D660). The control flow, the frame (0x240),
-   every stack slot, every call and every packet word are the original's.
-   What differs: the original has the halves of `lightDir` in $a3 / $a2 and those of `ambient` in $v0 / $v1, and
-   loads both table addresses up front (`lui t0 / lui v1 / addiu t0 / addiu v1 / ld a3,0(t0) / ld a2,8(t0) /
-   move t0,v1 / ... / ld v0,0(v1) / ld v1,8(t0)`); here the halves sit in $a2 / $a3 and $v1 / $v0 and both
-   addresses go through $t0, one instruction less (a nop for the loop alignment replaces it further down).
-   Measured (build/scratch_shell_burst/, rtl/bv_g1): the four halves are block-local pseudos allocated by length of
-   life, and the original's registers need the first scheduling pass to emit `ld / $a0 = d / ld / $a1 = d / ld /
-   ld` behind the memset where it emits `ld / ld / $a0 = d / ld / $a1 = d / ld` here: one instruction more has to
-   be issued in the cycle of the memset call (in front of the first `ld`). The address of `d` computed in that
-   block instead of being hoisted by gcse would do it; no source form that keeps it there was found (pointer
-   locals, an inline length helper, the order of the three initialisers, `len` as an initialiser, a separate
-   dot-product variable, const / pure on Vec3_Dot: all give this code).
-   FIXED on 2026-10-08, and what the two other differences of the earlier note were: Mtx_ProjectPointStq is NOT
-   void. With `extern s32` the colour unpack (registers alternating $v1 / $v0, `move a2,v0 / dsll a2,a2,8`, no
-   reload of rgba[2]) and the order of the argument moves in front of the call match as written below.
-   Ruled out (about 250 variants): every element type / alignment for the vectors, `static const` tables copied by
-   struct assignment, memcpy, u64 pairs (u128 gives lq / sq and is the only form that keeps the lui / addiu in the
-   block), colour bytes as u8, bit fields, temporaries, one u32, casts, statement permutations, the position of
-   `env`, `pos[3]`, `vis`.
-   What the rewrite established (and the previous attempt had wrong in shape, not in behaviour):
+/* EftBurst_DrawModel. What the source has to look like for the match (found over three attempts):
+   - `light` is a UNION of the vector and a float array (`union { EftFVec v; f32 f[4]; }`): the code is the
+     same as for a plain array, but the first scheduling pass issues one more instruction in the cycle of the
+     memset call, which orders the 64-bit halves of the two constant vectors behind it as `ld / $a0 = d / ld /
+     $a1 = d / ld / ld` and so gives them $a3 / $a2 and $v0 / $v1 (reload then copies the second table address,
+     `move t0,v1`, because $v1 is also the last half's register);
+   - Mtx_ProjectPointStq is NOT void: with `extern s32` the colour unpack and the argument moves match;
    - a triangle record is a structure, { s16 vtx[3]; s16 nrm[3][2]; u16 col[3][2]; }: the colour is read as two
      16-bit words split with `& 0xFF` and `>> 8` (lbu / lhu + srl), and the multiple-of-16 split of the member
      offsets gives the original's two extra walking pointers (tri + 2, tri + 6);
@@ -526,8 +511,8 @@ void EftBurst_ClearAlphaPlane(void) {
    - the group loop is `for (i = 0; i < n; i++)` (reversed by the compiler into the counter at sp+0x18C), not a
      loop on n itself; the triangles are written out without a loop, two words at a time;
    - the visibility test is the inline function Eft_IsScreenPosVisible used as a value (`vis += ...`);
-   - the light vectors are block-scope initialised arrays ({0, 0, 0, 1} is "mostly zero", so it becomes
-     memset + one store). */
+   - the light vectors are block-scope initialised locals ({0, 0, 0, 1} is "mostly zero", so it becomes
+     memset + one store; the two others are copied from .rodata as 64-bit halves). */
 typedef struct EftBurstTri {
     /* 0x00 */ s16 vtx[3];
     /* 0x06 */ s16 nrm[3][2];   /* two packed angles per corner (env-map normal) */
@@ -662,7 +647,7 @@ void EftBurst_DrawModel(EftBurstModel *model, s32 unused) {
                     st2[k][0] *= 8.0f;
                     st2[k][1] *= 8.0f;
                     if (gEftBurst->frame >= 11) {
-                        EftFVec light = { 0.0f, 0.0f, 0.0f, 1.0f };
+                        union { EftFVec v; f32 f[4]; } light = { { 0.0f, 0.0f, 0.0f, 1.0f } };
                         EftFVec lightDir = { 1.0f, -0.2f, -0.8f, 0.0f };
                         EftFVec ambient = { 127.0f, 127.0f, 127.0f, 0.0f };
                         EftFVec colF;
@@ -675,8 +660,8 @@ void EftBurst_DrawModel(EftBurstModel *model, s32 unused) {
                             lit = 255.0f;
                         }
                         IVec4_ToFloat(colF, rgba);
-                        Vec4_Scale((Vec4 *)light, (Vec4 *)light, fade * 0.6f * lit);
-                        Vec4_Add((Vec4 *)ambient, (Vec4 *)light, (Vec4 *)ambient);
+                        Vec4_Scale((Vec4 *)light.v, (Vec4 *)light.v, fade * 0.6f * lit);
+                        Vec4_Add((Vec4 *)ambient, (Vec4 *)light.v, (Vec4 *)ambient);
                         Vec4_Clamp(ambient, ambient, 0.0f, 255.0f);
                         Vec4_ToInt(rgba, (Vec4 *)ambient);
                         rgbaq[k][1] = (u64)rgba[0] | ((u64)rgba[1] << 8) | ((u64)rgba[2] << 16) |
@@ -758,12 +743,6 @@ void EftBurst_DrawModel(EftBurstModel *model, s32 unused) {
     }
     Dma_EndDirect(EftBurst_PutModelEnvEnd(Dma_BeginDirect()));
 }
-#endif
-INCLUDE_RODATA("asm/nonmatchings/battle/eft_burst", D_002EC8C0);
-INCLUDE_RODATA("asm/nonmatchings/battle/eft_burst", D_002EC8D0);
-LIT4_WORD(D_002FC474, 0x3C888888); /* 1.0f / 60.0f */
-LIT4_WORD(D_002FC478, 0x3F199999); /* 0.6f */
-INCLUDE_ASM("asm/nonmatchings/battle/eft_burst", EftBurst_DrawModel);
 
 /* Uploads a texture unless it is already the current one. */
 void EftBurst_SetTexture(EftBurstTex *tex, s32 x, s32 y) {
