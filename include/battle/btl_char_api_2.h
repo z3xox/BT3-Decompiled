@@ -19,9 +19,9 @@ typedef struct BtlCharApiVitals {
     /* 0x00 */ s32 hp;     /* < 1 = down (BtlChar_IsDead) */
     /* 0x04 */ s32 hpMax;
     /* 0x08 */ u8 unk8[0x20 - 0x8];
-    /* 0x20 */ s32 unk20;  /* member +0x60 */
+    /* 0x20 */ s32 variant;  /* member +0x60 */
     /* 0x24 */ u8 unk24[0x30 - 0x24];
-    /* 0x30 */ s32 unk30;  /* member +0x70; non-zero makes the win / lose talk use character 0x56 (btl_seq.c) */
+    /* 0x30 */ s32 bodyChanged;  /* member +0x70; non-zero makes the win / lose talk use character 0x56 (btl_seq.c) */
 } BtlCharApiVitals;
 
 /* Fighter (0x1600 bytes, BtlChar_Get / BtlChar_FindByObjId). */
@@ -46,25 +46,25 @@ typedef struct BtlCharApiChr {
     /* 0x04BC */ u8 unk4BC[0x948 - 0x4BC];
     /* 0x0948 */ s32 action;        /* action id (BtlAct_GetCurrent) */
     /* 0x094C */ u8 unk94C[0x974 - 0x94C];
-    /* 0x0974 */ s32 unk974;        /* index into the manager's table at +0x20 (BtlAnim_GetId) */
+    /* 0x0974 */ s32 motion;        /* index into the manager's table at +0x20 (BtlAnim_GetId) */
     /* 0x0978 */ u8 unk978[0x990 - 0x978];
-    /* 0x0990 */ s32 unk990;        /* > 0 makes BtlCharApi_ObjTestAttr answer 0 (BtlAnim_TestAttr) */
+    /* 0x0990 */ s32 prevStall;        /* > 0 makes BtlCharApi_ObjTestAttr answer 0 (BtlAnim_TestAttr) */
     /* 0x0994 */ s32 member;        /* active member index (BtlMember_GetActive) */
     /* 0x0998 */ u8 unk998[0xE44 - 0x998]; /* member blocks of 0xA4 bytes start at 0x9A4 */
-    /* 0x0E44 */ f32 unkE44;
+    /* 0x0E44 */ f32 techCharge;
     /* 0x0E48 */ u8 unkE48[0xE5C - 0xE48];
-    /* 0x0E5C */ s32 unkE5C;        /* counter, full at 3 */
+    /* 0x0E5C */ s32 skillCount3;        /* counter, full at 3 */
     /* 0x0E60 */ s32 unkE60;        /* counter, full at 5 */
     /* 0x0E64 */ u8 unkE64[0xEFC - 0xE64];
-    /* 0x0EFC */ f32 unkEFC[4];     /* length not known; summed by BtlCharApi_GetRushSequenceFrame */
+    /* 0x0EFC */ f32 stepFrame[4];     /* length not known; summed by BtlCharApi_GetRushSequenceFrame */
     /* 0x0F0C */ u8 unkF0C[0x1278 - 0xF0C];
     /* 0x1278 */ s32 injectOn;      /* input comes from the three fields below (btl_input.h) */
     /* 0x127C */ u32 injectButtons;
     /* 0x1280 */ f32 injectStickX;
     /* 0x1284 */ f32 injectStickY;
-    /* 0x1288 */ u64 unk1288;
+    /* 0x1288 */ u64 actBits;
     /* 0x1290 */ u8 unk1290[0x1320 - 0x1290];
-    /* 0x1320 */ s32 unk1320;       /* > 0: no camera shake from BtlCharApi_ShakeCamsNear (BtlChar_IsFrozen) */
+    /* 0x1320 */ s32 freeze;       /* > 0: no camera shake from BtlCharApi_ShakeCamsNear (BtlChar_IsFrozen) */
     /* 0x1324 */ u8 unk1324[0x15D0 - 0x1324];
     /* 0x15D0 */ s32 rumbleOn;      /* pad vibration block, written by BtlChar_SetVibration / BtlChar_SetSmallVibration, run by BtlChar_UpdateVibration */
     /* 0x15D4 */ f32 rumblePower;   /* 0..1 */
@@ -81,20 +81,20 @@ typedef struct BtlCharApiObj {
         s32 flags;                  /* the single-bit accessors read and write the low word */
     } u;
     /* 0xA48 */ u8 unkA48[0xC78 - 0xA48];
-    /* 0xC78 */ f32 unkC78;
+    /* 0xC78 */ f32 animFrame;
     /* 0xC7C */ u8 unkC7C[0xC80 - 0xC7C];
-    /* 0xC80 */ f32 unkC80;
+    /* 0xC80 */ f32 animStep;
     /* 0xC84 */ u8 unkC84[0xCAC - 0xC84];
-    /* 0xCAC */ s8 unkCAC;
-    /* 0xCAD */ s8 unkCAD;          /* expected to be ~unkCAC */
+    /* 0xCAC */ s8 hitCount;
+    /* 0xCAD */ s8 hitIndex;          /* expected to be ~hitCount */
     /* 0xCAE */ s8 attrCount;       /* number of attribute words below (BtlObjAnim_TestEvent) */
 } BtlCharApiObj;
 
 /* One playing sound of a side (0xC bytes). BtlCharSnd_StoreHandle fills a slot, BtlCharSnd_StopUnrequestedLoops stops it with Snd_StopHandle. */
 typedef struct BtlCharApiSound {
     /* 0x0 */ s32 handle;           /* sound handle, < 0 = free slot */
-    /* 0x4 */ s32 unk4;
-    /* 0x8 */ u8 unk8;              /* index into the table at 0x2EF290 (BtlCharSnd_GetBankMask) */
+    /* 0x4 */ s32 id;
+    /* 0x8 */ u8 kind;              /* index into the table at 0x2EF290 (BtlCharSnd_GetBankMask) */
 } BtlCharApiSound;
 
 typedef struct BtlCharApiSoundSet {
@@ -107,10 +107,10 @@ typedef struct BtlCharApiMgr {
     /* 0x00 */ s32 count;
     /* 0x04 */ BtlCharApiChr *chars;
     /* 0x08 */ void *unk8;
-    /* 0x0C */ BtlCharApiSoundSet *sounds; /* one per side */
+    /* 0x0C */ BtlCharApiSoundSet *loopSounds; /* one per side */
     /* 0x10 */ u8 unk10[0x1C - 0x10];
     /* 0x1C */ s32 unk1C;               /* counter, full at 90 */
-    /* 0x20 */ void **unk20;            /* 0x19E pointers, indexed by fighter +0x974 */
+    /* 0x20 */ void **motionFlags;            /* 0x19E pointers, indexed by fighter +0x974 */
     /* 0x24 .. 0x280: not touched here. Seen in callees: +0xA0 four 0x20-byte sound requests {Vec4 pos, f32 near,
        f32 far, s32 id, s8 owner, s8 kind} with their count at +0x120 (BtlCharSnd_Request); +0x130 / +0x134 (BtlReplay_GetViewSide). */
 } BtlCharApiMgr;
@@ -243,22 +243,22 @@ typedef struct BtlCapiBChr {
     /* 0x0D48 */ s32 comboTimer;    /* countdown; > 0 = the combo display is on */
     /* 0x0D4C */ s32 comboNewHit;   /* 1 on the frame a counted hit landed */
     /* 0x0D50 */ u8 unkD50[0xD70 - 0xD50];
-    /* 0x0D70 */ s32 unkD70;
-    /* 0x0D74 */ s32 unkD74;
+    /* 0x0D70 */ s32 vanishCount;
+    /* 0x0D74 */ s32 vanishLimit;
     /* 0x0D78 */ u8 unkD78[0xDE0 - 0xD78];
     /* 0x0DE0 */ s32 blastShots;    /* compared with the character's limit of class-0 blasts */
     /* 0x0DE4 */ u8 unkDE4[0xE00 - 0xDE4];
     /* 0x0E00 */ s32 dodges;        /* automatic evasions left */
     /* 0x0E04 */ s32 dodgesB;
-    /* 0x0E08 */ s32 unkE08;
+    /* 0x0E08 */ s32 skillTimer;
     /* 0x0E0C */ s32 dodgeKind;     /* 0 / 1 */
-    /* 0x0E10 */ s32 unkE10;
-    /* 0x0E14 */ s32 unkE14;        /* timer; > 0 adds one armour level */
+    /* 0x0E10 */ s32 skillKiRate;
+    /* 0x0E14 */ s32 skillTimerC;        /* timer; > 0 adds one armour level */
     /* 0x0E18 */ u8 unkE18[0xE38 - 0xE18];
     /* 0x0E38 */ s32 slotOn[2];     /* 1 while move slot n's effect is active */
-    /* 0x0E40 */ s32 unkE40;        /* countdown, cleared by BtlCtrl_UseTechnique */
-    /* 0x0E44 */ f32 unkE44;
-    /* 0x0E48 */ s32 unkE48;
+    /* 0x0E40 */ s32 techDelay;        /* countdown, cleared by BtlCtrl_UseTechnique */
+    /* 0x0E44 */ f32 techCharge;
+    /* 0x0E48 */ s32 chargeFull;
     /* 0x0E4C */ s32 clashCountA;
     /* 0x0E50 */ s32 clashCountB;
     /* 0x0E54 */ u8 unkE54[0xFB0 - 0xE54];
@@ -266,11 +266,11 @@ typedef struct BtlCapiBChr {
     /* 0x0FB4 */ u8 unkFB4[0xFE0 - 0xFB4];
     /* 0x0FE0 */ s32 stunTimer;     /* countdown; > 0 = not free */
     /* 0x0FE4 */ u8 unkFE4[0x106C - 0xFE4];
-    /* 0x106C */ s32 unk106C;
-    /* 0x1070 */ s32 unk1070;
+    /* 0x106C */ s32 dodgeWindow;
+    /* 0x1070 */ s32 counterWindow;
     /* 0x1074 */ u8 unk1074[0x1290 - 0x1074];
-    /* 0x1290 */ s32 unk1290;
-    /* 0x1294 */ s32 unk1294;       /* >= 0: overrides the technique progress the AI sees */
+    /* 0x1290 */ s32 storyAiForce;
+    /* 0x1294 */ s32 framesLeftOverride;       /* >= 0: overrides the technique progress the AI sees */
     /* 0x1298 */ u8 unk1298[0x1550 - 0x1298];
     /* 0x1550 */ s32 motion;        /* animation of action 4 (scripted motion) */
     /* 0x1554 */ f32 motionBlend;   /* its blend time */
@@ -286,22 +286,22 @@ typedef struct BtlCapiBChr {
 /* Character parameter block (battle object +0x91C); read here only through BtlCharApi_GetParamByte2 / Flags /
    Unk14 / Unk18. The rest is what the callees of this file read (0x20DF80..0x20F3C8). */
 typedef struct BtlCapiBParam {
-    /* 0x00 */ u16 unk0;            /* bit 0x80: BtlCharApi_HasParamBit80 */
-    /* 0x02 */ s8 unk2;
+    /* 0x00 */ u16 charaFlags;            /* bit 0x80: BtlCharApi_HasParamBit80 */
+    /* 0x02 */ s8 sizeClass;
     /* 0x03 */ u8 unk3[0x10 - 0x3];
     /* 0x10 */ s32 flags;           /* bits 4 / 8: armour level of BtlCharApi_GetArmorBreakLevel */
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
+    /* 0x14 */ s32 flags2;
+    /* 0x18 */ s32 flags3;
     /* 0x1C */ u8 unk1C[0x80 - 0x1C];
     /* 0x80 */ s16 blastLimit;      /* class-0 blasts alive at once (BtlParam_GetBlastLimitA) */
     /* 0x82 */ s16 blastLimitB;     /* class-1 (BtlParam_GetBlastLimitB) */
     /* 0x84 */ u8 unk84[0x8F - 0x84];
-    /* 0x8F */ u8 unk8F[9];         /* BtlParam_GetComboFinish(chr, n) */
+    /* 0x8F */ u8 comboFinish[9];         /* BtlParam_GetComboFinish(chr, n) */
     /* 0x98 */ u8 transformId[4];   /* 0xFF = none (BtlParam_GetSlotId) */
     /* 0x9C */ u8 transformCost[4]; /* blast stocks (BtlParam_GetSlotCost) */
     /* 0xA0 */ u8 unkA0[0xAC - 0xA0];
     /* 0xAC */ s8 transformSlot;    /* the slot the AI uses, -1 none (BtlParam_GetDefaultSlot) */
-    /* 0xAD */ u8 unkAD;
+    /* 0xAD */ u8 formFlags;
     /* 0xAE */ u8 fusionCost[3];    /* blast stocks (BtlParam_GetCostAE) */
     /* 0xB1 */ u8 unkB1[3];
     /* 0xB4 */ u8 fusionId[3];      /* (BtlParam_GetFusionResult) */
@@ -314,13 +314,13 @@ typedef struct BtlCapiBSkills {
     /* 0x000 */ u32 state[3];       /* by skill slot */
     /* 0x00C */ u32 flags[3];       /* by skill slot (BtlSuper_GetFlags(chr, cls)): 1, 2, 4 tested here */
     /* 0x018 */ u8 unk18[0x13C - 0x18];
-    /* 0x13C */ s8 unk13C[5];       /* by class (BtlSuper_GetType) */
+    /* 0x13C */ s8 type[5];       /* by class (BtlSuper_GetType) */
     /* 0x141 */ u8 unk141[0x163 - 0x141];
     /* 0x163 */ s8 kind[5];         /* by class (BtlSuper_GetAiKind) */
     /* 0x168 */ u8 unk168[0x194 - 0x168];
     /* 0x194 */ s32 cost[5];        /* by class: ki cost (BtlSuper_GetKiCost) */
     /* 0x1A8 */ u8 unk1A8[0x227 - 0x1A8];
-    /* 0x227 */ s8 unk227[5];       /* BtlSuper_GetPromptRowIndex(chr, n): index into the roster table +0x34 */
+    /* 0x227 */ s8 promptRow[5];       /* BtlSuper_GetPromptRowIndex(chr, n): index into the roster table +0x34 */
 } BtlCapiBSkills;
 
 /* Move table (battle object +0x930, BtlCharApi_GetMoveTable): the two move slots. */
@@ -342,8 +342,8 @@ typedef struct BtlCapiBObj {
     /* 0x92C */ BtlCapiBSkills *skills;
     /* 0x930 */ BtlCapiBMoves *moves;
     /* 0x934 */ u8 unk934[0xCAC - 0x934];
-    /* 0xCAC */ s8 unkCAC;
-    /* 0xCAD */ s8 unkCAD;          /* expected to be ~unkCAC */
+    /* 0xCAC */ s8 hitCount;
+    /* 0xCAD */ s8 hitIndex;          /* expected to be ~hitCount */
 } BtlCapiBObj;
 
 /* Blast list (EftHit_GetList): 64 records of 0x190 bytes and a count. */

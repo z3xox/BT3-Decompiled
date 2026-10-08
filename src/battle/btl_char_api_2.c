@@ -137,7 +137,7 @@ s32 BtlCharApi_GetMemberUnk60(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return BtlMember_GetActiveGauge(chr)->unk20;
+        return BtlMember_GetActiveGauge(chr)->variant;
     }
     return 0;
 }
@@ -260,7 +260,7 @@ s32 BtlCharApi_GetSoundCount(s32 side) {
     if (gBtlChars == NULL) {
         return 0;
     }
-    e = gBtlChars->sounds[side].slot;
+    e = gBtlChars->loopSounds[side].slot;
     for (i = 0; i < 4; i++, e++) {
         if (e->handle >= 0) {
             count++;
@@ -278,7 +278,7 @@ void BtlCharApi_GetSound(s32 side, s32 n, s32 *handle, s32 *out3, s32 *out4) {
     if (gBtlChars == NULL) {
         return;
     }
-    e = gBtlChars->sounds[side].slot;
+    e = gBtlChars->loopSounds[side].slot;
     for (i = 0; i < 4; i++, e++) {
         if (e->handle >= 0) {
             if (count == n) {
@@ -286,10 +286,10 @@ void BtlCharApi_GetSound(s32 side, s32 n, s32 *handle, s32 *out3, s32 *out4) {
                     *handle = e->handle;
                 }
                 if (out3 != NULL) {
-                    *out3 = BtlCharSnd_GetBankMask(e->unk8);
+                    *out3 = BtlCharSnd_GetBankMask(e->kind);
                 }
                 if (out4 != NULL) {
-                    *out4 = e->unk4;
+                    *out4 = e->id;
                 }
                 return;
             }
@@ -331,7 +331,7 @@ f32 BtlCharApi_GetTechCharge(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return chr->unkE44;
+        return chr->techCharge;
     }
     return 0.0f;
 }
@@ -344,7 +344,7 @@ f32 BtlCharApi_GetSkillCount3Ratio(s32 objId) {
     if (chr == NULL) {
         return 0.0f;
     }
-    return BtlUtil_ClampF((f32)chr->unkE5C / 3.0f, 0.0f, 1.0f);
+    return BtlUtil_ClampF((f32)chr->skillCount3 / 3.0f, 0.0f, 1.0f);
 }
 
 /* Fighter counter +0xE60 as a 0..1 ratio of 5. */
@@ -417,7 +417,7 @@ s32 BtlCharApi_CanTechniqueFinish(s32 objId, s32 targetId) {
         if (BtlSuper_IsThrow(chr, slot)) {
             return 0;
         }
-        return BtlMember_GetActiveGauge(target)->unk20 == 0;
+        return BtlMember_GetActiveGauge(target)->variant == 0;
     }
     return result;
 }
@@ -515,7 +515,7 @@ f32 BtlCharApi_GetRushSequenceFrame(s32 objId) {
     if (BtlCharApi_IsInRushSequence(objId)) {
         n = BtlAct_GetMotionLevel(chr, BtlAnim_GetId(chr));
         for (i = 0; i < n; i++) {
-            value += chr->unkEFC[i] + 1.0f;
+            value += chr->stepFrame[i] + 1.0f;
         }
     }
     return value;
@@ -526,7 +526,7 @@ f32 BtlCharApi_ObjGetAnimFrame(s32 objId) {
     BtlCharApiObj *obj = BtlObj_Get(objId);
 
     if (obj != NULL) {
-        return obj->unkC78;
+        return obj->animFrame;
     }
     return 0.0f;
 }
@@ -536,7 +536,7 @@ f32 BtlCharApi_ObjGetAnimStep(s32 objId) {
     BtlCharApiObj *obj = BtlObj_Get(objId);
 
     if (obj != NULL) {
-        return obj->unkC80;
+        return obj->animStep;
     }
     return 0.0f;
 }
@@ -779,7 +779,7 @@ u64 BtlCharApi_GetActionBits(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return chr->unk1288;
+        return chr->actBits;
     }
     return 0;
 }
@@ -796,13 +796,13 @@ s32 BtlCharApi_IsAttackHitPending(s32 objId) {
     if (obj == NULL) {
         return 0;
     }
-    if (obj->unkCAD != ~obj->unkCAC) {
+    if (obj->hitIndex != ~obj->hitCount) {
         return 1;
     }
     if (BtlChar_TestFlag(chr, 0x60) == 1) {
         return 0;
     }
-    return obj->unkCAD >= 0;
+    return obj->hitIndex >= 0;
 }
 
 /* Fighter flag 0x60. */
@@ -926,7 +926,7 @@ s32 BtlCharApi_IsAttackHitsDone(s32 objId) {
     if (chr != NULL) {
         obj = BtlChar_GetObj(chr);
         if (obj != NULL) {
-            return obj->unkCAD == ~obj->unkCAC;
+            return obj->hitIndex == ~obj->hitCount;
         }
         return 0;
     }
@@ -1157,8 +1157,8 @@ f32 BtlCharApi_GetTechniqueProgress(s32 objId) {
     if (chr == NULL) {
         return 0.0f;
     }
-    if (chr->unk1294 >= 0) {
-        return chr->unk1294;
+    if (chr->framesLeftOverride >= 0) {
+        return chr->framesLeftOverride;
     }
     frame = BtlCharApi_ObjQuery24D610(objId, 1, 1);
     if (frame < 0) {
@@ -1371,7 +1371,7 @@ s32 BtlCharApi_IsCounterWindowBusy(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return chr->unk1070 != -30;
+        return chr->counterWindow != -30;
     }
     return 0;
 }
@@ -1535,7 +1535,7 @@ s32 BtlCharApi_GetParamFlags2(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return BtlChar_GetObj(chr)->param->unk14;
+        return BtlChar_GetObj(chr)->param->flags2;
     }
     return 0;
 }
@@ -1555,7 +1555,7 @@ s32 BtlCharApi_GetParamFlags3(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return BtlChar_GetObj(chr)->param->unk18;
+        return BtlChar_GetObj(chr)->param->flags3;
     }
     return 0;
 }
@@ -1678,7 +1678,7 @@ s32 BtlCharApi_TestOppSkillFlags(s32 objId) {
             if (flags & 1) {
                 return 1;
             }
-            if ((flags & 2) && 0.9f < chr->unkE44) {
+            if ((flags & 2) && 0.9f < chr->techCharge) {
                 return 1;
             }
             return unk == 1;
@@ -1824,7 +1824,7 @@ s32 BtlCharApi_GetStoryAiForce(s32 objId) {
         if (Battle_GetMode() != 1) {
             return 0;
         }
-        return chr->unk1290;
+        return chr->storyAiForce;
     }
     return 0;
 }
@@ -1834,7 +1834,7 @@ s32 BtlCharApi_IsDodgeWindowReady(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return chr->unk106C < -29;
+        return chr->dodgeWindow < -29;
     }
     return 0;
 }
@@ -1869,7 +1869,7 @@ s32 BtlCharApi_GetArmorBreakLevel(s32 objId) {
     if (BtlAct_TestPoweredSkill(opp, 0x40)) {
         level++;
     }
-    level += opp->unkE14 > 0;
+    level += opp->skillTimerC > 0;
     if (BtlMember_HasAbility(opp, 0x46)) {
         level++;
     }
@@ -1899,7 +1899,7 @@ s32 BtlCharApi_GetParamByte2(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return BtlChar_GetObj(chr)->param->unk2;
+        return BtlChar_GetObj(chr)->param->sizeClass;
     }
     return 0;
 }
@@ -1909,7 +1909,7 @@ f32 BtlCharApi_GetTechChargeB(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return chr->unkE44;
+        return chr->techCharge;
     }
     return 0.0f;
 }
@@ -1919,10 +1919,10 @@ s32 BtlCharApi_GetVanishStrikesLeft(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        if (chr->unkD74 == 0) {
+        if (chr->vanishLimit == 0) {
             return -1;
         }
-        return chr->unkD74 - chr->unkD70;
+        return chr->vanishLimit - chr->vanishCount;
     }
     return 0;
 }
@@ -1983,7 +1983,7 @@ s32 BtlCharApi_GetTechniqueCooldown(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return chr->unkE40;
+        return chr->techDelay;
     }
     return 0;
 }
@@ -2565,7 +2565,7 @@ s32 BtlCtrl_UseTechnique(s32 player, s32 kind) {
     BtlChar_SetHeldFlag(chr, 0x11E);
     BtlChar_ClearFlag(chr, 0xBE);
     chr->stunTimer = 0;
-    chr->unkE40 = 0;
+    chr->techDelay = 0;
     return 1;
 }
 

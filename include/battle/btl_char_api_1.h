@@ -62,7 +62,7 @@ typedef struct BtlCapiChr {
     /* 0x0ED8 */ s32 thrUnk48;      /* technique bit 0x2000 and attacker gauge word +0x20 == 0 */
     /* 0x0EDC */ s32 thrUnk4C;      /* technique bit 0x80000 and victim gauge word +0x20 == 0 */
     /* 0x0EE0 */ u8 unkEE0[0xFFC - 0xEE0];
-    /* 0x0FFC */ s32 unkFFC;        /* follows twice the countdown at +0xFF8 by 15 per frame (BtlAct_UpdateTimers);
+    /* 0x0FFC */ s32 blindLevel;        /* follows twice the countdown at +0xFF8 by 15 per frame (BtlAct_UpdateTimers);
                                        BtlCharApi_GetBlindRatio gives it as a ratio of 90 */
     /* 0x1000 */ u8 unk1000[0x1330 - 0x1000];
     /* 0x1330 */ s32 partnerOn;     /* the fighter has a partner object (a second character model) */
@@ -74,7 +74,7 @@ typedef struct BtlCapiChr {
 /* General parameters of the character (object +0x91C); BtlParam / BtlTechBParam in btl_param.h / btl_tech.h. */
 typedef struct BtlCapiParam {
     /* 0x00 */ u16 flags0;     /* bits tested by callers: 0x4, 0x8, 0x80 */
-    /* 0x02 */ u8 unk2;
+    /* 0x02 */ u8 sizeClass;
     /* 0x03 */ s8 auraType;
     /* 0x04 */ u8 unk4[0xC - 0x4];
     /* 0x0C */ f32 radius;     /* body radius; <= 0: object +0xFF0 * 1.8 is used */
@@ -94,15 +94,15 @@ typedef struct BtlCapiKiBlast {
 typedef struct BtlCapiNode {
     /* 0x00 */ u8 unk0[0x10];
     /* 0x10 */ Mtx44 mtx;      /* world matrix; its translation (+0x40) is the node position */
-    /* 0x50 */ Mtx44 unk50;
-    /* 0x90 */ Vec4 unk90;
+    /* 0x50 */ Mtx44 parent;
+    /* 0x90 */ Vec4 pos;
     /* 0xA0 */ Quat rot;
 } BtlCapiNode;
 
 /* What BtlObj_FindBound(obj, n) returns. */
 typedef struct BtlCapiPart {
     /* 0x00 */ u8 unk0[0x5C];
-    /* 0x5C */ f32 unk5C;
+    /* 0x5C */ f32 sizeFactor;
 } BtlCapiPart;
 
 /* Battle object (BtlObj in btl_obj.h): only the fields read here. */
@@ -110,9 +110,9 @@ typedef struct BtlCapiObj {
     /* 0x000 */ u8 unk0[0xC];
     /* 0x00C */ s32 chara;          /* character id */
     /* 0x010 */ u8 unk10[0x58 - 0x10];
-    /* 0x058 */ s32 unk58;
+    /* 0x058 */ s32 charPack;
     /* 0x05C */ u8 unk5C[0x9C - 0x5C];
-    /* 0x09C */ s32 unk9C[5];       /* five pointers of the model data block */
+    /* 0x09C */ s32 effectPacks[5];       /* five pointers of the model data block */
     /* 0x0B0 */ u8 unkB0[0x91C - 0xB0];
     /* 0x91C */ BtlCapiParam *param;
     /* 0x920 */ u8 unk920[4];
@@ -135,7 +135,7 @@ typedef struct BtlCapiObj {
     /* 0xFF4 */ f32 height;         /* model header +0x18 (BtlObjBody_Init copies the four) */
     /* 0xFF8 */ f32 unkFF8;         /* model header +0x1C */
     /* 0xFFC */ f32 centerHeight;   /* model header +0x20 */
-    /* 0x1000 */ f32 unk1000;       /* model header +0x24 */
+    /* 0x1000 */ f32 camSideSlope;       /* model header +0x24 */
 } BtlCapiObj;
 
 /* Roster (gBtlChars): only the field read here. */

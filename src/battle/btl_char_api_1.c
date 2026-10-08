@@ -119,7 +119,7 @@ f32 BtlCharApi_GetCamSideSlope(s32 objId) {
     BtlCapiObj *obj = BtlObj_Get(objId);
 
     if (obj != NULL) {
-        return obj->unk1000;
+        return obj->camSideSlope;
     }
     return 5.0f;
 }
@@ -295,7 +295,7 @@ s32 BtlCharApi_GetPlayerEffectPack(s32 player, u32 n) {
             if (n >= 5) {
                 return 0;
             }
-            return obj->unk9C[n];
+            return obj->effectPacks[n];
         }
         return 0;
     }
@@ -340,7 +340,7 @@ s32 BtlCharApi_GetPlayerCharPack(s32 player) {
     if (chr != NULL) {
         obj = BtlChar_GetObj(chr);
         if (obj != NULL) {
-            return obj->unk58;
+            return obj->charPack;
         }
         return 0;
     }
@@ -541,7 +541,7 @@ void BtlCharApi_GetNodeUnk90(s32 objId, s32 node, Vec4 *out) {
     if (obj != NULL) {
         n = BtlObj_GetNode(obj, node);
         if (n != NULL) {
-            Vec4_Copy(out, &n->unk90);
+            Vec4_Copy(out, &n->pos);
             return;
         }
         Vec4_Copy(out, &obj->pos);
@@ -579,7 +579,7 @@ void BtlCharApi_GetNodeMtx50(s32 objId, s32 node, Mtx44 *out) {
     if (obj != NULL) {
         n = BtlObj_GetNode(obj, node);
         if (n != NULL) {
-            Mtx_Copy(out, &n->unk50);
+            Mtx_Copy(out, &n->parent);
             return;
         }
         Mtx_StoreIdentity(out);
@@ -628,7 +628,7 @@ f32 BtlCharApi_GetNodeBoundSize(s32 objId, s32 n) {
     if (obj != NULL) {
         part = BtlObj_FindBound(obj, n);
         if (part != NULL) {
-            return part->unk5C;
+            return part->sizeFactor;
         }
         return 1.0f;
     }
@@ -814,7 +814,7 @@ f32 BtlCharApi_GetBlindRatio(s32 objId) {
     if (chr == NULL) {
         return 0.0f;
     }
-    return BtlUtil_ClampF((f32)chr->unkFFC / 90.0f, 0.0f, 1.0f);
+    return BtlUtil_ClampF((f32)chr->blindLevel / 90.0f, 0.0f, 1.0f);
 }
 
 /* During a rush sequence: 0 when the rush has no marked step (attacker: throw word +0x48 / +0x10 - 1; victim: +0x4C /

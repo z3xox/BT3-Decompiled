@@ -52,7 +52,7 @@ typedef struct ChrCam {
     /* 0x10 [0x430] */ Vec4 pos;      /* camera position after BtlCam_TraceStage: what the views get */
     /* 0x20 [0x440] */ Vec4 rot;      /* Euler angles (pitch, yaw, roll), each wrapped to -pi..pi; w forced to 0 */
     /* 0x30 [0x450] */ Vec4 target;   /* point looked at (the trace starts here) */
-    /* 0x40 [0x460] */ Vec4 unk40;    /* copy of *(Vec4 *)(obj + 0xFA0), refreshed by ChrCam_UpdateInput; read by BtlCharApi_GetCamBodyPos */
+    /* 0x40 [0x460] */ Vec4 bodyPos;    /* copy of *(Vec4 *)(obj + 0xFA0), refreshed by ChrCam_UpdateInput; read by BtlCharApi_GetCamBodyPos */
     /* 0x50 [0x470] */ CamShake shake;
     /* 0x70 [0x490] */ s32 hitObj;    /* BtlCam_TraceStage: what was hit */
     /* 0x74 [0x494] */ s32 hit;       /* BtlCam_TraceStage result (1 = the stage is between target and eye); returned by BtlCharApi_GetCamPose, read by 0x1D16F8 */
@@ -64,7 +64,7 @@ typedef struct ChrCam {
     /* 0x8C [0x4AC] */ f32 yawOfs;    /* what ChrCam_CalcFixed / ChrCam_CalcLockOn took off the yaw for rot.y; no reader found */
     /* 0x90 [0x4B0] */ f32 bob;       /* phase of the vertical swing added by ChrCam_GetBob */
     /* 0x94 [0x4B4] */ f32 rate;      /* interpolation factor eye/rot -> wanted pose (ChrCam_GetRate) */
-    /* 0x98 [0x4B8] */ s32 unk98;     /* non-zero enables shake requests and the swing; BtlChar_Reset: BattleSide_GetOptionB(side) == 0 */
+    /* 0x98 [0x4B8] */ s32 shakeOn;     /* non-zero enables shake requests and the swing; BtlChar_Reset: BattleSide_GetOptionB(side) == 0 */
     /* 0x9C [0x4BC] */ s32 unk9C;
 } ChrCam; /* size 0xA0 */
 
@@ -82,8 +82,8 @@ typedef struct ChrCam {
 /* A camera cut: six vectors and six scalars as (start, delta) pairs, blended over `total` frames.
    Fighter + 0x4C0. */
 typedef struct ChrCamCut {
-    /* 0x00 [0x4C0] */ s32 unk0;       /* the two arguments of ChrCam_RequestCut */
-    /* 0x04 [0x4C4] */ s32 unk4;
+    /* 0x00 [0x4C0] */ s32 reqTable;       /* the two arguments of ChrCam_RequestCut */
+    /* 0x04 [0x4C4] */ s32 reqIndex;
     /* 0x08 [0x4C8] */ u8 unk8[8];
     /* 0x10 [0x4D0] */ Vec4 vecA;      /* start values ... */
     /* 0x20 [0x4E0] */ Vec4 vecADelta; /* ... and what is added over the cut */
@@ -97,10 +97,10 @@ typedef struct ChrCamCut {
     /* 0x7C [0x53C] */ f32 valBDelta;
     /* 0x80 [0x540] */ f32 valC;
     /* 0x84 [0x544] */ f32 valCDelta;
-    /* 0x88 [0x548] */ s32 unk88;
-    /* 0x8C [0x54C] */ s32 unk8C;
-    /* 0x90 [0x550] */ s32 unk90;
-    /* 0x94 [0x554] */ s32 unk94;
+    /* 0x88 [0x548] */ s32 nodeA;
+    /* 0x8C [0x54C] */ s32 nodeA2;
+    /* 0x90 [0x550] */ s32 nodeC;
+    /* 0x94 [0x554] */ s32 nodeC2;
     /* 0x98 [0x558] */ s32 timer;      /* frames left; > 0 means a cut is running */
     /* 0x9C [0x55C] */ s32 total;      /* length in frames */
     /* 0xA0 [0x560] */ s32 flags;      /* CHRCUT_F_* */
@@ -147,7 +147,7 @@ typedef struct ChrCamMgr {
     /* 0x000 */ u8 unk0[0x24];
     /* 0x024 */ ChrCamCutDef *cutDefs; /* common cut table */
     /* 0x028 */ u8 unk28[0x274 - 0x28];
-    /* 0x274 */ s32 unk274;            /* BtlChars_IsTimeStopped: non-zero forces rate 1 and no swing */
+    /* 0x274 */ s32 timeStopped;            /* BtlChars_IsTimeStopped: non-zero forces rate 1 and no swing */
 } ChrCamMgr;
 
 /* The fighter's body block, fighter + 0x10 (BtlChar_GetPos returns it): only what this file reads. */
@@ -160,7 +160,7 @@ typedef struct ChrCamBody {
 /* Partial view of a fighter (0x1600 bytes, BtlChar_Get): only what this file touches. */
 typedef struct ChrCamChr {
     /* 0x000 */ s32 side;      /* 0 / 1 (btl_input.h: player); the opponent is BtlChar_Get(side == 0); passed to DemoCam_PlayCharAnim0..2 */
-    /* 0x004 */ s32 unk4;
+    /* 0x004 */ s32 pad;
     /* 0x008 */ s32 unk8;
     /* 0x00C */ s32 objId;     /* BtlObj_Get index of the model object */
     /* 0x010 */ ChrCamBody body;
@@ -168,7 +168,7 @@ typedef struct ChrCamChr {
     /* 0x420 */ ChrCam cam;
     /* 0x4C0 */ ChrCamCut cut;
     /* 0x570 */ u8 unk570[0x974 - 0x570];
-    /* 0x974 */ s32 unk974;    /* BtlAnim_GetId */
+    /* 0x974 */ s32 motion;    /* BtlAnim_GetId */
     /* 0x978 */ u8 unk978[0x1600 - 0x978];
 } ChrCamChr; /* size 0x1600 */
 
