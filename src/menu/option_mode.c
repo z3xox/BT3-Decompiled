@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/evo_top_option.h"
+#include "menu/option.h"
 
 /*
  * 0x39FAA8..0x39FBB8: the handler Progress_Main dispatches to for mode 62. It emits no data, so nothing says

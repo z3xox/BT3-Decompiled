@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/evo_top_option.h"
+#include "menu/evo_top.h"
 #include "sys/pad.h"
 
 /*

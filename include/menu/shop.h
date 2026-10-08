@@ -17,7 +17,7 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
  *   menu_w.c    0x39A978..0x39E940  Shop     tail of the item shop object (mode 50); head: src/menu/shop.c
  *                                            -- now merged into src/menu/shop.c, which includes this header
  *   evo_mode.c  0x39E940..0x39EB08  EvoMode_Main, the handler of modes 48..50
- *   evo_top.c  0x39EB08..0x39FAA8  EvoTop   the mode's top menu (mode 48); declared in include/menu/evo_top_option.h
+ *   evo_top.c  0x39EB08..0x39FAA8  EvoTop   the mode's top menu (mode 48); declared in include/menu/evo_top.h / option.h
  *
  * The Shop layout below is this chunk's own view (the previous chunk's include/menu/evo_z_items.h declares the same
  * structure from the head of the object only and was still changing; unify them when the two files are merged:
@@ -194,6 +194,6 @@ s32 Shop_Run(s32 section);
 
 s32 EvoMode_Main(void);
 
-/* EvoTop (evo_top.c, the whole object since the merge with menu_x.c): see include/menu/evo_top_option.h. */
+/* EvoTop (evo_top.c, the whole object since the merge with menu_x.c): see include/menu/evo_top.h / option.h. */
 
 #endif
