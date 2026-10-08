@@ -7,3 +7,4 @@
   include/battle/btl_char_mgr.h BtlMgrObj: put back (1 fields): uses not resolved by the compiler loop
   include/sys/common.h CommonRes: put back (1 fields): uses not resolved by the compiler loop
   include/battle/stg.h StgDataA: put back (24 fields): uses not resolved by the compiler loop
+  include/sys/save.h SaveData: put back (14 fields): uses not resolved by the compiler loop
