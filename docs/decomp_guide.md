@@ -1050,3 +1050,10 @@ More of the same night (the geyser functions):
 - **Probe**: `extern T alias __asm__("RealName");` is another symbol to cse / gcse and the same assembly: it
   tells whether a shared `%hi()` register causes a difference (in -G0 code such a register has no known base
   address and a store through it conflicts with every later struct load in the block).
+- **A table declared `const`** (as its definition is): a load from a const object conflicts with no store, so a
+  store the scheduler kept glued to the table load floats to its place. Check a table's definition and section
+  against the header's `extern`; a cast to const does not do it. (SimEv34: the 15-instruction miss; menu_u.h)
+- **`(u32)(v * 0.0f)` with `v` assigned a constant just before** keeps the whole >= 2^31 arm of the conversion
+  (`mtc1 zero,$fN` then `sub.s / lui / trunc / mfc1 / or`); a variable holding 0.0 has it folded. Look for a
+  sibling call with the same argument shape and a run-time factor: the constant call is the same expression with
+  the factor set to 1. (ShenScene_StepSeq)
