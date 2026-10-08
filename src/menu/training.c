@@ -1033,7 +1033,7 @@ void Train_Input(void) {
             gTrain->level = TRAIN_LV_PAGES;
             Flash_GotoLabel(&gTrain->flash[0], "fl_ss_view_in", 1);
             gTrain->page = 0;
-            MsgWin_SetBoxParam(0, 5);
+            MsgWin_SetSpacing(0, 5);
             FontIcon_SetPadType(0);
             MsgWin_SetText(gTrain->pageText);
             gTrain->voiceLine = gTrain->pages[gTrain->sel[1]][TRAIN_CUR_LESSON][gTrain->page];
@@ -1073,7 +1073,7 @@ void Train_Input(void) {
                     MsgWin_SetText(gTrain->text);
                 } else {
                     gTrain->voiceLine = -1;
-                    MsgWin_SetBoxParam(0, 0);
+                    MsgWin_SetSpacing(0, 0);
                     MsgWin_SetText(gTrain->msgText[1]);
                     if (Train_IsCleared(gTrain->sel[1], TRAIN_CUR_LESSON)) {
                         gTrain->level = TRAIN_LV_LESSON;
@@ -1093,7 +1093,7 @@ void Train_Input(void) {
             Flash_GotoLabel(&gTrain->flash[0], "fl_ss_view_out", 1);
             Train_Plate2Goto(gTrain->row, 1);
             Snd_PlaySe(1, 2);
-            MsgWin_SetBoxParam(0, 0);
+            MsgWin_SetSpacing(0, 0);
             MsgWin_SetText(gTrain->msgText[1]);
             Train_Say(gTrain->voiceTbl[gTrain->sel[1]][TRAIN_CUR_LESSON]);
         }

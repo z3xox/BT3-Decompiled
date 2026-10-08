@@ -60,7 +60,7 @@ typedef struct McFlowReq {
         char text[0x100];        /* icon.sys title, Shift-JIS */
         u64 align;               /* the strcpy into it is done in 8-byte pieces */
     } title;
-    /* 0x418 */ s32 unk418;      /* the tail of McCardFile.iconName[2]; not used here */
+    /* 0x418 */ s32 iconNameTail;      /* the tail of McCardFile.iconName[2]; not used here */
     /* 0x41C */ s32 titleBreak;  /* byte offset of the line break in the title */
 } McFlowReq; /* size 0x420 */
 

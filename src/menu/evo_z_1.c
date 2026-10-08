@@ -75,7 +75,7 @@ void EvoZ_Init(s32 section) {
         } else if (i < 10) {
             TextBox_Init(box, gEvoZ->text[2], 6);
             TextBox_SetNoFlush(box, 1);
-            TextBox_SetRect(box, 0, 0x200, 0xC6, 0x198);
+            TextBox_SetClip(box, 0, 0x200, 0xC6, 0x198);
         } else {
             TextBox_Init(box, gEvoZ->text[2], 6);
             TextBox_SetNoFlush(box, 1);

@@ -144,7 +144,7 @@ void BtlChar_UpdateLook(BtlCtlChr *chr) {
     blend = 0.0f;
     Vec4_Copy(&q0, (Vec4 *)&head->rot);
     Vec4_Copy(&q1, (Vec4 *)&neck->rot);
-    Mtx_Copy(&m, &head->mtx);
+    Mtx_Copy(&m, &head->parentMtx);
     Mtx_StoreIdentity(&rotm);
     Mtx_RotateX(&rotm, &rotm, neckPitch);
     Mtx_Mul(&m, &m, &rotm);
@@ -287,7 +287,7 @@ void BtlChar_UpdateLookAlt(BtlCtlChr *chr) {
     Vec4_Copy(&q0, (Vec4 *)&head->rot);
     blend = 0.0f;
     Vec4_Copy(&q1, (Vec4 *)&neck->rot);
-    Mtx_Copy(&m, &head->mtx);
+    Mtx_Copy(&m, &head->parentMtx);
     Mtx_InverseRT(&inv, &m);
     BtlOpp_GetDelta(chr, &target);
     Vec4_Add(&target, &target, &look->offset);

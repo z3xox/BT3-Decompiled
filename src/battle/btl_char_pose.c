@@ -81,7 +81,7 @@ void BtlChar_ObjToPose(BtlCtlChr *chr) {
     Vec4_Copy(&pose->rot, &obj->rot);
     node = BtlObj_GetNode(obj, 0);
     if (node != NULL) {
-        Vec4_Copy(&pose->rootPos, &node->pos);
+        Vec4_Copy(&pose->rootPos, &node->localPos);
         Vec4_Copy((Vec4 *)&q, (Vec4 *)&node->rot);
         Quat_ToEuler(&pose->rootRot, &q);
     } else {

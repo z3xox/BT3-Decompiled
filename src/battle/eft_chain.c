@@ -3,7 +3,7 @@
 #include "sys/gfx_ot.h"
 
 /*
- * Effect tasks, 0x178AB0..0x17EE68. Written as two files and merged at integration (EftChain_SetRes only matches
+ * Effect tasks, 0x178AB0..0x17EE68. Written as two files and merged at integration (EftChain_SetTexPair only matches
  * with EftChain_SetTex, 0x1793A8, defined above it): the first part, 0x178AB0..0x17CB40, see
  * include/battle/eft_chain.h; the second part (formerly eft_t.c, 0x17CB40..0x17EE68: the chain module's tail and the
  * ray burst), see include/battle/eft_draw_modules.h and the comment at its start.
@@ -1463,7 +1463,7 @@ void EftChain_Update(EftTask *task) {
  * Nothing here writes a fighter, a battle object or a hit record. Random numbers: libc rand() only, in
  * EftRay_Setup (5 per ray, 6 for a screen burst) and EftRay_Update (1 + one per ray, every frame, modes 1..3).
  *
- * All of this part is C (EftChain_SetRes matches only with 0x1793A8 defined in the same file). Its .lit4
+ * All of this part is C (EftChain_SetTexPair matches only with 0x1793A8 defined in the same file). Its .lit4
  * (0x2FCC84..0x2FCCAC) and .rodata (0x2ECDE0..0x2ECE60, the two tables of EftRay_DrawRays and EftRay_DrawQuad2D
  * included) come out identical to the original.
  */
@@ -1768,7 +1768,7 @@ s32 EftChain_SetSize(EftTTask *task, f32 size) {
 }
 
 /* Sets the node count (the part's parameter 3), clamped to 3..7. */
-s32 EftChain_SetParam3(EftTTask *task, s32 count) {
+s32 EftChain_SetNodeCount(EftTTask *task, s32 count) {
     EftChainWork *w;
 
     if (task == NULL) {
@@ -1791,7 +1791,7 @@ s32 EftChain_SetParam3(EftTTask *task, s32 count) {
 }
 
 /* Sets the start delay (the part's parameter 5). */
-s32 EftChain_SetParam5(EftTTask *task, f32 delay) {
+s32 EftChain_SetDelay(EftTTask *task, f32 delay) {
     EftChainWork *w;
 
     if (task == NULL) {
@@ -1809,7 +1809,7 @@ s32 EftChain_SetParam5(EftTTask *task, f32 delay) {
 }
 
 /* Sets the wait at the end (the part's parameter 6). */
-s32 EftChain_SetParam6(EftTTask *task, f32 endWait) {
+s32 EftChain_SetEndWait(EftTTask *task, f32 endWait) {
     EftChainWork *w;
 
     if (task == NULL) {
@@ -1830,7 +1830,7 @@ s32 EftChain_SetParam6(EftTTask *task, f32 endWait) {
 /* Matching note: compiled on its own this differs in 2 of 22 instructions (a `bne` that comes out `bnel`, and the
    branch target of the "not alive" test). It matches only because EftChain_SetTex (0x1793A8) is DEFINED earlier in
    the same file, which is why the two parts were merged into this one file. */
-s32 EftChain_SetRes(EftTTask *task, s32 set, s32 idxA, s32 idxB) {
+s32 EftChain_SetTexPair(EftTTask *task, s32 set, s32 idxA, s32 idxB) {
     EftChainWork *w;
 
     if (task == NULL) {
@@ -2074,7 +2074,7 @@ void EftRayMgr_Term(EftTTask *task) {
 
 /* Update callback of the manager class: steps the texture animation while a burst exists. */
 void EftRayMgr_Update(EftTTask *task) {
-    if (task->children->count != 0) { /* `count` is the list's head pointer (BtlTaskList.head): list not empty */
+    if (task->children->head != 0) { /* `count` is the list's head pointer (BtlTaskList.head): list not empty */
         EftRay_StepTexture();
     }
 }

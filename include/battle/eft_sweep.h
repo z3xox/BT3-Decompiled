@@ -60,7 +60,7 @@ typedef struct EftEmitDef {
     /* 0x05 */ u8 delay;       /* module parameters */
     /* 0x06 */ u8 stopDelay;
     /* 0x07 */ u8 fade;
-    /* 0x08 */ u8 kind;       /* the start phase (`phase` of EftSetDef, eft_emit.h); 2 and 6 are one-shots */
+    /* 0x08 */ u8 phase;       /* the start phase (`phase` of EftSetDef, eft_emit.h); 2 and 6 are one-shots */
     /* 0x09 */ u8 endPhase;
     /* 0x0A */ u8 node;       /* index into gEftEmitNodeSlot; 6 = opponent node 3 */
     /* 0x0B */ u8 dirMode;    /* 0 dir, 1 -dir, 2 / 3 perpendicular, 4 up, 5 down */
@@ -167,8 +167,8 @@ typedef struct EftEmitSet {
                                             what this union reproduces. */
     };
     /* 0x2FC */ s32 tex32;
-    /* 0x300 */ u8 *tex33;   /* the 16-texture sets: entries of 0x108 bytes (33 = 0x108 / 8) */
-    /* 0x304 */ u8 *tex17;   /* the 8-texture sets: entries of 0x88 bytes (17 = 0x88 / 8) */
+    /* 0x300 */ u8 *tex16;   /* the 16-texture sets: entries of 0x108 bytes (33 = 0x108 / 8) */
+    /* 0x304 */ u8 *tex8;   /* the 8-texture sets: entries of 0x88 bytes (17 = 0x88 / 8) */
     /* 0x308 */ u8 unk308[0x14];
     /* 0x31C */ EftOwner *owner;
 } EftEmitSet; /* size 0x320 */

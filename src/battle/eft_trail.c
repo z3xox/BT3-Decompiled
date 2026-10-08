@@ -84,7 +84,7 @@ extern s32 BtlCharApi_IsHidden(s32 objId);
 extern s32 BtlCharApi_IsModelNew(s32 objId);
 extern s32 BtlCharApi_ObjTestFlagBit21(s32 objId);
 extern s32 BtlCharApi_IsFlag8Action104(s32 objId);
-extern s32 BtlCharApi_GetMemberUnk60(s32 objId);
+extern s32 BtlCharApi_GetMemberVariant(s32 objId);
 extern s32 BtlCharApi_TestFlag2B(s32 objId);
 extern s32 BtlCharApi_IsInRushSequence(s32 objId);
 extern s32 BtlCharApi_GetRushFinishPhase(s32 objId);
@@ -1084,7 +1084,7 @@ void EftFlash_Reset(EftQTask *task) {
 }
 
 /* Task update: fade in, hold, fade out. The hold lasts until its time has run AND, for a flash started by the
- * manager, the fighter's member flag (BtlCharApi_GetMemberUnk60) is set and the rush finish is in state 0 or 2;
+ * manager, the fighter's member flag (BtlCharApi_GetMemberVariant) is set and the rush finish is in state 0 or 2;
  * a waiting flash (arg.wait) ends its hold when the rush finish reaches state 2. 180 frames end it regardless. */
 void EftFlash_Update(EftQTask *task) {
     EftFlash *w = task->work;
@@ -1120,12 +1120,12 @@ void EftFlash_Update(EftQTask *task) {
                 break;
             }
             if (gEftFlash->flags & 2) {
-                if (!BtlCharApi_GetMemberUnk60(0)) {
+                if (!BtlCharApi_GetMemberVariant(0)) {
                     break;
                 }
             }
             if (gEftFlash->flags & 4) {
-                if (!BtlCharApi_GetMemberUnk60(1)) {
+                if (!BtlCharApi_GetMemberVariant(1)) {
                     break;
                 }
             }

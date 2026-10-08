@@ -263,7 +263,7 @@ void EftEmit_SpawnType9(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32
     p.w = 1.0f;
     if (flags & EFT_SPAWN_START) {
         if (H(n) == NULL) {
-            void *tex = set->tex17 + (grp->texBase + def->tex) * 0x88;
+            void *tex = set->tex8 + (grp->texBase + def->tex) * 0x88;
             s32 res0 = EFT_EMIT_RES(set, grp->resFirst + idx).a;
             s32 res1 = EFT_EMIT_RES(set, grp->resFirst + idx).b;
             EftArg9 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, rate, objId };
@@ -327,7 +327,7 @@ void EftEmit_SpawnType10(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s3
     p.w = 1.0f;
     if (flags & EFT_SPAWN_START) {
         if (H(n) == NULL) {
-            void *tex = set->tex33 + (grp->texBase + def->tex) * 0x108;
+            void *tex = set->tex16 + (grp->texBase + def->tex) * 0x108;
             s32 res0 = EFT_EMIT_RES(set, grp->resFirst + idx).a;
             s32 res1 = EFT_EMIT_RES(set, grp->resFirst + idx).b;
             EftArg10 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, rate, def->unk2, def->unk2, objId };
@@ -391,7 +391,7 @@ void EftEmit_SpawnType15(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s3
     p2.w = 1.0f;
     if (flags & EFT_SPAWN_START) {
         if (H(n) == NULL) {
-            void *tex = set->tex33 + (grp->texBase + def->tex) * 0x108;
+            void *tex = set->tex16 + (grp->texBase + def->tex) * 0x108;
             s32 res0 = EFT_EMIT_RES(set, grp->resFirst + idx).a;
             s32 res1 = EFT_EMIT_RES(set, grp->resFirst + idx).b;
             EftArg15 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, rate, def->unk2, 0, objId };
@@ -452,7 +452,7 @@ void EftEmit_SpawnType12(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s3
     p.w = 1.0f;
     if (flags & EFT_SPAWN_START) {
         if (H(n) == NULL) {
-            void *tex = set->tex33 + (grp->texBase + def->tex) * 0x108;
+            void *tex = set->tex16 + (grp->texBase + def->tex) * 0x108;
             s32 res0 = EFT_EMIT_RES(set, grp->resFirst + idx).a;
             s32 res1 = EFT_EMIT_RES(set, grp->resFirst + idx).b;
             EftArg12 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, rate, def->unk2, objId, { srcKind } };
@@ -549,7 +549,7 @@ void EftEmit_Spawn(EftEmitSet *set, EftEmitState *state, EftEmitNodes *nodes, Ve
     slot = gEftEmitNodeSlot[sel];
     if (flags & EFT_SPAWN_START) {
         if (!(state->flags[n] & EFT_EMIT_STARTED)) {
-            if (def->kind == 2) {
+            if (def->phase == 2) {
                 if (def->endPhase != 0) {
                     return;
                 }
@@ -557,7 +557,7 @@ void EftEmit_Spawn(EftEmitSet *set, EftEmitState *state, EftEmitNodes *nodes, Ve
                     return;
                 }
                 state->flags[n] |= EFT_EMIT_ONESHOT;
-            } else if (def->kind == 6) {
+            } else if (def->phase == 6) {
                 if (def->endPhase != 0) {
                     return;
                 }
@@ -573,7 +573,7 @@ void EftEmit_Spawn(EftEmitSet *set, EftEmitState *state, EftEmitNodes *nodes, Ve
     }
     rate = def->rate;
     if (flags & EFT_SPAWN_STOP) {
-        if (def->kind == 2) {
+        if (def->phase == 2) {
             flags &= ~EFT_SPAWN_STOP;
         }
     }
@@ -821,7 +821,7 @@ void EftEmit_MarkKind6(EftEmitSet *set, EftEmitState *state) {
                 if (!(state->flags[n] & EFT_EMIT_STARTED)) {
                     s32 stopped = state->flags[n] & EFT_EMIT_STOPPED;
 
-                    if (!stopped && def->kind == 6) {
+                    if (!stopped && def->phase == 6) {
                         state->flags[n] |= EFT_EMIT_KIND6;
                     }
                 }
@@ -946,7 +946,7 @@ s32 EftEmit_UpdateAlive(EftEmitSet *set, EftEmitState *state) {
                     switch (type) {
                     case 0:
                         if (EftRay_IsAlive(handles->h[n])) {
-                            if (def->kind != 2) {
+                            if (def->phase != 2) {
                                 result |= 1 << type;
                             }
                         } else {
@@ -955,7 +955,7 @@ s32 EftEmit_UpdateAlive(EftEmitSet *set, EftEmitState *state) {
                         break;
                     case 2:
                         if (EftRays_IsAlive(handles->h[n])) {
-                            if (def->kind != 2) {
+                            if (def->phase != 2) {
                                 result |= 1 << type;
                             }
                         } else {
@@ -964,7 +964,7 @@ s32 EftEmit_UpdateAlive(EftEmitSet *set, EftEmitState *state) {
                         break;
                     case 16:
                         if (EftBill_IsAlive(handles->h[n])) {
-                            if (def->kind != 2) {
+                            if (def->phase != 2) {
                                 result |= 1 << type;
                             }
                         } else {
@@ -973,7 +973,7 @@ s32 EftEmit_UpdateAlive(EftEmitSet *set, EftEmitState *state) {
                         break;
                     case 17:
                         if (EftRibbon_IsAlive(handles->h[n])) {
-                            if (def->kind != 2) {
+                            if (def->phase != 2) {
                                 result |= 1 << type;
                             }
                         } else {
@@ -982,7 +982,7 @@ s32 EftEmit_UpdateAlive(EftEmitSet *set, EftEmitState *state) {
                         break;
                     case 18:
                         if (EftChain_IsAlive(handles->h[n])) {
-                            if (def->kind != 2) {
+                            if (def->phase != 2) {
                                 result |= 1 << type;
                             }
                         } else {
@@ -991,7 +991,7 @@ s32 EftEmit_UpdateAlive(EftEmitSet *set, EftEmitState *state) {
                         break;
                     case 14:
                         if (EftAnimPart_IsAlive(handles->h[n])) {
-                            if (def->kind != 2) {
+                            if (def->phase != 2) {
                                 result |= 1 << type;
                             }
                         } else {
@@ -1000,7 +1000,7 @@ s32 EftEmit_UpdateAlive(EftEmitSet *set, EftEmitState *state) {
                         break;
                     case 5:
                         if (EftPtcl_IsAlive(handles->h[n])) {
-                            if (def->kind != 2) {
+                            if (def->phase != 2) {
                                 result |= 1 << type;
                             }
                         } else {
@@ -1009,7 +1009,7 @@ s32 EftEmit_UpdateAlive(EftEmitSet *set, EftEmitState *state) {
                         break;
                     case 9:
                         if (EftQuad_IsAlive(handles->h[n])) {
-                            if (def->kind != 2) {
+                            if (def->phase != 2) {
                                 result |= 1 << type;
                             }
                         } else {
@@ -1018,7 +1018,7 @@ s32 EftEmit_UpdateAlive(EftEmitSet *set, EftEmitState *state) {
                         break;
                     case 10:
                         if (EftPart10_IsAlive(handles->h[n])) {
-                            if (def->kind != 2) {
+                            if (def->phase != 2) {
                                 result |= 1 << type;
                             }
                         } else {
@@ -1027,7 +1027,7 @@ s32 EftEmit_UpdateAlive(EftEmitSet *set, EftEmitState *state) {
                         break;
                     case 15:
                         if (EftLink_IsAlive(handles->h[n])) {
-                            if (def->kind != 2) {
+                            if (def->phase != 2) {
                                 result |= 1 << type;
                             }
                         } else {
@@ -1036,7 +1036,7 @@ s32 EftEmit_UpdateAlive(EftEmitSet *set, EftEmitState *state) {
                         break;
                     case 12:
                         if (EftZap_IsAlive(handles->h[n])) {
-                            if (def->kind != 2) {
+                            if (def->phase != 2) {
                                 result |= 1 << type;
                             }
                         } else {

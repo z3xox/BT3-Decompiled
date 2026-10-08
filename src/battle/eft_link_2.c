@@ -1106,7 +1106,7 @@ void EftLink_SetSize(EftWTask *task, f32 size) {
 }
 
 /* Sets the argument block's rate. No caller in the executable. */
-void EftLink_SetRate(EftWTask *task, f32 rate) {
+void EftLink_SetLife(EftWTask *task, f32 rate) {
     EftWLink *w;
 
     if (gEftLink == NULL) {
@@ -1123,7 +1123,7 @@ void EftLink_SetRate(EftWTask *task, f32 rate) {
         return;
     }
     if (w->flags & 1) {
-        w->arg.rate = rate;
+        w->arg.life = rate;
     }
 }
 
@@ -1363,7 +1363,7 @@ void EftPart10_Init(EftWTask *task, EftPart10Arg *arg) {
     } else {
         w->spinA = 0.0f;
         w->scale = 1.0f;
-        w->stopDelay = 0.0f;
+        w->spinB = 0.0f;
         w->count = def->count;
     }
     if (def->flags & 0x200) {
@@ -1442,8 +1442,8 @@ void EftPart10_Update(EftWTask *task) {
                 }
             }
             if (w->flags & 8) {
-                if (0.0f < w->timer) {
-                    w->timer -= 1.0f;
+                if (0.0f < w->hold) {
+                    w->hold -= 1.0f;
                 } else {
                     w->flags &= ~8;
                     if (!(w->flags & 0x10)) {

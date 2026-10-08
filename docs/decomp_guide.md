@@ -1066,3 +1066,15 @@ More of the same night (the geyser functions):
   move t1,t0`). Found by the permuter. (Train_BuildLists: the last INCLUDE_ASM of the game)
 - **The permuter does not permute an inline helper** (`scripts/permute.py` wraps kept callee bodies in
   PERM_IGNORE): hand-inline the helper into the target first.
+
+## A name can change the code (found 2026-10-08, renaming fields)
+
+Renaming a structure field is expected to change nothing, and of some 1,600 field renames three did: in
+`include/battle/btl_act_2.h`, `BtlActCPose.move` -> `moved`, `BtlActEPose.facing` -> `yaw` and `BtlActEPose.vel` ->
+`dir` each made `BtlAct_RecoverHandler` (src/battle/btl_act_2.c) compile six instructions differently: the
+dispatch of its `switch` loads the jump table's address with `lui / addiu / addu / lw` where the original has
+`sll / lw $3,$L1396($2)`. Only the spelling changed (the offsets are the same). Nothing else in the tree reacted.
+Inferred, not confirmed in the compiler's source: a hash in the optimiser that depends on where identifiers are
+allocated, which the length of a name moves. The three stay under their old names
+(docs/names/fields/changes_code.tsv). So: a rename is checked by the build like any other change, and a function
+that suddenly differs after a rename nearby may be this.

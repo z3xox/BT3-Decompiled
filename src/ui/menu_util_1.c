@@ -45,14 +45,14 @@ ViewProgress *gProgress = NULL;
 void Progress_Init(void) {
     gProgress = Heap_Alloc(sizeof(ViewProgress), 0x20, 0, HEAP_ANY);
     memset(gProgress, 0, sizeof(ViewProgress));
-    gProgress->unk4 = 0x1C1;
+    gProgress->baseFile = 0x1C1;
     gProgress->loadPack = Heap_Alloc(0x3000, 0x40, 0, HEAP_ANY);
     gProgress->loadRes = Heap_Alloc(0x6800, 0x20, 0, HEAP_ANY);
     gProgress->loadSprites = Heap_Alloc(0x380, 0x20, 0, HEAP_ANY);
     gProgress->mode = 1;
     gProgress->flags |= PROGRESS_FLAG_40;
     Progress_ClearSession();
-    gProgress->unk24 = -1;
+    gProgress->demoPick = -1;
 }
 
 /* Clears the parts of the progress block that do not survive a return to the title (also called by Save_*). */
@@ -80,7 +80,7 @@ void FlashAnim_Blink(Flash *flash, FlashRef *ref, s32 *timer, s32 frame) {
     if (gProgress->flags & PROGRESS_FLAG_FREEZE) {
         return;
     }
-    if (ref->id < 0) {
+    if (ref->index < 0) {
         return;
     }
     if (*timer < 36) {
@@ -110,7 +110,7 @@ void FlashAnim_Blink(Flash *flash, FlashRef *ref, s32 *timer, s32 frame) {
 
 /* Shows the clip at frame + 1. */
 void FlashAnim_ShowNext(Flash *flash, FlashRef *ref, s32 frame) {
-    if (ref->id >= 0) {
+    if (ref->index >= 0) {
         Flash_ClipSetFlags(flash, ref, FLASH_PROP_VISIBLE, 1);
         Flash_ClipSetTex(flash, ref, frame + 1);
     }
@@ -122,7 +122,7 @@ void FlashAnim_Talk(Flash *flash, FlashRef *ref, s32 *timer, s32 frame) {
     if (gProgress->flags & PROGRESS_FLAG_FREEZE) {
         return;
     }
-    if (ref->id < 0) {
+    if (ref->index < 0) {
         return;
     }
     LipSync_Update();
@@ -152,7 +152,7 @@ void FlashAnim_Talk(Flash *flash, FlashRef *ref, s32 *timer, s32 frame) {
 
 /* Shows the clip at frame + 1 (the same code as FlashAnim_ShowNext). */
 void FlashAnim_ShowNext2(Flash *flash, FlashRef *ref, s32 frame) {
-    if (ref->id >= 0) {
+    if (ref->index >= 0) {
         Flash_ClipSetFlags(flash, ref, FLASH_PROP_VISIBLE, 1);
         Flash_ClipSetTex(flash, ref, frame + 1);
     }
@@ -169,7 +169,7 @@ void FlashAnim_Sheet(Flash *flash, FlashRef *ref, s32 *timer, s32 *frame, FlashU
     if (gProgress->flags & PROGRESS_FLAG_FREEZE) {
         return;
     }
-    if (ref->id < 0) {
+    if (ref->index < 0) {
         return;
     }
     (*timer)++;
@@ -203,7 +203,7 @@ void FlashAnim_Scroll(Flash *flash, FlashRef *ref, FlashUv *uv, f32 *x, f32 *y, 
     if (gProgress->flags & PROGRESS_FLAG_FREEZE) {
         return;
     }
-    if (ref->id < 0) {
+    if (ref->index < 0) {
         return;
     }
     cell = *uv;
@@ -786,7 +786,7 @@ void ChrGrid_Build(s32 *outCount, ChrGridCell *out, s32 *inCount, ChrGridCell *i
 
     if (gProgress->mode >= 0x26 && gProgress->mode < 0x2A) {
         if (gProgress->mode == 0x28) {
-            if (gProgress->unk624 == 2) {
+            if (gProgress->battleType == 2) {
                 flags |= CHRGRID_NO_RANDOM;
             }
         }
@@ -1032,12 +1032,12 @@ void TextBox_SetOffset(TextBox *box, s32 x, s32 y) {
 
 /* Sets the font clip rectangle of the text (TextBox_DrawClip hands clip[0..3] to Font_SetClip as x0, y0, x1, y1;
    without it the clip is the whole screen, 0, 0, 0x1FF, 0x1BF). Note the argument order: both x first. */
-void TextBox_SetRect(TextBox *box, s32 x0, s32 x1, s32 y0, s32 y1) {
+void TextBox_SetClip(TextBox *box, s32 x0, s32 x1, s32 y0, s32 y1) {
     box->clip[3] = y1;
     box->clip[0] = x0;
     box->clip[1] = y0;
     box->clip[2] = x1;
-    box->flags |= TEXTBOX_FLAG_RECT;
+    box->flags |= TEXTBOX_FLAG_CLIP;
 }
 
 /* Sets the text colour from 0xRRGGBBAA. */
@@ -1051,8 +1051,8 @@ void TextBox_SetColor(TextBox *box, u32 rgba) {
 
 /* Sets the colour of the text's shadow from 0xRRGGBBAA (without it the shadow is 0x20, 0x20, 0x20 at half the
    clip's alpha). */
-void TextBox_SetColor2(TextBox *box, u32 rgba) {
-    box->flags |= TEXTBOX_FLAG_COLOR2;
+void TextBox_SetShadowColor(TextBox *box, u32 rgba) {
+    box->flags |= TEXTBOX_FLAG_SHADOW;
     box->shadow[0] = rgba >> 24;
     box->shadow[1] = rgba >> 16;
     box->shadow[2] = rgba >> 8;
@@ -1233,7 +1233,7 @@ s32 TextBox_DrawClip(TextBoxDraw *draw, TextBoxClipProp *prop) {
         TB(box)->draw.color[2] = 0xFF; \
         TB(box)->draw.color[3] = (u32)(alpha * 128.0f); \
     } \
-    if (TB(box)->flags & TEXTBOX_FLAG_COLOR2) { \
+    if (TB(box)->flags & TEXTBOX_FLAG_SHADOW) { \
         TB(box)->draw.shadow[0] = TB(box)->shadow[0]; \
         TB(box)->draw.shadow[1] = TB(box)->shadow[1]; \
         TB(box)->draw.shadow[2] = TB(box)->shadow[2]; \
@@ -1244,7 +1244,7 @@ s32 TextBox_DrawClip(TextBoxDraw *draw, TextBoxClipProp *prop) {
         TB(box)->draw.shadow[2] = 0x20; \
         TB(box)->draw.shadow[3] = (u32)(alpha * 64.0f); \
     } \
-    if (TB(box)->flags & TEXTBOX_FLAG_RECT) { \
+    if (TB(box)->flags & TEXTBOX_FLAG_CLIP) { \
         TB(box)->draw.clip[0] = TB(box)->clip[0]; \
         TB(box)->draw.clip[1] = TB(box)->clip[1]; \
         TB(box)->draw.clip[2] = TB(box)->clip[2]; \
@@ -1274,7 +1274,7 @@ void TextBox_AttachLine(Flash *flash, FlashRef *ref, s32 x, s32 y, s32 line, Tex
     f32 alpha;
     u16 *str;
 
-    if (line < 0 || ref->id < 0) {
+    if (line < 0 || ref->index < 0) {
         Flash_ClipSetCallbackC(flash, ref, NULL, NULL);
         return;
     }
@@ -1290,7 +1290,7 @@ void TextBox_AttachString(Flash *flash, FlashRef *ref, s32 x, s32 y, u16 *str, T
     f32 scale[2];
     f32 alpha;
 
-    if (ref->id < 0) {
+    if (ref->index < 0) {
         Flash_ClipSetCallbackC(flash, ref, NULL, NULL);
         return;
     }

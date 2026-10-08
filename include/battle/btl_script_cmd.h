@@ -101,7 +101,7 @@
  *   -B n   AddGaugeC(n): the code calls the +0xC gauge here, not BtlFacade_AddGauge14 (which has no caller)
  *   -0..-6 (and -a = slot 7, command 14 only) replace one item id of the member; BtlFacade_SetMemberItems is
  *          always called at the end, options or not
- *   -l n   command 14 only: BtlFacade_SetCpuParam8(n + 0 / 6 / 9 by gProgress->0x3C)
+ *   -l n   command 14 only: BtlFacade_SetCpuLevel(n + 0 / 6 / 9 by gProgress->0x3C)
  */
 
 /* A text window as command 1302 fills it (the same 0x50 bytes btl_script.h calls BtlScriptWindow). */
@@ -116,7 +116,7 @@ typedef struct BtlScriptCmdWindow {
     /* 0x1C */ s32 align;   /* -w */
     /* 0x20 */ s32 flags;
     /* 0x24 */ s32 shadowMode;   /* -T */
-    /* 0x28 */ u32 color28; /* -C: the shadow colour (FontStyle.shadowColor) */
+    /* 0x28 */ u32 shadowColor; /* -C: the shadow colour (FontStyle.shadowColor) */
     /* 0x2C */ s16 shadowDx;   /* -O, first */
     /* 0x2E */ s16 shadowDy;   /* -O, second */
     /* 0x30 */ u8 unk30[0x18];

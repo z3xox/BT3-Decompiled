@@ -240,7 +240,7 @@ s32 EftPart10_InitPtcl(EftPart10Ptcl *p, EftPart10 *em) {
 
     Vec4_Set(&p->pos, 0.0f, 0.0f, 0.0f, 1.0f);
     Vec4_Set(&p->scale, em->scaleX.v, em->scaleY.v, 0.0f, 1.0f);
-    p->speed = em->speedBase.v + Rand_FloatRange(em->speed.v, em->speed.v + em->speedRange.v);
+    p->dist = em->distBase.v + Rand_FloatRange(em->dist.v, em->dist.v + em->distRange.v);
     p->distVel = Rand_FloatRange(em->distVel.v, em->distVel.v + em->distVelRange.v);
     p->distVel *= em->size;
     life = Rand_FloatRange(em->life.v, em->life.v + em->lifeRange.v) * 30.0f;
@@ -295,10 +295,10 @@ s32 EftPart10_InitPtcl(EftPart10Ptcl *p, EftPart10 *em) {
     }
     if (def->colorMode == 2) {
         if (!(rand() & 1)) {
-            p->flags |= EFT_PART10_P_UNK80;
+            p->flags |= EFT_PART10_P_COLOR_RAMP;
         }
     } else if (def->colorMode != 1) {
-        p->flags |= EFT_PART10_P_UNK80;
+        p->flags |= EFT_PART10_P_COLOR_RAMP;
     }
     p->fadeTime = p->life * (em->fade1.v - em->fade0.v);
     p->fadeT = 0.0f;
@@ -321,22 +321,22 @@ s32 EftPart10_InitPtcl(EftPart10Ptcl *p, EftPart10 *em) {
     p->fadeIn = p->life * def->fadeIn;
     p->fadeOut = p->life * (1.0f - def->fadeOut);
     if (def->flags & 0x100) {
-        p->stretchTime = em->stretchTime.v * 30.0f;
-        p->stretchAge = 0.0f;
-        p->stretchStep[0] = em->stretchX.b - em->stretchX.a;
-        p->stretchStep[1] = em->stretchY.b - em->stretchY.a;
-        p->stretchStep[2] = em->stretchZ.b - em->stretchZ.a;
-        p->stretch[0] = em->stretchX.a;
-        p->stretch[1] = em->stretchY.a;
-        p->stretch[2] = em->stretchZ.a;
-        if (p->stretchStep[0] != 0.0f) {
-            p->flags |= EFT_PART10_P_SCALEX;
+        p->mulTime = em->stretchTime.v * 30.0f;
+        p->mulT = 0.0f;
+        p->mulD[0] = em->stretchX.b - em->stretchX.a;
+        p->mulD[1] = em->stretchY.b - em->stretchY.a;
+        p->mulD[2] = em->stretchZ.b - em->stretchZ.a;
+        p->mul0[0] = em->stretchX.a;
+        p->mul0[1] = em->stretchY.a;
+        p->mul0[2] = em->stretchZ.a;
+        if (p->mulD[0] != 0.0f) {
+            p->flags |= EFT_PART10_P_MUL_R;
         }
-        if (p->stretchStep[1] != 0.0f) {
-            p->flags |= EFT_PART10_P_SCALEY;
+        if (p->mulD[1] != 0.0f) {
+            p->flags |= EFT_PART10_P_MUL_G;
         }
-        if (p->stretchStep[2] != 0.0f) {
-            p->flags |= EFT_PART10_P_SCALEZ;
+        if (p->mulD[2] != 0.0f) {
+            p->flags |= EFT_PART10_P_MUL_B;
         }
     }
     return 1;
@@ -844,9 +844,9 @@ void EftPart10_StartKeys(EftPart10 *em) {
         em->angARange.d = def->angARange[seg] - def->angARange[seg - 1];
         em->angB.d = def->angB[seg] - def->angB[seg - 1];
         em->angBRange.d = def->angBRange[seg] - def->angBRange[seg - 1];
-        em->speed.d = def->speed[seg] - def->speed[seg - 1];
-        em->speedRange.d = def->speedRange[seg] - def->speedRange[seg - 1];
-        em->speedBase.d = def->speedBase[seg] - def->speedBase[seg - 1];
+        em->dist.d = def->dist[seg] - def->dist[seg - 1];
+        em->distRange.d = def->distRange[seg] - def->distRange[seg - 1];
+        em->distBase.d = def->distBase[seg] - def->distBase[seg - 1];
         em->distVel.d = def->distVel[seg] - def->distVel[seg - 1];
         em->distVelRange.d = def->distVelRange[seg] - def->distVelRange[seg - 1];
         em->scaleX.d = def->scaleX[seg] - def->scaleX[seg - 1];
@@ -858,13 +858,13 @@ void EftPart10_StartKeys(EftPart10 *em) {
         em->dPulse.a = def->pulse[seg][0] - def->pulse[seg - 1][0];
         em->dPulse.b = def->pulse[seg][1] - def->pulse[seg - 1][1];
         em->pulseTime.d = def->pulseTime[seg] - def->pulseTime[seg - 1];
-        em->dStretchX.a = def2->stretchX[seg][0] - def2->stretchX[seg - 1][0];
-        em->dStretchX.b = def2->stretchX[seg][1] - def2->stretchX[seg - 1][1];
-        em->dStretchY.a = def2->stretchY[seg][0] - def2->stretchY[seg - 1][0];
-        em->dStretchY.b = def2->stretchY[seg][1] - def2->stretchY[seg - 1][1];
-        em->dStretchZ.a = def2->stretchZ[seg][0] - def2->stretchZ[seg - 1][0];
-        em->dStretchZ.b = def2->stretchZ[seg][1] - def2->stretchZ[seg - 1][1];
-        em->stretchTime.d = def2->stretchTime[seg] - def2->stretchTime[seg - 1];
+        em->dStretchX.a = def2->mulR[seg][0] - def2->mulR[seg - 1][0];
+        em->dStretchX.b = def2->mulR[seg][1] - def2->mulR[seg - 1][1];
+        em->dStretchY.a = def2->mulG[seg][0] - def2->mulG[seg - 1][0];
+        em->dStretchY.b = def2->mulG[seg][1] - def2->mulG[seg - 1][1];
+        em->dStretchZ.a = def2->mulB[seg][0] - def2->mulB[seg - 1][0];
+        em->dStretchZ.b = def2->mulB[seg][1] - def2->mulB[seg - 1][1];
+        em->stretchTime.d = def2->mulTime[seg] - def2->mulTime[seg - 1];
         em->fade0.d = def2->fade0[seg] - def2->fade0[seg - 1];
         em->fade1.d = def2->fade1[seg] - def2->fade1[seg - 1];
         Vec4_Sub(&em->dColor, &def2->color[seg], &def2->color[seg - 1]);
@@ -913,9 +913,9 @@ void EftPart10_UpdateKeys(EftPart10 *em) {
     em->angB.v = def->angB[seg] + em->angB.d * t;
     em->angARange.v = def->angARange[seg] + em->angARange.d * t;
     em->angBRange.v = def->angBRange[seg] + em->angBRange.d * t;
-    em->speed.v = def->speed[seg] + em->speed.d * t;
-    em->speedRange.v = def->speedRange[seg] + em->speedRange.d * t;
-    em->speedBase.v = def->speedBase[seg] + em->speedBase.d * t;
+    em->dist.v = def->dist[seg] + em->dist.d * t;
+    em->distRange.v = def->distRange[seg] + em->distRange.d * t;
+    em->distBase.v = def->distBase[seg] + em->distBase.d * t;
     em->distVel.v = def->distVel[seg] + em->distVel.d * t;
     em->distVelRange.v = def->distVelRange[seg] + em->distVelRange.d * t;
     em->scaleX.v = def->scaleX[seg] + em->scaleX.d * t;
@@ -927,13 +927,13 @@ void EftPart10_UpdateKeys(EftPart10 *em) {
     em->pulse.a = def->pulse[seg][0] + em->dPulse.a * t;
     em->pulse.b = def->pulse[seg][1] + em->dPulse.b * t;
     em->pulseTime.v = def->pulseTime[seg] + em->pulseTime.d * t;
-    em->stretchX.a = def2->stretchX[seg][0] + em->dStretchX.a * t;
-    em->stretchX.b = def2->stretchX[seg][1] + em->dStretchX.b * t;
-    em->stretchY.a = def2->stretchY[seg][0] + em->dStretchY.a * t;
-    em->stretchY.b = def2->stretchY[seg][1] + em->dStretchY.b * t;
-    em->stretchZ.a = def2->stretchZ[seg][0] + em->dStretchZ.a * t;
-    em->stretchZ.b = def2->stretchZ[seg][1] + em->dStretchZ.b * t;
-    em->stretchTime.v = def2->stretchTime[seg] + em->stretchTime.d * t;
+    em->stretchX.a = def2->mulR[seg][0] + em->dStretchX.a * t;
+    em->stretchX.b = def2->mulR[seg][1] + em->dStretchX.b * t;
+    em->stretchY.a = def2->mulG[seg][0] + em->dStretchY.a * t;
+    em->stretchY.b = def2->mulG[seg][1] + em->dStretchY.b * t;
+    em->stretchZ.a = def2->mulB[seg][0] + em->dStretchZ.a * t;
+    em->stretchZ.b = def2->mulB[seg][1] + em->dStretchZ.b * t;
+    em->stretchTime.v = def2->mulTime[seg] + em->stretchTime.d * t;
     em->fade0.v = def2->fade0[seg] + em->fade0.d * t;
     em->fade1.v = def2->fade1[seg] + em->fade1.d * t;
     Vec3_Scale(p, &em->dColor, t);
@@ -970,9 +970,9 @@ void EftPart10_SetKey(EftPart10 *em, s32 idx) {
     em->angARange.v = def->angARange[idx];
     em->angB.v = def->angB[idx];
     em->angBRange.v = def->angBRange[idx];
-    em->speed.v = def->speed[idx];
-    em->speedRange.v = def->speedRange[idx];
-    em->speedBase.v = def->speedBase[idx];
+    em->dist.v = def->dist[idx];
+    em->distRange.v = def->distRange[idx];
+    em->distBase.v = def->distBase[idx];
     em->distVel.v = def->distVel[idx];
     em->distVelRange.v = def->distVelRange[idx];
     em->scaleX.v = def->scaleX[idx];
@@ -984,13 +984,13 @@ void EftPart10_SetKey(EftPart10 *em, s32 idx) {
     em->pulse.a = def->pulse[idx][0];
     em->pulse.b = def->pulse[idx][1];
     em->pulseTime.v = def->pulseTime[idx];
-    em->stretchX.a = def2->stretchX[idx][0];
-    em->stretchX.b = def2->stretchX[idx][1];
-    em->stretchY.a = def2->stretchY[idx][0];
-    em->stretchY.b = def2->stretchY[idx][1];
-    em->stretchZ.a = def2->stretchZ[idx][0];
-    em->stretchZ.b = def2->stretchZ[idx][1];
-    em->stretchTime.v = def2->stretchTime[idx];
+    em->stretchX.a = def2->mulR[idx][0];
+    em->stretchX.b = def2->mulR[idx][1];
+    em->stretchY.a = def2->mulG[idx][0];
+    em->stretchY.b = def2->mulG[idx][1];
+    em->stretchZ.a = def2->mulB[idx][0];
+    em->stretchZ.b = def2->mulB[idx][1];
+    em->stretchTime.v = def2->mulTime[idx];
     em->fade0.v = def2->fade0[idx];
     em->fade1.v = def2->fade1[idx];
     Vec4_Copy(&em->color, &def2->color[idx]);
@@ -1227,7 +1227,7 @@ void EftPart10_SetSize(EftXTask *task, f32 size) {
 }
 
 /* Sets the emitter's life in seconds (0 = until stopped). No caller. */
-void EftPart10_SetRate(EftXTask *task, f32 rate) {
+void EftPart10_SetLife(EftXTask *task, f32 rate) {
     EftPart10 *em;
 
     if (gEftPart10Mgr == NULL) {

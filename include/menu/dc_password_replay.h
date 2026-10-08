@@ -31,7 +31,7 @@ extern void Flash_ClipSetCallbackB(MFlash *flash, MFlashRef *ref, void *fn, void
 extern void Sprite_SetScissor(s32 x0, s32 x1, s32 y0, s32 y1);
 extern void TextBox_Init(MTextBox *box, void *text, u32 preset);
 extern void TextBox_SetNoFlush(MTextBox *box, s32 value);
-extern void TextBox_SetRect(MTextBox *box, s32 x0, s32 x1, s32 y0, s32 y1);
+extern void TextBox_SetClip(MTextBox *box, s32 x0, s32 x1, s32 y0, s32 y1);
 extern void TextBox_AttachLine(MFlash *flash, MFlashRef *ref, s32 x, s32 y, s32 line, MTextBox *box);
 extern s32 Dialog_Input(s32 allowCancel);
 extern s32 Dialog_IsClosed(void);
@@ -92,7 +92,7 @@ typedef struct ZaChrEntry {
     /* 0x00 */ u8 unk0[8];
     /* 0x08 */ u16 flags;       /* bit 0 / bit 1: two character classes that some items refuse */
     /* 0x0A */ u8 unkA[4];
-    /* 0x0E */ u16 slots;       /* item slots the character has at level 0 (baseLevel in ChrTblEntry / VChrEntry) */
+    /* 0x0E */ u16 baseLevel;       /* item slots the character has at level 0 (baseLevel in ChrTblEntry / VChrEntry) */
     /* 0x10 */ u8 unk10[0x2C];
 } ZaChrEntry; /* 0x3C */
 

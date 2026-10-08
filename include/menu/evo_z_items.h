@@ -75,7 +75,7 @@ typedef struct VChrEntry {
     /* 0x08 */ u16 flags;
     /* 0x0A */ u16 costumes;
     /* 0x0C */ u16 cost;
-    /* 0x0E */ u16 baseLevel;   /* the level counts item slots: base slot count (ZaChrEntry.slots); ChrTbl_GetLevel adds the saved level */
+    /* 0x0E */ u16 baseLevel;   /* the level counts item slots: base slot count (ZaChrEntry.slots); ChrTbl_GetItemSlots adds the saved level */
     /* 0x10 */ s32 exp[7];      /* experience needed for each level */
     /* 0x2C */ u8 unk2C[0x10];
 } VChrEntry; /* 0x3C */
@@ -159,7 +159,7 @@ typedef struct EvoZ {
     /* 0x001C */ void * dialogText;  /* section 39 */
     /* 0x0020 */ void * text[3];  /* sections 34, 35, 37 */
     /* 0x002C */ MFlash flash[EVOZ_FLASH_NUM];  /* sections 13, 23, 31: screen, character reel, item list */
-    /* 0x00B0 */ MTexRes * chipTex;  /* the relocated chip file, drawn as the background picture (`bg` in UEvoZ, evo_z.h) */
+    /* 0x00B0 */ MTexRes * bg;  /* the relocated chip file, drawn as the background picture (`bg` in UEvoZ, evo_z.h) */
     /* 0x00B4 */ u8 * tex0[43];  /* [42] = the portrait */
     /* 0x0160 */ u8 * tex1[25];  /* [0..6] the reel chips, [18..24] the chips before the last change */
     /* 0x01C4 */ u8 * tex2[26];
@@ -185,8 +185,8 @@ typedef struct EvoZ {
     /* 0x0324 */ VChrCell cells[165];  /* the grid as ChrGrid_Build filters it (previous chunk) */
     /* 0x1A58 */ s32 rows;  /* rows of the character grid */
     /* 0x1A5C */ f32 faceAlpha;
-    /* 0x1A60 */ s32 capacity;  /* item slots of the character (ChrTbl_GetLevel) */
-    /* 0x1A64 */ s32 fits;  /* item slots the set takes (result of ItemSet_Fit) */
+    /* 0x1A60 */ s32 capacity;  /* item slots of the character (ChrTbl_GetItemSlots) */
+    /* 0x1A64 */ s32 used;  /* item slots the set takes (result of ItemSet_Fit) */
     /* 0x1A68 */ s32 kind;  /* bit 0 of the character entry's flags, inverted */
     /* 0x1A6C */ s32 exp;
     /* 0x1A70 */ s32 nextExp;  /* experience of the next level (0 at the last level) */
@@ -244,7 +244,7 @@ extern s32 Dialog_IsClosed(void);
 extern void Dialog_Draw(s32 visible);
 extern void Flash_ClipSetCallbackA(MFlash *flash, MFlashRef *ref, void *fn, void *arg);
 extern void Flash_ClipSetCallbackB(MFlash *flash, MFlashRef *ref, void *fn, void *arg);
-extern s32 ChrTbl_GetLevel(s32 chara, s32 slot, s32 fromRec);
+extern s32 ChrTbl_GetItemSlots(s32 chara, s32 slot, s32 fromRec);
 extern s32 ChrTbl_GetExp(s32 chara, s32 slot);
 extern s32 ChrTbl_GetMaxExp(s32 chara);
 extern s32 ItemSet_Fit(u16 *ids, VItemEntry *table, s32 capacity, s32 *used);
@@ -292,6 +292,6 @@ void ItemHelp_Close(void);
  * include/menu/shop.h (this header's partial view was removed). ---- */
 
 extern void Sprite_SetScissor(s32 x0, s32 x1, s32 y0, s32 y1);
-extern void TextBox_SetRect(MTextBox *box, s32 a, s32 b, s32 c, s32 d);
+extern void TextBox_SetClip(MTextBox *box, s32 a, s32 b, s32 c, s32 d);
 
 #endif

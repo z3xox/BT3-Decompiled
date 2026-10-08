@@ -57,7 +57,7 @@ ZaChrPass PassChk_ConvertOld(ZaOldPass *old) {
 
     memset(&out, 0, sizeof(out));
     chara = gPassChk->oldChara[old->charId];
-    out.extraSlots = 7 - charaTbl[chara].slots;
+    out.extraSlots = 7 - charaTbl[chara].baseLevel;
     for (i = 0; i < 7; i++) {
         if ((u32)(old->item[i] - 1) < PASSCHK_OLD_ITEM_NUM) {
             PassOldItem *item = &gPassChk->oldItem[old->item[i] - 1];
@@ -173,7 +173,7 @@ s32 PassChk_IsValid(ZaChrPass *pass) {
         return 0;
     }
     extra = pass->extraSlots;
-    if (charaTbl[chara].slots + extra > 7) {
+    if (charaTbl[chara].baseLevel + extra > 7) {
         return 0;
     }
     for (i = 0; i < 8; i++) {
@@ -228,9 +228,9 @@ s32 PassChk_IsValid(ZaChrPass *pass) {
         }
     }
     if (fill) {
-        extra = pass->extraSlots = 7 - charaTbl[chara].slots;
+        extra = pass->extraSlots = 7 - charaTbl[chara].baseLevel;
     }
-    if (extra + charaTbl[chara].slots < cost) {
+    if (extra + charaTbl[chara].baseLevel < cost) {
         return 0;
     }
     return 1;

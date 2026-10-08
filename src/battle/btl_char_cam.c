@@ -852,7 +852,7 @@ shake:
     if (keepBehind) {
         ChrCam_KeepBehindHead(chr, &cam->eye, &rot);
     }
-    cam->hit = BtlCam_TraceStage(&cam->pos, &cam->eye, &cam->target, &cam->hitFrac, &cam->hitObj);
+    cam->hit = BtlCam_TraceStage(&cam->pos, &cam->eye, &cam->target, &cam->hitFrac, &cam->hitZone);
     if (cam->hit && turn) {
         ChrCam_TurnToOpponent(chr, &rot);
     }

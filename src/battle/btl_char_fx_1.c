@@ -572,9 +572,9 @@ void BtlFx_SpawnHitSparkReq17(FxChr *chr) {
 
     if (BtlChar_TestFxBit(chr, 0x17)) {
         type = BtlKiBlast_GetType(chr);
-        Vec4_Copy(&arg.pos, &chr->hitPos);
+        Vec4_Copy(&arg.pos, &chr->aimDir);
         arg.objId = chr->objId;
-        arg.kind = chr->hitKind;
+        arg.kind = chr->blastNode;
         arg.unk18 = BtlKiBlast_GetUnk3(chr);
         arg.scale = 1.0f;
         if (BtlChar_IsBodyChanged(chr)) {
@@ -1308,12 +1308,12 @@ void BtlFx_FireKiBlast(FxChr *chr) {
     if (BtlAnim_TestAttr(chr, 4)) {
         spread = BtlKiBlast_GetSpreadMode(chr);
         node = BtlObjAnim_MaskToNode(BtlObjAnim_GetEventArg(obj, 4));
-        Vec4_Copy(&aimDir, &chr->hitPos);
+        Vec4_Copy(&aimDir, &chr->aimDir);
         count = BtlKiBlast_GetHits(chr);
         if (count <= 0) {
             count = 1;
         }
-        arg.code = node;
+        arg.node = node;
         arg.objId2 = chr->objId;
         arg.objId = chr->objId;
         arg.area = obj->area;

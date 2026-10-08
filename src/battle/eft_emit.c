@@ -45,7 +45,7 @@ extern s32 BtlCharApi_GetPlayerEffectPack(s32 player, u32 n);
 extern void *BtlCharApi_GetPlayerSuperData(s32 player);
 extern void *BtlCharApi_GetPlayerSkillData(s32 player);
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out);
-extern s32 BtlCharApi_ObjQuery24D610(s32 objId, s32 mask, s32 what);
+extern s32 BtlCharApi_ObjQueryAnimEvent(s32 objId, s32 mask, s32 what);
 
 /* eft_shot.c */
 extern s32 EftShot_TestBits(s32 objId, s32 mask);
@@ -514,7 +514,7 @@ void EftVolley_Fire(s32 objId, EftHTask *task, s32 phase, s32 sub) {
                 BtlCharApi_GetNodePos(objId, node, &w->shotPose[i].nodePos);
                 arg.pose = &w->shotPose[i];
             } else {
-                if (BtlCharApi_ObjQuery24D610(objId, 0x400, 4) <= 0) {
+                if (BtlCharApi_ObjQueryAnimEvent(objId, 0x400, 4) <= 0) {
                     shot->flags |= 2;
                 }
                 node = w->pose.node;
@@ -1777,9 +1777,9 @@ extern s32 EftChain_SetPos(void *obj, Vec4 *pos);
 extern s32 EftChain_Warp(void *obj, Vec4 *pos);
 extern s32 EftChain_SetDir(void *obj, Vec4 *dir);
 extern s32 EftChain_SetSize(void *obj, f32 size);
-extern s32 EftChain_SetParam3(void *obj, s32 count);
-extern s32 EftChain_SetParam5(void *obj, f32 delay);
-extern s32 EftChain_SetParam6(void *obj, f32 endWait);
+extern s32 EftChain_SetNodeCount(void *obj, s32 count);
+extern s32 EftChain_SetDelay(void *obj, f32 delay);
+extern s32 EftChain_SetEndWait(void *obj, f32 endWait);
 extern s32 EftChain_SetViewOnly(void *obj);
 extern s32 EftChain_SetType(void *obj, s32 type);
 
@@ -1807,9 +1807,9 @@ void EftEmit_SpawnType18(EftSet *set, EftSetHandles *handles, s32 flags, s32 typ
                 Vec4_Copy((Vec4 *)&arg.pos, &p);
             }
             H(n) = EftChain_Create(&arg);
-            EftChain_SetParam3(H(n), part->count);
-            EftChain_SetParam5(H(n), part->delay);
-            EftChain_SetParam6(H(n), part->hold);
+            EftChain_SetNodeCount(H(n), part->count);
+            EftChain_SetDelay(H(n), part->delay);
+            EftChain_SetEndWait(H(n), part->hold);
             if (part->flags & 0x20) {
                 EftChain_SetViewOnly(H(n));
             }
@@ -1836,7 +1836,7 @@ void EftEmit_SpawnType18(EftSet *set, EftSetHandles *handles, s32 flags, s32 typ
             H(n) = NULL;
         } else if (flags & EFT_CMD_STOP) {
             if (flags & EFT_CMD_FADE) {
-                EftChain_SetParam6(H(n), 0.0f);
+                EftChain_SetEndWait(H(n), 0.0f);
             }
             EftChain_Stop(H(n));
         }

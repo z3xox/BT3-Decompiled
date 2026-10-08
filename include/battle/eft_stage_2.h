@@ -102,7 +102,7 @@ typedef struct EftGeyserSteamArg {
     /* 0x10 */ EftVec dir;
     /* 0x20 */ EftVec color;
     /* 0x30 */ f32 speed;
-    /* 0x34 */ f32 gravity; /* 9.8 / 30; `accel` in EftSteamArg (eft_water.h): added to the vertical speed every frame */
+    /* 0x34 */ f32 accel; /* 9.8 / 30; `accel` in EftSteamArg (eft_water.h): added to the vertical speed every frame */
     /* 0x38 */ f32 size;
     /* 0x3C */ s32 life;
     /* 0x40 */ f32 posRange;
@@ -195,13 +195,13 @@ typedef struct EftStageKind {
 
 /* Texture record of the surface file. */
 typedef struct EftSurfTex {
-    /* 0x00 */ s32 ofs0; /* file offsets of two blocks: the image and the CLUT (the record has the layout of EftVramImage) */
-    /* 0x04 */ s32 ofs4;
+    /* 0x00 */ s32 imageOfs; /* file offsets of two blocks: the image and the CLUT (the record has the layout of EftVramImage) */
+    /* 0x04 */ s32 clutOfs;
     /* 0x08 */ u8 unk8[0x20];
     /* 0x28 */ u64 tex0;  /* written every frame by EftSurf_UpdateTextures */
     /* 0x30 */ u64 tex0Base;
-    /* 0x38 */ s32 ptr0;  /* ofs0 / ofs4 as pointers: image and CLUT */
-    /* 0x3C */ s32 ptr4;
+    /* 0x38 */ s32 image;  /* imageOfs / clutOfs as pointers: image and CLUT */
+    /* 0x3C */ s32 clut;
 } EftSurfTex; /* size 0x40 */
 
 #define EFT_SURF_NO_DEPTH_TEST 0x8 /* drawn in layer 1 */

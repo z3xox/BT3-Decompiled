@@ -443,7 +443,7 @@ void HistResult_UpdateState(void) {
         break;
     case 53:
     case 56:
-        if (GetWin_IsAnimating()) {
+        if (GetWin_IsAnimDone()) {
             gHistResult->state++;
         }
         break;

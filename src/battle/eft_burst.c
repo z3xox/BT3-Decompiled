@@ -369,8 +369,8 @@ void EftBurst_RelocateModel(EftBurstModel *model) {
         model->tex = (EftBurstTex *)((u8 *)model->tex + (s32)model);
         tex = model->tex;
         for (i = 0; i < model->texCount; i++) {
-            tex->ptr0 = tex->ofs0 + (s32)model;
-            tex->ptr4 = tex->ofs4 + (s32)model;
+            tex->image = tex->imageOfs + (s32)model;
+            tex->clut = tex->clutOfs + (s32)model;
             tex++;
         }
     }

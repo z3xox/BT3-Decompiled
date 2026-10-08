@@ -2077,12 +2077,12 @@ void BtlObj_SetSubState(BObj *obj, s32 mode, s32 arg) {
     case BOBJ_MOUTH_TALK_3:
         if (rand() & 1) {
             face->talkCount = 7;
-            face->talkTable = gBtlObjTalkPattern7;
+            face->talkKeys = gBtlObjTalkPattern7;
         } else {
             face->talkCount = 5;
-            face->talkTable = gBtlObjTalkPattern5;
+            face->talkKeys = gBtlObjTalkPattern5;
         }
-        end = face->talkTable[face->talkCount * 2 - 2];
+        end = face->talkKeys[face->talkCount * 2 - 2];
         face->talkTime = 0.0f;
         face->talkEnd = end;
         face->talkLoops = 0;

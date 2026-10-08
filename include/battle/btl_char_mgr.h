@@ -171,7 +171,7 @@ typedef struct BtlMgrChr {
     /* 0x1590 */ s32 dirHeld;    /* -1 each frame */
     /* 0x1594 */ s32 techClass;    /* -1 each frame (BtlInputChr.techClass) */
     /* 0x1598 */ u8 unk1598[0x15D0 - 0x1598];
-    /* 0x15D0 */ s32 padFlagA;   /* (SaveData.flags & (2 << pad)) != 0: vibration enabled, BtlCharVib.enabled (btl_char_util.h) */
+    /* 0x15D0 */ s32 vibEnabled;   /* (SaveData.flags & (2 << pad)) != 0: vibration enabled, BtlCharVib.enabled (btl_char_util.h) */
     /* 0x15D4 */ s32 vibState[5]; /* the rest of BtlCharVib: power (an f32), time, smallTime, phase, toggle; cleared on a character swap */
     /* 0x15E8 */ u32 *objTbl[3]; /* table inside each of the object's three files */
     /* 0x15F4 */ u8 unk15F4[0x1600 - 0x15F4];

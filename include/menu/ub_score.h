@@ -118,8 +118,8 @@ typedef struct PProgress {
     /* 0x018 */ s32 mode;
     /* 0x01C */ u8 unk1C[0x61C];
     /* 0x638 */ s32 ubCursor;      /* plate the mode 13 menu was left on (0..3); while it is 0 a score total is capped at 65535 */
-    /* 0x63C */ s32 misRank;       /* mission select: page (five missions each) */
-    /* 0x640 */ s32 misRow;        /* mission select: plate on the page */
+    /* 0x63C */ s32 missionPage;       /* mission select: page (five missions each) */
+    /* 0x640 */ s32 cursor;        /* mission select: plate on the page */
 } PProgress;
 
 #define P_PROG ((PProgress *)gProgress)

@@ -56,9 +56,9 @@ BtlCharApi_GetAltitude = 0x002058A8; // type:func
 // Model nodes (func_002505A8(obj, node)): node +0x40 (position), +0x90, matrix +0x10, matrix +0x50, func_00250940, quaternion
 // +0xA0. 0x205C00: float +0x5C of func_00250570(obj, n), default 1.0.
 BtlCharApi_GetNodePos = 0x002058E0; // type:func
-BtlCharApi_GetNodeUnk90 = 0x00205978; // type:func
+BtlCharApi_GetNodeLocalPos = 0x00205978; // type:func (guess)
 BtlCharApi_GetNodeMtx = 0x00205A10; // type:func
-BtlCharApi_GetNodeMtx50 = 0x00205A98; // type:func
+BtlCharApi_GetNodeParentMtx = 0x00205A98; // type:func (guess)
 BtlCharApi_GetNodeRot = 0x00205B20; // type:func // guess
 BtlCharApi_GetNodeQuat = 0x00205B78; // type:func
 BtlCharApi_GetNodeBoundSize = 0x00205C00; // type:func (guess)

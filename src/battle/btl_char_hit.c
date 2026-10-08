@@ -397,7 +397,7 @@ s32 BtlHit_CheckGrab(HitChr *a, HitChr *b) {
     }
     t = BtlSkill_GetFrames(a, slot);
     b->react.back = 0;
-    b->react.unk48 = t;
+    b->react.blindTimer = t;
     b->react.yaw = BtlChar_GetPos(a)->yaw;
     BtlChar_PlayVoice(b, 0);
     if (is800) {
@@ -1248,7 +1248,7 @@ void BtlHit_ApplyHit(HitChr *atk) {
             BtlChar_PlayVoice(def, BtlHit_GetVoiceKind(def->react.reaction));
         }
     } else {
-        def->react.unk38 = 3;
+        def->react.shakeTimer = 3;
         if (drain) {
             BtlMember_SpendKi(def, 2000, 0);
         }

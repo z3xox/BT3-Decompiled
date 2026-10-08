@@ -114,8 +114,8 @@ typedef struct BtlCtlNode {
     /* 0x04 */ u32 flags;   /* bit 0 cleared by the head tracking */
     /* 0x08 */ u8 unk8[0x40 - 0x8];
     /* 0x40 */ Vec4 worldPos;
-    /* 0x50 */ Mtx44 mtx;   /* the parent's world matrix (the node's own is at +0x10) */
-    /* 0x90 */ Vec4 pos;    /* local translation */
+    /* 0x50 */ Mtx44 parentMtx;   /* the parent's world matrix (the node's own is at +0x10) */
+    /* 0x90 */ Vec4 localPos;    /* local translation */
     /* 0xA0 */ Quat rot;
 } BtlCtlNode;
 

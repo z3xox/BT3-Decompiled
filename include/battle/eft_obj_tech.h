@@ -164,7 +164,7 @@ typedef struct EftShotTech {
 
 /* Argument of EftCam_Start, passed by value. */
 typedef struct EftKCamArg {
-    /* 0x00 */ s32 *pack;  /* the camera animation (`anim` in EftCamArg, eft_core.h) */
+    /* 0x00 */ s32 *anim;  /* the camera animation (`anim` in EftCamArg, eft_core.h) */
     /* 0x04 */ s32 objId;
     /* 0x08 */ s32 id;
 } EftKCamArg;

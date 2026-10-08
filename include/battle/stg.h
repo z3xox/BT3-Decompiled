@@ -115,7 +115,7 @@ typedef struct StgDataA {
     /* 0x08 */ s32 objCount;    StgObjDef *objDefs;    /* 0x0C */
     /* 0x10 */ s32 envCount;    StgEnv *env;           /* 0x14 */
     /* 0x18 */ s32 lightCount;  StgLight *light;       /* 0x1C */
-    /* 0x20 */ s32 pointCount;  StgVec *points;        /* 0x24: entry 0 is the light direction (BtlStage_GetLightDir) */
+    /* 0x20 */ s32 pointCount;  StgVec *lightDirs;        /* 0x24: entry 0 is the light direction (BtlStage_GetLightDir) */
     /* 0x28 */ s32 startCount;  StgPlace *starts;      /* 0x2C: one per player */
     /* 0x30 */ s32 altCount;    StgPlace *altStarts;   /* 0x34 */
     /* 0x38 */ s32 placeCount;  StgPlace *places;      /* 0x3C */
@@ -254,9 +254,9 @@ typedef struct StgView {
     /* 0x000 */ u8 unk0[0x40];
     /* 0x040 */ Mtx44 mtx;
     /* 0x080 */ u8 unk80[0x180];
-    /* 0x200 */ s32 x0;        /* View.scissorX0 */
+    /* 0x200 */ s32 scissorX0;        /* View.scissorX0 */
     /* 0x204 */ s32 scissorX1;
-    /* 0x208 */ s32 x1;        /* View.scissorY0 (btl_cam.h), not an x: StgFrustum_Build subtracts x0 from it all the same */
+    /* 0x208 */ s32 scissorY0;        /* View.scissorY0 (btl_cam.h), not an x: StgFrustum_Build subtracts scissorX0 from it all the same */
     /* 0x20C */ s32 scissorY1;
     /* 0x210 */ u8 unk210[0x10];
     /* 0x220 */ Vec4 pos;

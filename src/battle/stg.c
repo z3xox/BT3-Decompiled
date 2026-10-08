@@ -368,7 +368,7 @@ void StgFrustum_Build(StgView *view, StgFrustum *fr) {
     s32 i;
 
     memset(fr, 0, sizeof(StgFrustum));
-    if ((f32)(view->x1 - view->x0) > 256.0f) {
+    if ((f32)(view->scissorY0 - view->scissorX0) > 256.0f) {
         STG_FRUSTUM_PLANES(448.0f / 3.0f);
     } else {
         STG_FRUSTUM_PLANES(896.0f / 3.0f);
@@ -379,7 +379,7 @@ void StgFrustum_Build(StgView *view, StgFrustum *fr) {
     k = view->nearZ / view->screenDist;
     top = -k * -224.0f;
     bottom = -k * 224.0f;
-    if ((f32)(view->x1 - view->x0) > 256.0f) {
+    if ((f32)(view->scissorY0 - view->scissorX0) > 256.0f) {
         right = k * 256.0f * 0.5f * 1.1666667f;
         left = k * -256.0f * 0.5f * 1.1666667f;
     } else {

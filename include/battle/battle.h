@@ -21,7 +21,7 @@
  *       (only acts in sequence states 3 and 5)
  *    5. BtlChars_CheckStart()   fighter manager: first-frame hook when the sequence reaches state 2 or 3
  *    6. Pad_Update()      <- controller input is sampled here, once per frame
- *    7. Snd_Update(), Snd_SendFighters() (per-fighter sound update)
+ *    7. Snd_Update(), Snd_SendLoopSounds() (per-fighter sound update)
  *    8. BtlGame_PreUpdate()   HUD pre-update + BtlSeq_PreUpdate (sequence state's preUpdate)
  *    9. Battle_UpdateWork()   play-time counter and event bit sets (skipped while paused)
  *   10. BtlAiMgr_Update(), BtlChars_SampleInput()   two more fighter-side passes (see battle.c)

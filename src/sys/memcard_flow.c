@@ -17,8 +17,8 @@ typedef struct McFlowSlotInfo {
 
 /* The part of the progress block this module touches (local view). */
 typedef struct McFlowProgress {
-    /* 0x000 */ s32 unk0;
-    /* 0x004 */ s32 fileBase;    /* first id of the common files */
+    /* 0x000 */ s32 language;
+    /* 0x004 */ s32 baseFile;    /* first id of the common files */
     /* 0x008 */ s32 unk8[3];
     /* 0x014 */ s32 flags;       /* bit 2: "continue without saving" was chosen at boot; bit 3: a save was loaded at boot */
     /* 0x018 */ u8 unk18[0x674];
@@ -31,13 +31,13 @@ typedef struct McFlowProgress {
    +0x1C size and types +0x20 as void *buf (local view; the names are readings of how it is used here). */
 typedef struct McCardInfo {
     /* 0x00 */ s32 flags;         /* bit 0 after a read: the file was not usable */
-    /* 0x04 */ s32 callResult;
+    /* 0x04 */ s32 ret;
     /* 0x08 */ s32 result;       /* result of the last operation (sceMcSync) */
     /* 0x0C */ s32 type;         /* 2 = PS2 memory card */
     /* 0x10 */ s32 free;         /* free clusters */
-    /* 0x14 */ s32 formatted;
+    /* 0x14 */ s32 format;
     /* 0x18 */ s32 fd;
-    /* 0x1C */ s32 need;         /* clusters the save still needs (McCard_CalcNeed) */
+    /* 0x1C */ s32 size;         /* clusters the save still needs (McCard_CalcNeed) */
     /* 0x20 */ s32 buf;
 } McCardInfo; /* size 0x24 */
 
@@ -308,7 +308,7 @@ void McFlow_UpdateSave(void) {
                 Dialog_SetCursor(1);
                 break;
             }
-            if (MCF_CARD.formatted == 0) {
+            if (MCF_CARD.format == 0) {
                 gMcFlow->state = 0x17;
                 Dialog_SetCursor(1);
             }
@@ -319,7 +319,7 @@ void McFlow_UpdateSave(void) {
                 MCF_GO(0x1B);
                 break;
             }
-            if (MCF_CARD.formatted == 0) {
+            if (MCF_CARD.format == 0) {
                 gMcFlow->state = 0x17;
                 Dialog_SetCursor(1);
                 break;
@@ -588,7 +588,7 @@ void McFlow_UpdateSave(void) {
                 MCF_GO(0x1B);
                 break;
             }
-            if (MCF_CARD.formatted == 0) {
+            if (MCF_CARD.format == 0) {
                 gMcFlow->state = 0x17;
                 Dialog_SetCursor(1);
                 break;
@@ -598,8 +598,8 @@ void McFlow_UpdateSave(void) {
             }
             break;
         }
-        if (MCF_CARD.need > 0) {
-            if (MCF_CARD.free < MCF_CARD.need) {
+        if (MCF_CARD.size > 0) {
+            if (MCF_CARD.free < MCF_CARD.size) {
                 MCF_GO(0x1E);
                 break;
             }
@@ -906,7 +906,7 @@ void McFlow_UpdateBootLoad(void) {
             }
             break;
         }
-        if (MCF_CARD.formatted == 0) {
+        if (MCF_CARD.format == 0) {
             gMcFlow->state = 0x25;
             break;
         }
@@ -977,7 +977,7 @@ void McFlow_UpdateBootLoad(void) {
         }
         McCard_ResetStep();
         if (MCF_CARD.type == 2) {
-            if (MCF_CARD.formatted == 0) {
+            if (MCF_CARD.format == 0) {
                 gMcFlow->state = 0x25;
                 break;
             }
@@ -1016,7 +1016,7 @@ void McFlow_UpdateBootLoad(void) {
             break;
         }
         if (MCF_CARD.type == 2) {
-            if (MCF_CARD.formatted == 0) {
+            if (MCF_CARD.format == 0) {
                 gMcFlow->state = 0x25;
                 break;
             }
@@ -1245,7 +1245,7 @@ void McFlow_UpdateNewSave(void) {
                 MCF_GO(0x1B);
                 break;
             }
-            if (MCF_CARD.formatted == 0) {
+            if (MCF_CARD.format == 0) {
                 gMcFlow->state = 0x17;
                 Dialog_SetCursor(1);
             }
@@ -1256,7 +1256,7 @@ void McFlow_UpdateNewSave(void) {
                 MCF_GO(0x1B);
                 break;
             }
-            if (MCF_CARD.formatted == 0) {
+            if (MCF_CARD.format == 0) {
                 gMcFlow->state = 0x17;
                 Dialog_SetCursor(1);
                 break;
@@ -1486,7 +1486,7 @@ void McFlow_UpdateNewSave(void) {
                 MCF_GO(0x1B);
                 break;
             }
-            if (MCF_CARD.formatted == 0) {
+            if (MCF_CARD.format == 0) {
                 gMcFlow->state = 0x17;
                 Dialog_SetCursor(1);
                 break;
@@ -1496,8 +1496,8 @@ void McFlow_UpdateNewSave(void) {
             }
             break;
         }
-        if (MCF_CARD.need > 0) {
-            if (MCF_CARD.free < MCF_CARD.need) {
+        if (MCF_CARD.size > 0) {
+            if (MCF_CARD.free < MCF_CARD.size) {
                 MCF_GO(0x1E);
                 break;
             }
@@ -1884,7 +1884,7 @@ void McFlow_UpdateReplaySave(void) {
                 MCF_GO(0x1B);
                 break;
             }
-            if (MCF_CARD.formatted == 0) {
+            if (MCF_CARD.format == 0) {
                 gMcFlow->state = 0x17;
                 Dialog_SetCursor(1);
             }
@@ -1895,7 +1895,7 @@ void McFlow_UpdateReplaySave(void) {
                 MCF_GO(0x1B);
                 break;
             }
-            if (MCF_CARD.formatted == 0) {
+            if (MCF_CARD.format == 0) {
                 gMcFlow->state = 0x17;
                 Dialog_SetCursor(1);
                 break;
@@ -2156,7 +2156,7 @@ void McFlow_UpdateReplaySave(void) {
                 MCF_GO(0x1B);
                 break;
             }
-            if (MCF_CARD.formatted == 0) {
+            if (MCF_CARD.format == 0) {
                 gMcFlow->state = 0x17;
                 Dialog_SetCursor(1);
                 break;
@@ -2166,8 +2166,8 @@ void McFlow_UpdateReplaySave(void) {
             }
             break;
         }
-        if (MCF_CARD.need > 0) {
-            if (MCF_CARD.free < MCF_CARD.need) {
+        if (MCF_CARD.size > 0) {
+            if (MCF_CARD.free < MCF_CARD.size) {
                 MCF_GO(0x1E);
                 break;
             }
@@ -2633,7 +2633,7 @@ void McFlow_Init(void) {
 
     gMcFlow = Heap_Alloc(0x39F90, 0x20, 0, 2);
     memset(gMcFlow, 0, 0x39F90);
-    gMcFlow->pack = File_LoadSync(gProgress->fileBase + 0x1D, NULL, 0);
+    gMcFlow->pack = File_LoadSync(gProgress->baseFile + 0x1D, NULL, 0);
     gMcFlow->res = Sprite_Unpack(gMcFlow->pack, NULL, NULL);
     work = gMcFlow;
     rep = BattleReplay_GetBuffer(NULL);

@@ -90,7 +90,7 @@ extern s32 BtlCharApi_GetBlastRoom(s32 objId);
 extern s32 BtlCharApi_GetBlastRoomB(s32 objId);
 extern s32 BtlCharApi_TestFlag66(s32 objId);                   /* fighter flag 0x66 */
 extern s32 BtlCharApi_FindIncomingBlast(s32 objId, s32 mode);         /* index of an incoming projectile, -1 none */
-extern f32 BtlCharApi_GetTechniqueProgress(s32 objId);                   /* progress of the technique in use, -1 none */
+extern f32 BtlCharApi_GetTechniqueFramesLeft(s32 objId);                   /* progress of the technique in use, -1 none */
 extern u32 BtlCharApi_GetAttackAttr(s32 objId);                   /* attribute word of the technique in use */
 extern s32 BtlCharApi_GetHp(s32 objId);                   /* health */
 extern s32 BtlCharApi_GetHpMax(s32 objId);                   /* health maximum */
@@ -101,9 +101,9 @@ extern s32 BtlCharApi_IsCounterWindowBusy(s32 objId);                   /* fight
 extern s32 BtlCharApi_GetTransformCost(s32 objId);                   /* gauge cost: parameter byte * 100000 */
 extern s32 BtlCharApi_IsChangingForm(s32 objId);                   /* action id in 0xEC..0xF2 (changing form) */
 extern s32 BtlCharApi_GetParamFlags(s32 objId);                   /* parameter word +0x10 */
-extern s32 BtlCharApi_GetOppSkillKind(s32 objId);                   /* kind byte of the opponent's technique, -1 none */
+extern s32 BtlCharApi_GetOppTechniqueKind(s32 objId);                   /* kind byte of the opponent's technique, -1 none */
 extern s32 BtlCharApi_IsOppSkillFlag4(s32 objId);
-extern s32 BtlCharApi_GetOppMoveKind(s32 objId);
+extern s32 BtlCharApi_GetOppSkillKind(s32 objId);
 extern s32 BtlCharApi_GetStunTimer(s32 objId);                   /* fighter +0xFE0 */
 extern s32 BtlCharApi_GetPromptButtons(s32 objId);                   /* buttons a switch prompt accepts, 0 none */
 extern s32 BtlCharApi_GetStoryAiForce(s32 objId);
@@ -970,14 +970,14 @@ s32 BtlAiSense_IsBehindOpponent(AiActSide *s) {
 
 /* Situation bit 32: the opponent's technique can be answered now. By its kind byte: 1, 2, 5 within reach
    (own radius + the opponent's speed), 3, 4, 6 a projectile of mode 2 is coming, other kinds with
-   BtlCharApi_GetOppMoveKind == 0 a projectile of mode 3, otherwise attribute bit 0 and progress in 1..3. Needs fighter
+   BtlCharApi_GetOppSkillKind == 0 a projectile of mode 3, otherwise attribute bit 0 and progress in 1..3. Needs fighter
    +0x106C < -29 and react bit 0x40 clear. */
 s32 BtlAiSense_CheckBit32(AiActSide *s) {
     AiActStatus *st = &s->st;
-    f32 progress = BtlCharApi_GetTechniqueProgress(s->side ^ 1);
+    f32 progress = BtlCharApi_GetTechniqueFramesLeft(s->side ^ 1);
     u32 attr = BtlCharApi_GetAttackAttr(s->side ^ 1);
-    s32 kind = BtlCharApi_GetOppSkillKind(s->side);
-    s32 sub = BtlCharApi_GetOppMoveKind(s->side);
+    s32 kind = BtlCharApi_GetOppTechniqueKind(s->side);
+    s32 sub = BtlCharApi_GetOppSkillKind(s->side);
     f32 radius = BtlCharApi_GetRadius(s->side);
     f32 speed = BtlCharApi_GetSpeed(s->side ^ 1);
     s32 ready = BtlCharApi_IsDodgeWindowReady(s->side);
@@ -1149,13 +1149,13 @@ s32 BtlAiSense_IsBusy(AiActSide *s) {
     }
     if ((u32)cls < 3) {
         if (r == 1) {
-            st->downTimer = 4;
+            st->hitPendingTimer = 4;
             return 1;
         }
-        if (--st->downTimer > 0) {
+        if (--st->hitPendingTimer > 0) {
             return 1;
         }
-        st->downTimer = 0;
+        st->hitPendingTimer = 0;
     }
     return 0;
 }
@@ -1336,9 +1336,9 @@ s32 BtlAiSense_CheckBit29(AiActSide *s) {
    1, fighter +0x1070 is -30, react bit 0x400 clear. */
 s32 BtlAiSense_CheckBit35(AiActSide *s) {
     AiActStatus *st = &s->st;
-    f32 progress = BtlCharApi_GetTechniqueProgress(s->side ^ 1);
+    f32 progress = BtlCharApi_GetTechniqueFramesLeft(s->side ^ 1);
 
-    if (!BtlCharApi_GetOppSkillKind(s->side)) {
+    if (!BtlCharApi_GetOppTechniqueKind(s->side)) {
         return 0;
     }
     if (st->react & 0x400) {
@@ -1360,11 +1360,11 @@ s32 BtlAiSense_CheckBit35(AiActSide *s) {
    with the opponent in state class 0x18 and progress 1..3; react bit 0x80 clear. */
 s32 BtlAiSense_CheckBit31(AiActSide *s) {
     AiActStatus *st = &s->st;
-    f32 progress = BtlCharApi_GetTechniqueProgress(s->side ^ 1);
+    f32 progress = BtlCharApi_GetTechniqueFramesLeft(s->side ^ 1);
     AiActTables *tbl = gBtlAi->data->tables;
     s32 cls = tbl->stateClass[BtlCharApi_GetAnimId(s->side ^ 1)];
 
-    if (!BtlCharApi_GetOppSkillKind(s->side)) {
+    if (!BtlCharApi_GetOppTechniqueKind(s->side)) {
         if (progress < 0.0f) {
             return 0;
         }
@@ -1424,7 +1424,7 @@ s32 BtlAiSense_CheckBit34(AiActSide *s) {
 /* Situation bit 36: the opponent's technique kind byte is 1 or 2, react bit 0x800 clear. */
 s32 BtlAiSense_CheckBit36(AiActSide *s) {
     AiActStatus *st = &s->st;
-    s32 kind = BtlCharApi_GetOppSkillKind(s->side);
+    s32 kind = BtlCharApi_GetOppTechniqueKind(s->side);
 
     if (kind == -1) {
         return 0;
@@ -1441,7 +1441,7 @@ s32 BtlAiSense_CheckBit36(AiActSide *s) {
 /* Situation bit 37: the kind byte is 3, react bit 0x1000 clear. */
 s32 BtlAiSense_CheckBit37(AiActSide *s) {
     AiActStatus *st = &s->st;
-    s32 kind = BtlCharApi_GetOppSkillKind(s->side);
+    s32 kind = BtlCharApi_GetOppTechniqueKind(s->side);
 
     if (kind == -1) {
         return 0;
@@ -1458,7 +1458,7 @@ s32 BtlAiSense_CheckBit37(AiActSide *s) {
 /* Situation bit 38: the kind byte is 0, react bit 0x2000 clear. */
 s32 BtlAiSense_CheckBit38(AiActSide *s) {
     AiActStatus *st = &s->st;
-    s32 kind = BtlCharApi_GetOppSkillKind(s->side);
+    s32 kind = BtlCharApi_GetOppTechniqueKind(s->side);
 
     if (kind == -1) {
         return 0;

@@ -184,7 +184,7 @@ s32 EftStruggle_IsActive(void) {
     if (gEftStruggle == NULL) {
         return 0;
     }
-    return gEftStruggle->list->first != NULL;
+    return gEftStruggle->list->head != NULL;
 }
 
 /* Ends the struggle (BtlClash_UpdateA). winner 0 / 1: the other fighter's technique timers are expired and its
@@ -198,7 +198,7 @@ void EftStruggle_End(s32 winner) {
     if (gEftStruggle == NULL) {
         return;
     }
-    task = gEftStruggle->list->first;
+    task = gEftStruggle->list->head;
     if (task == NULL) {
         return;
     }
@@ -240,7 +240,7 @@ void EftStruggle_SetBias(f32 bias) {
     if (gEftStruggle == NULL) {
         return;
     }
-    task = gEftStruggle->list->first;
+    task = gEftStruggle->list->head;
     if (task == NULL) {
         return;
     }
@@ -267,7 +267,7 @@ f32 EftStruggle_GetBias(void) {
     if (gEftStruggle == NULL) {
         return 0.0f;
     }
-    task = gEftStruggle->list->first;
+    task = gEftStruggle->list->head;
     if (task == NULL) {
         return 0.0f;
     }
@@ -287,7 +287,7 @@ void EftStruggle_GetPos(EftRVec *out) {
     if (gEftStruggle == NULL) {
         return;
     }
-    task = gEftStruggle->list->first;
+    task = gEftStruggle->list->head;
     if (task == NULL) {
         return;
     }
@@ -307,7 +307,7 @@ void EftStruggle_SetPos(EftRVec *pos) {
     if (gEftStruggle == NULL) {
         return;
     }
-    task = gEftStruggle->list->first;
+    task = gEftStruggle->list->head;
     if (task == NULL) {
         return;
     }

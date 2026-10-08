@@ -293,7 +293,7 @@ s32 BtlCtrl_TestFlagE5(s32 side) {
 }
 
 /* In battle mode 5: bit gProgress->tutorial (the tutorial number) of fighter 0's per-frame bit set. */
-s32 BtlCtrl_TestProgressFrameBit(void) {
+s32 BtlCtrl_TestTutorialFrameBit(void) {
     BtlTechChr *chr;
 
     if (Battle_GetMode() != 5) {

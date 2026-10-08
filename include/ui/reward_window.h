@@ -26,15 +26,15 @@
 typedef struct Flash {
     /* 0x00 */ s32 unk0[3]; /* [2] (+0x08) is Flash.flags of sys/flash.h: bit 1 (FLASH_PAD) is set and cleared by the
                                movie itself (action "pad" "true" / "false"): the screen may take input */
-    /* 0x0C */ s32 flags;   /* Flash.trig of sys/flash.h, not flags: bit n is set for one frame by the movie's action
-                               "trig" "n". Bit 0 is what GetWin_IsAnimating tests */
+    /* 0x0C */ s32 trig;   /* Flash.trig of sys/flash.h, not flags: bit n is set for one frame by the movie's action
+                               "trig" "n". Bit 0 is what GetWin_IsAnimDone tests */
     /* 0x10 */ s32 unk10[7];
 } Flash; /* size 0x2C */
 
 /* What Flash_FindLabel fills in: a handle to one movie clip. */
 typedef struct FlashRef {
-    /* 0x00 */ s32 id;      /* negative: not found (`index` in sys/flash.h) */
-    /* 0x04 */ s32 unk4;    /* `more` in sys/flash.h: how many more clips share the name */
+    /* 0x00 */ s32 index;      /* negative: not found (`index` in sys/flash.h) */
+    /* 0x04 */ s32 more;    /* `more` in sys/flash.h: how many more clips share the name */
 } FlashRef; /* size 8 */
 
 /* Texture rectangle of a movie clip (argument of Flash_ClipSetUv). */
@@ -63,9 +63,9 @@ typedef struct FlashTexRes {
 
 /* ---- TextBox (menu_util_1.c; the flags and prototypes of the second half are in ui/menu_support.h) ---- */
 
-#define TEXTBOX_FLAG_RECT 1    /* `clip` is set (TextBox_SetRect): the font clip rectangle */
+#define TEXTBOX_FLAG_CLIP 1    /* `clip` is set (TextBox_SetClip): the font clip rectangle */
 #define TEXTBOX_FLAG_COLOR 2   /* `color` is set (TextBox_SetColor) */
-#define TEXTBOX_FLAG_COLOR2 4  /* `shadow` is set (TextBox_SetColor2): the colour of the text's shadow */
+#define TEXTBOX_FLAG_SHADOW 4  /* `shadow` is set (TextBox_SetShadowColor): the colour of the text's shadow */
 
 /* A text file with the style its lines are drawn in. The full layout is TextBoxFull in ui/menu_support.h. */
 typedef struct TextBox {
@@ -76,8 +76,8 @@ typedef struct TextBox {
     /* 0x10 */ s32 y;
     /* 0x14 */ u8 unk14[0x1C];
     /* 0x30 */ u8 color[4];    /* r, g, b, a */
-    /* 0x34 */ u8 shadow[4];   /* TextBox_SetColor2: colour of the text's shadow */
-    /* 0x38 */ s32 clip[4];    /* font clip x0, y0, x1, y1; TextBox_SetRect takes them as x0, x1, y0, y1 */
+    /* 0x34 */ u8 shadow[4];   /* TextBox_SetShadowColor: colour of the text's shadow */
+    /* 0x38 */ s32 clip[4];    /* font clip x0, y0, x1, y1; TextBox_SetClip takes them as x0, x1, y0, y1 */
     /* 0x48 */ u8 unk48[8];
     /* 0x50 */ s32 align;      /* Font_SetAlign value: 0 or 2 in the presets, 1 in the reward window */
     /* 0x54 */ u8 unk54[0x2C];
@@ -89,9 +89,9 @@ void TextBox_Init(TextBox *box, void *text, u32 preset);
 void TextBox_SetAlign(TextBox *box, s32 align);
 void TextBox_SetNoFlush(TextBox *box, s32 noFlush);
 void TextBox_SetOffset(TextBox *box, s32 x, s32 y);
-void TextBox_SetRect(TextBox *box, s32 x0, s32 x1, s32 y0, s32 y1);
+void TextBox_SetClip(TextBox *box, s32 x0, s32 x1, s32 y0, s32 y1);
 void TextBox_SetColor(TextBox *box, u32 rgba);
-void TextBox_SetColor2(TextBox *box, u32 rgba);
+void TextBox_SetShadowColor(TextBox *box, u32 rgba);
 
 /* ---- GetWin (reward_window.c) ---- */
 
@@ -136,7 +136,7 @@ void GetWin_Draw(void);
 void GetWin_Open(void);
 void GetWin_Close(void);
 void GetWin_Next(void);
-s32 GetWin_IsAnimating(void);
+s32 GetWin_IsAnimDone(void);
 void GetWin_Setup(s32 kind, s32 value);
 
 /* ---- MsgWin (message_window.c) ---- */
@@ -156,7 +156,7 @@ void MsgWin_Open(void);
 void MsgWin_Close(void);
 void MsgWin_SetText(void *text);
 void MsgWin_SetSide(s32 side);
-void MsgWin_SetBoxParam(s32 spacingX, s32 spacingY);
+void MsgWin_SetSpacing(s32 spacingX, s32 spacingY);
 
 /* ---- IconWin (icon_window.c) ---- */
 
@@ -265,22 +265,22 @@ typedef struct ProgressEntry {
 
 /* gProgress: the 0x7FC-byte block of state that survives between the menu and the battle. Local view. */
 typedef struct ViewProgress {
-    /* 0x000 */ s32 unk0;
-    /* 0x004 */ s32 unk4;          /* 0x1C1 at start: first file id of the common files (`baseFile` in the menu headers) */
+    /* 0x000 */ s32 language;
+    /* 0x004 */ s32 baseFile;          /* 0x1C1 at start: first file id of the common files (`baseFile` in the menu headers) */
     /* 0x008 */ void *loadPack;    /* 0x3000 bytes */
     /* 0x00C */ void *loadRes;     /* 0x6800 bytes */
     /* 0x010 */ void *loadSprites; /* 0x380 bytes */
     /* 0x014 */ s32 flags;         /* PROGRESS_FLAG_* */
     /* 0x018 */ s32 mode;          /* the menu screen / game mode */
     /* 0x01C */ s32 unk1C[2];
-    /* 0x024 */ s32 unk24;         /* -1 at start: `demoPick` in ui/menu_support.h, the demo battle's last pairing */
+    /* 0x024 */ s32 demoPick;         /* -1 at start: `demoPick` in ui/menu_support.h, the demo battle's last pairing */
     /* 0x028 */ s32 unk28[2];
     /* 0x030 */ u8 unk30[0x4C];    /* cleared per session */
     /* 0x07C */ u8 unk7C[0x3C4];   /* cleared per session */
-    /* 0x440 */ ProgressEntry unk440[5]; /* cleared per session; unk0 = 0 */
-    /* 0x530 */ ProgressEntry unk530[5]; /* unk0 = 1 */
+    /* 0x440 */ ProgressEntry unk440[5]; /* cleared per session; language = 0 */
+    /* 0x530 */ ProgressEntry unk530[5]; /* language = 1 */
     /* 0x620 */ s32 unk620;
-    /* 0x624 */ s32 unk624;        /* `battleType` in the menu headers; 2 in mode 0x28: the grid is built without the
+    /* 0x624 */ s32 battleType;        /* `battleType` in the menu headers; 2 in mode 0x28: the grid is built without the
                                       random cell (CHRGRID_NO_RANDOM in ChrGrid_Build) */
     /* 0x628 */ s32 unk628[3];
     /* 0x634 */ u8 unk634[0x58];   /* cleared per session */

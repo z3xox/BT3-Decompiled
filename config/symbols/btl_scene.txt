@@ -16,10 +16,10 @@ BtlFacade_GetFixedCamera = 0x0012BD90; // type:func
 BtlFacade_ClearFixedCamera = 0x0012BDA8; // type:func
 // Fighter object sub-state (0x24F5D8(obj, 14, arg); 0x24F860(obj) == 3 -> 0x24F5D8(obj, 0, -1)) and the two words
 // of the per-side controller entries at gp 0x2FEB10 (0x1BB478 stores +8, 0x1BB3E0 stores +4, both restart the entry).
-BtlFacade_SetObjSubState14 = 0x0012BDC0; // type:func // guess
+BtlFacade_PlayLipTrack = 0x0012BDC0; // type:func // guess
 BtlFacade_EndObjSubState3 = 0x0012BDF8; // type:func // guess
-BtlFacade_SetCpuParam8 = 0x0012BE58; // type:func // guess
-BtlFacade_SetCpuParam4 = 0x0012BE90; // type:func // guess
+BtlFacade_SetCpuLevel = 0x0012BE58; // type:func // guess
+BtlFacade_SetCpuType = 0x0012BE90; // type:func // guess
 // Scripted movement of a fighter and its control flags: forwards to 0x20A050..0x20A5B8 (see BtlCtrl_* below).
 // The SetCtrl / ClearCtrl names carry the flag number that the target sets or clears.
 BtlFacade_SetCharPos = 0x0012BEC8; // type:func

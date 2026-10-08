@@ -68,7 +68,7 @@ typedef struct NProgress {
     /* 0x45C */ s32 chara;      /* the player's fighter (team.member[0].chara) */
     /* 0x460 */ u16 items[8];   /* its items (team.member[0].items) */
     /* 0x470 */ u8 unk470[0x1D0];
-    /* 0x640 */ s32 ubKind;     /* 0 = the ranking ladder (modes 25..27), 1 = the courses (modes 28..30) */
+    /* 0x640 */ s32 cursor;     /* 0 = the ranking ladder (modes 25..27), 1 = the courses (modes 28..30) */
     /* 0x644 */ s32 teamSize;   /* fighters the character select lets the player choose */
     /* 0x648 */ s32 dpRule;     /* 0 = no DP limit */
     /* 0x64C */ u8 unk64C[0x38];

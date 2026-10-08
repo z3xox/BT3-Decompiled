@@ -265,8 +265,8 @@ void GetWin_Next(void) {
    sys/flash.h: bit n is set by the movie's action "trig" "n" and cleared by every Flash_Advance), not a "running"
    flag: the callers start an animation, then wait for this to become non-zero before they go on, so it marks the
    point where an animation has finished coming in or going out. The name says the opposite. */
-s32 GetWin_IsAnimating(void) {
-    if (gGetWin->flash[0].flags & 1) {
+s32 GetWin_IsAnimDone(void) {
+    if (gGetWin->flash[0].trig & 1) {
         return 1;
     }
     return 0;

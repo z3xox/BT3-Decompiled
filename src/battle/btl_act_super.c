@@ -396,7 +396,7 @@ void BtlSuper_Begin(BtlSuperChr *chr, s32 cls, s32 force) {
         return;
     }
     BtlChar_GetPos(chr)->speed = 0.0f;
-    BtlChar_GetPos(chr)->velY = 0.0f;
+    BtlChar_GetPos(chr)->fallSpeed = 0.0f;
     BtlChar_ClearFlagRange(chr, 0x9B, 0xA0);
     BtlChar_ClearFlagRange(chr, 0xA7, 0xAA);
     BtlChar_SetFlag(chr, 0x29);
@@ -441,7 +441,7 @@ void BtlSuper_Leave(BtlSuperChr *chr, s32 cls) {
         chr->skillCount3 = 0;
         break;
     case 0x2CD:
-        chr->unkE60 = 0;
+        chr->boostStock = 0;
         break;
     }
 }
@@ -554,7 +554,7 @@ void BtlSuper_SetupRushDamage(BtlSuperChr *chr, s32 cls, s32 fromAnim) {
     }
     if (BtlSuper_GetId(chr, cls) == 0x2EF) {
         if (!(BtlOpp_GetParamWord0(chr) & 0x80)) {
-            chr->unkE60 = BtlUtil_Clamp(chr->unkE60 + 5, 0, 10);
+            chr->boostStock = BtlUtil_Clamp(chr->boostStock + 5, 0, 10);
         }
     }
 }

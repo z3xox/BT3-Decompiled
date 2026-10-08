@@ -278,7 +278,7 @@ void DuelMenu_Init(s32 section) {
         DM->blink[i] = Rand_Range(0x20);
     }
     DM->voiceLine = -1;
-    DM->sel[DUEL_LEVEL_TOP] = DUEL_PROG->versus;
+    DM->sel[DUEL_LEVEL_TOP] = DUEL_PROG->players;
     DM->sel[DUEL_LEVEL_TYPE] = DUEL_PROG->battleType;
     DM->sel[DUEL_LEVEL_DP] = DUEL_PROG->dpLimit;
 }
@@ -995,7 +995,7 @@ s32 DuelMenu_Run(s32 section) {
         if (gDuelMenu->flags & DUELMENU_LEAVING) {
             if (--gDuelMenu->timer == -1) {
                 ColorFade_StartOut(0, 0, 0, 0x14);
-                DUEL_PROG->versus = gDuelMenu->sel[0];
+                DUEL_PROG->players = gDuelMenu->sel[0];
                 DUEL_PROG->battleType = gDuelMenu->sel[1];
                 DUEL_PROG->dpLimit = gDuelMenu->sel[2];
             }

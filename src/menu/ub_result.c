@@ -133,7 +133,7 @@ void UbResult_Init(s32 section) {
     rank = UbScore_CalcRank(3, &gUbResult->score);
     if (gUbResult->kind == 1) {
         /* a course */
-        gUbResult->course = UO_PROG->course;
+        gUbResult->course = UO_PROG->ubChoice;
         IconWin_SetIcon(4);
         if (gUbResult->lose == 0) {
             gUbResult->newRecord = UbScore_SaveBestC(gUbResult->course, rank, &gUbResult->score);
@@ -145,7 +145,7 @@ void UbResult_Init(s32 section) {
     } else {
         /* the ladder: first place taken */
         IconWin_SetIcon(3);
-        if (gUbResult->lose == 0 && gSaveData->rank == 1 && (UO_PROG->discFlags & UB_DISC_FLAG8)) {
+        if (gUbResult->lose == 0 && gSaveData->rank == 1 && (UO_PROG->ubFlags & UB_DISC_FLAG8)) {
             gUbResult->gotItem = 1;
             Save_AddItem(UbScore_GetRewardItem(4));
         }
@@ -187,7 +187,7 @@ void UbResult_Draw(void) {
     FlashAnim_Talk(flash, &ref, &gUbResult->talk, 0);
     if (gUbResult->lose == 0) {
         Flash_FindLabel(flash, "mc_window_plate01", "mc_window_text1_0", &ref);
-        if (gUbResult->kind == 0 && (UO_PROG->discFlags & UB_DISC_FLAG8)) {
+        if (gUbResult->kind == 0 && (UO_PROG->ubFlags & UB_DISC_FLAG8)) {
             TextBox_AttachLine(flash, &ref, 0, 0, 0x140, &gUbResult->box[3]);
         } else {
             TextBox_AttachLine(flash, &ref, 0, 0, 0x141, &gUbResult->box[3]);

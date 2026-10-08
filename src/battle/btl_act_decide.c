@@ -649,22 +649,22 @@ s32 BtlAct_CanUseSkill(BtlActJChr *chr, u32 slot) {
         case 0xC:
         case 0x32:
             if (stack) {
-                if (chr->dodges >= 3) {
+                if (chr->skillStackA >= 3) {
                     return 0;
                 }
             } else {
-                if (chr->dodges > 0) {
+                if (chr->skillStackA > 0) {
                     return 0;
                 }
             }
             break;
         case 0x37:
             if (stack) {
-                if (chr->dodgesB >= 3) {
+                if (chr->skillStackB >= 3) {
                     return 0;
                 }
             } else {
-                if (chr->dodgesB > 0) {
+                if (chr->skillStackB > 0) {
                     return 0;
                 }
             }

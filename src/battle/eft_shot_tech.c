@@ -405,8 +405,8 @@ s32 EftMulti_UpdatePieces(s32 objId, EftJTask *task) {
 }
 
 /* 1 when part `part` of group `group` is of kind 5. */
-s32 EftMulti_IsPartKind5(EftJSet *set, s32 group, s32 part) {
-    return set->parts[set->grp[group].base + part].kind == 5;
+s32 EftMulti_IsPartNode5(EftJSet *set, s32 group, s32 part) {
+    return set->parts[set->grp[group].base + part].node == 5;
 }
 
 /* Runs every emitter of the set for this frame, except the parts of kind 5. */
@@ -420,7 +420,7 @@ void EftMulti_UpdateParts(s32 objId, EftJTask *task, EftJSet *set, s32 mode) {
             s32 j;
 
             for (j = 0; j < info[1]; j++) {
-                if (!EftMulti_IsPartKind5(set, info[0], j)) {
+                if (!EftMulti_IsPartNode5(set, info[0], j)) {
                     s32 res;
 
                     if (mode == 0) {
@@ -472,7 +472,7 @@ void EftMulti_Term(EftJTask *task) {
     EftJSrc *src = w->src;
 
     EftEmit_TermState(w->set, w->emit);
-    if (src->def->cls != 0) {
+    if (src->def->kind != 0) {
         EftShot_SetHeldFlagA8(src->objId);
     }
 }
@@ -904,7 +904,7 @@ void EftPropShot_Term(EftJTask *task) {
 
     EftEmit_TermState(w->set, w->emit);
     EftPropShot_FreeProp(task);
-    if (!(w->flags & 0x800) && src->def->cls != 0) {
+    if (!(w->flags & 0x800) && src->def->kind != 0) {
         EftShot_SetHeldFlagA8(src->objId);
     }
 }
@@ -920,7 +920,7 @@ void EftPropShot_Update(EftJTask *task) {
     if (BtlScene_IsCharStopped(src->objId)) {
         return;
     }
-    if (src->def->cls == 0) {
+    if (src->def->kind == 0) {
         EftShot_PlayFireSound(src->objId, src);
     }
     EftEmit_UpdateNodesReq(src, w->node);
@@ -1006,7 +1006,7 @@ void EftPropShot_Update(EftJTask *task) {
     if ((w->flags & 1) && !(w->flags & 2)) {
         if ((w->flags & 0x800) && (w->timer >= w->life || (w->flags & 4))) {
             if (!(w->flags & 0x1000)) {
-                if (src->def->cls != 0) {
+                if (src->def->kind != 0) {
                     EftShot_SetHeldFlagA8(src->objId);
                 }
                 w->flags |= 0x1000;
@@ -1087,7 +1087,7 @@ void EftPropShotMgr_Init(EftJTask *task, EftJSrc *src) {
     EftShot_Nop(0x328);
     memset(m, 0, 0x328);
     if (src->def->id == 0x19A) {
-        u8 costume = BtlCharApi_GetCostume(src->objId20);
+        u8 costume = BtlCharApi_GetCostume(src->chr);
 
         m->model = BtlScene_GetPackEntry(BtlScene_GetPackEntry(src->pack, 1), costume + 1);
     } else {
@@ -1287,7 +1287,7 @@ void EftBlast_Term(EftJTask *task) {
     EftJSrc *src = w->src;
 
     EftEmit_TermState(w->set, w->emit);
-    if (src->def->cls != 0) {
+    if (src->def->kind != 0) {
         EftShot_SetHeldFlagA8(src->objId);
     }
 }
@@ -1302,7 +1302,7 @@ void EftBlast_Update(EftJTask *task) {
     if (BtlScene_IsCharStopped(src->objId)) {
         return;
     }
-    if (src->def->cls == 0) {
+    if (src->def->kind == 0) {
         EftShot_PlayFireSound(src->objId, src);
     }
     EftEmit_UpdateNodesReq(src, w->node);
@@ -1761,7 +1761,7 @@ void EftShotTech_UpdateParts(s32 objId, EftJTask *task, EftJSet *set) {
                 if (res != 0) {
                     alt = 0;
                     if ((u8)(EftEmit_GetHead26(w->mgr) & 1)) {
-                        alt = set->parts[set->grp[info[0]].base + j].type == 4;
+                        alt = set->parts[set->grp[info[0]].base + j].phase == 4;
                     }
                     if (alt) {
                         EftEmit_SpawnOwn(set, w->emit, w->nodes, &w->muzzlePos, &w->muzzleDir, g, j, res, w->scale);

@@ -12,7 +12,7 @@
  *   - the float pool is one run: 0x2FE07C (BtlCharApi_ObjPushDir) .. 0x2FE0D4 (BtlCharApi_TestOppSkillFlags); 0x2FE078 belongs to
  *     BtlAct_CheckRecoveryInput before it and 0x2FE0E4 to BtlAtk_GetId after it;
  *   - calls inside it are compiled as same-file calls (BtlCharApi_IsCamShown -> BtlCharApi_IsInClashA / BtlCharApi_IsInClashBC here,
- *     BtlCharApi_GetTechniqueProgress -> 0x207C60 / 0x207C88 / 0x207CB0, BtlCharApi_FindIncomingBlast -> BtlCharApi_GetPos).
+ *     BtlCharApi_GetTechniqueFramesLeft -> 0x207C60 / 0x207C88 / 0x207CB0, BtlCharApi_FindIncomingBlast -> BtlCharApi_GetPos).
  * So the object starts at 0x204E78 and ends at 0x209EE8 or later (0x20B4A8 if the BtlCtrl functions are part of it).
  * The slice decompiled here uses no float pool entry, string or jump table, so it can be linked as its own file.
  *
@@ -133,7 +133,7 @@ s32 BtlCharApi_TestFlagA4(s32 objId) {
 }
 
 /* Model variant of the fighter's active member (member block +0x60, gauge word +0x20). */
-s32 BtlCharApi_GetMemberUnk60(s32 objId) {
+s32 BtlCharApi_GetMemberVariant(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
@@ -544,7 +544,7 @@ f32 BtlCharApi_ObjGetAnimStep(s32 objId) {
 
 /* BtlObjAnim_QueryEvent(obj, mask, 0, what) on the object: an event query on layer 0 of its animation
    (what 0 = frame of the first event with a mask bit, 1 = the first still ahead, 3 = how many, ...). */
-s32 BtlCharApi_ObjQuery24D610(s32 objId, s32 mask, s32 what) {
+s32 BtlCharApi_ObjQueryAnimEvent(s32 objId, s32 mask, s32 what) {
     BtlCharApiObj *obj = BtlObj_Get(objId);
 
     if (obj != NULL) {
@@ -590,7 +590,7 @@ s32 BtlCharApi_GetCamPose(s32 objId, Vec4 *pos, Vec4 *rot) {
     if (chr != NULL) {
         Vec4_Copy(pos, &chr->camPos);
         Vec4_Copy(rot, &chr->camRot);
-        return chr->camUnk494;
+        return chr->camHit;
     }
     Vec4_SetZeroW1(pos);
     Vec4_SetZero(rot);
@@ -602,7 +602,7 @@ f32 BtlCharApi_GetCamYaw(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return chr->camUnk4A0;
+        return chr->camYaw;
     }
     return 0.0f;
 }
@@ -633,7 +633,7 @@ void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 strength, f32 ti
         if (BtlChar_IsFrozen(chr)) {
             continue;
         }
-        dist = Vec3_Dist(&chr->camUnk420, pos);
+        dist = Vec3_Dist(&chr->camEye, pos);
         if (dist < far) {
             rate = BtlUtil_ClampF(1.0f - (dist - near) / (far - near), 0.0f, 1.0f);
             ChrCam_AddShake(chr, strength * rate, time * rate);
@@ -680,7 +680,7 @@ void BtlCharApi_GetCamBodyPos(s32 objId, Vec4 *out) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        Vec4_Copy(out, &chr->camUnk460);
+        Vec4_Copy(out, &chr->camBodyPos);
     }
 }
 
@@ -917,7 +917,7 @@ extern s32 BtlSkill_GetFlags(BtlCapiBChr *chr, s32 slot);      /* moves->flags[s
 extern s32 BtlSkill_GetAiKind(BtlCapiBChr *chr, s32 slot);      /* moves->kind[slot] */
 extern s32 BtlSkill_GetBlastCost(BtlCapiBChr *chr, s32 slot);      /* moves->stock[slot] (-1 with ability 0x15, min 1) * 100000 */
 
-extern s32 BtlCharApi_ObjQuery24D610(s32 objId, s32 mask, s32 what);
+extern s32 BtlCharApi_ObjQueryAnimEvent(s32 objId, s32 mask, s32 what);
 extern f32 BtlCharApi_ObjGetAnimFrame(s32 objId);
 extern f32 BtlCharApi_ObjGetAnimStep(s32 objId);
 
@@ -1150,9 +1150,9 @@ void BtlCharApi_MarkIncomingBlast(s32 objId) {
 }
 
 /* Not a progress: the number of updates left until the next animation event with attribute bit 1. Fighter +0x1294
-   when it is >= 0, else (frame of that event, BtlCharApi_ObjQuery24D610(objId, 1, 1), - the current frame, object
+   when it is >= 0, else (frame of that event, BtlCharApi_ObjQueryAnimEvent(objId, 1, 1), - the current frame, object
    +0xC78) / the frame step, object +0xC80; -1 when no such event is ahead. */
-f32 BtlCharApi_GetTechniqueProgress(s32 objId) {
+f32 BtlCharApi_GetTechniqueFramesLeft(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
     s32 eventFrame;
     f32 curFrame;
@@ -1164,7 +1164,7 @@ f32 BtlCharApi_GetTechniqueProgress(s32 objId) {
     if (chr->framesLeftOverride >= 0) {
         return chr->framesLeftOverride;
     }
-    eventFrame = BtlCharApi_ObjQuery24D610(objId, 1, 1);
+    eventFrame = BtlCharApi_ObjQueryAnimEvent(objId, 1, 1);
     if (eventFrame < 0) {
         return -1.0f;
     }
@@ -1636,7 +1636,7 @@ s32 BtlCharApi_GetMemberKiPercent(s32 objId, s32 member) {
 
 /* Kind byte of the technique the opponent is performing, -1 if it is not in a technique action. Despite the
    "Skill" of the name this reads the technique table (BtlSuper_*, object +0x92C). */
-s32 BtlCharApi_GetOppSkillKind(s32 objId) {
+s32 BtlCharApi_GetOppTechniqueKind(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
     BtlCapiBChr *opp;
 
@@ -1710,7 +1710,7 @@ s32 BtlCharApi_GetOppSkillClass(s32 objId) {
 
 /* Kind byte of the move the opponent is performing (action 0xFD..0x102), -1 if none. This one reads the skill
    table (BtlSkill_*, object +0x930, the two slots this header calls moves). */
-s32 BtlCharApi_GetOppMoveKind(s32 objId) {
+s32 BtlCharApi_GetOppSkillKind(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
     BtlCapiBChr *opp;
 
@@ -1799,10 +1799,10 @@ s32 BtlCharApi_GetPromptButtons(s32 objId) {
     if (chr == NULL) {
         return 0;
     }
-    if (chr->switchPrompt < 2) {
+    if (chr->techClass < 2) {
         return 0;
     }
-    prompt = &gBtlChars->prompts[BtlSuper_GetPromptRowIndex(chr, chr->switchPrompt)];
+    prompt = &gBtlChars->prompts[BtlSuper_GetPromptRowIndex(chr, chr->techClass)];
     if (BtlChar_TestFlag(chr, 0xA2)) {
         return 0;
     }

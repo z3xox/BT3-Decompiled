@@ -20,7 +20,7 @@
    number there (`tutorial` in training.h and btl_param.h); the field name here is older. */
 typedef struct BtlTextProgress {
     /* 0x000 */ u8 unk0[0x7F4];
-    /* 0x7F4 */ s32 controlType;
+    /* 0x7F4 */ s32 tutorial;
 } BtlTextProgress;
 
 extern BtlTextProgress *gProgress;
@@ -37,7 +37,7 @@ extern void Font_PrintAt(s32 x, s32 y, u16 *str);
 /* Draws the controls page inside a box: the title (sheet entry 0, row 4) centred at the top and the text for
    the pad type and the tutorial number (gProgress + 0x7F4) below it. */
 void BtlText_DrawControls(u64 **pkt, s32 x0, s32 x1, s32 y0, s32 y1) {
-    s32 tutorial = gProgress->controlType;
+    s32 tutorial = gProgress->tutorial;
     s32 padType = BtlMenu_GetDefaultPadType();
 
     Font_PushStyle();

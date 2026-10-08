@@ -12,7 +12,7 @@ TextBox_AttachString = 0x00260900; // type:func
 // What the character fields mean is inferred from the menu's use (see the header).
 ChrTbl_WrapCostume = 0x00260D20; // type:func // guess
 ChrTbl_GetCost = 0x00260D88; // type:func // guess
-ChrTbl_GetLevel = 0x00260DB8; // type:func // guess
+ChrTbl_GetItemSlots = 0x00260DB8; // type:func // guess
 ChrTbl_GetExp = 0x00260E28; // type:func // guess
 ChrTbl_GetMaxExp = 0x00260E78; // type:func // guess
 ItemSet_Fit = 0x00260EE8; // type:func // guess

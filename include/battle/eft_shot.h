@@ -54,8 +54,8 @@ typedef struct EftTexSet {
 typedef struct EftShotDef {
     /* 0x00 */ s16 id;
     /* 0x02 */ s16 level;
-    /* 0x04 */ s8 cls;         /* 0 skill, 1 technique, 2 ultimate (`kind` in eft_emit.h / eft_obj_tech.h) */
-    /* 0x05 */ s8 kind;        /* the sub-kind inside the class (`sub` / unk5 in those headers) */
+    /* 0x04 */ s8 kind;         /* 0 skill, 1 technique, 2 ultimate (`kind` in eft_emit.h / eft_obj_tech.h) */
+    /* 0x05 */ s8 sub;        /* the sub-kind inside the class (`sub` / unk5 in those headers) */
     /* 0x06 */ u8 unk6[0x36];
     /* 0x3C */ s32 flags;      /* bit 0x2000 tested by EftShot_IsSlotFlag2000 */
     /* 0x40 */ u8 unk40[0x4C];
@@ -227,7 +227,7 @@ typedef struct EftBoundParam {
     /* 0x2C */ f32 scrollS;
     /* 0x30 */ f32 scrollT;
     /* 0x34 */ f32 phaseRate;
-    /* 0x38 */ s32 otZ;
+    /* 0x38 */ s32 layer;
 } EftBoundParam;
 
 /* Work block of the per-fighter task. */

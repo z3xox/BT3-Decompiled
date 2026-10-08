@@ -1,0 +1,3 @@
+include/battle/btl_act_2.h	BtlActEPose	facing	yaw	HIGH	+0x94 heading yaw, as in the other pose views; btl_act_2.c:3950 copies it to rot.y.
+include/battle/btl_act_2.h	BtlActEPose	vel	dir	HIGH	btl_act_2.c:3602-3604 writes (sin yaw, 0, cos yaw) to it: a unit direction, not a velocity.
+include/battle/btl_act_2.h	BtlActCPose	move	moved	HIGH	+0x40 is the whole movement of the previous frame

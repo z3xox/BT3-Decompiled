@@ -32,7 +32,7 @@ BtlCtrl_TestFlagE4 = 0x0020BF18; // type:func
 // Flag 0xE5.
 BtlCtrl_TestFlagE5 = 0x0020BF58; // type:func
 // In battle mode 5: bit gProgress->unk7F4 of fighter 0's per-frame bit set.
-BtlCtrl_TestProgressFrameBit = 0x0020BF98; // type:func // guess
+BtlCtrl_TestTutorialFrameBit = 0x0020BF98; // type:func // guess
 // Flag 0xE6 when the fighter's pad status is not 1; the status is written to *padStatus.
 BtlCtrl_TestFlagE6Pad = 0x0020BFF8; // type:func // guess
 // Flag 0xE6 when the fighter's pad status is 1.

@@ -403,11 +403,11 @@ typedef struct EftEmitArgA {
     /* 0x10 */ Vec4Q dir;
     /* 0x20 */ s32 chr;
     /* 0x24 */ s32 texIdx; /* EftSetDef.texIdx */
-    /* 0x28 */ f32 rate;
+    /* 0x28 */ f32 life;
     /* 0x2C */ f32 size;
-    /* 0x30 */ u8 *res;   /* the 16-entry texture set (EftSet.array[1]; EftArcArg.texSet in the chain module) */
-    /* 0x34 */ s32 *texA; /* EftSetPair.a: not a texture, the module's first definition block (EftArcArg.param) */
-    /* 0x38 */ s32 *texB; /* EftSetPair.b: the second definition block (EftArcArg.keys) */
+    /* 0x30 */ u8 *texSet;   /* the 16-entry texture set (EftSet.array[1]; EftArcArg.texSet in the chain module) */
+    /* 0x34 */ s32 *param; /* EftSetPair.a: not a texture, the module's first definition block (EftArcArg.param) */
+    /* 0x38 */ s32 *keys; /* EftSetPair.b: the second definition block (EftArcArg.keys) */
 } EftEmitArgA; /* size 0x40 */
 
 /* Type 17 (0x1A3640). */
@@ -420,7 +420,7 @@ typedef struct EftEmitArg17 {
     /* 0x2C */ f32 rate;
     /* 0x30 */ f32 size;
     /* 0x34 */ u8 *res;   /* the 16-entry texture set (EftSet.array[1]) */
-    /* 0x38 */ s32 *texA; /* EftSetPair.a: not a texture, the ribbon's definition block (EftRibbonArg.prm) */
+    /* 0x38 */ s32 *prm; /* EftSetPair.a: not a texture, the ribbon's definition block (EftRibbonArg.prm) */
     /* 0x3C */ s32 *texB; /* EftSetPair.b */
 } EftEmitArg17; /* size 0x40 */
 

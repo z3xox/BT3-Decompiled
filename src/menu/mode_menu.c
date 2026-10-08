@@ -15,7 +15,7 @@ ModeMenu *gModeMenu = NULL; /* 0x3B12F0 */
 extern void TextBox_Init(MTextBox *box, void *text, u32 preset);
 extern void TextBox_SetNoFlush(MTextBox *box, s32 value);
 extern void TextBox_SetAlign(MTextBox *box, s32 value);
-extern void TextBox_SetRect(MTextBox *box, s32 a, s32 b, s32 c, s32 d);
+extern void TextBox_SetClip(MTextBox *box, s32 a, s32 b, s32 c, s32 d);
 extern void TextBox_AttachLine(MFlash *flash, MFlashRef *ref, s32 x, s32 y, s32 line, MTextBox *box);
 
 #define MODEMENU_BGM 0x10B1C
@@ -244,7 +244,7 @@ void ModeMenu_Init(s32 section) {
         TextBox_Init(&gModeMenu->box[i], gModeMenu->text, 0);
         TextBox_SetNoFlush(&gModeMenu->box[i], 1);
         TextBox_SetAlign(&gModeMenu->box[i], 1);
-        TextBox_SetRect(&gModeMenu->box[i], 0, 0x200, 0, 0x1A1);
+        TextBox_SetClip(&gModeMenu->box[i], 0, 0x200, 0, 0x1A1);
     }
 
     switch (gProgress->subMenu) {

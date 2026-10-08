@@ -554,7 +554,7 @@ void Bracket_UpdateSeq(Bracket *b) {
         b->seq++;
         break;
     case 0x102:
-        if (GetWin_IsAnimating()) {
+        if (GetWin_IsAnimDone()) {
             b->seq++;
         }
         break;
@@ -573,7 +573,7 @@ void Bracket_UpdateSeq(Bracket *b) {
         GetWin_Close();
         break;
     case 0x105:
-        if (GetWin_IsAnimating()) {
+        if (GetWin_IsAnimDone()) {
             b->seq++;
         }
         break;
@@ -684,7 +684,7 @@ void Bracket_UpdateSeq(Bracket *b) {
         b->seq++;
         break;
     case 0x165:
-        if (GetWin_IsAnimating()) {
+        if (GetWin_IsAnimDone()) {
             b->seq++;
         }
         break;
@@ -703,7 +703,7 @@ void Bracket_UpdateSeq(Bracket *b) {
         GetWin_Close();
         break;
     case 0x168:
-        if (GetWin_IsAnimating()) {
+        if (GetWin_IsAnimDone()) {
             b->seq++;
         }
         break;

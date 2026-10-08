@@ -305,7 +305,7 @@ void ItemPanel_SetChara(s32 side, s32 chara, s32 slot, s32 set, s32 fromRec) {
     }
     p->chara = chara;
     p->set = set + 1;
-    p->limit = ChrTbl_GetLevel(chara, slot, fromRec);
+    p->limit = ChrTbl_GetItemSlots(chara, slot, fromRec);
     p->used = ItemSet_Fit(p->item.id, p->items, p->limit, &p->count);
     if (fromRec) {
         p->used = 10;

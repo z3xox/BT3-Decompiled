@@ -1,0 +1,36 @@
+BtlCharApi_GetNodeUnk90	BtlCharApi_GetNodeLocalPos	MEDIUM	Copies the node's vector at +0x90, the field the node views name pos (the local translation; the world matrix is at +0x10).
+BtlCharApi_GetNodeMtx50	BtlCharApi_GetNodeParentMtx	MEDIUM	Copies the node's matrix at +0x50, which the field is named parent for (the parent's world matrix).
+BtlCharApi_GetMemberUnk60	BtlCharApi_GetMemberVariant	HIGH	Returns BtlMember_GetActiveGauge(chr)->variant, the model variant of the active member.
+BtlCharApi_ObjQuery24D610	BtlCharApi_ObjQueryAnimEvent	HIGH	It is BtlObjAnim_QueryEvent(obj, mask, 0, what) by object id.
+BtlCharApi_GetTechniqueProgress	BtlCharApi_GetTechniqueFramesLeft	MEDIUM	Returns framesLeftOverride or (frame of the next event with bit 1 - current frame) / frame step: updates left until the event, not a progress.
+BtlCharApi_GetOppSkillKind	BtlCharApi_GetOppTechniqueKind	MEDIUM	Reads the technique table through BtlSuper_GetAiKind while the opponent is in a technique action (BtlAct_IsTechniqueId).
+BtlCharApi_GetOppMoveKind	BtlCharApi_GetOppSkillKind	MEDIUM	Reads the skill table through BtlSkill_GetAiKind in actions 0xFD..0x102; apply only after the previous line, which frees the name.
+BtlPartner_SetObjFloats	BtlPartner_AddSway	HIGH	Its whole body is BtlObj_AddSway on the partner object (the fighter-side twin is BtlAct_AddSway).
+BtlFacade_SetCpuParam8	BtlFacade_SetCpuLevel	HIGH	Its body is BtlAiMgr_SetLevel(0, v); BtlAiMgr_SetLevel(1, v) (btl_facade.c:114), whose parameter is cpuLevel.
+BtlFacade_SetCpuParam4	BtlFacade_SetCpuType	HIGH	Its body is BtlAiMgr_SetType(0, v); BtlAiMgr_SetType(1, v) (btl_facade.c:120), whose parameter is aiType.
+BtlFacade_SetObjSubState14	BtlFacade_PlayLipTrack	MEDIUM	Calls BtlObj_SetSubState(obj, 0xE, arg): mode 14 is BOBJ_MOUTH_LIP_PTR and the only caller (btl_script_cmd.c:650) passes work->lip.
+BtlCtrl_TestProgressFrameBit	BtlCtrl_TestTutorialFrameBit	MEDIUM	In battle mode 5 it tests bit gProgress->tutorial (progress +0x7F4, written by training.c) of fighter 0's frameBits (btl_param.c:296).
+EftChain_SetParam3	EftChain_SetNodeCount	HIGH	Stores its argument in EftChainWork.nodeCount clamped to 3..7 (src/battle/eft_chain.c).
+EftChain_SetParam5	EftChain_SetDelay	HIGH	Stores its argument in EftChainWork.delay, the start delay the update counts down (src/battle/eft_chain.c).
+EftChain_SetParam6	EftChain_SetEndWait	HIGH	Stores its argument in EftChainWork.endWait, counted down once the effect is ending (src/battle/eft_chain.c).
+EftChain_SetRes	EftChain_SetTexPair	MEDIUM	Only forwards (set, idxA, idxB) to EftChain_SetTex, which copies two texture entries of the set.
+EFT_PART10_P_SCALEX	EFT_PART10_P_MUL_R	MEDIUM	Per-channel flag of the colour multiplier pulse (eft_link_2.c:1616 tests 0x2000 for mul[0]); likewise SCALEY/SCALEZ -> MUL_G/MUL_B.
+EFT_PART10_P_SCALEY	EFT_PART10_P_MUL_G	MEDIUM	eft_link_2.c:1619 tests 0x4000 for the green multiplier.
+EFT_PART10_P_SCALEZ	EFT_PART10_P_MUL_B	MEDIUM	eft_link_2.c:1622 tests 0x8000 for the blue multiplier.
+EFT_PART10_P_UNK80	EFT_PART10_P_COLOR_RAMP	MEDIUM	eft_link_2.c:1679-1686: with 0x80 the colour runs from col0 along colDelta; set from def->colorMode (eft_part10.c:296-301).
+EftPart10_SetRate	EftPart10_SetLife	MEDIUM	Writes the word eft_link_2.c:1437 reads as the emitter's life in seconds.
+EftLink_SetRate	EftLink_SetLife	MEDIUM	Writes EftWLinkArg +0x34, the life in seconds (eft_link_1.c:129).
+EftZap_SetUnk40	EftZap_SetType	HIGH	Writes the creation argument's +0x40 byte, now named `type` in both eft_zap.h and eft_ribbon.h (twin of EftRibbon_SetType).
+EftMulti_IsPartKind5	EftMulti_IsPartNode5	MEDIUM	It tests byte +0x0A of the emitter definition, which is the node slot in EftSetDef / EftEmitDef, not a kind.
+EftSurf_SetParam30	EftSurf_SetSpecular	MEDIUM	Its whole body is gEftSurf->param30 = v, the specular factor of the surface parameters.
+EftZap_SetRate	EftZap_SetLife	HIGH	It stores seconds at arg +0x34 and seconds * 30 at work +0x174, the life EftZap_Update counts down (eft_ribbon.c w->life).
+BtlStage_GetPlace2C	BtlStage_GetFirstStartPlace	MEDIUM	It returns the position and facing yaw of entry 0 of StgDataA.starts (stage data +0x2C).
+GetWin_IsAnimating	GetWin_IsAnimDone	MEDIUM	it tests bit 0 of the movie's trigger word (Flash.trig, set for one frame by the movie's action "trig" "0"); the callers start an animation and wait for it to become non-zero before going on.
+TextBox_SetColor2	TextBox_SetShadowColor	HIGH	it stores into the box's shadow colour, which TextBox_DrawClip hands to Font_SetShadowColor.
+TEXTBOX_FLAG_COLOR2	TEXTBOX_FLAG_SHADOW	HIGH	the flag TextBox_SetColor2 sets; it selects box->shadow over the default shadow colour in TB_ATTACH.
+TextBox_SetRect	TextBox_SetClip	HIGH	it stores the four values TextBox_DrawClip hands to Font_SetClip (argument order x0, x1, y0, y1).
+TEXTBOX_FLAG_RECT	TEXTBOX_FLAG_CLIP	HIGH	the flag TextBox_SetRect sets; it selects box->clip over the full-screen clip in TB_ATTACH.
+MsgWin_SetBoxParam	MsgWin_SetSpacing	HIGH	its whole body is TextBox_SetSpacing(&gMsgWin->box, a, b).
+ChrTbl_GetLevel	ChrTbl_GetItemSlots	MEDIUM	both callers store the result as the item slot capacity (ItemSet_Fit's capacity argument).
+Snd_SendFighters	Snd_SendLoopSounds	MEDIUM	it collects the handles of the live looping sounds of both sides (BtlCharApi_GetSound's first output), not fighter ids.
+Snd_RpcSetFighters	Snd_RpcSetLoopSounds	MEDIUM	its only caller passes looping-sound handles; same for the constant SND_RPC_FIGHTERS.

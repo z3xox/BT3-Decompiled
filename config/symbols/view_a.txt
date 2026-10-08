@@ -9,12 +9,12 @@ GetWin_Draw = 0x0025C648; // type:func // guess
 GetWin_Open = 0x0025CC38; // type:func // guess
 GetWin_Close = 0x0025CC70; // type:func // guess
 GetWin_Next = 0x0025CC98; // type:func // guess
-GetWin_IsAnimating = 0x0025CCD0; // type:func // guess
+GetWin_IsAnimDone = 0x0025CCD0; // type:func // guess
 GetWin_Setup = 0x0025CCE8; // type:func // guess
 gGetWin = 0x002FF0D0; // size:0x4 // guess
 
 // MsgWin (view_a_b.c): the message window; clip "mc_message_text", labels "fl_l_in" / "fl_r_in" / "fl_l_out" /
-// "fl_r_out". MsgWin_SetBoxParam forwards to func_00260140 of the text box module.
+// "fl_r_out". MsgWin_SetSpacing forwards to func_00260140 of the text box module.
 MsgWin_Init = 0x0025CFC0; // type:func // guess
 MsgWin_Term = 0x0025D0C0; // type:func // guess
 MsgWin_Draw = 0x0025D0F8; // type:func // guess
@@ -22,7 +22,7 @@ MsgWin_Open = 0x0025D1B0; // type:func // guess
 MsgWin_Close = 0x0025D1F8; // type:func // guess
 MsgWin_SetText = 0x0025D240; // type:func // guess
 MsgWin_SetSide = 0x0025D258; // type:func // guess
-MsgWin_SetBoxParam = 0x0025D268; // type:func // guess
+MsgWin_SetSpacing = 0x0025D268; // type:func // guess
 gMsgWin = 0x002FF0D8; // size:0x4 // guess
 
 // IconWin (view_a_c.c): a window with a changeable icon texture; labels "fl_in" / "fl_out".
@@ -63,9 +63,9 @@ TextBox_Init = 0x0025FE00; // type:func // guess
 TextBox_SetAlign = 0x00260010; // type:func // guess
 TextBox_SetNoFlush = 0x00260018; // type:func // guess
 TextBox_SetOffset = 0x00260020; // type:func // guess
-TextBox_SetRect = 0x00260030; // type:func // guess
+TextBox_SetClip = 0x00260030; // type:func // guess
 TextBox_SetColor = 0x00260050; // type:func // guess
-TextBox_SetColor2 = 0x00260080; // type:func // guess
+TextBox_SetShadowColor = 0x00260080; // type:func // guess
 
 // Progress and menu helpers (view_a_e.c). Progress_Init was named before; Progress_ClearSession is what
 // sys/save.c calls "clears the per-session parts of gProgress". FlashAnim_*: per-frame animation of one movie

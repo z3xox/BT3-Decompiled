@@ -59,7 +59,7 @@ typedef struct AiThRange {
 /* Situation: work + 0x2C0. Filled by sense (0x1BFF70, outside this file). */
 typedef struct AiThStatus {
     /* 0x00 */ u64 flags;      /* (m) bit n set = rules of situation group n may run this frame */
-    /* 0x08 */ s32 downTimer;
+    /* 0x08 */ s32 hitPendingTimer;
     /* 0x0C */ s32 oppClass;
     /* 0x10 */ s32 oppAction;
     /* 0x14 */ s32 react;

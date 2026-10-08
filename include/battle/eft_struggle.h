@@ -79,7 +79,7 @@ typedef struct EftRTask {
 
 typedef struct EftRList {
     /* 0x0 */ s32 parent;
-    /* 0x4 */ EftRTask *first; /* BtlTaskList.head */
+    /* 0x4 */ EftRTask *head; /* BtlTaskList.head */
 } EftRList;
 
 /* ---- emitter set (eft_emit.c / eft_sweep.c EftEmit_*) ---- */

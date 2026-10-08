@@ -73,8 +73,8 @@ typedef struct BtlActJChr {
     /* 0x0D8C */ s32 unkD8C;
     /* 0x0D90 */ s32 attackId;       /* id BtlAct_PrepareAttack was last called with */
     /* 0x0D94 */ u8 unkD94[0xE00 - 0xD94];
-    /* 0x0E00 */ s32 dodges;         /* stack count 0..3 of skill ids 0x0C / 0x32 (skillStackA in BtlActIChr): the skill is refused at 3, or above 0 when it does not stack */
-    /* 0x0E04 */ s32 dodgesB;        /* the same for skill id 0x37 (skillStackB in BtlActIChr) */
+    /* 0x0E00 */ s32 skillStackA;         /* stack count 0..3 of skill ids 0x0C / 0x32 (skillStackA in BtlActIChr): the skill is refused at 3, or above 0 when it does not stack */
+    /* 0x0E04 */ s32 skillStackB;        /* the same for skill id 0x37 (skillStackB in BtlActIChr) */
     /* 0x0E08 */ u8 unkE08[0xE40 - 0xE08];
     /* 0x0E40 */ s32 techDelay;      /* countdown: no technique input while > 0 */
     /* 0x0E44 */ u8 unkE44[0xE5C - 0xE44];

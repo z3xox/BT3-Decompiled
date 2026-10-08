@@ -47,7 +47,7 @@ typedef struct EftTTask {
 /* A list of child tasks as BtlTask_CreateChildList returns it; only the test the ray manager makes. */
 typedef struct EftTTaskList {
     /* 0x00 */ s32 parent;
-    /* 0x04 */ s32 count;         /* BtlTaskList.head: the first child task (a pointer); non-zero = list not empty */
+    /* 0x04 */ s32 head;         /* BtlTaskList.head: the first child task (a pointer); non-zero = list not empty */
 } EftTTaskList;
 
 /* A screen position as Mtx_ProjectPoint writes it: GS units (1 / 16 pixel) with the 0x7000 / 0x7200 offset. */

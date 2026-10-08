@@ -276,15 +276,15 @@ s32 EftQuad_InitQuad(EftPart9Ptcl *p, EftPart9 *em) {
     Mtx_StoreIdentity(&m);
     Vec4_Set(&up, 0.0f, 0.0f, 1.0f, 1.0f);
     a = Rand_FloatRange(em->arc, em->arc + em->arcRange) * 3.14159265f;
-    p->dir.x = sinf(a);
-    p->dir.y = 0.0f;
-    p->dir.z = cosf(a);
-    p->dir.w = 1.0f;
+    p->vel.x = sinf(a);
+    p->vel.y = 0.0f;
+    p->vel.z = cosf(a);
+    p->vel.w = 1.0f;
     Mtx_RotateZ(&m, &m, EftMath_WrapAngle(Rand_FloatRange(0.0f, 1.0f) * 6.2831853f));
-    Mtx_MulVec4(&p->dir, &m, &p->dir);
-    Vec3_Sub(&p->vel, &up, &p->dir);
-    Vec3_Normalize(&p->vel, &p->vel);
-    Vec3_Scale(&p->vel, &p->vel, em->speed);
+    Mtx_MulVec4(&p->vel, &m, &p->vel);
+    Vec3_Sub(&p->accel, &up, &p->vel);
+    Vec3_Normalize(&p->accel, &p->accel);
+    Vec3_Scale(&p->accel, &p->accel, em->speed);
     p->rotVel[0] = Rand_FloatRange(em->rotVelMin[0], em->rotVelMin[0] + em->rotVelRange[0]) * 3.14159265f;
     p->rotVel[1] = Rand_FloatRange(em->rotVelMin[1], em->rotVelMin[1] + em->rotVelRange[1]) * 3.14159265f;
     p->rotVel[2] = Rand_FloatRange(em->rotVelMin[2], em->rotVelMin[2] + em->rotVelRange[2]) * 3.14159265f;
@@ -360,34 +360,34 @@ s32 EftQuad_InitQuad(EftPart9Ptcl *p, EftPart9 *em) {
         }
     }
     if (def->flags & 0x80) {
-        p->stretchTime = em->stretchTime * 30.0f;
-        p->stretchAge = 0.0f;
-        if (p->stretchAge < p->stretchTime) {
-            p->stretchStep[0] = em->stretch1[0] - em->stretch0[0];
-            p->stretchStep[1] = em->stretch1[1] - em->stretch0[1];
-            p->stretchStep[2] = em->stretch1[2] - em->stretch0[2];
-            p->stretch[0] = em->stretch0[0];
-            p->stretch[1] = em->stretch0[1];
-            p->stretch[2] = em->stretch0[2];
-            if (p->stretchStep[0] != 0.0f) {
+        p->colorOscPeriod = em->stretchTime * 30.0f;
+        p->colorOscTime = 0.0f;
+        if (p->colorOscTime < p->colorOscPeriod) {
+            p->colorOscAmp[0] = em->stretch1[0] - em->stretch0[0];
+            p->colorOscAmp[1] = em->stretch1[1] - em->stretch0[1];
+            p->colorOscAmp[2] = em->stretch1[2] - em->stretch0[2];
+            p->colorMul[0] = em->stretch0[0];
+            p->colorMul[1] = em->stretch0[1];
+            p->colorMul[2] = em->stretch0[2];
+            if (p->colorOscAmp[0] != 0.0f) {
                 p->flags |= 0x10000;
             }
-            if (p->stretchStep[1] != 0.0f) {
+            if (p->colorOscAmp[1] != 0.0f) {
                 p->flags |= 0x20000;
             }
-            if (p->stretchStep[2] != 0.0f) {
+            if (p->colorOscAmp[2] != 0.0f) {
                 p->flags |= 0x40000;
             }
         }
     } else {
-        p->stretch[0] = 1.0f;
-        p->stretch[1] = 1.0f;
-        p->stretch[2] = 1.0f;
+        p->colorMul[0] = 1.0f;
+        p->colorMul[1] = 1.0f;
+        p->colorMul[2] = 1.0f;
     }
     sz[0] = Rand_FloatRange(em->size0[0], em->size0[0] + em->size0Range[0]);
     sz[1] = Rand_FloatRange(em->size0[1], em->size0[1] + em->size0Range[1]);
     sz[2] = Rand_FloatRange(em->size0[2], em->size0[2] + em->size0Range[2]);
-    p->size = sz[0];
+    p->sizeMul = sz[0];
     p->sizeStep0 = (sz[1] - sz[0]) / (p->life * def->sizeMid);
     p->sizeStep1 = (sz[2] - sz[1]) / (p->life * (1.0f - def->sizeMid));
     p->baseSize = p->halfSize = Rand_FloatRange(def->baseSize, def->baseSize + def->baseSizeRange);

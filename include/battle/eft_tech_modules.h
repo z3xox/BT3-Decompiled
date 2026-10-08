@@ -76,7 +76,7 @@ typedef struct EftTechArg {
     /* 0x04 */ s32 slot;      /* shot slot: 0, 1 ki blasts, 2..4 techniques */
     /* 0x08 */ u8 unk8[0x1C - 0x8];
     /* 0x1C */ s32 *pack;     /* the technique's effect pack */
-    /* 0x20 */ s32 side;      /* the fighter whose character pack is read (`chr` in EftKSrc, eft_obj_tech.h) */
+    /* 0x20 */ s32 chr;      /* the fighter whose character pack is read (`chr` in EftKSrc, eft_obj_tech.h) */
     /* 0x24 */ EftTechDef *def;
 } EftTechArg;
 

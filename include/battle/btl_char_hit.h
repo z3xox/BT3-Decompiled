@@ -109,10 +109,10 @@ typedef struct HitReact {
     /* 0x28 */ f32 launchA;    /* launch reactions: attack record + 0x15 as an angle */
     /* 0x2C */ f32 launchB;    /* attack record + 0x16 as an angle */
     /* 0x30 */ u8 unk30[0x38 - 0x30];
-    /* 0x38 */ s32 unk38;      /* fighter +0xFE8, shakeTimer in btl_char_action.h / btl_char_move.h (a countdown: the model shakes sideways); set to 3 with reaction 2 */
+    /* 0x38 */ s32 shakeTimer;      /* fighter +0xFE8, shakeTimer in btl_char_action.h / btl_char_move.h (a countdown: the model shakes sideways); set to 3 with reaction 2 */
     /* 0x3C */ s32 damage;     /* reactions 0x14, 0x16, 0x25: the damage, applied later by other code */
     /* 0x40 */ u8 unk40[0x48 - 0x40];
-    /* 0x48 */ s32 unk48;      /* fighter +0xFF8, blindTimer in btl_char_action.h (a countdown); a grab sets it to BtlSkill_GetFrames(attacker, skill slot) */
+    /* 0x48 */ s32 blindTimer;      /* fighter +0xFF8, blindTimer in btl_char_action.h (a countdown); a grab sets it to BtlSkill_GetFrames(attacker, skill slot) */
 } HitReact;
 
 /* Partial view of a fighter (0x1600 bytes). */

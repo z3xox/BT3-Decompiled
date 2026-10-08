@@ -37,8 +37,8 @@ extern void BtlFacade_StartCharMoveF(s32 side, s32 type, f32 value, s32 mode) __
 extern BtlScriptCmdWindow *Font_GetStyle(void);
 /* start position and direction of a side (0x2427A0, stage code, not decompiled) */
 extern void BtlStage_GetStartPlace(s32 side, Vec4 *pos, Vec4 *rot, s32 alt);
-/* called with a second argument (0) that BtlFacade_SetCpuParam8 does not take */
-extern void BtlFacade_SetCpuParam8Ex(s32 value, s32 unused) __asm__("BtlFacade_SetCpuParam8");
+/* called with a second argument (0) that BtlFacade_SetCpuLevel does not take */
+extern void BtlFacade_SetCpuParam8Ex(s32 value, s32 unused) __asm__("BtlFacade_SetCpuLevel");
 
 extern BtlScriptCmdProgress *gProgress;
 extern BtlScriptWork gBtlScript;
@@ -527,7 +527,7 @@ s32 BtlScriptCmd_SetWindow(u32 phase, void *taskWork) {
             g = Gsc_GetIntOr(0xFF);
             b = Gsc_GetIntOr(0xFF);
             a = Gsc_GetIntOr(0x80);
-            win->color28 = r | (a << 24) | ((b << 16) | (g << 8));
+            win->shadowColor = r | (a << 24) | ((b << 16) | (g << 8));
         }
     }
     return 1;
@@ -647,7 +647,7 @@ s32 BtlScriptCmd_Talk(u32 phase, void *taskWork) {
         break;
     case GSC_PHASE_UPDATE:
         if (work->lip != NULL && work->lipStarted == 0 && Adx_GetStat(work->channel + 4) == 3) {
-            BtlFacade_SetObjSubState14(work->side, (s32)work->lip);
+            BtlFacade_PlayLipTrack(work->side, (s32)work->lip);
             work->lipStarted = 1;
         }
         if (Voice_IsStopped(work->channel)) {

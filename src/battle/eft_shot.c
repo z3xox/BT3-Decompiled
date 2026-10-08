@@ -272,7 +272,7 @@ s32 EftRec_GetDefClass(EftRecView *rec) {
         return 0;
     }
     def = rec->src->def;
-    kind = def->kind;
+    kind = def->sub;
     id = def->id;
     if (kind != 3) {
         if (kind == 4) {
@@ -1287,10 +1287,10 @@ void EftBound_DrawMeshCulled(EftBoundMesh *mesh) {
         if (Vec3_Dot(&m->quad[0].normal, &d) < 0.0f) {
             EftBound_DrawTri(*(EftMtxArg *)&gBtlCamView->screen, vtx[idx.i[0]].pos, vtx[idx.i[1]].pos,
                              vtx[idx.i[2]].pos, vtx[idx.i[0]].st, vtx[idx.i[1]].st, vtx[idx.i[2]].st,
-                             vtx[idx.i[0]].col, vtx[idx.i[1]].col, vtx[idx.i[2]].col, param->otZ, tex->tex0);
+                             vtx[idx.i[0]].col, vtx[idx.i[1]].col, vtx[idx.i[2]].col, param->layer, tex->tex0);
             EftBound_DrawTri(*(EftMtxArg *)&gBtlCamView->screen, vtx[idx.i[2]].pos, vtx[idx.i[1]].pos,
                              vtx[idx.i[3]].pos, vtx[idx.i[2]].st, vtx[idx.i[1]].st, vtx[idx.i[3]].st,
-                             vtx[idx.i[2]].col, vtx[idx.i[1]].col, vtx[idx.i[3]].col, param->otZ, tex->tex0);
+                             vtx[idx.i[2]].col, vtx[idx.i[1]].col, vtx[idx.i[3]].col, param->layer, tex->tex0);
         }
     }
     Vu0Cur_Pop();
@@ -1310,10 +1310,10 @@ void EftBound_DrawMesh(EftBoundMesh *mesh) {
         idx = mesh->quad[i].idx;
         EftBound_DrawTri(*(EftMtxArg *)&gBtlCamView->screen, vtx[idx.i[0]].pos, vtx[idx.i[1]].pos,
                          vtx[idx.i[2]].pos, vtx[idx.i[0]].st, vtx[idx.i[1]].st, vtx[idx.i[2]].st,
-                         vtx[idx.i[0]].col, vtx[idx.i[1]].col, vtx[idx.i[2]].col, param->otZ, tex->tex0);
+                         vtx[idx.i[0]].col, vtx[idx.i[1]].col, vtx[idx.i[2]].col, param->layer, tex->tex0);
         EftBound_DrawTri(*(EftMtxArg *)&gBtlCamView->screen, vtx[idx.i[2]].pos, vtx[idx.i[1]].pos,
                          vtx[idx.i[3]].pos, vtx[idx.i[2]].st, vtx[idx.i[1]].st, vtx[idx.i[3]].st,
-                         vtx[idx.i[2]].col, vtx[idx.i[1]].col, vtx[idx.i[3]].col, param->otZ, tex->tex0);
+                         vtx[idx.i[2]].col, vtx[idx.i[1]].col, vtx[idx.i[3]].col, param->layer, tex->tex0);
     }
     Vu0Cur_Pop();
 }
@@ -1631,7 +1631,7 @@ s32 EftShot_GetCurSlot(s32 chr) {
 void EftShot_PlayFireSound(s32 objId, EftShotSlot *slot) {
     s32 snd = -1;
 
-    if (slot->def->cls == 0) {
+    if (slot->def->kind == 0) {
         if (EftShot_TestBits(objId, 2)) {
             if (slot->def->id != 0x27) {
                 snd = 0;

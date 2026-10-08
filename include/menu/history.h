@@ -197,7 +197,7 @@ extern void GetWin_Draw(void);
 extern void GetWin_Open(void);
 extern void GetWin_Close(void);
 extern void GetWin_Next(void);
-extern s32 GetWin_IsAnimating(void);
+extern s32 GetWin_IsAnimDone(void);
 extern void GetWin_Setup(s32 kind, s32 value);
 extern void Num_Draw(MFlash *flash, char *fmt, s32 first, s32 count, s32 value, s32 w, s32 h, s32 mode);
 extern void StreamSe_PlayPausedDefault(s32 se, s32 id);

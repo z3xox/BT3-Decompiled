@@ -89,9 +89,9 @@ typedef struct UoProgress {
     /* 0x64C */ u8 unk64C[0x28];
     /* 0x674 */ s32 simTurn;     /* counted up each time mode 23 goes back to mode 22 */
     /* 0x678 */ s32 unk678[3];
-    /* 0x684 */ s32 discFlags;  /* UB_DISC_; bit 8 is read by the result screen (ub_rank.h: ubFlags, where bit 8 is
+    /* 0x684 */ s32 ubFlags;  /* UB_DISC_; bit 8 is read by the result screen (ub_rank.h: ubFlags, where bit 8 is
                                    NPROG_UB_UPWARD: the place challenged on the ladder is above the player's) */
-    /* 0x688 */ s32 course;     /* copied to UbResult.course when cursor == 1 (ub_rank.h: ubChoice) */
+    /* 0x688 */ s32 ubChoice;     /* copied to UbResult.course when cursor == 1 (ub_rank.h: ubChoice) */
 } UoProgress;
 
 #define UO_PROG ((UoProgress *)gProgress)

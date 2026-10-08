@@ -171,15 +171,15 @@ void BtlObjMdl_BindFiles(ObjMdlObj *obj) {
     if (!mdl->file->bound) {
         mdl->file->tbp = 0x3480;
         mdl->model->cbp = 0x3C00;
-        mdl->model->cbp2 = 0x3D00;
-        mdl->model->tbp2 = 0x3D40;
+        mdl->model->clutTbp = 0x3D00;
+        mdl->model->fadeTbp = 0x3D40;
         mdl->model->fadeCbp = 0x3E40;
         mdl->model->alphaRow = BtlObjVis_AllocFreeBit();
-        MdlTex_RebaseChain(0, mdl->meshes, mdl->model->tbp, mdl->model->cbp, 0x3D40, mdl->model->cbp2, 0x7FFFFFFF,
+        MdlTex_RebaseChain(0, mdl->meshes, mdl->model->tbp, mdl->model->cbp, 0x3D40, mdl->model->clutTbp, 0x7FFFFFFF,
                            0x7FFFFFFF);
         for (i = 0; i < 8; i++) {
             if (obj->mdl.extra[i] != NULL) {
-                MdlTex_RebaseChain(1, obj->mdl.extra[i], mdl->model->tbp, mdl->model->cbp, 0x3D40, mdl->model->cbp2,
+                MdlTex_RebaseChain(1, obj->mdl.extra[i], mdl->model->tbp, mdl->model->cbp, 0x3D40, mdl->model->clutTbp,
                                    0, 0);
             }
         }
@@ -647,10 +647,10 @@ void ObjShadow_LoadProg(ObjMdlObj *obj, ObjShadowWork *work) {
     Mtx_Mul(screen, screen, &flat);
     Mtx_Copy(&prog->clip, screen);
     view = obj->view;
-    view->color.x = 128.0f;
-    view->color.y = 128.0f;
-    view->color.z = 128.0f;
-    view->color.w = 128.0f;
+    view->shadowColor.x = 128.0f;
+    view->shadowColor.y = 128.0f;
+    view->shadowColor.z = 128.0f;
+    view->shadowColor.w = 128.0f;
     ObjDraw_DrawPartsFlat(obj);
 }
 
@@ -753,7 +753,7 @@ void ObjShadow_BeginFlat(ObjMdlObj *obj) {
     memset(&plane, 0, sizeof(plane));
     plane.y = -1.0f;
     if (ObjShadow_IsFlat(obj)) {
-        BtlObjLight_GetColor(&obj->view->color);
+        BtlObjLight_GetColor(&obj->view->shadowColor);
         Vu1Pkt_LoadProg2(0);
         BtlObjLight_GetHalf(&half);
         ObjShadow_MakePlaneMtx(&flat, &plane, &half, -0.01f);

@@ -413,7 +413,7 @@ typedef struct EftZapPool {
     /* 0x17D0 */ u8 pts[0x690];  /* point pool: 35 of 0x30 bytes (EftZap_AddNode, eft_ad) */
     /* 0x1E60 */ Mtx44 identity;
     /* 0x1EA0 */ u8 nextLine;
-    /* 0x1EA1 */ u8 unk1EA1[0xF];
+    /* 0x1EA1 */ u8 nodeCur[0xF];
 } EftZapPool; /* 0x1EB0 */
 
 #endif

@@ -32,15 +32,15 @@ typedef struct BtlCharApiChr {
     /* 0x000C */ s32 objId;         /* BtlObj_Get index of this fighter's object */
     /* 0x0010 */ Vec4 pos;          /* world position (BtlChar_GetPos returns its address) */
     /* 0x0020 */ u8 unk20[0x420 - 0x20];
-    /* 0x0420 */ Vec4 camUnk420;    /* ChrCam.eye (btl_char_cam.h): the wanted camera position; the camera-shake distance is measured from it */
+    /* 0x0420 */ Vec4 camEye;    /* ChrCam.eye (btl_char_cam.h): the wanted camera position; the camera-shake distance is measured from it */
     /* 0x0430 */ Vec4 camPos;       /* fighter camera position */
     /* 0x0440 */ Vec4 camRot;       /* fighter camera rotation */
     /* 0x0450 */ u8 unk450[0x460 - 0x450];
-    /* 0x0460 */ Vec4 camUnk460;    /* ChrCam.bodyPos: copy of the object's body position (+0xFA0); end point of the demo camera's stage trace */
+    /* 0x0460 */ Vec4 camBodyPos;    /* ChrCam.bodyPos: copy of the object's body position (+0xFA0); end point of the demo camera's stage trace */
     /* 0x0470 */ u8 camShake[0x494 - 0x470]; /* CamShake_Add target (ChrCam_AddShake) */
-    /* 0x0494 */ s32 camUnk494;     /* ChrCam.hit: 1 = the stage is between target and eye; returned by BtlCharApi_GetCamPose */
+    /* 0x0494 */ s32 camHit;     /* ChrCam.hit: 1 = the stage is between target and eye; returned by BtlCharApi_GetCamPose */
     /* 0x0498 */ u8 unk498[0x4A0 - 0x498];
-    /* 0x04A0 */ f32 camUnk4A0;     /* ChrCam.yaw: yaw of the follow camera (BtlCharApi_GetCamYaw) */
+    /* 0x04A0 */ f32 camYaw;     /* ChrCam.yaw: yaw of the follow camera (BtlCharApi_GetCamYaw) */
     /* 0x04A4 */ u8 unk4A4[0x4B8 - 0x4A4];
     /* 0x04B8 */ s32 camShakeOn;    /* ChrCam_AddShake only shakes when non-zero */
     /* 0x04BC */ u8 unk4BC[0x948 - 0x4BC];
@@ -87,7 +87,7 @@ typedef struct BtlCharApiObj {
     /* 0xC84 */ u8 unkC84[0xCAC - 0xC84];
     /* 0xCAC */ s8 hitCount;
     /* 0xCAD */ s8 hitIndex;          /* expected to be ~hitCount */
-    /* 0xCAE */ s8 attrCount;       /* eventCount in btl_obj_anim.h: number of animation events (BtlObjAnim_TestEvent) */
+    /* 0xCAE */ s8 eventCount;       /* eventCount in btl_obj_anim.h: number of animation events (BtlObjAnim_TestEvent) */
 } BtlCharApiObj;
 
 /* One playing sound of a side (0xC bytes). BtlCharSnd_StoreHandle fills a slot, BtlCharSnd_StopUnrequestedLoops stops it with Snd_StopHandle. */
@@ -106,7 +106,7 @@ typedef struct BtlCharApiSoundSet {
 typedef struct BtlCharApiMgr {
     /* 0x00 */ s32 count;
     /* 0x04 */ BtlCharApiChr *chars;
-    /* 0x08 */ void *sounds;            /* the one-shot sound sets; the looping sets follow */
+    /* 0x08 */ void *oneShotSounds;            /* the one-shot sound sets; the looping sets follow */
     /* 0x0C */ BtlCharApiSoundSet *loopSounds; /* one per side */
     /* 0x10 */ u8 unk10[0x1C - 0x10];
     /* 0x1C */ s32 unk1C;               /* counter, full at 90 */
@@ -120,7 +120,7 @@ s32 BtlCharApi_ObjHasFlags42(s32 objId);
 s32 BtlCharApi_AnyHasFlag128(void);
 s32 BtlCharApi_IsHpEmpty(s32 objId);
 s32 BtlCharApi_TestFlagA4(s32 objId);
-s32 BtlCharApi_GetMemberUnk60(s32 objId);
+s32 BtlCharApi_GetMemberVariant(s32 objId);
 s32 BtlCharApi_IsFlag8Action104(s32 objId);
 s32 BtlCharApi_IsAction103OrFlagA6(s32 objId);
 s32 BtlCharApi_IsMemberBodyChanged(s32 objId);
@@ -151,7 +151,7 @@ s32 BtlCharApi_ObjGetAttrKind(s32 objId, u64 mask);
 f32 BtlCharApi_GetRushSequenceFrame(s32 objId);
 f32 BtlCharApi_ObjGetAnimFrame(s32 objId);
 f32 BtlCharApi_ObjGetAnimStep(s32 objId);
-s32 BtlCharApi_ObjQuery24D610(s32 objId, s32 mask, s32 what);
+s32 BtlCharApi_ObjQueryAnimEvent(s32 objId, s32 mask, s32 what);
 s32 BtlCharApi_GetAnimId(s32 objId);
 void *BtlCharApi_GetAnimFlags(s32 objId);
 s32 BtlCharApi_TestFlag2B(s32 objId);
@@ -279,7 +279,7 @@ typedef struct BtlCapiBChr {
     /* 0x1560 */ Vec4 warpPos;      /* taken when held flag 0xFC is seen */
     /* 0x1570 */ Vec4 warpRot;      /* taken when held flag 0xFD is seen */
     /* 0x1580 */ u8 unk1580[0x1594 - 0x1580];
-    /* 0x1594 */ s32 switchPrompt;  /* techClass in btl_param.h / btl_input.h: the technique class 2..4 whose button command is watched this frame; -1 each frame */
+    /* 0x1594 */ s32 techClass;  /* techClass in btl_param.h / btl_input.h: the technique class 2..4 whose button command is watched this frame; -1 each frame */
     /* 0x1598 */ u8 unk1598[0x1600 - 0x1598];
 } BtlCapiBChr; /* size 0x1600 */
 
@@ -427,7 +427,7 @@ s32 BtlCharApi_SkipBlastRec(s32 objId, BtlCapiBBlastRec *rec, s32 mode);
 s32 BtlCharApi_FindIncomingBlast(s32 objId, s32 mode);
 s32 BtlCharApi_IsBlastPassing(s32 objId);
 void BtlCharApi_MarkIncomingBlast(s32 objId);
-f32 BtlCharApi_GetTechniqueProgress(s32 objId);
+f32 BtlCharApi_GetTechniqueFramesLeft(s32 objId);
 BtlCapiBSkills *BtlCharApi_GetSkillTable(s32 objId);
 BtlCapiBMoves *BtlCharApi_GetMoveTable(s32 objId);
 s32 BtlCharApi_GetAttackAttr(s32 objId);
@@ -458,11 +458,11 @@ s32 BtlCharApi_GetActiveMember(s32 objId);
 s32 BtlCharApi_GetSwitchTarget(s32 objId);
 s32 BtlCharApi_GetMemberHpPercent(s32 objId, s32 member);
 s32 BtlCharApi_GetMemberKiPercent(s32 objId, s32 member);
-s32 BtlCharApi_GetOppSkillKind(s32 objId);
+s32 BtlCharApi_GetOppTechniqueKind(s32 objId);
 s32 BtlCharApi_IsOppSkillFlag4(s32 objId);
 s32 BtlCharApi_TestOppSkillFlags(s32 objId);
 s32 BtlCharApi_GetOppSkillClass(s32 objId);
-s32 BtlCharApi_GetOppMoveKind(s32 objId);
+s32 BtlCharApi_GetOppSkillKind(s32 objId);
 s32 BtlCharApi_GetClashCountB(s32 objId);
 s32 BtlCharApi_GetClashCountA(s32 objId);
 s32 BtlCharApi_IsMoveSlotActive(s32 objId, u32 slot);

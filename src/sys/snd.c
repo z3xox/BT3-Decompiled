@@ -290,9 +290,9 @@ void Snd_RpcCmdE(void) {
     Snd_RpcCall(SND_RPC_CMD_E, &gSndRpcBuf, 4);
 }
 
-/* RPC 0xF: a count and that many 16-bit values. The one caller (Snd_SendFighters) passes the handles of the looping
+/* RPC 0xF: a count and that many 16-bit values. The one caller (Snd_SendLoopSounds) passes the handles of the looping
    sounds the two sides have running, not fighter ids. */
-void Snd_RpcSetFighters(s32 count, s32 *handles) {
+void Snd_RpcSetLoopSounds(s32 count, s32 *handles) {
     s32 i;
 
     gSndRpcBuf.h[0] = count;
@@ -736,7 +736,7 @@ void Snd_CmdE(void) {
 
 /* Battle, per frame: sends the handles of the live looping sounds of both sides (BtlCharApi_GetSound; up to four
    per side) to the driver (RPC 0xF). */
-void Snd_SendFighters(void) {
+void Snd_SendLoopSounds(void) {
     s32 handles[12];
     s32 count = 0;
     s32 i;
@@ -749,7 +749,7 @@ void Snd_SendFighters(void) {
         BtlCharApi_GetSound(1, i, &handles[count], NULL, NULL);
         count++;
     }
-    Snd_RpcSetFighters(count, handles);
+    Snd_RpcSetLoopSounds(count, handles);
 }
 
 /* Sony HD header chunk -> its vag-info chunk (offset at +0x30 of the header section, word aligned). */

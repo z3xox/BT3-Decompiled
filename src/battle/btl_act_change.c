@@ -35,10 +35,10 @@ void BtlActThrow_SetReleaseHeading(BtlActHChr *chr) {
     f32 pitch;
 
     if (chr->react.back != 0) {
-        yaw = BtlUtil_WrapAngle(BtlUtil_WrapAngle(pose->facing + chr->react.launchA) + BTL_DEG(180.0f));
+        yaw = BtlUtil_WrapAngle(BtlUtil_WrapAngle(pose->yaw + chr->react.launchA) + BTL_DEG(180.0f));
         pitch = chr->react.launchB;
     } else {
-        yaw = BtlUtil_WrapAngle(pose->facing + chr->react.launchA);
+        yaw = BtlUtil_WrapAngle(pose->yaw + chr->react.launchA);
         pitch = -chr->react.launchB;
     }
     BtlMove_SetHeading(chr, yaw, pitch * Mathf_Cos(pose->rootRot.y));
@@ -403,7 +403,7 @@ s32 BtlAct_SlamThrown(BtlActHChr *chr, s32 phase) {
                 Quat_ToEuler(&euler, &q);
                 yaw = euler.y;
             }
-            BtlMove_SetHeading(chr, BtlUtil_WrapAngle(BtlChar_GetPos(chr)->facing - yaw), 0.0f);
+            BtlMove_SetHeading(chr, BtlUtil_WrapAngle(BtlChar_GetPos(chr)->yaw - yaw), 0.0f);
         }
     }
     if (phase == 1) {
@@ -749,7 +749,7 @@ void BtlActSwitch_SetEnterCut(BtlActHChr *chr) {
     b.y = a.y - BtlCharApi_GetHeight(chr->objId) * 0.5f;
     b.z = a.z;
     ChrCam_SetCut(chr, &a, &gVu0ZeroVec, &a, &gVu0ZeroVec, &b, &gVu0ZeroVec, -1,
-                  BtlUtil_WrapAngle(BtlChar_GetPos(chr)->facing + BTL_DEG(180.0f)), 0.0f, 0.0f, 0.0f,
+                  BtlUtil_WrapAngle(BtlChar_GetPos(chr)->yaw + BTL_DEG(180.0f)), 0.0f, 0.0f, 0.0f,
                   BtlCharApi_GetHeight(chr->objId) + 5.0f, 0.0f, -1, -1, 0x11, 0xF, 0xC5);
 }
 

@@ -50,8 +50,8 @@ typedef struct TextBoxFull {
     /* 0x28 */ s32 maxW;
     /* 0x2C */ s32 maxH;
     /* 0x30 */ u8 color[4];
-    /* 0x34 */ u8 shadow[4];   /* TextBox_SetColor2 (flag TEXTBOX_FLAG_COLOR2) */
-    /* 0x38 */ s32 clip[4];    /* x0, y0, x1, y1; TextBox_SetRect (flag TEXTBOX_FLAG_RECT) */
+    /* 0x34 */ u8 shadow[4];   /* TextBox_SetShadowColor (flag TEXTBOX_FLAG_SHADOW) */
+    /* 0x38 */ s32 clip[4];    /* x0, y0, x1, y1; TextBox_SetClip (flag TEXTBOX_FLAG_CLIP) */
     /* 0x48 */ s32 spacingX;
     /* 0x4C */ s32 spacingY;
     /* 0x50 */ TextBoxDraw draw; /* +0x50 align (TextBox_SetAlign), +0x80 noFlush (TextBox_SetNoFlush) */
@@ -95,7 +95,7 @@ typedef struct ChrTblEntry {
     /* 0x08 */ u16 flags;       /* CHRTBL_FLAG_* */
     /* 0x0A */ u16 costumes;    /* number of costumes (guess) */
     /* 0x0C */ u16 cost;        /* summed over a team and compared with a limit by the menu: DP cost (guess) */
-    /* 0x0E */ u16 baseLevel;   /* added to the saved level (ChrTbl_GetLevel); the callers use the sum as the number of
+    /* 0x0E */ u16 baseSlots;   /* added to the saved level (ChrTbl_GetItemSlots); the callers use the sum as the number of
                                    item slots, so this is the character's base slot count (`slots` in ZaChrEntry) */
     /* 0x10 */ s32 exp[CHRTBL_EXP_COUNT]; /* indexed by the saved level; a zero ends the list */
     /* 0x2C */ u8 link[CHRTBL_LINK_COUNT]; /* ids of the other forms of the character, 0xFF = none */
@@ -143,7 +143,7 @@ typedef struct ItemSetStats {
 
 s32 ChrTbl_WrapCostume(s32 chara, s32 *costume);
 s32 ChrTbl_GetCost(s32 chara);
-s32 ChrTbl_GetLevel(s32 chara, s32 slot, s32 fromRec);
+s32 ChrTbl_GetItemSlots(s32 chara, s32 slot, s32 fromRec);
 s32 ChrTbl_GetExp(s32 chara, s32 slot);
 s32 ChrTbl_GetMaxExp(s32 chara);
 s32 ItemSet_Fit(u16 *ids, ItemTblEntry *table, s32 capacity, s32 *used);
@@ -199,7 +199,7 @@ typedef struct MenuUtilProgress {
     /* 0x018 */ u8 unk18[0xC];
     /* 0x024 */ s32 demoPick;    /* the pairing Demo_SetupBattle chose last, -1 at start */
     /* 0x028 */ u8 unk28[0x69C - 0x28];
-    /* 0x69C */ ProgressTeam team[PROGRESS_TEAM_COUNT];
+    /* 0x69C */ ProgressTeam replaySlot[PROGRESS_TEAM_COUNT];
     /* 0x7D0 */ u8 unk7D0[0x2C];
 } MenuUtilProgress; /* size 0x7FC */
 

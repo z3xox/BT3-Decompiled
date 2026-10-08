@@ -40,7 +40,7 @@ extern void GetWin_Draw(void);
 extern void GetWin_Open(void);
 extern void GetWin_Close(void);
 extern void GetWin_Next(void);
-extern s32 GetWin_IsAnimating(void);
+extern s32 GetWin_IsAnimDone(void);
 extern void GetWin_Setup(s32 kind, s32 value);
 extern void TextBox_Init(MTextBox *box, void *text, u32 preset);
 extern void Flash_Reset(MFlash *flash, s32 keepClips);

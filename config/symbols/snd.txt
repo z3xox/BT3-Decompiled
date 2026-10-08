@@ -59,8 +59,8 @@ Snd_RpcCmd8 = 0x001244C8; // type:func
 Snd_RpcCmdB = 0x00124298; // type:func
 Snd_RpcCmdC = 0x001242C8; // type:func
 Snd_RpcCmdE = 0x00124570; // type:func
-// 0xF (count, ids): s16 count + s16 ids, 0x18 bytes; fed by Snd_SendFighters.
-Snd_RpcSetFighters = 0x00124598; // type:func // guess
+// 0xF (count, ids): s16 count + s16 ids, 0x18 bytes; fed by Snd_SendLoopSounds.
+Snd_RpcSetLoopSounds = 0x00124598; // type:func // guess
 // The per-frame queue at gSndRpc+0x68 (count + 32 entries of 0xC). 0x124150 appends type 0 (bank, id, volume, pan, pitch,
 // loop, serial) and returns the serial; 0x1241F0 type 1 (bank, id); 0x124248 type 2 (serial).
 Snd_QueuePlay = 0x00124150; // type:func
@@ -117,7 +117,7 @@ Snd_StopBankAndResume = 0x001251A0; // type:func // guess
 Snd_IsLoopSe = 0x001251E8; // type:func
 Snd_GetVagMax = 0x00125278; // type:func
 // 0x125330: collects func_002074B8(side, i) for both sides (func_00207460 = count) and sends them with RPC 0xF.
-Snd_SendFighters = 0x00125330; // type:func // guess
+Snd_SendLoopSounds = 0x00125330; // type:func // guess
 
 // --- src/sys/snd.c: bank header readers -----------------------------------------------------------------------------
 // The header section is read as a Sony HD file: word +0x30 is the vag-info chunk offset, chunk +0xC the highest index,

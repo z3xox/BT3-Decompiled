@@ -124,8 +124,8 @@ typedef struct BObjFace {
     /* 0x14 */ u32 eyeForced;    /* (v) value BtlObj_SetEyeFrame asked for */
     /* 0x18 */ s32 mode;         /* (v) BOBJ_MOUTH_* */
     /* 0x1C */ s32 shape;        /* (v) mouth texture set in use, 1-based; 0 = closed */
-    /* 0x20 */ void *jawTable;   /* jaw key table picked by BtlObjFace_PickJawKeys (rand() % 4) */
-    /* 0x24 */ s16 *talkTable;   /* (v) talk pattern: pairs {frame, shape} */
+    /* 0x20 */ void *jawKeys;   /* jaw key table picked by BtlObjFace_PickJawKeys (rand() % 4) */
+    /* 0x24 */ s16 *talkKeys;   /* (v) talk pattern: pairs {frame, shape} */
     /* 0x28 */ BObjLipKey *lip;  /* (v) lip track being played */
     /* 0x2C */ f32 step;         /* (v) frames per update: 2.0 */
     /* 0x30 */ f32 talkEnd;      /* (v) last frame of the talk pattern */

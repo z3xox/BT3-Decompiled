@@ -322,7 +322,7 @@ s32 BtlAiCond_Rate1(BtlAiWork *ai, u8 arg) {
     s32 roll = Rand_Range(100);
     s32 chance = RATE(ai, lo, hi, 1);
 
-    if (BtlCharApi_GetOppSkillKind(ai->objId) == -1) {
+    if (BtlCharApi_GetOppTechniqueKind(ai->objId) == -1) {
         BtlAi_NoteOpponent(ai, 0x40);
     }
     seq->roll = roll;

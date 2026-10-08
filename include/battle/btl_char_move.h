@@ -135,7 +135,7 @@ typedef struct BtlMoveBlastRec {
     /* 0x54 */ s32 unk54;    /* 1: ignored */
     /* 0x58 */ u8 unk58[0xC];
     /* 0x64 */ BtlMoveBlastSrc *src;
-    /* 0x68 */ BtlMoveBlastDef *def;
+    /* 0x68 */ BtlMoveBlastDef *atk;
     /* 0x6C */ u8 unk6C[0x190 - 0x6C];
 } BtlMoveBlastRec; /* size 0x190 */
 

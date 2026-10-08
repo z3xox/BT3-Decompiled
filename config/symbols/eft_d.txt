@@ -12,7 +12,7 @@ EftSurf_SetLightDir = 0x0013B140; // type:func // guess
 // 0x13B178(f): work + 0x12F4 (animFrames) = (int)f. 0x13B188(f): work + 0x12F0 = f. 0x13B198: &work->0x12C0 or NULL.
 // No caller.
 EftSurf_SetAnimFrames = 0x0013B178; // type:func // guess
-EftSurf_SetParam30 = 0x0013B188; // type:func // guess
+EftSurf_SetSpecular = 0x0013B188; // type:func // guess
 EftSurf_GetParam = 0x0013B198; // type:func // guess
 // 0x13B1B0(tri, unused, tex pair, fog, zBias): the unclipped version: skipped when all three vertices are off
 // screen. No caller.

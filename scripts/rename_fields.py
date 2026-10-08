@@ -107,7 +107,13 @@ def main(lists):
         before = {d: rd(f'{R}/{d}') for d in deps}; before[f] = text
         touched = {}
         tok = re.compile(r'\b(' + '|'.join(re.escape(a) for a in sorted(M, key=len, reverse=True)) + r')\b')
-        wr(path, text[:span[0]] + tok.sub(lambda m: M[m.group(1)], body) + text[span[1]:])
+        # in the code every listed name; inside comments only the placeholders (a name with a digit in it): an
+        # ordinary word such as `speed` in a comment is prose, not the field (it once made "fall pitch" of "fall speed")
+        def in_comment(m):
+            return M[m.group(1)] if re.search(r'\d', m.group(1)) else m.group(1)
+        parts = re.split(r'(/\*.*?\*/)', body, flags=re.S)
+        body2 = ''.join(tok.sub(in_comment, x) if x.startswith('/*') else tok.sub(lambda m: M[m.group(1)], x) for x in parts)
+        wr(path, text[:span[0]] + body2 + text[span[1]:])
         ok = False
         for rnd in range(12):
             err = check(deps)

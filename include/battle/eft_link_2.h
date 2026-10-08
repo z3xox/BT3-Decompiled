@@ -161,8 +161,8 @@ typedef struct EftWLinkArg {
     /* 0x10 */ Vec4 pos;
     /* 0x20 */ Vec4 pos2;
     /* 0x30 */ f32 size;
-    /* 0x34 */ f32 rate;           /* the emitter's life in seconds (`life` in the other views); <= 0 = until stopped */
-    /* 0x38 */ s32 frame;          /* index of the texture entry, not a frame (the caller passes a texture index) */
+    /* 0x34 */ f32 life;           /* the emitter's life in seconds (`life` in the other views); <= 0 = until stopped */
+    /* 0x38 */ s32 texIdxA;          /* index of the texture entry, not a frame (the caller passes a texture index) */
     /* 0x3C */ s32 texIdxB;
     /* 0x40 */ s32 objId;
     /* 0x44 */ s32 pad44[3];
@@ -349,7 +349,7 @@ typedef struct EftPart10 {
     /* 0x248 */ f32 fade0, fade0Delta;
     /* 0x250 */ f32 fade1, fade1Delta;
     /* 0x258 */ f32 spinA;
-    /* 0x25C */ f32 stopDelay;     /* the second spin per frame (`spinB` in eft_part10.h), not a delay */
+    /* 0x25C */ f32 spinB;     /* the second spin per frame (`spinB` in eft_part10.h), not a delay */
     /* 0x260 */ f32 angA0;
     /* 0x264 */ f32 angB0;
     /* 0x268 */ f32 scale;
@@ -362,7 +362,7 @@ typedef struct EftPart10 {
     /* 0x39C */ f32 texFrames;
     /* 0x3A0 */ f32 frame;
     /* 0x3A4 */ f32 delay;
-    /* 0x3A8 */ f32 timer;         /* frames it keeps emitting after a stop (`hold` in eft_part10.h) */
+    /* 0x3A8 */ f32 hold;         /* frames it keeps emitting after a stop (`hold` in eft_part10.h) */
     /* 0x3AC */ f32 fade;
     /* 0x3B0 */ f32 fadeTime;
     /* 0x3B4 */ u8 unk3B4[8];

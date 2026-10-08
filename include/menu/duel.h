@@ -37,7 +37,7 @@ typedef struct MItemEntry {
     /* 0x04 */ u8 unk4[0x24];
 } MItemEntry; /* 0x28 */
 
-extern s32 ChrTbl_GetLevel(s32 chara, s32 slot, s32 fromRec);
+extern s32 ChrTbl_GetItemSlots(s32 chara, s32 slot, s32 fromRec);
 extern s32 ItemSet_Fit(u16 *ids, MItemEntry *table, s32 capacity, s32 *used);
 extern s32 ItemTbl_GetClass(s32 item, MItemEntry *table);
 
@@ -58,7 +58,7 @@ typedef struct ItemPanel {
     /* 0x094 */ s32 flags;          /* ITEMPANEL_ */
     /* 0x098 */ s32 chara;          /* character id: line of the name and form texts */
     /* 0x09C */ s32 set;            /* row of the set-name strip: item set + 1 */
-    /* 0x0A0 */ s32 limit;          /* item slots the character has (ChrTbl_GetLevel) */
+    /* 0x0A0 */ s32 limit;          /* item slots the character has (ChrTbl_GetItemSlots) */
     /* 0x0A4 */ s32 used;           /* ItemSet_Fit result */
     /* 0x0A8 */ s32 count;          /* rows in use (ItemSet_Fit's second result) */
     /* 0x0AC */ s32 cursor;
@@ -90,7 +90,7 @@ void ItemPanel_Hide(s32 side);
 /* gProgress fields of the duel mode (local view; MenuProgress in overlay_common.h has only +0x624). */
 typedef struct DuelProgress {
     /* 0x000 */ u8 unk0[0x620];
-    /* 0x620 */ s32 versus;         /* DuelMenu top item: 0 1P vs COM, 1 1P vs 2P, 2 COM vs COM (3 = settings); `players` in CharSelProgress / team_select.h */
+    /* 0x620 */ s32 players;         /* DuelMenu top item: 0 1P vs COM, 1 1P vs 2P, 2 COM vs COM (3 = settings); `players` in CharSelProgress / team_select.h */
     /* 0x624 */ s32 battleType;     /* 0 single, 1 team, 2 DP battle */
     /* 0x628 */ s32 unk628[2];
     /* 0x630 */ s32 dpLimit;        /* row of the DP limit list (0..2) */

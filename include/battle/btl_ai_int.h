@@ -54,7 +54,7 @@ extern s32 BtlCharApi_GetHp(s32 objId);
 extern s32 BtlCharApi_GetMaxPower(s32 objId); /* member entry + 0x1C */
 extern s32 BtlCharApi_GetParamFlags2(s32 objId);
 extern s32 BtlCharApi_GetParamFlags(s32 objId);
-extern s32 BtlCharApi_GetOppSkillKind(s32 objId);
+extern s32 BtlCharApi_GetOppTechniqueKind(s32 objId);
 extern s32 BtlCharApi_IsOppSkillFlag4(s32 objId);
 extern s32 BtlCharApi_TestOppSkillFlags(s32 objId);
 extern s32 BtlCharApi_GetClashCountB(s32 objId);

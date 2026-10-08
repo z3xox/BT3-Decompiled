@@ -13,7 +13,7 @@
  * from a first read of their code (not decompiled):
  *
  *   sound       Snd_StopBankAndResume(n)   two sound-driver commands (0xA, then 6 with (n, 0)); n = 0x3C at restart
- *               Snd_SendFighters      per-frame, walks both sides' fighters through 0x207460 / 0x2074B8
+ *               Snd_SendLoopSounds      per-frame, walks both sides' fighters through 0x207460 / 0x2074B8
  *   scene mgr   BtlScene_Init(0) init / BtlScene_Term term / BtlScene_Reset(0) reset / BtlScene_Update and
  *               BtlScene_PostUpdate the two per-frame updates / BtlScene_Draw(first) draw / BtlScene_SetSingleView(v)
  *               stores v in mgr+0x24. Next module (0x12C9F0..), state at gp 0x2FE9A0 (0x34 bytes); its
@@ -91,7 +91,7 @@ extern void StgModel_InitStage(void);
 extern void StgModel_Cull(s32 view);
 extern void StgModel_Draw(s32 view);
 extern void Snd_StopBankAndResume(s32 mask);
-extern void Snd_SendFighters(void);
+extern void Snd_SendLoopSounds(void);
 extern void BtlLoad_PollObjectRequest(void);
 extern void BtlLoad_PollCharaRequest(void);
 extern void BattleResult_Finish(void);
@@ -343,7 +343,7 @@ void Battle_Loop(void) {
         BtlChars_CheckStart();
         Pad_Update();
         Snd_Update();
-        Snd_SendFighters();
+        Snd_SendLoopSounds();
         BtlGame_PreUpdate();
         Battle_UpdateWork();
         BtlAiMgr_Update();

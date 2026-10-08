@@ -83,11 +83,11 @@ typedef struct EftXIVec {
 /* Particle flags (EftPart10Ptcl.flags). */
 #define EFT_PART10_P_ALIVE 0x0001
 #define EFT_PART10_P_DRAW 0x0040
-#define EFT_PART10_P_UNK80 0x0080     /* the colour runs from color0 along colorStep (set from def->colorMode) */
+#define EFT_PART10_P_COLOR_RAMP 0x0080     /* the colour runs from color0 along colorStep (set from def->colorMode) */
 #define EFT_PART10_P_MIRROR 0x0200    /* texture mirrored (negative spin) */
-#define EFT_PART10_P_SCALEX 0x2000    /* the colour multiplier pulse runs on red (stretch[0]); nothing is scaled */
-#define EFT_PART10_P_SCALEY 0x4000    /* on green */
-#define EFT_PART10_P_SCALEZ 0x8000    /* on blue */
+#define EFT_PART10_P_MUL_R 0x2000    /* the colour multiplier pulse runs on red (stretch[0]); nothing is scaled */
+#define EFT_PART10_P_MUL_G 0x4000    /* on green */
+#define EFT_PART10_P_MUL_B 0x8000    /* on blue */
 
 /* A value animated over the emitter's life: the current value and its change over the current segment. */
 typedef struct EftPart10Key {
@@ -116,10 +116,10 @@ typedef struct EftPart10Def {
     /* 0x0B4 */ f32 angARange[EFT_PART10_KEYS];
     /* 0x0C0 */ f32 angB[EFT_PART10_KEYS];
     /* 0x0CC */ f32 angBRange[EFT_PART10_KEYS];
-    /* 0x0D8 */ f32 speed[EFT_PART10_KEYS];  /* a particle's start distance from the emitter, not a speed (dist /
+    /* 0x0D8 */ f32 dist[EFT_PART10_KEYS];  /* a particle's start distance from the emitter, not a speed (dist /
                                                distRange / distBase in eft_link_2.h); distVel is the speed */
-    /* 0x0E4 */ f32 speedRange[EFT_PART10_KEYS];
-    /* 0x0F0 */ f32 speedBase[EFT_PART10_KEYS];
+    /* 0x0E4 */ f32 distRange[EFT_PART10_KEYS];
+    /* 0x0F0 */ f32 distBase[EFT_PART10_KEYS];
     /* 0x0FC */ f32 distVel[EFT_PART10_KEYS];
     /* 0x108 */ f32 distVelRange[EFT_PART10_KEYS];
     /* 0x114 */ f32 scaleX[EFT_PART10_KEYS];
@@ -164,11 +164,11 @@ typedef struct EftPart10Def2 {
     /* 0x030 */ Vec4 colorRange[EFT_PART10_KEYS];
     /* 0x060 */ Vec4 endColor[EFT_PART10_KEYS];
     /* 0x090 */ Vec4 endColorRange[EFT_PART10_KEYS];
-    /* 0x0C0 */ f32 stretchX[EFT_PART10_KEYS][2]; /* colour multiplier pulse, red: from, to (mulR / mulG / mulB /
+    /* 0x0C0 */ f32 mulR[EFT_PART10_KEYS][2]; /* colour multiplier pulse, red: from, to (mulR / mulG / mulB /
                                                      mulTime in eft_link_2.h); nothing is stretched */
-    /* 0x0D8 */ f32 stretchY[EFT_PART10_KEYS][2];
-    /* 0x0F0 */ f32 stretchZ[EFT_PART10_KEYS][2];
-    /* 0x108 */ f32 stretchTime[EFT_PART10_KEYS];
+    /* 0x0D8 */ f32 mulG[EFT_PART10_KEYS][2];
+    /* 0x0F0 */ f32 mulB[EFT_PART10_KEYS][2];
+    /* 0x108 */ f32 mulTime[EFT_PART10_KEYS];
     /* 0x114 */ f32 fade0[EFT_PART10_KEYS];
     /* 0x120 */ f32 fade1[EFT_PART10_KEYS];
 } EftPart10Def2;
@@ -194,7 +194,7 @@ typedef struct EftPart10Ptcl {
     /* 0x060 */ Vec4 corner[4];
     /* 0x0A0 */ Vec4 uv0;                       /* texture coordinates of corners 0 and 1 */
     /* 0x0B0 */ Vec4 uv1;                       /* of corners 2 and 3 */
-    /* 0x0C0 */ f32 speed;                      /* distance from the emitter (eft_link_2.h: dist); grows by distVel */
+    /* 0x0C0 */ f32 dist;                      /* distance from the emitter (eft_link_2.h: dist); grows by distVel */
     /* 0x0C4 */ f32 distVel;
     /* 0x0C8 */ f32 angX;
     /* 0x0CC */ f32 angY;
@@ -211,10 +211,10 @@ typedef struct EftPart10Ptcl {
     /* 0x0F8 */ f32 pulse0;
     /* 0x0FC */ f32 pulseT;
     /* 0x100 */ f32 pulseTime;
-    /* 0x104 */ f32 stretchStep[3];             /* colour multiplier pulse per channel: range (eft_link_2.h: mulD) */
-    /* 0x110 */ f32 stretch[3];                 /* its start value (mul0) */
-    /* 0x11C */ f32 stretchAge;                 /* its time (mulT) */
-    /* 0x120 */ f32 stretchTime;                /* its period in frames (mulTime) */
+    /* 0x104 */ f32 mulD[3];             /* colour multiplier pulse per channel: range (eft_link_2.h: mulD) */
+    /* 0x110 */ f32 mul0[3];                 /* its start value (mul0) */
+    /* 0x11C */ f32 mulT;                 /* its time (mulT) */
+    /* 0x120 */ f32 mulTime;                /* its period in frames (mulTime) */
     /* 0x124 */ f32 fadeT;
     /* 0x128 */ f32 fadeTime;
     /* 0x12C */ f32 pulseD;
@@ -263,9 +263,9 @@ typedef struct EftPart10 {
     /* 0x0F8 */ EftPart10Key angARange;
     /* 0x100 */ EftPart10Key angB;
     /* 0x108 */ EftPart10Key angBRange;
-    /* 0x110 */ EftPart10Key speed;
-    /* 0x118 */ EftPart10Key speedRange;
-    /* 0x120 */ EftPart10Key speedBase;
+    /* 0x110 */ EftPart10Key dist;
+    /* 0x118 */ EftPart10Key distRange;
+    /* 0x120 */ EftPart10Key distBase;
     /* 0x128 */ EftPart10Key distVel;
     /* 0x130 */ EftPart10Key distVelRange;
     /* 0x138 */ EftPart10Key scaleX;
@@ -349,7 +349,7 @@ typedef struct EftPart10Arg {
     /* 0x10 */ Vec4 pos;
     /* 0x20 */ Vec4 dir;
     /* 0x30 */ f32 size;
-    /* 0x34 */ f32 rate;                        /* the emitter's life in seconds (see EftPart10.rate) */
+    /* 0x34 */ f32 life;                        /* the emitter's life in seconds (see EftPart10.rate) */
     /* 0x38 */ s32 texIdxA;
     /* 0x3C */ s32 texIdxB;
     /* 0x40 */ s32 objId;
@@ -398,8 +398,8 @@ typedef struct EftPart9Def {
 typedef struct EftPart9Ptcl {
     /* 0x000 */ Vec4 pos;
     /* 0x010 */ Vec4 origin;
-    /* 0x020 */ Vec4 dir;                       /* the velocity (eft_quad_2.h: vel) */
-    /* 0x030 */ Vec4 vel;                       /* added to it every frame (eft_quad_2.h: accel) */
+    /* 0x020 */ Vec4 vel;                       /* the velocity (eft_quad_2.h: vel) */
+    /* 0x030 */ Vec4 accel;                       /* added to it every frame (eft_quad_2.h: accel) */
     /* 0x040 */ Vec4 color0;
     /* 0x050 */ Vec4 colorStep;
     /* 0x060 */ Vec4 color;
@@ -410,7 +410,7 @@ typedef struct EftPart9Ptcl {
     /* 0x0EC */ f32 fadeIn;
     /* 0x0F0 */ f32 fadeOut;
     /* 0x0F4 */ f32 sizeOscAmp;
-    /* 0x0F8 */ f32 stretchStep[3];             /* colour multiplier pulse: range (eft_quad_2.h: colorOscAmp) */
+    /* 0x0F8 */ f32 colorOscAmp[3];             /* colour multiplier pulse: range (eft_quad_2.h: colorOscAmp) */
     /* 0x104 */ f32 speed;
     /* 0x108 */ f32 speedMul;
     /* 0x10C */ f32 speedStep0;
@@ -418,12 +418,12 @@ typedef struct EftPart9Ptcl {
     /* 0x114 */ f32 sizeOscBase;
     /* 0x118 */ f32 sizeOscTime;
     /* 0x11C */ f32 sizeOscPeriod;
-    /* 0x120 */ f32 stretch[3];                 /* its start value (colorMul) */
-    /* 0x12C */ f32 stretchAge;                 /* its time (colorOscTime) */
-    /* 0x130 */ f32 stretchTime;                /* its period in frames (colorOscPeriod) */
+    /* 0x120 */ f32 colorMul[3];                 /* its start value (colorMul) */
+    /* 0x12C */ f32 colorOscTime;                 /* its time (colorOscTime) */
+    /* 0x130 */ f32 colorOscPeriod;                /* its period in frames (colorOscPeriod) */
     /* 0x134 */ f32 halfSize;
     /* 0x138 */ f32 baseSize;
-    /* 0x13C */ f32 size;                       /* the size multiplier (eft_quad_2.h: sizeMul) */
+    /* 0x13C */ f32 sizeMul;                       /* the size multiplier (eft_quad_2.h: sizeMul) */
     /* 0x140 */ f32 sizeStep0;
     /* 0x144 */ f32 sizeStep1;
     /* 0x148 */ f32 rampLen;
@@ -554,7 +554,7 @@ void EftPart10_SetPos(EftXTask *task, EftXVec pos);
 void EftPart10_Warp(EftXTask *task, EftXVec pos);
 void EftPart10_SetDir(EftXTask *task, EftXVec dir);
 void EftPart10_SetSize(EftXTask *task, f32 size);
-void EftPart10_SetRate(EftXTask *task, f32 rate);
+void EftPart10_SetLife(EftXTask *task, f32 rate);
 void EftPart10_SetTex(EftXTask *task, EftXTexSet *tex, s32 image, s32 palette);
 void EftPart10_SetDelay(EftXTask *task, s32 frames);
 void EftPart10_SetHold(EftXTask *task, s32 frames);

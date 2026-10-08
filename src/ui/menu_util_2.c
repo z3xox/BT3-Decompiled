@@ -65,11 +65,11 @@ void Progress_ClearTeams(void) {
     s32 j;
     s32 k;
 
-    memset(gProgress->team, 0, sizeof(gProgress->team));
+    memset(gProgress->replaySlot, 0, sizeof(gProgress->replaySlot));
     for (i = 0; i < PROGRESS_TEAM_COUNT; i++) {
         for (j = 0; j < 2; j++) {
             for (k = 0; k < 5; k++) {
-                gProgress->team[i].chara[j][k] = PROGRESS_TEAM_EMPTY;
+                gProgress->replaySlot[i].chara[j][k] = PROGRESS_TEAM_EMPTY;
             }
         }
     }

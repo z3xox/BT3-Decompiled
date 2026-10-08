@@ -48,7 +48,7 @@ typedef struct EftSurfD {
     /* 0x12C0 */ Vec4 colorA;        /* +0x12C0..0x1300: the parameter block (EftSurfParam of eft_stage_2.h) */
     /* 0x12D0 */ Vec4 colorB;
     /* 0x12E0 */ Vec4 lightDir;
-    /* 0x12F0 */ f32 param30;       /* EftSurfParam.specular (last argument of EftGfx_LightClutSpecular) */
+    /* 0x12F0 */ f32 specular;       /* EftSurfParam.specular (last argument of EftGfx_LightClutSpecular) */
     /* 0x12F4 */ s32 animFrames;
 } EftSurfD;
 
@@ -57,8 +57,8 @@ typedef struct EftSurfD {
 /* Texture record: the texture pack (transition file entry 3) has an array of them at +0x10, and the
    model (entry 2) has its own. */
 typedef struct EftBurstTex {
-    /* 0x00 */ s32 ofs0;    /* model textures: file offsets of two blocks, image and CLUT (layout of EftVramImage) */
-    /* 0x04 */ s32 ofs4;
+    /* 0x00 */ s32 imageOfs;    /* model textures: file offsets of two blocks, image and CLUT (layout of EftVramImage) */
+    /* 0x04 */ s32 clutOfs;
     /* 0x08 */ u8 unk8[8];
     /* 0x10 */ s32 w;
     /* 0x14 */ s32 h;
@@ -67,8 +67,8 @@ typedef struct EftBurstTex {
     /* 0x24 */ s32 vramY;
     /* 0x28 */ u8 unk28[8];
     /* 0x30 */ u64 tex0;    /* GS TEX0 without the buffer address */
-    /* 0x38 */ s32 ptr0;    /* ofs0 / ofs4 as pointers, image and CLUT (EftBurst_RelocateModel) */
-    /* 0x3C */ s32 ptr4;
+    /* 0x38 */ s32 image;    /* imageOfs / clutOfs as pointers, image and CLUT (EftBurst_RelocateModel) */
+    /* 0x3C */ s32 clut;
 } EftBurstTex; /* 0x40 */
 
 struct EftBurstPtcl;
@@ -160,7 +160,7 @@ extern EftBurstRes gEftBurstRes;
 
 void EftSurf_DrawPolyOtClipped(EftSurfVtxD *poly, s32 unused, u64 *tex, Vec4 *fog, s32 zBias);
 void EftSurf_SetAnimFrames(f32 v);
-void EftSurf_SetParam30(f32 v);
+void EftSurf_SetSpecular(f32 v);
 Vec4 *EftSurf_GetParam(void);
 void EftSurf_DrawTriOt(EftSurfVtxD *tri, s32 unused, u64 *tex, Vec4 *fog, s32 zBias);
 void EftSurf_DrawTriOtEx(EftScrPos *scr0, EftScrPos *scr1, EftScrPos *scr2, Vec4 *col0, Vec4 *col1, Vec4 *col2,

@@ -54,7 +54,7 @@ typedef struct ChrCam {
     /* 0x30 [0x450] */ Vec4 target;   /* point looked at (the trace starts here) */
     /* 0x40 [0x460] */ Vec4 bodyPos;    /* copy of *(Vec4 *)(obj + 0xFA0), refreshed by ChrCam_UpdateInput; read by BtlCharApi_GetCamBodyPos */
     /* 0x50 [0x470] */ CamShake shake;
-    /* 0x70 [0x490] */ s32 hitObj;    /* BtlCam_TraceStage: the stage zone that was traced (the one hit, else the last one tried); not an object */
+    /* 0x70 [0x490] */ s32 hitZone;    /* BtlCam_TraceStage: the stage zone that was traced (the one hit, else the last one tried); not an object */
     /* 0x74 [0x494] */ s32 hit;       /* BtlCam_TraceStage result (1 = the stage is between target and eye); returned by BtlCharApi_GetCamPose, read by 0x1D16F8 */
     /* 0x78 [0x498] */ f32 hitFrac;   /* BtlCam_TraceStage: fraction of the segment at the hit */
     /* 0x7C [0x49C] */ s32 distMode;  /* 0..2, ChrCam_GetOffset preset; BtlChar_Reset: BattleSide_GetOptionA(side); SELECT steps it */

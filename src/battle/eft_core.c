@@ -117,14 +117,14 @@ void EftHit_Add(EftHitRec *rec) {
     if (rec->src != NULL) {
         rec->objId = rec->src->objId;
         rec->unkF0 = rec->src->unk8;
-        rec->shape.unk8 = rec->src->def->unk34;
-        rec->unk4 = rec->src->def->unk6;
+        rec->shape.unk8 = rec->src->def->speed;
+        rec->unk4 = rec->src->def->node;
         rec->level = rec->src->def->level;
         rec->type = EFT_HIT_TECH;
         rec->unk54 = (rec->src->def->flags >> 1) & 1;
         rec->seenByAi = 0;
         rec->shape.scale = EftHit_GetScale(rec);
-        if (rec->src->def->kind == 9) {
+        if (rec->src->def->sub == 9) {
             rec->flags |= EFT_HIT_FLAG_8;
         }
         EftHit_InitMultiHit(rec);
@@ -255,11 +255,11 @@ s32 EftHit_CanHit(EftHitRec *rec, s32 mode) {
                 ok = 0;
             } else if (flags & EFT_TASK_KEEP) {
                 ok = 0;
-            } else if (def->cls != 0) {
+            } else if (def->kind != 0) {
                 if (flags & 0x104) {
                     ok = 0;
                 }
-            } else if (def->kind != 4) {
+            } else if (def->sub != 4) {
                 ok = 0;
             }
             break;
@@ -294,11 +294,11 @@ s32 EftHit_IsStoppedByHit(EftHitRec *rec) {
 
     if (rec->type == EFT_HIT_TECH) {
         def = rec->src->def;
-        if (def->cls == 0) {
-            if (def->kind == 4) {
+        if (def->kind == 0) {
+            if (def->sub == 4) {
                 result = 0;
             }
-        } else if (def->kind == 9 || def->kind == 7) {
+        } else if (def->sub == 9 || def->sub == 7) {
             result = 0;
         }
     }
@@ -329,13 +329,13 @@ s32 EftHit_ClashTech(EftHitRec *a, EftHitRec *b) {
     f32 t;
     s32 result;
 
-    if (defA->cls == 0 || defB->cls == 0) {
+    if (defA->kind == 0 || defB->kind == 0) {
         return 3;
     }
-    if (!((defA->kind >= 0 && defA->kind <= 2) || defA->kind == 8)) {
+    if (!((defA->sub >= 0 && defA->sub <= 2) || defA->sub == 8)) {
         return 3;
     }
-    if ((defA->flags & 0x100) || (defB->flags & 0x100) || defA->unk9 >= 2 || defB->unk9 >= 2) {
+    if ((defA->flags & 0x100) || (defB->flags & 0x100) || defA->shots >= 2 || defB->shots >= 2) {
         return 3;
     }
     Vec4_Sub(&moveA, &a->pos, &a->prevPos);
@@ -494,7 +494,7 @@ void EftHit_MarkLastHit(EftHitRec *rec) {
                 }
             }
         }
-    } else if (rec->src->def->kind != 4) {
+    } else if (rec->src->def->sub != 4) {
         rec->flags |= EFT_HIT_FLAG_LAST;
     }
 }
@@ -538,12 +538,12 @@ s32 EftHit_IsRushHit(EftHitRec *rec) {
     }
     if (rec->src != NULL) {
         def = rec->src->def;
-        if (def->cls == 0) {
-            if (def->kind == 4) {
+        if (def->kind == 0) {
+            if (def->sub == 4) {
                 result = 1;
             }
         } else {
-            result = def->kind == 9;
+            result = def->sub == 9;
         }
     }
     return result;
@@ -830,7 +830,7 @@ s32 EftHit_IsTechClass(EftHitRec *rec, s32 cls) {
     s32 result = 0;
 
     if (rec->type == EFT_HIT_TECH) {
-        result = rec->src->def->cls == cls;
+        result = rec->src->def->kind == cls;
     }
     return result;
 }

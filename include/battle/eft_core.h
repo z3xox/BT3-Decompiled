@@ -92,20 +92,20 @@ typedef struct EftHitTask {
 
 /* Definition of a technique's hit (EftHitSrc.def). */
 typedef struct EftHitDef {
-    /* 0x00 */ s16 unk0;
+    /* 0x00 */ s16 id;
     /* 0x02 */ s16 level;    /* copied to EftHitRec.level */
-    /* 0x04 */ s8 cls;       /* 0 skill, 1 technique, 2 ultimate (EftHit_IsTechClass(rec, 0) tests the skill class) */
-    /* 0x05 */ s8 kind;      /* 0..2, 4, 7, 8, 9 tested */
-    /* 0x06 */ s8 unk6;      /* copied to EftHitRec.unk4 */
+    /* 0x04 */ s8 kind;       /* 0 skill, 1 technique, 2 ultimate (EftHit_IsTechClass(rec, 0) tests the skill class) */
+    /* 0x05 */ s8 sub;      /* 0..2, 4, 7, 8, 9 tested */
+    /* 0x06 */ s8 node;      /* copied to EftHitRec.unk4 */
     /* 0x07 */ s8 unk7;
     /* 0x08 */ s8 shape;     /* 0: spheres, 1: boxes (read by the tasks that build the record) */
-    /* 0x09 */ s8 unk9;      /* < 2 for a technique that can clash */
+    /* 0x09 */ s8 shots;      /* < 2 for a technique that can clash */
     /* 0x0A */ s8 maxHits;   /* > 0: multi-hit */
     /* 0x0B */ s8 hitInterval;
     /* 0x0C */ s8 aimMode;   /* EftAim_GetDirKeep: 0 = aim every call, else aim once and keep */
     /* 0x0D */ u8 unkD[0x34 - 0xD];
-    /* 0x34 */ f32 unk34;    /* copied to EftHitRec.shape.unk8 */
-    /* 0x38 */ s32 unk38;
+    /* 0x34 */ f32 speed;    /* copied to EftHitRec.shape.unk8 */
+    /* 0x38 */ s32 homing;
     /* 0x3C */ s32 flags;    /* 0x2 -> EftHitRec.unk54; 0x20; 0x100 cannot clash; 0x200000 */
     /* 0x40 */ s16 impactFx; /* effect id of the impact on a fighter, < 0 none */
     /* 0x42 */ s16 groundFx; /* effect id of the impact on the stage, < 0 none */
@@ -210,7 +210,7 @@ typedef struct EftHitArena {
 typedef struct EftCamArg {
     /* 0x0 */ void *anim;  /* camera animation (DemoCam_SetAnim) */
     /* 0x4 */ s32 objId;   /* fighter whose technique timer drives the cut, or -1 */
-    /* 0x8 */ s32 unk8;
+    /* 0x8 */ s32 id;
 } EftCamArg;
 
 /* Camera cut of an effect. */

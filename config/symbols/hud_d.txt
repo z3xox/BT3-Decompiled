@@ -37,7 +37,7 @@ HudNotice_UpdateFight = 0x00227468; // type:func // guess
 HudNotice_DrawKo = 0x00227DC0; // type:func // guess
 HudNotice_UpdateKo = 0x00227EA8; // type:func // guess
 // Announcement 3 (K.O. while BattleResult_IsWinnerEvent59Clear) and announcement 8 (Hud_PreUpdate, when
-// BtlCtrl_TestProgressFrameBit): the same animation on rows 64..128 / 0..64 of texture 3.
+// BtlCtrl_TestTutorialFrameBit): the same animation on rows 64..128 / 0..64 of texture 3.
 HudNotice_DrawBandA = 0x00228A00; // type:func // guess
 HudNotice_UpdateBandA = 0x00228A78; // type:func // guess
 HudNotice_DrawBandB = 0x00228FB0; // type:func // guess

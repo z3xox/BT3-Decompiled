@@ -73,7 +73,7 @@ typedef struct BtlCapiChr {
 
 /* General parameters of the character (object +0x91C); BtlParam / BtlTechBParam in btl_param.h / btl_tech.h. */
 typedef struct BtlCapiParam {
-    /* 0x00 */ u16 flags0;     /* bits tested by callers: 0x4, 0x8, 0x80 */
+    /* 0x00 */ u16 charaFlags;     /* bits tested by callers: 0x4, 0x8, 0x80 */
     /* 0x02 */ u8 sizeClass;
     /* 0x03 */ s8 auraType;
     /* 0x04 */ u8 unk4[0xC - 0x4];
@@ -178,9 +178,9 @@ f32 BtlCharApi_GetFallSpeed(s32 objId);
 f32 BtlCharApi_GetGroundY(s32 objId);
 f32 BtlCharApi_GetAltitude(s32 objId);
 void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out);
-void BtlCharApi_GetNodeUnk90(s32 objId, s32 node, Vec4 *out);
+void BtlCharApi_GetNodeLocalPos(s32 objId, s32 node, Vec4 *out);
 void BtlCharApi_GetNodeMtx(s32 objId, s32 node, Mtx44 *out);
-void BtlCharApi_GetNodeMtx50(s32 objId, s32 node, Mtx44 *out);
+void BtlCharApi_GetNodeParentMtx(s32 objId, s32 node, Mtx44 *out);
 void BtlCharApi_GetNodeRot(s32 objId, s32 node, Vec4 *out);
 void BtlCharApi_GetNodeQuat(s32 objId, s32 node, Quat *out);
 f32 BtlCharApi_GetNodeBoundSize(s32 objId, s32 node);

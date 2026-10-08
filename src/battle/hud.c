@@ -76,7 +76,7 @@ extern s32 BtlSide_GetSwitchTargetHp(s32 side);
 extern s32 BtlSide_GetSwitchTargetHpMax(s32 side);
 extern s32 BtlSide_GetSwitchTarget(s32 side);
 extern s32 BtlCtrl_IsSwitching(s32 side);
-extern s32 BtlCtrl_TestProgressFrameBit(void);
+extern s32 BtlCtrl_TestTutorialFrameBit(void);
 
 /* Gauge part (0x21C0E0..0x2224C8 and on). */
 extern void HudGauge_Init(HudNode **out, HudRes *res); /* init */
@@ -494,7 +494,7 @@ void Hud_PreUpdate(void) {
             HudTeam_SetSwitching(side, v);
         }
     }
-    if (BtlCtrl_TestProgressFrameBit()) {
+    if (BtlCtrl_TestTutorialFrameBit()) {
         HudNotice_Show(8);
     }
 }

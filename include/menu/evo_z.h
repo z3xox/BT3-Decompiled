@@ -22,7 +22,7 @@ extern void Flash_ClipSetOffset(MFlash *flash, MFlashRef *ref, s32 x, s32 y);
 
 extern void TextBox_Init(MTextBox *box, void *text, u32 preset);
 extern void TextBox_SetNoFlush(MTextBox *box, s32 value);
-extern void TextBox_SetRect(MTextBox *box, s32 x0, s32 x1, s32 y0, s32 y1);
+extern void TextBox_SetClip(MTextBox *box, s32 x0, s32 x1, s32 y0, s32 y1);
 extern void TextBox_AttachLine(MFlash *flash, MFlashRef *ref, s32 x, s32 y, s32 line, MTextBox *box);
 extern void Num_DrawChild(MFlash *flash, char *parent, char *fmt, s32 first, s32 count, s32 value, s32 w, s32 h,
                           s32 mode, s32 parentFmt);

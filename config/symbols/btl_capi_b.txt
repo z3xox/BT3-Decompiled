@@ -24,7 +24,7 @@ BtlCharApi_MarkIncomingBlast = 0x00208A28; // type:func
 // 0x208A90: progress of the technique in use (fighter +0x1294 if >= 0, else (frame - object +0xC78) / +0xC80), -1.
 // 0x208B58 / 0x208B98: battle object +0x92C / +0x930 = the technique table and the move table (field tables in
 // include/battle/btl_capi_b.h). 0x208BD8: BtlAtk_GetFlags while BtlAtk_GetId < 0xA3.
-BtlCharApi_GetTechniqueProgress = 0x00208A90; // type:func // guess
+BtlCharApi_GetTechniqueFramesLeft = 0x00208A90; // type:func // guess
 BtlCharApi_GetSkillTable = 0x00208B58; // type:func
 BtlCharApi_GetMoveTable = 0x00208B98; // type:func
 BtlCharApi_GetAttackAttr = 0x00208BD8; // type:func // guess
@@ -69,11 +69,11 @@ BtlCharApi_GetMemberKiPercent = 0x00209550; // type:func
 // 0x2095E8 kind byte (technique table +0x163 + class), 0x209670 bit 4 of its flag word, 0x2096E8 flag bit 1, or bit 2
 // with own +0xE44 > 0.9, or byte +0x13C == 1; 0x2097C0 the class. 0x209838: move table kind byte (+0x9E + class)
 // while the opponent is in action 0xFD..0x102.
-BtlCharApi_GetOppSkillKind = 0x002095E8; // type:func
+BtlCharApi_GetOppTechniqueKind = 0x002095E8; // type:func (guess)
 BtlCharApi_IsOppSkillFlag4 = 0x00209670; // type:func
 BtlCharApi_TestOppSkillFlags = 0x002096E8; // type:func // guess
 BtlCharApi_GetOppSkillClass = 0x002097C0; // type:func
-BtlCharApi_GetOppMoveKind = 0x00209838; // type:func
+BtlCharApi_GetOppSkillKind = 0x00209838; // type:func (guess)
 // 0x2098C0 / 0x2098E8: fighter +0xE50 / +0xE4C (clash counters, names from btl_char_flag). 0x209910(objId, slot):
 // move slot's effect is running (+0xE0C == slot with +0xE00 or +0xE04 > 0, or +0xE38[slot != 0]). 0x209978: bit 0x100
 // of the move's flag word. 0x2099C0: fighter +0xFE0 (stun countdown). 0x2099E8: button bits the open prompt (+0x1594

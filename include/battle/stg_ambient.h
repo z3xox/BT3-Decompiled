@@ -27,7 +27,7 @@ typedef struct StgData {
     /* 0x18 */ u8 unk18[0xC];
     /* 0x24 */ Vec4 *lightDir; /* StgDataA.points in stg.h */
     /* 0x28 */ s32 startCount;
-    /* 0x2C */ f32 *place;    /* StgDataA.starts in stg.h (StgPlace: pos, target), read as floats: pos.x, pos.z at
+    /* 0x2C */ f32 *starts;    /* StgDataA.starts in stg.h (StgPlace: pos, target), read as floats: pos.x, pos.z at
                                  [0], [2] and target.x, target.z at [4], [6] */
     /* 0x30 */ u8 unk30[0x10];
     /* 0x40 */ s32 depthTintCount;
@@ -199,7 +199,7 @@ s32 BtlStage_GetAmbient(s32 *rgba);
 s32 BtlStage_SetAmbient(s32 *rgba);
 s32 BtlStage_GetId(void);
 s32 BtlStage_GetLightDir(Vec4 *out);
-s32 BtlStage_GetPlace2C(Vec4 *pos, Vec4 *rot);
+s32 BtlStage_GetFirstStartPlace(Vec4 *pos, Vec4 *rot);
 s32 BtlStage_GetChangeTarget(void);
 void BtlStage_UpdateTimers(void);
 void BtlStage_Update(void);

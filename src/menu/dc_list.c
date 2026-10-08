@@ -1077,10 +1077,10 @@ void DcList_Init(DcList *list) {
     list->formText = DcList_Section(list, 18, DCLIST_HOST "chara_form_JP_PS2_.pak");
     for (i = 0; i < 4; i++) {
         TextBox_Init(&list->view.nameBox[i], list->nameText, 2);
-        TextBox_SetRect(&list->view.nameBox[i], 0xAF, 0x1FF, 0x6A, 0x139);
+        TextBox_SetClip(&list->view.nameBox[i], 0xAF, 0x1FF, 0x6A, 0x139);
         TextBox_SetNoFlush(&list->view.nameBox[i], 1);
         TextBox_Init(&list->view.formBox[i], list->formText, 4);
-        TextBox_SetRect(&list->view.formBox[i], 0xAF, 0x1FF, 0x6A, 0x139);
+        TextBox_SetClip(&list->view.formBox[i], 0xAF, 0x1FF, 0x6A, 0x139);
         TextBox_SetNoFlush(&list->view.formBox[i], 1);
     }
     TextBox_Init(&list->view.nameBoxB, list->nameText, 1);

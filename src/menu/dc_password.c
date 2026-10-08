@@ -1017,17 +1017,17 @@ void DcPass_Init(DcPass *pass, s32 section) {
     pass->view.formText = DcPass_Section(pass, 14, DP_HOST "chara_form_JP_PS2_.pak");
     for (i = 0; i < DCPASS_LIST_ROWS; i++) {
         TextBox_Init(&pass->view.nameBox[i], pass->view.nameText, 2);
-        TextBox_SetRect(&pass->view.nameBox[i], 0xAF, 0x1FF, 0x6A, 0x132);
+        TextBox_SetClip(&pass->view.nameBox[i], 0xAF, 0x1FF, 0x6A, 0x132);
         TextBox_SetNoFlush(&pass->view.nameBox[i], 1);
         TextBox_Init(&pass->view.formBox[i], pass->view.formText, 4);
-        TextBox_SetRect(&pass->view.formBox[i], 0xAF, 0x1FF, 0x6A, 0x132);
+        TextBox_SetClip(&pass->view.formBox[i], 0xAF, 0x1FF, 0x6A, 0x132);
         TextBox_SetNoFlush(&pass->view.formBox[i], 1);
     }
     TextBox_Init(&pass->view.nameBoxB, pass->view.nameText, 2);
-    TextBox_SetRect(&pass->view.nameBoxB, 0xAF, 0x1FF, 0x6A, 0x132);
+    TextBox_SetClip(&pass->view.nameBoxB, 0xAF, 0x1FF, 0x6A, 0x132);
     TextBox_SetNoFlush(&pass->view.nameBoxB, 1);
     TextBox_Init(&pass->view.formBoxB, pass->view.formText, 4);
-    TextBox_SetRect(&pass->view.formBoxB, 0xAF, 0x1FF, 0x6A, 0x132);
+    TextBox_SetClip(&pass->view.formBoxB, 0xAF, 0x1FF, 0x6A, 0x132);
     TextBox_SetNoFlush(&pass->view.formBoxB, 1);
     TextBox_Init(&pass->view.nameBoxL, pass->view.nameText, 1);
     TextBox_Init(&pass->view.formBoxL, pass->view.formText, 1);

@@ -852,7 +852,7 @@ void BtlPartner_PushDir(FxChr *chr, Vec4 *dir, f32 speed, f32 max) {
 }
 
 /* BtlObj_AddSway(add, max) on the partner's object. */
-void BtlPartner_SetObjFloats(FxChr *chr, f32 add, f32 max) {
+void BtlPartner_AddSway(FxChr *chr, f32 add, f32 max) {
     FxPartner *p = &chr->partner;
 
     if (p->active) {

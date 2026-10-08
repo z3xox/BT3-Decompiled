@@ -142,15 +142,15 @@ typedef struct BtlCollThrow {
 
 /* Pending hit reaction of a fighter (fighter + 0xFB0). */
 typedef struct BtlCollReact {
-    /* 0x00 */ s32 id;        /* reaction to start; 0 = none, 2 = no flinch, 0x22 = caught; a throw needs the
+    /* 0x00 */ s32 reaction;        /* reaction to start; 0 = none, 2 = no flinch, 0x22 = caught; a throw needs the
                                  attacker's id < 3 */
     /* 0x04 */ s32 unk4[2];
     /* 0x0C */ s32 back;      /* BtlColl_IsFacing(chr, dirYaw): the hit travels the way the fighter faces, i.e. it
                                  comes from behind; for a throw: technique bit 0x10000000 */
     /* 0x10 */ s32 unk10[2];
     /* 0x18 */ s32 scale;
-    /* 0x1C */ f32 dirYaw;    /* yaw of the hit direction */
-    /* 0x20 */ f32 faceYaw;   /* yaw to turn to (with flag 0x94) */
+    /* 0x1C */ f32 yaw;    /* yaw of the hit direction */
+    /* 0x20 */ f32 turnYaw;   /* yaw to turn to (with flag 0x94) */
     /* 0x24 */ f32 turnPitch;
     /* 0x28 */ s32 unk28[2];
     /* 0x30 */ s32 stun;      /* > 0: not free (BtlChar_IsFree); set from BtlSkill_GetFrames for reactions 0x17..0x1C */

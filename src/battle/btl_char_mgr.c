@@ -315,7 +315,7 @@ void BtlChar_Reset(BtlMgrChr *chr) {
     BtlChar_SetStage(chr, BTL_CHR_STAGE_RESET);
     chr->optA = BattleSide_GetOptionA(side);
     chr->optBOff = BattleSide_GetOptionB(side) == 0;
-    chr->padFlagA = (gSaveData->flags & (2 << chr->pad)) != 0;
+    chr->vibEnabled = (gSaveData->flags & (2 << chr->pad)) != 0;
     chr->dirHeld = -1;
     chr->techClass = -1;
     BtlInput_Init(chr);

@@ -19,7 +19,7 @@
  *   1  line 1  BtlSeqReady_Exit            6  none    lower banner (winner's entry in the result sequence)
  *   2  line 2  finish: K.O.                7  none    lower banner, texture 6 (HudNotice_UpdateBanner)
  *   3  line 3  finish: the other K.O.      8  line 2 or 3, picked by Rand_Range(2): Hud_PreUpdate, when
- *   4  line 4  finish: reason bit 2                   BtlCtrl_TestProgressFrameBit() is set
+ *   4  line 4  finish: reason bit 2                   BtlCtrl_TestTutorialFrameBit() is set
  */
 
 /* The part's work pointer lives in .sdata at 0x2FEB5C, right behind gHudCombo (0x2FEB58). It is defined here because

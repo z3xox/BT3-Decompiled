@@ -88,8 +88,8 @@ typedef struct BtlActVitals {
     /* 0x00 */ s32 hp;
     /* 0x04 */ s32 hpMax;
     /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 gaugeB;
-    /* 0x10 */ s32 gaugeBMax;
+    /* 0x0C */ s32 ki;
+    /* 0x10 */ s32 kiMax;
     /* 0x14 */ u8 unk14[0x20 - 0x14];
     /* 0x20 */ s32 variant;
     /* 0x24 */ s32 lowHealth;
@@ -158,7 +158,7 @@ typedef struct BtlActChr {
     /* 0x0CD8 */ s32 switchMember;  /* member being switched to */
     /* 0x0CDC */ s32 switchChara;
     /* 0x0CE0 */ s32 switchCostume;
-    /* 0x0CE4 */ s32 switchUnk20;
+    /* 0x0CE4 */ s32 switchVariant;
     /* 0x0CE8 */ s32 switchAnimChara;
     /* 0x0CEC */ s32 unkCEC;
     /* 0x0CF0 */ s32 switchVoiceChara;

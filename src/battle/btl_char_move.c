@@ -230,7 +230,7 @@ s32 BtlMove_CanFireBlast(BtlMoveChr *chr, s32 mode, s32 *outCount) {
         if (rec->type != 0) {
             continue;
         }
-        def = rec->def;
+        def = rec->atk;
         if (def == NULL) {
             continue;
         }
@@ -290,10 +290,10 @@ s32 BtlMove_IsBlastIncoming(BtlMoveChr *chr, s32 uncharged, s32 otherBlasts, s32
             continue;
         }
         if (rec->type == 0) {
-            if (rec->def == NULL) {
+            if (rec->atk == NULL) {
                 continue;
             }
-            switch (rec->def->kind) {
+            switch (rec->atk->kind) {
             case 0:
             case 4:
             case 8:

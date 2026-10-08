@@ -12,12 +12,12 @@ DiscFusion *gDiscFusion = NULL; /* 0x3B735C */
 
 /* Copies the two "recognised" bits of gProgress into the work area. */
 void DiscFusion_UpdateHave(void) {
-    if (UO_PROG->discFlags & UB_DISC_0) {
+    if (UO_PROG->ubFlags & UB_DISC_0) {
         gDiscFusion->have[0] = 1;
     } else {
         gDiscFusion->have[0] = 0;
     }
-    if (UO_PROG->discFlags & UB_DISC_1) {
+    if (UO_PROG->ubFlags & UB_DISC_1) {
         gDiscFusion->have[1] = 1;
     } else {
         gDiscFusion->have[1] = 0;
@@ -309,9 +309,9 @@ void DiscFusion_UpdateDisc(void) {
         break;
     case DISCFUSION_DLG_FOUND:
         if (gDiscFusion->chosen == 0) {
-            UO_PROG->discFlags |= UB_DISC_0;
+            UO_PROG->ubFlags |= UB_DISC_0;
         } else {
-            UO_PROG->discFlags |= UB_DISC_1;
+            UO_PROG->ubFlags |= UB_DISC_1;
         }
         DiscFusion_UpdateHave();
         Flash_GotoLabel(&gDiscFusion->flash[1], "fl_start", 1);
@@ -410,13 +410,13 @@ void DiscFusion_UpdateDisc(void) {
             Bgm_Play(UB_BGM);
             gDiscFusion->dlgStep = 0;
             if (gDiscFusion->chosen == 0) {
-                if (UO_PROG->discFlags & UB_DISC_0) {
+                if (UO_PROG->ubFlags & UB_DISC_0) {
                     gDiscFusion->talkStep = 6;
                 } else {
                     gDiscFusion->talkStep = 7;
                 }
             } else {
-                if (UO_PROG->discFlags & UB_DISC_1) {
+                if (UO_PROG->ubFlags & UB_DISC_1) {
                     gDiscFusion->talkStep = 6;
                 } else {
                     gDiscFusion->talkStep = 7;

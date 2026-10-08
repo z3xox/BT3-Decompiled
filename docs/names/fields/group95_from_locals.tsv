@@ -1,0 +1,150 @@
+include/battle/btl_act_2.h	BtlActCPose	facing	yaw	HIGH	+0x94 is the heading yaw kept by BtlMove_SetHeading (yaw in BtlActBPose / BtlActDPose / BtlMovePose); btl_act_2.c:1363 builds the aim direction from sin / cos of it.
+include/battle/btl_act_2.h	BtlActCPose	vel	dir	HIGH	+0x80 is the unit travel direction (dir in BtlActBPose / BtlActDPose); btl_act_2.c:1498 copies it as a direction.
+include/battle/btl_act_change.h	BtlActHPose	facing	yaw	HIGH	+0x94 is the first argument of BtlMove_SetHeading as kept in the pose (btl_act_change.c:406 passes it back as the yaw).
+include/battle/btl_act_super.h	BtlSuperPose	velY	fallSpeed	MEDIUM	+0x9C is fallSpeed in every other pose view including ActGPose of the same header; BtlSuper_Begin only zeroes it.
+include/battle/btl_act_super.h	BtlSuperChr	unkE60	boostStock	HIGH	Same fighter word +0xE60 as BtlActHChr.boostStock: both clamp it to 0..10 (btl_act_super.c:557 adds 5, btl_act_change.c:160 adds 1).
+include/battle/btl_ai_sense.h	AiActStatus	downTimer	hitPendingTimer	MEDIUM	BtlAiSense_IsBusy sets it to 4 while BtlCharApi_IsAttackHitPending is 1 and counts it down; nothing tests a downed fighter.
+include/battle/btl_ai_think.h	AiThStatus	downTimer	hitPendingTimer	MEDIUM	Same status word +0x08 as AiActStatus.downTimer (btl_ai_sense.c:1152-1158).
+include/battle/btl_act_decide.h	BtlActJChr	dodges	skillStackA	MEDIUM	BtlAct_CanUseSkill tests it for skill ids 0xC / 0x32 against 3; btl_act_change.c:1911 raises the same word +0xE00 as skillStackA up to 3.
+include/battle/btl_act_decide.h	BtlActJChr	dodgesB	skillStackB	MEDIUM	The same for skill id 0x37 and word +0xE04 (btl_act_change.c:1923).
+include/battle/btl_char_action.h	BtlActVitals	gaugeB	ki	HIGH	Same member block as BtlMemberVitals (btl_char_member.h: ki at +0x0C); the bench recovery in BtlAct_UpdateGauges adds 1000 per second up to the +0x10 word.
+include/battle/btl_char_action.h	BtlActVitals	gaugeBMax	kiMax	HIGH	Word +0x10 of the member block, kiMax in btl_char_member.h; used as the cap of the ki recovery.
+include/battle/btl_char_action.h	BtlActChr	switchUnk20	switchVariant	HIGH	BtlAct_PrepareSwitch stores the target member's vitals.variant in it, and it is passed as the variant argument of BtlChange_RequestChara.
+include/battle/btl_char_api_1.h	BtlCapiParam	flags0	charaFlags	HIGH	Word +0x00 of the parameter block at object +0x91C, which btl_param.h (BtlParam) names charaFlags.
+include/battle/btl_char_api_2.h	BtlCharApiChr	camUnk420	camEye	HIGH	Fighter +0x420 is ChrCam.eye (btl_char_cam.h, the camera block starts at +0x420).
+include/battle/btl_char_api_2.h	BtlCharApiChr	camUnk460	camBodyPos	HIGH	Fighter +0x460 is ChrCam.bodyPos; BtlCharApi_GetCamBodyPos returns it.
+include/battle/btl_char_api_2.h	BtlCharApiChr	camUnk494	camHit	HIGH	Fighter +0x494 is ChrCam.hit, the BtlCam_TraceStage result that BtlCharApi_GetCamPose returns.
+include/battle/btl_char_api_2.h	BtlCharApiChr	camUnk4A0	camYaw	HIGH	Fighter +0x4A0 is ChrCam.yaw; BtlCharApi_GetCamYaw returns it.
+include/battle/btl_char_api_2.h	BtlCharApiObj	attrCount	eventCount	HIGH	Object +0xCAE is eventCount in btl_obj_anim.h (BobjAnimPlayer +0x1E).
+include/battle/btl_char_api_2.h	BtlCapiBChr	switchPrompt	techClass	HIGH	Fighter +0x1594 is techClass in btl_param.h, btl_input.h and btl_char_mgr.h; BtlCharApi_GetPromptButtons passes it to BtlSuper_GetPromptRowIndex as the technique class.
+include/battle/btl_char_api_2.h	BtlCharApiMgr	sounds	oneShotSounds	MEDIUM	Manager +0x08 is the one-shot sound set array, beside loopSounds at +0x0C (note of group 03).
+include/battle/btl_char_cam.h	ChrCam	hitObj	hitZone	HIGH	BtlCam_TraceStage stores in it the BtlStage_FindZoneNear zone index it gave StgCol_TraceSphere (zoneIdx), not an object.
+include/battle/btl_char_fx_1.h	FxChr	hitPos	aimDir	HIGH	Fighter +0xDD0 is written by the ki blast actions with BtlCharApi_CalcAimDir (aimDir in btl_act_2.h) and BtlFx_FireKiBlast uses it as the launch direction.
+include/battle/btl_char_fx_1.h	FxChr	hitKind	blastNode	HIGH	Fighter +0xDF0 is blastNode in btl_act_2.h (result of BtlAct_PlaySubAnim); request 0x17 passes it to BtlObj_GetNodeSide.
+include/battle/btl_char_fx_1.h	FxHitArg2	code	node	HIGH	BtlFx_FireKiBlast fills it with BtlObjAnim_MaskToNode(event argument); the callee's view (EftRArg) names it node.
+include/battle/btl_char_hit.h	HitReact	unk38	shakeTimer	HIGH	React block +0x38 is fighter +0xFE8, shakeTimer in btl_char_action.h and btl_char_move.h; BtlHit_ApplyHit sets it to 3 for the no-flinch reaction 2.
+include/battle/btl_char_hit.h	HitReact	unk48	blindTimer	HIGH	React block +0x48 is fighter +0xFF8, blindTimer in btl_char_action.h; BtlHit_CheckGrab stores BtlSkill_GetFrames of the grabbing skill slot in it.
+include/battle/btl_char_mgr.h	BtlMgrChr	padFlagA	vibEnabled	HIGH	Fighter +0x15D0 is BtlCharVib.enabled (btl_char_util.h), set from the save flag 2 << pad at fighter reset.
+src/battle/btl_seq.c	BtlTextProgress	controlType	tutorial	MEDIUM	Progress +0x7F4 is the tutorial number training.c:1273 stores (training.h, btl_param.h: tutorial); BtlMenu_GetControlsText adds it to a base of 40 texts per pad type (38 tutorials).
+include/battle/btl_script_cmd.h	BtlScriptCmdWindow	color28	shadowColor	HIGH	The block is a FontStyle (sys/font.h), where +0x28 is shadowColor between shadowMode (+0x24) and shadowDx (+0x2C).
+include/battle/btl_char_coll.h	BtlCollReact	id	reaction	MEDIUM	Same block as HitReact (btl_char_hit.h, fighter +0xFB0), which names +0x00 reaction.
+include/battle/btl_char_coll.h	BtlCollReact	dirYaw	yaw	MEDIUM	HitReact (btl_char_hit.h) names +0x1C yaw: the direction the hit pushes.
+include/battle/btl_char_coll.h	BtlCollReact	faceYaw	turnYaw	MEDIUM	HitReact names +0x20 turnYaw beside turnPitch at +0x24, which this view already has.
+include/battle/btl_char_ctl.h	BtlCtlNode	mtx	parentMtx	MEDIUM	The head tracking (btl_head_tracking.c:147) inverts it to bring the target into the frame the node's local rotation is expressed in; the node's own world matrix is at +0x10.
+include/battle/btl_char_ctl.h	BtlCtlNode	pos	localPos	MEDIUM	+0x90 sits beside the local rotation at +0xA0; the world position is worldPos at +0x40.
+include/battle/btl_char_move.h	BtlMoveBlastRec	def	atk	MEDIUM	EftHitRec (eft_core.h) names +0x68 atk (set for type EFT_HIT_BLAST) with src at +0x64, as here.
+include/battle/btl_obj_anim_part2.h	BObjFace	jawTable	jawKeys	MEDIUM	Same structure as BobjFace (btl_obj_anim.h), whose +0x20 is jawKeys, set by BtlObjFace_PickJawKeys.
+include/battle/btl_obj_anim_part2.h	BObjFace	talkTable	talkKeys	MEDIUM	Same structure as BobjFace (btl_obj_anim.h), whose +0x24 is talkKeys.
+include/battle/eft_aura.h	EftAuraCfgSpark	kind	emitNode	HIGH	Offset 0x4A4 + 8i is EftAuraDataSpark.node, which EftAuraMgr code passes to BtlCharApi_GetNodePos to place sparkPos[i] (eft_aura.c, gData->spark[i].node).
+include/battle/eft_aura.h	EftAuraSpark	kind	emitNode	MEDIUM	EftAura_SpawnSpark stores the value read from EftAuraCfgSpark.kind, which is the emitter's model node; nothing reads it.
+include/battle/eft_aura.h	EftAuraCfgFlame	node	nodeEnd	HIGH	Same record as EftAuraDataPart {node, nodeEnd, nodeRef}: +4 is the part's second node (eft_aura.c reads it as the end node of the flame segment).
+include/battle/eft_emit.h	EftEmitArgA	res	texSet	HIGH	EftEmit_SpawnType18 passes set->array[1] + n * 0x108, a 16-entry texture set, and the receiver EftArcArg names +0x30 texSet.
+include/battle/eft_emit.h	EftEmitArgA	texA	param	MEDIUM	The receiver of type 18 (EftArcArg, eft_chain.h) names +0x34 param (EftArcParam): a definition block, not a texture; types 5 and 16 share the argument.
+include/battle/eft_emit.h	EftEmitArgA	texB	keys	MEDIUM	The receiver of type 18 (EftArcArg, eft_chain.h) names +0x38 keys (EftArcKeys): a definition block, not a texture.
+include/battle/eft_emit.h	EftEmitArg17	texA	prm	MEDIUM	The receiver EftRibbonArg (eft_ribbon.h) names +0x38 prm (EftRibbonPrm): a definition block, not a texture.
+include/battle/eft_emit.h	EftEmitArgA	rate	life	MEDIUM	The receiver EftArcArg names +0x28 life (seconds; <= 0 until told to end); EftRibbonArg names the same slot of type 17 life.
+include/battle/eft_obj_tech.h	EftKCamArg	pack	anim	HIGH	EftCam_Start (eft_core.c) passes word +0 to DemoCam_SetAnim; eft_core.h EftCamArg names it anim.
+include/battle/eft_core.h	EftCamArg	unk8	id	MEDIUM	Same block as EftKCamArg (eft_obj_tech.h), which names +8 id; EftCam_Start only copies it.
+include/battle/eft_shot_tech.h	EftJDef	recType	level	HIGH	EftHit_Add (eft_core.c) does rec->level = rec->src->def->level from definition +0x02; rec->type is the constant EFT_HIT_TECH.
+include/battle/eft_core.h	EftHitDef	kind	sub	MEDIUM	EftHitDef is the block EftShot_BuildParam fills (EftShotParam, eft_emit.h): +0x05 gets hitDirKind and is named sub there; frees the name kind for +0x04.
+include/battle/eft_core.h	EftHitDef	cls	kind	MEDIUM	EftShot_BuildParam writes 0 skill / 1 technique / 2 ultimate to +0x04, named kind in EftShotParam and eft_obj_tech.h (apply after kind -> sub).
+include/battle/eft_core.h	EftHitDef	unk0	id	MEDIUM	Same block as EftShotParam, whose +0x00 is the technique id (EftShot_BuildParam: p->id = d->id[n]).
+include/battle/eft_core.h	EftHitDef	unk34	speed	MEDIUM	Same block as EftShotParam (+0x34 speed); EftHit_Add copies it to the slot that a ki blast fills with atk->speed.
+include/battle/eft_core.h	EftHitDef	unk38	homing	MEDIUM	Same block as EftShotParam, whose +0x38 is homing (shot turn rate).
+include/battle/eft_core.h	EftHitDef	unk6	node	MEDIUM	Same block as EftShotParam, whose +0x06 is node (EftShot_BuildParam: p->node = d->node[n]).
+include/battle/eft_core.h	EftHitDef	unk9	shots	MEDIUM	Same block as EftShotParam, whose +0x09 is shots (number of shots); the clash test wants it below 2.
+include/battle/eft_draw_modules.h	EftTTaskList	count	head	HIGH	Offset 4 of the list BtlTask_CreateChildList returns is BtlTaskList.head (eft_sprite_anim.h); EftRayMgr_Update only tests it against 0.
+include/battle/eft_part10.h	EftPart10Ptcl	speed	dist	HIGH	eft_link_2.c:1657-1664 does p->dist += p->distVel and places the particle at base * dist (the same block; eft_link_2.h names it dist).
+include/battle/eft_part10.h	EftPart10Def	speed	dist	HIGH	Track copied to EftPart10Ptcl 0xC0, the particle's distance from the emitter (eft_part10.c:243; eft_link_2.h EftWLinkDef.dist).
+include/battle/eft_part10.h	EftPart10Def	speedRange	distRange	HIGH	Random range of the start distance (eft_part10.c:243), distRange in eft_link_2.h.
+include/battle/eft_part10.h	EftPart10Def	speedBase	distBase	HIGH	Added to the random start distance (eft_part10.c:243), distBase in eft_link_2.h.
+include/battle/eft_part10.h	EftPart10	speed	dist	HIGH	Current value of the dist track (em->speedBase.v + Rand(em->speed.v, ...) is stored as the particle's distance, eft_part10.c:243).
+include/battle/eft_part10.h	EftPart10	speedRange	distRange	HIGH	Current value of the distRange track (eft_part10.c:243).
+include/battle/eft_part10.h	EftPart10	speedBase	distBase	HIGH	Current value of the distBase track (eft_part10.c:243).
+include/battle/eft_part10.h	EftPart10	rate	life	HIGH	eft_link_2.c:1437 ends the emitter when arg->life * 30 <= frame and life > 0 (same word, argument copy at 0x30 + 0x34).
+include/battle/eft_part10.h	EftPart10Arg	rate	life	HIGH	Same word as EftPart10Arg.life in eft_link_2.h: seconds before the emitter stops (eft_link_2.c:1437).
+include/battle/eft_link_2.h	EftWLinkArg	rate	life	HIGH	eft_link_1.c:129 ends the emitter when arg->life * 30 <= time (EftLinkArg.life in eft_particle_unused.h is the same word at +0x34).
+include/battle/eft_link_2.h	EftWLinkArg	frame	texIdxA	MEDIUM	eft_link_1.c:47 passes it to EftLink_SelectTex as the image entry index beside texIdxB (palette); the caller eft_sweep.c gives a texture index.
+include/battle/eft_link_2.h	EftPart10	stopDelay	spinB	HIGH	eft_part10.c:761-807 uses 0x25C as the second spin (rotB += spinB); eft_link_2.c:1366 only clears it beside spinA.
+include/battle/eft_link_2.h	EftPart10	timer	hold	HIGH	eft_link_2.c:1445 counts it down while flag 8 (EFT_PART10_HOLD) is set; eft_part10.h names 0x3A8 hold (set by EftPart10_SetHold, eft_part10.c:1316).
+include/battle/eft_part10.h	EftPart10Ptcl	stretchStep	mulD	HIGH	eft_link_2.c:1616-1623 uses it as the range of a per-channel colour multiplier (col = col0 * mul), not a stretch.
+include/battle/eft_part10.h	EftPart10Ptcl	stretch	mul0	HIGH	Start value of the colour multiplier pulse (eft_link_2.c:1617).
+include/battle/eft_part10.h	EftPart10Ptcl	stretchAge	mulT	HIGH	Time of the colour multiplier pulse, stepped up and down (eft_link_2.c:1626-1632).
+include/battle/eft_part10.h	EftPart10Ptcl	stretchTime	mulTime	HIGH	Period in frames of the colour multiplier pulse (eft_link_2.c:1611-1612).
+include/battle/eft_part10.h	EftPart10Def2	stretchX	mulR	HIGH	Key track of the red colour multiplier (eft_part10.c:326-331 feeds the pulse eft_link_2.c applies to col.x); mulR in eft_link_2.h.
+include/battle/eft_part10.h	EftPart10Def2	stretchY	mulG	HIGH	Green colour multiplier track; mulG in eft_link_2.h.
+include/battle/eft_part10.h	EftPart10Def2	stretchZ	mulB	HIGH	Blue colour multiplier track; mulB in eft_link_2.h.
+include/battle/eft_part10.h	EftPart10Def2	stretchTime	mulTime	HIGH	Period of the colour multiplier pulse in seconds (eft_part10.c:324 multiplies by 30); mulTime in eft_link_2.h.
+include/battle/eft_part10.h	EftPart9Ptcl	size	sizeMul	HIGH	eft_quad_2.c:107-118: stepped by sizeStep and used as halfSize = size(0x138) * sizeMul(0x13C) * osc.
+include/battle/eft_part10.h	EftPart9Ptcl	dir	vel	HIGH	eft_quad_2.c:126-127: 0x20 is the velocity (vel += accel; step = vel * speed).
+include/battle/eft_part10.h	EftPart9Ptcl	vel	accel	HIGH	eft_quad_2.c:126: 0x30 is added to the velocity every frame.
+include/battle/eft_part10.h	EftPart9Ptcl	stretchStep	colorOscAmp	HIGH	eft_quad_2.c:141-151: range of the per-channel colour multiplier at 0xF8 (colorOscAmp in eft_quad_2.h).
+include/battle/eft_part10.h	EftPart9Ptcl	stretch	colorMul	HIGH	eft_quad_2.c:141-153: base of the colour multiplier at 0x120.
+include/battle/eft_part10.h	EftPart9Ptcl	stretchAge	colorOscTime	HIGH	eft_quad_2.c:136, 159-167: time of the colour pulse at 0x12C.
+include/battle/eft_part10.h	EftPart9Ptcl	stretchTime	colorOscPeriod	HIGH	eft_quad_2.c:135-136: period of the colour pulse at 0x130.
+include/battle/eft_tech_modules.h	EftTechArg	side	chr	MEDIUM	Same word as EftKSrc.chr / EftHSlot.chr (+0x20); passed to BtlScene_GetCharPackEntry (eft_obj_tech.c:617 and :2472).
+include/battle/eft_shot_tech.h	EftJSrc	objId20	chr	MEDIUM	Only use is BtlCharApi_GetCostume(src->objId20) (eft_shot_tech.c:1090); the other views of the same record name +0x20 chr.
+include/battle/eft_shot_tech.h	EftJPart	type	phase	HIGH	Same 0x40 record as EftSetDef (eft_emit.h), whose +0x08 is phase (start phase); the test `== 4` is the event-started muzzle emitter.
+include/battle/eft_shot_tech.h	EftJPart	kind	node	HIGH	Same 0x40 record as EftSetDef / EftEmitDef, whose +0x0A is node (index into gEftEmitNodeSlot).
+include/battle/eft_shot_tech.h	EftJShotArg	evtIdx	nodeSlot	MEDIUM	EftBlastObj_Init (eft_blast_obj.c:368) stores it in sel[0].node; the caller passes 0..4 picked by which event bit fired.
+include/battle/eft_sweep.h	EftEmitDef	kind	phase	HIGH	Same record as EftSetDef (eft_emit.h:268) where +0x08 is phase, beside endPhase at +0x09; EftEmit_Spawn tests it against 2 and 6 together with endPhase.
+include/battle/eft_sweep.h	EftEmitSet	tex33	tex16	MEDIUM	Entries are 0x108 bytes = a 16-texture set; 33 is only 0x108 / 8.
+include/battle/eft_sweep.h	EftEmitSet	tex17	tex8	MEDIUM	Entries are 0x88 bytes = an 8-texture set; 17 is only 0x88 / 8.
+include/battle/eft_struggle.h	EftRList	first	head	HIGH	The record is BtlTaskList, whose +0x04 is head (eft_sprite_anim.h:72); eft_struggle.c walks tasks from it.
+include/battle/eft_surface_out.h	EftSurfD	param30	specular	HIGH	+0x12C0 is the EftSurfParam block and its +0x30 is specular (eft_stage_2.c:1881 passes rt->param.specular as the last argument of EftGfx_LightClutSpecular).
+include/battle/eft_stage_2.h	EftGeyserSteamArg	gravity	accel	MEDIUM	Same argument record as EftSteamArg (eft_water.h:142), whose +0x34 is accel (added to the vertical speed every frame).
+include/battle/eft_stage_2.h	EftSurfTex	ofs0	imageOfs	MEDIUM	Record has the layout of EftVramImage (eft_detect.h): +0x38 / +0x3C are image / clut, and eft_stage_2.c:1070 sets ptr0 = ofs0 + file.
+include/battle/eft_stage_2.h	EftSurfTex	ofs4	clutOfs	MEDIUM	Same: eft_stage_2.c:1071 sets ptr4 = ofs4 + file, and +0x3C is clut in EftVramImage.
+include/battle/eft_stage_2.h	EftSurfTex	ptr0	image	MEDIUM	+0x38 is image in EftVramImage (eft_detect.h:304).
+include/battle/eft_stage_2.h	EftSurfTex	ptr4	clut	MEDIUM	+0x3C is clut in EftVramImage (eft_detect.h:305).
+include/battle/eft_surface_out.h	EftBurstTex	ofs0	imageOfs	MEDIUM	Record has the layout of EftVramImage; +0x00 relocates into +0x38 (image).
+include/battle/eft_surface_out.h	EftBurstTex	ofs4	clutOfs	MEDIUM	Record has the layout of EftVramImage; +0x04 relocates into +0x3C (clut).
+include/battle/eft_surface_out.h	EftBurstTex	ptr0	image	MEDIUM	+0x38 is image in EftVramImage (eft_detect.h:304).
+include/battle/eft_surface_out.h	EftBurstTex	ptr4	clut	MEDIUM	+0x3C is clut in EftVramImage (eft_detect.h:305).
+include/battle/eft_shot.h	EftBoundParam	otZ	layer	HIGH	Only use is the 2nd argument of EftGfx_DrawPolyScaledZ (through EftBound_DrawTri), which eft_core.c forwards as EftPrim_DrawTriangle's `layer` (negative = no blending, 2/3 = GS context 2).
+include/battle/eft_shot.h	EftShotDef	cls	kind	MEDIUM	EftShot_BuildParam (eft_emit.c:135) writes +0x04 as p->kind: 0 skill, 1 technique, 2 ultimate; follows eft_emit.h.
+include/battle/eft_shot.h	EftShotDef	kind	sub	MEDIUM	EftShot_BuildParam writes +0x05 as p->sub (from hitDirKind[n]); follows eft_emit.h EftShotParam.
+include/battle/eft_shot_tech.h	EftJDef	cls	kind	MEDIUM	Same definition record as EftShotParam (eft_emit.h): +0x04 is kind (0 skill / 1 technique / 2 ultimate).
+include/battle/eft_shot_tech.h	EftJDef	kind	sub	MEDIUM	Same definition record as EftShotParam (eft_emit.h): +0x05 is sub.
+include/battle/eft_core.h	EftGfxVert	color	uv	MEDIUM	EftGfx_DrawPoly* pass &verts[i].uv (+0x20) as arguments 4-6 of EftPrim_DrawTriangle, which eft_stage_1.c writes to RGBA; ClipVtx_Set callers (EftBVert, EftClipVtx) have st at +0x10 and colour at +0x20.
+include/battle/eft_core.h	EftGfxVert	uv	color	MEDIUM	Same evidence: +0x20 reaches the RGBA slots of EftPrim_DrawTriangle (swap with the line above).
+include/battle/eft_zap.h	EftZapArg	rate	life	HIGH	EftZap_Init (eft_ribbon.c) does w->life = arg->life * 30 when > 0 and counts it down; eft_ribbon.h EftZapInit names +0x34 `life`.
+include/battle/eft_zap.h	EftZap	rateFrames	life	HIGH	Work +0x174 is arg +0x34 * 30, decremented every frame by EftZap_Update until the zap stops; `life` in eft_ribbon.h.
+include/battle/eft_zap.h	EftZap	fadeTime	fadeFrame	HIGH	Work +0x168 is decremented each frame of the fade and ends the zap below 0 (eft_ribbon.c EftZap_Update); `fadeFrame` in eft_ribbon.h.
+include/battle/eft_zap.h	EftZap	fade	fadeTime	HIGH	Work +0x16C is the divisor of fadeFrame / fadeTime in EftZap_Update and is set with +0x168 by EftZap_SetFadeTime; `fadeTime` in eft_ribbon.h (rename after fadeTime -> fadeFrame).
+include/battle/eft_zap.h	EftZap	fadeDelay	holdTime	MEDIUM	Work +0x164 counts down while the hold flag is set and then stops the zap (eft_ribbon.c EftZap_Update); `holdTime` in eft_ribbon.h.
+include/battle/eft_ribbon.h	EftZapPool	unk1EA1	nodeCur	MEDIUM	Byte +0x1EA1 of the gap is the round-robin cursor EftZap_AddNode (eft_zap.c) reads and writes; eft_zap.h EftZapMgr names it nodeCur (needs a split of the u8 array).
+include/battle/obj_gs_env.h	ObjMdlFile	cbp2	clutTbp	HIGH	Model file +0x60 is the block obj_render.c uploads the CLUT range to (TexFile_UploadRange) and that obj_render.h names clutTbp.
+include/battle/obj_gs_env.h	ObjMdlFile	tbp2	fadeTbp	HIGH	Model file +0x64 is the TBP0 of the fade texture in obj_render.c (TexFile_UploadOne, tex0 |= fadeTbp) and is fadeTbp in obj_render.h.
+include/battle/obj_gs_env.h	ObjShadowView	color	shadowColor	MEDIUM	View +0x30 is set to 128 by ObjShadow_LoadProg just before ObjDraw_DrawPartsFlat; BtlObjView.color (the light colour) is at +0x20.
+include/battle/stg.h	StgView	x1	scissorY0	HIGH	View +0x208 is scissorY0 in View (btl_cam.h) and ViewScissor (main.h); +0x204 is scissorX1 in this same structure.
+include/battle/stg.h	StgView	x0	scissorX0	HIGH	View +0x200 is scissorX0 in View (btl_cam.h).
+include/battle/stg_ambient.h	StgData	place	starts	HIGH	Stage data +0x2C is StgDataA.starts (stg.h), the StgPlace list stg_parts.c reads as starts[i].pos / target; BtlStage_GetPlace2C reads pos and target of entry 0.
+include/battle/stg.h	StgDataA	points	lightDirs	MEDIUM	BtlStage_GetLightDir (stg_ambient.c) returns entry 0 of the list at +0x24 as the stage's light direction (StgData.lightDir).
+src/battle/hud_combo.c	HudCObj	skillScript	skillText	HIGH	Object +0xBC is given to BtlMenu_SetScript2(u16 *text) and is skillText in pause_menu.c and hud_prompt.c.
+include/menu/evo_z_items.h	EvoZ	chipTex	bg	HIGH	EvoZ_Load stores the relocated resource of file 0x3C0 at +0xB0 and evo_z_1.c draws it with Sprite_DrawPicture(gEvoZ->bg, 0, 0, 0x80); UEvoZ (evo_z.h) and Shop already call it bg and no code uses chipTex.
+include/menu/evo_z_items.h	EvoZ	fits	used	MEDIUM	ez->fits = ItemSet_Fit(...) which returns the slots the set takes (EvoZ_CanPlace: capacity >= fits - old + new); ItemPanel (duel.h +0xA4) names the same result used.
+include/menu/evo_z.h	UEvoZ	fits	used	MEDIUM	Same +0x1A64 word as EvoZ.fits: the ItemSet_Fit result (slots used), drawn next to capacity by evo_z_2.c; the old comment (slots still free) was the opposite.
+include/menu/duel.h	DuelProgress	versus	players	MEDIUM	gProgress +0x620 is players in CharSelProgress (char_select.h:125) and team_select.h:76; CharSel_Run switches on it (0 = 1P vs COM, 1 = 1P vs 2P, 2 = COM vs COM).
+include/menu/dc_password_replay.h	ZaChrEntry	slots	baseLevel	MEDIUM	+0x0E is baseLevel in ChrTblEntry (menu_support.h) and VChrEntry (evo_z_items.h); ChrTbl_GetLevel returns baseLevel + saved level and that sum is the capacity given to ItemSet_Fit, so both words name the base item-slot count; one spelling should be chosen.
+include/menu/ub_score.h	PProgress	misRow	cursor	MEDIUM	gProgress +0x640 is written by MisSel_Input as UO_PROG->cursor (mission_select.c:445) and by SurvSel as S_PROG->cursor (survival_select.c:350); ub.h and survival.h both call it cursor.
+include/menu/ub_score.h	PProgress	misRank	missionPage	HIGH	mission_result.c:151 computes mission = misRank * MISSEL_ROWS + misRow, so +0x63C is the page of the mission list; ub.h (UoProgress) names the same word missionPage.
+include/menu/ub_rank.h	NProgress	ubKind	cursor	MEDIUM	gProgress +0x640 is the cursor the previous list screen left (ub.c:187 and ub_result.c:130 read UO_PROG->cursor for the same ladder / courses choice); ub.h and survival.h call it cursor.
+include/menu/ub.h	UoProgress	course	ubChoice	MEDIUM	gProgress +0x688 is written as NPROG->ubChoice by both UbzSel_Input (course 0..4, ubz_select.c:353) and UbRank (ladder place, ub_rank.c:586), so it is not only a course.
+include/menu/ub.h	UoProgress	discFlags	ubFlags	MEDIUM	gProgress +0x684 is ubFlags in NProgress (ub_rank.h:75, NPROG_UB_ bits) and the note in ub.h itself says bit 8 is that NPROG_UB_UPWARD bit.
+include/ui/reward_window.h	Flash	flags	trig	HIGH	+0x0C of the movie is Flash.trig in sys/flash.h (set by the action url "trig" "n", cleared by Flash_Advance); Flash.flags is +0x08, which this local view hides in unk0[2].
+include/ui/reward_window.h	FlashRef	unk4	more	HIGH	sys/flash.h FlashRef names +0x04 `more` (how many more clips share the name); the same structure.
+include/ui/reward_window.h	FlashRef	id	index	MEDIUM	sys/flash.h FlashRef names +0x00 `index`; reward_window.h is a local view of the same structure.
+include/ui/reward_window.h	ViewProgress	unk4	baseFile	HIGH	Progress_Init sets it to 0x1C1 and Shen_Main loads file gProgress->unk4 + 0x18; eleven menu headers name progress +0x004 baseFile.
+include/ui/reward_window.h	ViewProgress	unk24	demoPick	HIGH	MenuUtilProgress in ui/menu_support.h names +0x024 demoPick (the pairing Demo_SetupBattle chose last); Progress_Init sets it to -1.
+include/ui/reward_window.h	ViewProgress	unk624	battleType	MEDIUM	the menu headers name progress +0x624 battleType; ChrGrid_Build tests it == 2 in mode 0x28 to drop the random cell.
+include/ui/reward_window.h	ViewProgress	unk0	language	MEDIUM	nine menu headers name progress +0x000 language (a reading, see notes_for_later.md).
+src/sys/memcard_flow.c	McFlowProgress	fileBase	baseFile	MEDIUM	the same word of the progress block is baseFile in eleven menu headers.
+src/sys/memcard_flow.c	McFlowProgress	unk0	language	MEDIUM	nine menu headers name progress +0x000 language.
+src/sys/memcard_flow.c	McCardInfo	callResult	ret	HIGH	gMcCardPort is McCardPort of sys/memcard.h, where +0x04 is ret (return value of the last library call).
+src/sys/memcard_flow.c	McCardInfo	formatted	format	HIGH	McCardPort in sys/memcard.h names +0x14 format (sceMcGetInfo: formatted).
+src/sys/memcard_flow.c	McCardInfo	need	size	MEDIUM	McCardPort in sys/memcard.h names +0x1C size (file size for McCard_LoadFile, clusters still needed for McCard_CalcNeed).
+include/sys/memcard_flow.h	McFlowReq	unk418	iconNameTail	MEDIUM	McCardFile in sys/memcard.h has iconName[3][0x40] from 0x35C to 0x41C, so +0x418 is the last four bytes of iconName[2]; better still, use McCardFile itself (title[0x44], iconName, u16 titleBreak).
+include/ui/menu_support.h	ChrTblEntry	baseLevel	baseSlots	MEDIUM	ChrTbl_GetLevel returns baseLevel + saved level and both callers use it as the item slot capacity (item_panel.c p->limit -> ItemSet_Fit capacity; evo_z_3.c ez->capacity); ZaChrEntry calls the same u16 slots.
+include/ui/menu_support.h	MenuUtilProgress	team	replaySlot	MEDIUM	progress +0x69C is the list McFlow_CopySlotInfo fills from the replay files' headers (McFlowSlotInfo slot[] in sys/memcard_flow.c, seven entries of 0x2C).
+include/sys/save.h	SaveRec	unk0	item	MEDIUM	ZSaveRec in menu/dc.h has u16 item[8] at +0x00 and a word at +0x10 for the same record (needs the array split, not only a rename).

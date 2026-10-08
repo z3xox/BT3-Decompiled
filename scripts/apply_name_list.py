@@ -22,7 +22,7 @@ for a, b, conf, why in rows:
         continue
     m = re.match(r'(func|D)_([0-9A-Fa-f]{6,8})$', a)
     if not m:
-        print('no definition and no address in the name, skipped:', a); del M[a]; continue
+        continue  # not a symbol of the binary (a macro): renamed in the sources only
     note = (' guess:' if conf == 'MEDIUM' else '') + ' ' + why[:110].replace(';', ',')  # (a line of a symbol list may hold one semicolon)
     # the evidence on a line of its own: splat reads `word:` in a trailing comment as an attribute
     new_lines.append(f'//{note}\n{b} = 0x{int(m.group(2), 16):08X};' + (' // type:func' if m.group(1) == 'func' else ''))

@@ -148,7 +148,7 @@ void MisResult_Init(s32 section) {
     MR->step = 0;
     MR->voiceSkip = 0;
     MR->reward = 0;
-    MR->mission = P_PROG->misRank * MISSEL_ROWS + P_PROG->misRow;
+    MR->mission = P_PROG->missionPage * MISSEL_ROWS + P_PROG->cursor;
     MR->outcome = UbScore_Fill(1, &MR->score, &MR->pages);
     UbScore_CalcPoints(MR->price, &MR->score);
     total = UbScore_CalcRank(1, &MR->score);
@@ -206,7 +206,7 @@ void MisResult_Draw(void) {
     Flash_FindLabel(flash, "mc_guide_17go", "mc_guide_17go_mouth", &ref);
     FlashAnim_Talk(flash, &ref, &MR->talk, 0);
     /* the mission's name */
-    mission = P_PROG->misRank * MISSEL_ROWS + P_PROG->misRow;
+    mission = P_PROG->missionPage * MISSEL_ROWS + P_PROG->cursor;
     Flash_FindLabel(flash, "mc_window_plate01", "mc_window_text1_0", &ref);
     TextBox_AttachLine(flash, &ref, 0, 0, mission + 0xD8, &MR->box[3]);
     uv.x0 = 0;

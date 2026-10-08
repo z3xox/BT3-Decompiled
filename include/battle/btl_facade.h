@@ -60,10 +60,10 @@ void BtlFacade_GetFixedCamera(struct Vec4 *pos, struct Vec4 *rot);
 void BtlFacade_ClearFixedCamera(void);
 
 /* fighter object and controller */
-void BtlFacade_SetObjSubState14(s32 side, s32 lip);
+void BtlFacade_PlayLipTrack(s32 side, s32 lip);
 void BtlFacade_EndObjSubState3(s32 side);
-void BtlFacade_SetCpuParam8(s32 level);
-void BtlFacade_SetCpuParam4(s32 type);
+void BtlFacade_SetCpuLevel(s32 level);
+void BtlFacade_SetCpuType(s32 type);
 
 /* scripted movement and control flags */
 void BtlFacade_SetCharPos(s32 side, struct Vec4 *pos);

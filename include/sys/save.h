@@ -51,18 +51,18 @@ typedef struct SaveSlot {
     /* 0x04 */ s32 val[3]; /* 0xFFFF each after Save_UnlockAll; slot 0 gets val[0] |= 1 and val[2] |= 1 by default */
 } SaveSlot;
 
-/* 0x38 bytes; per-character customisation (menu functions 0x398A60..0x3991D8, main ChrTbl_GetLevel / ChrTbl_GetExp). */
+/* 0x38 bytes; per-character customisation (menu functions 0x398A60..0x3991D8, main ChrTbl_GetItemSlots / ChrTbl_GetExp). */
 typedef struct SaveCustom {
     /* 0x00 */ u16 item[SAVE_CUSTOM_SETS][SAVE_CUSTOM_ITEMS]; /* equipped item ids (1-based, 0 = empty) of each of the 3 sets */
     /* 0x30 */ s32 exp;  /* running total compared with the table value picked by `level` (EvoZ_RefreshStatus): experience, guess */
-    /* 0x34 */ u16 level;  /* added to the character table's u16 at +0xE by ChrTbl_GetLevel; indexes its s32 table at +0x10 in ChrTbl_GetExp */
+    /* 0x34 */ u16 level;  /* added to the character table's u16 at +0xE by ChrTbl_GetItemSlots; indexes its s32 table at +0x10 in ChrTbl_GetExp */
     /* 0x36 */ u16 unk36;
 } SaveCustom;
 
 /* 0x1C bytes; fourteen of them at 0x2D40. */
 typedef struct SaveRec {
-    /* 0x00 */ u8 unk0[0x14];  /* u16 item[8] (item ids, 1-based, 0 = empty) and a word at +0x10: ZSaveRec in menu/dc.h */
-    /* 0x14 */ u16 level;  /* used instead of SaveCustom.level when ChrTbl_GetLevel is asked for one of these */
+    /* 0x00 */ u8 item[0x14];  /* u16 item[8] (item ids, 1-based, 0 = empty) and a word at +0x10: ZSaveRec in menu/dc.h */
+    /* 0x14 */ u16 level;  /* used instead of SaveCustom.level when ChrTbl_GetItemSlots is asked for one of these */
     /* 0x16 */ u16 unk16;
     /* 0x18 */ s32 chara;  /* character id, -1 = empty (defaults; ChrGrid_Build appends the non-empty ones to the character list) */
 } SaveRec;
@@ -116,7 +116,7 @@ typedef struct SaveData {
 /* Header of common file 4 (gCommonRes->data[2]): byte offsets of its tables, rounded down to 4. */
 typedef struct ItemFile {
     /* 0x00 */ s32 unk0;
-    /* 0x04 */ u32 charaOffset; /* table of 0x3C-byte character entries (ChrTbl_GetLevel) */
+    /* 0x04 */ u32 charaOffset; /* table of 0x3C-byte character entries (ChrTbl_GetItemSlots) */
     /* 0x08 */ u32 itemOffset;  /* table of SAVE_ITEM_COUNT ItemInfo */
 } ItemFile;
 

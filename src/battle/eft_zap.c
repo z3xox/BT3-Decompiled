@@ -171,11 +171,11 @@ void EftZap_Stop(EftAdTask *task) {
             w = task->work;
             if (w != NULL) {
                 if (w->flags & EFT_ZAP_ALIVE) {
-                    if (w->fade > 0.0f) {
+                    if (w->fadeTime > 0.0f) {
                         w->flags |= EFT_ZAP_FADE;
                         now = 0;
                     }
-                    if (w->fadeDelay > 0.0f) {
+                    if (w->holdTime > 0.0f) {
                         w->flags |= EFT_ZAP_FADE_WAIT;
                         now = 0;
                     }
@@ -248,15 +248,15 @@ void EftZap_SetSize(EftAdTask *task, f32 size) {
 }
 
 /* Sets the zap's life in seconds (the `rate` of the argument) and in frames. No caller. */
-void EftZap_SetRate(EftAdTask *task, f32 rate) {
+void EftZap_SetLife(EftAdTask *task, f32 rate) {
     EftZap *w;
 
     if (gEftZapMgr != NULL && task != NULL && IS_ZAP(task)) {
         w = task->work;
         if (w != NULL) {
             if (w->flags & EFT_ZAP_ALIVE) {
-                w->arg.rate = rate;
-                w->rateFrames = rate * 30.0f;
+                w->arg.life = rate;
+                w->life = rate * 30.0f;
             }
         }
     }
@@ -299,7 +299,7 @@ void EftZap_SetFadeDelay(EftAdTask *task, s32 frames) {
         w = task->work;
         if (w != NULL) {
             if (w->flags & EFT_ZAP_ALIVE) {
-                w->fadeDelay = frames;
+                w->holdTime = frames;
             }
         }
     }
@@ -313,8 +313,8 @@ void EftZap_SetFadeTime(EftAdTask *task, s32 frames) {
         w = task->work;
         if (w != NULL) {
             if (w->flags & EFT_ZAP_ALIVE) {
-                w->fade = frames;
                 w->fadeTime = frames;
+                w->fadeFrame = frames;
             }
         }
     }
@@ -346,7 +346,7 @@ s32 EftZap_SetFlag20000(EftAdTask *task) {
 
 /* Sets the effect type the creation argument carries at +0x40 (what EftZap_Update asks
    BtlScene_IsEffectStopped about). No caller. */
-s32 EftZap_SetUnk40(EftAdTask *task, s32 value) {
+s32 EftZap_SetType(EftAdTask *task, s32 value) {
     EftZap *w;
 
     if (gEftZapMgr == NULL) {

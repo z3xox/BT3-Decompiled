@@ -295,7 +295,7 @@ s32 BtlAct_GetUpHandler(Chr *chr, s32 phase) {
             case 0xE5:
                 anim = 0xFE;
                 pose = BtlChar_GetPos(chr);
-                pose->facing = BtlUtil_WrapAngle(BtlChar_GetPos(chr)->facing + 3.14159265f);
+                pose->yaw = BtlUtil_WrapAngle(BtlChar_GetPos(chr)->yaw + 3.14159265f);
                 break;
         }
         BtlAnim_Play(chr, anim, 0.15f);
@@ -1360,9 +1360,9 @@ s32 BtlAct_KiBlastHandler(Chr *chr, s32 phase) {
             BtlCharApi_GetNodePos(chr->objId, 0x11, &pos);
             BtlCharApi_CalcAimDir(chr->objId, 0x11, &pos, &chr->aimDir, -BTL_DEG(36.0f), BTL_DEG(36.0f));
         } else {
-            chr->aimDir.x = Mathf_Sin(BtlChar_GetPos(chr)->facing);
+            chr->aimDir.x = Mathf_Sin(BtlChar_GetPos(chr)->yaw);
             chr->aimDir.y = zero;
-            chr->aimDir.z = Mathf_Cos(BtlChar_GetPos(chr)->facing);
+            chr->aimDir.z = Mathf_Cos(BtlChar_GetPos(chr)->yaw);
             chr->aimDir.w = zero;
         }
     }
@@ -1435,9 +1435,9 @@ s32 BtlAct_ChargedKiBlastHandler(Chr *chr, s32 phase) {
             BtlCharApi_GetNodePos(chr->objId, 0x11, &pos);
             BtlCharApi_CalcAimDir(chr->objId, chr->blastNode, &pos, &chr->aimDir, -BTL_DEG(36.0f), BTL_DEG(36.0f));
         } else {
-            chr->aimDir.x = Mathf_Sin(BtlChar_GetPos(chr)->facing);
+            chr->aimDir.x = Mathf_Sin(BtlChar_GetPos(chr)->yaw);
             chr->aimDir.y = zero;
-            chr->aimDir.z = Mathf_Cos(BtlChar_GetPos(chr)->facing);
+            chr->aimDir.z = Mathf_Cos(BtlChar_GetPos(chr)->yaw);
             chr->aimDir.w = zero;
         }
     }
@@ -1495,7 +1495,7 @@ s32 BtlAct_DashKiBlastHandler(Chr *chr, s32 phase) {
             BtlAct_Request(chr, 0xF);
         }
         dir = &chr->aimDir;
-        Vec4_Copy(dir, &BtlChar_GetPos(chr)->vel);
+        Vec4_Copy(dir, &BtlChar_GetPos(chr)->dir);
         switch (BtlAnim_GetId(chr)) {
             case 0x77:
                 break;
@@ -1625,7 +1625,7 @@ s32 BtlAct_DashChargedKiBlastHandler(Chr *chr, s32 phase) {
                 break;
         }
         dir = &chr->aimDir;
-        Vec4_Copy(dir, &BtlChar_GetPos(chr)->vel);
+        Vec4_Copy(dir, &BtlChar_GetPos(chr)->dir);
         switch (BtlAnim_GetId(chr)) {
             case 0x89:
                 tmp = -dir->x;

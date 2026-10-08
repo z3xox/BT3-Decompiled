@@ -151,7 +151,7 @@ s32 BtlAiSeq_IsInterrupted(BtlAiWork *ai, s32 id) {
     BtlAiSeqBody *body = &AI_DATA->act->body;
     u16 flags = body->flags[id];
     s8 cls = body->stateClass[BtlCharApi_GetAnimId(ai->objId)];
-    s32 kind = BtlCharApi_GetOppSkillKind(ai->objId);
+    s32 kind = BtlCharApi_GetOppTechniqueKind(ai->objId);
     BtlAiSeqA *seq = SEQA(ai);
 
     if ((u16)(flags & BTLAI_SEQF_END_WHEN_HIT) && !(seq->flags & BTLAI_SEQ_NO_HIT_END) && (u32)(cls - 1) < 7) {
@@ -1092,7 +1092,7 @@ s32 BtlAiStep_GuardUntilSafe(BtlAiWork *ai) {
     s32 passing = BtlCharApi_IsBlastPassing(ai->objId);
     BtlAiSeqEntry *top = &SEQ_TOP(seq);
     u8 flags = act->body.stateFlags[anim];
-    s32 kind = BtlCharApi_GetOppSkillKind(ai->objId);
+    s32 kind = BtlCharApi_GetOppTechniqueKind(ai->objId);
     s32 hitCls = 0x10;
     s32 ret = 0;
     s32 none;

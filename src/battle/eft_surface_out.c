@@ -259,8 +259,8 @@ void EftSurf_SetAnimFrames(f32 v) {
 }
 
 /* Sets the float at +0x30 of the surface parameters (the specular factor, EftSurfParam.specular). No caller. */
-void EftSurf_SetParam30(f32 v) {
-    gEftSurf->param30 = v;
+void EftSurf_SetSpecular(f32 v) {
+    gEftSurf->specular = v;
 }
 
 /* Returns the surface parameters (work + 0x12C0), NULL when the surface module is not running. No caller. */

@@ -1067,8 +1067,8 @@ void EftSurf_Relocate(EftSurfFile *file) {
     }
     tex = file->texs;
     for (i = 0; i < file->texCount; i++) {
-        tex->ptr0 = tex->ofs0 + (s32)file;
-        tex->ptr4 = tex->ofs4 + (s32)file;
+        tex->image = tex->imageOfs + (s32)file;
+        tex->clut = tex->clutOfs + (s32)file;
         tex++;
     }
     mesh = file->meshes;
@@ -1086,8 +1086,8 @@ void EftSurf_Unrelocate(EftSurfFile *file) {
 
     tex = file->texs;
     for (i = 0; i < file->texCount; i++) {
-        tex->ptr0 = (s32)file - tex->ofs0;
-        tex->ptr4 = (s32)file - tex->ofs4;
+        tex->image = (s32)file - tex->imageOfs;
+        tex->clut = (s32)file - tex->clutOfs;
         tex++;
     }
     mesh = file->meshes;

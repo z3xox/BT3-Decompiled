@@ -87,7 +87,7 @@ s32 Shen_Main(void) {
     s32 ret = 1;
 
     if (gMenuArc12 == NULL) {
-        gMenuArc12 = File_LoadSync(gProgress->unk4 + 0x18, NULL, 0);
+        gMenuArc12 = File_LoadSync(gProgress->baseFile + 0x18, NULL, 0);
     }
     do {
         switch (gProgress->mode) {
@@ -582,7 +582,7 @@ void Shen_Init(ShenWork *work, s32 section) {
     work->font = PACK_AT(work->res, 13);
     for (i = 0; i < 5; i++) {
         TextBox_Init(&work->box[i], work->font, 2);
-        TextBox_SetRect(&work->box[i], 0, 0x200, 0x6A, 0x11E);
+        TextBox_SetClip(&work->box[i], 0, 0x200, 0x6A, 0x11E);
     }
 
     Shen_DebugFile("host:data/test/shenron/shenron_list_PS2_.dat");
@@ -716,7 +716,7 @@ void Shen_Update(ShenWork *work) {
     if (gProgress->flags & PROGRESS_FLAG_FREEZE) {
         return;
     }
-    if (GetWin_IsAnimating()) {
+    if (GetWin_IsAnimDone()) {
         return;
     }
     if (Shen_UpdateTalk(work)) {

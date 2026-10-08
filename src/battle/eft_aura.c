@@ -712,7 +712,7 @@ s32 EftAura_SpawnSpark(EftAura *aura, s32 objId, s32 emitter, s32 emitNode, Vec4
         s->flags |= 2;
     }
     s->emitter = emitter;
-    s->kind = emitNode;
+    s->emitNode = emitNode;
     s->age = 0.0f;
     if (s->flags & 0x10) {
         s->life = gEftAuraCfg->sparkLifeLong + gEftAuraCfg->sparkLifeLongRange * RANDF();
@@ -784,7 +784,7 @@ void EftAura_SpawnSparks(EftAura *aura, s32 objId, s32 emitter, s32 once) {
 
     step = gEftAuraCfg->sparkStep * aura->scale;
     Vec4_Set(&offset, 0.0f, 0.0f, 0.0f, 1.0f);
-    emitNode = gEftAuraCfg->spark[emitter].kind;
+    emitNode = gEftAuraCfg->spark[emitter].emitNode;
     node = gEftAuraCfg->spark[emitter].node;
     Vec4_Copy(&pos, &aura->sparkPos[emitter]);
     Vec4_Set(&delta, 0.0f, 0.0f, 0.0f, 1.0f);
@@ -1232,7 +1232,7 @@ s32 EftAura_SpawnFlames(EftAura *aura, s32 objId, s32 part, s32 once) {
 
     Vec4_Copy(&pos, &aura->part[part]);
     Vec4_Set(&delta, 0.0f, 0.0f, 0.0f, one);
-    node = gEftAuraCfg->flame[part].node;
+    node = gEftAuraCfg->flame[part].nodeEnd;
     if (node >= 0) {
         BtlCharApi_GetNodePos(objId, node, &nodePos);
         Vec4_Sub(&d, &nodePos, &pos);
@@ -1345,7 +1345,7 @@ void EftAura_StepFlames(EftAura *aura, s32 objId) {
             if (0.0f < f->time) {
                 Vec4_Copy(&base, &aura->part[f->part]);
                 Vec4_Copy(&pos, &base);
-                if (gEftAuraCfg->flame[f->part].node >= 0) {
+                if (gEftAuraCfg->flame[f->part].nodeEnd >= 0) {
                     Vec4_Copy(&end, &aura->partEnd[f->part]);
                     Vec4_Sub(&d, &end, &base);
                     Vec3_Scale(&tmp, &d, f->follow);

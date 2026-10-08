@@ -132,12 +132,12 @@ void CharRef_Init(s32 section) {
     TextBox_Init(&gCharRef->box[CHARREF_BOX_FORM], gCharRef->text[1], 4);
     TextBox_Init(&gCharRef->box[CHARREF_BOX_VOICE], gCharRef->text[2], 2);
     TextBox_Init(&gCharRef->box[CHARREF_BOX_PROFILE], gCharRef->text[3], 0);
-    TextBox_SetRect(&gCharRef->box[CHARREF_BOX_PROFILE], 0, 0x200, 0x128, 0x198);
+    TextBox_SetClip(&gCharRef->box[CHARREF_BOX_PROFILE], 0, 0x200, 0x128, 0x198);
     for (i = 0; i < 5; i++) {
         TextBox_Init(&gCharRef->box[CHARREF_BOX_LIST_NAME + i], gCharRef->nameText[i], 2);
-        TextBox_SetRect(&gCharRef->box[CHARREF_BOX_LIST_NAME + i], 0, 0x200, 0x49, 0x135);
+        TextBox_SetClip(&gCharRef->box[CHARREF_BOX_LIST_NAME + i], 0, 0x200, 0x49, 0x135);
         TextBox_Init(&gCharRef->box[CHARREF_BOX_LIST_FORM + i], gCharRef->formText[i], 4);
-        TextBox_SetRect(&gCharRef->box[CHARREF_BOX_LIST_FORM + i], 0, 0x200, 0x49, 0x135);
+        TextBox_SetClip(&gCharRef->box[CHARREF_BOX_LIST_FORM + i], 0, 0x200, 0x49, 0x135);
     }
     for (i = 0; i < CHARREF_BOX_NUM; i++) {
         TextBox_SetNoFlush(&gCharRef->box[i], 1);

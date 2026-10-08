@@ -119,7 +119,7 @@ typedef struct EftZapArg {
     /* 0x10 */ Vec4 dir;
     /* 0x20 */ Vec4 pos;
     /* 0x30 */ f32 size;
-    /* 0x34 */ f32 rate;      /* the life in seconds (`life` in EftZapInit, eft_ribbon.h); <= 0 = until stopped */
+    /* 0x34 */ f32 life;      /* the life in seconds (`life` in EftZapInit, eft_ribbon.h); <= 0 = until stopped */
     /* 0x38 */ s32 texIdx;
     /* 0x3C */ s32 objId;
     /* 0x40 */ u8 type;       /* effect type EftZap_Update gives BtlScene_IsEffectStopped (eft_ribbon.c) */
@@ -154,11 +154,11 @@ typedef struct EftZap {
     /* 0x150 */ f32 curJ;
     /* 0x154 */ u8 unk154[0xC];
     /* 0x160 */ f32 delay;     /* frames (set from a part definition byte) */
-    /* 0x164 */ f32 fadeDelay; /* frames a stop is held back; > 0 makes a stop gradual (`holdTime` in eft_ribbon.h) */
-    /* 0x168 */ f32 fadeTime;  /* frames LEFT of the fade: counted down by EftZap_Update (`fadeFrame` in eft_ribbon.h) */
-    /* 0x16C */ f32 fade;      /* length of the fade in frames; > 0 makes a stop gradual (`fadeTime` in eft_ribbon.h) */
+    /* 0x164 */ f32 holdTime; /* frames a stop is held back; > 0 makes a stop gradual (`holdTime` in eft_ribbon.h) */
+    /* 0x168 */ f32 fadeFrame;  /* frames LEFT of the fade: counted down by EftZap_Update (`fadeFrame` in eft_ribbon.h) */
+    /* 0x16C */ f32 fadeTime;      /* length of the fade in frames; > 0 makes a stop gradual (`fadeTime` in eft_ribbon.h) */
     /* 0x170 */ f32 frame;
-    /* 0x174 */ f32 rateFrames; /* arg.rate x 30: the life in frames, counted down by EftZap_Update (`life` in eft_ribbon.h) */
+    /* 0x174 */ f32 life; /* arg.rate x 30: the life in frames, counted down by EftZap_Update (`life` in eft_ribbon.h) */
     /* 0x178 */ u8 texIdx;     /* which image of the texture object */
     /* 0x179 */ u8 pad179[3];
     /* 0x17C */ s32 flags;     /* EFT_ZAP_* */
@@ -183,13 +183,13 @@ void EftZap_SetPos(EftAdTask *task, EftAdVec pos);
 void EftZap_WarpPos(EftAdTask *task, EftAdVec pos);
 void EftZap_SetDir(EftAdTask *task, EftAdVec dir);
 void EftZap_SetSize(EftAdTask *task, f32 size);
-void EftZap_SetRate(EftAdTask *task, f32 rate);
+void EftZap_SetLife(EftAdTask *task, f32 rate);
 s32 EftZap_SetTex(EftAdTask *task, EftZapTexObj *tex, s32 a, s32 b);
 void EftZap_SetDelay(EftAdTask *task, s32 frames);
 void EftZap_SetFadeDelay(EftAdTask *task, s32 frames);
 void EftZap_SetFadeTime(EftAdTask *task, s32 frames);
 s32 EftZap_SetFlag20000(EftAdTask *task);
-s32 EftZap_SetUnk40(EftAdTask *task, s32 value);
+s32 EftZap_SetType(EftAdTask *task, s32 value);
 s32 EftZap_IsAlive(EftAdTask *task);
 
 /* ---- fighter shock effect (fighter effect request 6) ----------------------------------------------------- */

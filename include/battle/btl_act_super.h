@@ -23,7 +23,7 @@ typedef struct BtlSuperPose {
     /* 0x10 */ Vec4 rot;       /* rot.y = model yaw */
     /* 0x20 */ u8 unk20[0x98 - 0x20];
     /* 0x98 */ f32 speed;      /* zeroed with velY when a technique starts */
-    /* 0x9C */ f32 velY;       /* vertical speed, positive = down (`fallSpeed` in the other pose views, ActGPose included) */
+    /* 0x9C */ f32 fallSpeed;       /* vertical speed, positive = down (`fallSpeed` in the other pose views, ActGPose included) */
 } BtlSuperPose;
 
 /* Animation data of one layer of the object. */
@@ -79,7 +79,7 @@ typedef struct BtlSuperChr {
     /* 0x0E48 */ s32 chargeFull;   /* frames the charge has been full (the sounds play on the first) */
     /* 0x0E4C */ u8 unkE4C[0xE5C - 0xE4C];
     /* 0x0E5C */ s32 skillCount3;       /* counter (full at 3, fighter.md); zeroed when technique 0x268 ends */
-    /* 0x0E60 */ s32 unkE60;       /* counter 0..10 (boostStock in btl_act_change.h): + 5 per technique 0x2EF, zeroed when technique 0x2CD ends; + 1 per throw by character 0x6E (btl_act_change.c) */
+    /* 0x0E60 */ s32 boostStock;       /* counter 0..10 (boostStock in btl_act_change.h): + 5 per technique 0x2EF, zeroed when technique 0x2CD ends; + 1 per throw by character 0x6E (btl_act_change.c) */
     /* 0x0E64 */ u8 unkE64[0xEC4 - 0xE64];
     /* 0x0EC4 */ s32 thrFailed;       /* non-zero: a flag B 0x400 technique deals 1 damage, undefended and exact */
     /* 0x0EC8 */ u8 unkEC8[0xEE8 - 0xEC8];

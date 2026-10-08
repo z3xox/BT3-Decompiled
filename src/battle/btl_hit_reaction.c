@@ -144,7 +144,7 @@ s32 BtlColl_StartThrow(BtlCollChr *atk, BtlCollChr *def, s32 slot, u32 techFlags
     s32 back;
     f32 yaw;
 
-    if (atk->react.id >= 3) {
+    if (atk->react.reaction >= 3) {
         return 0;
     }
     if (BtlChar_IsDead(atk)) {
@@ -169,7 +169,7 @@ s32 BtlColl_StartThrow(BtlCollChr *atk, BtlCollChr *def, s32 slot, u32 techFlags
     atk->thr.partnerStep = BtlSuper_GetThrowPartnerStep(atk, slot);
     atk->thr.defFormStep = BtlSuper_GetLastStep(atk, slot);
     BtlChar_SetFlag(atk, 0x94);
-    atk->react.faceYaw = BtlChar_GetPos(atk)->yaw;
+    atk->react.turnYaw = BtlChar_GetPos(atk)->yaw;
     atk->react.turnPitch = 0.0f;
     back = 0;
     if (techFlags & 0x10000000) {
@@ -222,7 +222,7 @@ s32 BtlColl_StartThrow(BtlCollChr *atk, BtlCollChr *def, s32 slot, u32 techFlags
     if (techFlags & 0x4000000) {
         atk->thr.unk5C = 1;
     }
-    def->react.id = BTL_REACT_CAUGHT;
+    def->react.reaction = BTL_REACT_CAUGHT;
     def->thr.tech = atk->thr.tech;
     def->thr.atkSide = atk->thr.atkSide;
     def->thr.defSide = atk->thr.defSide;
@@ -248,10 +248,10 @@ s32 BtlColl_StartThrow(BtlCollChr *atk, BtlCollChr *def, s32 slot, u32 techFlags
     def->thr.unk58 = atk->thr.unk58;
     def->thr.unk5C = atk->thr.unk5C;
     BtlChar_SetFlag(def, 0x94);
-    yaw = atk->react.faceYaw;
-    def->react.faceYaw = yaw;
+    yaw = atk->react.turnYaw;
+    def->react.turnYaw = yaw;
     def->react.turnPitch = atk->react.turnPitch;
-    def->react.dirYaw = yaw;
+    def->react.yaw = yaw;
     def->react.back = back;
     BtlChar_SetFlag(atk, 0x44);
     BtlChar_SetFlag(atk, 0x45);
@@ -652,16 +652,16 @@ s32 BtlColl_HitByBlast(BtlCollChr *chr, BtlCollHit *hit) {
     if (react == BTL_REACT_NOFLINCH) {
         BtlCollReact *g = &chr->react;
 
-        g->id = react;
+        g->reaction = react;
         g->unk38 = 3;
     } else {
         BtlCollReact *r = &chr->react;
 
-        r->id = react;
+        r->reaction = react;
         r->scale = 0;
-        chr->react.faceYaw = 0.0f;
+        chr->react.turnYaw = 0.0f;
         chr->react.turnPitch = 0.0f;
-        r->dirYaw = yaw;
+        r->yaw = yaw;
         r->back = front;
         BtlMove_SetImpulseDir(chr, &dir, BtlKiBlast_GetPushOfHit(hit));
         BtlChar_PlayVoice(chr, 0);
@@ -734,19 +734,19 @@ s32 BtlColl_HitByStrike(BtlCollChr *chr, BtlCollHit *hit) {
     if (chr->noFlinch > 0) {
         react = BTL_REACT_NOFLINCH;
     }
-    r->dirYaw = yaw;
+    r->yaw = yaw;
     r->back = front;
-    r->id = react;
+    r->reaction = react;
     if (react != BTL_REACT_NOFLINCH) {
         r->scale = 0;
-        chr->react.faceYaw = 0.0f;
+        chr->react.turnYaw = 0.0f;
         chr->react.turnPitch = 0.0f;
         BtlChar_SetFlag(chr, 0x94);
         if (front) {
-            chr->react.faceYaw = yaw;
+            chr->react.turnYaw = yaw;
             chr->react.turnPitch = 0.0f;
         } else {
-            chr->react.faceYaw = BtlUtil_WrapAngle(yaw + 3.1415927f);
+            chr->react.turnYaw = BtlUtil_WrapAngle(yaw + 3.1415927f);
             chr->react.turnPitch = 0.0f;
         }
         BtlMove_SetImpulseDir(chr, &dir, BtlSkill_GetPush(atk, slot));
@@ -797,19 +797,19 @@ void BtlColl_ApplyRushHit(BtlCollChr *chr, BtlCollChr *atk, BtlCollHit *hit, s32
     s32 dmg;
     s32 n;
 
-    r->id = react;
+    r->reaction = react;
     r->scale = 0;
     r->slot = slot;
     alt = (hit->flags >> 4) & 1;
     BtlChar_SetFlag(chr, 0x94);
     if (front) {
-        chr->react.faceYaw = yaw;
+        chr->react.turnYaw = yaw;
         chr->react.turnPitch = 0.0f;
     } else {
-        chr->react.faceYaw = BtlUtil_WrapAngle(yaw + 3.1415927f);
+        chr->react.turnYaw = BtlUtil_WrapAngle(yaw + 3.1415927f);
         chr->react.turnPitch = 0.0f;
     }
-    r->dirYaw = yaw;
+    r->yaw = yaw;
     r->back = front;
     if (alt) {
         BtlMove_SetImpulseDir(chr, dir, BtlSuper_GetPush(atk, slot));
@@ -876,8 +876,8 @@ void BtlColl_ApplyRushNoFlinch(BtlCollChr *chr, BtlCollChr *atk, BtlCollHit *hit
     s32 n;
 
     r->back = front;
-    r->dirYaw = yaw;
-    r->id = BTL_REACT_NOFLINCH;
+    r->yaw = yaw;
+    r->reaction = BTL_REACT_NOFLINCH;
     alt = (hit->flags >> 4) & 1;
     BtlChar_SetFxBit(chr, 0x1D);
     BtlColl_PlayHitSound(chr, hit, BtlSuper_GetHitSound(atk, slot, alt));
@@ -912,7 +912,7 @@ s32 BtlColl_StartRushCatch(BtlCollChr *chr, BtlCollChr *atk, BtlCollHit *hit, s3
     u32 tf;
     s32 alt;
 
-    if (atk->react.id >= 3) {
+    if (atk->react.reaction >= 3) {
         return 0;
     }
     if (BtlChar_IsDead(atk)) {
@@ -925,9 +925,9 @@ s32 BtlColl_StartRushCatch(BtlCollChr *chr, BtlCollChr *atk, BtlCollHit *hit, s3
         return 0;
     }
     alt = (hit->flags >> 4) & 1;
-    r->id = react;
+    r->reaction = react;
     r->scale = 0;
-    chr->react.faceYaw = 0.0f;
+    chr->react.turnYaw = 0.0f;
     chr->react.turnPitch = 0.0f;
     atk->thr.tech = BtlSuper_GetId(atk, slot);
     atk->thr.atkSide = atk->side;
@@ -987,7 +987,7 @@ s32 BtlColl_StartRushCatch(BtlCollChr *chr, BtlCollChr *atk, BtlCollHit *hit, s3
     chr->thr.turnBack = atk->thr.turnBack;
     chr->thr.angleYaw = atk->thr.angleYaw;
     chr->thr.anglePitch = atk->thr.anglePitch;
-    chr->react.dirYaw = yaw;
+    chr->react.yaw = yaw;
     chr->react.back = back;
     chr->thr.caughtLoop = atk->thr.caughtLoop;
     chr->thr.atkFormChange = atk->thr.atkFormChange;
@@ -1471,7 +1471,7 @@ s32 BtlColl_Hit(s32 objId, BtlCollHit *hit) {
     if (chr == NULL) {
         return 0;
     }
-    switch (chr->react.id) {
+    switch (chr->react.reaction) {
     case 9:
     case 10:
     case 11:

@@ -451,7 +451,7 @@ s32 BtlStage_GetLightDir(Vec4 *out) {
 
 /* Gives the first start placement (section +0x2C, StgDataA.starts): its position (y = 0) and the yaw from it
    toward its target. */
-s32 BtlStage_GetPlace2C(Vec4 *pos, Vec4 *rot) {
+s32 BtlStage_GetFirstStartPlace(Vec4 *pos, Vec4 *rot) {
     StgData *d;
     f32 *b;
     f32 yaw;
@@ -466,7 +466,7 @@ s32 BtlStage_GetPlace2C(Vec4 *pos, Vec4 *rot) {
     if (d == NULL) {
         return 0;
     }
-    b = d->place;
+    b = d->starts;
     yaw = Stg_CalcYaw(b[0], b[2], b[4], b[6]);
     pos->x = b[0];
     pos->y = 0.0f;

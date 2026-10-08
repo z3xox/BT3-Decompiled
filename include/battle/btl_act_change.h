@@ -24,7 +24,7 @@ typedef struct BtlActHPose {
     /* 0x60 */ Vec4 rootRot;   /* animation root rotation */
     /* 0x70 */ u8 unk70[0x90 - 0x70];
     /* 0x90 */ f32 pitch;      /* heading pitch: second argument of BtlMove_SetHeading as kept in the pose */
-    /* 0x94 */ f32 facing;     /* heading yaw (first argument of BtlMove_SetHeading; `yaw` in the other pose views) */
+    /* 0x94 */ f32 yaw;     /* heading yaw (first argument of BtlMove_SetHeading; `yaw` in the other pose views) */
     /* 0x98 */ f32 speed;      /* zeroed when a change action starts */
     /* 0x9C */ f32 fallSpeed;      /* zeroed when a change action starts */
 } BtlActHPose;

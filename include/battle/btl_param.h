@@ -265,7 +265,7 @@ s32 BtlCtrl_TestFlag12B(s32 side);
 s32 BtlCtrl_IsSwitching(s32 side);
 s32 BtlCtrl_TestFlagE4(s32 side);
 s32 BtlCtrl_TestFlagE5(s32 side);
-s32 BtlCtrl_TestProgressFrameBit(void);
+s32 BtlCtrl_TestTutorialFrameBit(void);
 s32 BtlCtrl_TestFlagE6Pad(s32 side, s32 *padStatus);
 s32 BtlCtrl_TestFlagE6Pad1(s32 side);
 s32 BtlCtrl_GetTechPromptPad1(s32 side, s32 *row, s32 *kind, s32 *idx);

@@ -442,7 +442,7 @@ void BtlAct_PrepareSwitch(BtlActChr *chr) {
     chr->switchMember = BtlMember_GetSwitchTarget(chr);
     chr->switchChara = BtlMember_Get(chr, chr->switchMember)->chara;
     chr->switchCostume = BtlMember_Get(chr, chr->switchMember)->costume;
-    chr->switchUnk20 = BtlMember_GetGauge(chr, chr->switchMember)->variant;
+    chr->switchVariant = BtlMember_GetGauge(chr, chr->switchMember)->variant;
     if (BtlMember_GetGauge(chr, chr->switchMember)->bodyChanged != 0) {
         chr->switchAnimChara = 0x56;
         chr->unkCEC = 0x56;
@@ -945,9 +945,9 @@ void BtlAct_UpdateGauges(BtlActChr *chr) {
                         if (BtlMember_HasAbilityOf(chr, i, 0x5F)) {
                             v->hp = BtlUtil_Min(v->hp + 200, cap);
                         }
-                        v->gaugeB = BtlUtil_Min(v->gaugeB + 1000, v->gaugeBMax);
+                        v->ki = BtlUtil_Min(v->ki + 1000, v->kiMax);
                         if (BtlMember_HasAbilityOf(chr, i, 0x60)) {
-                            v->gaugeB = BtlUtil_Min(v->gaugeB + 2000, v->gaugeBMax);
+                            v->ki = BtlUtil_Min(v->ki + 2000, v->kiMax);
                         }
                     }
                 }

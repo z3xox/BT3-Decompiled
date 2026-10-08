@@ -38,7 +38,7 @@ s32 ChrTbl_GetCost(s32 chara) {
 /* The character's level: the table's base plus the saved level of a customisation slot or of a record. Both
    callers (the menu's item panel and the Z-item screen) use the result as the number of item slots the character
    has, the `capacity` of ItemSet_Fit. */
-s32 ChrTbl_GetLevel(s32 chara, s32 slot, s32 fromRec) {
+s32 ChrTbl_GetItemSlots(s32 chara, s32 slot, s32 fromRec) {
     s32 level;
     ChrTblFile *file;
     ChrTblEntry *table;
@@ -50,7 +50,7 @@ s32 ChrTbl_GetLevel(s32 chara, s32 slot, s32 fromRec) {
     }
     file = CHRTBL_FILE;
     table = (ChrTblEntry *)CHRTBL_SECTION(file, charaOffset);
-    return table[chara].baseLevel + level;
+    return table[chara].baseSlots + level;
 }
 
 /* The experience value of the level the customisation slot has reached. */

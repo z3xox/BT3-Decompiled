@@ -195,7 +195,7 @@ typedef struct EftAuraSpark {
     /* 0x00 */ s32 flags;   /* 1 fading out, 2, 4, 8 (aura flag 0x80), 0x10 (aura type 9 / 10) */
     /* 0x04 */ u8 objId;
     /* 0x05 */ u8 emitter;
-    /* 0x06 */ u8 kind;     /* the emitter's model node (set by EftAura_SpawnSpark; no reader found) */
+    /* 0x06 */ u8 emitNode;     /* the emitter's model node (set by EftAura_SpawnSpark; no reader found) */
     /* 0x07 */ u8 unk7;     /* 1 */
     /* 0x08 */ f32 age;
     /* 0x0C */ f32 life;
@@ -235,12 +235,12 @@ typedef struct EftAuraPool {
 
 typedef struct EftAuraCfgFlame {
     /* 0x0 */ u8 partNode;
-    /* 0x4 */ s32 node;  /* second model node of the part, or negative (EftAuraDataPart.nodeEnd) */
+    /* 0x4 */ s32 nodeEnd;  /* second model node of the part, or negative (EftAuraDataPart.nodeEnd) */
     /* 0x8 */ s32 nodeRef;
 } EftAuraCfgFlame;
 
 typedef struct EftAuraCfgSpark {
-    /* 0x0 */ s32 kind;  /* not a kind: the model node the emitter sits on (EftAuraDataSpark.node) */
+    /* 0x0 */ s32 emitNode;  /* not a kind: the model node the emitter sits on (EftAuraDataSpark.node) */
     /* 0x4 */ s32 node;  /* model node the spark is pulled towards, or negative */
 } EftAuraCfgSpark;
 

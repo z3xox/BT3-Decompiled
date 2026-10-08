@@ -295,7 +295,7 @@ void EvoZ_Input(EvoZ *ez, s32 *result) {
                 break;
             case 3:
                 EvoZ_ClipGoto(ez, 2, EVOZ_CLIP_SLOT, 0, "fl_ok");
-                if (ez->fits != 0 || EZ_SET.id[7] != 0) {
+                if (ez->used != 0 || EZ_SET.id[7] != 0) {
                     ez->dialog.state = 1;
                     Snd_PlaySe(1, 1);
                 } else {
@@ -704,8 +704,8 @@ void EvoZ_RefreshStatus(EvoZ *ez) {
     s32 base;
 
     ez->kind = (((VChrEntry *)MPACK_AT(gCommonRes->data[2], 1))[ez->side->chara].flags ^ 1) & 1;
-    ez->capacity = ChrTbl_GetLevel(ez->side->chara, EZ_CELL, 0);
-    ez->fits = ItemSet_Fit(VSAVE->custom[EZ_CELL].set[ez->set].id, ez->items, ez->capacity, &ez->rowsUsed);
+    ez->capacity = ChrTbl_GetItemSlots(ez->side->chara, EZ_CELL, 0);
+    ez->used = ItemSet_Fit(VSAVE->custom[EZ_CELL].set[ez->set].id, ez->items, ez->capacity, &ez->rowsUsed);
     ez->exp = VSAVE->custom[EZ_CELL].exp;
     ez->nextExp = ChrTbl_GetExp(ez->side->chara, EZ_CELL);
     ez->expLeft = ChrTbl_GetMaxExp(ez->side->chara) - ez->exp;
@@ -798,9 +798,9 @@ s32 EvoZ_CanEquip(EvoZ *ez, s32 item) {
         ret = 0;
     } else {
         if (ez->curItem != 0) {
-            used = ez->fits - ez->items[ez->curItem - 1].slots;
+            used = ez->used - ez->items[ez->curItem - 1].slots;
         } else {
-            used = ez->fits;
+            used = ez->used;
         }
         if (ez->capacity >= used + ez->items[item].slots) {
             for (i = 0; i < 7; i++) {

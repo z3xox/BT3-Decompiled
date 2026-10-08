@@ -236,7 +236,7 @@ void EftShotTech_StartCam(EftKTask *task) {
     EftKSrc *src = w->src;
 
     if (w->flags & 0x800) {
-        arg.pack = w->camPack;
+        arg.anim = w->camPack;
         arg.objId = src->objId;
         arg.id = src->def->id;
         copy = arg;
@@ -2470,7 +2470,7 @@ void EftRushShotMgr_Init(EftTask *task, EftTechArg *arg) {
     /* The original addresses sub[i + 1] as "(mgr + 4)->sub[i]": a base pointer one word into the work. */
     next = (EftRushShotMgrWork *)((u8 *)mgr + 4);
     for (i = 0; i < 3; i++) {
-        s32 *pack = BtlScene_GetCharPackEntry(arg->side, 8);
+        s32 *pack = BtlScene_GetCharPackEntry(arg->chr, 8);
 
         if (pack[i + 2] != pack[i + 1]) {
             next->sub[i] = BtlScene_GetPackEntry(pack, i + 1);

@@ -102,6 +102,6 @@ void MsgWin_SetSide(s32 side) {
 }
 
 /* Sets the character and line spacing of the window's text (TextBox_SetSpacing). */
-void MsgWin_SetBoxParam(s32 spacingX, s32 spacingY) {
+void MsgWin_SetSpacing(s32 spacingX, s32 spacingY) {
     TextBox_SetSpacing(&gMsgWin->box, spacingX, spacingY);
 }

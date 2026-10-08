@@ -15,13 +15,13 @@ EftZap_SetPos = 0x001A6700; // type:func // guess
 EftZap_WarpPos = 0x001A6770; // type:func // guess
 EftZap_SetDir = 0x001A67E0; // type:func // guess
 EftZap_SetSize = 0x001A6850; // type:func // guess
-EftZap_SetRate = 0x001A68A0; // type:func // guess
+EftZap_SetLife = 0x001A68A0; // type:func // guess
 EftZap_SetTex = 0x001A6900; // type:func // guess
 EftZap_SetDelay = 0x001A6968; // type:func // guess
 EftZap_SetFadeDelay = 0x001A69C0; // type:func // guess
 EftZap_SetFadeTime = 0x001A6A18; // type:func // guess
 EftZap_SetFlag20000 = 0x001A6A78; // type:func // guess
-EftZap_SetUnk40 = 0x001A6AE0; // type:func // guess
+EftZap_SetType = 0x001A6AE0; // type:func // guess
 EftZap_IsAlive = 0x001A6B40; // type:func // guess
 gEftZapClass = 0x002C4338; // size:0x18 // guess
 

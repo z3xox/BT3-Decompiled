@@ -323,9 +323,9 @@ void Shop_Init(s32 section) {
         TextBox_Init(&gShop->box[k], gShop->itemText, 6);
         TextBox_SetNoFlush(&gShop->box[k], 1);
         if (k < 8) {
-            TextBox_SetRect(&gShop->box[k], 0, 0x200, 0x86, 0x17F);
+            TextBox_SetClip(&gShop->box[k], 0, 0x200, 0x86, 0x17F);
         } else if (k < 13) {
-            TextBox_SetRect(&gShop->box[k], 0, 0x200, 0x86, 0x116);
+            TextBox_SetClip(&gShop->box[k], 0, 0x200, 0x86, 0x116);
         }
     }
 }

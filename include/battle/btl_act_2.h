@@ -18,9 +18,9 @@ typedef struct BtlActCPose {
     /* 0x40 */ Vec4 move;      /* whole movement of the previous frame (`moved` in BtlActBPose); its length is the real speed */
     /* 0x50 */ u8 unk50[0x70 - 0x50];
     /* 0x70 */ Vec4 impulse;
-    /* 0x80 */ Vec4 vel;       /* unit direction of travel (`dir` in the other pose views) */
+    /* 0x80 */ Vec4 dir;       /* unit direction of travel (`dir` in the other pose views) */
     /* 0x90 */ f32 pitch;      /* heading pitch */
-    /* 0x94 */ f32 facing;     /* heading yaw (`yaw` in the other pose views) */
+    /* 0x94 */ f32 yaw;     /* heading yaw (`yaw` in the other pose views) */
     /* 0x98 */ f32 speed;      /* along the travel direction, per frame */
     /* 0x9C */ f32 fallSpeed;
     /* 0xA0 */ f32 leanX;

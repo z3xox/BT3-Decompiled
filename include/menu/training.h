@@ -18,7 +18,7 @@
 /* ---- Main executable, beyond what overlay_common.h declares ---- */
 
 extern void MsgWin_SetText(void *text);
-extern void MsgWin_SetBoxParam(s32 a, s32 b);
+extern void MsgWin_SetSpacing(s32 a, s32 b);
 extern void IconWin_SetIcon(s32 icon);
 extern void TextBox_Init(MTextBox *box, void *text, u32 preset);
 extern void TextBox_SetNoFlush(MTextBox *box, s32 value);

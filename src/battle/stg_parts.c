@@ -670,7 +670,7 @@ void BtlStage_BindData(BtlStage *stage, StgDataA *base) {
         STG_RELOC(env);
         STG_RELOC(ambient);
         STG_RELOC(light);
-        STG_RELOC(points);
+        STG_RELOC(lightDirs);
         STG_RELOC(starts);
         STG_RELOC(altStarts);
         STG_RELOC(places);
@@ -700,8 +700,8 @@ void BtlStage_BindData(BtlStage *stage, StgDataA *base) {
             d->light[i].dir.z = -d->light[i].dir.z;
         }
         for (i = 0; i < d->pointCount; i++) {
-            d->points[i].y = -d->points[i].y;
-            d->points[i].z = -d->points[i].z;
+            d->lightDirs[i].y = -d->lightDirs[i].y;
+            d->lightDirs[i].z = -d->lightDirs[i].z;
         }
         for (i = 0; i < d->startCount; i++) {
             d->starts[i].pos.y = -d->starts[i].pos.y;

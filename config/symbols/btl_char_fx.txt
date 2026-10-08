@@ -109,7 +109,7 @@ BtlPartner_LinkToOwner = 0x001D3850; // type:func // guess
 BtlPartner_GetObj = 0x001D38B8; // type:func // guess
 BtlPartner_PushAngle = 0x001D38E8; // type:func // guess
 BtlPartner_PushDir = 0x001D3978; // type:func // guess
-BtlPartner_SetObjFloats = 0x001D3A30; // type:func // guess
+BtlPartner_AddSway = 0x001D3A30; // type:func // guess
 BtlPartner_SetFlag80 = 0x001D3A98; // type:func // guess
 // Read-only data: .lit4 0x2FD1D8..0x2FD290 (see the report for which file emits which) and the jump table 0x2EF020
 // (BtlFx_FireKiBlast, left in assembly).

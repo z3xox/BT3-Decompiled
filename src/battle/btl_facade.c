@@ -97,7 +97,7 @@ void BtlFacade_ClearFixedCamera(void) {
 }
 
 /* Makes the side's fighter object play the lip track `lip` points to (mouth mode 14, BOBJ_MOUTH_LIP_PTR). */
-void BtlFacade_SetObjSubState14(s32 side, s32 lip) {
+void BtlFacade_PlayLipTrack(s32 side, s32 lip) {
     BtlObj_SetSubState(BtlObj_Get(BattleSide_GetObjId(side)), 0xE, lip);
 }
 
@@ -111,13 +111,13 @@ void BtlFacade_EndObjSubState3(s32 side) {
 }
 
 /* Sets the CPU level of both sides (BtlAiMgr_SetLevel: word +8 of the controller, which restarts). */
-void BtlFacade_SetCpuParam8(s32 level) {
+void BtlFacade_SetCpuLevel(s32 level) {
     BtlAiMgr_SetLevel(0, level);
     BtlAiMgr_SetLevel(1, level);
 }
 
 /* Sets the CPU type of both sides (BtlAiMgr_SetType: word +4 of the controller, which restarts; no caller). */
-void BtlFacade_SetCpuParam4(s32 type) {
+void BtlFacade_SetCpuType(s32 type) {
     BtlAiMgr_SetType(0, type);
     BtlAiMgr_SetType(1, type);
 }

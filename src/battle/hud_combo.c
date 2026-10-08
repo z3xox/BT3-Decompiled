@@ -80,7 +80,7 @@ typedef struct HudCombo {
 /* The side's fighter object as BtlCtrl_GetObj returns it: only what this file reads. */
 typedef struct HudCObj {
     /* 0x00 */ u8 unk0[0xBC];
-    /* 0xBC */ void *skillScript; /* the fighter's skill text (`skillText` in pause_menu.c / hud_prompt.c), given to
+    /* 0xBC */ void *skillText; /* the fighter's skill text (`skillText` in pause_menu.c / hud_prompt.c), given to
                                      BtlMenu_SetScript2 before the name is drawn */
 } HudCObj;
 
@@ -708,7 +708,7 @@ void HudCombo_DrawText(void) {
         f32 alpha = gHudCombo->textAlpha[side];
 
         if (pos[0] >= 0 && pos[1] >= 0) {
-            BtlMenu_SetScript2(BtlCtrl_GetObj(side)->skillScript);
+            BtlMenu_SetScript2(BtlCtrl_GetObj(side)->skillText);
             BtlText_DrawEntryName(pos[0], pos[1], gHudCombo->text[side], side, alpha);
         }
     }

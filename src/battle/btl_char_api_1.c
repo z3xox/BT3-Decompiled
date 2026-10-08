@@ -129,7 +129,7 @@ s32 BtlCharApi_ObjGetParamFlags0(s32 objId) {
     BtlCapiObj *obj = BtlObj_Get(objId);
 
     if (obj != NULL) {
-        return obj->param->flags0;
+        return obj->param->charaFlags;
     }
     return 0;
 }
@@ -535,7 +535,7 @@ void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out) {
 }
 
 /* The vector at +0x90 of a model node (its local translation); the object position when the node does not exist. No caller. */
-void BtlCharApi_GetNodeUnk90(s32 objId, s32 node, Vec4 *out) {
+void BtlCharApi_GetNodeLocalPos(s32 objId, s32 node, Vec4 *out) {
     BtlCapiObj *obj = BtlObj_Get(objId);
     BtlCapiNode *n;
 
@@ -573,7 +573,7 @@ void BtlCharApi_GetNodeMtx(s32 objId, s32 node, Mtx44 *out) {
 }
 
 /* The second matrix (+0x50) of a model node (the parent's world matrix), identity when there is none. No caller. */
-void BtlCharApi_GetNodeMtx50(s32 objId, s32 node, Mtx44 *out) {
+void BtlCharApi_GetNodeParentMtx(s32 objId, s32 node, Mtx44 *out) {
     BtlCapiObj *obj = BtlObj_Get(objId);
     BtlCapiNode *n;
 
