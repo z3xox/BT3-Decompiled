@@ -991,3 +991,8 @@ More of the same night (the geyser functions):
   (`p4, p3, p2, p1`) is spill-slot order; the text order of the computations is statement order.
 - Fake match: EftBlade_AddPoint (three empty asm statements; a duplicated `t->wasOut = ...` in both arms of the
   first `if` gets to 2 instructions, which suggests a merged duplicate there).
+- **`x++; x--;` on a loop's bound** (a variable used only in the loop condition) is the cleanest probe for "one
+  more instruction in the loop at allocation time": it disturbs nothing else. (EftWater_DrawClippedFan: fake)
+- **A zero kept in a saved register across a call and copied afterwards**, the register reused later for a
+  pointer: the zero is that later variable (`tint = NULL; ... medium = (s32)tint; ... tint = &tbl[medium]`).
+  (StgDepthTint_Draw: with an empty tied asm in front of the call, a fake; without it 2 instructions off)
