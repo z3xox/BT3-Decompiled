@@ -68,7 +68,6 @@ void EvoTop_Draw(EvoTop *m);
 void EvoTop_Input(EvoTop *m);
 s32 EvoTop_Leave(EvoTop *m);
 s32 EvoTop_Run(s32 section);
-s32 OptMode_Main(void);
 s32 Option_Init(s32 section);
 s32 Option_Run(s32 section);
 s32 Option_Input(void);

@@ -116,6 +116,8 @@ void Option_DimPickers(void);
 void Option_OnSaved(void);                                 /* McFlow "done" callback */
 void Option_Term(void);
 
+s32 OptMode_Main(void);
+
 /* ---- the second half of the object (formerly its own header) ---- */
 
 #include "types.h"
