@@ -1061,3 +1061,8 @@ More of the same night (the geyser functions):
   mostly-zero vector changed the first scheduling pass's order in the block BEHIND the memset (the two halves
   of a 16-byte constant copy loaded through different base registers are reload inheritance, not a source-level
   pointer copy). (EftBurst_DrawModel: the 16-instruction miss, the last function of the main executable)
+- **A counter initialised twice** (`u32 i = 0;` and again `for (i = 0; ...)`): the sign is a zero copied from
+  another zero variable with the entry compare `0 < n` left unfolded (`move t0,zero / sltu v0,t0,t2 / beqz /
+  move t1,t0`). Found by the permuter. (Train_BuildLists: the last INCLUDE_ASM of the game)
+- **The permuter does not permute an inline helper** (`scripts/permute.py` wraps kept callee bodies in
+  PERM_IGNORE): hand-inline the helper into the target first.
