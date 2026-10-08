@@ -996,3 +996,13 @@ More of the same night (the geyser functions):
 - **A zero kept in a saved register across a call and copied afterwards**, the register reused later for a
   pointer: the zero is that later variable (`tint = NULL; ... medium = (s32)tint; ... tint = &tbl[medium]`).
   (StgDepthTint_Draw: with an empty tied asm in front of the call, a fake; without it 2 instructions off)
+- **A zero-initialised local as a union** (`union { Vec v; f32 f[4]; } c = { { 0, 0, 0, 0 } };`) allocates
+  differently from a struct with the same initialiser, with identical code: two float registers swapped in the
+  block just in front of a `= {0}` memset while the sibling blocks match. (EftZap_InitLine: the natural form
+  after 200 variants and a first agent's 7-instruction miss)
+- **`movn` / `movz` on a value that is stored**: the value went through a local (`k = c ? a : b; p->f = k;`).
+  `p->f = c ? a : b;` makes a real branch, which also stops `n + K` folding into `slot + (K - 2)` behind it. A
+  function-scope index assigned in each branch (`n = slot;` / `n = slot - 2;`) gives the `move` copy.
+  (EftShot_BuildParam)
+- On a function full of address arithmetic, compare structure, not fdiff's count: the right form looked worse
+  (488 of 489) than the wrong one (424 of 499) until the last piece was in.
