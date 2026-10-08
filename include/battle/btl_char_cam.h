@@ -54,7 +54,7 @@ typedef struct ChrCam {
     /* 0x30 [0x450] */ Vec4 target;   /* point looked at (the trace starts here) */
     /* 0x40 [0x460] */ Vec4 bodyPos;    /* copy of *(Vec4 *)(obj + 0xFA0), refreshed by ChrCam_UpdateInput; read by BtlCharApi_GetCamBodyPos */
     /* 0x50 [0x470] */ CamShake shake;
-    /* 0x70 [0x490] */ s32 hitObj;    /* BtlCam_TraceStage: what was hit */
+    /* 0x70 [0x490] */ s32 hitObj;    /* BtlCam_TraceStage: the stage zone that was traced (the one hit, else the last one tried); not an object */
     /* 0x74 [0x494] */ s32 hit;       /* BtlCam_TraceStage result (1 = the stage is between target and eye); returned by BtlCharApi_GetCamPose, read by 0x1D16F8 */
     /* 0x78 [0x498] */ f32 hitFrac;   /* BtlCam_TraceStage: fraction of the segment at the hit */
     /* 0x7C [0x49C] */ s32 distMode;  /* 0..2, ChrCam_GetOffset preset; BtlChar_Reset: BattleSide_GetOptionA(side); SELECT steps it */
@@ -190,11 +190,11 @@ f32 ChrCam_GetSideLimit(ChrCamChr *chr);
 void ChrCam_AddShake(ChrCamChr *chr, f32 strength, f32 time);
 void ChrCam_UpdateDemo(ChrCamChr *chr);
 void ChrCam_SetCut(ChrCamChr *chr, Vec4 *vecA, Vec4 *vecADelta, Vec4 *vecB, Vec4 *vecBDelta, Vec4 *vecC,
-                   Vec4 *vecCDelta, s32 unk88, f32 valA, f32 valADelta, f32 valB, f32 valBDelta, f32 valC,
-                   f32 valCDelta, s32 unk8C, s32 unk90, s32 unk94, s32 time, s32 flags);
-void ChrCam_BlendToCut(ChrCamChr *chr, Vec4 *vecADelta, Vec4 *vecBDelta, Vec4 *vecCDelta, s32 unk8C, s32 unk94,
+                   Vec4 *vecCDelta, s32 nodeA, f32 valA, f32 valADelta, f32 valB, f32 valBDelta, f32 valC,
+                   f32 valCDelta, s32 nodeA2, s32 nodeC, s32 nodeC2, s32 time, s32 flags);
+void ChrCam_BlendToCut(ChrCamChr *chr, Vec4 *vecADelta, Vec4 *vecBDelta, Vec4 *vecCDelta, s32 nodeA2, s32 nodeC2,
                        f32 valADelta, f32 valBDelta, f32 valCDelta, s32 time, s32 flags);
-void ChrCam_RequestCut(ChrCamChr *chr, s32 arg1, s32 arg2);
+void ChrCam_RequestCut(ChrCamChr *chr, s32 table, s32 index);
 void ChrCam_StartCut(ChrCamChr *chr);
 void ChrCam_EndCut(ChrCamChr *chr);
 s32 ChrCam_IsCutActive(ChrCamChr *chr);

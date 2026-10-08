@@ -90,7 +90,7 @@ void ItemPanel_Hide(s32 side);
 /* gProgress fields of the duel mode (local view; MenuProgress in overlay_common.h has only +0x624). */
 typedef struct DuelProgress {
     /* 0x000 */ u8 unk0[0x620];
-    /* 0x620 */ s32 versus;         /* DuelMenu top item: 0 1P vs COM, 1 1P vs 2P, 2 COM vs COM (3 = settings) */
+    /* 0x620 */ s32 versus;         /* DuelMenu top item: 0 1P vs COM, 1 1P vs 2P, 2 COM vs COM (3 = settings); `players` in CharSelProgress / team_select.h */
     /* 0x624 */ s32 battleType;     /* 0 single, 1 team, 2 DP battle */
     /* 0x628 */ s32 unk628[2];
     /* 0x630 */ s32 dpLimit;        /* row of the DP limit list (0..2) */
@@ -159,7 +159,7 @@ typedef struct DuelMenu {
 extern DuelMenu *gDuelMenu;      /* 0x3B38E8 */
 
 s32 Duel_Main(void);
-s32 Duel_Mode41(s32 arg);
+s32 Duel_Mode41(s32 unused);
 void DuelMenu_Idle(void);
 void DuelMenu_ShowValues(s32 item, s32 show);
 void DuelMenu_SetupValue(void);

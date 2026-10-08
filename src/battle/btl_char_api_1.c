@@ -16,7 +16,7 @@
  *     makes with jal;
  *   - the action-id tests are switches (slti ladders), not range compares.
  *
- * Callees still named by address: BtlObj_GetNode(obj, node) model node or NULL, BtlObj_FindBound(obj, n),
+ * Callees still named by address: BtlObj_GetNode(obj, node) model node or NULL, BtlObj_FindBound(obj, node),
  * BtlObj_GetNodeVelocity(obj, node, out), BtlObj_AddPush(obj, vec, arg), Vec4_SetZeroW1 / Vec4_SetZero zero a vector (the
  * first is used for positions, the second for directions and rotations), Mtx_Copy copies a matrix,
  * Vec3_RotateAxis(out, v, axis, angle) turns v about axis.
@@ -50,7 +50,7 @@ extern s32 BtlParam_GetFlags(BtlCapiChr *chr);    /* parameter word +0x10 */
 extern s32 BtlParam_GetAuraKind(BtlCapiChr *chr); /* parameter byte +3, replaced by abilities 0x4D.. */
 extern s32 BtlSuper_GetFlags(BtlCapiChr *chr, s32 slot); /* attribute word of technique `slot` */
 extern BtlCapiNode *BtlObj_GetNode(BtlCapiObj *obj, s32 node);
-extern BtlCapiPart *BtlObj_FindBound(BtlCapiObj *obj, s32 n);
+extern BtlCapiPart *BtlObj_FindBound(BtlCapiObj *obj, s32 node);
 extern void BtlObj_GetNodeVelocity(BtlCapiObj *obj, s32 node, Vec4 *out);
 extern void BtlObj_AddPush(BtlCapiObj *obj, Vec4 *v, f32 arg);
 
@@ -114,7 +114,7 @@ f32 BtlCharApi_GetCenterHeight(s32 objId) {
     return 5.0f;
 }
 
-/* Object float +0x1000 (model header +0x24); 5 for no object. No caller. */
+/* Object float +0x1000 (model header +0x24); 5 for no object. Called by ChrCam_GetSideLimit. */
 f32 BtlCharApi_GetCamSideSlope(s32 objId) {
     BtlCapiObj *obj = BtlObj_Get(objId);
 
@@ -235,7 +235,7 @@ s32 BtlCharApi_HasKiBlastType3(s32 objId) {
     return 0;
 }
 
-/* Whether the object id is a fighter's. No caller. */
+/* Whether the object id is a fighter's. Called from btl_scene.c. */
 s32 BtlCharApi_IsFighter(s32 objId) {
     return BtlChar_FindByObjId(objId) != NULL;
 }
@@ -250,7 +250,7 @@ s32 BtlCharApi_GetObjIdOfPlayer(s32 player) {
     return player;
 }
 
-/* Player index of the fighter (fighter +0), -1 for a non-fighter. No caller. */
+/* Player index of the fighter (fighter +0), -1 for a non-fighter. Called from btl_demo_cam.c. */
 s32 BtlCharApi_GetPlayer(s32 objId) {
     BtlCapiChr *chr = BtlChar_FindByObjId(objId);
 
@@ -332,7 +332,8 @@ void *BtlCharApi_GetPlayerSkillData(s32 player) {
     return NULL;
 }
 
-/* Word +0x58 of fighter `player`'s object. No caller. */
+/* Word +0x58 of fighter `player`'s object: the character pack. Called by BtlScene_GetCharPackEntry (btl_scene.c),
+   which declares the result as a pointer (s32 *); here it is an s32. */
 s32 BtlCharApi_GetPlayerCharPack(s32 player) {
     BtlCapiChr *chr = BtlChar_Get(player);
     BtlCapiObj *obj;
@@ -533,7 +534,7 @@ void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out) {
     }
 }
 
-/* The vector at +0x90 of a model node; the object position when the node does not exist. No caller. */
+/* The vector at +0x90 of a model node (its local translation); the object position when the node does not exist. No caller. */
 void BtlCharApi_GetNodeUnk90(s32 objId, s32 node, Vec4 *out) {
     BtlCapiObj *obj = BtlObj_Get(objId);
     BtlCapiNode *n;
@@ -571,7 +572,7 @@ void BtlCharApi_GetNodeMtx(s32 objId, s32 node, Mtx44 *out) {
     }
 }
 
-/* The second matrix (+0x50) of a model node, identity when there is none. No caller. */
+/* The second matrix (+0x50) of a model node (the parent's world matrix), identity when there is none. No caller. */
 void BtlCharApi_GetNodeMtx50(s32 objId, s32 node, Mtx44 *out) {
     BtlCapiObj *obj = BtlObj_Get(objId);
     BtlCapiNode *n;
@@ -620,13 +621,13 @@ void BtlCharApi_GetNodeQuat(s32 objId, s32 node, Quat *out) {
     }
 }
 
-/* Float +0x5C of what BtlObj_FindBound(obj, n) returns, 1.0 when there is none. */
-f32 BtlCharApi_GetNodeBoundSize(s32 objId, s32 n) {
+/* Float +0x5C of what BtlObj_FindBound(obj, node) returns, 1.0 when there is none. */
+f32 BtlCharApi_GetNodeBoundSize(s32 objId, s32 node) {
     BtlCapiObj *obj = BtlObj_Get(objId);
     BtlCapiPart *part;
 
     if (obj != NULL) {
-        part = BtlObj_FindBound(obj, n);
+        part = BtlObj_FindBound(obj, node);
         if (part != NULL) {
             return part->sizeFactor;
         }
@@ -653,7 +654,7 @@ f32 BtlCharApi_ObjExistsF(s32 objId) {
     return 1.0f;
 }
 
-/* Fighter flag 0x13: the opponent is within the close range. No caller in the main executable. */
+/* Fighter flag 0x13: the opponent is within the close range. Called from btl_ai_mgr.c. */
 s32 BtlCharApi_IsClose(s32 objId) {
     BtlCapiChr *chr = BtlChar_FindByObjId(objId);
 
@@ -703,7 +704,7 @@ s32 BtlCharApi_IsHidden(s32 objId) {
     return 0;
 }
 
-/* Whether the fighter is frozen by hit-stop. No caller. */
+/* Whether the fighter is frozen by hit-stop. Called from btl_scene.c. */
 s32 BtlCharApi_IsFrozen(s32 objId) {
     BtlCapiChr *chr = BtlChar_FindByObjId(objId);
 
@@ -713,7 +714,7 @@ s32 BtlCharApi_IsFrozen(s32 objId) {
     return 0;
 }
 
-/* Whether any fighter is frozen by hit-stop. No caller. */
+/* Whether any fighter is frozen by hit-stop. Called from btl_scene.c. */
 s32 BtlCharApi_AnyFrozen(void) {
     s32 i;
 
@@ -844,8 +845,8 @@ s32 BtlCharApi_GetRushFinishPhase(s32 objId) {
     return (BtlAct_GetMotionLevel(chr, BtlAnim_GetId(chr)) >= level) ? 1 : 2;
 }
 
-/* BtlObj_AddPush(obj, (sin yaw, 0, cos yaw) * len, arg). No caller. */
-void BtlCharApi_ObjPushYaw(s32 objId, f32 yaw, f32 len, f32 arg) {
+/* BtlObj_AddPush(obj, (sin yaw, 0, cos yaw) * len, max). No caller. */
+void BtlCharApi_ObjPushYaw(s32 objId, f32 yaw, f32 len, f32 max) {
     Vec4 v;
     BtlCapiObj *obj = BtlObj_Get(objId);
 
@@ -854,24 +855,24 @@ void BtlCharApi_ObjPushYaw(s32 objId, f32 yaw, f32 len, f32 arg) {
         v.y = 0.0f;
         v.z = Mathf_Cos(yaw) * len;
         v.w = 0.0f;
-        BtlObj_AddPush(obj, &v, arg);
+        BtlObj_AddPush(obj, &v, max);
     }
 }
 
-/* BtlObj_AddPush(obj, dir scaled to length len, arg); nothing for a direction shorter than 0.0001. No caller. */
-void BtlCharApi_ObjPushDir(s32 objId, Vec4 *dir, f32 len, f32 arg) {
+/* BtlObj_AddPush(obj, dir scaled to length len, max); nothing for a direction shorter than 0.0001. No caller. */
+void BtlCharApi_ObjPushDir(s32 objId, Vec4 *dir, f32 len, f32 max) {
     Vec4 v;
     BtlCapiObj *obj = BtlObj_Get(objId);
-    f32 l;
+    f32 dirLen;
 
     if (obj != NULL) {
-        l = Vec3_Length(dir);
-        if (l < 0.0001f) {
+        dirLen = Vec3_Length(dir);
+        if (dirLen < 0.0001f) {
             return;
         }
-        Vec4_Scale(&v, dir, 1.0f / l);
+        Vec4_Scale(&v, dir, 1.0f / dirLen);
         Vec4_Scale(&v, &v, len);
-        BtlObj_AddPush(obj, &v, arg);
+        BtlObj_AddPush(obj, &v, max);
     }
 }
 
@@ -1074,7 +1075,7 @@ s32 BtlCharApi_IsInTechnique(s32 objId) {
     return 0;
 }
 
-/* In a technique action while the previous action (+0x950) was not one. No caller. */
+/* In a technique action while the previous action (+0x950) was not one. Called from btl_char_mgr.c (events 0x26..0x28). */
 s32 BtlCharApi_EnteredTechnique(s32 objId) {
     BtlCapiChr *chr = BtlChar_FindByObjId(objId);
 
@@ -1126,7 +1127,7 @@ s32 BtlCharApi_IsInSkill(s32 objId) {
     return 0;
 }
 
-/* In a skill action on the frame it was entered (flag 8). No caller. */
+/* In a skill action on the frame it was entered (flag 8). Called from btl_char_mgr.c. */
 s32 BtlCharApi_IsSkillStart(s32 objId) {
     BtlCapiChr *chr = BtlChar_FindByObjId(objId);
 

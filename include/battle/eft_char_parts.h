@@ -347,7 +347,7 @@ void EftGndDust_GetLightColors(u8 *colA, u8 *colB);
 EftGroundPiece *EftGndDust_SpawnPiece(EftGroundWork *w, EftGroundDef *def, s32 flags, f32 size, f32 rot);
 EftGroundPiece *EftGndDust_SpawnPieceEx(EftGroundWork *w, Vec4 *pos, Vec4 *dir, EftGroundRgba *colA, EftGroundRgba *colB,
                                        f32 sizeX, f32 sizeY, f32 growX, f32 growY, f32 speed, f32 drag, f32 rot,
-                                       f32 spin, s16 life, s16 fade, s16 tex, f32 unkB8, f32 gravity, s32 flags);
+                                       f32 spin, s16 life, s16 fade, s16 tex, f32 growDamp, f32 gravity, s32 flags);
 void EftGndDust_SpawnBodyDust(EftGroundWork *w, EftGroundDef *def, f32 scale);
 void EftGndDust_SpawnChip(EftGroundWork *w, Vec4 *pos, Vec4 *dir, EftGroundRgba *colA, EftGroundRgba *colB, s32 life,
                          s32 fade);

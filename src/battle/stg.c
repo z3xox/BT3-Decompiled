@@ -60,16 +60,16 @@ extern void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 power, f3
 extern s32 BtlCharApi_IsInputInjected(s32 objId);
 
 /* Stage model code (0x114C60..0x115DE0) and stage code after this file. */
-extern void BtlStage_Relocate(void *arg);
+extern void BtlStage_Relocate(void *base);
 extern void StgModel_InitStage(void);
 extern void StgModel_ResetAnims(void);
 extern void StgModel_BindAnims(void);
 extern void StgModel_ClearAnims(void);
-extern void ColMesh_SetBase(void *arg);
+extern void ColMesh_SetBase(void *base);
 extern void StgRigid_Reset(void);                           /* stage rigid bodies: reset */
 extern void StgRigid_Init(void);                           /* stage rigid bodies: init */
 extern void StgRigid_Term(void);                           /* stage rigid bodies: term */
-extern s32 StgRigid_Create(Vec4 *pos, f32 radius, s32 arg);  /* new rigid body, handle or < 0 */
+extern s32 StgRigid_Create(Vec4 *pos, f32 radius, s32 user);  /* new rigid body, handle or < 0 */
 extern void StgRigid_Launch(s32 body, Vec4 *hitPos, s32 material);
 extern void StgRigid_Release(s32 body);                       /* release a rigid body */
 extern void StgRigid_GetMatrix(StgNode *node, s32 body);        /* node matrix = body transform */
@@ -173,10 +173,10 @@ void BtlStage_Reset(void) {
 }
 
 /* Sets the stage object, builds its model and rigid bodies, then resets it. */
-void BtlStage_Init(BtlStage *stage, void *arg) {
+void BtlStage_Init(BtlStage *stage, void *base) {
     gBtlStage = stage;
-    BtlStage_Relocate(arg);
-    ColMesh_SetBase(arg);
+    BtlStage_Relocate(base);
+    ColMesh_SetBase(base);
     gBtlStage->flags = 0;
     BtlStage_BindFile(gBtlStage);
     StgModel_BindAnims();

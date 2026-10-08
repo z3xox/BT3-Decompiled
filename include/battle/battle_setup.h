@@ -16,8 +16,8 @@
  * --- How a battle is set up -------------------------------------------------------------------------
  * The menu overlay (and two places in the main executable) build the setup with this sequence:
  *     Battle_ClearWork()                       -> BattleSetup_Clear(): memset + magic "btls" + version 7
- *     BattleSetup_SetRule(screenMode, mode, bgm, timeLimit, announcer, stage, unk10)
- *     BattleSetup_SetSide(side, control, pad, memberCount, unk1FC, unk200, lead, charaBits)   for side 0, 1
+ *     BattleSetup_SetRule(screenMode, mode, bgm, timeLimit, announcer, stage, stageChange)
+ *     BattleSetup_SetSide(side, control, pad, memberCount, changeAllowed, switchEnabled, lead, charaBits)   for side 0, 1
  *     BattleSetup_SetMember(side, idx, chara, costume, variant, cpuLevel, health, items)       per member
  *     [BattleSetup_SetPoolMember(count, idx, ...)   mode 3 only: the queue of up to 50 opponents]
  *     BattleSetup_Finish()                     -> BattleSetup_FinishEx(0)
@@ -130,8 +130,8 @@ void BattleReplay_ClearDataFlag(void);
 void BattleSetup_SetScript(s32 script);
 void BattleSetup_SetOptions(s32 optA0, s32 optA1, s32 optB0, s32 optB1);
 void BattleSetup_SetOption14(s32 val);
-void BattleSetup_SetRule(s32 screenMode, s32 mode, s32 bgm, s32 timeLimit, s32 announcer, s32 stage, s32 unk10);
-void BattleSetup_SetSide(s32 sideNo, s32 control, s32 pad, s32 memberCount, s32 unk1FC, s32 unk200, s32 lead,
+void BattleSetup_SetRule(s32 screenMode, s32 mode, s32 bgm, s32 timeLimit, s32 announcer, s32 stage, s32 stageChange);
+void BattleSetup_SetSide(s32 sideNo, s32 control, s32 pad, s32 memberCount, s32 changeAllowed, s32 switchEnabled, s32 lead,
                          BattleCharaBits *bits);
 void BattleSetup_SetMemberByItemIds(s32 sideNo, s32 idx, s32 chara, s32 costume, s32 variant, s32 cpuLevel,
                                     f32 health, u32 *itemIds);

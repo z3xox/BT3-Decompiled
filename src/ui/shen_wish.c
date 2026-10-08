@@ -8,7 +8,7 @@
 
 /*
  * Shen, 0x2BD230..0x2BEB20: the dragon-summoning screen (gProgress->mode 70) and the mode loop around it.
- * Built with -G0: no $gp addressing anywhere. See sys/late_a.h.
+ * Built with -G0: no $gp addressing anywhere. See ui/shen_wish.h.
  *
  * The object's strings start at 0x2FBDA8 ("mc_menu_plate_%d") and end with "fl_out" (0x2FC0E8); the twelve
  * "host:data/test/shenron/..." names in between are arguments of a debug loader that compiles to nothing.
@@ -41,17 +41,17 @@ extern void Flash_Create(Flash *flash, void *data, void *tex);
 extern void Flash_Destroy(Flash *flash);
 extern void Flash_Advance(Flash *flash);
 extern void Flash_Draw(Flash *flash);
-extern void Flash_Play(Flash *flash, s32 arg);
-extern void Flash_GotoLabel(Flash *flash, const char *label, s32 arg);
+extern void Flash_Play(Flash *flash, s32 speed);
+extern void Flash_GotoLabel(Flash *flash, const char *label, s32 restart);
 extern void Flash_FindLabel(Flash *flash, const char *parent, const char *name, FlashRef *out);
 extern void Flash_ClipGotoLabel(Flash *flash, FlashRef *ref, const char *label);
 extern void Flash_ClipSetCallbackA(Flash *flash, FlashRef *ref, void (*cb)(void), s32 arg);
 extern void Flash_ClipSetCallbackB(Flash *flash, FlashRef *ref, void (*cb)(void), s32 arg);
 extern void Flash_ClipSetColor(Flash *flash, FlashRef *ref, f32 v);
 extern void Flash_ClipSetUv(Flash *flash, FlashRef *ref, FlashUv *uv);
-/* text box module, after 0x2600B0 (not decompiled): draws a line in a clip */
-extern void TextBox_AttachLine(Flash *flash, FlashRef *ref, s32 a, s32 b, s32 line, TextBox *box);
-/* the screen's backdrop (0x262BC8.., not decompiled): the dragon scene */
+/* text box module (menu_util_1.c): draws a line in a clip */
+extern void TextBox_AttachLine(Flash *flash, FlashRef *ref, s32 x, s32 y, s32 line, TextBox *box);
+/* the screen's backdrop (shen_scene.c): the dragon scene */
 extern s32 ShenScene_GetState(void);       /* its state: 1 = ready for input, 2 = ended */
 extern void ShenScene_SetState(s32 state); /* requests a state; 3 = end */
 extern void ShenScene_Update(void);      /* draws it */
@@ -486,8 +486,9 @@ static inline void ShenList_Fill(ShenNode *head, ShenWish *src, s32 count) {
 /*
  * Draws which dragon comes and copies its wishes from the wish file into the list.
  *
- * One Rand_Range(100) draw `r`. With bit 0 of gSaveData->slot[8].flags set: r < 40 dragon 0, 40..59 dragon 1,
- * 60..99 dragon 2. Without it: r < 50 dragon 0, else dragon 1 (dragon 2 cannot come). Dragon 1 lists seven
+ * One Rand_Range(100) draw `roll`; dragon 1 comes for from1 <= roll < from2, dragon 2 for from2 <= roll < end2.
+ * With bit 0 of gSaveData->slot[8].flags set: roll < 40 dragon 0, 40..59 dragon 1, 60..99 dragon 2. Without it:
+ * roll < 50 dragon 0, else dragon 1 (dragon 2 cannot come). Dragon 1 lists seven
  * wishes and grants three; the others list four and grant one. The dragon number also goes to the backdrop
  * (ShenScene_Init).
  *
@@ -496,28 +497,28 @@ static inline void ShenList_Fill(ShenNode *head, ShenWish *src, s32 count) {
  * of its own, as the original does. A `list` variable, or the `out` store inside the arms, changes that.
  */
 void Shen_BuildList(ShenWork *work, ShenWishFile *file) {
-    s32 a;
-    s32 b;
-    s32 c;
-    s32 r;
+    s32 from1;
+    s32 from2;
+    s32 end2;
+    s32 roll;
 
     if (gSaveData->slot[8].flags & 1) {
-        a = 40;
-        b = 60;
-        c = 100;
+        from1 = 40;
+        from2 = 60;
+        end2 = 100;
     } else {
-        a = 50;
-        b = 100;
-        c = 200;
+        from1 = 50;
+        from2 = 100;
+        end2 = 200;
     }
-    r = Rand_Range(100);
-    if (r >= b && r < c) {
+    roll = Rand_Range(100);
+    if (roll >= from2 && roll < end2) {
         work->dragon = SHEN_DRAGON_2;
         work->wishMax = 1;
         ShenScene_Init(SHEN_DRAGON_2);
         ShenList_Build(&work->list, 4);
         ShenList_Fill(&work->list, file->list2, 4);
-    } else if (r >= a && r < b) {
+    } else if (roll >= from1 && roll < from2) {
         work->dragon = SHEN_DRAGON_1;
         work->wishMax = 3;
         ShenScene_Init(SHEN_DRAGON_1);

@@ -81,8 +81,8 @@ extern void BtlObjFade_Step(BtlObj *obj);
 extern void BtlObjFade_Get(BtlObj *obj, Vec4 *out);
 extern void BtlObj_UpdateFace(BtlObj *obj);
 extern BtlObjPart *BtlObj_GetNode(BtlObj *obj, s32 node);
-extern s32 BtlObj_IsNodeShown(BtlObj *obj, s32 arg);
-extern void BtlObj_SaveNodePositions(BtlObj *obj, s32 arg);
+extern s32 BtlObj_IsNodeShown(BtlObj *obj, s32 node);
+extern void BtlObj_SaveNodePositions(BtlObj *obj, s32 relative);
 extern void BtlObj_InitChains(BtlObj *obj);
 extern void BtlObj_UpdateChains(BtlObj *obj);
 /* Drawing modules. */
@@ -388,12 +388,12 @@ void BtlObj_InitTable(void) {
     }
 }
 
-/* Returns the float at table + 0x44FC4. */
+/* Returns the animation step new animation players start with (table + 0x44FC4; 2.0 at init). */
 f32 BtlObj_GetDefaultAnimStep(void) {
     return BtlObj_GetTable()->defaultAnimStep;
 }
 
-/* Sets the float at table + 0x44FC4. */
+/* Sets the default animation step (table + 0x44FC4); the character viewer sets 1.0. */
 void BtlObj_SetDefaultAnimStep(f32 value) {
     BtlObj_GetTable()->defaultAnimStep = value;
 }
@@ -566,9 +566,9 @@ void BtlObj_UpdateBounds(BtlObj *obj, BtlObjState *state) {
     Vec4 rel;
     Vec4 center;
     Mtx44 mtx;
-    Vec4 unk60;
+    Vec4 unused60; /* never used: only keeps the stack layout */
     Vec4 ext;
-    Vec4 unk80[7];
+    Vec4 unused80[7]; /* never used */
     Vec4 corner[8];
     Vec4 out[8];
     BtlObjBound *bound = obj->mdl.bounds;

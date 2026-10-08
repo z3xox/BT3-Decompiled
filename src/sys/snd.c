@@ -89,11 +89,11 @@ extern void IopHeap_Free(void *addr); /* sceSifFreeIopHeap wrapper */
 extern void SpuHeap_Init(void);       /* SPU RAM heap: init (0x5010..0x1F0FD0 + 0x5010) */
 extern s32 SpuHeap_Alloc(s32 size);    /* SPU RAM heap: alloc, returns the SPU address */
 extern void SpuHeap_Free(s32 addr);   /* SPU RAM heap: free */
-extern s32 SpuHeap_GetFreeSize(void);        /* SPU RAM heap: bytes in use */
+extern s32 SpuHeap_GetFreeSize(void);        /* SPU RAM heap: total bytes free */
 
 extern s32 BtlScript_IsSlotBusy(s32 side, s32 idx);
 extern s32 BtlCharApi_GetSoundCount(s32 side);
-extern void BtlCharApi_GetSound(s32 side, s32 idx, s32 *id, s32 *a3, s32 *a4);
+extern void BtlCharApi_GetSound(s32 side, s32 n, s32 *handle, s32 *bankMask, s32 *id);
 
 /* Sends one command to SOUNDS.IRX and waits for the answer; returns the first reply word. */
 s32 Snd_RpcCall(s32 cmd, void *data, s32 size) {
@@ -290,13 +290,14 @@ void Snd_RpcCmdE(void) {
     Snd_RpcCall(SND_RPC_CMD_E, &gSndRpcBuf, 4);
 }
 
-/* RPC 0xF: a count and that many 16-bit ids (the fighters on the field). */
-void Snd_RpcSetFighters(s32 count, s32 *ids) {
+/* RPC 0xF: a count and that many 16-bit values. The one caller (Snd_SendFighters) passes the handles of the looping
+   sounds the two sides have running, not fighter ids. */
+void Snd_RpcSetFighters(s32 count, s32 *handles) {
     s32 i;
 
     gSndRpcBuf.h[0] = count;
     for (i = 0; i < count; i++) {
-        gSndRpcBuf.h[i + 1] = ids[i];
+        gSndRpcBuf.h[i + 1] = handles[i];
     }
     Snd_RpcCall(SND_RPC_FIGHTERS, &gSndRpcBuf, 0x18);
 }
@@ -592,13 +593,13 @@ s32 Snd_IsUploadDone(void) {
     return done;
 }
 
-/* Pushes the SPU heap's current usage on a small stack. No callers. */
+/* Pushes the SPU heap's current free size on a small stack. No callers. */
 void Snd_PushSpuMark(void) {
     gSndMgr->spuMark[gSndMgr->spuMarkCount] = SpuHeap_GetFreeSize();
     gSndMgr->spuMarkCount++;
 }
 
-/* Pops that stack and returns the current usage. No callers. */
+/* Pops that stack and returns the current free size. No callers. */
 s32 Snd_PopSpuMark(void) {
     gSndMgr->spuMarkCount--;
     return SpuHeap_GetFreeSize();
@@ -733,21 +734,22 @@ void Snd_CmdE(void) {
     Snd_RpcCmdE();
 }
 
-/* Battle, per frame: sends the ids of both sides' fighters to the driver (RPC 0xF). */
+/* Battle, per frame: sends the handles of the live looping sounds of both sides (BtlCharApi_GetSound; up to four
+   per side) to the driver (RPC 0xF). */
 void Snd_SendFighters(void) {
-    s32 ids[12];
+    s32 handles[12];
     s32 count = 0;
     s32 i;
 
     for (i = 0; i < BtlCharApi_GetSoundCount(0); i++) {
-        BtlCharApi_GetSound(0, i, &ids[count], NULL, NULL);
+        BtlCharApi_GetSound(0, i, &handles[count], NULL, NULL);
         count++;
     }
     for (i = 0; i < BtlCharApi_GetSoundCount(1); i++) {
-        BtlCharApi_GetSound(1, i, &ids[count], NULL, NULL);
+        BtlCharApi_GetSound(1, i, &handles[count], NULL, NULL);
         count++;
     }
-    Snd_RpcSetFighters(count, ids);
+    Snd_RpcSetFighters(count, handles);
 }
 
 /* Sony HD header chunk -> its vag-info chunk (offset at +0x30 of the header section, word aligned). */

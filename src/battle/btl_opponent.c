@@ -24,7 +24,7 @@ extern void *BtlObj_Get(s32 id);
 extern void ChrCam_EndCut(BtlFlagChr *chr);
 extern void BtlChar_GetSnapPos(BtlFlagChr *chr, Vec4 *out, s32 slot); /* override position `slot` when its bit of +0x3C0 is set, else the position */
 extern void BtlChar_GetSnapRot(BtlFlagChr *chr, Vec4 *out, s32 slot); /* the same for the rotation */
-extern s32 BtlMember_HasAbility(BtlFlagChr *chr, s32 arg);
+extern s32 BtlMember_HasAbility(BtlFlagChr *chr, s32 ability);
 extern s32 BtlAct_GetCurrent(BtlFlagChr *chr);                        /* action id */
 extern s32 BtlAct_IsTechniqueId(s32 action);                             /* action is 0x105..0x132 */
 extern f32 BtlCharApi_GetHeight(s32 objId);                              /* object +0xFF4: height (10 without object) */
@@ -300,8 +300,8 @@ f32 BtlOpp_GetClosingTime(BtlFlagChr *chr) {
 }
 
 /* BtlMember_HasAbility on the opponent. */
-s32 BtlOpp_HasAbility(BtlFlagChr *chr, s32 arg) {
-    return BtlMember_HasAbility(OPPONENT(chr), arg);
+s32 BtlOpp_HasAbility(BtlFlagChr *chr, s32 ability) {
+    return BtlMember_HasAbility(OPPONENT(chr), ability);
 }
 
 /* BtlParam_GetUnkC7Scale on the opponent. */

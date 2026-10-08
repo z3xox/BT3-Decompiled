@@ -63,7 +63,7 @@ extern void BtlOpp_GetNodePos(ChrCamChr *chr, s32 node, Vec4 *out); /* world pos
 extern s32 BtlInput_IsPressed(ChrCamChr *chr, u32 mask);
 extern s32 BtlInput_IsHeld(ChrCamChr *chr, u32 mask);
 extern f32 BtlInput_GetStickX(ChrCamChr *chr);                       /* smoothed stick x (BtlCharInput.stick[0]) */
-extern s32 BtlInput_TestAction(ChrCamChr *chr, s32 action, s32 arg);  /* action input test, built on BtlInput_* */
+extern s32 BtlInput_TestAction(ChrCamChr *chr, s32 action, s32 want);  /* action input test, built on BtlInput_* */
 
 /* Model objects and stage. */
 extern f32 BtlCharApi_GetHeight(s32 objId);                            /* body scale, obj + 0xFF4 (10 when no object) */

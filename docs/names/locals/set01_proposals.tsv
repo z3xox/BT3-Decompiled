@@ -1,0 +1,12 @@
+FIELD	include/battle/btl_act_2.h	BtlActCPose	facing	yaw	HIGH	+0x94 is the heading yaw kept by BtlMove_SetHeading (yaw in BtlActBPose / BtlActDPose / BtlMovePose); btl_act_2.c:1363 builds the aim direction from sin / cos of it.
+FIELD	include/battle/btl_act_2.h	BtlActCPose	vel	dir	HIGH	+0x80 is the unit travel direction (dir in BtlActBPose / BtlActDPose); btl_act_2.c:1498 copies it as a direction.
+FIELD	include/battle/btl_act_2.h	BtlActCPose	move	moved	HIGH	+0x40 is the whole movement of the previous frame (moved in BtlActBPose / BtlActEPose); btl_act_2.c:839 compares its length with 200 km/h.
+FIELD	include/battle/btl_act_2.h	BtlActEPose	facing	yaw	HIGH	+0x94 heading yaw, as in the other pose views; btl_act_2.c:3950 copies it to rot.y.
+FIELD	include/battle/btl_act_2.h	BtlActEPose	vel	dir	HIGH	btl_act_2.c:3602-3604 writes (sin yaw, 0, cos yaw) to it: a unit direction, not a velocity.
+FIELD	include/battle/btl_act_change.h	BtlActHPose	facing	yaw	HIGH	+0x94 is the first argument of BtlMove_SetHeading as kept in the pose (btl_act_change.c:406 passes it back as the yaw).
+FIELD	include/battle/btl_act_super.h	BtlSuperPose	velY	fallSpeed	MEDIUM	+0x9C is fallSpeed in every other pose view including ActGPose of the same header; BtlSuper_Begin only zeroes it.
+FIELD	include/battle/btl_act_super.h	BtlSuperChr	unkE60	boostStock	HIGH	Same fighter word +0xE60 as BtlActHChr.boostStock: both clamp it to 0..10 (btl_act_super.c:557 adds 5, btl_act_change.c:160 adds 1).
+FIELD	include/battle/btl_ai_sense.h	AiActStatus	downTimer	hitPendingTimer	MEDIUM	BtlAiSense_IsBusy sets it to 4 while BtlCharApi_IsAttackHitPending is 1 and counts it down; nothing tests a downed fighter.
+FIELD	include/battle/btl_ai_think.h	AiThStatus	downTimer	hitPendingTimer	MEDIUM	Same status word +0x08 as AiActStatus.downTimer (btl_ai_sense.c:1152-1158).
+FIELD	include/battle/btl_act_decide.h	BtlActJChr	dodges	skillStackA	MEDIUM	BtlAct_CanUseSkill tests it for skill ids 0xC / 0x32 against 3; btl_act_change.c:1911 raises the same word +0xE00 as skillStackA up to 3.
+FIELD	include/battle/btl_act_decide.h	BtlActJChr	dodgesB	skillStackB	MEDIUM	The same for skill id 0x37 and word +0xE04 (btl_act_change.c:1923).

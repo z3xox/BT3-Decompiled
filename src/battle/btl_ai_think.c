@@ -30,11 +30,11 @@ INCLUDE_RODATA("asm/nonmatchings/battle/btl_ai_think", gBtlAiRateColsF);
 /* Records the opponent's current action and its class, and raises reaction bits. */
 void BtlAi_NoteOpponent(BtlAiWork *ai, s32 react) {
     BtlAiActTable *act = gBtlAi->data->act;
-    s32 action = BtlCharApi_GetAnimId(ai->objId ^ 1);
+    s32 anim = BtlCharApi_GetAnimId(ai->objId ^ 1);
     BtlAiStatus *st = &ai->status;
-    s32 cls = act->actClass[action];
+    s32 cls = act->actClass[anim];
 
-    st->oppAction = action;
+    st->oppAction = anim;
     st->oppClass = cls;
     st->react |= react;
 }
@@ -201,7 +201,7 @@ s32 BtlAiCond_React(BtlAiWork *ai, u8 arg) {
     s32 blastC[5] = { 0, 2, 3, 4, 5 };
     s32 step = LEVEL_IDX(ai);
     s32 roll = Rand_Range(100);
-    s32 action = BtlCharApi_GetAnimId(ai->objId ^ 1);
+    s32 anim = BtlCharApi_GetAnimId(ai->objId ^ 1);
     s32 chance;
 
     switch (arg) {
@@ -219,11 +219,11 @@ s32 BtlAiCond_React(BtlAiWork *ai, u8 arg) {
         break;
     case 3:
         BtlAi_NoteOpponent(ai, 0x100000);
-        if (action == 0x37 || action == 0x3C) {
+        if (anim == 0x37 || anim == 0x3C) {
             chance = LEVEL_STEP(ai, blastA);
-        } else if (action == 0x38 || action == 0x3D) {
+        } else if (anim == 0x38 || anim == 0x3D) {
             chance = LEVEL_STEP(ai, blastB);
-        } else if (action == 0x39 || action == 0x3E) {
+        } else if (anim == 0x39 || anim == 0x3E) {
             chance = LEVEL_STEP(ai, blastC);
         } else {
             BtlAi_NoteOpponent(ai, 0x10);
@@ -286,10 +286,10 @@ s32 BtlAiCond_Rate5(BtlAiWork *ai, u8 arg) {
     s8 *hi = (s8 *)ai->param + 0x100;
     s32 roll = Rand_Range(100);
     s32 chance = RATE(ai, lo, hi, 5);
-    s32 a = BtlCharApi_GetParamFlags2(ai->objId);
-    s32 b = BtlCharApi_GetParamFlags(ai->objId);
+    s32 flags2 = BtlCharApi_GetParamFlags2(ai->objId);
+    s32 flags = BtlCharApi_GetParamFlags(ai->objId);
 
-    if (!(a & 0x20) && !(b & 2)) {
+    if (!(flags2 & 0x20) && !(flags & 2)) {
         return 0;
     }
     return roll < chance;
@@ -344,11 +344,11 @@ s32 BtlAiCond_Rate4(BtlAiWork *ai, u8 arg) {
 /* Condition 31: AI-type rate chosen by which of the opponent actions 0x37..0x3A / 0x3C..0x3F is running. */
 s32 BtlAiCond_TypeRateByOppAction(BtlAiWork *ai, u8 arg) {
     BtlAiSeq *seq = &ai->seq;
-    s32 action = BtlCharApi_GetAnimId(ai->objId ^ 1);
+    s32 anim = BtlCharApi_GetAnimId(ai->objId ^ 1);
     u8 *prof = gBtlAi->data->profile[ai->type];
     s8 *lo = (s8 *)prof + 0x2A8;
     s8 *hi = (s8 *)prof + 0x568;
-    s32 idx = action < 0x3C ? action - 0x37 : action - 0x3C;
+    s32 idx = anim < 0x3C ? anim - 0x37 : anim - 0x3C;
     s32 roll = Rand_Range(100);
     s32 chance;
 
@@ -748,7 +748,7 @@ extern s32 BtlCharApi_GetOppSkillClass(s32 objId);
 extern s32 BtlCharApi_IsMoveFlag100(s32 objId, s32 slot);
 extern s32 BtlCharApi_GetStunTimer(s32 objId);
 extern s32 BtlCharApi_IsAnimFlag2800(s32 objId);
-extern s32 BtlCharApi_TestPoseBit80(s32 objId, s32 arg);
+extern s32 BtlCharApi_TestPoseBit80(s32 objId, s32 always);
 extern s32 BtlCharApi_TestFlag98(s32 objId);
 extern s32 BtlCharApi_GetTechniqueCooldown(s32 objId);
 extern s32 BtlSide_GetKi(s32 objId);
@@ -1022,7 +1022,7 @@ s32 AiThink_TestWeighted(AiThWork *ai, s32 byGauge) {
     AiThRoll *r = &plan->rolls[plan->condNo];
     s32 fn = gBtlAiCondFuncIndex[plan->cond];
     AiThChrSkills *skills = BtlCharApi_GetSkillTable(ai->objId);
-    s32 dist = BtlCharApi_GetHp(ai->objId);
+    s32 hp = BtlCharApi_GetHp(ai->objId);
     s32 near = BtlAi_ScaleByLevel(ai->level, prof[0x2AE], prof[0x56E]);
     s32 col = AiThink_FindWeightColumn(plan);
     s32 rate;
@@ -1070,7 +1070,7 @@ s32 AiThink_TestWeighted(AiThWork *ai, s32 byGauge) {
             }
         }
     }
-    if (dist < 10000) {
+    if (hp < 10000) {
         if (near != 0 && fn == 0x5D) {
             rate = near;
         }
@@ -1090,8 +1090,8 @@ s32 AiThink_TestMove(AiThWork *ai) {
     AiThChrMoves *moves = BtlCharApi_GetMoveTable(ai->objId);
     s32 stock = BtlSide_GetBlast(ai->objId) / 100000;
     s32 kind = plan->cond - 0x5C;
-    s32 dist = BtlCharApi_GetHp(ai->objId);
-    s32 oppVal = BtlCharApi_GetStunTimer(ai->objId ^ 1);
+    s32 hp = BtlCharApi_GetHp(ai->objId);
+    s32 oppStun = BtlCharApi_GetStunTimer(ai->objId ^ 1);
     s32 i;
     s32 blocked;
 
@@ -1113,7 +1113,7 @@ s32 AiThink_TestMove(AiThWork *ai) {
                 if (BtlCharApi_TestFlag05(ai->objId ^ 1) == 0) {
                     blocked = 1;
                 }
-            } else if (!(oppVal < 0x1F)) {
+            } else if (!(oppStun < 0x1F)) {
                 blocked = 1;
             }
             break;
@@ -1139,7 +1139,7 @@ s32 AiThink_TestMove(AiThWork *ai) {
         if (blocked) {
             continue;
         }
-        if (moves->id[i] == 0x17 && dist < 10000) {
+        if (moves->id[i] == 0x17 && hp < 10000) {
             continue;
         }
         if (stock < moves->stock[i]) {
@@ -1178,7 +1178,7 @@ s32 AiThink_TestSkill(AiThWork *ai) {
     s32 count;
     s32 anyBasic;
     s32 beatOpp;
-    s32 dist;
+    s32 hp;
     s32 strict;
     AiThChrSkills *skills;
     AiThChrSkills *opp;
@@ -1195,7 +1195,7 @@ s32 AiThink_TestSkill(AiThWork *ai) {
     strict = 1;
     gauge = BtlSide_GetKi(ai->objId);
     kind = plan->cond - 0x65;
-    dist = BtlCharApi_GetHp(ai->objId);
+    hp = BtlCharApi_GetHp(ai->objId);
     oppSlot = BtlCharApi_GetOppSkillClass(ai->objId);
     opp = BtlCharApi_GetSkillTable(ai->objId ^ 1);
     if (BtlCharApi_GetTechniqueCooldown(ai->objId) != 0) {
@@ -1262,7 +1262,7 @@ s32 AiThink_TestSkill(AiThWork *ai) {
             }
         }
         if ((skills->flags[i] & 0x2000) || skills->id[i] == 0x280) {
-            if (dist > 10000) {
+            if (hp > 10000) {
                 continue;
             }
         }
@@ -1458,9 +1458,9 @@ s32 AiThCond_ActRateByFlags(AiThWork *ai, u8 arg) {
     s32 roll = Rand_Range(100);
     AiThProfile *prof = (AiThProfile *)PROFILE(ai);
     s32 code = plan->cond - 40;
-    u64 f = BtlCharApi_GetActionBits(ai->objId);
+    u64 actBits = BtlCharApi_GetActionBits(ai->objId);
     AiThActTable *act = gBtlAi->data->act;
-    s32 action[2];
+    s32 anim[2];
     s8 cls[2];
     s32 chance;
     s32 i;
@@ -1482,106 +1482,106 @@ s32 AiThCond_ActRateByFlags(AiThWork *ai, u8 arg) {
     if (chance < roll) {
         return 0;
     }
-    action[0] = BtlCharApi_GetAnimId(ai->objId);
-    action[1] = BtlCharApi_GetAnimId(ai->objId ^ 1);
-    cls[0] = ((AiThActBody *)((u8 *)act + 8))->actClass[action[0]];
-    cls[1] = ((AiThActBody *)((u8 *)act + 8))->actClass[action[1]];
+    anim[0] = BtlCharApi_GetAnimId(ai->objId);
+    anim[1] = BtlCharApi_GetAnimId(ai->objId ^ 1);
+    cls[0] = ((AiThActBody *)((u8 *)act + 8))->actClass[anim[0]];
+    cls[1] = ((AiThActBody *)((u8 *)act + 8))->actClass[anim[1]];
     switch (gBtlAiCondFuncIndex[plan->cond]) {
     case 0x38:
-        if (!(f & 0x80)) {
+        if (!(actBits & 0x80)) {
             return 0;
         }
         break;
     case 0x39:
-        if (!(f & 0x100)) {
+        if (!(actBits & 0x100)) {
             return 0;
         }
         break;
     case 0x3A:
-        if (!(f & 0x10000000)) {
+        if (!(actBits & 0x10000000)) {
             return 0;
         }
         break;
     case 0x3B:
-        if (!(f & 4)) {
+        if (!(actBits & 4)) {
             return 0;
         }
         break;
     case 0x3C:
-        if (!(f & 0x10)) {
+        if (!(actBits & 0x10)) {
             return 0;
         }
         break;
     case 0x3D:
-        if (!(f & 0x20000000)) {
+        if (!(actBits & 0x20000000)) {
             return 0;
         }
         break;
     case 0x3F:
-        if (!(f & 0x80000000)) {
+        if (!(actBits & 0x80000000)) {
             return 0;
         }
         break;
     case 0x49:
-        if (!(f & 0x100000000)) {
+        if (!(actBits & 0x100000000)) {
             return 0;
         }
         break;
     case 0x40:
     case 0x41:
-        if (!(f & 8)) {
+        if (!(actBits & 8)) {
             return 0;
         }
         break;
     case 0x42:
-        if (!(f & 0x200000000)) {
+        if (!(actBits & 0x200000000)) {
             return 0;
         }
         break;
     case 0x43:
-        if (!(f & 0x400000000)) {
+        if (!(actBits & 0x400000000)) {
             return 0;
         }
         break;
     case 0x44:
-        if (!(f & 2)) {
+        if (!(actBits & 2)) {
             return 0;
         }
         break;
     case 0x45:
-        if (!(f & 1)) {
+        if (!(actBits & 1)) {
             return 0;
         }
         break;
     case 0x46:
-        if (!(f & 0x20)) {
+        if (!(actBits & 0x20)) {
             return 0;
         }
         break;
     case 0x47:
-        if ((f & 0x80000) && cls[0] == 0x10) {
+        if ((actBits & 0x80000) && cls[0] == 0x10) {
             break;
         }
         return 0;
     case 0x48:
-        if (!(f & 0x40)) {
+        if (!(actBits & 0x40)) {
             return 0;
         }
         break;
     case 0x4A:
-        if (!(f & 0x1000000000)) {
+        if (!(actBits & 0x1000000000)) {
             return 0;
         }
         break;
     case 0x4B:
-        if (!(f & 0x800000000)) {
+        if (!(actBits & 0x800000000)) {
             return 0;
         }
         break;
     default:
         return 0;
     case 0x3E:
-        if ((f & 0x80) && cls[1] == 3) {
+        if ((actBits & 0x80) && cls[1] == 3) {
             break;
         }
         return 0;
@@ -1611,7 +1611,7 @@ s32 AiThink_RollActRate(AiThWork *ai, s32 cond) {
 
 /* Condition functions 114, 115, 117: the weighted test, only with fighter flag 6 and one ability bit. */
 s32 AiThCond_WeightedIfAbility(AiThWork *ai, u8 arg) {
-    s32 ab = BtlCharApi_GetParamFlags3(ai->objId);
+    s32 flags3 = BtlCharApi_GetParamFlags3(ai->objId);
     s32 fn = gBtlAiCondFuncIndex[ai->plan.cond];
 
     if (BtlSide_IsPoweredUp(ai->objId) == 0) {
@@ -1619,17 +1619,17 @@ s32 AiThCond_WeightedIfAbility(AiThWork *ai, u8 arg) {
     }
     switch (fn) {
     case 0x73:
-        if (ab & 0x200) {
+        if (flags3 & 0x200) {
             break;
         }
         return 0;
     case 0x72:
-        if (ab & 0x10) {
+        if (flags3 & 0x10) {
             break;
         }
         return 0;
     case 0x75:
-        if (!(ab & 8)) {
+        if (!(flags3 & 8)) {
             return 0;
         }
         break;
@@ -1946,7 +1946,7 @@ s32 AiThink_GetRollRange(AiThWork *ai, s32 tbl) {
     AiThPlan *plan = &ai->plan;
     s32 idx;
     s8 total;
-    s32 dist;
+    s32 hp;
     s32 near;
 
     if (tbl != 3) {
@@ -1955,7 +1955,7 @@ s32 AiThink_GetRollRange(AiThWork *ai, s32 tbl) {
         idx = plan->sub;
     }
     total = plan->total[tbl][idx];
-    dist = BtlCharApi_GetHp(ai->objId);
+    hp = BtlCharApi_GetHp(ai->objId);
     near = BtlAi_ScaleByLevel(ai->level, PROFILE(ai)[0x2AE], PROFILE(ai)[0x56E]);
     if (total == 0) {
         return 100;
@@ -1974,7 +1974,7 @@ s32 AiThink_GetRollRange(AiThWork *ai, s32 tbl) {
     default:
         return total;
     }
-    if (dist < 10001) {
+    if (hp < 10001) {
         return total + near;
     }
     return total;
@@ -2175,20 +2175,20 @@ void AiThink_EvalRules(AiThWork *ai, AiThRuleList *list) {
  * computed in front of the first branch and its compare lands in that branch's delay slot). */
 s32 AiThink_GetBlastStep(AiThWork *ai) {
     AiThActTable *act = gBtlAi->data->act;
-    s32 action = BtlCharApi_GetAnimId(ai->objId);
+    s32 anim = BtlCharApi_GetAnimId(ai->objId);
     AiThSeq *seq = &ai->seq;
-    s32 k = action - 0x3C;
+    s32 k = anim - 0x3C;
 
-    if (act->actClass[action] == 15) {
+    if (act->actClass[anim] == 15) {
         return 1;
     }
     if ((u32)k >= 4) {
         return 0;
     }
     if (seq->flags & 0x100) {
-        return action - 0x3A;
+        return anim - 0x3A;
     }
-    return action - 0x3B;
+    return anim - 0x3B;
 }
 
 /* Counts the plan cooldown down. */

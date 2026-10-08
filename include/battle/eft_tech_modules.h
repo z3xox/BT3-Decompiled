@@ -76,7 +76,7 @@ typedef struct EftTechArg {
     /* 0x04 */ s32 slot;      /* shot slot: 0, 1 ki blasts, 2..4 techniques */
     /* 0x08 */ u8 unk8[0x1C - 0x8];
     /* 0x1C */ s32 *pack;     /* the technique's effect pack */
-    /* 0x20 */ s32 side;
+    /* 0x20 */ s32 side;      /* the fighter whose character pack is read (`chr` in EftKSrc, eft_obj_tech.h) */
     /* 0x24 */ EftTechDef *def;
 } EftTechArg;
 
@@ -165,7 +165,8 @@ typedef struct EftRushShotWork {
     /* 0x064 */ EftModelInst inst;
     /* 0x330 */ u8 nodes[0x20]; /* node slots of the set (EftEmit_UpdateNodesReq), 0x250 bytes from here */
     /* 0x350 */ u8 slot0Pos[0x40];
-    /* 0x390 */ Vec4 slot1Pos;    /* node slots + 0x60: position of the start node */
+    /* 0x390 */ Vec4 slot1Pos;    /* node slots + 0x60: position of slot 1, the fire node (EftObjTech.fireNodePos); the
+                                     start node is slot 0, whose position is at 0x350 */
     /* 0x3A0 */ u8 unk3A0[0x580 - 0x3A0];
     /* 0x580 */ EftModel *model;
     /* 0x584 */ u32 flags;
@@ -356,7 +357,7 @@ void EftRushShotMgr_Reset(void);
 
 /* eft_ring_shot.c */
 EftRingShotOne *EftRingShot_AllocShot(EftRingShot *w);
-void EftRingShot_Fire(s32 objId, EftTask *task, s32 node, s32 arg3, s32 volley);
+void EftRingShot_Fire(s32 objId, EftTask *task, s32 node, s32 nodeSlot, s32 volley);
 void EftRingShot_BobShot(EftRingShotOne *shot);
 void EftRingShot_UpdateRing(s32 objId, EftTask *task);
 void EftRingShot_UpdatePath(s32 objId, EftTask *task);

@@ -114,7 +114,7 @@ extern EftAeVram *gEftVram;
 
 extern void *memset(void *dst, s32 c, u32 n);
 extern s32 rand(void);
-extern void *Heap_Alloc(s32 size, s32 align, s32 a2, s32 a3);
+extern void *Heap_Alloc(s32 size, s32 align, s32 fromTail, s32 heap);
 extern void Heap_Free(void *p);
 extern s32 BtlPool_GetCurrent(void);
 extern void *BtlPool_Alloc(s32 slot, s32 size);

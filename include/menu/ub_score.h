@@ -142,7 +142,7 @@ typedef struct UbScore {
     /* 0x004 */ s32 saved;      /* copy of the total taken before it is converted */
     /* 0x008 */ s32 convert;    /* money made of the total and not yet paid out */
     /* 0x00C */ s32 unkC;
-    /* 0x010 */ UbScoreLine line[UBSCORE_LINE_MAX];   /* health, unk24, unk1C, battle time */
+    /* 0x010 */ UbScoreLine line[UBSCORE_LINE_MAX];   /* health, longest combo (hits), biggest combo (damage), battle time */
     /* 0x040 */ UbScoreLine bonus[UBSCORE_BONUS_MAX]; /* one per set bit of the battle's event summary */
     /* 0x280 */ s32 shown[UBSCORE_PAGE]; /* bonus indices on the page shown (set in menu_q) */
     /* 0x28C */ s32 lineCount;  /* 3, or 4 with the time line */

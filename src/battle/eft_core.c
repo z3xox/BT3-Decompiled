@@ -35,7 +35,7 @@ extern void Vec4_Lerp(EftVec *dst, EftVec *a, EftVec *b, f32 t); /* dst = a * t 
 extern s32 ClipPoly_ClipPlane(EftGfxVert *verts, EftVec *plane, s32 count); /* clips a polygon against a plane, new count */
 extern void ClipPoly_ProjectCur(s32 (*scr)[4], EftVec *col, EftGfxVert *verts, s32 count); /* projects a polygon */
 extern void EftPrim_DrawTriangle(s32 *p0, s32 *p1, s32 *p2, EftVec *uv0, EftVec *uv1, EftVec *uv2,
-                          EftVec *col0, EftVec *col1, EftVec *col2, s32 arg9, s32 arg10, s32 arg11, s32 z, u64 tex);
+                          EftVec *col0, EftVec *col1, EftVec *col2, s32 arg9, s32 arg10, s32 layer, s32 z, u64 tex);
 extern s32 abs(s32 x);
 extern f32 sinf(f32 x);
 extern f32 cosf(f32 x);
@@ -62,7 +62,7 @@ extern void BtlTask_SetPos(EftHitTask *task, EftVec pos);     /* task->pos = pos
 extern void EftTechEvt_RequestStop(s32 side);                         /* beam struggle: sets bit 2 in a per-side word */
 extern void EftKiBomb_SetContact(EftHitTask *task, void *mtx);    /* copies a 0x40-byte block into the blast task's work */
 extern f32 BtlStage_GetInnerRadius(void);                              /* stage radius - 100 */
-extern s32 EftImpact_SpawnBlast(EftImpactArg arg, f32 scale, f32 unk); /* adds an impact effect task (class 0x2C3F20) */
+extern s32 EftImpact_SpawnBlast(EftImpactArg arg, f32 scale, f32 rise); /* adds an impact effect task (class 0x2C3F20) */
 extern void EftGndDust_SpawnImpact(s32 objId, EftVec *pos, f32 scale);
 extern s32 BtlCharApi_GetOpponentObjId(s32 objId);
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, EftVec *out);
@@ -1405,12 +1405,13 @@ void EftGfx_UpdateClipPlanes(void) {
     plane[4].w -= 0.3f;
 }
 
-/* Direction a projectile of fighter objId starts in: at the locked target, else straight ahead (yaw only). */
-s32 EftAim_GetDir(EftVec *out, s32 arg, s32 objId) {
+/* Direction a projectile of fighter objId starts in: at the locked target, else straight ahead (yaw only).
+   `from` is the start point (a vector pointer handed through as an integer). */
+s32 EftAim_GetDir(EftVec *out, s32 from, s32 objId) {
     EftVec rot;
 
     if (BtlCharApi_IsLockedOn(objId)) {
-        BtlCharApi_CalcAimDir45(objId, arg, out);
+        BtlCharApi_CalcAimDir45(objId, from, out);
     } else {
         BtlCharApi_GetRot(objId, &rot);
         out->x = sinf(rot.y);
@@ -1426,7 +1427,7 @@ s32 EftAim_GetDir(EftVec *out, s32 arg, s32 objId) {
  * Same for a technique: with definition aimMode != 0 the aim is taken once and kept in src->aimDir; an aim more
  * than 60 degrees off the fighter's facing (flat dot < 0.5) falls back to straight ahead.
  */
-s32 EftAim_GetDirKeep(EftHitSrc *src, EftVec *out, s32 arg, s32 objId) {
+s32 EftAim_GetDirKeep(EftHitSrc *src, EftVec *out, s32 from, s32 objId) {
     EftVec rot;
     EftVec fwd;
     EftVec flat;
@@ -1439,9 +1440,9 @@ s32 EftAim_GetDirKeep(EftHitSrc *src, EftVec *out, s32 arg, s32 objId) {
     if (BtlCharApi_IsLockedOn(objId)) {
         if (src != NULL) {
             if (src->def->aimMode == 0) {
-                BtlCharApi_CalcAimDir45(objId, arg, out);
+                BtlCharApi_CalcAimDir45(objId, from, out);
             } else if (!(src->aimFlags & 2)) {
-                BtlCharApi_CalcAimDir45(objId, arg, out);
+                BtlCharApi_CalcAimDir45(objId, from, out);
                 Vec4_Copy(&src->aimDir, out);
                 src->aimFlags |= 2;
             } else {
@@ -1551,7 +1552,7 @@ typedef struct EftGfxScr {
  * triangles (0x132E80). The sort depth of each triangle is the average of its three projected depths >> 8
  * (mirrored to 0x1000 - z when flip is set) plus zOfs; depths are clamped to 0xFFFFFF.
  */
-void EftGfx_DrawPolyAvgZ(EftGfxVert *verts, s32 arg1, s32 arg2, s32 arg3, s32 flip, u64 tex, s32 zOfs) {
+void EftGfx_DrawPolyAvgZ(EftGfxVert *verts, s32 layer, s32 arg2, s32 arg3, s32 flip, u64 tex, s32 zOfs) {
     EftGfxScr scr[9];
     EftVec col[9];
     EftVec *plane;
@@ -1573,13 +1574,13 @@ void EftGfx_DrawPolyAvgZ(EftGfxVert *verts, s32 arg1, s32 arg2, s32 arg3, s32 fl
             if (scr[i - 1].z > 0xFFFFFF) { scr[i - 1].z = 0xFFFFFF; }
             if (scr[i].z > 0xFFFFFF) { scr[i].z = 0xFFFFFF; }
             EftPrim_DrawTriangle((void *)&scr[0], (void *)&scr[i - 1], (void *)&scr[i], &verts[0].uv, &verts[i - 1].uv, &verts[i].uv, &col[0],
-                          &col[i - 1], &col[i], arg2, arg3, arg1, z + zOfs, tex);
+                          &col[i - 1], &col[i], arg2, arg3, layer, z + zOfs, tex);
         }
     }
 }
 
 /* Same with a fixed sort depth z (mirrored when flip is set); front forces the three depths to 0xFFFFFF. */
-void EftGfx_DrawPolyFixedZ(EftGfxVert *verts, s32 arg1, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex, s32 z) {
+void EftGfx_DrawPolyFixedZ(EftGfxVert *verts, s32 layer, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex, s32 z) {
     EftGfxScr scr[9];
     EftVec col[9];
     EftVec *plane;
@@ -1600,13 +1601,13 @@ void EftGfx_DrawPolyFixedZ(EftGfxVert *verts, s32 arg1, s32 arg2, s32 arg3, s32 
             if (scr[i].z > 0xFFFFFF) { scr[i].z = 0xFFFFFF; }
             if (front) { scr[0].z = 0xFFFFFF; scr[i - 1].z = 0xFFFFFF; scr[i].z = 0xFFFFFF; }
             EftPrim_DrawTriangle((void *)&scr[0], (void *)&scr[i - 1], (void *)&scr[i], &verts[0].uv, &verts[i - 1].uv, &verts[i].uv, &col[0],
-                          &col[i - 1], &col[i], arg2, arg3, arg1, z, tex);
+                          &col[i - 1], &col[i], arg2, arg3, layer, z, tex);
         }
     }
 }
 
 /* Same as EftGfx_DrawPolyAvgZ with the option to force the three depths to 0xFFFFFF (front). */
-void EftGfx_DrawPolyAvgZFront(EftGfxVert *verts, s32 arg1, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex,
+void EftGfx_DrawPolyAvgZFront(EftGfxVert *verts, s32 layer, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex,
                               s32 zOfs) {
     EftGfxScr scr[9];
     EftVec col[9];
@@ -1630,13 +1631,13 @@ void EftGfx_DrawPolyAvgZFront(EftGfxVert *verts, s32 arg1, s32 arg2, s32 arg3, s
             if (scr[i].z > 0xFFFFFF) { scr[i].z = 0xFFFFFF; }
             if (front) { scr[0].z = 0xFFFFFF; scr[i - 1].z = 0xFFFFFF; scr[i].z = 0xFFFFFF; }
             EftPrim_DrawTriangle((void *)&scr[0], (void *)&scr[i - 1], (void *)&scr[i], &verts[0].uv, &verts[i - 1].uv, &verts[i].uv, &col[0],
-                          &col[i - 1], &col[i], arg2, arg3, arg1, z + zOfs, tex);
+                          &col[i - 1], &col[i], arg2, arg3, layer, z + zOfs, tex);
         }
     }
 }
 
 /* Same with the average depth multiplied by zScale. */
-void EftGfx_DrawPolyScaledZ(EftGfxVert *verts, s32 arg1, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex,
+void EftGfx_DrawPolyScaledZ(EftGfxVert *verts, s32 layer, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex,
                               f32 zScale) {
     EftGfxScr scr[9];
     EftVec col[9];
@@ -1660,7 +1661,7 @@ void EftGfx_DrawPolyScaledZ(EftGfxVert *verts, s32 arg1, s32 arg2, s32 arg3, s32
             if (scr[i].z > 0xFFFFFF) { scr[i].z = 0xFFFFFF; }
             if (front) { scr[0].z = 0xFFFFFF; scr[i - 1].z = 0xFFFFFF; scr[i].z = 0xFFFFFF; }
             EftPrim_DrawTriangle((void *)&scr[0], (void *)&scr[i - 1], (void *)&scr[i], &verts[0].uv, &verts[i - 1].uv, &verts[i].uv, &col[0],
-                          &col[i - 1], &col[i], arg2, arg3, arg1, (s32)(z * zScale), tex);
+                          &col[i - 1], &col[i], arg2, arg3, layer, (s32)(z * zScale), tex);
         }
     }
 }

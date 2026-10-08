@@ -32,15 +32,15 @@ typedef struct BtlCharApiChr {
     /* 0x000C */ s32 objId;         /* BtlObj_Get index of this fighter's object */
     /* 0x0010 */ Vec4 pos;          /* world position (BtlChar_GetPos returns its address) */
     /* 0x0020 */ u8 unk20[0x420 - 0x20];
-    /* 0x0420 */ Vec4 camUnk420;    /* point the camera-shake distance is measured from */
+    /* 0x0420 */ Vec4 camUnk420;    /* ChrCam.eye (btl_char_cam.h): the wanted camera position; the camera-shake distance is measured from it */
     /* 0x0430 */ Vec4 camPos;       /* fighter camera position */
     /* 0x0440 */ Vec4 camRot;       /* fighter camera rotation */
     /* 0x0450 */ u8 unk450[0x460 - 0x450];
-    /* 0x0460 */ Vec4 camUnk460;    /* end point of the demo camera's stage trace */
+    /* 0x0460 */ Vec4 camUnk460;    /* ChrCam.bodyPos: copy of the object's body position (+0xFA0); end point of the demo camera's stage trace */
     /* 0x0470 */ u8 camShake[0x494 - 0x470]; /* CamShake_Add target (ChrCam_AddShake) */
-    /* 0x0494 */ s32 camUnk494;     /* returned by BtlCharApi_GetCamPose */
+    /* 0x0494 */ s32 camUnk494;     /* ChrCam.hit: 1 = the stage is between target and eye; returned by BtlCharApi_GetCamPose */
     /* 0x0498 */ u8 unk498[0x4A0 - 0x498];
-    /* 0x04A0 */ f32 camUnk4A0;
+    /* 0x04A0 */ f32 camUnk4A0;     /* ChrCam.yaw: yaw of the follow camera (BtlCharApi_GetCamYaw) */
     /* 0x04A4 */ u8 unk4A4[0x4B8 - 0x4A4];
     /* 0x04B8 */ s32 camShakeOn;    /* ChrCam_AddShake only shakes when non-zero */
     /* 0x04BC */ u8 unk4BC[0x948 - 0x4BC];
@@ -56,7 +56,7 @@ typedef struct BtlCharApiChr {
     /* 0x0E5C */ s32 skillCount3;        /* counter, full at 3 */
     /* 0x0E60 */ s32 unkE60;        /* counter, full at 5 */
     /* 0x0E64 */ u8 unkE64[0xEFC - 0xE64];
-    /* 0x0EFC */ f32 stepFrame[4];     /* length not known; summed by BtlCharApi_GetRushSequenceFrame */
+    /* 0x0EFC */ f32 stepFrame[4];     /* five entries in btl_act_super.h (f32 stepFrame[5]); summed by BtlCharApi_GetRushSequenceFrame */
     /* 0x0F0C */ u8 unkF0C[0x1278 - 0xF0C];
     /* 0x1278 */ s32 injectOn;      /* input comes from the three fields below (btl_input.h) */
     /* 0x127C */ u32 injectButtons;
@@ -87,7 +87,7 @@ typedef struct BtlCharApiObj {
     /* 0xC84 */ u8 unkC84[0xCAC - 0xC84];
     /* 0xCAC */ s8 hitCount;
     /* 0xCAD */ s8 hitIndex;          /* expected to be ~hitCount */
-    /* 0xCAE */ s8 attrCount;       /* number of attribute words below (BtlObjAnim_TestEvent) */
+    /* 0xCAE */ s8 attrCount;       /* eventCount in btl_obj_anim.h: number of animation events (BtlObjAnim_TestEvent) */
 } BtlCharApiObj;
 
 /* One playing sound of a side (0xC bytes). BtlCharSnd_StoreHandle fills a slot, BtlCharSnd_StopUnrequestedLoops stops it with Snd_StopHandle. */
@@ -106,7 +106,7 @@ typedef struct BtlCharApiSoundSet {
 typedef struct BtlCharApiMgr {
     /* 0x00 */ s32 count;
     /* 0x04 */ BtlCharApiChr *chars;
-    /* 0x08 */ void *sounds;
+    /* 0x08 */ void *sounds;            /* the one-shot sound sets; the looping sets follow */
     /* 0x0C */ BtlCharApiSoundSet *loopSounds; /* one per side */
     /* 0x10 */ u8 unk10[0x1C - 0x10];
     /* 0x1C */ s32 unk1C;               /* counter, full at 90 */
@@ -132,7 +132,7 @@ void BtlCharApi_SetHeldFlagAB(s32 objId);
 void BtlCharApi_PlaySoundAt(Vec4 *pos, s32 kind, s32 id, f32 near, f32 far);
 s32 BtlCharApi_PlayTechniqueSound(s32 objId, u32 n); /* result undefined, see the source */
 s32 BtlCharApi_GetSoundCount(s32 side);
-void BtlCharApi_GetSound(s32 side, s32 n, s32 *handle, s32 *out3, s32 *out4);
+void BtlCharApi_GetSound(s32 side, s32 n, s32 *handle, s32 *bankMask, s32 *id);
 void BtlCharApi_ObjClearMaskBit3(s32 objId);
 void BtlCharApi_ObjSetMaskBit3(s32 objId);
 s32 BtlCharApi_ObjTestFlagBit21(s32 objId);
@@ -151,14 +151,14 @@ s32 BtlCharApi_ObjGetAttrKind(s32 objId, u64 mask);
 f32 BtlCharApi_GetRushSequenceFrame(s32 objId);
 f32 BtlCharApi_ObjGetAnimFrame(s32 objId);
 f32 BtlCharApi_ObjGetAnimStep(s32 objId);
-s32 BtlCharApi_ObjQuery24D610(s32 objId, s32 arg1, s32 arg2);
+s32 BtlCharApi_ObjQuery24D610(s32 objId, s32 mask, s32 what);
 s32 BtlCharApi_GetAnimId(s32 objId);
 void *BtlCharApi_GetAnimFlags(s32 objId);
 s32 BtlCharApi_TestFlag2B(s32 objId);
 s32 BtlCharApi_GetCamPose(s32 objId, Vec4 *pos, Vec4 *rot);
 f32 BtlCharApi_GetCamYaw(s32 objId);
 s32 BtlCharApi_HasCamPriority(s32 objId);
-void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 arg3, f32 arg4);
+void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 strength, f32 time);
 s32 BtlCharApi_IsCamShown(s32 objId);
 void BtlCharApi_GetCamBodyPos(s32 objId, Vec4 *out);
 s32 BtlCharApi_GetReplayViewSide(void);
@@ -279,7 +279,7 @@ typedef struct BtlCapiBChr {
     /* 0x1560 */ Vec4 warpPos;      /* taken when held flag 0xFC is seen */
     /* 0x1570 */ Vec4 warpRot;      /* taken when held flag 0xFD is seen */
     /* 0x1580 */ u8 unk1580[0x1594 - 0x1580];
-    /* 0x1594 */ s32 switchPrompt;  /* >= 2 while a switch prompt is open; -1 each frame */
+    /* 0x1594 */ s32 switchPrompt;  /* techClass in btl_param.h / btl_input.h: the technique class 2..4 whose button command is watched this frame; -1 each frame */
     /* 0x1598 */ u8 unk1598[0x1600 - 0x1598];
 } BtlCapiBChr; /* size 0x1600 */
 
@@ -531,7 +531,7 @@ s32 BtlCtrl_CanAct(s32 player);
 /* --- the character-change request, for the loader --- */
 s32 BtlChange_IsPendingType0(s32 player);
 s32 BtlChange_IsPendingType1(s32 player);
-void BtlChange_GetArgs(s32 *a, s32 *b, s32 *c, s32 *d, s32 *e, s32 *f, s32 *g);
+void BtlChange_GetArgs(s32 *chara, s32 *costume, s32 *variant, s32 *animChara, s32 *animChara2, s32 *voiceChara, s32 *slot);
 void BtlChange_NotifyTaken(void);
 void BtlChange_NotifyLoaded(void);
 s32 BtlChange_IsReady(void);

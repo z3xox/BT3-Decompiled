@@ -88,14 +88,14 @@ extern f32 BtlUtil_ClampF(f32 v, f32 lo, f32 hi);
 extern f32 BtlUtil_MaxF(f32 a, f32 b);
 extern f32 BtlUtil_MinF(f32 a, f32 b);
 extern void ChrCam_EndCut(BtlActAChr *chr);
-extern void ChrCam_RequestCut(BtlActAChr *chr, s32 arg1, s32 arg2);
+extern void ChrCam_RequestCut(BtlActAChr *chr, s32 table, s32 index);
 
 extern s32 BtlDecide_Main(BtlActAChr *chr, u32 mask);
 extern s32 BtlDecide_Attack(BtlActAChr *chr, u32 mask);
 extern s32 BtlDecide_QueueAttack(BtlActAChr *chr, s32 action);
 extern s32 BtlAct_QueueComboFinish(BtlActAChr *chr);
 extern f32 BtlAtk_GetLaunchSpeed(BtlActAChr *chr);
-extern f32 BtlAtk_GetLaunchAngleBOf(BtlActAChr *chr, s32 arg);
+extern f32 BtlAtk_GetLaunchAngleBOf(BtlActAChr *chr, s32 id);
 extern s32 BtlAtk_GetVoiceKind(BtlActAChr *chr);
 extern s32 BtlParam_GetFlags2(BtlActAChr *chr);
 extern f32 BtlParam_GetChargeRateA(BtlActAChr *chr);
@@ -1399,7 +1399,7 @@ s32 BtlAct_SmashVanishHandler(BtlActAChr *chr, s32 phase) {
     s32 *count = &chr->work[3];
     BtlActAObj *obj;
     s32 move;
-    s32 a;
+    s32 eventFrames;
     f32 turn;
 
     if (phase == 0) {
@@ -1451,9 +1451,9 @@ s32 BtlAct_SmashVanishHandler(BtlActAChr *chr, s32 phase) {
                 }
                 if (*count == 2) {
                     BtlAnim_PlaySub(chr, *anim + 2);
-                    a = BtlObjAnim_QueryEvent(obj, 1, 1, 0);
-                    a += BtlObjAnim_QueryEvent(obj, 2, 1, 0);
-                    *lead += (f32)a * 0.5f * 30.0f / 60.0f;
+                    eventFrames = BtlObjAnim_QueryEvent(obj, 1, 1, 0);
+                    eventFrames += BtlObjAnim_QueryEvent(obj, 2, 1, 0);
+                    *lead += (f32)eventFrames * 0.5f * 30.0f / 60.0f;
                     *lead = floorf(*lead + 0.5f);
                 }
                 if (*count >= 4) {
@@ -1982,10 +1982,10 @@ extern s32 BtlAct_QueueFlag21ActionB(BtlActBChr *chr); /* the same against a wal
 #define BtlParam_GetFlags2 ((s32 (*)(BtlActBChr *chr))BtlParam_GetFlags2) /* parameter +0x14, skill bits */
 extern s32 BtlParam_GetRecoverKiCost(BtlActBChr *chr); /* ki an air recovery costs */
 extern s32 BtlMember_Damage(BtlActBChr *chr, s32 amount, s32 flags);
-extern void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 arg3, f32 arg4);
+extern void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 strength, f32 time);
 extern void BtlCharApi_RumbleNear(Vec4 *pos, f32 near, f32 far, f32 power, f32 time);
 extern BtlActBGauge *BtlMember_GetActiveGauge(BtlActBChr *chr);
-extern s32 BtlAct_CheckRecoveryInput(BtlActBChr *chr, s32 arg); /* get-up input of a downed fighter: queues 0xE1..0xE6 */
+extern s32 BtlAct_CheckRecoveryInput(BtlActBChr *chr, s32 held); /* get-up input of a downed fighter: queues 0xE1..0xE6 */
 extern f32 BtlStage_GetBottom(void); /* stage: height below which a fighter is out of the arena (inferred) */
 
 /* Action 0x63: animation 0x93 after taking off toward the opponent, with the attack voice; attack inputs (mask 3)

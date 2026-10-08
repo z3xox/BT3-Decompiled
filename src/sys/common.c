@@ -6,7 +6,7 @@
 /* libc */
 extern void *memset(void *dst, s32 value, u32 size);
 
-extern void Snd_LoadBank(s32 mask, void *data, s32 unk);
+extern void Snd_LoadBank(s32 mask, void *data, s32 sync);
 
 /* File_Request is called here with a third argument (the buffer size) that it ignores. */
 #define File_RequestSized ((void *(*)(s32, void *, s32))File_Request)

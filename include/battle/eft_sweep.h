@@ -60,7 +60,7 @@ typedef struct EftEmitDef {
     /* 0x05 */ u8 delay;       /* module parameters */
     /* 0x06 */ u8 stopDelay;
     /* 0x07 */ u8 fade;
-    /* 0x08 */ u8 kind;       /* 2 and 6 are one-shots */
+    /* 0x08 */ u8 kind;       /* the start phase (`phase` of EftSetDef, eft_emit.h); 2 and 6 are one-shots */
     /* 0x09 */ u8 endPhase;
     /* 0x0A */ u8 node;       /* index into gEftEmitNodeSlot; 6 = opponent node 3 */
     /* 0x0B */ u8 dirMode;    /* 0 dir, 1 -dir, 2 / 3 perpendicular, 4 up, 5 down */
@@ -167,8 +167,8 @@ typedef struct EftEmitSet {
                                             what this union reproduces. */
     };
     /* 0x2FC */ s32 tex32;
-    /* 0x300 */ u8 *tex33;   /* entries of 0x108 bytes */
-    /* 0x304 */ u8 *tex17;   /* entries of 0x88 bytes */
+    /* 0x300 */ u8 *tex33;   /* the 16-texture sets: entries of 0x108 bytes (33 = 0x108 / 8) */
+    /* 0x304 */ u8 *tex17;   /* the 8-texture sets: entries of 0x88 bytes (17 = 0x88 / 8) */
     /* 0x308 */ u8 unk308[0x14];
     /* 0x31C */ EftOwner *owner;
 } EftEmitSet; /* size 0x320 */
@@ -327,18 +327,18 @@ typedef struct EftFollowWork {
     /* 0x5A4 */ s32 unk5A4[3];
 } EftFollowWork; /* size 0x5B0 */
 
-void EftEmit_SpawnType9(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32 arg3, s32 objId, s32 idx, f32 size,
+void EftEmit_SpawnType9(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32 srcKind, s32 objId, s32 idx, f32 size,
                         f32 scale, f32 rate, Vec4 *pos, Vec4 *dir);
-void EftEmit_SpawnType10(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32 arg3, s32 objId, s32 idx, f32 size,
+void EftEmit_SpawnType10(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32 srcKind, s32 objId, s32 idx, f32 size,
                          f32 scale, f32 rate, Vec4 *pos, Vec4 *unused, Vec4 *dir);
-void EftEmit_SpawnType15(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32 arg3, s32 objId, s32 idx, f32 size,
+void EftEmit_SpawnType15(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32 srcKind, s32 objId, s32 idx, f32 size,
                          f32 scale, f32 rate, Vec4 *pos, Vec4 *pos2, Vec4 *dir);
-void EftEmit_SpawnType12(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32 arg3, s32 objId, s32 idx, f32 size,
+void EftEmit_SpawnType12(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32 srcKind, s32 objId, s32 idx, f32 size,
                          f32 scale, f32 rate, Vec4 *pos, Vec4 *dir);
 void EftEmit_SpawnOwn(EftEmitSet *set, EftEmitState *state, EftEmitNodes *nodes, Vec4 *pos, Vec4 *dir, s32 type,
                       s32 idx, s32 flags, f32 scale);
 void EftEmit_Spawn(EftEmitSet *set, EftEmitState *state, EftEmitNodes *nodes, Vec4 *pos, Vec4 *dir, s32 objId,
-                   s32 node, s32 arg7, s32 type, s32 idx, s32 flags, f32 scale);
+                   s32 node, s32 srcKind, s32 type, s32 idx, s32 flags, f32 scale);
 void EftEmit_MarkCond(s32 objId, s32 extra, EftEmitSet *set, EftEmitState *state);
 void EftEmit_MarkKind6(EftEmitSet *set, EftEmitState *state);
 void EftEmit_KillAll(EftEmitSet *set, EftEmitState *state);

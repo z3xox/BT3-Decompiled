@@ -34,14 +34,15 @@ extern void Vec3_ScaleAdd(Vec4 *dst, Vec4 *dir, Vec4 *base, f32 s); /* dst = bas
 extern void Mtx_RotateZ(Mtx44 *dst, Mtx44 *src, f32 angle);   /* rotate about Z */
 extern void Mtx_RotateX(Mtx44 *dst, Mtx44 *src, f32 angle);   /* rotate about X */
 extern void Mtx_RotateY(Mtx44 *dst, Mtx44 *src, f32 angle);   /* rotate about Y */
-extern u64 EftVram_AddImage(EftUPtclTex *tex, s32 a, s32 b);       /* uploads the image, returns its TEX0 */
+extern u64 EftVram_AddImage(EftUPtclTex *tex, s32 tcc, s32 tfx);       /* uploads the image, returns its TEX0 */
 extern u64 EftVram_AddClut(EftUPtclTex *tex);                     /* uploads the palette, returns its block */
 
-/* Copies entries a (image) and b (palette) of a texture set into the work and remembers b as the cache slot. */
-void EftPtcl_PickTexture(EftUPtclWork *w, EftUPtclTex *tex, s32 a, s32 b) {
-    w->texA = tex[a];
-    w->texB = tex[b];
-    w->arg.texIdx = b;
+/* Copies the image entry and the palette entry of a texture set into the work and remembers the palette index as
+   the cache slot. */
+void EftPtcl_PickTexture(EftUPtclWork *w, EftUPtclTex *tex, s32 image, s32 palette) {
+    w->texA = tex[image];
+    w->texB = tex[palette];
+    w->arg.texIdx = palette;
 }
 
 /* The emitter's TEX0 for this frame: uploads image and palette the first time the set's entry is used and
@@ -1571,7 +1572,7 @@ s32 EftPtcl_SetLinger(EftVTask *task, f32 frames) {
 /* NOT MATCHING: standalone, 2 instructions (a `bne` that is `bnel` here, and the branch after it one instruction
    short). It matches as written once EftPtcl_PickTexture is DEFINED above it in the same file (checked with a stand-in
    definition): the head of this module, 0x182CE8..0x1853C8, is the same translation unit. */
-s32 EftPtcl_SetTexture(EftVTask *task, void *res, s32 a, s32 b) {
+s32 EftPtcl_SetTexture(EftVTask *task, void *res, s32 image, s32 palette) {
     EftPtclWork *w;
 
     if (task == NULL) {
@@ -1584,7 +1585,7 @@ s32 EftPtcl_SetTexture(EftVTask *task, void *res, s32 a, s32 b) {
     if (!(w->flags & EFT_PTCL_ALIVE)) {
         return 0;
     }
-    EftPtcl_PickTexture(w, res, a, b);
+    EftPtcl_PickTexture(w, res, image, palette);
     return 1;
 }
 

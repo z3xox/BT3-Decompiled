@@ -39,8 +39,8 @@ extern s32 BattleSide_GetControl(s32 side);
 extern void BtlCharApi_GetCamPose(s32 objId, Vec4 *pos, Vec4 *rot); /* the fighter camera's pose */
 extern s32 BtlCharApi_HasCamPriority(s32 objId);                /* the fighter camera's priority */
 extern s32 BtlCharApi_GetReplayViewSide(void);
-extern s32 StgCol_TraceSphere(s32 obj, void *seg, Vec4 *hitPos, f32 *frac, void *unk);
-extern s32 BtlStage_FindZoneNear(s32 arg0, Vec4 *pos);
+extern s32 StgCol_TraceSphere(s32 zoneIdx, void *seg, Vec4 *hitPos, f32 *frac, void *tri);
+extern s32 BtlStage_FindZoneNear(s32 zone, Vec4 *pos);
 extern s32 D_002FF280[2];
 
 extern View gDbgCamView;
@@ -133,7 +133,7 @@ void View_BuildProjection(View *view) {
 
 /* Stores the projection parameters (the larger aspect factor becomes 1) and rebuilds the projection. */
 void View_SetProjection(View *view, Vec4 *screenSize, f32 screenDist, f32 aspectX, f32 aspectY, f32 centerX,
-                        f32 centerY, f32 zMin, f32 zMax, f32 nearZ, f32 farZ, f32 unk258) {
+                        f32 centerY, f32 zMin, f32 zMax, f32 nearZ, f32 farZ, f32 projScale) {
     Vec4_Copy(&view->screenSize, screenSize);
     view->screenDist = screenDist;
     view->centerX = centerX;
@@ -142,7 +142,7 @@ void View_SetProjection(View *view, Vec4 *screenSize, f32 screenDist, f32 aspect
     view->zMax = zMax;
     view->nearZ = nearZ;
     view->farZ = farZ;
-    view->projScale = unk258;
+    view->projScale = projScale;
     view->aspectX = aspectX;
     view->aspectY = aspectY;
     if (aspectX > 1.0f) {
@@ -339,7 +339,7 @@ void BtlCam_UpdateView(s32 side) {
 }
 
 /* Segment test from `to` towards `from` against the stage collision: where a camera may stand. */
-s32 BtlCam_TraceStage(Vec4 *out, Vec4 *from, Vec4 *to, f32 *frac, s32 *hitObj) {
+s32 BtlCam_TraceStage(Vec4 *out, Vec4 *from, Vec4 *to, f32 *frac, s32 *hitZone) {
     Vec4 a;
     Vec4 b;
     struct {
@@ -348,12 +348,12 @@ s32 BtlCam_TraceStage(Vec4 *out, Vec4 *from, Vec4 *to, f32 *frac, s32 *hitObj) {
         f32 radius;
     } seg;
     Vec4 hitPos;
-    u8 unk[0x40];
+    u8 tri[0x40];
     f32 t;
-    s32 objA;
-    s32 objB;
-    s32 obj;
-    s32 ret;
+    s32 zoneA;
+    s32 zoneB;
+    s32 zone;
+    s32 hit;
     f32 f;
 
     Vec4_Copy(out, from);
@@ -365,47 +365,47 @@ s32 BtlCam_TraceStage(Vec4 *out, Vec4 *from, Vec4 *to, f32 *frac, s32 *hitObj) {
     }
     Vec4_Copy(&a, to);
     Vec4_Copy(&b, from);
-    objA = BtlStage_FindZoneNear(-1, &a);
-    objB = BtlStage_FindZoneNear(-1, &b);
+    zoneA = BtlStage_FindZoneNear(-1, &a);
+    zoneB = BtlStage_FindZoneNear(-1, &b);
     Vec4_Copy(&seg.a, &a);
     Vec4_Copy(&seg.b, &b);
     seg.radius = 2.0f;
     /* The three outcomes are written out separately; a shared `hit:` label allocates registers differently. */
-    if (objA != objB) {
-        obj = objA;
-        if (StgCol_TraceSphere(obj, &seg, &hitPos, &t, unk) != 0) {
+    if (zoneA != zoneB) {
+        zone = zoneA;
+        if (StgCol_TraceSphere(zone, &seg, &hitPos, &t, tri) != 0) {
             Vec4_Copy(out, &hitPos);
-            ret = 1;
+            hit = 1;
             f = t;
         } else {
-            obj = objB;
-            if (StgCol_TraceSphere(obj, &seg, &hitPos, &t, unk) != 0) {
+            zone = zoneB;
+            if (StgCol_TraceSphere(zone, &seg, &hitPos, &t, tri) != 0) {
                 Vec4_Copy(out, &hitPos);
-                ret = 1;
+                hit = 1;
                 f = t;
             } else {
-                ret = 0;
+                hit = 0;
                 f = 1.0f;
             }
         }
     } else {
-        obj = objA;
-        if (StgCol_TraceSphere(obj, &seg, &hitPos, &t, unk) != 0) {
+        zone = zoneA;
+        if (StgCol_TraceSphere(zone, &seg, &hitPos, &t, tri) != 0) {
             Vec4_Copy(out, &hitPos);
-            ret = 1;
+            hit = 1;
             f = t;
         } else {
             f = 1.0f;
-            ret = 0;
+            hit = 0;
         }
     }
     if (frac != NULL) {
         *frac = f;
     }
-    if (hitObj != NULL) {
-        *hitObj = obj;
+    if (hitZone != NULL) {
+        *hitZone = zone;
     }
-    return ret;
+    return hit;
 }
 
 /* Which view to show full screen when neither camera asks for it. */

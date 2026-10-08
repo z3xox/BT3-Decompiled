@@ -28,7 +28,7 @@ extern void *gEftShockClass[6];
 extern void *memset(void *dst, s32 c, u32 n);
 extern void Vec4_Copy(Vec4 *dst, Vec4 *src);
 extern void EftZap_Update(EftAdTask *task);                  /* the zap task's update (file before this one) */
-extern u64 EftVram_AddImage(EftAdTex *tex, s32 a1, s32 a2);     /* TEX0 of a table entry */
+extern u64 EftVram_AddImage(EftAdTex *tex, s32 tcc, s32 tfx);     /* TEX0 of a table entry */
 extern u64 EftVram_AddClut(EftAdTex *tex);                     /* palette block of a table entry */
 extern void BtlTask_SetOwnerTag(void *task, s32 flag);             /* tags a task with its character (0x800 / 0x1000) */
 extern EftAdTask *BtlTask_GetParent(EftAdTask *task);            /* the task that owns the list this task is in */
@@ -247,7 +247,7 @@ void EftZap_SetSize(EftAdTask *task, f32 size) {
     }
 }
 
-/* Sets the zap's rate (seconds) and its frame count. No caller. */
+/* Sets the zap's life in seconds (the `rate` of the argument) and in frames. No caller. */
 void EftZap_SetRate(EftAdTask *task, f32 rate) {
     EftZap *w;
 
@@ -291,7 +291,7 @@ void EftZap_SetDelay(EftAdTask *task, s32 frames) {
     }
 }
 
-/* Sets the frames between a stop and the fade. */
+/* Sets the frames a stop is held back for (the hold of EftZap_Update). */
 void EftZap_SetFadeDelay(EftAdTask *task, s32 frames) {
     EftZap *w;
 
@@ -305,7 +305,7 @@ void EftZap_SetFadeDelay(EftAdTask *task, s32 frames) {
     }
 }
 
-/* Sets the fade length in frames. */
+/* Sets the fade length in frames, and the frames left of it. */
 void EftZap_SetFadeTime(EftAdTask *task, s32 frames) {
     EftZap *w;
 
@@ -344,7 +344,8 @@ s32 EftZap_SetFlag20000(EftAdTask *task) {
     return 0;
 }
 
-/* Writes the byte the creation argument carries at +0x40. No caller. */
+/* Sets the effect type the creation argument carries at +0x40 (what EftZap_Update asks
+   BtlScene_IsEffectStopped about). No caller. */
 s32 EftZap_SetUnk40(EftAdTask *task, s32 value) {
     EftZap *w;
 

@@ -89,7 +89,6 @@ typedef struct GfxWaterStage {
 extern GfxWaterLayer *gGfxWater;
 extern GfxClutWork gGfxDepthFog;
 extern GfxLensView *gBtlCamView;
-extern s32 D_002FE8D0[];
 extern GfxLensWork gGfxLens;
 extern GfxClutWork *gGfxAlphaKey;
 extern GfxLensCam *gBtlCam;

@@ -66,7 +66,7 @@ typedef struct EftShotParam {
     /* 0x00 */ s16 id;        /* technique id                     skill +0x10[i]   super +0x18[i] */
     /* 0x02 */ s16 level;      /*                                  skill +0x14[i]   super +0x1E[i] */
     /* 0x04 */ s8 kind;       /* 0 skill, 1 technique, 2 ultimate */
-    /* 0x05 */ s8 sub;       /*                                  skill +0x62[i]   super +0x141[i] */
+    /* 0x05 */ s8 sub;       /* hitDirKind                       skill +0x62[i]   super +0x13B[i] */
     /* 0x06 */ s8 node;       /*                                  skill +0x38[i]   super +0x90[i] */
     /* 0x07 */ s8 unk7;
     /* 0x08 */ s8 hitShape;       /*                                  skill +0x3E[i]   super +0x99[i] */
@@ -112,8 +112,8 @@ typedef struct EftHStartArg {
     /* 0x08 */ s32 unk8;
     /* 0x0C */ s32 unkC;
     /* 0x10 */ f32 time;  /* seconds; replaces EftShotParam.life */
-    /* 0x14 */ f32 speed; /* replaces EftShotParam.unk34 */
-    /* 0x18 */ f32 homing; /* replaces EftShotParam.unk38 */
+    /* 0x14 */ f32 speed; /* replaces EftShotParam.speed */
+    /* 0x18 */ f32 homing; /* replaces EftShotParam.homing */
 } EftHStartArg; /* size 0x1C */
 
 /* One technique slot of one character. */
@@ -327,7 +327,7 @@ typedef struct EftSet {
 typedef struct EftSetState {
     /* 0x000 */ void *handle[2][40]; /* task of each part, by part index */
     /* 0x140 */ u8 flag[40];         /* 2 started, 4 stopped, 0x20, 0x40, 0x80 */
-    /* 0x168 */ f32 scale[40];      /* EftSetDef.unk1C */
+    /* 0x168 */ f32 scale[40];      /* EftSetDef.scale0 */
     /* 0x208 */ u8 unk208[0xA0];
     /* 0x2A8 */ f32 trailWidth;
     /* 0x2AC */ f32 trailSplitFrames;
@@ -374,15 +374,15 @@ typedef struct EftEmitLightArg {
     /* 0x20 */ f32 life;
     /* 0x24 */ f32 length;    /* scale * 100 (kind 0) or * 800 (kind 1) */
     /* 0x28 */ f32 width;
-    /* 0x2C */ f32 inner;    /* EftSetDef.unk10 * scale */
-    /* 0x30 */ f32 jitter;    /* EftSetDef.unk14 * scale */
+    /* 0x2C */ f32 inner;    /* EftSetDef.offset * scale */
+    /* 0x30 */ f32 jitter;    /* EftSetDef.offset2 * scale */
     /* 0x34 */ s32 mode;
-    /* 0x38 */ s32 count;    /* EftSetDef.unk3 */
+    /* 0x38 */ s32 count;    /* EftSetDef.count */
     /* 0x3C */ s32 chr;
     /* 0x40 */ s32 blend;
     /* 0x44 */ s32 space;
-    /* 0x48 */ s32 delay;    /* EftSetDef.unk5 */
-    /* 0x4C */ s32 fadeFrames;    /* EftSetDef.unk6 */
+    /* 0x48 */ s32 delay;    /* EftSetDef.delay */
+    /* 0x4C */ s32 fadeFrames;    /* EftSetDef.hold */
     /* 0x50 */ s32 autoKill;
 } EftEmitLightArg; /* size 0x60 */
 
@@ -402,12 +402,12 @@ typedef struct EftEmitArgA {
     /* 0x00 */ Vec4Q pos;
     /* 0x10 */ Vec4Q dir;
     /* 0x20 */ s32 chr;
-    /* 0x24 */ s32 texIdx; /* EftSetDef.unk2 */
+    /* 0x24 */ s32 texIdx; /* EftSetDef.texIdx */
     /* 0x28 */ f32 rate;
     /* 0x2C */ f32 size;
-    /* 0x30 */ u8 *res;   /* resource object, kind 1 */
-    /* 0x34 */ s32 *texA; /* EftSetPair.a */
-    /* 0x38 */ s32 *texB; /* EftSetPair.b */
+    /* 0x30 */ u8 *res;   /* the 16-entry texture set (EftSet.array[1]; EftArcArg.texSet in the chain module) */
+    /* 0x34 */ s32 *texA; /* EftSetPair.a: not a texture, the module's first definition block (EftArcArg.param) */
+    /* 0x38 */ s32 *texB; /* EftSetPair.b: the second definition block (EftArcArg.keys) */
 } EftEmitArgA; /* size 0x40 */
 
 /* Type 17 (0x1A3640). */
@@ -416,12 +416,12 @@ typedef struct EftEmitArg17 {
     /* 0x10 */ Vec4Q dir;
     /* 0x20 */ s32 type;
     /* 0x24 */ s32 chr;
-    /* 0x28 */ s32 texIdx; /* EftSetDef.unk2 */
+    /* 0x28 */ s32 texIdx; /* EftSetDef.texIdx */
     /* 0x2C */ f32 rate;
     /* 0x30 */ f32 size;
-    /* 0x34 */ u8 *res;   /* resource object, kind 1 */
-    /* 0x38 */ s32 *texA;
-    /* 0x3C */ s32 *texB;
+    /* 0x34 */ u8 *res;   /* the 16-entry texture set (EftSet.array[1]) */
+    /* 0x38 */ s32 *texA; /* EftSetPair.a: not a texture, the ribbon's definition block (EftRibbonArg.prm) */
+    /* 0x3C */ s32 *texB; /* EftSetPair.b */
 } EftEmitArg17; /* size 0x40 */
 
 /* Type 14 (0x19D730). */
@@ -498,14 +498,14 @@ typedef struct EftVolleyShotArg {
 /* Data of an EftVolley instance task. */
 typedef struct EftVolleyWork {
     /* 0x0000 */ s32 flags;
-    /* 0x0004 */ f32 speed;   /* EftShotParam.unk34 */
-    /* 0x0008 */ f32 homing;   /* EftShotParam.unk38 */
-    /* 0x000C */ f32 unkC;   /* EftShotParam.unk30 */
-    /* 0x0010 */ f32 scale;  /* EftShotParam.unk30 */
-    /* 0x0014 */ f32 unk14;  /* EftShotParam.unk30 */
+    /* 0x0004 */ f32 speed;   /* EftShotParam.speed */
+    /* 0x0008 */ f32 homing;   /* EftShotParam.homing */
+    /* 0x000C */ f32 unkC;   /* EftShotParam.scale */
+    /* 0x0010 */ f32 scale;  /* EftShotParam.scale */
+    /* 0x0014 */ f32 unk14;  /* EftShotParam.scale */
     /* 0x0018 */ f32 unk18;
     /* 0x001C */ f32 endTime;  /* frames since the end was asked */
-    /* 0x0020 */ f32 endLimit; /* EftSetHead.unk20 */
+    /* 0x0020 */ f32 endLimit; /* EftSetHead.endFrames */
     /* 0x0024 */ u8 unk24[0xC];
     /* 0x0030 */ Vec4 aim;
     /* 0x0040 */ Vec4 dir;

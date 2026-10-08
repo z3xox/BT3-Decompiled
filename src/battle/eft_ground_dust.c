@@ -43,11 +43,11 @@ extern void Vec3_Copy(EftYVec *dst, EftYVec *src); /* copies x, y, z */
 extern void Vec4_ToInt(EftYCol *dst, EftYVec *src); /* float vector to integer vector */
 extern void Vec4_Clamp(EftYVec *dst, EftYVec *src, f32 lo, f32 hi); /* clamps each component */
 extern void Vec3_ScaleAdd(EftYVec *dst, EftYVec *dir, EftYVec *base, f32 s); /* dst = base + dir * s */
-extern void EftGfx_DrawPolyFixedZ(EftYClipVtx *verts, s32 layer, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex,
+extern void EftGfx_DrawPolyFixedZ(EftYClipVtx *verts, s32 layer, s32 unusedA, s32 unusedB, s32 front, s32 flip, u64 tex,
                                   s32 z);
-extern void EftGfx_DrawPolyScaledZ(EftYClipVtx *verts, s32 layer, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex,
+extern void EftGfx_DrawPolyScaledZ(EftYClipVtx *verts, s32 layer, s32 unusedA, s32 unusedB, s32 front, s32 flip, u64 tex,
                                    f32 zScale);
-extern u64 EftVram_AddImage(EftYTex *tex, s32 a, s32 b);
+extern u64 EftVram_AddImage(EftYTex *tex, s32 tcc, s32 tfx);
 extern u64 EftVram_AddClut(EftYTex *tex);
 extern EftYTask *BtlTaskList_AddTail(void *list, void *cls, void *arg);
 extern s32 EftQuad_InitQuad(EftQuad *q, EftQuadWork *w); /* fills a new quad from the emitter's current values */
@@ -62,10 +62,10 @@ extern EftYCamView *gBtlCamView;
 #define EFTY_CLAMP01(x) EFTY_CLAMP(x, 0.0f, 1.0f)
 
 /* Binds a line to two entries of a texture table. */
-void EftLine_SetTex(EftLineWork *w, EftYTex16 *tex, s32 a, s32 b) {
-    w->tex0 = *(a + tex->e);
-    w->tex1 = *(b + tex->e);
-    w->arg.texIdx = b;
+void EftLine_SetTex(EftLineWork *w, EftYTex16 *tex, s32 image, s32 palette) {
+    w->tex0 = *(image + tex->e);
+    w->tex1 = *(palette + tex->e);
+    w->arg.texIdx = palette;
 }
 
 /* Builds the line's GS TEX0 value, or takes the one already built for its table entry. */
@@ -419,7 +419,7 @@ void EftLine_DrawClipped(EftYTask *task) {
 #define Vec3_Scale ((void (*)(Vec4 *dst, Vec4 *src, f32 s))Vec3_Scale)
 #define Vec3_Normalize ((void (*)(Vec4 *dst, Vec4 *src))Vec3_Normalize)
 #define BtlTaskList_AddTail ((EftZTask *(*)(void *list, void *cls, void *arg))BtlTaskList_AddTail)
-#define EftLine_SetTex ((void (*)(EftBill *w, void *res, s32 a2, s32 a3))EftLine_SetTex)
+#define EftLine_SetTex ((void (*)(EftBill *w, void *res, s32 image, s32 palette))EftLine_SetTex)
 #define EftLine_LoadTex ((void (*)(EftBill *w, EftBill *w2))EftLine_LoadTex)
 #define EftLine_SetKey ((void (*)(EftBillKey *key, EftBill *w, s32 mode))EftLine_SetKey)
 #define EftLine_Animate ((void (*)(EftBill *w))EftLine_Animate)
@@ -896,7 +896,7 @@ s32 EftBill_SetUnkD8(EftZTask *task, f32 v) {
    straight to `jr ra`; standalone this compiles to a bnel and a branch to the `ld ra`. It prints OK when
    EftLine_SetTex is DEFINED earlier in the same file (tested with a dummy body), so this file and the range before
    it (0x195038..) are one source file: merge and re-diff. */
-s32 EftBill_SetTexture(EftZTask *task, s32 a1, s32 a2, s32 a3) {
+s32 EftBill_SetTexture(EftZTask *task, s32 res, s32 image, s32 palette) {
     EftBill *w;
 
     if (task == NULL) {
@@ -909,7 +909,7 @@ s32 EftBill_SetTexture(EftZTask *task, s32 a1, s32 a2, s32 a3) {
     if (!(w->flags & EFT_BILL_ALIVE)) {
         return 0;
     }
-    EftLine_SetTex(w, (void *)a1, a2, a3);
+    EftLine_SetTex(w, (void *)res, image, palette);
     return 1;
 }
 

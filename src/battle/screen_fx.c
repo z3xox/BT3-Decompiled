@@ -86,7 +86,7 @@ extern void ScrWarp_Init(void);
 extern void ScrWarp_Term(void);
 extern void ScrWarp_Reset(void);
 extern void ScrWarp_Update(void);
-extern void StgFog_Init(s32 base);
+extern void StgFog_Init(s32 cbp);
 extern void StgFog_Term(void);
 extern void StgFog_ResetColor(void);
 extern void StgFog_Draw(void);

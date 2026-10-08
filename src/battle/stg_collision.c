@@ -69,7 +69,7 @@ extern void ColBounds_OfSeg(StgColBox *out, StgColSeg *seg);      /* bounds of a
 extern void ColCapsule_GetLongSegDir(StgColVec *out, StgColVec *dir, StgColSweepCtx *ctx); /* direction of a sweep */
 
 /* Battle object body (0x24DC58..0x24E3F8). */
-extern void BtlObjBody_Update(StgColFighter *obj, s32 arg);
+extern void BtlObjBody_Update(StgColFighter *obj, s32 parts);
 extern void BtlObjBody_BeginFrame(StgColFighter *obj);
 extern void BtlObjXf_Update(StgColFighter *obj);
 extern void BtlObjPose_CalcMatrices(StgColFighter *obj);
@@ -92,8 +92,8 @@ extern void *gStgColMesh;
 extern s32 gStgColZoneMisses;
 extern s32 gStgColZoneVisits;
 extern f32 gStgColFar[];
-extern StgColVec gVu0ZeroVecW1;       /* zero vector */
-extern StgColVec gStgDownDir;       /* (0, 1, 0): down */
+extern StgColVec gVu0ZeroVecW1;       /* {0, 0, 0, 1}: "no movement" */
+extern StgColVec gStgDownDir;       /* {0, 1, 0, 1}: down */
 
 /* Queries test the zone's static mesh, whole objects and broken objects. */
 void StgCol_SetModeAll(void) {

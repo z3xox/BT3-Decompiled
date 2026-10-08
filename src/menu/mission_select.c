@@ -49,8 +49,8 @@ void MisSel_SetRank(s32 row, s32 rank) {
  */
 void MisSel_SetupBattle(void) {
     u16 items[8];
-    s32 unk1FC;
-    s32 unk10;
+    s32 changeAllowed;
+    s32 stageChange;
     MisSelDef *def = &gMisSel->missions[gMisSel->mission];
     s32 announcer;
     s32 timeLimit;
@@ -63,8 +63,8 @@ void MisSel_SetupBattle(void) {
     MisSelOpp *opp;
     u16 *item;
 
-    unk10 = def->stageChange != 0;
-    unk1FC = def->changeAllowed != 0;
+    stageChange = def->stageChange != 0;
+    changeAllowed = def->changeAllowed != 0;
     announcer = def->announcer;
     timeLimit = def->timeLimit;
     stage = def->stage;
@@ -107,8 +107,8 @@ void MisSel_SetupBattle(void) {
         }
     }
     Battle_ClearWork();
-    BattleSetup_SetRule(0, 2, bgm, timeLimit, announcer, stage, unk10);
-    BattleSetup_SetSide(1, 2, 1, count, unk1FC, 1, 0, NULL);
+    BattleSetup_SetRule(0, 2, bgm, timeLimit, announcer, stage, stageChange);
+    BattleSetup_SetSide(1, 2, 1, count, changeAllowed, 1, 0, NULL);
     for (i = 0; i < count; i++) {
         opp = &gMisSel->opps[def->opp[i]];
         memset(items, 0, sizeof(items));

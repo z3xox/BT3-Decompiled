@@ -55,7 +55,7 @@ extern void HudSprite_DrawAt(HudESprite *spr, HudERes *res, s32 additive, s32 a,
 extern void HudSprite_Draw(HudESprite *spr, HudERes *res, s32 additive);     /* HudSprite_Draw */
 extern void HudNode_Show(HudENode *node, s32 show);                        /* HudNode_Show */
 extern void HudNode_SetPos(HudENode *node, s32 x, s32 y);                    /* HudNode_SetPos */
-extern void BtlMenu_SetScript2(s32 arg);
+extern void BtlMenu_SetScript2(s32 text);
 extern HudPromptObj *BtlCtrl_GetObj(s32 side);
 extern HudERes *FontIcon_GetRes(void);
 extern HudPromptIconDef *FontIcon_GetDefs(void);

@@ -12,7 +12,7 @@
  * - The whole controller state the simulation sees for one fighter and one frame is BtlInputRecord:
  *   {buttons, stickX, stickY} plus the command word, which is a pure function of buttons, the previous record's
  *   buttons, the recCount frame counters and three pieces of fighter state (BtlInput_BuildCommands,
- *   BtlInput_TestSwitch: chr->unk1594, fighter flags 0xA2 / 0xA3, the entry of BtlSuper_GetPromptRow).
+ *   BtlInput_TestSwitch: chr->techClass, fighter flags 0xA2 / 0xA3, the entry of BtlSuper_GetPromptRow).
  *   The game's own replay feature stores only {buttons, stickX, stickY} per fighter per frame
  *   (BtlReplay_Record writes, BtlReplay_Play reads; gBattleReplay data at 0x301810: per player 9000 x u8[2] stick,
  *   9000 x u32 buttons, s32 count, s32 position = 0xD2F8 bytes, then a flag word whose bit 0 means "ran out")
@@ -96,7 +96,7 @@
 #define BTLC_CHARGE_BLAST   0x00000200 /* H CHARGE, P BLAST, neither DOWN nor UP held */
 #define BTLC_CHARGE_BLAST_U 0x00000400 /* H CHARGE, P BLAST, H UP (DOWN not held) */
 #define BTLC_CHARGE_BLAST_D 0x00000800 /* H CHARGE, P BLAST, H DOWN */
-#define BTLC_SWITCH         0x00001000 /* BtlInput_TestSwitch() while chr->unk1594 >= 2 */
+#define BTLC_SWITCH         0x00001000 /* BtlInput_TestSwitch() while chr->techClass >= 2 */
 #define BTLC_UNUSED2000     0x00002000 /* never set */
 #define BTLC_CHARGE_GUARD   0x00004000 /* H CHARGE, P GUARD, UP not held */
 #define BTLC_CHARGE_GUARD_U 0x00008000 /* H CHARGE, P GUARD, H UP */
@@ -217,7 +217,7 @@ void BtlInput_TickCounters(BtlInputCounters *c, u32 held, u32 pressed, u32 relea
 void BtlInput_RingPush(BtlInputChr *chr, u32 buttons, u32 commands, u8 *stick);
 void BtlInput_RingPop(BtlInputChr *chr, u32 *buttons, u32 *commands, u8 *stick);
 u32 BtlInput_AddDoubleTaps(BtlInputChr *chr, u32 buttons, u32 prev, s32 padStatus);
-s32 BtlInput_TestSwitch(BtlInputChr *chr, s32 arg, u32 held, u32 pressed);
+s32 BtlInput_TestSwitch(BtlInputChr *chr, s32 techClass, u32 held, u32 pressed);
 u32 BtlInput_MergeStick(BtlInputChr *chr, u32 buttons, u8 *stick);
 u32 BtlInput_BuildCommands(BtlInputChr *chr, u32 held, u32 prev);
 void BtlInput_BuildRecord(BtlInputChr *chr);

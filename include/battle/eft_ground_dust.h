@@ -291,7 +291,7 @@ s32 EftBill_SetSize(EftZTask *task, f32 size);
 s32 EftBill_SetDelay(EftZTask *task, f32 frames);
 s32 EftBill_SetEndDelay(EftZTask *task, f32 frames);
 s32 EftBill_SetUnkD8(EftZTask *task, f32 v);
-s32 EftBill_SetTexture(EftZTask *task, s32 a1, s32 a2, s32 a3);
+s32 EftBill_SetTexture(EftZTask *task, s32 res, s32 image, s32 palette);
 s32 EftBill_SetFront(EftZTask *task);
 s32 EftBill_SetType(EftZTask *task, s32 type);
 
@@ -382,7 +382,7 @@ extern void BtlCharApi_GetFrameMove(s32 objId, Vec4 *out);
 extern EftGndDustStage *BtlStage_GetList68(void);
 
 /* The sprite module's functions before this file. */
-extern void EftLine_SetTex(EftBill *w, void *res, s32 a2, s32 a3);  /* sets w->tex */
+extern void EftLine_SetTex(EftBill *w, void *res, s32 image, s32 palette);  /* sets w->tex */
 extern void EftLine_LoadTex(EftBill *w, EftBill *w2);                /* end-of-update step */
 extern void EftLine_SetKey(EftBillKey *key, EftBill *w, s32 mode);  /* loads key values */
 extern void EftLine_Animate(EftBill *w);                             /* steps the key animation */

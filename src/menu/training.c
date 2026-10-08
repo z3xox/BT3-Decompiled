@@ -379,21 +379,21 @@ void Train_NextRow(void) {
 
 /* Up (dir 0) or down (dir 1) on the current menu level. */
 void Train_MoveCursor(s32 dir) {
-    s32 d = 0;
+    s32 step = 0;
     s32 line;
 
     switch (dir) {
     case 0:
-        d = -1;
+        step = -1;
         break;
     case 1:
-        d = 1;
+        step = 1;
         break;
     }
     switch (gTrain->level) {
     case 0:
         Train_CursorGoto(0);
-        gTrain->sel[gTrain->level] += d;
+        gTrain->sel[gTrain->level] += step;
         Train_Wrap(&gTrain->sel[gTrain->level], 0, 1);
         Train_CursorGoto(1);
         Snd_PlaySe(1, 0);
@@ -402,7 +402,7 @@ void Train_MoveCursor(s32 dir) {
         break;
     case 1:
         Train_CursorGoto(0);
-        gTrain->sel[gTrain->level] += d;
+        gTrain->sel[gTrain->level] += step;
         Train_Wrap(&gTrain->sel[gTrain->level], 0, 2);
         Train_CursorGoto(1);
         Snd_PlaySe(1, 0);
@@ -410,7 +410,7 @@ void Train_MoveCursor(s32 dir) {
         TRAIN_SAY(line);
         break;
     case 2:
-        Train_MoveRow(d);
+        Train_MoveRow(step);
         break;
     case 3:
     case 4:

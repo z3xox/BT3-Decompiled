@@ -60,8 +60,8 @@ extern void BtlMember_AddBlast(BtlCollChr *chr, s32 n);    /* gauge +0x14 += n, 
 extern void BtlMember_AddMaxPower(BtlCollChr *chr, s32 n);    /* gauge +0x1C += n, clamped to 30000 */
 extern s32 BtlMember_HasAbility(BtlCollChr *chr, s32 n);     /* active member has ability n */
 extern void BtlChar_SetFxBit(BtlCollChr *chr, s32 n);    /* sets bit n of the byte set at chr + 0x1262 */
-extern void BtlChar_GetSnapDelta(BtlCollChr *chr, Vec4 *out, s32 arg2, s32 arg3);
-extern void BtlCharSnd_RequestAt(Vec4 *pos, s32 arg1, s32 sound, f32 near, f32 far); /* positional sound */
+extern void BtlChar_GetSnapDelta(BtlCollChr *chr, Vec4 *out, s32 from, s32 to);
+extern void BtlCharSnd_RequestAt(Vec4 *pos, s32 kind, s32 sound, f32 near, f32 far); /* positional sound */
 extern void BtlCharSnd_PlayCommon(BtlCollChr *chr, s32 sound); /* sound at the fighter */
 extern s32 BtlChar_IsFlagRaised(BtlCollChr *chr, s32 flag);  /* flag rose this frame */
 extern void BtlChar_RaiseFirstClash(BtlCollChr *chr);           /* first-hit bookkeeping (flag 0xE3, event 0x3C) */
@@ -78,7 +78,7 @@ extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out); /* world posi
 extern s32 BtlParam_GetFlags(BtlCollChr *chr);            /* parameter word +0x10 of the fighter's object */
 extern s32 BtlParam_GetSizeClass(BtlCollChr *chr);
 extern f32 BtlParam_GetUnkC7Scale(BtlCollChr *chr);
-extern s32 BtlObjAnim_QueryEvent(BtlCollObj *obj, u64 arg1, s32 arg2, s32 arg3);
+extern s32 BtlObjAnim_QueryEvent(BtlCollObj *obj, u64 mask, s32 layer, s32 what);
 extern s32 BtlStage_GetWaterLevel(f32 *height);
 extern s32 EftHit_GetHitCount(BtlCollHit *hit);
 
@@ -124,7 +124,7 @@ extern s32 BtlSuper_GetThrowGauge20(BtlCollChr *chr, s32 slot);
 extern s32 BtlSuper_GetThrowPartnerStep(BtlCollChr *chr, s32 slot);
 extern s32 BtlSuper_GetThrowObjectSlot(BtlCollChr *chr, s32 slot);
 extern s32 BtlSuper_GetLastStep(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetDamage(BtlCollChr *chr, s32 slot, s32 arg2, s32 arg3); /* damage */
+extern s32 BtlSuper_GetDamage(BtlCollChr *chr, s32 slot, s32 guard, s32 total); /* damage */
 
 /* Strike parameter readers (attacker, slot 0..1). */
 extern u32 BtlSkill_GetFlags(BtlCollChr *chr, s32 slot);  /* flag word */
@@ -134,8 +134,8 @@ extern s32 BtlSkill_GetReactS800(BtlCollChr *chr, s32 slot);
 extern s32 BtlSkill_GetHitSound(BtlCollChr *chr, s32 slot);  /* hit sound kind */
 extern f32 BtlSkill_GetPush(BtlCollChr *chr, s32 slot);  /* push */
 extern f32 BtlSkill_GetGuardPush(BtlCollChr *chr, s32 slot);
-extern s32 BtlSkill_GetDamage(BtlCollChr *chr, s32 slot, s32 arg2); /* damage */
-extern s32 BtlSkill_GetGuardDamage(BtlCollChr *chr, s32 slot, s32 arg2);
+extern s32 BtlSkill_GetDamage(BtlCollChr *chr, s32 slot, s32 total); /* damage */
+extern s32 BtlSkill_GetGuardDamage(BtlCollChr *chr, s32 slot, s32 total);
 extern s32 BtlSkill_GetFrames(BtlCollChr *chr, s32 slot);  /* stun frames */
 
 /* Starts a throw: fills the attacker's throw block, copies it to the victim and marks both. */
@@ -1816,12 +1816,12 @@ void BtlColl_AddActionBit(BtlCollChr *chr, s32 action) {
     chr->actBits |= bit;
 }
 
-/* Sets chr->unk1294. */
-void BtlColl_SetFramesLeftOverride(BtlCollChr *chr, s32 v) {
-    chr->framesLeftOverride = v;
+/* Sets chr->framesLeftOverride (fighter +0x1294). */
+void BtlColl_SetFramesLeftOverride(BtlCollChr *chr, s32 frames) {
+    chr->framesLeftOverride = frames;
 }
 
-/* Sets unk1294 to the number of frames the animation needs to reach `scale` times its length (rounded up). */
+/* Sets framesLeftOverride to the number of frames the animation needs to reach `scale` times its length (rounded up). */
 void BtlColl_SetFramesToReach(BtlCollChr *chr, f32 scale) {
     f32 len;
     f32 have;

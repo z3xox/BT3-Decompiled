@@ -4,7 +4,7 @@
 
 /*
  * IconWin, 0x25D290..0x25D468: a small movie window ("fl_in" / "fl_out") whose fifth texture is an icon picked
- * from a second sprite resource. Used all over the menu overlay. See battle/view_a.h.
+ * from a second sprite resource. Used all over the menu overlay. See ui/reward_window.h.
  */
 
 extern void *memset(void *dst, s32 c, u32 n);
@@ -14,8 +14,8 @@ extern void Flash_Create(Flash *flash, void *data, void *tex);
 extern void Flash_Destroy(Flash *flash);
 extern void Flash_Advance(Flash *flash);
 extern void Flash_Draw(Flash *flash);
-extern void Flash_Play(Flash *flash, s32 arg);
-extern void Flash_GotoLabel(Flash *flash, char *label, s32 arg);
+extern void Flash_Play(Flash *flash, s32 speed);
+extern void Flash_GotoLabel(Flash *flash, char *label, s32 restart);
 
 /* Defined here: this object's .sdata (0x2FF0F0). */
 IconWin *gIconWin = NULL;

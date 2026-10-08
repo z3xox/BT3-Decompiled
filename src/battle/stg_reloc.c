@@ -80,11 +80,11 @@ void BtlStage_Relocate(s32 *base) {
                 STG_RELOC(StgRelocA2 *, a1->items);
                 for (k = 0; k < a1->count; k++) {
                     StgRelocA2 *a2 = &a1->items[k];
-                    s32 o8 = (s32)a2->chain;
-                    s32 oC = (s32)a2->mtx;
+                    s32 chainOfs = (s32)a2->chain;
+                    s32 mtxOfs = (s32)a2->mtx;
 
-                    a2->chain = base + o8;
-                    a2->mtx = base + oC;
+                    a2->chain = base + chainOfs;
+                    a2->mtx = base + mtxOfs;
                 }
             }
         }

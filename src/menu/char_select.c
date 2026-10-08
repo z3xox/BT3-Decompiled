@@ -59,7 +59,7 @@ extern void ItemPanel_Draw(s32 side);
 extern void ItemPanel_Update(s32 side);
 extern void ItemHelp_Init(void *data);
 extern void ItemHelp_Term(void);
-extern void ItemHelp_Draw(s32 arg);
+extern void ItemHelp_Draw(s32 item);
 
 /* The six chips of the stage reel show the cursor's row of the stage grid. */
 void CharSel_SetStageChips(void) {
@@ -1541,8 +1541,8 @@ void CharSel_Input(s32 *running) {
 /* ---- the frame loop (0x348710) ---- */
 
 extern void Battle_ClearWork(void);
-extern void BattleSetup_SetRule(s32 screenMode, s32 mode, s32 bgm, s32 timeLimit, s32 announcer, s32 stage, s32 unk10);
-extern void BattleSetup_SetSide(s32 sideNo, s32 control, s32 pad, s32 memberCount, s32 unk1FC, s32 unk200, s32 lead,
+extern void BattleSetup_SetRule(s32 screenMode, s32 mode, s32 bgm, s32 timeLimit, s32 announcer, s32 stage, s32 stageChange);
+extern void BattleSetup_SetSide(s32 sideNo, s32 control, s32 pad, s32 memberCount, s32 changeAllowed, s32 switchEnabled, s32 lead,
                                 void *bits);
 extern void BattleSetup_SetMember(s32 sideNo, s32 idx, s32 chara, s32 costume, s32 variant, s32 cpuLevel, f32 health,
                                   void *items);
@@ -1557,7 +1557,7 @@ s32 CharSel_Run(s32 section) {
     s32 timeLimit;
     s32 announcer;
     s32 stage;
-    s32 unk10;
+    s32 stageChange;
     s32 cpuLevel;
     s32 i;
 
@@ -1622,7 +1622,7 @@ s32 CharSel_Run(s32 section) {
             }
             announcer = 1;
             timeLimit = 0;
-            unk10 = 0;
+            stageChange = 0;
             stage = gCharSel->stage->stage;
             cpuLevel = -1;
             flag[0] = 1;
@@ -1655,14 +1655,14 @@ s32 CharSel_Run(s32 section) {
                 break;
             }
             stage = gCharSel->stage->stage;
-            unk10 = gSaveData->rule[5] ^ 1;
+            stageChange = gSaveData->rule[5] ^ 1;
             announcer = gSaveData->rule[2];
             cpuLevel = CpuLevel_FromSetting(gSaveData->rule[1]);
             flag[0] = gSaveData->rule[3] ^ 1;
             flag[1] = gSaveData->rule[4] ^ 1;
         }
         Battle_ClearWork();
-        BattleSetup_SetRule(screenMode, mode, bgm, timeLimit, announcer, stage, unk10);
+        BattleSetup_SetRule(screenMode, mode, bgm, timeLimit, announcer, stage, stageChange);
         switch (gCharSel->players) {
         case 0:
             BattleSetup_SetSide(0, 0, 0, 1, 1, 1, 0, NULL);

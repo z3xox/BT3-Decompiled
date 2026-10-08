@@ -37,7 +37,8 @@ typedef struct EftJTask {
 /* Definition record of one technique effect (the record the fighter's technique table points at). */
 typedef struct EftJDef {
     /* 0x00 */ s16 id;      /* effect id: selects the look and the special cases below */
-    /* 0x02 */ s16 recType; /* copied to the hit record's type */
+    /* 0x02 */ s16 recType; /* the effect's level: EftHit_Add copies it to the hit record's level (the record's type is the
+                               constant EFT_HIT_TECH) */
     /* 0x04 */ s8 cls;     /* non-zero: EftShot_SetHeldFlagA8(objId) when the item ends; zero: fire sound */
     /* 0x05 */ s8 kind;
     /* 0x06 */ s8 unk6;
@@ -70,16 +71,16 @@ typedef struct EftJSrc {
     /* 0x08 */ s32 unk8;
     /* 0x0C */ u8 unkC[0x10];
     /* 0x1C */ s32 *pack; /* the effect's resource pack */
-    /* 0x20 */ s32 objId20;
+    /* 0x20 */ s32 objId20; /* the character index (`chr` in the other views of this record) */
     /* 0x24 */ EftJDef *def;
 } EftJSrc;
 
 /* Model set of a module (built by EftEmit_LoadSet from the pack). */
 typedef struct EftJPart {
     /* 0x00 */ u8 unk0[8];
-    /* 0x08 */ u8 type; /* 4: "muzzle" emitter of the shots module */
+    /* 0x08 */ u8 type; /* the emitter's start phase (`phase` of EftSetDef, eft_emit.h); 4: "muzzle" emitter of the shots module */
     /* 0x09 */ u8 unk9;
-    /* 0x0A */ u8 kind; /* 5: skipped by EftMulti_UpdateParts */
+    /* 0x0A */ u8 kind; /* the emitter's node slot (`node` of EftSetDef / EftEmitDef); 5: skipped by EftMulti_UpdateParts */
     /* 0x0B */ u8 unkB[0x35];
 } EftJPart; /* size 0x40 */
 
@@ -344,7 +345,7 @@ typedef struct EftJShotArg {
     /* 0x14 */ s32 index;
     /* 0x18 */ s32 count;
     /* 0x1C */ s32 kind;
-    /* 0x20 */ s32 evtIdx;
+    /* 0x20 */ s32 evtIdx; /* node slot index: EftBlastObj_Init stores it in sel[0].node */
     /* 0x24 */ s32 life;
     /* 0x28 */ f32 scale;
     /* 0x2C */ f32 speed;

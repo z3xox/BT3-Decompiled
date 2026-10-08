@@ -46,7 +46,7 @@ extern void ItemPanel_Term(s32 side);
 extern void ItemPanel_Draw(s32 side);
 extern void ItemHelp_Init(void *data);
 extern void ItemHelp_Term(void);
-extern void ItemHelp_Draw(s32 arg);
+extern void ItemHelp_Draw(s32 item);
 
 /* DP battle: adds up the cost of a side's members; with skipCur the member being chosen is left out. */
 void TeamSel_SumCost(s32 side, s32 skipCur) {
@@ -1125,8 +1125,8 @@ extern void StgGrid_MoveLeft(s32 *ids, s32 *col, s32 row);
 extern void StgGrid_MoveDown(s32 *ids, s32 *col, s32 *row, s32 rows);
 extern void StgGrid_MoveUp(s32 *ids, s32 *col, s32 *row, s32 rows);
 extern void Battle_ClearWork(void);
-extern void BattleSetup_SetRule(s32 screenMode, s32 mode, s32 bgm, s32 timeLimit, s32 announcer, s32 stage, s32 unk10);
-extern void BattleSetup_SetSide(s32 sideNo, s32 control, s32 pad, s32 memberCount, s32 unk1FC, s32 unk200, s32 lead,
+extern void BattleSetup_SetRule(s32 screenMode, s32 mode, s32 bgm, s32 timeLimit, s32 announcer, s32 stage, s32 stageChange);
+extern void BattleSetup_SetSide(s32 sideNo, s32 control, s32 pad, s32 memberCount, s32 changeAllowed, s32 switchEnabled, s32 lead,
                                 void *bits);
 extern void BattleSetup_SetMember(s32 sideNo, s32 idx, s32 chara, s32 costume, s32 variant, s32 cpuLevel, f32 health,
                                   void *items);
@@ -1989,7 +1989,7 @@ s32 TeamSel_Run(s32 section) {
     }
 
     if (result != 0) {
-        s32 handicap[2] = { 1, 1 };
+        s32 changeAllowed[2] = { 1, 1 };
 
         if (gTeamSel->stage->stage == TS_STAGE_RANDOM) {
             do {
@@ -2020,8 +2020,8 @@ s32 TeamSel_Run(s32 section) {
             timeLimit = 5;
             break;
         }
-        handicap[0] = gSaveData->rule[3] ^ 1;
-        handicap[1] = gSaveData->rule[4] ^ 1;
+        changeAllowed[0] = gSaveData->rule[3] ^ 1;
+        changeAllowed[1] = gSaveData->rule[4] ^ 1;
         cpuLevel = CpuLevel_FromSetting(gSaveData->rule[1]);
         Battle_ClearWork();
         BattleSetup_SetRule(gTeamSel->players == TEAMSEL_PLAYERS_TWO, 0, bgm, timeLimit, gSaveData->rule[2],
@@ -2029,15 +2029,15 @@ s32 TeamSel_Run(s32 section) {
         switch (gTeamSel->players) {
         case TEAMSEL_PLAYERS_VS_CPU:
             BattleSetup_SetSide(0, 0, 0, gTeamSel->side[0]->memberCount, 1, 1, 0, NULL);
-            BattleSetup_SetSide(1, 2, 1, gTeamSel->side[1]->memberCount, handicap[1], 1, 0, NULL);
+            BattleSetup_SetSide(1, 2, 1, gTeamSel->side[1]->memberCount, changeAllowed[1], 1, 0, NULL);
             break;
         case TEAMSEL_PLAYERS_TWO:
             BattleSetup_SetSide(0, 0, 0, gTeamSel->side[0]->memberCount, 1, 1, 0, NULL);
             BattleSetup_SetSide(1, 0, 1, gTeamSel->side[1]->memberCount, 1, 1, 0, NULL);
             break;
         case TEAMSEL_PLAYERS_CPU_CPU:
-            BattleSetup_SetSide(0, 2, 0, gTeamSel->side[0]->memberCount, handicap[0], 1, 0, NULL);
-            BattleSetup_SetSide(1, 2, 1, gTeamSel->side[1]->memberCount, handicap[1], 1, 0, NULL);
+            BattleSetup_SetSide(0, 2, 0, gTeamSel->side[0]->memberCount, changeAllowed[0], 1, 0, NULL);
+            BattleSetup_SetSide(1, 2, 1, gTeamSel->side[1]->memberCount, changeAllowed[1], 1, 0, NULL);
             break;
         }
         for (i = 0; i < TEAMSEL_SIDES; i++) {

@@ -48,7 +48,7 @@ extern void Vu0Cur_LoadMtx(Mtx44 *m);                        /* VU0 current matr
 extern s32 Vu0Cur_ProjectPoints(void *out, void *pos, s32 count);  /* project to screen */
 extern void ClipVtx_Set(void *vtx, void *pos, void *uv, void *col); /* fills one polygon vertex */
 extern f32 EftMath_WrapAngle(f32 angle);
-extern void EftGfx_DrawPolyAvgZFront(void *verts, s32 arg1, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex,
+extern void EftGfx_DrawPolyAvgZFront(void *verts, s32 blend, s32 unusedA, s32 unusedB, s32 front, s32 flip, u64 tex,
                                      s32 zOfs);
 
 extern void *BtlPool_GetCurrent(void);
@@ -63,8 +63,8 @@ extern s32 BtlScene_IsEffectHidden(s32 objId, s32 kind);
 extern void *BtlTask_CreateChildList(EftOTask *task, s32 count, s32 workSize);
 extern EftOTask *BtlTaskList_AddTail(void *list, void *cls, void *arg);
 extern void BtlTask_SetDead(EftOTask *task);                  /* kill a task */
-extern u64 EftVram_AddTex(void *entry, s32 a, s32 b);        /* advances a texture, returns TEX0 */
-extern u64 EftVram_AddImage(void *set, s32 a, s32 b);
+extern u64 EftVram_AddTex(void *entry, s32 tcc, s32 tfx);        /* advances tcc texture, returns TEX0 */
+extern u64 EftVram_AddImage(void *set, s32 tcc, s32 tfx);
 extern u64 EftVram_AddClut(void *entry);
 extern void EftTexSet_Load32(void *set, s32 *pack);            /* binds a texture set to a pack */
 

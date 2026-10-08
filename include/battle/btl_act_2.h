@@ -15,13 +15,13 @@ typedef struct BtlActCPose {
     /* 0x00 */ Vec4 pos;
     /* 0x10 */ Vec4 rot;
     /* 0x20 */ u8 unk20[0x40 - 0x20];
-    /* 0x40 */ Vec4 move;      /* y = fall pitch */
+    /* 0x40 */ Vec4 move;      /* whole movement of the previous frame (`moved` in BtlActBPose); its length is the real speed */
     /* 0x50 */ u8 unk50[0x70 - 0x50];
     /* 0x70 */ Vec4 impulse;
-    /* 0x80 */ Vec4 vel;
-    /* 0x90 */ f32 pitch;
-    /* 0x94 */ f32 facing;
-    /* 0x98 */ f32 speed;
+    /* 0x80 */ Vec4 vel;       /* unit direction of travel (`dir` in the other pose views) */
+    /* 0x90 */ f32 pitch;      /* heading pitch */
+    /* 0x94 */ f32 facing;     /* heading yaw (`yaw` in the other pose views) */
+    /* 0x98 */ f32 speed;      /* along the travel direction, per frame */
     /* 0x9C */ f32 fallSpeed;
     /* 0xA0 */ f32 leanX;
     /* 0xA4 */ f32 leanZ;
@@ -257,13 +257,13 @@ typedef struct BtlActEPose {
     /* 0x00 */ Vec4 pos;
     /* 0x10 */ Vec4 rot;
     /* 0x20 */ u8 unk20[0x40 - 0x20];
-    /* 0x40 */ Vec4 moved;     /* its length is compared with a pitch: the movement of this frame */
+    /* 0x40 */ Vec4 moved;     /* whole movement of the previous frame: its length is compared with a speed */
     /* 0x50 */ u8 unk50[0x80 - 0x50];
-    /* 0x80 */ Vec4 vel;       /* direction of travel */
-    /* 0x90 */ f32 pitch;
-    /* 0x94 */ f32 facing;
-    /* 0x98 */ f32 speed;      /* forward pitch */
-    /* 0x9C */ f32 fallSpeed;      /* vertical pitch */
+    /* 0x80 */ Vec4 vel;       /* unit direction of travel (`dir` in the other pose views) */
+    /* 0x90 */ f32 pitch;      /* heading pitch */
+    /* 0x94 */ f32 facing;     /* heading yaw (`yaw` in the other pose views) */
+    /* 0x98 */ f32 speed;      /* forward speed */
+    /* 0x9C */ f32 fallSpeed;  /* vertical speed, positive = down */
 } BtlActEPose;
 
 /* Active member's gauge block (BtlMember_GetActiveGauge). */

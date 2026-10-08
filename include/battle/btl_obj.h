@@ -17,7 +17,7 @@
  *   0x10E0C  List usedObjs              objects in creation order; the walk order of every pass
  *   0x10E40  u8 charaWork[2][0x1A0C0]   big per-fighter buffer, given to type 0 objects with id < 3 (the test
  *                                       allows three; a third would overlap the pool that follows)
- *   0x44FC4  f32 unk44FC4               = 2.0 at init; getter / setter only
+ *   0x44FC4  f32 defaultAnimStep        = 2.0 at init; the step BtlObjAnim gives a new player
  *   0x45000  part pool                  512 nodes of 0xE0 + free list   (size 0x1C010)
  *   0x61010  pool                       4 nodes of 0x70 + free list     (size 0x1D0)
  *   0x611E0  pool                       free list at +0xA140; initialised by ObjShadow_InitPool

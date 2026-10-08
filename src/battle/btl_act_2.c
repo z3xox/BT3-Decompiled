@@ -37,7 +37,7 @@ extern s32 BtlAct_GetQueued(Chr *chr);
 extern f32 BtlAct_GetFacingRelCam(Chr *chr);
 extern void BtlAct_SetPitchMotion(Chr *chr, s32 motionUp, s32 motionDown, s32 recalc);
 extern s32 BtlAct_IsAirMotion(Chr *chr, s32 useSaved);
-extern void BtlAct_PushDir(Chr *chr, Vec4 *dir, f32 speed, f32 arg);
+extern void BtlAct_PushDir(Chr *chr, Vec4 *dir, f32 speed, f32 max);
 
 extern s32 BtlAnim_Advance(Chr *chr, s32 flags);
 extern void BtlAnim_AdvanceLoop(Chr *chr, s32 flags);
@@ -141,11 +141,11 @@ extern s32 BtlParam_GetChargeLoopSound(Chr *chr);
 extern s32 BtlParam_GetMaxPowerSound(Chr *chr);
 extern s32 BtlParam_CanFly(Chr *chr);
 extern f32 BtlParam_GetTypeValueB(Chr *chr);
-extern s32 BtlDecide_Common(Chr *chr, s32 arg);
+extern s32 BtlDecide_Common(Chr *chr, s32 mask);
 extern void BtlDecide_Main(Chr *chr, s32 mask);
-extern s32 BtlDecide_Attack(Chr *chr, s32 arg);
+extern s32 BtlDecide_Attack(Chr *chr, s32 mask);
 extern void BtlDecide_QueueAttack(Chr *chr, s32 attack);
-extern s32 BtlAct_CheckRecoveryInput(Chr *chr, s32 arg);
+extern s32 BtlAct_CheckRecoveryInput(Chr *chr, s32 held);
 extern s32 BtlAct_GetDownAction(Chr *chr);
 extern s32 BtlAct_GetEvasionAttack(Chr *chr);
 extern s32 BtlAct_GetIdleFollowUp(Chr *chr);
@@ -1747,7 +1747,7 @@ extern s32 BtlChar_IsFlagRaised(BtlActDChr *chr, s32 n);
 #define BtlChar_SetLookEnabled ((void (*)(BtlActDChr *chr, s32 enabled))BtlChar_SetLookEnabled)
 #define BtlCharSnd_PlayCommon ((void (*)(BtlActDChr *chr, s32 id))BtlCharSnd_PlayCommon)
 extern void BtlCharApi_RumbleNear(Vec4 *pos, f32 near, f32 far, f32 power, f32 time);
-extern void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 arg3, f32 arg4);
+extern void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 strength, f32 time);
 #define ChrCam_RequestCut ((void (*)(BtlActDChr *chr, s32 table, s32 index))ChrCam_RequestCut)
 extern void ChrCam_EndCut(BtlActDChr *chr);
 
@@ -3370,7 +3370,7 @@ extern f32 BtlOpp_GetYawFromItsFacing(BtlActEChr *chr);
 #define BtlAnim_SetDuration ((void (*)(BtlActEChr *chr, f32 seconds))BtlAnim_SetDuration)
 extern s32 BtlMove_CircleOpponent(BtlActEChr *chr, s32 side, s32 lead, f32 baseYaw, f32 speed);
 #define BtlMove_SetLeanX ((void (*)(BtlActEChr *chr, f32 v))BtlMove_SetLeanX)
-#define ChrCam_RequestCut ((void (*)(BtlActEChr *chr, s32 arg1, s32 arg2))ChrCam_RequestCut)
+#define ChrCam_RequestCut ((void (*)(BtlActEChr *chr, s32 table, s32 index))ChrCam_RequestCut)
 
 #define BtlAnim_Play ((void (*)(BtlActEChr *chr, s32 anim, f32 blend))BtlAnim_Play)
 #define BtlAnim_Request ((void (*)(BtlActEChr *chr, s32 anim, f32 blend))BtlAnim_Request)

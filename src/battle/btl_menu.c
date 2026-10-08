@@ -234,8 +234,8 @@ u16 *BtlMenu_GetItemText(s32 n) {
     return BtlMenu_GetText(n + 8);
 }
 
-/* Text of the controls page for a pad type and a control configuration. */
-u16 *BtlMenu_GetControlsText(s32 padType, s32 config) {
+/* Text of the controls page for a pad type and a tutorial number (gProgress + 0x7F4): 40 texts per pad type. */
+u16 *BtlMenu_GetControlsText(s32 padType, s32 tutorial) {
     s32 base;
 
     if (padType == 0) {
@@ -247,7 +247,7 @@ u16 *BtlMenu_GetControlsText(s32 padType, s32 config) {
     } else {
         base = 0x9E;
     }
-    return BtlMenu_GetText(base + config);
+    return BtlMenu_GetText(base + tutorial);
 }
 
 /* Finds the item with an id in a menu or its sub menus (depth first). */

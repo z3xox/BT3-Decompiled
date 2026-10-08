@@ -24,10 +24,11 @@ typedef struct McFlowProgress {
     /* 0x018 */ u8 unk18[0x674];
     /* 0x68C */ s32 replayFlags;      /* bit 0 picks the retry question of the scan flow */
     /* 0x690 */ s32 unk690[3];
-    /* 0x69C */ McFlowSlotInfo slot[8];
+    /* 0x69C */ McFlowSlotInfo slot[8]; /* seven are used (MCFLOW_REPLAY_SLOTS); the eighth would lie over +0x7D0 */
 } McFlowProgress;
 
-/* Card state per port, kept by the card layer (local view; the names are readings of how it is used). */
+/* Card state per port, kept by the card layer: McCardPort of sys/memcard.h, which names +0x04 ret, +0x14 format,
+   +0x1C size and types +0x20 as void *buf (local view; the names are readings of how it is used here). */
 typedef struct McCardInfo {
     /* 0x00 */ s32 flags;         /* bit 0 after a read: the file was not usable */
     /* 0x04 */ s32 callResult;
@@ -45,7 +46,7 @@ extern McFlowSave *gSaveData;
 extern McCardInfo gMcCardPort[2];
 #define gMcCard gMcCardPort
 
-/* The card layer below (0x115478..0x1198D8). Names from config/symbols/stgm_a.txt. */
+/* The card layer below (src/sys/memcard.c; its own header sys/memcard.h types the request as McCardFile). */
 extern void McCard_ResetStep(void);
 extern s32 McCard_GetInfo(s32 port);
 extern void McCard_Probe(s32 port);
@@ -54,7 +55,7 @@ extern s32 McCard_CreateSave(s32 port, McFlowReq *req);
 extern s32 McCard_WriteSave(s32 port, void *buf, s32 size, McFlowReq *req);
 extern s32 McCard_ReadFile(s32 port, void *buf, s32 size, McFlowReq *req);
 extern s32 McCard_CheckFiles(s32 port, McFlowReq *req);
-extern void McCardFile_SetNames(McFlowReq *req, char *dir, s32 slot, s32 a3, s32 kind);
+extern void McCardFile_SetNames(McFlowReq *req, char *dir, s32 slot, s32 unused, s32 kind);
 extern s32 McCard_IsFatalError(s32 code);
 extern s32 McCard_FindSystemSave(s32 port);
 extern s32 McCard_FindSave(s32 port, McFlowReq *req);

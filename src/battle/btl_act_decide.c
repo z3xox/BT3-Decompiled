@@ -270,7 +270,7 @@ s32 BtlAct_QueueTransform(BtlActJChr *chr, s32 index) {
     s32 cost = BtlParam_GetSlotCost(chr, index);
     s32 seq = BtlParam_GetSlotA0(chr, index);
     s32 kind = BtlParam_GetSlotA4(chr, index);
-    s32 unk24 = BtlParam_GetSlotA8(chr, index);
+    s32 objId = BtlParam_GetSlotA8(chr, index);
     s32 action;
 
     chr->form.index = index;
@@ -279,7 +279,7 @@ s32 BtlAct_QueueTransform(BtlActJChr *chr, s32 index) {
     chr->form.cost = cost;
     chr->form.partner = -1;
     chr->form.kind = kind;
-    chr->form.objId = unk24;
+    chr->form.objId = objId;
     chr->form.objCostume = 0;
     chr->form.variant = BtlMember_GetActiveGauge(chr)->variant;
     chr->form.animChara = chara;
@@ -403,7 +403,7 @@ s32 BtlAct_QueueFusion(BtlActJChr *chr, s32 index, s32 partner) {
     s32 chara = BtlParam_GetFusionResult(chr, index);
     s32 cost = BtlParam_GetCostAE(chr, index);
     s32 seq = BtlParam_GetFusionSequence(chr, index);
-    s32 unk24 = BtlParam_GetUnkB7(chr, index);
+    s32 objId = BtlParam_GetUnkB7(chr, index);
     s32 i;
     s32 action;
 
@@ -422,7 +422,7 @@ s32 BtlAct_QueueFusion(BtlActJChr *chr, s32 index, s32 partner) {
     chr->form.index = index;
     chr->form.cost = cost;
     chr->form.kind = 5;
-    chr->form.objId = unk24;
+    chr->form.objId = objId;
     chr->form.chara = chara;
     chr->form.costume = 0;
     chr->form.partner = partner;
@@ -720,7 +720,7 @@ s32 BtlAct_CheckSkillInput(BtlActJChr *chr) {
  *       14 0xDA   15 0xCF   16 0xD0   17 0xD5   18 0xD6   19 0xD4   20 0xB8   22 0xBA
  *       23 / 24 / 25  0xD3, and stunTime = 15 / 30 / 45 frames unless it is already running
  *       26 / 27 / 28  0xE0, and stunTime = 15 / 30 / 45 the same way
- *       29, 30  0x131 + unkE9C      31 0xDB   32 0xDC   33 0xDD   34 0x137 + unkE9C
+ *       29, 30  0x131 + thrSlot      31 0xDB   32 0xDC   33 0xDD   34 0x137 + thrSlot
  *       35 0xC7   36 0xC8   37 0xBC   38 0xD1   39 0xCB   40 0xDF   41 0x134 + unkFF4
  *       42 0xC6   43 0xC4   44 0xC5   45 0xC6   46 0xC4   47 0xC6   48 0xC6   49 0xBF
  *       2, 3, 21 and anything else  0xC0
@@ -958,7 +958,7 @@ s32 BtlAct_QueueReaction(BtlActJChr *chr, u32 reaction) {
 }
 
 /* Action that follows actions 0x12D..0x12F, 0x133..0x135 and 0x139..0x13B, by `kind` 0..7 (5 and others: 0xCF). */
-s32 BtlAct_GetLandingAction(BtlActJChr *chr, s32 arg1, u32 kind) {
+s32 BtlAct_GetLandingAction(BtlActJChr *chr, s32 slot, u32 kind) {
     s32 action = 0xCF;
 
     switch (kind) {

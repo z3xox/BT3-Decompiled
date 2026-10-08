@@ -92,7 +92,7 @@ typedef struct ZaChrEntry {
     /* 0x00 */ u8 unk0[8];
     /* 0x08 */ u16 flags;       /* bit 0 / bit 1: two character classes that some items refuse */
     /* 0x0A */ u8 unkA[4];
-    /* 0x0E */ u16 slots;       /* item slots the character has */
+    /* 0x0E */ u16 slots;       /* item slots the character has at level 0 (baseLevel in ChrTblEntry / VChrEntry) */
     /* 0x10 */ u8 unk10[0x2C];
 } ZaChrEntry; /* 0x3C */
 

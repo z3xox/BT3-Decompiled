@@ -1,0 +1,29 @@
+FIELD	include/battle/eft_shot_tech.h	EftJDef	recType	level	HIGH	EftHit_Add (eft_core.c:122) does rec->level = rec->src->def->level from definition +0x02; rec->type is the constant EFT_HIT_TECH; eft_shot.h and eft_emit.h name it level.
+FIELD	include/battle/eft_shot_tech.h	EftJSrc	objId20	chr	MEDIUM	Only use is BtlCharApi_GetCostume(src->objId20) (eft_shot_tech.c:1090); the other views of the same record name +0x20 chr.
+FIELD	include/battle/eft_shot_tech.h	EftJPart	type	phase	HIGH	Same 0x40 record as EftSetDef (eft_emit.h), whose +0x08 is phase (start phase); the test `== 4` is the event-started muzzle emitter.
+FIELD	include/battle/eft_shot_tech.h	EftJPart	kind	node	HIGH	Same 0x40 record as EftSetDef / EftEmitDef, whose +0x0A is node (index into gEftEmitNodeSlot).
+NAME	EftMulti_IsPartKind5	EftMulti_IsPartNode5	MEDIUM	It tests byte +0x0A of the emitter definition, which is the node slot in EftSetDef / EftEmitDef, not a kind.
+FIELD	include/battle/eft_shot_tech.h	EftJShotArg	evtIdx	nodeSlot	MEDIUM	EftBlastObj_Init (eft_blast_obj.c:368) stores it in sel[0].node; the caller passes 0..4 picked by which event bit fired.
+FIELD	include/battle/eft_sweep.h	EftEmitDef	kind	phase	HIGH	Same record as EftSetDef (eft_emit.h:268) where +0x08 is phase, beside endPhase at +0x09; EftEmit_Spawn tests it against 2 and 6 together with endPhase.
+FIELD	include/battle/eft_sweep.h	EftEmitSet	tex33	tex16	MEDIUM	Entries are 0x108 bytes = a 16-texture set; 33 is only 0x108 / 8.
+FIELD	include/battle/eft_sweep.h	EftEmitSet	tex17	tex8	MEDIUM	Entries are 0x88 bytes = an 8-texture set; 17 is only 0x88 / 8.
+FIELD	include/battle/eft_draw_modules.h	EftTTaskList	count	head	HIGH	The record is BtlTaskList (eft_sprite_anim.h): +0x04 is BtlTask *head; eft_chain.c:2078 only tests it against 0 (list not empty); the type should become a pointer.
+FIELD	include/battle/eft_struggle.h	EftRList	first	head	HIGH	The record is BtlTaskList, whose +0x04 is head (eft_sprite_anim.h:72); eft_struggle.c walks tasks from it.
+FIELD	include/battle/eft_surface_out.h	EftSurfD	param30	specular	HIGH	+0x12C0 is the EftSurfParam block and its +0x30 is specular (eft_stage_2.c:1881 passes rt->param.specular as the last argument of EftGfx_LightClutSpecular).
+NAME	EftSurf_SetParam30	EftSurf_SetSpecular	MEDIUM	Its whole body is gEftSurf->param30 = v, the specular factor of the surface parameters.
+FIELD	include/battle/eft_stage_2.h	EftGeyserSteamArg	gravity	accel	MEDIUM	Same argument record as EftSteamArg (eft_water.h:142), whose +0x34 is accel (added to the vertical speed every frame).
+FIELD	include/battle/eft_stage_2.h	EftSurfTex	ofs0	imageOfs	MEDIUM	Record has the layout of EftVramImage (eft_detect.h): +0x38 / +0x3C are image / clut, and eft_stage_2.c:1070 sets ptr0 = ofs0 + file.
+FIELD	include/battle/eft_stage_2.h	EftSurfTex	ofs4	clutOfs	MEDIUM	Same: eft_stage_2.c:1071 sets ptr4 = ofs4 + file, and +0x3C is clut in EftVramImage.
+FIELD	include/battle/eft_stage_2.h	EftSurfTex	ptr0	image	MEDIUM	+0x38 is image in EftVramImage (eft_detect.h:304).
+FIELD	include/battle/eft_stage_2.h	EftSurfTex	ptr4	clut	MEDIUM	+0x3C is clut in EftVramImage (eft_detect.h:305).
+FIELD	include/battle/eft_surface_out.h	EftBurstTex	ofs0	imageOfs	MEDIUM	Record has the layout of EftVramImage; +0x00 relocates into +0x38 (image).
+FIELD	include/battle/eft_surface_out.h	EftBurstTex	ofs4	clutOfs	MEDIUM	Record has the layout of EftVramImage; +0x04 relocates into +0x3C (clut).
+FIELD	include/battle/eft_surface_out.h	EftBurstTex	ptr0	image	MEDIUM	+0x38 is image in EftVramImage (eft_detect.h:304).
+FIELD	include/battle/eft_surface_out.h	EftBurstTex	ptr4	clut	MEDIUM	+0x3C is clut in EftVramImage (eft_detect.h:305).
+FIELD	include/battle/eft_shot.h	EftBoundParam	otZ	layer	HIGH	Only use is the 2nd argument of EftGfx_DrawPolyScaledZ (through EftBound_DrawTri), which eft_core.c forwards as EftPrim_DrawTriangle's `layer` (negative = no blending, 2/3 = GS context 2).
+FIELD	include/battle/eft_shot.h	EftShotDef	cls	kind	MEDIUM	EftShot_BuildParam (eft_emit.c:135) writes +0x04 as p->kind: 0 skill, 1 technique, 2 ultimate; follows eft_emit.h.
+FIELD	include/battle/eft_shot.h	EftShotDef	kind	sub	MEDIUM	EftShot_BuildParam writes +0x05 as p->sub (from hitDirKind[n]); follows eft_emit.h EftShotParam.
+FIELD	include/battle/eft_shot_tech.h	EftJDef	cls	kind	MEDIUM	Same definition record as EftShotParam (eft_emit.h): +0x04 is kind (0 skill / 1 technique / 2 ultimate).
+FIELD	include/battle/eft_shot_tech.h	EftJDef	kind	sub	MEDIUM	Same definition record as EftShotParam (eft_emit.h): +0x05 is sub.
+FIELD	include/battle/eft_core.h	EftGfxVert	color	uv	MEDIUM	EftGfx_DrawPoly* pass &verts[i].uv (+0x20) as arguments 4-6 of EftPrim_DrawTriangle, which eft_stage_1.c writes to RGBA; ClipVtx_Set callers (EftBVert, EftClipVtx) have st at +0x10 and colour at +0x20.
+FIELD	include/battle/eft_core.h	EftGfxVert	uv	color	MEDIUM	Same evidence: +0x20 reaches the RGBA slots of EftPrim_DrawTriangle (swap with the line above).

@@ -297,7 +297,7 @@ void EftWater_DrawGroundQuad(EftWaterVec *pos, EftWaterMtx *world2screen, f32 si
 void EftWater_DrawSprayQuad(EftWaterVec *pos, EftWaterMtx *orient, EftWaterMtx *world2screen, f32 roll, f32 size,
                             f32 near, f32 far, f32 width, u8 r, u8 g, u8 b, u8 a, u8 alphaRef, u64 *tex,
                             u8 layer);
-void EftWater_UpdateTextures(s32 a0, s32 a1);
+void EftWater_UpdateTextures(s32 tcc, s32 tfx);
 void EftWater_DrawClippedFan(EftWaterClipVtx *poly, s32 layer, u64 tex0);
 
 #endif

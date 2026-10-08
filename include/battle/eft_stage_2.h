@@ -102,7 +102,7 @@ typedef struct EftGeyserSteamArg {
     /* 0x10 */ EftVec dir;
     /* 0x20 */ EftVec color;
     /* 0x30 */ f32 speed;
-    /* 0x34 */ f32 gravity; /* 9.8 / 30 */
+    /* 0x34 */ f32 gravity; /* 9.8 / 30; `accel` in EftSteamArg (eft_water.h): added to the vertical speed every frame */
     /* 0x38 */ f32 size;
     /* 0x3C */ s32 life;
     /* 0x40 */ f32 posRange;
@@ -195,12 +195,12 @@ typedef struct EftStageKind {
 
 /* Texture record of the surface file. */
 typedef struct EftSurfTex {
-    /* 0x00 */ s32 ofs0; /* file offsets of two blocks */
+    /* 0x00 */ s32 ofs0; /* file offsets of two blocks: the image and the CLUT (the record has the layout of EftVramImage) */
     /* 0x04 */ s32 ofs4;
     /* 0x08 */ u8 unk8[0x20];
     /* 0x28 */ u64 tex0;  /* written every frame by EftSurf_UpdateTextures */
     /* 0x30 */ u64 tex0Base;
-    /* 0x38 */ s32 ptr0;  /* ofs0 / ofs4 as pointers */
+    /* 0x38 */ s32 ptr0;  /* ofs0 / ofs4 as pointers: image and CLUT */
     /* 0x3C */ s32 ptr4;
 } EftSurfTex; /* size 0x40 */
 
@@ -427,7 +427,7 @@ void EftSurf_DrawMeshes(void);
 void EftSurf_PutTri(s32 *xyz0, s32 *xyz1, s32 *xyz2, Vec4 *st0, Vec4 *st1, Vec4 *st2, Vec4 *rgba0, Vec4 *rgba1,
                     Vec4 *rgba2, u64 tex0);
 void EftSurf_BeginDraw(s32 blend, s32 noDepthWrite);
-void EftSurf_EndDraw(s32 arg);
+void EftSurf_EndDraw(s32 noClamp);
 void EftSurf_DrawTri(EftSurfVtx *tri, u64 tex0);
 void EftSurf_DrawTriClipped(EftSurfVtx *tri, u64 tex0);
 void EftSurf_DrawReflectTri(EftSurfVtx *tri, u64 *tex, Vec4 *fog);

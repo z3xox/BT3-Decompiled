@@ -41,8 +41,8 @@ extern void Voice_StopWithLip(void);
 extern void Save_AddItem(s32 idx);
 extern void Battle_ClearWork(void);
 extern void BattleSetup_SetRule(s32 screenMode, s32 mode, s32 bgm, s32 timeLimit, s32 announcer, s32 stage,
-                                s32 unk10);
-extern void BattleSetup_SetSide(s32 sideNo, s32 control, s32 pad, s32 memberCount, s32 unk1FC, s32 unk200, s32 lead,
+                                s32 stageChange);
+extern void BattleSetup_SetSide(s32 sideNo, s32 control, s32 pad, s32 memberCount, s32 changeAllowed, s32 switchEnabled, s32 lead,
                                 void *bits);
 extern void BattleSetup_SetMember(s32 sideNo, s32 idx, s32 chara, s32 costume, s32 variant, s32 cpuLevel, f32 health,
                                   void *items);
@@ -150,11 +150,11 @@ extern s32 UbScore_GetRewardItem(s32 idx);  /* gUbRewardItems[idx]; idx 3 = item
 /* Section 12: one course (0xE0 bytes). The head is MisSelDef's (include/menu/ub.h). */
 typedef struct SurvCourse {
     /* 0x00 */ s32 announcer;   /* BattleSetup_SetRule's fifth argument; SURV_RANDOM = Rand_Range(8) */
-    /* 0x04 */ s32 stageChange;        /* non-zero: BattleSetup_SetRule's last argument is 1 */
+    /* 0x04 */ s32 stageChange;        /* non-zero: the rule's stageChange (BattleSetup_SetRule's last argument) is 1 */
     /* 0x08 */ s32 timeLimit;
     /* 0x0C */ s32 stage;       /* SURV_RANDOM = Rand_Range(35) */
     /* 0x10 */ s32 bgm;         /* SURV_RANDOM = 0x18, the "random" music id */
-    /* 0x14 */ s32 changeAllowed;       /* non-zero: side 1's unk1FC = 1 */
+    /* 0x14 */ s32 changeAllowed;       /* non-zero: side 1's changeAllowed = 1 */
     /* 0x18 */ s32 opp[SURV_OPP_NUM]; /* indices into section 13 */
 } SurvCourse; /* 0xE0 */
 

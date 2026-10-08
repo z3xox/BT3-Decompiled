@@ -1475,7 +1475,7 @@ extern void BtlChar_SetSmallVibration(BtlActIChr *chr, f32 seconds);
 extern void BtlChar_AddStageTimer(f32 seconds);
 #define BtlCharSnd_PlayCommon ((void (*)(BtlActIChr *chr, s32 id))BtlCharSnd_PlayCommon)
 extern void BtlEvent_Raise(s32 side, s32 ev);
-#define ChrCam_RequestCut ((void (*)(BtlActIChr *chr, s32 arg1, s32 arg2))ChrCam_RequestCut)
+#define ChrCam_RequestCut ((void (*)(BtlActIChr *chr, s32 table, s32 index))ChrCam_RequestCut)
 #define ChrCam_AddShake ((void (*)(BtlActIChr *chr, f32 strength, f32 time))ChrCam_AddShake)
 extern void BtlColl_AddActionBit(BtlActIChr *chr, s32 action);
 #define BtlOpp_GetSeenAction ((s32 (*)(BtlActIChr *chr))BtlOpp_GetSeenAction)
@@ -1526,13 +1526,13 @@ extern s32 BtlAct_TestPoweredSkill(BtlActIChr *chr, u32 mask);
 #define BtlActSwitch_SaveEntryPlacement ((void (*)(BtlActIChr *chr))BtlActSwitch_SaveEntryPlacement) /* entry point of the arriving member -> saved placement */
 #define BtlActSwitch_SetLeaveCut ((s32 (*)(BtlActIChr *chr))BtlActSwitch_SetLeaveCut)        /* camera cut; 1 = below the stage floor or after action 0xEB */
 #define BtlActSwitch_SetEnterCut ((void (*)(BtlActIChr *chr))BtlActSwitch_SetEnterCut)
-extern void BtlChange_RequestChara(s32 player, s32 chara, s32 costume, s32 variant, s32 animChara, s32 unk18, s32 voiceChara);
+extern void BtlChange_RequestChara(s32 player, s32 chara, s32 costume, s32 variant, s32 animChara, s32 anim1Chara, s32 voiceChara);
 extern s32 BtlChange_IsLoadedFor(s32 player);
 extern void BtlChange_SetReady(s32 player);
 extern void BtlChange_SetDone(s32 player);
 extern s32 BtlChars_IsTimeStopped(void);
-extern void BtlStage_GetStartPlace(s32 player, Vec4 *pos, Vec4 *rot, s32 arg3); /* start placement of a player (stage side) */
-extern void BtlObj_SetColorMode(BtlActIObj *obj, s32 arg1, s32 arg2);        /* battle object: called for object flag 0x40000 */
+extern void BtlStage_GetStartPlace(s32 player, Vec4 *pos, Vec4 *rot, s32 alt); /* start placement of a player (stage side) */
+extern void BtlObj_SetColorMode(BtlActIObj *obj, s32 bit, s32 on);        /* battle object: called for object flag 0x40000 */
 
 /* Gauges and stat modifiers. */
 extern BtlActIGauge *BtlMember_GetActiveGauge(BtlActIChr *chr);

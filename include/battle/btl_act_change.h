@@ -23,8 +23,8 @@ typedef struct BtlActHPose {
     /* 0x20 */ u8 unk20[0x60 - 0x20];
     /* 0x60 */ Vec4 rootRot;   /* animation root rotation */
     /* 0x70 */ u8 unk70[0x90 - 0x70];
-    /* 0x90 */ f32 pitch;      /* second argument of BtlMove_SetHeading as kept in the pose (btl_char_ctl.h: speed) */
-    /* 0x94 */ f32 facing;     /* yaw the fighter faces */
+    /* 0x90 */ f32 pitch;      /* heading pitch: second argument of BtlMove_SetHeading as kept in the pose */
+    /* 0x94 */ f32 facing;     /* heading yaw (first argument of BtlMove_SetHeading; `yaw` in the other pose views) */
     /* 0x98 */ f32 speed;      /* zeroed when a change action starts */
     /* 0x9C */ f32 fallSpeed;      /* zeroed when a change action starts */
 } BtlActHPose;
@@ -84,7 +84,7 @@ typedef struct BtlActHChr {
     /* 0x0DC0 */ s32 drainFrom;      /* first animation frame of the throw's drain window, < 0 = none */
     /* 0x0DC4 */ s32 drainTo;        /* last frame of it */
     /* 0x0DC8 */ u8 unkDC8[0xE60 - 0xDC8];
-    /* 0x0E60 */ s32 boostStock;         /* counter 0..10, +1 per throw by character 0x6E */
+    /* 0x0E60 */ s32 boostStock;         /* counter 0..10: +1 per throw by character 0x6E here, +5 per technique 0x2EF and zeroed when technique 0x2CD ends (btl_act_super.c) */
     /* 0x0E64 */ u8 unkE64[0xFB0 - 0xE64];
     /* 0x0FB0 */ BtlActHReact react;
     /* 0x0FE0 */ u8 unkFE0[0x12CC - 0xFE0];
@@ -151,21 +151,21 @@ extern s32 BtlChar_IsDead(BtlActHChr *chr);
 extern s32 BtlChar_IsStage4Or27(void);
 extern s32 BtlChar_FrameMod(s32 n);
 extern void BtlChar_SavePlacement(BtlActHChr *chr);
-extern void BtlChar_SetSavedPlacement(BtlActHChr *chr, Vec4 *pos, Vec4 *rot, Vec4 *unk1310, s32 flagF, s32 flagE);
+extern void BtlChar_SetSavedPlacement(BtlActHChr *chr, Vec4 *pos, Vec4 *rot, Vec4 *bodyWarpPos, s32 flagF, s32 flagE);
 extern void BtlChar_ResetLook(BtlActHChr *chr);
 extern void BtlCharSnd_PlayCommon(BtlActHChr *chr, s32 id);
 extern void BtlCharSnd_PlayStream(BtlActHChr *chr, s32 id);
-extern void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 arg3, f32 arg4);
+extern void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 strength, f32 time);
 extern void BtlCharApi_RumbleNear(Vec4 *pos, f32 near, f32 far, f32 power, f32 time);
 extern void BtlEvent_Raise(s32 side, s32 ev);
 
-extern void ChrCam_RequestCut(BtlActHChr *chr, s32 arg1, s32 arg2);
+extern void ChrCam_RequestCut(BtlActHChr *chr, s32 table, s32 index);
 extern void ChrCam_EndCut(BtlActHChr *chr);
 extern s32 ChrCam_IsCutActive(BtlActHChr *chr);
 extern void ChrCam_AddShake(BtlActHChr *chr, f32 strength, f32 time);
 extern void ChrCam_SetCut(BtlActHChr *chr, Vec4 *vecA, Vec4 *vecADelta, Vec4 *vecB, Vec4 *vecBDelta, Vec4 *vecC,
-                          Vec4 *vecCDelta, s32 unk88, f32 valA, f32 valADelta, f32 valB, f32 valBDelta, f32 valC,
-                          f32 valCDelta, s32 unk8C, s32 unk90, s32 unk94, s32 time, s32 flags);
+                          Vec4 *vecCDelta, s32 nodeA, f32 valA, f32 valADelta, f32 valB, f32 valBDelta, f32 valC,
+                          f32 valCDelta, s32 nodeA2, s32 nodeC, s32 nodeC2, s32 time, s32 flags);
 
 extern void BtlAnim_Play(BtlActHChr *chr, s32 anim, f32 blend);
 extern void BtlAnim_PlaySub(BtlActHChr *chr, s32 anim);
@@ -201,7 +201,7 @@ extern s32 BtlAct_GetPrev(BtlActHChr *chr);
 extern s32 BtlAct_GetQueued(BtlActHChr *chr);
 extern f32 BtlAct_GetHeight(BtlActHChr *chr);
 extern s32 BtlAct_IsAirMotion(BtlActHChr *chr, s32 useSaved);
-extern void BtlAct_PushAngle(BtlActHChr *chr, f32 angle, f32 speed, f32 arg);
+extern void BtlAct_PushAngle(BtlActHChr *chr, f32 angle, f32 speed, f32 max);
 
 extern BtlActHMember *BtlMember_GetActive(BtlActHChr *chr);
 extern s32 BtlMember_Damage(BtlActHChr *chr, s32 amount, s32 flags);
@@ -220,16 +220,16 @@ extern s32 BtlPartner_StepAnim(BtlActHChr *chr);
 extern void BtlPartner_Release(BtlActHChr *chr);
 extern void BtlPartner_SetFlag80(BtlActHChr *chr, s32 on);
 
-extern void BtlChange_RequestChara(s32 player, s32 chara, s32 costume, s32 variant, s32 animChara, s32 unk18, s32 voiceChara);
+extern void BtlChange_RequestChara(s32 player, s32 chara, s32 costume, s32 variant, s32 animChara, s32 anim1Chara, s32 voiceChara);
 extern void BtlChange_RequestObject(s32 player, s32 id, s32 costume, s32 variant, s32 slot);
 extern s32 BtlChange_IsLoadedFor(s32 player);
 extern void BtlChange_SetReady(s32 player);
 extern void BtlChange_SetDone(s32 player);
 
 /* Not named yet (purposes read from their disassembly or from the call sites here). */
-extern void BtlActThrow_SetupDamage(BtlActHChr *chr, s32 arg1);  /* thrower setup (previous file) */
+extern void BtlActThrow_SetupDamage(BtlActHChr *chr, s32 extraHit);  /* thrower setup (previous file) */
 extern void BtlActThrow_TurnByRootYaw(BtlActHChr *chr);            /* thrown fighter setup (previous file) */
-extern void BtlAct_QueueReaction(BtlActHChr *chr, s32 arg1);  /* fills the action queue from a reaction word */
+extern void BtlAct_QueueReaction(BtlActHChr *chr, s32 reaction);  /* fills the action queue from a reaction word */
 extern s32 BtlAct_CheckStoryForced(BtlActHChr *chr);             /* fills the action queue; 1 when it queued something */
 extern f32 BtlCharApi_GetHeight(s32 objId);                   /* a size of the object (height) */
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out); /* world position of a model node */
@@ -243,7 +243,7 @@ extern f32 BtlStage_GetInnerRadius(void);                        /* stage radius
 extern f32 BtlStage_GetTop(void);                        /* stage height limit */
 extern f32 BtlStage_GetBottom(void);                        /* stage floor level */
 extern s32 BtlStage_GetWaterLevel(f32 *out);                    /* a stage height, 0 when the stage has none */
-extern void BtlStage_GetStartPlace(s32 player, Vec4 *pos, Vec4 *rot, s32 arg3); /* start placement of a player */
+extern void BtlStage_GetStartPlace(s32 player, Vec4 *pos, Vec4 *rot, s32 alt); /* start placement of a player */
 extern void BtlStage_GetPlace(Vec4 *pos, Vec4 *rot);       /* a stage reference point */
 
 void BtlActThrow_SetReleaseHeading(BtlActHChr *chr);

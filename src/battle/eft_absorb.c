@@ -29,7 +29,7 @@ extern EftTask *BtlTaskList_AddTail(void *list, void *cls, void *arg);
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out);
 extern s32 BtlCharApi_ObjTestAttr(s32 objId, u64 mask);
 
-extern void EftEmit_LoadSet(void *arg, void *model, s32 a2, s32 *pack, s32 a4, s32 a5);
+extern void EftEmit_LoadSet(void *arg, void *model, s32 head, s32 *pack, s32 common, s32 idx);
 extern void EftEmit_FreeSet(void *model);
 extern void EftEmit_BeginFrame(void *model);
 extern s32 EftEmit_GetEndFrames(EftModel *model);
@@ -37,12 +37,12 @@ extern void EftEmit_InitState(EftModel *model, EftModelInst *inst);
 extern void EftEmit_TermState(EftModel *model, EftModelInst *inst);
 extern s32 EftEmit_GetFlagsFromMask(EftModel *model, EftModelInst *inst, s32 objId, s32 part, s32 sub, s32 end, s32 fast, s32 mask);
 extern void EftEmit_Spawn(EftModel *model, EftModelInst *inst, void *nodes, Vec4 *pos, Vec4 *dir, s32 objId, s32 node,
-                          s32 arg7, s32 part, s32 sub, s32 flags, f32 scale);
+                          s32 srcKind, s32 part, s32 sub, s32 flags, f32 scale);
 extern void EftEmit_KillAll(EftModel *model, EftModelInst *inst);
 extern s32 EftEmit_UpdateAlive(EftModel *model, EftModelInst *inst);
 extern void EftEmit_SetNode(void *nodes, s32 slot, s32 node, Vec4 *pos);
 extern void EftEmit_RefreshFixedNodes(s32 objId, void *nodes);
-extern void EftChar_SetList(s32 side, s32 arg1, void *list);
+extern void EftChar_SetList(s32 side, s32 kind, void *list);
 extern void *EftChar_GetList(s32 objId, s32 kind);
 extern void EftCharSlot_SetAbsorb(s32 objId, EftTask *task);
 extern void EftCharSlot_ClearAbsorb(s32 objId);

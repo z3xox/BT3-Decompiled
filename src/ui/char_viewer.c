@@ -9,7 +9,7 @@
 /*
  * ChrView, 0x25D468..0x25DE68: the character model viewer of the menus. It runs the battle's object, stage and
  * scene modules without a battle: one character model at a time on a backdrop (file 0x197), turned with the
- * orbit camera. All callers of the public functions are in the menu overlay. See battle/view_a.h.
+ * orbit camera. All callers of the public functions are in the menu overlay. See ui/reward_window.h.
  *
  * A new model is loaded by a job (ChrView_StepLoad) into the buffer that is not on screen; the old model is
  * destroyed when the new one has been set up, three frames after its object was created.
@@ -28,7 +28,7 @@ typedef struct ChrViewStage {
     /* 0x08 */ s32 flags;   /* bit 0: not ready */
 } ChrViewStage;
 
-/* gCommonRes->unk20: the viewer keeps its backdrop file there */
+/* gCommonRes->battleRes: the viewer keeps its backdrop file there */
 typedef struct ChrViewCommon {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ void *stage;

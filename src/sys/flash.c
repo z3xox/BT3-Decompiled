@@ -256,7 +256,7 @@ void FlashSlot_SetClip(FlashSlot *slot, u16 id, char *name, FlashMtx *mtx, Flash
 void FlashSlot_Clear(FlashSlot *slot);
 void FlashSlot_Move(FlashSlot *slot, FlashMtx *mtx, FlashCxform *cx);
 void FlashShape_Free(FlashShape *shape);
-void FlashClip_Reset(FlashClip *clip, s32 arg);
+void FlashClip_Reset(FlashClip *clip, s32 unused);
 
 /* Sets a colour transform to the identity. */
 void Flash_CxformIdentity(FlashCxform *cx) {
@@ -1776,9 +1776,10 @@ void FlashClip_Set(FlashClip *clip, FlashMtx *mtx, FlashCxform *cx) {
         clip->prop.cx = *cx;
     }
 }
-
-/* Clears an instance: name, flags, overrides, callbacks, and its timeline back to frame 0. */
-void FlashClip_Reset(FlashClip *clip, s32 arg) {
+/* Clears an instance: name, flags, overrides, callbacks, and its timeline back to frame 0. The second argument
+   only goes to FlashTl_Rewind, which ignores it. */
+/* Clears an instance: name, flags, overrides, callbacks, and its timeline back to frame 0. The second argument only goes to FlashTl_Rewind, which ignores it. */
+void FlashClip_Reset(FlashClip *clip, s32 unused) {
     memset(clip->name, 0, sizeof(clip->name));
     clip->flags = 0;
     memset(&clip->prop, 0, sizeof(FlashProp));
@@ -1789,7 +1790,7 @@ void FlashClip_Reset(FlashClip *clip, s32 arg) {
     clip->postDraw = NULL;
     clip->preArg = NULL;
     clip->postArg = NULL;
-    FlashTl_Rewind(&clip->tl, arg);
+    FlashTl_Rewind(&clip->tl, unused);
 }
 
 /* Returns the first instance with the given name, or NULL. */

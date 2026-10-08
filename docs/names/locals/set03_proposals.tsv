@@ -1,0 +1,14 @@
+NAME	BtlFacade_SetCpuParam8	BtlFacade_SetCpuLevel	HIGH	Its body is BtlAiMgr_SetLevel(0, v); BtlAiMgr_SetLevel(1, v) (btl_facade.c:114), whose parameter is cpuLevel.
+NAME	BtlFacade_SetCpuParam4	BtlFacade_SetCpuType	HIGH	Its body is BtlAiMgr_SetType(0, v); BtlAiMgr_SetType(1, v) (btl_facade.c:120), whose parameter is aiType.
+NAME	BtlFacade_SetObjSubState14	BtlFacade_PlayLipTrack	MEDIUM	Calls BtlObj_SetSubState(obj, 0xE, arg): mode 14 is BOBJ_MOUTH_LIP_PTR and the only caller (btl_script_cmd.c:650) passes work->lip.
+NAME	BtlCtrl_TestProgressFrameBit	BtlCtrl_TestTutorialFrameBit	MEDIUM	In battle mode 5 it tests bit gProgress->tutorial (progress +0x7F4, written by training.c) of fighter 0's frameBits (btl_param.c:296).
+FIELD	src/battle/btl_seq.c	BtlTextProgress	controlType	tutorial	MEDIUM	Progress +0x7F4 is the tutorial number training.c:1273 stores (training.h, btl_param.h: tutorial); BtlMenu_GetControlsText adds it to a base of 40 texts per pad type (38 tutorials).
+FIELD	include/battle/btl_script_cmd.h	BtlScriptCmdWindow	color28	shadowColor	HIGH	The block is a FontStyle (sys/font.h), where +0x28 is shadowColor between shadowMode (+0x24) and shadowDx (+0x2C).
+FIELD	include/battle/btl_char_coll.h	BtlCollReact	id	reaction	MEDIUM	Same block as HitReact (btl_char_hit.h, fighter +0xFB0), which names +0x00 reaction.
+FIELD	include/battle/btl_char_coll.h	BtlCollReact	dirYaw	yaw	MEDIUM	HitReact (btl_char_hit.h) names +0x1C yaw: the direction the hit pushes.
+FIELD	include/battle/btl_char_coll.h	BtlCollReact	faceYaw	turnYaw	MEDIUM	HitReact names +0x20 turnYaw beside turnPitch at +0x24, which this view already has.
+FIELD	include/battle/btl_char_ctl.h	BtlCtlNode	mtx	parentMtx	MEDIUM	The head tracking (btl_head_tracking.c:147) inverts it to bring the target into the frame the node's local rotation is expressed in; the node's own world matrix is at +0x10.
+FIELD	include/battle/btl_char_ctl.h	BtlCtlNode	pos	localPos	MEDIUM	+0x90 sits beside the local rotation at +0xA0; the world position is worldPos at +0x40.
+FIELD	include/battle/btl_char_move.h	BtlMoveBlastRec	def	atk	MEDIUM	EftHitRec (eft_core.h) names +0x68 atk (set for type EFT_HIT_BLAST) with src at +0x64, as here.
+FIELD	include/battle/btl_obj_anim_part2.h	BObjFace	jawTable	jawKeys	MEDIUM	Same structure as BobjFace (btl_obj_anim.h), whose +0x20 is jawKeys, set by BtlObjFace_PickJawKeys.
+FIELD	include/battle/btl_obj_anim_part2.h	BObjFace	talkTable	talkKeys	MEDIUM	Same structure as BobjFace (btl_obj_anim.h), whose +0x24 is talkKeys.

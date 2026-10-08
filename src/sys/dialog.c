@@ -31,10 +31,10 @@ extern void Flash_FindLabel(DialogFlash *obj, char *parent, char *name, DialogFl
 extern void Flash_Destroy(DialogFlash *obj);                               /* destroy */
 extern void Flash_Advance(DialogFlash *obj);                               /* per frame: advance */
 extern void Flash_Draw(DialogFlash *obj);                               /* per frame: draw */
-extern void Flash_Play(DialogFlash *obj, s32 a);
-extern void Flash_GotoLabel(DialogFlash *obj, char *label, s32 a);           /* play a root label */
+extern void Flash_Play(DialogFlash *obj, s32 speed);
+extern void Flash_GotoLabel(DialogFlash *obj, char *label, s32 fromStart);           /* play a root label */
 extern void Flash_ClipGotoLabel(DialogFlash *obj, DialogFlashRef *clip, const char *label); /* play a clip's label */
-extern void Flash_ClipSetFlags(DialogFlash *obj, DialogFlashRef *clip, s32 a, s32 visible);
+extern void Flash_ClipSetFlags(DialogFlash *obj, DialogFlashRef *clip, s32 props, s32 on);
 extern void Flash_ClipSetUv(DialogFlash *obj, DialogFlashRef *clip, DialogRect *rect);
 extern void Flash_ClipGetPos(DialogFlash *obj, DialogFlashRef *clip, s32 *x, s32 *y);
 extern f32 Flash_ClipGetAlpha(DialogFlash *obj, DialogFlashRef *clip);          /* clip alpha, 0..1 */

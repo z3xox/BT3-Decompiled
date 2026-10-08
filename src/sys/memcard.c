@@ -1,6 +1,6 @@
 /*
- * Memory card operations (0x116B98..0x1198D8). The file stem is a placeholder: this is system code
- * (proper home src/sys/mcard.c), unrelated to the stage drawing in front of it.
+ * Memory card operations (0x116B98..0x1198D8). System code, unrelated to the stage drawing in front of it
+ * in the executable; the save / load flow that drives it is src/sys/memcard_flow.c.
  *
  * Every operation is polled: the caller invokes it once per frame until it returns 1. gMcCardCmd names the
  * operation that owns the step counter gMcCardStep; an operation entered while another one's command is set

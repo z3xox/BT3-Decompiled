@@ -149,7 +149,7 @@ typedef struct EftDetStageCtx {
     /* 0x20 */ f32 radius;
     /* 0x24 */ f32 unk24[3];
     /* 0x30 */ EftDetVec unk30[2];
-    /* 0x50 */ EftDetVec delta;    /* handed to BtlStage_DestroyObj as the place of the hit */
+    /* 0x50 */ EftDetVec delta;    /* the sweep's movement, b - a (StgColSweepCtx.delta); handed to BtlStage_DestroyObj */
     /* 0x60 */ EftDetVec dir;
     /* 0x70 */ f32 length;         /* compared with the radius to pick the first "best distance" */
     /* 0x74 */ f32 unk74[3];

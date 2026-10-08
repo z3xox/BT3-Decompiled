@@ -95,11 +95,11 @@ void SimDay_SetupBattle(void) {
     s32 round = QPROG->sim.turn / SIM_TURNS;
     SimRound *rd = &gSimDay->round[round];
     s32 announcer = rd->announcer;
-    s32 unk4 = rd->stageChange != 0;
+    s32 stageChange = rd->stageChange != 0;
     s32 timeLimit = rd->timeLimit;
     s32 stage = rd->stage;
     s32 bgm = rd->bgm;
-    s32 unk14 = rd->changeAllowed != 0;
+    s32 changeAllowed = rd->changeAllowed != 0;
     SimEnemy *en = &gSimDay->enemy[rd->enemy];
     s32 i;
     s32 n;
@@ -115,7 +115,7 @@ void SimDay_SetupBattle(void) {
         bgm = 0x18;
     }
     Battle_ClearWork();
-    BattleSetup_SetRule(0, 2, bgm, timeLimit, announcer, stage, unk4);
+    BattleSetup_SetRule(0, 2, bgm, timeLimit, announcer, stage, stageChange);
     if (en->chara == SIMDAY_RANDOM) {
         s32 pool;
 
@@ -166,7 +166,7 @@ void SimDay_SetupBattle(void) {
         enemyItems[7] = en->lastItem + 1;
     }
     BattleSetup_SetSide(0, 0, 0, 1, 1, 1, 0, 0);
-    BattleSetup_SetSide(1, 2, 1, 1, unk14, 1, 0, 0);
+    BattleSetup_SetSide(1, 2, 1, 1, changeAllowed, 1, 0, 0);
     BattleSetup_SetMember(0, 0, QPROG->member.chara, QPROG->member.color, 0, 0, QPROG->sim.stat[SIM_STAT_HP], items);
     color = en->color;
     if (gSimDay->enemyChara == QPROG->member.chara) {

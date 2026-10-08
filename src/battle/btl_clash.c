@@ -27,9 +27,9 @@ extern u32 BtlChar_Rand(void);
 extern void BtlChar_PlayVoice(BtlFlagChr *chr, s32 kind);
 extern s32 Battle_GetMode(void);
 extern void ChrCam_SetCut(BtlFlagChr *chr, Vec4 *vecA, Vec4 *vecADelta, Vec4 *vecB, Vec4 *vecBDelta, Vec4 *vecC,
-                          Vec4 *vecCDelta, s32 unk88, f32 valA, f32 valADelta, f32 valB, f32 valBDelta, f32 valC,
-                          f32 valCDelta, s32 unk8C, s32 unk90, s32 unk94, s32 time, s32 flags);
-extern void ChrCam_RequestCut(BtlFlagChr *chr, s32 arg1, s32 arg2);
+                          Vec4 *vecCDelta, s32 nodeA, f32 valA, f32 valADelta, f32 valB, f32 valBDelta, f32 valC,
+                          f32 valCDelta, s32 nodeA2, s32 nodeC, s32 nodeC2, s32 time, s32 flags);
+extern void ChrCam_RequestCut(BtlFlagChr *chr, s32 table, s32 index);
 extern void ChrCam_EndCut(BtlFlagChr *chr);
 extern s32 BtlCharApi_IsInClashA(s32 objId);                                  /* action id in 0x130..0x132 */
 extern s32 BtlAct_GetCurrent(BtlFlagChr *chr);                            /* action id */
@@ -44,7 +44,7 @@ extern s32 BtlStage_GetPathCount(void);                                       /*
 extern BtlClashPath *BtlStage_GetPath(s32 n);                            /* stage path n */
 extern s32 BtlSuper_IsThrow(BtlFlagChr *chr, s32 cls);
 extern s32 BtlSuper_GetFlags(BtlFlagChr *chr, s32 cls);                   /* attribute word of the technique */
-extern s32 BtlSuper_GetDamage(BtlFlagChr *chr, s32 cls, s32 arg2, s32 arg3); /* damage of the technique */
+extern s32 BtlSuper_GetDamage(BtlFlagChr *chr, s32 cls, s32 guard, s32 total); /* damage of the technique */
 extern void BtlColl_StartThrow(BtlFlagChr *chr, BtlFlagChr *target, s32 cls, s32 attr);
 extern void BtlMember_Damage(BtlFlagChr *chr, s32 damage, s32 flags);    /* applies damage */
 

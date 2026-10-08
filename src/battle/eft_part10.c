@@ -137,17 +137,17 @@ extern s32 Vu0Cur_ProjectPoint(EftXIVec *out, Vec4 *pos);              /* projec
 extern s32 Vu0Cur_ProjectPointsStq(EftXIVec *xyz, Vec4 *stq, Vec4 *pos, Vec4 *uv, s32 n); /* project n points; 0 = clipped */
 extern void ClipVtx_Set(EftXVert *out, Vec4 *pos, Vec4 *uv, Vec4 *color);
 extern f32 EftMath_WrapAngle(f32 angle);
-extern void EftGfx_DrawPolyFixedZ(EftXVert *verts, s32 arg1, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex, s32 z);
-extern void EftGfx_DrawPolyScaledZ(EftXVert *verts, s32 arg1, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex,
+extern void EftGfx_DrawPolyFixedZ(EftXVert *verts, s32 layer, s32 unusedA, s32 unusedB, s32 front, s32 flip, u64 tex, s32 z);
+extern void EftGfx_DrawPolyScaledZ(EftXVert *verts, s32 layer, s32 unusedA, s32 unusedB, s32 front, s32 flip, u64 tex,
                                    f32 zScale);
-extern u64 EftVram_AddImage(EftXTexEntry *tex, s32 a, s32 b);
+extern u64 EftVram_AddImage(EftXTexEntry *tex, s32 tcc, s32 tfx);
 extern u64 EftVram_AddClut(EftXTexEntry *tex);
 extern EftXTask *BtlTaskList_AddTail(void *list, void *cls, void *arg);
 extern void EftPart10_Update(EftXTask *task);                       /* the emitter class's update */
 
 s32 EftPart10_InitPtcl(EftPart10Ptcl *p, EftPart10 *em);
 void EftPart10_LinkPtcl(EftPart10Ptcl **head, EftPart10Ptcl **tail, EftPart10Ptcl *p);
-void EftPart10_SelectTex(EftPart10 *em, EftXTexEntry *tbl, s32 a, s32 b);
+void EftPart10_SelectTex(EftPart10 *em, EftXTexEntry *tbl, s32 image, s32 palette);
 s32 EftPart10_IsCornerOffScreen(s32 x, s32 y, s32 z);
 
 /* Appends a burst group to an emitter's list. */
@@ -999,15 +999,16 @@ void EftPart10_SetKey(EftPart10 *em, s32 idx) {
     Vec4_Copy(&em->endColorRange, &def2->endColorRange[idx]);
 }
 
-/* Chooses the emitter's two pack textures; the blended TEX0 goes to entry a + b of the table (b when equal). */
-void EftPart10_SelectTex(EftPart10 *em, EftXTexEntry *tbl, s32 a, s32 b) {
-    if (a == b) {
-        em->texSlot = b;
+/* Chooses the emitter's two pack textures; the blended TEX0 goes to entry image + palette of the table (palette
+   when equal). */
+void EftPart10_SelectTex(EftPart10 *em, EftXTexEntry *tbl, s32 image, s32 palette) {
+    if (image == palette) {
+        em->texSlot = palette;
     } else {
-        em->texSlot = a + b;
+        em->texSlot = image + palette;
     }
-    em->texA = tbl[a];
-    em->texB = tbl[b];
+    em->texA = tbl[image];
+    em->texB = tbl[palette];
 }
 
 /* Builds the emitter's TEX0 (texture A with the CLUT of texture B) once per frame into its table entry. */
@@ -1248,7 +1249,7 @@ void EftPart10_SetRate(EftXTask *task, f32 rate) {
 }
 
 /* Changes the emitter's texture table and its two textures. No caller. */
-void EftPart10_SetTex(EftXTask *task, EftXTexSet *tex, s32 a, s32 b) {
+void EftPart10_SetTex(EftXTask *task, EftXTexSet *tex, s32 image, s32 palette) {
     EftPart10 *em;
 
     if (gEftPart10Mgr == NULL) {
@@ -1266,9 +1267,9 @@ void EftPart10_SetTex(EftXTask *task, EftXTexSet *tex, s32 a, s32 b) {
     }
     if (em->flags & EFT_PART10_ALIVE) {
         em->tex = tex;
-        em->texIdxA = a;
-        em->texIdxB = b;
-        EftPart10_SelectTex(em, (EftXTexEntry *)tex, a, b);
+        em->texIdxA = image;
+        em->texIdxB = palette;
+        EftPart10_SelectTex(em, (EftXTexEntry *)tex, image, palette);
     }
 }
 

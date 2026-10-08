@@ -52,9 +52,9 @@ extern void Vu0Cur_Push(void);                            /* VU0 matrix stack pu
 extern void Vu0Cur_LoadMtx(Mtx44 *m);                        /* load the matrix */
 extern void Vu0Cur_Pop(void);                            /* pop */
 extern void ClipVtx_Set(void *vtx, Vec4 *pos, Vec4 *uv, Vec4 *col);
-extern void EftGfx_DrawPolyAvgZFront(void *prim, s32 blend, s32 a2, s32 a3, s32 inView, s32 t1, u64 tex, s32 t3);
+extern void EftGfx_DrawPolyAvgZFront(void *prim, s32 blend, s32 a2, s32 a3, s32 inView, s32 flip, u64 tex, s32 zOfs);
 extern void EftTexSet_Load4(EftSpdTex *tex, s32 *entry);
-extern void EftTexSet_Keep4(EftSpdTex *tex, s32 a, s32 b);
+extern void EftTexSet_Keep4(EftSpdTex *tex, s32 tcc, s32 tfx);
 extern EftMBattleWork *Battle_GetWork(void);
 extern s32 BtlPool_GetCurrent(void);
 extern void *BtlPool_Alloc(s32 slot, s32 size);
@@ -494,9 +494,9 @@ void EftSpdLine_DrawQuad(Vec4 *quad, Mtx44 *mtx, EftSpdTex *tex, f32 r, f32 g, f
 }
 
 /* Keeps the textures referenced while any segment is alive. */
-void EftSpdLine_UpdateTexture(s32 a, s32 b) {
+void EftSpdLine_UpdateTexture(s32 tcc, s32 tfx) {
     if (gEftSpdLine->trailCount + gEftSpdLine->streakCount != 0) {
-        EftTexSet_Keep4(gEftSpdLine->tex, a, b);
+        EftTexSet_Keep4(gEftSpdLine->tex, tcc, tfx);
         gEftSpdLine->texReady = 1;
     } else {
         gEftSpdLine->texReady = 0;
@@ -506,7 +506,7 @@ void EftSpdLine_UpdateTexture(s32 a, s32 b) {
 /* ---- aura particles ------------------------------------------------------------------------------------- */
 
 extern void EftSpr_DrawRot(u8 r, u8 g, u8 b, u8 a, f32 x, f32 y, f32 z, f32 u0, f32 v0, f32 u1, f32 v1, f32 rot,
-                          s32 t0, s32 t1, s32 w, s32 h, s32 s0, u32 size, s32 s2, s32 s3, void *tex);
+                          s32 ofsX, s32 ofsY, s32 w, s32 h, s32 unused, u32 size, s32 ctx, s32 layer, void *tex);
 
 /* Drift direction of a spark: against the fighter's velocity, with a random vertical part. */
 void EftAura_GetSparkDir(Vec4 *out, s32 objId) {
@@ -691,7 +691,7 @@ void EftAura_FreeSparks(s32 objId) {
 }
 
 /* Creates one spark of an emitter: random life and colour, direction from the fighter's motion. */
-s32 EftAura_SpawnSpark(EftAura *aura, s32 objId, s32 emitter, s32 kind, Vec4 *offset, f32 follow) {
+s32 EftAura_SpawnSpark(EftAura *aura, s32 objId, s32 emitter, s32 emitNode, Vec4 *offset, f32 follow) {
     Vec4 dir;
     EftAuraSpark *s = EftAura_AllocSpark();
     s32 color = rand() % aura->colorCount;
@@ -712,7 +712,7 @@ s32 EftAura_SpawnSpark(EftAura *aura, s32 objId, s32 emitter, s32 kind, Vec4 *of
         s->flags |= 2;
     }
     s->emitter = emitter;
-    s->kind = kind;
+    s->kind = emitNode;
     s->age = 0.0f;
     if (s->flags & 0x10) {
         s->life = gEftAuraCfg->sparkLifeLong + gEftAuraCfg->sparkLifeLongRange * RANDF();
@@ -779,12 +779,12 @@ void EftAura_SpawnSparks(EftAura *aura, s32 objId, s32 emitter, s32 once) {
     f32 step;
     f32 len;
     s32 node;
-    s32 kind;
+    s32 emitNode;
     s32 i;
 
     step = gEftAuraCfg->sparkStep * aura->scale;
     Vec4_Set(&offset, 0.0f, 0.0f, 0.0f, 1.0f);
-    kind = gEftAuraCfg->spark[emitter].kind;
+    emitNode = gEftAuraCfg->spark[emitter].kind;
     node = gEftAuraCfg->spark[emitter].node;
     Vec4_Copy(&pos, &aura->sparkPos[emitter]);
     Vec4_Set(&delta, 0.0f, 0.0f, 0.0f, 1.0f);
@@ -798,7 +798,7 @@ void EftAura_SpawnSparks(EftAura *aura, s32 objId, s32 emitter, s32 once) {
         }
     }
     for (i = 0; i < count; i++) {
-        EftAura_SpawnSpark(aura, objId, emitter, kind, &offset, RANDF());
+        EftAura_SpawnSpark(aura, objId, emitter, emitNode, &offset, RANDF());
         if (once) {
             break;
         }
@@ -1682,7 +1682,7 @@ extern void Vu0Cur_Pop(void);                            /* pop */
 extern s32 Vu0Cur_ProjectPoint(EftNScr *out, Vec4 *pos);          /* project to GS screen coordinates; returns a value */
 extern void IVec4_Set(s32 *out, s32 x, s32 y, s32 z, s32 w);
 extern void EftSpr_DrawRot(u8 r, u8 g, u8 b, u8 a, f32 x, f32 y, f32 z, f32 u0, f32 v0, f32 u1, f32 v1, f32 rot,
-                          s32 t0, s32 t1, s32 w, s32 h, s32 s0, u32 size, s32 s2, s32 s3, void *tex);
+                          s32 ofsX, s32 ofsY, s32 w, s32 h, s32 unused, u32 size, s32 ctx, s32 layer, void *tex);
 extern void BtlTask_SetDead(EftNTask *task);                  /* kills the task */
 extern u64 EftVram_AddTex(EftNTexEntry *tex, s32 a, s32 b);  /* TEX0 of an entry */
 extern u64 EftVram_AddImage(EftNTexEntry *tex, s32 a, s32 b);  /* TEX0 without the palette */

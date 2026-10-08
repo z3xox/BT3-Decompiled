@@ -1,0 +1,25 @@
+FIELD	include/ui/reward_window.h	Flash	flags	trig	HIGH	+0x0C of the movie is Flash.trig in sys/flash.h (set by the action url "trig" "n", cleared by Flash_Advance); Flash.flags is +0x08, which this local view hides in unk0[2].
+FIELD	include/ui/reward_window.h	FlashRef	unk4	more	HIGH	sys/flash.h FlashRef names +0x04 `more` (how many more clips share the name); the same structure.
+FIELD	include/ui/reward_window.h	FlashRef	id	index	MEDIUM	sys/flash.h FlashRef names +0x00 `index`; reward_window.h is a local view of the same structure.
+FIELD	include/ui/reward_window.h	ViewProgress	unk4	baseFile	HIGH	Progress_Init sets it to 0x1C1 and Shen_Main loads file gProgress->unk4 + 0x18; eleven menu headers name progress +0x004 baseFile.
+FIELD	include/ui/reward_window.h	ViewProgress	unk24	demoPick	HIGH	MenuUtilProgress in ui/menu_support.h names +0x024 demoPick (the pairing Demo_SetupBattle chose last); Progress_Init sets it to -1.
+FIELD	include/ui/reward_window.h	ViewProgress	unk624	battleType	MEDIUM	the menu headers name progress +0x624 battleType; ChrGrid_Build tests it == 2 in mode 0x28 to drop the random cell.
+FIELD	include/ui/reward_window.h	ViewProgress	unk0	language	MEDIUM	nine menu headers name progress +0x000 language (a reading, see notes_for_later.md).
+FIELD	src/sys/memcard_flow.c	McFlowProgress	fileBase	baseFile	MEDIUM	the same word of the progress block is baseFile in eleven menu headers.
+FIELD	src/sys/memcard_flow.c	McFlowProgress	unk0	language	MEDIUM	nine menu headers name progress +0x000 language.
+FIELD	src/sys/memcard_flow.c	McCardInfo	callResult	ret	HIGH	gMcCardPort is McCardPort of sys/memcard.h, where +0x04 is ret (return value of the last library call).
+FIELD	src/sys/memcard_flow.c	McCardInfo	formatted	format	HIGH	McCardPort in sys/memcard.h names +0x14 format (sceMcGetInfo: formatted).
+FIELD	src/sys/memcard_flow.c	McCardInfo	need	size	MEDIUM	McCardPort in sys/memcard.h names +0x1C size (file size for McCard_LoadFile, clusters still needed for McCard_CalcNeed).
+FIELD	include/sys/memcard_flow.h	McFlowReq	unk418	iconNameTail	MEDIUM	McCardFile in sys/memcard.h has iconName[3][0x40] from 0x35C to 0x41C, so +0x418 is the last four bytes of iconName[2]; better still, use McCardFile itself (title[0x44], iconName, u16 titleBreak).
+FIELD	include/ui/menu_support.h	ChrTblEntry	baseLevel	baseSlots	MEDIUM	ChrTbl_GetLevel returns baseLevel + saved level and both callers use it as the item slot capacity (item_panel.c p->limit -> ItemSet_Fit capacity; evo_z_3.c ez->capacity); ZaChrEntry calls the same u16 slots.
+FIELD	include/ui/menu_support.h	MenuUtilProgress	team	replaySlot	MEDIUM	progress +0x69C is the list McFlow_CopySlotInfo fills from the replay files' headers (McFlowSlotInfo slot[] in sys/memcard_flow.c, seven entries of 0x2C).
+FIELD	include/sys/save.h	SaveRec	unk0	item	MEDIUM	ZSaveRec in menu/dc.h has u16 item[8] at +0x00 and a word at +0x10 for the same record (needs the array split, not only a rename).
+NAME	GetWin_IsAnimating	GetWin_IsAnimDone	MEDIUM	it tests bit 0 of the movie's trigger word (Flash.trig, set for one frame by the movie's action "trig" "0"); the callers start an animation and wait for it to become non-zero before going on.
+NAME	TextBox_SetColor2	TextBox_SetShadowColor	HIGH	it stores into the box's shadow colour, which TextBox_DrawClip hands to Font_SetShadowColor.
+NAME	TEXTBOX_FLAG_COLOR2	TEXTBOX_FLAG_SHADOW	HIGH	the flag TextBox_SetColor2 sets; it selects box->shadow over the default shadow colour in TB_ATTACH.
+NAME	TextBox_SetRect	TextBox_SetClip	HIGH	it stores the four values TextBox_DrawClip hands to Font_SetClip (argument order x0, x1, y0, y1).
+NAME	TEXTBOX_FLAG_RECT	TEXTBOX_FLAG_CLIP	HIGH	the flag TextBox_SetRect sets; it selects box->clip over the full-screen clip in TB_ATTACH.
+NAME	MsgWin_SetBoxParam	MsgWin_SetSpacing	HIGH	its whole body is TextBox_SetSpacing(&gMsgWin->box, a, b).
+NAME	ChrTbl_GetLevel	ChrTbl_GetItemSlots	MEDIUM	both callers store the result as the item slot capacity (ItemSet_Fit's capacity argument).
+NAME	Snd_SendFighters	Snd_SendLoopSounds	MEDIUM	it collects the handles of the live looping sounds of both sides (BtlCharApi_GetSound's first output), not fighter ids.
+NAME	Snd_RpcSetFighters	Snd_RpcSetLoopSounds	MEDIUM	its only caller passes looping-sound handles; same for the constant SND_RPC_FIGHTERS.

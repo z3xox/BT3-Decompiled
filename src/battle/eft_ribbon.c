@@ -29,7 +29,7 @@ extern void Vec3_Normalize(EftRbnVec *dst, EftRbnVec *src);
 extern void Vec3_Div(EftRbnVec *dst, EftRbnVec *src, f32 d);   /* dst.xyz = src.xyz / d */
 extern void Vec3_Copy(EftRbnVec *dst, EftRbnVec *src);          /* copies x, y, z */
 
-extern u64 EftVram_AddImage(EftAbTexEntry *tex, s32 a, s32 b);         /* uploads the image, returns its TEX0 */
+extern u64 EftVram_AddImage(EftAbTexEntry *tex, s32 tcc, s32 tfx);         /* uploads the image, returns its TEX0 */
 extern u64 EftVram_AddClut(EftAbTexEntry *tex);                       /* uploads the palette, returns its block */
 
 /* Takes a free node from the pool (round-robin) and appends it to the ribbon's list. */
@@ -418,7 +418,7 @@ typedef struct EftRbnView {
 extern EftRbnView *gBtlCamView;
 
 extern void ClipVtx_Set(EftRbnVert *out, EftRbnVec *pos, EftRbnVec *uv, EftRbnVec *color);
-extern void EftGfx_DrawPolyScaledZ(EftRbnVert *verts, s32 blend, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex0,
+extern void EftGfx_DrawPolyScaledZ(EftRbnVert *verts, s32 blend, s32 unusedA, s32 unusedB, s32 front, s32 flip, u64 tex0,
                                    f32 zScale);
 
 /* Draws a kind 0 ribbon: one camera-facing quad (two triangles) per pair of nodes, the side vector being the cross
@@ -631,7 +631,7 @@ extern s32 Rand_IntRange(s32 lo, s32 hi);
 /* The rest of the zap module (the file after this one, eft_ad). */
 extern void EftZap_LoadKey(EftZapWork *w, s32 n);
 extern s32 EftZap_AddNode(EftZapStrand *line);                       /* adds a point; 0 when the pool is empty */
-extern void EftZap_SetTexPair(EftZapWork *w, EftAcTex *tex, s32 a, s32 b);
+extern void EftZap_SetTexPair(EftZapWork *w, EftAcTex *tex, s32 image, s32 palette);
 extern void EftZap_LoadTex(EftZapWork *w);
 
 /* The first part of the ribbon module (the file before this one, eft_ab). EftRibbon_SetEnd and
@@ -671,9 +671,9 @@ void EftRibbon_DrawKind1(EftRibbon *w, EftRibbonArg *arg, EftRibbonPrm *prm) {
     EftAcVec toCam;
     EftAcVec uv[4];
     EftAcVec col;
-    EftAcVec unk170;
+    EftAcVec unusedA; /* never used: stack layout only */
     EftAcVec half;
-    EftAcVec unk190;
+    EftAcVec unusedB; /* never used: stack layout only */
     EftAcScr scr[4];
     EftAcVert verts[9];
     EftRibbonNode **link;
@@ -1341,7 +1341,7 @@ s32 EftRibbon_SetFadeTime(EftAcTask *task, f32 frames) {
 }
 
 /* Sets one texture frame of the ribbon. No caller. */
-s32 EftRibbon_SetTexFrame(EftAcTask *task, s32 slot, void *uv, s32 a, s32 b) {
+s32 EftRibbon_SetTexFrame(EftAcTask *task, s32 slot, void *uv, s32 image, s32 palette) {
     EftRibbon *w;
 
     if (task == NULL) {
@@ -1354,7 +1354,7 @@ s32 EftRibbon_SetTexFrame(EftAcTask *task, s32 slot, void *uv, s32 a, s32 b) {
     if (!(w->flags & EFT_RIBBON_ALIVE)) {
         return 0;
     }
-    EftRibbon_SetTexPair(w, slot, uv, a, b);
+    EftRibbon_SetTexPair(w, slot, uv, image, palette);
     return 1;
 }
 

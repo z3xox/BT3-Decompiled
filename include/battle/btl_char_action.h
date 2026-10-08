@@ -180,7 +180,7 @@ typedef struct BtlActChr {
     /* 0x0D7C */ s32 chargeTimer;
     /* 0x0D80 */ s32 chargeGauge;        /* gauge that drains 400 per frame down to a floor */
     /* 0x0D84 */ s32 chargeFullFrames;
-    /* 0x0D88 */ s32 evasionCount;        /* frames with flag 8 in actions 0x89..0x8C */
+    /* 0x0D88 */ s32 evasionCount;        /* +1 per frame with flag 8 in actions 0x89..0x8C; kept through 0x2B / 0x2D / 0x2E, else 0; read as a count (BtlOpp_GetEvasionCount, modulo 3) */
     /* 0x0D8C */ s32 unkD8C;
     /* 0x0D90 */ s32 attackId;      /* id BtlAct_PrepareAttack was last called with */
     /* 0x0D94 */ u8 unkD94[0xDE0 - 0xD94];
@@ -271,9 +271,9 @@ f32 BtlAct_ScaleSpeedByDist(BtlActChr *chr, f32 speed, f32 range, f32 frames);
 void BtlAct_SetPitchMotion(BtlActChr *chr, s32 motionUp, s32 motionDown, s32 recalc);
 s32 BtlAct_IsAirMotion(BtlActChr *chr, s32 useSaved);
 void BtlAct_PrepareSwitch(BtlActChr *chr);
-void BtlAct_PushAngle(BtlActChr *chr, f32 angle, f32 speed, f32 arg);
-void BtlAct_PushDir(BtlActChr *chr, Vec4 *dir, f32 speed, f32 arg);
-void BtlAct_AddSway(BtlActChr *chr, f32 a, f32 b);
+void BtlAct_PushAngle(BtlActChr *chr, f32 angle, f32 speed, f32 max);
+void BtlAct_PushDir(BtlActChr *chr, Vec4 *dir, f32 speed, f32 max);
+void BtlAct_AddSway(BtlActChr *chr, f32 add, f32 max);
 s32 BtlAct_IsAttackId(s32 id);
 s32 BtlAct_TestAttackSkill(BtlActChr *chr, s32 attack);
 void BtlAct_PrepareAttack(BtlActChr *chr, s32 id);

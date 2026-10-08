@@ -125,7 +125,7 @@ typedef struct UEvoZ {
     /* 0x001C */ void *dialogText;
     /* 0x0020 */ void *text[3];         /* character names, form names, item names */
     /* 0x002C */ MFlash flash[UEVOZ_FLASH_NUM]; /* screen, character reel, item / slot list */
-    /* 0x00B0 */ void *bg;              /* background picture */
+    /* 0x00B0 */ void *bg;              /* background picture (EvoZ in evo_z_items.h calls it chipTex) */
     /* 0x00B4 */ u8 *tex0[43];          /* [42] = the portrait */
     /* 0x0160 */ u8 *tex1[25];
     /* 0x01C4 */ u8 *tex2[26];
@@ -159,7 +159,7 @@ typedef struct UEvoZ {
     /* 0x1A58 */ s32 rows;              /* rows of the grid (7 columns) */
     /* 0x1A5C */ f32 faceAlpha;         /* fades the portrait in once it is loaded */
     /* 0x1A60 */ s32 capacity;          /* item slots of the character */
-    /* 0x1A64 */ s32 fits;              /* slots still free */
+    /* 0x1A64 */ s32 fits;              /* item slots the set takes (ItemSet_Fit's result), not the free ones */
     /* 0x1A68 */ s32 kind;
     /* 0x1A6C */ s32 exp;
     /* 0x1A70 */ s32 nextExp;           /* experience of the next level, 0 at the last level */

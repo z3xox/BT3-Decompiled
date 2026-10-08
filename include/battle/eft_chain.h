@@ -402,7 +402,7 @@ void EftKiObj_Break(EftTask *task, EftVec *pos);
 void EftKiObj_StepFrags(EftTask *task);
 void EftKiObj_DrawFrags(EftTask *task);
 
-void EftChain_SetTex(EftArc *w, EftArcTexSet *set, s32 a, s32 b);
+void EftChain_SetTex(EftArc *w, EftArcTexSet *set, s32 idxA, s32 idxB);
 void EftChain_BuildTex(EftArc *dst, EftArc *src);
 void EftChain_SetKey(EftArcKey *out, EftArc *w, s32 key);
 void EftChain_BlendKeys(EftArc *w);

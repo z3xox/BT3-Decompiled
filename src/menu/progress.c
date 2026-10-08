@@ -58,7 +58,7 @@ extern void OptMode_Main(void);
     }
 
 /* Runs the menus until one of them starts a battle. Chooses the first screen from how the last battle ended. */
-s32 Progress_Main(s32 arg) {
+s32 Progress_Main(s32 unused) {
     s32 done = 0;
     s32 flags;
     s32 reason;

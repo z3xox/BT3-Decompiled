@@ -1571,7 +1571,7 @@ s32 BtlObjMdl_HasJaw(BobjObj *obj) {
     return (obj->mdl.model->flags & 0xC00000) != 0;
 }
 
-/* Picks one of four eye direction tracks at random (libc rand); model flag 0x400000 selects the second set. */
+/* Picks one of four jaw rotation tracks (node 0x31) at random (libc rand); model flag 0x400000 selects the second set. */
 void BtlObjFace_PickJawKeys(BobjObj *obj, BobjFace *face) {
     if (!BtlObjMdl_HasJaw(obj)) {
         return;

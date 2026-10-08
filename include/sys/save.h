@@ -61,7 +61,7 @@ typedef struct SaveCustom {
 
 /* 0x1C bytes; fourteen of them at 0x2D40. */
 typedef struct SaveRec {
-    /* 0x00 */ u8 unk0[0x14];
+    /* 0x00 */ u8 unk0[0x14];  /* u16 item[8] (item ids, 1-based, 0 = empty) and a word at +0x10: ZSaveRec in menu/dc.h */
     /* 0x14 */ u16 level;  /* used instead of SaveCustom.level when ChrTbl_GetLevel is asked for one of these */
     /* 0x16 */ u16 unk16;
     /* 0x18 */ s32 chara;  /* character id, -1 = empty (defaults; ChrGrid_Build appends the non-empty ones to the character list) */
@@ -75,7 +75,7 @@ typedef struct SaveData {
     /* 0x0010 */ SaveSlot slot[SAVE_SLOT_COUNT];
     /* 0x00A0 */ u8 unkA0[0x208 - 0xA0];
     /* 0x0208 */ s32 ubFlags;        /* bit 0 set by Save_UnlockAll */
-    /* 0x020C */ s32 missionPages;        /* 5 by default, 20 after Save_UnlockAll: a capacity, guess */
+    /* 0x020C */ s32 missionPages;        /* 5 by default (Save_SetDefaults), 20 after Save_UnlockAll */
     /* 0x0210 */ u8 unk210[0x77C - 0x210]; /* menu 0x37F5F8 / 0x385268 / 0x387F90 use 0x210-0x28D */
     /* 0x077C */ s32 rank;        /* 99 by default */
     /* 0x0780 */ u8 unk780[0xA08 - 0x780]; /* byte records at 0x780.. (menu 0x372E98 / 0x3760C8) */
@@ -132,9 +132,9 @@ extern SaveData *gSaveData;
 #define SAVE_CHARA_WORD(opt, id) (*((opt)->charaBits + (id) / 64))
 #define SAVE_CHARA_MASK(id) (1LL << ((id) % 64))
 
-void Save_UnlockAll(SaveData *opt);
-void Save_SetDefaults(SaveData *opt);
-void Save_Stub266600(SaveData *opt);
+void Save_UnlockAll(SaveData *save);
+void Save_SetDefaults(SaveData *save);
+void Save_Stub266600(SaveData *save);
 void Save_Init(void);
 void Save_AddItem(s32 idx);
 void Save_AddMoney(s32 amount);

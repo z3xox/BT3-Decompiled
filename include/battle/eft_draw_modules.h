@@ -35,8 +35,8 @@ struct EftTTaskList;
 typedef struct EftTTask {
     /* 0x00 */ u8 flags;          /* bit 0: dead */
     /* 0x01 */ u8 unk1[7];
-    /* 0x08 */ u8 unk8[0x10];     /* texture animation state A (EftVram_AddImage) */
-    /* 0x18 */ u8 unk18[0xC];     /* texture animation state B (EftVram_AddClut) */
+    /* 0x08 */ u8 unk8[0x10];     /* BtlTask: result / counts at 0x08, pos (Vec4) at 0x10 */
+    /* 0x18 */ u8 unk18[0xC];     /* BtlTask: rest of pos, then the owning list at 0x20 */
     /* 0x24 */ struct EftTTaskList *children; /* the list BtlTask_CreateChildList made for this task */
     /* 0x28 */ void **cls;        /* task class; cls[0] is the update callback, used as a type tag */
     /* 0x2C */ u8 unk2C[0xC];
@@ -47,7 +47,7 @@ typedef struct EftTTask {
 /* A list of child tasks as BtlTask_CreateChildList returns it; only the test the ray manager makes. */
 typedef struct EftTTaskList {
     /* 0x00 */ s32 parent;
-    /* 0x04 */ s32 count;         /* live children */
+    /* 0x04 */ s32 count;         /* BtlTaskList.head: the first child task (a pointer); non-zero = list not empty */
 } EftTTaskList;
 
 /* A screen position as Mtx_ProjectPoint writes it: GS units (1 / 16 pixel) with the 0x7000 / 0x7200 offset. */
@@ -100,7 +100,7 @@ typedef struct EftChainLink {
 
 /* One of the 16 strands of a chain effect. */
 typedef struct EftChainStrand {
-    /* 0x00 */ Mtx44 mtx;
+    /* 0x00 */ Mtx44 mtx;      /* the same block is four vectors in EftArcChain (eft_chain.h): pos, drift, unk20, color */
     /* 0x40 */ u8 unk40[0x20];
     /* 0x60 */ EftChainLink *head;
     /* 0x64 */ s32 count;

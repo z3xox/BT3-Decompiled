@@ -164,7 +164,7 @@ typedef struct EftShotTech {
 
 /* Argument of EftCam_Start, passed by value. */
 typedef struct EftKCamArg {
-    /* 0x00 */ s32 *pack;
+    /* 0x00 */ s32 *pack;  /* the camera animation (`anim` in EftCamArg, eft_core.h) */
     /* 0x04 */ s32 objId;
     /* 0x08 */ s32 id;
 } EftKCamArg;
@@ -244,9 +244,10 @@ typedef struct EftObjTech {
                                      velocity 0x80 */
     /* 0x090 */ EftKSrc *src;
     /* 0x094 */ u8 emit[0x2CC];   /* emitter state; +0x2A8 width */
-    /* 0x360 */ Vec4 nodes[2];
+    /* 0x360 */ Vec4 nodes[2];    /* not positions: the 0x10-byte header of the node block (EftEmitNodes, eft_sweep.h)
+                                     and slot 0's id and padding; slot 0's position is startNodePos */
     /* 0x380 */ Vec4 startNodePos;
-    /* 0x390 */ Vec4 unk390[3];
+    /* 0x390 */ Vec4 unk390[3];   /* slot 0's second node (id, position) and slot 1's id: not three vectors */
     /* 0x3C0 */ Vec4 fireNodePos;
     /* 0x3D0 */ u8 unk3D0[0x60];
     /* 0x430 */ s32 node;
@@ -303,7 +304,7 @@ typedef struct EftRushShot {
     /* 0x064 */ u8 emit[0x2CC];
     /* 0x330 */ Vec4 nodes[2];
     /* 0x350 */ Vec4 startNodePos;
-    /* 0x360 */ Vec4 unk360[3];
+    /* 0x360 */ Vec4 unk360[3];  /* the same mix as EftObjTech.unk390 */
     /* 0x390 */ Vec4 fireNodePos;
     /* 0x3A0 */ u8 unk3A0[0x1E4];
     /* 0x584 */ s32 flags;

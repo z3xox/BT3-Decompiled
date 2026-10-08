@@ -91,7 +91,7 @@ extern void EftEmit_TermState(EftOSet *set, void *state);
 extern s32 EftEmit_GetFlagsFromMask(EftOSet *set, void *state, s32 objId, s32 type, s32 idx, s32 ending, s32 kill,
                                     s32 mask);
 extern void EftEmit_Spawn(EftOSet *set, void *state, EftOEmitNodes *nodes, void *pos, void *dir, s32 objId,
-                          s32 node, s32 arg7, s32 type, s32 idx, s32 flags, f32 scale);
+                          s32 node, s32 srcKind, s32 type, s32 idx, s32 flags, f32 scale);
 extern void EftEmit_KillAll(EftOSet *set, void *state);
 extern s32 EftEmit_UpdateAlive(EftOSet *set, void *state);
 extern void EftEmit_SetNode(EftOEmitNodes *nodes, s32 slot, s32 node, void *pos);
@@ -102,8 +102,8 @@ extern void EftMesh_Init(void *model, s32 *data);    /* model template from pack
 extern void EftMesh_SetTex(void *model, void *tex);    /* its texture set */
 extern void EftMesh_SetMtx(void *model, Mtx44 *m);     /* its matrix */
 extern void EftMesh_Copy(void *model, void *proto);  /* instance of a template */
-extern void EftMesh_SetTexBase(void *model, s32 a1);
-extern void EftMesh_SetOwner(void *model, s32 objId, s32 a2);
+extern void EftMesh_SetTexBase(void *model, s32 base);
+extern void EftMesh_SetOwner(void *model, s32 objId, s32 type);
 
 extern void EftDisc_SpawnParts(EftOTask *task, s32 mode);
 extern void EftDisc_AddHit(EftOTask *task);

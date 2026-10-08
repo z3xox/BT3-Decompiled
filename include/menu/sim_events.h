@@ -84,7 +84,7 @@ extern s32 gSimPopoRank;    /* 0x31EB38 */
 extern s32 SimDay_CountItems2(void);
 extern void SimDay_TakeItem(void);
 
-s32 SimPopo_Swap(USimDay *day, s32 a, s32 b);
+s32 SimPopo_Swap(USimDay *day, s32 figA, s32 figB);
 void SimPopo_CursorOn(USimDay *day);
 void SimPopo_CursorOff(USimDay *day);
 

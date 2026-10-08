@@ -339,14 +339,14 @@ f32 BtlAiAtk_RollCharge(AiActSide *s, s8 base, s8 range) {
 void BtlAiAtk_SetInput(AiActSide *s, u32 kind) {
     AiActAtk *atk = &s->atk;
     s32 action = BtlCharApi_GetAction(s->side);
-    s32 state = BtlCharApi_GetAnimId(s->side);
+    s32 anim = BtlCharApi_GetAnimId(s->side);
     s32 row = 0;
     u8 bit = s->param[0] & 1;
     f32 t;
 
-    if ((u32)(state - 0x37) < 4 || (u32)(state - 0x3C) < 4) {
-        row = BtlCharApi_GetParamByte84(s->side, state < 0x3C ? state - 0x37 : state - 0x3C);
-    } else if (state == 0x1B) {
+    if ((u32)(anim - 0x37) < 4 || (u32)(anim - 0x3C) < 4) {
+        row = BtlCharApi_GetParamByte84(s->side, anim < 0x3C ? anim - 0x37 : anim - 0x3C);
+    } else if (anim == 0x1B) {
         if (kind == 0) {
             if (action == 0x1F) {
                 row = BtlCharApi_GetParamByte8D(s->side) / 2;
@@ -416,8 +416,8 @@ void BtlAiAtk_SetInput(AiActSide *s, u32 kind) {
 s32 BtlAiAtk_PickOption(AiActSide *s, s8 *lo, s8 *hi) {
     AiActAtk *atk = &s->atk;
     AiActStatus *st = &s->st;
-    s32 state = BtlCharApi_GetAnimId(s->side);
-    s32 step = state < 0x3C ? state - 0x37 : state - 0x3C;
+    s32 anim = BtlCharApi_GetAnimId(s->side);
+    s32 step = anim < 0x3C ? anim - 0x37 : anim - 0x3C;
     s32 roll = Rand_Range(100) + 1;
     s32 sum;
 
@@ -539,7 +539,7 @@ void BtlAiCombo_Init(AiActSide *s) {
    No option picked: press RUSH. */
 void BtlAiCombo_Start(AiActSide *s) {
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 state[2];
+    s32 anim[2];
     s8 cls[2];
     AiActAtk *atk = &s->atk;
     s32 picked = 0;
@@ -547,8 +547,8 @@ void BtlAiCombo_Start(AiActSide *s) {
     AiActSeq *act = &s->act;
     s32 step;
 
-    AIACT_GET_STATES(s, tbl, state, cls);
-    step = state[0] < 0x3C ? state[0] - 0x37 : state[0] - 0x3C;
+    AIACT_GET_STATES(s, tbl, anim, cls);
+    step = anim[0] < 0x3C ? anim[0] - 0x37 : anim[0] - 0x3C;
     BtlAiAtk_Reset(s->side, atk);
     atk->oppKind = 0;
     atk->step = step;
@@ -591,10 +591,10 @@ void BtlAiAtk_Run(AiActSide *s) {
     AiActSeq *act = &s->act;
     AiActAtk *atk = &s->atk;
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 state = BtlCharApi_GetAnimId(s->side);
+    s32 anim = BtlCharApi_GetAnimId(s->side);
     f32 held = BtlCharApi_GetChargeRate(s->side);
     AiActEntry *e = AIACT_TOP(act);
-    s32 cls = tbl->stateClass[state];
+    s32 cls = tbl->stateClass[anim];
 
     BtlAiPad_Clear(&s->pad, 1);
     if (atk->flags & AIACT_ATK_IDLE) {
@@ -607,7 +607,7 @@ void BtlAiAtk_Run(AiActSide *s) {
         act->phase = 3;
         return;
     }
-    if (state != atk->state) {
+    if (anim != atk->state) {
         if (atk->hold & (AIACT_BTN_BLAST | AIACT_BTN_RUSH)) {
             if (atk->charge <= held || cls == 0) {
                 atk->hold = 0;
@@ -1120,12 +1120,12 @@ s32 BtlAiSense_Basic(AiActSide *s) {
 /* Sets react bit 4 while the opponent's state id is 0x97 or 0x189. */
 void BtlAiSense_NoteOppState(AiActSide *s) {
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 state[2];
+    s32 anim[2];
     s8 cls[2];
     AiActStatus *st = &s->st;
 
-    AIACT_GET_STATES(s, tbl, state, cls);
-    if (state[1] == 0x97 || state[1] == 0x189) {
+    AIACT_GET_STATES(s, tbl, anim, cls);
+    if (anim[1] == 0x97 || anim[1] == 0x189) {
         st->react |= 4;
     }
 }
@@ -1138,9 +1138,9 @@ void BtlAiSense_NoteOppState(AiActSide *s) {
    unsigned compare (no prediction, slot filled from the target: the original's `beqzl` + `move v0,zero`). */
 s32 BtlAiSense_IsBusy(AiActSide *s) {
     AiActTables8 *tbl = (AiActTables8 *)((u8 *)gBtlAi->data->tables + 8);
-    s32 state = BtlCharApi_GetAnimId(s->side);
-    u8 busy = tbl->stateFlags[state] & 1;
-    s32 cls = (s8)tbl->stateClass[state] - 15;
+    s32 anim = BtlCharApi_GetAnimId(s->side);
+    u8 busy = tbl->stateFlags[anim] & 1;
+    s32 cls = (s8)tbl->stateClass[anim] - 15;
     s32 r = BtlCharApi_IsAttackHitPending(s->side);
     AiActStatus *st = &s->st;
 
@@ -1224,8 +1224,8 @@ s32 BtlAiSense_CheckBit40(AiActSide *s) {
     AiActEntry *e = &s->act.stack[0];
     AiActSide *opp = &gBtlAi->side[s->side ^ 1];
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 oppState = BtlCharApi_GetAnimId(s->side ^ 1);
-    s32 cls = tbl->stateClass[oppState];
+    s32 oppAnim = BtlCharApi_GetAnimId(s->side ^ 1);
+    s32 cls = tbl->stateClass[oppAnim];
     u64 w = BtlCharApi_GetActionBits(s->side);
 
     if (!BtlSide_IsPoweredUp(opp->side)) {
@@ -1247,7 +1247,7 @@ s32 BtlAiSense_CheckBit40(AiActSide *s) {
         return 0;
     }
     if (st->react & 0x100000) {
-        if (st->oppAction == oppState) {
+        if (st->oppAction == oppAnim) {
             return 0;
         }
         st->react &= ~0x100000;
@@ -1289,11 +1289,11 @@ s32 BtlAiSense_CheckBit41(AiActSide *s) {
    away from this fighter, BtlCharApi_IsAttackHitsDone, react bit 0x20 clear. */
 s32 BtlAiSense_CheckBit28(AiActSide *s) {
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 state[2];
+    s32 anim[2];
     s8 cls[2];
     AiActStatus *st = &s->st;
 
-    AIACT_GET_STATES(s, tbl, state, cls);
+    AIACT_GET_STATES(s, tbl, anim, cls);
     if (!(st->flags & 0x10)) {
         return 0;
     }
@@ -1402,13 +1402,13 @@ s32 BtlAiSense_CheckBit33(AiActSide *s) {
    fighter flag 0x66. */
 s32 BtlAiSense_CheckBit34(AiActSide *s) {
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 state[2];
+    s32 anim[2];
     s8 cls[2];
     AiActSeq *act = &s->act;
     s32 step;
 
-    AIACT_GET_STATES(s, tbl, state, cls);
-    step = state[1] < 0x3C ? state[1] - 0x37 : state[1] - 0x3C;
+    AIACT_GET_STATES(s, tbl, anim, cls);
+    step = anim[1] < 0x3C ? anim[1] - 0x37 : anim[1] - 0x3C;
     if (cls[0] == 0x1A) {
         if (!((u32)step < 4)) {
             return 0;
@@ -1475,10 +1475,10 @@ s32 BtlAiSense_CheckBit38(AiActSide *s) {
 /* Situation bit 39: BtlCharApi_IsOppSkillFlag4 and bit 1 of the own parameter word +0x10. */
 s32 BtlAiSense_CheckBit39(AiActSide *s) {
     s32 a = BtlCharApi_IsOppSkillFlag4(s->side);
-    s32 b = BtlCharApi_GetParamFlags(s->side);
+    s32 flags = BtlCharApi_GetParamFlags(s->side);
     s32 ret = a != 0;
 
-    if (!(b & 2)) {
+    if (!(flags & 2)) {
         ret = 0;
     }
     return ret;
@@ -1487,7 +1487,7 @@ s32 BtlAiSense_CheckBit39(AiActSide *s) {
 /* Third pass of sense: the reaction bits. */
 void BtlAiSense_Reactions(AiActSide *s) {
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 state[2];
+    s32 anim[2];
     s8 cls[2];
     AiActSeq *act = &s->act;
     AiActStatus *st = &s->st;
@@ -1495,7 +1495,7 @@ void BtlAiSense_Reactions(AiActSide *s) {
     AiActEntry *e;
     s32 r;
 
-    AIACT_GET_STATES(s, tbl, state, cls);
+    AIACT_GET_STATES(s, tbl, anim, cls);
     r = BtlAiSense_CheckBit51(s);
     if (r != 0) {
         if (r == 2) {
@@ -1602,20 +1602,20 @@ void BtlAiSense_Reactions(AiActSide *s) {
 s32 BtlAiSense_IsSteep(AiActSide *s) {
     AiActVec pos;
     AiActVec opp;
-    f32 a;
+    f32 pitch;
 
     BtlCharApi_GetPos(s->side, &pos);
     BtlCharApi_GetPos(s->side ^ 1, &opp);
     if (Vec3_Dist(&opp, &pos) < 30.0f) {
         return 0;
     }
-    a = -atan2f(opp.y - pos.y, Vec3_Dist(&opp, &pos));
-    if (a < 0.0f) {
-        if (!(-0.7f < a)) {
+    pitch = -atan2f(opp.y - pos.y, Vec3_Dist(&opp, &pos));
+    if (pitch < 0.0f) {
+        if (!(-0.7f < pitch)) {
             return 1;
         }
     } else {
-        if (!(a < 0.7f)) {
+        if (!(pitch < 0.7f)) {
             return 1;
         }
     }
@@ -1625,13 +1625,13 @@ s32 BtlAiSense_IsSteep(AiActSide *s) {
 /* Fourth pass of sense: bits derived from the earlier ones and from the opponent's state class. */
 void BtlAiSense_Derived(AiActSide *s) {
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 state[2];
+    s32 anim[2];
     s8 cls[2];
     AiActStatus *st = &s->st;
     u64 w = BtlCharApi_GetActionBits(s->side);
-    s32 oppBusy = BtlCharApi_GetStunTimer(s->side ^ 1);
+    s32 oppStun = BtlCharApi_GetStunTimer(s->side ^ 1);
 
-    AIACT_GET_STATES(s, tbl, state, cls);
+    AIACT_GET_STATES(s, tbl, anim, cls);
     if (st->react & 1) {
         st->flags |= 0x2000;
     } else {
@@ -1665,7 +1665,7 @@ void BtlAiSense_Derived(AiActSide *s) {
     if (w & 0x3FB00809FF) {
         st->flags |= 0x2000000;
     }
-    if (cls[1] == 6 || oppBusy > 0) {
+    if (cls[1] == 6 || oppStun > 0) {
         st->flags |= 0x10000;
     }
     if ((u8)(cls[1] - 3) < 5 && cls[1] != 6) {

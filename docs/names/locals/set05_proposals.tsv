@@ -1,0 +1,37 @@
+FIELD	include/battle/eft_part10.h	EftPart10Ptcl	speed	dist	HIGH	eft_link_2.c:1657-1664 does p->dist += p->distVel and places the particle at base * dist (the same block; eft_link_2.h names it dist).
+FIELD	include/battle/eft_part10.h	EftPart10Def	speed	dist	HIGH	Track copied to EftPart10Ptcl 0xC0, the particle's distance from the emitter (eft_part10.c:243; eft_link_2.h EftWLinkDef.dist).
+FIELD	include/battle/eft_part10.h	EftPart10Def	speedRange	distRange	HIGH	Random range of the start distance (eft_part10.c:243), distRange in eft_link_2.h.
+FIELD	include/battle/eft_part10.h	EftPart10Def	speedBase	distBase	HIGH	Added to the random start distance (eft_part10.c:243), distBase in eft_link_2.h.
+FIELD	include/battle/eft_part10.h	EftPart10	speed	dist	HIGH	Current value of the dist track (em->speedBase.v + Rand(em->speed.v, ...) is stored as the particle's distance, eft_part10.c:243).
+FIELD	include/battle/eft_part10.h	EftPart10	speedRange	distRange	HIGH	Current value of the distRange track (eft_part10.c:243).
+FIELD	include/battle/eft_part10.h	EftPart10	speedBase	distBase	HIGH	Current value of the distBase track (eft_part10.c:243).
+FIELD	include/battle/eft_part10.h	EftPart10	rate	life	HIGH	eft_link_2.c:1437 ends the emitter when arg->life * 30 <= frame and life > 0 (same word, argument copy at 0x30 + 0x34).
+FIELD	include/battle/eft_part10.h	EftPart10Arg	rate	life	HIGH	Same word as EftPart10Arg.life in eft_link_2.h: seconds before the emitter stops (eft_link_2.c:1437).
+FIELD	include/battle/eft_link_2.h	EftWLinkArg	rate	life	HIGH	eft_link_1.c:129 ends the emitter when arg->life * 30 <= time (EftLinkArg.life in eft_particle_unused.h is the same word at +0x34).
+FIELD	include/battle/eft_link_2.h	EftWLinkArg	frame	texIdxA	MEDIUM	eft_link_1.c:47 passes it to EftLink_SelectTex as the image entry index beside texIdxB (palette); the caller eft_sweep.c gives a texture index.
+FIELD	include/battle/eft_link_2.h	EftPart10	stopDelay	spinB	HIGH	eft_part10.c:761-807 uses 0x25C as the second spin (rotB += spinB); eft_link_2.c:1366 only clears it beside spinA.
+FIELD	include/battle/eft_link_2.h	EftPart10	timer	hold	HIGH	eft_link_2.c:1445 counts it down while flag 8 (EFT_PART10_HOLD) is set; eft_part10.h names 0x3A8 hold (set by EftPart10_SetHold, eft_part10.c:1316).
+FIELD	include/battle/eft_part10.h	EftPart10Ptcl	stretchStep	mulD	HIGH	eft_link_2.c:1616-1623 uses it as the range of a per-channel colour multiplier (col = col0 * mul), not a stretch.
+FIELD	include/battle/eft_part10.h	EftPart10Ptcl	stretch	mul0	HIGH	Start value of the colour multiplier pulse (eft_link_2.c:1617).
+FIELD	include/battle/eft_part10.h	EftPart10Ptcl	stretchAge	mulT	HIGH	Time of the colour multiplier pulse, stepped up and down (eft_link_2.c:1626-1632).
+FIELD	include/battle/eft_part10.h	EftPart10Ptcl	stretchTime	mulTime	HIGH	Period in frames of the colour multiplier pulse (eft_link_2.c:1611-1612).
+FIELD	include/battle/eft_part10.h	EftPart10Def2	stretchX	mulR	HIGH	Key track of the red colour multiplier (eft_part10.c:326-331 feeds the pulse eft_link_2.c applies to col.x); mulR in eft_link_2.h.
+FIELD	include/battle/eft_part10.h	EftPart10Def2	stretchY	mulG	HIGH	Green colour multiplier track; mulG in eft_link_2.h.
+FIELD	include/battle/eft_part10.h	EftPart10Def2	stretchZ	mulB	HIGH	Blue colour multiplier track; mulB in eft_link_2.h.
+FIELD	include/battle/eft_part10.h	EftPart10Def2	stretchTime	mulTime	HIGH	Period of the colour multiplier pulse in seconds (eft_part10.c:324 multiplies by 30); mulTime in eft_link_2.h.
+FIELD	include/battle/eft_part10.h	EftPart9Ptcl	size	sizeMul	HIGH	eft_quad_2.c:107-118: stepped by sizeStep and used as halfSize = size(0x138) * sizeMul(0x13C) * osc.
+FIELD	include/battle/eft_part10.h	EftPart9Ptcl	dir	vel	HIGH	eft_quad_2.c:126-127: 0x20 is the velocity (vel += accel; step = vel * speed).
+FIELD	include/battle/eft_part10.h	EftPart9Ptcl	vel	accel	HIGH	eft_quad_2.c:126: 0x30 is added to the velocity every frame.
+FIELD	include/battle/eft_part10.h	EftPart9Ptcl	stretchStep	colorOscAmp	HIGH	eft_quad_2.c:141-151: range of the per-channel colour multiplier at 0xF8 (colorOscAmp in eft_quad_2.h).
+FIELD	include/battle/eft_part10.h	EftPart9Ptcl	stretch	colorMul	HIGH	eft_quad_2.c:141-153: base of the colour multiplier at 0x120.
+FIELD	include/battle/eft_part10.h	EftPart9Ptcl	stretchAge	colorOscTime	HIGH	eft_quad_2.c:136, 159-167: time of the colour pulse at 0x12C.
+FIELD	include/battle/eft_part10.h	EftPart9Ptcl	stretchTime	colorOscPeriod	HIGH	eft_quad_2.c:135-136: period of the colour pulse at 0x130.
+FIELD	include/battle/eft_obj_tech.h	EftKCamArg	pack	anim	MEDIUM	First word of EftCam_Start's argument is the camera animation (EftCamArg.anim, eft_core.h; eft_obj_tech.c:2045 passes w->camAnim).
+FIELD	include/battle/eft_tech_modules.h	EftTechArg	side	chr	MEDIUM	Same word as EftKSrc.chr / EftHSlot.chr (+0x20); passed to BtlScene_GetCharPackEntry (eft_obj_tech.c:617 and :2472).
+NAME	EFT_PART10_P_SCALEX	EFT_PART10_P_MUL_R	MEDIUM	Per-channel flag of the colour multiplier pulse (eft_link_2.c:1616 tests 0x2000 for mul[0]); likewise SCALEY/SCALEZ -> MUL_G/MUL_B.
+NAME	EFT_PART10_P_SCALEY	EFT_PART10_P_MUL_G	MEDIUM	eft_link_2.c:1619 tests 0x4000 for the green multiplier.
+NAME	EFT_PART10_P_SCALEZ	EFT_PART10_P_MUL_B	MEDIUM	eft_link_2.c:1622 tests 0x8000 for the blue multiplier.
+NAME	EFT_PART10_P_UNK80	EFT_PART10_P_COLOR_RAMP	MEDIUM	eft_link_2.c:1679-1686: with 0x80 the colour runs from col0 along colDelta; set from def->colorMode (eft_part10.c:296-301).
+NAME	EftPart10_SetRate	EftPart10_SetLife	MEDIUM	Writes the word eft_link_2.c:1437 reads as the emitter's life in seconds.
+NAME	EftLink_SetRate	EftLink_SetLife	MEDIUM	Writes EftWLinkArg +0x34, the life in seconds (eft_link_1.c:129).
+NAME	EftZap_SetUnk40	EftZap_SetType	HIGH	Writes the creation argument's +0x40 byte, now named `type` in both eft_zap.h and eft_ribbon.h (twin of EftRibbon_SetType).

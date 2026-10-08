@@ -56,7 +56,7 @@ extern void EftPrim_DrawQuadDepth(EftVVec *pos, EftVVec *color, s32 layer, s32 f
                                   f32 v0, f32 u1, f32 v1, f32 rot);
 extern void EftGfx_DrawSprite(EftVVec *pos, EftVVec *color, f32 w, f32 h, f32 u0, f32 v0, f32 u1, f32 v1,
                               f32 rot, s32 layer, s32 front, u64 tex0);
-extern void EftGfx_DrawPolyScaledZ(EftVVert *verts, s32 layer, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex0,
+extern void EftGfx_DrawPolyScaledZ(EftVVert *verts, s32 layer, s32 unusedA, s32 unusedB, s32 front, s32 flip, u64 tex0,
                                    f32 zScale);
 extern s32 BtlPool_GetCurrent(void);
 extern void *BtlPool_Alloc(s32 slot, s32 size);
@@ -71,7 +71,7 @@ extern s32 BtlScene_IsTimeStopped(void);
 extern f32 BtlScene_GetCharScale(s32 objId);
 
 /* The head of the particle emitter module (0x182CE8..0x1853C8, another file). */
-extern void EftPtcl_PickTexture(EftPtclWork *w, void *res, s32 a, s32 b);    /* picks the emitter's texture (tex0) */
+extern void EftPtcl_PickTexture(EftPtclWork *w, void *res, s32 image, s32 palette);    /* picks the emitter's texture (tex0) */
 extern void EftPtcl_UploadTexture(EftPtclWork *w, EftPtclWork *w2);            /* per-frame step of the emitter's own values */
 extern void EftPtcl_SetKey(EftPtclCur *cur, EftPtclWork *w, s32 key);   /* current values = key `key` of the definition */
 extern void EftPtcl_BlendKeys(EftPtclWork *w);                             /* steps the current values between keys */
@@ -101,7 +101,7 @@ extern void EftLink_DrawQuad(EftLinkNode *n, EftVVec *uv0, EftVVec *uv1, EftVVec
 extern void EftLink_DrawQuadClipped(EftLinkNode *n, EftVVec *uv0, EftVVec *uv1, EftVVec *color, s32 layer, s32 frame, s32 front,
                           EftVTex *tex);
 extern void EftLink_SetKey(EftLinkWork *w, s32 key);                    /* current values = key `key` */
-extern void EftLink_SelectTex(EftLinkWork *w, EftVTex *tex, s32 frame, s32 arg3);
+extern void EftLink_SelectTex(EftLinkWork *w, EftVTex *tex, s32 image, s32 palette);
 extern void EftLink_BuildTex(EftLinkWork *w);
 extern EftLinkNode *EftLink_NewNode(EftLinkWork *w, EftVVec *pos, f32 index); /* takes a node from the pool */
 extern void EftLink_InitNode(EftLinkNode *n, EftLinkWork *w);             /* initialises a node from the current values */

@@ -9,12 +9,12 @@
 #include "sys/ramp.h"
 
 /*
- * ShenScene, 0x261ED8..0x262FF0: the 3D backdrop of the dragon (wish) screen, sys/late_a.c. Like the character
+ * ShenScene, 0x261ED8..0x262FF0: the 3D backdrop of the dragon (wish) screen, ui/shen_wish.c. Like the character
  * viewer (char_viewer.c) it runs the battle's object, stage, scene and ordering-table modules without a battle:
  * a backdrop (file 0x194 + dragon), the seven balls and the dragon, with scripted cameras that come from the
  * dragon's model file. The summoning is a fixed sequence (ShenScene_StepSeq): balls glowing, a flash, the
  * dragon in front of the fixed camera until the screen asks to leave, a farewell camera, fade out.
- * See battle/view_b.h.
+ * See ui/menu_support.h.
  */
 
 extern void *memset(void *dst, s32 c, u32 n);
@@ -25,7 +25,7 @@ typedef struct ShenBattleWork {
     /* 0x19F0 */ u64 flags; /* 0x100 = paused */
 } ShenBattleWork;
 
-/* gCommonRes->unk20: the scene keeps its backdrop file there (as the character viewer does) */
+/* gCommonRes->battleRes: the scene keeps its backdrop file there (as the character viewer does) */
 typedef struct ShenCommon {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ void *stage;
@@ -120,7 +120,7 @@ ShenScene *gShenScene = NULL;
      6  until the fade is done
    Sounds 0x3D..0x40 of bank mask 2 follow the steps.
    Step 1's blur call is step 3's with the strength fixed at 1: all four arguments are float-to-unsigned
-   conversions of `hi * k` (k = 64, 0, 0, 128). The compiler folds the first two and keeps the third (`hi * 0.0f`
+   conversions of `strength * k` (k = 64, 0, 0, 128). The compiler folds the first two and keeps the third (`strength * 0.0f`
    becomes a plain 0.0 it no longer knows as a constant in the >= 2^31 arm) and the multiply of the fourth.
    ScrXfade_Start takes the float first; `zero = 0.0f; half = 0.5f;` of step 2 stand behind the
    BtlObjAnim_PlayModel call. */
@@ -134,17 +134,17 @@ static inline void ShenScene_PlaySe(s32 id, s32 volume) {
 typedef Vec4 ShenVec __attribute__((aligned(16)));
 
 /* The radial blur of the flash: the alpha of its four grey layers. */
-static inline void ShenScene_SetBlur(u8 a3, u8 a0, u8 a1, u8 a2) {
-    StgBlur_SetColor3Rgba(0, 0x80, 0x80, 0x80, a3);
-    StgBlur_SetColor0Rgba(0, 0x80, 0x80, 0x80, a0);
-    StgBlur_SetColor1Rgba(0, 0x80, 0x80, 0x80, a1);
-    StgBlur_SetColor2Rgba(0, 0x80, 0x80, 0x80, a2);
+static inline void ShenScene_SetBlur(u8 alpha3, u8 alpha0, u8 alpha1, u8 alpha2) {
+    StgBlur_SetColor3Rgba(0, 0x80, 0x80, 0x80, alpha3);
+    StgBlur_SetColor0Rgba(0, 0x80, 0x80, 0x80, alpha0);
+    StgBlur_SetColor1Rgba(0, 0x80, 0x80, 0x80, alpha1);
+    StgBlur_SetColor2Rgba(0, 0x80, 0x80, 0x80, alpha2);
 }
 
 s32 ShenScene_StepSeq(ShenSeq *seq) {
     Mtx44 m;
     ShenVec center;
-    f32 hi;
+    f32 strength;
     ShenActor *actor;
     Ramp *ramp;
     ShenScene *work;
@@ -192,9 +192,9 @@ s32 ShenScene_StepSeq(ShenSeq *seq) {
         if (DemoCam_GetTime() >= 354.0f) {
             static const ShenVec c = {0.0f, 0.0f, 1.0f, 1.0f};
 
-            hi = 1.0f;
+            strength = 1.0f;
             center = c;
-            ShenScene_SetBlur((u32)(hi * 64.0f), (u32)(hi * 0.0f), (u32)(hi * 0.0f), (u32)(hi * 128.0f));
+            ShenScene_SetBlur((u32)(strength * 64.0f), (u32)(strength * 0.0f), (u32)(strength * 0.0f), (u32)(strength * 128.0f));
             StgBlur_SetCenter(0, &center, 0);
         }
         if (!ShenScene_IsCamEnd()) {
@@ -210,26 +210,26 @@ s32 ShenScene_StepSeq(ShenSeq *seq) {
         Ramp_Start(SHEN_RAMP(&work->actor[SHENSCENE_ACTOR_DRAGON]), 2.0f, 64.0f, zero);
         SHEN_OBJ_FLAGS(gShenScene->actor[SHENSCENE_ACTOR_BALLS].obj) &= ~2;
         {
-            ShenVec p[3] = {
+            ShenVec camPos[3] = {
                 {0.86f, -90.9870f, -19.1110f, 1.0f},
                 {-0.891f, -169.7360f, -33.2710f, 1.0f},
                 {-0.399f, -2.547f, -10.358f, 1.0f},
             };
-            ShenVec r[3] = {
+            ShenVec camRot[3] = {
                 {10.72f, 0.0f, 0.0f, 1.0f},
                 {16.778f, -0.823f, 0.0f, 1.0f},
                 {5.142f, 3.569f, 0.0f, 1.0f},
             };
 
             dragon = gShenScene->dragon;
-            r[dragon].x = r[dragon].x * 3.14159265f / 180.0f;
-            r[dragon].y = r[dragon].y * 3.14159265f / 180.0f;
-            r[dragon].z = r[dragon].z * 3.14159265f / 180.0f;
-            DemoCam_SetFixedPose(&p[dragon], &r[dragon]);
+            camRot[dragon].x = camRot[dragon].x * 3.14159265f / 180.0f;
+            camRot[dragon].y = camRot[dragon].y * 3.14159265f / 180.0f;
+            camRot[dragon].z = camRot[dragon].z * 3.14159265f / 180.0f;
+            DemoCam_SetFixedPose(&camPos[dragon], &camRot[dragon]);
             DemoCam_AddShake(1.0f);
-            p[dragon].z = zero;
-            p[dragon].x = zero;
-            ScrWarp_Spawn(0, &p[dragon], 3.8f, 10.0f, 50.0f, 10.0f, half);
+            camPos[dragon].z = zero;
+            camPos[dragon].x = zero;
+            ScrWarp_Spawn(0, &camPos[dragon], 3.8f, 10.0f, 50.0f, 10.0f, half);
         }
         ScrXfade_RequestCapture();
         ScrXfade_Start(half, 1);

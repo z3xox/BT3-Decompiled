@@ -103,8 +103,8 @@ extern void Mtx_Translate(Mtx44 *dst, Mtx44 *src, Vec4 *scale);
 extern void Mtx_RotateZ(Mtx44 *dst, Mtx44 *src, f32 angle);
 extern void Mtx_InverseRT(Mtx44 *dst, Mtx44 *src);
 extern void Mtx_Mul(Mtx44 *dst, Mtx44 *a, Mtx44 *b);
-extern void EftGfx_DrawPolyScaledZ(EftWVert *v, s32 layer, s32 a2, s32 a3, s32 noDepth, s32 a5, u64 tex0, f32 zScale);
-extern void EftGfx_DrawPolyFixedZ(EftWVert *v, s32 layer, s32 a2, s32 a3, s32 noDepth, s32 a5, u64 tex0, s32 z);
+extern void EftGfx_DrawPolyScaledZ(EftWVert *v, s32 layer, s32 unusedA, s32 unusedB, s32 noDepth, s32 flip, u64 tex0, f32 zScale);
+extern void EftGfx_DrawPolyFixedZ(EftWVert *v, s32 layer, s32 unusedA, s32 unusedB, s32 noDepth, s32 flip, u64 tex0, s32 z);
 s32 EftLink_IsCornerOffScreen(s32 x, s32 y, s32 z);
 
 extern EftWLinkMgr *gEftLink;
@@ -289,7 +289,7 @@ void EftLink_SetKey(EftWLink *w, s32 i) {
     Vec4_Copy(&w->col1Range, &key->col1Range[i]);
 }
 
-void EftLink_SelectTex(EftWLink *w, EftWTexEntry *tbl, s32 a, s32 b);
+void EftLink_SelectTex(EftWLink *w, EftWTexEntry *tbl, s32 image, s32 palette);
 
 extern void Vec4_Set(Vec4 *dst, f32 x, f32 y, f32 z, f32 w);
 extern void Vec3_Sub(Vec4 *dst, Vec4 *a, Vec4 *b);
@@ -300,7 +300,7 @@ extern s32 rand(void);
 extern f32 cosf(f32 x);
 extern f32 sinf(f32 x);
 extern f32 EftMath_WrapAngle(f32 a);
-extern u64 EftVram_AddImage(EftWTexEntry *e, s32 a, s32 b);
+extern u64 EftVram_AddImage(EftWTexEntry *e, s32 tcc, s32 tfx);
 extern u64 EftVram_AddClut(EftWTexEntry *e);
 extern void Vec4_Clamp(Vec4 *dst, Vec4 *src, f32 lo, f32 hi);
 extern void Vu0Cur_Translate(Vec4 *v);
@@ -321,16 +321,16 @@ extern void Vu0Cur_Pop(void);
 extern EftWLinkMgr *gEftLink;
 extern u8 gEftLinkClass[0x18];
 
-/* Takes texture entry a and palette entry b of a pack's texture table; the blended TEX0 is cached in table slot
-   a + b (slot b when both are the same). */
-void EftLink_SelectTex(EftWLink *w, EftWTexEntry *tbl, s32 a, s32 b) {
-    if (a == b) {
-        w->texIdx = b;
+/* Takes texture entry `image` and palette entry `palette` of a pack's texture table; the blended TEX0 is cached in
+   table slot image + palette (slot `palette` when both are the same). */
+void EftLink_SelectTex(EftWLink *w, EftWTexEntry *tbl, s32 image, s32 palette) {
+    if (image == palette) {
+        w->texIdx = palette;
     } else {
-        w->texIdx = a + b;
+        w->texIdx = image + palette;
     }
-    w->tex = tbl[a];
-    w->clut = tbl[b];
+    w->tex = tbl[image];
+    w->clut = tbl[palette];
 }
 
 /* Builds the TEX0 of the selected texture / palette pair once per texture table slot (bit in the table's mask). */
@@ -1128,7 +1128,7 @@ void EftLink_SetRate(EftWTask *task, f32 rate) {
 }
 
 /* Changes the texture table and the texture / palette pair. No caller in the executable. */
-void EftLink_SetTex(EftWTask *task, EftWTexSet *tex, s32 a, s32 b) {
+void EftLink_SetTex(EftWTask *task, EftWTexSet *tex, s32 image, s32 palette) {
     EftWLink *w;
 
     if (gEftLink == NULL) {
@@ -1141,13 +1141,13 @@ void EftLink_SetTex(EftWTask *task, EftWTexSet *tex, s32 a, s32 b) {
         w = task->work;
         if (w != NULL && (w->flags & 1)) {
             w->arg.tex = tex;
-            EftLink_SelectTex(w, tex->e, a, b);
+            EftLink_SelectTex(w, tex->e, image, palette);
         }
     }
 }
 
 /* Sets the start delay from a frame count (stored in seconds). */
-void EftLink_SetDelay(EftWTask *task, s32 v) {
+void EftLink_SetDelay(EftWTask *task, s32 frames) {
     EftWLink *w;
 
     if (gEftLink == NULL) {
@@ -1164,12 +1164,12 @@ void EftLink_SetDelay(EftWTask *task, s32 v) {
         return;
     }
     if (w->flags & 1) {
-        w->delay = (f32)v / 30.0f;
+        w->delay = (f32)frames / 30.0f;
     }
 }
 
 /* Sets how many frames a stop request waits before the emitter stops. */
-void EftLink_SetStopDelay(EftWTask *task, s32 v) {
+void EftLink_SetStopDelay(EftWTask *task, s32 frames) {
     EftWLink *w;
 
     if (gEftLink == NULL) {
@@ -1186,7 +1186,7 @@ void EftLink_SetStopDelay(EftWTask *task, s32 v) {
         return;
     }
     if (w->flags & 1) {
-        w->stopDelay = v;
+        w->stopDelay = frames;
     }
 }
 
@@ -1214,7 +1214,7 @@ s32 EftLink_SetFlag200(EftWTask *task) {
 }
 
 /* Stores the caller's tag (the effect pack library passes its arg3). Returns 0 only for a bad handle. */
-s32 EftLink_SetType(EftWTask *task, s32 v) {
+s32 EftLink_SetType(EftWTask *task, s32 type) {
     EftWLink *w;
 
     if (gEftLink == NULL) {
@@ -1231,7 +1231,7 @@ s32 EftLink_SetType(EftWTask *task, s32 v) {
         return 0;
     }
     if (w->flags & 1) {
-        w->type = v;
+        w->type = type;
     }
     return 1;
 }
@@ -1293,7 +1293,7 @@ extern void Vu0Cur_LoadMtx(Mtx44 *m);
 extern void EftPart10_InitSpin(EftPart10 *w);
 extern void EftPart10_StartKeys(EftPart10 *w);
 extern void EftPart10_SetKey(EftPart10 *w, s32 key);
-extern void EftPart10_SelectTex(EftPart10 *w, EftWTexSet *tex, s32 a, s32 b);
+extern void EftPart10_SelectTex(EftPart10 *w, EftWTexSet *tex, s32 image, s32 palette);
 extern void EftPart10_UpdateKeys(EftPart10 *w);
 extern void EftPart10_UpdateSpin(EftPart10 *w);
 extern void EftPart10_BuildTex(EftPart10 *w, EftWTexSet *tex);
@@ -1309,7 +1309,7 @@ extern void EftPart10_DrawQuad(Vec4 *corner, Vec4 *uv0, Vec4 *uv1, Vec4 *col, s3
 extern void EftPart10_UnlinkPtcl(EftPart10Ptcl **head, EftPart10Ptcl **tail, EftPart10Ptcl *p);
 extern void EftPart10_UnlinkGroup(EftPart10Grp **head, EftPart10Grp **tail, EftPart10Grp *g);
 extern void EftPart10_LinkGroup(EftPart10Grp **head, EftPart10Grp **tail, EftPart10Grp *g);
-extern void EftPart10_Emit(EftPart10 *w, EftPart10Grp *g, f32 a, f32 b);
+extern void EftPart10_Emit(EftPart10 *w, EftPart10Grp *g, f32 yaw, f32 pitch);
 extern void EftPart10_BuildCorners(EftPart10Ptcl *p, EftPart10 *w);
 
 void EftPart10_EmitRings(EftPart10 *w);

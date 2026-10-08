@@ -30,8 +30,8 @@ static const s32 sUbzFoeTex[8] = { 15, 18, 19, 20, 21, 22, 23, 24 };
 void UbzSel_SetupBattle(void) {
     u16 items[8];
     NCourse *course = &gUbzSel->course[gUbzSel->cursor[0]];
-    s32 unk4 = course->stageChange != 0;
-    s32 unk14 = course->changeAllowed != 0;
+    s32 stageChange = course->stageChange != 0;
+    s32 changeAllowed = course->changeAllowed != 0;
     s32 announcer = course->announcer;
     s32 timeLimit = course->timeLimit;
     s32 stage = course->stage;
@@ -57,9 +57,9 @@ void UbzSel_SetupBattle(void) {
         }
     }
     Battle_ClearWork();
-    BattleSetup_SetRule(0, 3, bgm, timeLimit, announcer, stage, unk4);
+    BattleSetup_SetRule(0, 3, bgm, timeLimit, announcer, stage, stageChange);
     BattleSetup_SetSide(0, 0, 0, 1, 1, 1, 0, NULL);
-    BattleSetup_SetSide(1, 2, 1, 1, unk14, 1, 0, NULL);
+    BattleSetup_SetSide(1, 2, 1, 1, changeAllowed, 1, 0, NULL);
     BattleSetup_SetMember(1, 0, gUbzSel->foe[course->foe[0]].chara, 0, 0, gUbzSel->foe[course->foe[0]].cpuLevel, 100.0f,
                           NULL);
     for (i = 0; i < count; i++) {

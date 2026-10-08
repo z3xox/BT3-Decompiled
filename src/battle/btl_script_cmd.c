@@ -36,7 +36,7 @@ extern void BtlFacade_StartCharMoveF(s32 side, s32 type, f32 value, s32 mode) __
 /* the text module's default window (0x23AC50, not decompiled) */
 extern BtlScriptCmdWindow *Font_GetStyle(void);
 /* start position and direction of a side (0x2427A0, stage code, not decompiled) */
-extern void BtlStage_GetStartPlace(s32 side, Vec4 *pos, Vec4 *rot, s32 arg);
+extern void BtlStage_GetStartPlace(s32 side, Vec4 *pos, Vec4 *rot, s32 alt);
 /* called with a second argument (0) that BtlFacade_SetCpuParam8 does not take */
 extern void BtlFacade_SetCpuParam8Ex(s32 value, s32 unused) __asm__("BtlFacade_SetCpuParam8");
 
@@ -961,7 +961,7 @@ s32 BtlScriptCmd_SetTriggers(u32 phase, void *taskWork) {
     return 1;
 }
 
-/* Command 10 "rule": stage bgm timeLimit announcer unk. Clears the battle work and sets the rule of a story
+/* Command 10 "rule": stage bgm timeLimit announcer stageChange. Clears the battle work and sets the rule of a story
    battle (mode 1). Setup action only. */
 s32 BtlScriptCmd_SetRule(u32 phase, void *taskWork) {
     if (phase == GSC_PHASE_BEGIN || phase == GSC_PHASE_BEGIN_ABORT) {
@@ -969,10 +969,10 @@ s32 BtlScriptCmd_SetRule(u32 phase, void *taskWork) {
         s32 bgm = Gsc_GetInt();
         s32 timeLimit = Gsc_GetInt();
         s32 announcer = Gsc_GetInt();
-        s32 unk10 = Gsc_GetInt();
+        s32 stageChange = Gsc_GetInt();
 
         Battle_ClearWork();
-        BattleSetup_SetRule(0, 1, bgm, timeLimit, announcer, stage, unk10);
+        BattleSetup_SetRule(0, 1, bgm, timeLimit, announcer, stage, stageChange);
     }
     return 1;
 }

@@ -24,7 +24,7 @@
  */
 
 /* MsgWin_Init takes three arguments (overlay_common.h declares a fourth, unused one as s32); a pointer is passed here. */
-extern void MsgWin_Init4(void *pack, void *text, s32 side, void *arg) __asm__("MsgWin_Init");
+extern void MsgWin_Init4(void *pack, void *text, s32 side, void *unused) __asm__("MsgWin_Init");
 
 /* Starts a line of the guide's voice with its subtitle. */
 void EvoTop_PlayVoice(EvoTop *menu, s32 line) {

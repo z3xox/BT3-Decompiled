@@ -49,7 +49,7 @@ extern void Font_Flush(s32 state);
 extern s32 BtlCtrl_IsActiveDead(s32 side);
 extern void HudPrompt_ShowCue(void);
 extern void HudPrompt_HideCue(void);
-extern void HudPrompt_SetCueDim(s32 arg);
+extern void HudPrompt_SetCueDim(s32 canAct);
 extern s32 BtlCtrl_GetActiveMember(s32 side);
 
 extern List gGscTaskList;

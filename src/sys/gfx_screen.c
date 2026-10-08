@@ -867,8 +867,8 @@ void GfxWater_LoadStageColor(void) {
    - the first CLAMP word is the macro `GS_SET_CLAMP(2, 2, x0, x1, 0, srcH)` with its `0 << 24` term: written out by
      hand in any term order the 9-register header, the reload registers and with them the first third of the
      function come out differently.
-   - there is no phase variable: `d * 0.2f` is written in both cosf arguments of a wave. The shared product is then
-     a block-local temporary that crosses one call (f20), which is what puts d in f21, dx in f22 and the second
+   - there is no phase variable: `dist * 0.2f` is written in both cosf arguments of a wave. The shared product is then
+     a block-local temporary that crosses one call (f20), which is what puts dist in f21, dx in f22 and the second
      square root straight into f20.
    - the strip loop sets a `sy` variable in front of each vertex (like `sx`): that decides the load order of gu / gv
      and their registers. */
@@ -900,7 +900,7 @@ void GfxWater_DrawView(s32 split, s32 view) {
     f32 fh;
     f32 dx;
     f32 dy;
-    f32 d;
+    f32 dist;
     s32 h = 0xE0;
     s32 srcH = 0x1C0;
 
@@ -951,14 +951,14 @@ void GfxWater_DrawView(s32 split, s32 view) {
                 fh = h;
                 dx = fx - fw * 0.2f;
                 dy = fy - 224 * 0.2f;
-                d = sqrtf(dx * dx + dy * dy);
-                gu[row][col] += (s32)(cosf(gGfxWater[view].phaseU + d * 0.2f) * (dx / d) * 3.0f * 16.0f);
-                gv[row][col] += (s32)(cosf(gGfxWater[view].phaseU + d * 0.2f) * (dy / d) * 3.0f * 16.0f);
+                dist = sqrtf(dx * dx + dy * dy);
+                gu[row][col] += (s32)(cosf(gGfxWater[view].phaseU + dist * 0.2f) * (dx / dist) * 3.0f * 16.0f);
+                gv[row][col] += (s32)(cosf(gGfxWater[view].phaseU + dist * 0.2f) * (dy / dist) * 3.0f * 16.0f);
                 dx = fx - fw * 0.8f;
                 dy = fy - 0.8f * fh;
-                d = sqrtf(dx * dx + dy * dy);
-                gu[row][col] += (s32)(cosf(gGfxWater[view].phaseV + d * 0.2f) * (dx / d) * 3.0f * 16.0f);
-                gv[row][col] += (s32)(cosf(gGfxWater[view].phaseV + d * 0.2f) * (dy / d) * 3.0f * 16.0f);
+                dist = sqrtf(dx * dx + dy * dy);
+                gu[row][col] += (s32)(cosf(gGfxWater[view].phaseV + dist * 0.2f) * (dx / dist) * 3.0f * 16.0f);
+                gv[row][col] += (s32)(cosf(gGfxWater[view].phaseV + dist * 0.2f) * (dy / dist) * 3.0f * 16.0f);
             }
             if (gu[row][col] < 0) {
                 gu[row][col] = 0;

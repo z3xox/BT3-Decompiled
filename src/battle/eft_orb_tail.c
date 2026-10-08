@@ -61,7 +61,7 @@ extern void BtlPool_Free(s32 slot, void *ptr);
 extern s32 BtlScene_IsEffectStopped(s32 objId, s32 kind);
 extern EftAbTask *BtlTaskList_AddTail(void *list, void *cls, void *arg);
 extern void BtlTask_SetDead(EftAbTask *task);                         /* marks a task as dying */
-extern u64 EftVram_AddImage(EftAbTexEntry *tex, s32 a, s32 b);         /* uploads the image, returns its TEX0 */
+extern u64 EftVram_AddImage(EftAbTexEntry *tex, s32 tcc, s32 tfx);         /* uploads the image, returns its TEX0 */
 extern u64 EftVram_AddClut(EftAbTexEntry *tex);                       /* uploads the palette, returns its block */
 
 extern f32 BtlCharApi_GetHeight(s32 objId);
@@ -96,7 +96,7 @@ extern s32 EftPtcl_Stop(void *h);                                  /* stop emitt
 extern s32 EftPtcl_IsAlive(void *h);                                  /* is the handle still valid */
 extern s32 EftPtcl_SetPos(void *h, EftAbVec *pos);
 extern s32 EftPtcl_SetDir(void *h, EftAbVec *dir);
-extern s32 EftPtcl_SetTexture(void *h, EftAbTex *tex, s32 a2, s32 a3);
+extern s32 EftPtcl_SetTexture(void *h, EftAbTex *tex, s32 image, s32 palette);
 
 typedef struct EftAbView {
     /* 0x000 */ u8 unk0[0x140];

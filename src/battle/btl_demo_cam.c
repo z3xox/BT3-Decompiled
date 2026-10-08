@@ -20,12 +20,12 @@ extern void Mtx_RotateY(Mtx44 *dst, Mtx44 *src, f32 angle); /* rotate about Y */
 extern void Vu0View_LoadMtx(Mtx44 *m);
 
 extern void *BtlObj_Get(s32 id);
-extern void *BtlCharApi_GetPlayer(void *arg);
-extern s32 BtlCharApi_IsMemberBodyChanged(void *arg);
-extern void BtlCharApi_GetCamBodyPos(void *arg, Vec4 *out);
+extern void *BtlCharApi_GetPlayer(void *objId);
+extern s32 BtlCharApi_IsMemberBodyChanged(void *objId);
+extern void BtlCharApi_GetCamBodyPos(void *objId, Vec4 *out);
 extern s32 BtlStage_IsReady(void);
 extern DemoCamAnim *BtlStage_GetFileMember(s32 idx);          /* the stage's camera animation idx (0..2) */
-extern u8 *BtlObj_GetNode(void *obj, s32 arg);
+extern u8 *BtlObj_GetNode(void *obj, s32 node);
 
 /* Turns the file offsets of a camera animation into pointers (once). */
 void DemoCam_FixupAnim(DemoCamAnim *anim) {

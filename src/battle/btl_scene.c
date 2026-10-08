@@ -545,7 +545,7 @@ void BtlScene_ClearStageChangeRequest(void) {
 /*
  * Once per frame, while fighting, outside modes 4..7 and with the time limit off or at least 10: looks for the
  * first active blast record whose definition is of type 1 (flags & 3) and, when that definition has bit 0x4000,
- * whose own flag 0x10 is set. hit is 1 when rule word 0x18 is on, EftHit_HasDefFlag200000(rec) holds and the opponent is
+ * whose own flag 0x10 is set. hit is 1 when rule word 0x10 (stageChange, setup + 0x18) is on, EftHit_HasDefFlag200000(rec) holds and the opponent is
  * below half HP (BtlCharApi_IsTargetBelowHalfHp), else 2 when BtlCharApi_CanTechniqueFinish holds. hit 1 marks the record (flags 2 and 8, two
  * separate stores in the source: with one `|= 0xA` the loop is short enough for the compiler to hoist its
  * constants) and asks for the stage change; hit 2 sets held flag 0xAB on the opponent. A pending

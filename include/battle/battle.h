@@ -191,8 +191,8 @@ typedef struct BattleRule {
 /* Options: setup + 0x2C. */
 typedef struct BattleOption {
     /* 0x00 */ s32 isSet;      /* 0: BattleSetup_FinishEx fills optA / optB from the save data */
-    /* 0x04 */ s32 optA[2];    /* per side, SaveData.unk1694 by default -> fighter + 0x49C */
-    /* 0x0C */ s32 optB[2];    /* per side, SaveData.unk1698 by default -> fighter + 0x4B8 = (optB == 0) */
+    /* 0x04 */ s32 optA[2];    /* per side, SaveData.camDistMode (camera distance preset) by default -> fighter + 0x49C */
+    /* 0x0C */ s32 optB[2];    /* per side, SaveData.camShakeOff by default -> fighter + 0x4B8 = (optB == 0) */
     /* 0x14 */ s32 unk14;      /* BattleSetup_SetOption14 / Battle_GetOption14, neither has a caller */
     /* 0x18 */ u8 unk18[0x78];
 } BattleOption; /* size 0x90 */

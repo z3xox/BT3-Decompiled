@@ -72,7 +72,7 @@
                          all bits of its mask). table = 31 raw PAD_* masks at chr+0x578.
      BtlInput_BuildMaskTable(chr)  builds that table from the key config: BtlInput_GetKeyMask(chr, action) looks `action`
                          up in gSaveData->keyConfig[player][8] (s32, gSaveData + 0x160C + player * 0x20; a
-                         backup copy sits at + 0x164C) and returns the matching entry of D_002EF050 =
+                         backup copy sits at + 0x164C) and returns the matching entry of its local padBit[] (rodata copy at 0x2EF050) =
                          { CIRCLE, CROSS, SQUARE, TRIANGLE, L1, L2, R1, R2 }. The option menu's default
                          (overlay 0x3A296C) is keyConfig = { 2, 1, 0, 3, 4, 5, 6, 7 }.
      BtlInput_Update(chr)  pushes the record through an 8-entry ring (chr+0x8C0..) and derives the per-frame

@@ -148,9 +148,9 @@ typedef struct EftClipVtx {
 } EftClipVtx; /* 0x30 */
 
 extern void ClipVtx_Set(EftClipVtx *out, EftVecArg *pos, EftVecArg *st, EftVecArg *col);
-extern void EftGfx_DrawPolyScaledZ(EftClipVtx *v, s32 otZ, s32 a3, s32 a4, s32 a5, s32 a6, u64 tex0, f32 unk);
+extern void EftGfx_DrawPolyScaledZ(EftClipVtx *v, s32 layer, s32 unused1, s32 unused2, s32 front, s32 flip, u64 tex0, f32 zScale);
 extern void EftSpr_DrawFlat(s32 r, s32 g, s32 b, s32 a, Vec4 *pos, f32 u0, f32 v0, f32 u1, f32 v1, u32 w, u32 h,
-                          s32 unk, s32 unkS0, void *tex);
+                          s32 ctx, s32 layer, void *tex0);
 
 /* GS XYZF2 register value. */
 typedef struct EftGsXyzf {
@@ -1245,7 +1245,7 @@ void EftBound_BuildWall(EftBoundChar *work, EftBoundChar *src) {
 /* Queues one triangle of the wall: builds three clip vertices, takes the whole texture repeats off the
    coordinates and hands them to the shared clipper (EftGfx_DrawPolyScaledZ). The matrix argument is not used. */
 void EftBound_DrawTri(EftMtxArg m, EftVecArg p0, EftVecArg p1, EftVecArg p2, EftVecArg st0, EftVecArg st1,
-                      EftVecArg st2, EftVecArg c0, EftVecArg c1, EftVecArg c2, s32 otZ, u64 tex0) {
+                      EftVecArg st2, EftVecArg c0, EftVecArg c1, EftVecArg c2, s32 layer, u64 tex0) {
     EftClipVtx v[9];
     f32 fs;
     f32 ft;
@@ -1262,7 +1262,7 @@ void EftBound_DrawTri(EftMtxArg m, EftVecArg p0, EftVecArg p1, EftVecArg p2, Eft
     v[0].st[1] -= ft;
     v[1].st[1] -= ft;
     v[2].st[1] -= ft;
-    EftGfx_DrawPolyScaledZ(v, otZ, 1, 0, 0, 0, tex0, 2.0f);
+    EftGfx_DrawPolyScaledZ(v, layer, 1, 0, 0, 0, tex0, 2.0f);
 }
 
 /* Draws the quads of a mesh that face the camera, two triangles each. */
@@ -1626,7 +1626,7 @@ s32 EftShot_GetCurSlot(s32 chr) {
     return c->curSlot;
 }
 
-/* Plays one of the fighter's technique sounds for a shot whose definition has unk4 == 0: 0 for bit 2 (except
+/* Plays one of the fighter's technique sounds for a shot whose definition has cls == 0 (a skill): 0 for bit 2 (except
    shot id 0x27), 1 for bit 4, 2 when the fighter has attribute 0x40000; the last that applies wins. */
 void EftShot_PlayFireSound(s32 objId, EftShotSlot *slot) {
     s32 snd = -1;

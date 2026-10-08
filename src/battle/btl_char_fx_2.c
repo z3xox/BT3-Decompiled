@@ -24,7 +24,7 @@ extern void BtlObj_SetColorMode(FxObj *obj, s32 bit, s32 on);
 extern void EftShotFx_Start(s32 objId, s32 kind);
 extern void EftImpact_SpawnHit(FxPosArg *arg);
 extern s32 *BtlMember_GetActive(FxChr *chr);
-extern void BtlObj_SetEyeFrame(FxObj *obj, s32 arg);
+extern void BtlObj_SetEyeFrame(FxObj *obj, s32 frame);
 extern s32 BtlObj_GetMouthMode(FxObj *obj);
 extern void BtlObj_SetSubState(FxObj *obj, s32 state, s32 arg);
 extern s32 BtlAnim_TestAttr(FxChr *chr, u64 mask);           /* animation event bits raised this frame */
@@ -34,7 +34,7 @@ extern s32 BtlOpp_GetPlayer(FxChr *chr);                      /* the opponent's 
 extern s32 BtlAct_GetCurrent(FxChr *chr);
 extern s32 BtlAct_IsTechniqueId(s32 action);
 extern s32 BtlAct_GetCurrentClass(FxChr *chr);
-extern void BtlAct_PushAngle(FxChr *chr, f32 yaw, f32 a, f32 b);
+extern void BtlAct_PushAngle(FxChr *chr, f32 yaw, f32 speed, f32 max);
 extern s32 BtlCharApi_IsInRushSequence(s32 objId);
 extern s32 BtlCharApi_IsInSkill(s32 objId);
 extern s32 BtlCharApi_HasWeaponOut(s32 objId);
@@ -46,7 +46,7 @@ extern s32 BtlSkill_GetId(FxChr *chr, s32 slot);
 extern s32 BtlChar_GetHitSoundLine(s32 kind);
 extern s32 BtlObjAnim_GetEventArg(FxObj *obj, u64 mask);
 extern s32 BtlObjAnim_MaskToNode(s32 bits);
-extern s32 BtlObjAnim_QueryEvent(FxObj *obj, u64 a, s32 b, s32 c);
+extern s32 BtlObjAnim_QueryEvent(FxObj *obj, u64 mask, s32 layer, s32 what);
 extern void BtlObj_GetNodeVelocity(FxObj *obj, s32 part, Vec4 *out);
 extern void Mtx_MulVec4(Vec4 *out, void *mtx, Vec4 *in);
 extern void EftSpdLine_SpawnPartStreaks(s32 objId, Vec4 *pos, s32 part);
@@ -61,16 +61,16 @@ extern void ChrCam_AddShake(FxChr *chr, f32 strength, f32 time);
 extern s32 BtlObjAnim_TestEvent(FxObj *obj, u64 mask);
 extern void BtlCharSnd_RequestAt(Vec4 *pos, s32 kind, s32 id, f32 near, f32 far);
 extern void BtlObjXf_Update(FxObj *obj);
-extern void BtlObjAnim_PlayModel(FxObj *obj, s32 anim, s32 arg);
-extern void BtlObj_SaveNodePositions(FxObj *obj, s32 arg);
+extern void BtlObjAnim_PlayModel(FxObj *obj, s32 anim, s32 mode);
+extern void BtlObj_SaveNodePositions(FxObj *obj, s32 relative);
 extern void BtlObjAnim_SamplePose(FxObj *obj);
 extern void BtlObjAnim_UpdateEvents(FxObj *obj);
 extern void BtlObjPose_CalcMatrices(FxObj *obj);
 extern void BtlObj_UpdateChains(FxObj *obj);
 extern void BtlObj_CopyLipTables(FxObj *obj, FxObj *owner);
-extern void BtlObj_AddPush(FxObj *obj, Vec4 *v, f32 arg);
-extern void BtlObj_AddSway(FxObj *obj, f32 a, f32 b);
-extern void StgTint_Start(s32 a, s32 b, f32 time);
+extern void BtlObj_AddPush(FxObj *obj, Vec4 *v, f32 max);
+extern void BtlObj_AddSway(FxObj *obj, f32 add, f32 max);
+extern void StgTint_Start(s32 slot, s32 dir, f32 time);
 extern void BtlChar_SpawnFxBits3C(FxChr *chr);
 extern void BtlChar_SpawnFxBits0(FxChr *chr);
 extern void BtlChar_SpawnHitFx(FxChr *chr);
@@ -818,7 +818,7 @@ FxObj *BtlPartner_GetObj(FxChr *chr) {
 }
 
 /* Gives the partner a horizontal velocity along a yaw. */
-void BtlPartner_PushAngle(FxChr *chr, f32 yaw, f32 speed, f32 arg) {
+void BtlPartner_PushAngle(FxChr *chr, f32 yaw, f32 speed, f32 max) {
     FxPartner *p = &chr->partner;
     Vec4 v;
     FxObj *obj;
@@ -829,12 +829,12 @@ void BtlPartner_PushAngle(FxChr *chr, f32 yaw, f32 speed, f32 arg) {
         v.y = 0.0f;
         v.z = Mathf_Cos(yaw) * speed;
         v.w = 0.0f;
-        BtlObj_AddPush(obj, &v, arg);
+        BtlObj_AddPush(obj, &v, max);
     }
 }
 
 /* Gives the partner a velocity of a given speed along a direction (ignored when the direction is shorter than 0.0001). */
-void BtlPartner_PushDir(FxChr *chr, Vec4 *dir, f32 speed, f32 arg) {
+void BtlPartner_PushDir(FxChr *chr, Vec4 *dir, f32 speed, f32 max) {
     FxPartner *p = &chr->partner;
     Vec4 v;
     FxObj *obj;
@@ -846,17 +846,17 @@ void BtlPartner_PushDir(FxChr *chr, Vec4 *dir, f32 speed, f32 arg) {
         if (!(len < 0.0001f)) {
             Vec4_Scale(&v, dir, 1.0f / len);
             Vec4_Scale(&v, &v, speed);
-            BtlObj_AddPush(obj, &v, arg);
+            BtlObj_AddPush(obj, &v, max);
         }
     }
 }
 
-/* Forwards two floats to BtlObj_AddSway on the partner. */
-void BtlPartner_SetObjFloats(FxChr *chr, f32 a, f32 b) {
+/* BtlObj_AddSway(add, max) on the partner's object. */
+void BtlPartner_SetObjFloats(FxChr *chr, f32 add, f32 max) {
     FxPartner *p = &chr->partner;
 
     if (p->active) {
-        BtlObj_AddSway(BtlObj_Get(p->objId), a, b);
+        BtlObj_AddSway(BtlObj_Get(p->objId), add, max);
     }
 }
 

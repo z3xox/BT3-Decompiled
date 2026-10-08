@@ -82,12 +82,12 @@ extern void BtlCharApi_SetHeldFlagA7(s32 objId);
 extern EftKTask *BtlTask_GetParent(EftKTask *task);
 extern void BtlTask_SetDead(EftKTask *task);
 extern void BtlTask_SetOwnerTag(EftKTask *task, s32 flags);
-extern void EftTexSet_Keep32(void *tex, s32 a1, s32 a2);
+extern void EftTexSet_Keep32(void *tex, s32 tcc, s32 tfx);
 extern void EftTexSet_Load32(void *tex, s32 *entry);
 extern s32 EftShot_TestBits(s32 objId, s32 bits);
 extern void EftShot_SetHeldFlagA8(s32 objId);
 extern void EftShot_Nop(s32 size);
-extern void EftEmit_LoadSet(EftKSrc *src, void *set, s32 a2, s32 *pack, s32 t0, s32 t1);
+extern void EftEmit_LoadSet(EftKSrc *src, void *set, s32 head, s32 *pack, s32 common, s32 idx);
 extern void EftEmit_FreeSet(void *set);
 extern void EftEmit_BeginFrame(void *set);
 extern u8 EftEmit_GetHead21(void *set);
@@ -133,9 +133,9 @@ extern f32 EftMath_WrapAngle(f32 angle);
 extern void EftAim_GetDir(Vec4 *dir, Vec4 *from, s32 objId);
 extern void EftAim_GetDirKeep(EftKSrc *src, Vec4 *dir, Vec4 *from, s32 objId);
 extern void EftAim_Home(Vec4 *out, Vec4 *from, Vec4 *dir, s32 objId, f32 speed, f32 homing);
-extern void EftGlow_Request(s32 objId, s32 a1);
+extern void EftGlow_Request(s32 objId, s32 cmd);
 extern void EftStreak_Stop(void *sub);
-extern void EftGndDust_SpawnLandingScaled(s32 objId, Vec4 *pos, Vec4 *dir, f32 a, f32 b);
+extern void EftGndDust_SpawnLandingScaled(s32 objId, Vec4 *pos, Vec4 *dir, f32 bright, f32 scale);
 extern void *EftOrbTail_Create(s32 objId, s32 auraType);
 extern void EftOrbTail_Burst(void *fx);
 extern void EftOrbTail_Kill(void *fx);
@@ -144,9 +144,9 @@ extern void EftMesh_Init(void *ring, s32 *model);
 extern void EftMesh_SetTex(void *ring, void *tex);
 extern void EftMesh_SetMtx(void *ring, Mtx44 *m);
 extern void EftMesh_Copy(void *ring, void *proto);
-extern void EftMesh_SetLayer(void *ring, s32 a1);
-extern void EftMesh_SetTexBase(void *ring, s32 a1);
-extern void EftMesh_SetOwner(void *ring, s32 objId, s32 a2);
+extern void EftMesh_SetLayer(void *ring, s32 blend);
+extern void EftMesh_SetTexBase(void *ring, s32 base);
+extern void EftMesh_SetOwner(void *ring, s32 objId, s32 type);
 extern void EftMesh_Draw(void *ring);
 extern s32 EftObj_Create(void *arg, s32 *pack);
 extern void EftObj_Destroy(s32 objId);
@@ -1209,7 +1209,8 @@ void EftObjTech_TermRings(EftKTask *task) {
 
 /* Runs the 19 emitter groups of the set: asks for each part what to do this frame (flag 1 = the object is ending,
    flag 8 = it was cut short) and starts or stops it at the body's head. Once the object has hit (0x400) the parts
-   move to the position on the target, and a part with a life (unk18 > 0) is left to run out.
+   move to the position on the target, and a part with a life of its own (its `rate` field, a life in seconds, > 0)
+   is left to run out.
    endOnTarget, onTarget, objId and a loop pointer live on the stack in the original: the function uses all nine
    saved registers. */
 void EftObjTech_UpdateEmitters(s32 objId, EftKTask *task, EftKSet *set) {
@@ -1986,7 +1987,7 @@ extern void EftAim_Home(Vec4 *dir, Vec4 *pos, Vec4 *dir2, s32 objId, f32 speed, 
 extern s32 EftShot_TestBits(s32 objId, s32 mask);
 extern void EftShot_SetHeldFlagA8(s32 objId);
 extern void EftShot_Nop(s32 size);
-#define EftEmit_LoadSet ((void (*)(EftTechArg *arg, void *model, s32 a2, s32 *pack, s32 a4, s32 a5))EftEmit_LoadSet)
+#define EftEmit_LoadSet ((void (*)(EftTechArg *arg, void *model, s32 head, s32 *pack, s32 common, s32 idx))EftEmit_LoadSet)
 extern void EftEmit_FreeSet(void *model);
 extern void EftEmit_BeginFrame(void *model);
 #define EftEmit_GetEndFrames ((s32 (*)(EftModel *model))EftEmit_GetEndFrames)
@@ -2014,12 +2015,12 @@ extern void EftObj_Destroy(s32 handle);
 #define BtlTask_SetDead ((void (*)(EftTask *task))BtlTask_SetDead)
 #define BtlTask_SetOwnerTag ((void (*)(EftTask *task, s32 flag))BtlTask_SetOwnerTag)
 #define BtlTask_GetParent ((EftTask *(*)(EftTask *task))BtlTask_GetParent)
-extern void StgTint_Start(s32 a0, s32 a1, f32 time);
-extern void StgBlur_SetCenter(s32 a0, Vec4 *pos, s32 a2);
-extern void StgBlur_SetColor0Rgba(s32 a0, s32 r, s32 g, s32 b, s32 a);
-extern void StgBlur_SetColor1Rgba(s32 a0, s32 r, s32 g, s32 b, s32 a);
-extern void StgBlur_SetColor2Rgba(s32 a0, s32 r, s32 g, s32 b, s32 a);
-extern void StgBlur_SetColor3Rgba(s32 a0, s32 r, s32 g, s32 b, s32 a);
+extern void StgTint_Start(s32 slot, s32 dir, f32 time);
+extern void StgBlur_SetCenter(s32 view, Vec4 *pos, s32 screenSpace);
+extern void StgBlur_SetColor0Rgba(s32 view, s32 r, s32 g, s32 b, s32 a);
+extern void StgBlur_SetColor1Rgba(s32 view, s32 r, s32 g, s32 b, s32 a);
+extern void StgBlur_SetColor2Rgba(s32 view, s32 r, s32 g, s32 b, s32 a);
+extern void StgBlur_SetColor3Rgba(s32 view, s32 r, s32 g, s32 b, s32 a);
 
 extern const EftSparkTbl gEftRushShotSparkTbl;
 
@@ -2057,8 +2058,8 @@ void EftRushShot_UpdateFade(EftTask *task) {
     Vec4 pos;
     Vec4 *center;
     f32 fade;
-    s32 a1;
-    s32 a2;
+    s32 alpha1;
+    s32 alpha2;
 
     if (arg->def->flags & 0x200) {
         if (EftShot_TestBits(opp, 0x10)) {
@@ -2080,11 +2081,11 @@ void EftRushShot_UpdateFade(EftTask *task) {
             }
         }
         fade = w->fade;
-        a1 = fade * 64.0f;
-        a2 = fade * 128.0f;
+        alpha1 = fade * 64.0f;
+        alpha2 = fade * 128.0f;
         StgBlur_SetColor0Rgba(0, 0x80, 0x80, 0x80, (u8)(s32)(fade * 32.0f));
-        StgBlur_SetColor1Rgba(0, 0x80, 0x80, 0x80, (u8)a1);
-        StgBlur_SetColor2Rgba(0, 0x80, 0x80, 0x80, (u8)a2);
+        StgBlur_SetColor1Rgba(0, 0x80, 0x80, 0x80, (u8)alpha1);
+        StgBlur_SetColor2Rgba(0, 0x80, 0x80, 0x80, (u8)alpha2);
         StgBlur_SetColor3Rgba(0, 0x80, 0x80, 0x80, 0x40);
         StgBlur_SetCenter(0, center, 0);
     }
@@ -2100,11 +2101,11 @@ void EftRushShot_UpdateStageFx(EftTask *task) {
         s32 i = w->stage;
         f32 angle = arg->def->subAngle[i] * 3.14159265f / 180.0f;
         s32 kind = arg->def->subKind[i];
-        s32 unk80 = arg->def->subArg;
+        s32 color = arg->def->subArg;
 
         angle = EftMath_WrapAngle(angle);
         if (kind >= 0) {
-            w->stageFx[i] = EftStreak_Start(arg->objId, kind, unk80, angle);
+            w->stageFx[i] = EftStreak_Start(arg->objId, kind, color, angle);
             w->flags |= EFT_RUSHSHOT_STAGE_FX;
         }
         w->stage++;

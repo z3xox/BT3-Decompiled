@@ -46,8 +46,8 @@ extern s32 Dialog_IsClosed(void);
 extern void Voice_StopWithLip(void);
 extern void Dialog_SetCursor(s32 choice);
 extern void Battle_ClearWork(void);
-extern void BattleSetup_SetRule(s32 screenMode, s32 mode, s32 bgm, s32 timeLimit, s32 announcer, s32 stage, s32 unk10);
-extern void BattleSetup_SetSide(s32 sideNo, s32 control, s32 pad, s32 memberCount, s32 unk1FC, s32 unk200, s32 lead,
+extern void BattleSetup_SetRule(s32 screenMode, s32 mode, s32 bgm, s32 timeLimit, s32 announcer, s32 stage, s32 stageChange);
+extern void BattleSetup_SetSide(s32 sideNo, s32 control, s32 pad, s32 memberCount, s32 changeAllowed, s32 switchEnabled, s32 lead,
                                 s32 charaBits);
 extern void BattleSetup_SetMember(s32 sideNo, s32 idx, s32 chara, s32 costume, s32 variant, s32 cpuLevel, f32 health,
                                   u16 *items);
@@ -101,7 +101,7 @@ typedef struct QSaveBody {
     /* 0x0288 */ s32 simCleared;
     /* 0x028C */ QSaveBest mission[100];
     /* 0x073C */ QSaveBestB bestB[5];
-    /* 0x0778 */ s32 unk778[2];
+    /* 0x0778 */ s32 unk778[2];              /* [1] (0x77C): the ladder rank (rank in the other menu views) */
     /* 0x0780 */ QSaveBest bestC[54];
     /* 0x0A08 */ u8 unkA08[0x2EC8 - 0xA08];
     /* 0x2EC8 */ u8 item[0x15E];        /* bit 0: owned */
@@ -181,11 +181,11 @@ typedef struct SimTrain {
 /* A round of the ladder (pack section 25). 998 = drawn at random, 999 = none. */
 typedef struct SimRound {
     /* 0x00 */ s32 announcer;
-    /* 0x04 */ s32 stageChange;        /* BattleSetup_SetRule's last argument (non-zero = 1) */
+    /* 0x04 */ s32 stageChange;        /* BattleSetup_SetRule: the rule's stageChange (non-zero = 1) */
     /* 0x08 */ s32 timeLimit;
     /* 0x0C */ s32 stage;
     /* 0x10 */ s32 bgm;
-    /* 0x14 */ s32 changeAllowed;       /* BattleSetup_SetSide's unk1FC of the opponent's side (non-zero = 1) */
+    /* 0x14 */ s32 changeAllowed;       /* BattleSetup_SetSide: changeAllowed of the opponent's side (non-zero = 1) */
     /* 0x18 */ s32 enemy;       /* index into the enemy table */
 } SimRound; /* 0x1C */
 

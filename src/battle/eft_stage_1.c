@@ -107,7 +107,7 @@ extern void Mtx_ProjectPoint(EftBIVec *out, Mtx44 *m, Vec4 *pos); /* project wit
 extern void Vec3_ScaleAdd(Vec4 *dst, Vec4 *dir, f32 s, Vec4 *base); /* dst = base + dir * s */
 extern f32 EftMath_WrapAngle(f32 angle);                        /* wraps an angle into -pi..pi */
 extern void EftGfx_UpdateClipPlanes(void);
-extern void EftGfx_DrawPolyFixedZ(void *verts, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, u64 tex0, s32 z);
+extern void EftGfx_DrawPolyFixedZ(void *verts, s32 layer, s32 unused1, s32 unused2, s32 front, s32 flip, u64 tex0, s32 z);
 extern s32 EftStage_IsDrawOn(void);
 extern f32 EftStage_GetTintScale(void);
 extern void EftSteam_Stop(void *emitter);
@@ -427,7 +427,7 @@ typedef struct EftBVert {
 
 /* Draws a w x h quad (half sizes) at `pos`, facing the camera and rotated by `rot` about the view axis, as two
    triangles through the clipping triangle routine 0x131478. Its depth slot is that of `pos`. */
-void EftPrim_DrawQuadDepth(Vec4 *pos, Vec4 *color, s32 arg2, s32 arg3, u64 tex0, f32 w, f32 h, f32 u0, f32 v0, f32 u1,
+void EftPrim_DrawQuadDepth(Vec4 *pos, Vec4 *color, s32 layer, s32 front, u64 tex0, f32 w, f32 h, f32 u0, f32 v0, f32 u1,
                            f32 v1, f32 rot) {
     EftBVert vert[9];
     Mtx44 m;
@@ -463,18 +463,18 @@ void EftPrim_DrawQuadDepth(Vec4 *pos, Vec4 *color, s32 arg2, s32 arg3, u64 tex0,
             ClipVtx_Set(&vert[0], &corner[i], &uv[i], color);
             ClipVtx_Set(&vert[1], &corner[i + 1], &uv[i + 1], color);
             ClipVtx_Set(&vert[2], &corner[i + 2], &uv[i + 2], color);
-            EftGfx_DrawPolyFixedZ(vert, arg2, 0, 0, arg3, 0, tex0, z);
+            EftGfx_DrawPolyFixedZ(vert, layer, 0, 0, front, 0, tex0, z);
         }
     }
 }
 
 /* Same as EftPrim_DrawQuadDepth with the depth slot multiplied by zScale.
-   The float parameters are declared BEFORE arg2 / arg3 / tex0 (integer and float arguments use separate
+   The float parameters are declared BEFORE layer / front / tex0 (integer and float arguments use separate
    registers, so callers are not affected): only with that order are the incoming float registers copied before
    the integer ones, which decides whether u0 or v1 gets $f29. The callers' local prototypes list the integers
    first; both forms pass every argument in the same register. */
 void EftPrim_DrawQuadDepthScaled(Vec4 *pos, Vec4 *color, f32 w, f32 h, f32 u0, f32 v0, f32 u1, f32 v1, f32 rot,
-                                 s32 arg2, s32 arg3, u64 tex0, f32 zScale) {
+                                 s32 layer, s32 front, u64 tex0, f32 zScale) {
     EftBVert vert[9];
     Mtx44 m;
     Mtx44 inv;
@@ -509,7 +509,7 @@ void EftPrim_DrawQuadDepthScaled(Vec4 *pos, Vec4 *color, f32 w, f32 h, f32 u0, f
             ClipVtx_Set(&vert[0], &corner[i], &uv[i], color);
             ClipVtx_Set(&vert[1], &corner[i + 1], &uv[i + 1], color);
             ClipVtx_Set(&vert[2], &corner[i + 2], &uv[i + 2], color);
-            EftGfx_DrawPolyFixedZ(vert, arg2, 0, 0, arg3, 0, tex0, z * zScale);
+            EftGfx_DrawPolyFixedZ(vert, layer, 0, 0, front, 0, tex0, z * zScale);
         }
     }
 }
@@ -518,7 +518,7 @@ void EftPrim_DrawQuadDepthScaled(Vec4 *pos, Vec4 *color, f32 w, f32 h, f32 u0, f
    coordinates. Skipped when all three alphas are 0.01 or less. A negative layer means layer 0 without blending;
    layers 2 and 3 are layers 0 and 1 drawn with GS context 2. */
 void EftPrim_DrawTriangle(EftBIVec *v0, EftBIVec *v1, EftBIVec *v2, Vec4 *c0, Vec4 *c1, Vec4 *c2, Vec4 *uv0, Vec4 *uv1,
-                          Vec4 *uv2, s32 unk1, s32 unk2, s32 layer, s32 z, u64 tex0) {
+                          Vec4 *uv2, s32 unused1, s32 unused2, s32 layer, s32 z, u64 tex0) {
     s32 abe = 1;
     s32 ctx;
     s32 l;

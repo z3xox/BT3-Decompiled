@@ -42,8 +42,8 @@ typedef struct ObjMdlFile {
     /* 0x55 */ u8 unk55[3];
     /* 0x58 */ s32 tbp;        /* GS block of the model's textures (0x3480) */
     /* 0x5C */ s32 cbp;        /* GS block of their CLUTs (0x3C00) */
-    /* 0x60 */ s32 cbp2;       /* 0x3D00 */
-    /* 0x64 */ s32 tbp2;       /* 0x3D40 */
+    /* 0x60 */ s32 cbp2;       /* 0x3D00: where the CLUT range is uploaded (`clutTbp` in obj_render.h) */
+    /* 0x64 */ s32 tbp2;       /* 0x3D40: block of the fade texture (`fadeTbp` in obj_render.h) */
     /* 0x68 */ s32 fadeCbp;      /* 0x3E40 */
     /* 0x6C */ s32 meshOfs;    /* byte offset of the mesh list */
 } ObjMdlFile;
@@ -97,7 +97,7 @@ typedef struct ObjShadowXf {
 /* BtlObjView (btl_obj.h) as this file writes it. */
 typedef struct ObjShadowView {
     /* 0x00 */ u8 unk00[0x30];
-    /* 0x30 */ Vec4 color;
+    /* 0x30 */ Vec4 color;     /* colour of the flat shadow pass (128 each); not the light colour, which is at +0x20 */
 } ObjShadowView;
 
 struct ObjShadow;

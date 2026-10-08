@@ -4,7 +4,7 @@
 #include "types.h"
 
 /*
- * Memory card operations (src/sys/memcard.c, 0x116B98..0x1198D8). Proper home: src/sys/mcard.c.
+ * Memory card operations (src/sys/memcard.c, 0x116B98..0x1198D8).
  *
  * A thin layer over Sony's libmc. Every operation is a function the caller invokes once per frame until it
  * returns 1; it advances one library call (or one sceMcSync poll) per invocation. Two globals carry the state:

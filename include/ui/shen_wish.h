@@ -5,8 +5,8 @@
 #include "ui/reward_window.h"
 
 /*
- * The dragon-summoning ("Shenron") screen of the main executable, 0x2BD230..0x2BF6B0 (placeholder stem
- * "late_a"): the player has the seven Dragon Balls, a dragon appears and grants wishes (an item, a stage, a
+ * The dragon-summoning ("Shenron") screen of the main executable, 0x2BD230..0x2BF6B0 (src/ui/shen_*.c):
+ * the player has the seven Dragon Balls, a dragon appears and grants wishes (an item, a stage, a
  * character or money), and the game is saved. Game code linked after the SDK libraries and built with -G0 (no
  * $gp addressing). Three objects:
  *
@@ -99,7 +99,7 @@ typedef struct ShenItem {
 typedef struct ShenWork {
     /* 0x000 */ u8 *pack;           /* the screen's section of the menu archive (packed) */
     /* 0x004 */ u32 *res;           /* unpacked pack file, freed by Shen_Term */
-    /* 0x008 */ Flash flash[SHEN_FLASH_COUNT]; /* the wish list movie; work +0x10 bit 1 = no labelled animation running */
+    /* 0x008 */ Flash flash[SHEN_FLASH_COUNT]; /* the wish list movie; work +0x10 is its Flash.flags, bit 1 (FLASH_PAD of sys/flash.h) = the movie allows input */
     /* 0x034 */ s32 unk34;
     /* 0x038 */ u8 *tex[8];         /* texture list of the movie; [3] stays NULL */
     /* 0x058 */ void *msg;          /* shenron_msg: the dragon's lines and the wish names */

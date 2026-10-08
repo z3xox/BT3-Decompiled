@@ -71,7 +71,7 @@ extern StgAnimStage *gBtlStage;
 StgAnimTable *gStgAnimTable = NULL;
 
 extern StgAnimWork *Battle_GetWork(void);
-extern void BtlStage_Init(void *stage, void *arg);
+extern void BtlStage_Init(void *stage, void *base);
 extern s32 BtlStage_IsObjBroken(s32 idx);
 extern void StgOfsTable_Relocate(StgAnimTable *t);
 extern void *StgOfsTable_Get(StgAnimTable *t, s32 i);

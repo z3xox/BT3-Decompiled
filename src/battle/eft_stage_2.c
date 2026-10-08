@@ -54,7 +54,7 @@ extern StgSurfRec *BtlStage_GetList58(void);
 extern u8 *BtlStage_GetList80(void);
 extern void BtlStage_GetWaterLevel(f32 *out);
 extern void StgTint_GetColor0(s32 *out);
-extern s32 StgTint_IsOn(s32 arg);
+extern s32 StgTint_IsOn(s32 slot);
 
 /* Texture tables (0x1AD..0x1AE). */
 extern void EftTexSet_Load32(EftTexTbl *tbl, s32 *data);
@@ -66,10 +66,10 @@ extern u64 EftVram_AddTex(EftSurfSlot *slot, s32 a, s32 b);
 extern void GfxClut_InitPacket(EftSurfBuf *buf, s32 id);
 
 /* Sprite draws of the effect core. */
-extern void EftGfx_DrawSprite(Vec4 *pos, Vec4 *color, f32 w, f32 h, f32 u0, f32 v0, f32 u1, f32 v1, f32 rot, s32 a,
-                          s32 b, u64 tex0);
-extern void EftPrim_DrawQuadDepth(Vec4 *pos, Vec4 *color, f32 w, f32 h, f32 u0, f32 v0, f32 u1, f32 v1, f32 rot, s32 a,
-                          s32 b, u64 tex0);
+extern void EftGfx_DrawSprite(Vec4 *pos, Vec4 *color, f32 w, f32 h, f32 u0, f32 v0, f32 u1, f32 v1, f32 rot, s32 layer,
+                          s32 front, u64 tex0);
+extern void EftPrim_DrawQuadDepth(Vec4 *pos, Vec4 *color, f32 w, f32 h, f32 u0, f32 v0, f32 u1, f32 v1, f32 rot, s32 layer,
+                          s32 front, u64 tex0);
 
 /* The geyser (eft_stage_1.c) and the emitters it starts (eft_shot.c smoke, eft_water.c steam). */
 extern void EftGeyser_Update(EftTask *task);
@@ -1496,10 +1496,10 @@ void EftSurf_BeginDraw(s32 blend, s32 noDepthTest) {
 }
 
 /* Restores the GS state after the surfaces: normal blend, depth test and depth writes; texture clamping
-   unless arg is set. */
-void EftSurf_EndDraw(s32 arg) {
+   unless noClamp is set. */
+void EftSurf_EndDraw(s32 noClamp) {
     u64 *p;
-    s32 clamp = arg == 0;
+    s32 clamp = noClamp == 0;
 
     p = Dma_BeginDirect();
     p[0] = GIF_TAG(11, 1, 1);

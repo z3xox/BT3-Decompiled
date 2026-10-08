@@ -25,9 +25,10 @@ typedef struct StgData {
     /* 0x10 */ s32 infoCount;
     /* 0x14 */ StgInfo *info;
     /* 0x18 */ u8 unk18[0xC];
-    /* 0x24 */ Vec4 *lightDir;
+    /* 0x24 */ Vec4 *lightDir; /* StgDataA.points in stg.h */
     /* 0x28 */ s32 startCount;
-    /* 0x2C */ f32 *place;    /* two points 8 bytes apart per coordinate: x0, z0, x1, z1 at [0], [2], [4], [6] */
+    /* 0x2C */ f32 *place;    /* StgDataA.starts in stg.h (StgPlace: pos, target), read as floats: pos.x, pos.z at
+                                 [0], [2] and target.x, target.z at [4], [6] */
     /* 0x30 */ u8 unk30[0x10];
     /* 0x40 */ s32 depthTintCount;
     /* 0x44 */ s32 *depthTints;    /* records of 0x10 bytes, bit 0 of the first word = present */
@@ -249,9 +250,9 @@ void ScrWarp_DrawAll(void);
 void ScrWarp_Update(void);
 s32 ScrWarp_Spawn(s32 view, Vec4 *pos, f32 seconds, f32 radius, f32 width, f32 speed, f32 jitter);
 
-void StgFog_SetupTex(StgFog *tone, u16 arg);
+void StgFog_SetupTex(StgFog *tone, u16 cbp);
 void StgFog_BuildClut(StgFog *tone, StgFogPoint *pts, s32 clearLast, f32 scale);
-void StgFog_Init(u16 arg);
+void StgFog_Init(u16 cbp);
 void StgFog_Term(void);
 void StgFog_ResetColor(void);
 void StgFog_Draw(void);

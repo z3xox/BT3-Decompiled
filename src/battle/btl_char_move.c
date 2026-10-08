@@ -53,8 +53,8 @@ extern s32 BtlInput_IsHeld(BtlMoveChr *chr, u32 mask);
 
 extern s32 BtlAnim_TestAttr(BtlMoveChr *chr, u64 mask);
 extern void BtlCharSnd_PlayStream(BtlMoveChr *chr, s32 id);
-extern void BtlAnim_SetSubMix(BtlMoveChr *chr, f32 v);
-extern void BtlAnim_SetStep(BtlMoveChr *chr, f32 v);
+extern void BtlAnim_SetSubMix(BtlMoveChr *chr, f32 mix);
+extern void BtlAnim_SetStep(BtlMoveChr *chr, f32 step);
 extern void BtlAnim_ApplyBlend(BtlMoveChr *chr);
 extern void BtlAct_Update(BtlMoveChr *chr);
 extern BtlMoveBlastList *EftHit_GetList(void);
@@ -73,7 +73,7 @@ extern void BtlOpp_GetTargetPos(BtlMoveChr *chr, Vec4 *out);
 extern void BtlOpp_GetVelocity(BtlMoveChr *chr, Vec4 *out);
 extern void BtlOpp_GetObjVecFA0(BtlMoveChr *chr, Vec4 *out);
 extern void BtlCharApi_GetBodyPos(s32 objId, Vec4 *out);
-extern void BtlChar_RequestBodyWarp(BtlMoveChr *chr, Vec4 *v);
+extern void BtlChar_RequestBodyWarp(BtlMoveChr *chr, Vec4 *pos);
 extern f32 BtlStage_GetInnerRadius(void);
 extern f32 BtlStage_GetTop(void);
 extern f32 BtlStage_GetBottom(void);
@@ -81,9 +81,9 @@ extern f32 BtlCharApi_GetHeight(s32 objId);
 extern f32 BtlOpp_GetHeight(BtlMoveChr *chr);
 extern void BtlChar_GetSnapPos(BtlMoveChr *chr, Vec4 *out, s32 slot);
 extern void BtlOpp_GetSnapPos(BtlMoveChr *chr, Vec4 *out, s32 slot);
-extern void BtlChar_GetSnapDelta(BtlMoveChr *chr, Vec4 *out, s32 a, s32 b);
+extern void BtlChar_GetSnapDelta(BtlMoveChr *chr, Vec4 *out, s32 from, s32 to);
 extern s32 BtlChars_IsTimeStopped(void);
-extern s32 BtlInput_TestAction(BtlMoveChr *chr, s32 id, s32 arg);
+extern s32 BtlInput_TestAction(BtlMoveChr *chr, s32 id, s32 want);
 extern f32 BtlMember_GetHealthRatio(BtlMoveChr *chr);
 extern s32 BtlMember_HasAbility(BtlMoveChr *chr, s32 ability);
 extern s32 BtlParam_GetFlags2(BtlMoveChr *chr);
@@ -273,9 +273,9 @@ s32 BtlMove_CanFireBlast(BtlMoveChr *chr, s32 mode, s32 *outCount) {
     return 0;
 }
 
-/* Returns 1 when a live blast record of an enabled class (a: kinds 0/4/8, b: other kinds, c: type-1 records) is
+/* Returns 1 when a live blast record of an enabled class (uncharged: definition kinds 0/4/8, otherBlasts: the other kinds, techniques: type-1 records) is
    moving towards the fighter and would reach it within `limit` frames at its current speed. */
-s32 BtlMove_IsBlastIncoming(BtlMoveChr *chr, s32 a, s32 b, s32 c, f32 limit) {
+s32 BtlMove_IsBlastIncoming(BtlMoveChr *chr, s32 uncharged, s32 otherBlasts, s32 techniques, f32 limit) {
     Vec4 step;
     Vec4 d;
     BtlMoveBlastList *list = EftHit_GetList();
@@ -297,12 +297,12 @@ s32 BtlMove_IsBlastIncoming(BtlMoveChr *chr, s32 a, s32 b, s32 c, f32 limit) {
             case 0:
             case 4:
             case 8:
-                if (!a) {
+                if (!uncharged) {
                     continue;
                 }
                 break;
             default:
-                if (!b) {
+                if (!otherBlasts) {
                     continue;
                 }
                 break;
@@ -316,7 +316,7 @@ s32 BtlMove_IsBlastIncoming(BtlMoveChr *chr, s32 a, s32 b, s32 c, f32 limit) {
             case 1:
                 continue;
             default:
-                if (!c) {
+                if (!techniques) {
                     continue;
                 }
                 break;
@@ -561,8 +561,8 @@ void BtlMove_SteerAtOpponent(BtlMoveChr *chr, f32 closeSpeed, f32 yawAccel, f32 
     f32 oppSpeed;
     f32 t;
     f32 k;
-    f32 k2;
-    f32 goal2;
+    f32 pitchGain;
+    f32 pitchGoal;
     f32 cur;
     f32 diff;
     f32 goal;
@@ -604,24 +604,24 @@ void BtlMove_SteerAtOpponent(BtlMoveChr *chr, f32 closeSpeed, f32 yawAccel, f32 
     goal = BtlUtil_WrapAngle(atan2f(to.x, to.z) + pose->steerYaw);
     pose->yaw = BtlUtil_WrapAngle(pose->yaw + BtlUtil_ClampF(BtlUtil_WrapAngle(goal - pose->yaw), -maxStep, maxStep));
     if (2.0f < t) {
-        k2 = 1.0f;
+        pitchGain = 1.0f;
     } else {
-        k2 = t * 0.5f;
+        pitchGain = t * 0.5f;
     }
     Vec4_Copy(&n, &to);
     Vec3_Normalize(&n, &n);
     n.y = BtlUtil_ClampF(n.y, -1.0f, 1.0f);
     base = -Mathf_Asin(n.y);
-    goal2 = BtlUtil_ClampF(-k2 * 1.5707963f * BtlInput_GetStickY(chr), -pitchMax, pitchMax);
+    pitchGoal = BtlUtil_ClampF(-pitchGain * 1.5707963f * BtlInput_GetStickY(chr), -pitchMax, pitchMax);
     cur = pose->steerPitch;
-    diff = goal2 - cur;
+    diff = pitchGoal - cur;
     step = __builtin_fabsf(diff);
     if (pitchAccel < step) {
         step = pitchAccel;
     }
-    pose->steerPitch = BtlUtil_ApproachF(cur, goal2, step);
-    goal2 = BtlUtil_WrapAngle(base + pose->steerPitch);
-    pose->pitch = BtlUtil_WrapAngle(pose->pitch + BtlUtil_ClampF(BtlUtil_WrapAngle(goal2 - pose->pitch), -maxStep, maxStep));
+    pose->steerPitch = BtlUtil_ApproachF(cur, pitchGoal, step);
+    pitchGoal = BtlUtil_WrapAngle(base + pose->steerPitch);
+    pose->pitch = BtlUtil_WrapAngle(pose->pitch + BtlUtil_ClampF(BtlUtil_WrapAngle(pitchGoal - pose->pitch), -maxStep, maxStep));
     if (t < 1.0f) {
         pose->pitch = pose->pitch * t;
     }
@@ -1127,21 +1127,21 @@ void BtlMove_ApplyGravity(BtlMoveChr *chr) {
 }
 
 /* Sets the model's forward lean, clamped to +-(pi/2 - 0.01). */
-void BtlMove_SetLeanX(BtlMoveChr *chr, f32 v) {
+void BtlMove_SetLeanX(BtlMoveChr *chr, f32 angle) {
     BtlMovePose *pose = BtlChar_GetPos(chr);
 
-    if (v < -BTL_PITCH_MAX) {
-        v = -BTL_PITCH_MAX;
+    if (angle < -BTL_PITCH_MAX) {
+        angle = -BTL_PITCH_MAX;
     }
-    if (BTL_PITCH_MAX < v) {
-        v = BTL_PITCH_MAX;
+    if (BTL_PITCH_MAX < angle) {
+        angle = BTL_PITCH_MAX;
     }
-    pose->leanX = v;
+    pose->leanX = angle;
 }
 
 /* Sets the model's sideways lean. */
-void BtlMove_SetLeanZ(BtlMoveChr *chr, f32 v) {
-    BtlChar_GetPos(chr)->leanZ = v;
+void BtlMove_SetLeanZ(BtlMoveChr *chr, f32 angle) {
+    BtlChar_GetPos(chr)->leanZ = angle;
 }
 
 /* 1 when the push-out moved the fighter this frame (flag 0x5E) and the two overlap in height (or flag 0x5F). */

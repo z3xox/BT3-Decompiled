@@ -63,7 +63,7 @@ extern s32 EftShot_TestBits(s32 objId, s32 mask);
 extern void EftShot_SetHeldFlagA8(s32 objId);
 extern void EftShot_SetHeldFlagA9(s32 objId);
 extern void EftShot_Nop(s32 size);
-extern void EftEmit_LoadSet(EftTechArg *arg, void *model, s32 a2, s32 *pack, s32 a4, s32 a5);
+extern void EftEmit_LoadSet(EftTechArg *arg, void *model, s32 head, s32 *pack, s32 common, s32 idx);
 extern void EftEmit_FreeSet(void *model);
 extern void EftEmit_BeginFrame(void *model);
 extern s32 EftEmit_GetEndFrames(EftModel *model);
@@ -132,7 +132,7 @@ EftRingShotOne *EftRingShot_AllocShot(EftRingShot *w) {
 
 /* Creates the shots of one volley (one shot, or the definition's count when `volley` is set): takes a free
  * entry, works out where the shot waits and which way it will fly, and creates its blast object. */
-void EftRingShot_Fire(s32 objId, EftTask *task, s32 node, s32 arg3, s32 volley) {
+void EftRingShot_Fire(s32 objId, EftTask *task, s32 node, s32 nodeSlot, s32 volley) {
     EftShotArg sarg;
     EftRingShot *w = task->work;
     EftTechArg *arg = w->arg;
@@ -157,7 +157,7 @@ void EftRingShot_Fire(s32 objId, EftTask *task, s32 node, s32 arg3, s32 volley) 
         if (shot != NULL) {
             t = (f32)arg->def->life / 30.0f;
             sarg = (EftShotArg){
-                arg, w->model, w->nodes, &shot->pos, &shot->dir, w->fired, w->total, node, arg3, 0, w->drawSize, w->speed
+                arg, w->model, w->nodes, &shot->pos, &shot->dir, w->fired, w->total, node, nodeSlot, 0, w->drawSize, w->speed
             };
             shot->index = w->fired;
             Vec4_Copy(&shot->dir, &w->dir);
@@ -390,7 +390,7 @@ void EftRingShot_BobShot(EftRingShotOne *shot) {
  * the opponent's node 0x11 on bit 0x40. */
 void EftRingShot_UpdateRing(s32 objId, EftTask *task) {
     s32 node = -1;
-    s32 arg3 = 0;
+    s32 nodeSlot = 0;
     EftRingShot *w = task->work;
     EftTechArg *arg;
     s32 allArrived;
@@ -409,12 +409,12 @@ void EftRingShot_UpdateRing(s32 objId, EftTask *task) {
         volley = 0;
         if (EftShot_TestBits(objId, 4)) {
             node = 1;
-            arg3 = 1;
+            nodeSlot = 1;
             volley = 1;
         }
         if (node >= 0) {
             if ((EftEmit_GetPhaseMask(w->model) >> node) & 1) {
-                EftRingShot_Fire(objId, task, node, arg3, volley);
+                EftRingShot_Fire(objId, task, node, nodeSlot, volley);
                 EftTechEvt_RequestRestart(arg->objId);
             }
         }
@@ -495,7 +495,7 @@ checked:
  * along it for 20 frames; afterwards the owner's bit 0x10 fires the volley. */
 void EftRingShot_UpdatePath(s32 objId, EftTask *task) {
     s32 node = -1;
-    s32 arg3 = 0;
+    s32 nodeSlot = 0;
     EftRingShot *w = task->work;
     EftTechArg *arg = w->arg;
 
@@ -545,11 +545,11 @@ void EftRingShot_UpdatePath(s32 objId, EftTask *task) {
 
         if (EftShot_TestBits(objId, 0x10)) {
             node = 3;
-            arg3 = 3;
+            nodeSlot = 3;
             volley = 1;
         }
         if (node >= 0) {
-            EftRingShot_Fire(objId, task, node, arg3, volley);
+            EftRingShot_Fire(objId, task, node, nodeSlot, volley);
             EftTechEvt_RequestRestart(arg->objId);
         }
     }

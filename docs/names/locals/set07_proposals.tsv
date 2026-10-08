@@ -1,0 +1,17 @@
+NAME	EftZap_SetUnk40	EftZap_SetType	HIGH	It stores into EftZapArg +0x40, the `type` byte EftZap_Update (eft_ribbon.c) passes to BtlScene_IsEffectStopped.
+NAME	EftZap_SetRate	EftZap_SetLife	HIGH	It stores seconds at arg +0x34 and seconds * 30 at work +0x174, the life EftZap_Update counts down (eft_ribbon.c w->life).
+FIELD	include/battle/eft_zap.h	EftZapArg	rate	life	HIGH	EftZap_Init (eft_ribbon.c) does w->life = arg->life * 30 when > 0 and counts it down; eft_ribbon.h EftZapInit names +0x34 `life`.
+FIELD	include/battle/eft_zap.h	EftZap	rateFrames	life	HIGH	Work +0x174 is arg +0x34 * 30, decremented every frame by EftZap_Update until the zap stops; `life` in eft_ribbon.h.
+FIELD	include/battle/eft_zap.h	EftZap	fadeTime	fadeFrame	HIGH	Work +0x168 is decremented each frame of the fade and ends the zap below 0 (eft_ribbon.c EftZap_Update); `fadeFrame` in eft_ribbon.h.
+FIELD	include/battle/eft_zap.h	EftZap	fade	fadeTime	HIGH	Work +0x16C is the divisor of fadeFrame / fadeTime in EftZap_Update and is set with +0x168 by EftZap_SetFadeTime; `fadeTime` in eft_ribbon.h (rename after fadeTime -> fadeFrame).
+FIELD	include/battle/eft_zap.h	EftZap	fadeDelay	holdTime	MEDIUM	Work +0x164 counts down while the hold flag is set and then stops the zap (eft_ribbon.c EftZap_Update); `holdTime` in eft_ribbon.h.
+FIELD	include/battle/eft_ribbon.h	EftZapPool	unk1EA1	nodeCur	MEDIUM	Byte +0x1EA1 of the gap is the round-robin cursor EftZap_AddNode (eft_zap.c) reads and writes; eft_zap.h EftZapMgr names it nodeCur (needs a split of the u8 array).
+FIELD	include/battle/obj_gs_env.h	ObjMdlFile	cbp2	clutTbp	HIGH	Model file +0x60 is the block obj_render.c uploads the CLUT range to (TexFile_UploadRange) and that obj_render.h names clutTbp.
+FIELD	include/battle/obj_gs_env.h	ObjMdlFile	tbp2	fadeTbp	HIGH	Model file +0x64 is the TBP0 of the fade texture in obj_render.c (TexFile_UploadOne, tex0 |= fadeTbp) and is fadeTbp in obj_render.h.
+FIELD	include/battle/obj_gs_env.h	ObjShadowView	color	shadowColor	MEDIUM	View +0x30 is set to 128 by ObjShadow_LoadProg just before ObjDraw_DrawPartsFlat; BtlObjView.color (the light colour) is at +0x20.
+FIELD	include/battle/stg.h	StgView	x1	scissorY0	HIGH	View +0x208 is scissorY0 in View (btl_cam.h) and ViewScissor (main.h); +0x204 is scissorX1 in this same structure.
+FIELD	include/battle/stg.h	StgView	x0	scissorX0	HIGH	View +0x200 is scissorX0 in View (btl_cam.h).
+FIELD	include/battle/stg_ambient.h	StgData	place	starts	HIGH	Stage data +0x2C is StgDataA.starts (stg.h), the StgPlace list stg_parts.c reads as starts[i].pos / target; BtlStage_GetPlace2C reads pos and target of entry 0.
+FIELD	include/battle/stg.h	StgDataA	points	lightDirs	MEDIUM	BtlStage_GetLightDir (stg_ambient.c) returns entry 0 of the list at +0x24 as the stage's light direction (StgData.lightDir).
+NAME	BtlStage_GetPlace2C	BtlStage_GetStartPlace	MEDIUM	It returns the position and facing yaw of entry 0 of StgDataA.starts (stage data +0x2C).
+FIELD	src/battle/hud_combo.c	HudCObj	skillScript	skillText	HIGH	Object +0xBC is given to BtlMenu_SetScript2(u16 *text) and is skillText in pause_menu.c and hud_prompt.c.

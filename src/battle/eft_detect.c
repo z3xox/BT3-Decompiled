@@ -72,7 +72,7 @@ extern void BtlCharApi_GetNodePos(s32 objId, s32 node, EftDetVec *out);
 extern s32 BtlCharApi_IsSightBlocked(s32 objId);
 extern s32 BtlCharApi_IsLockedOn(s32 objId);
 extern void BtlCharApi_SetHeldFlagAA(s32 objId);
-extern void BtlCharApi_ShakeCamsNear(EftDetVec *pos, f32 near, f32 far, f32 arg3, f32 arg4);
+extern void BtlCharApi_ShakeCamsNear(EftDetVec *pos, f32 near, f32 far, f32 strength, f32 time);
 extern void BtlCharApi_RumbleNear(EftDetVec *pos, f32 near, f32 far, f32 power, f32 time);
 extern s32 BtlSeq_GetState(void);
 extern s32 BattleSide_GetObjId(s32 side);

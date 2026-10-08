@@ -126,7 +126,7 @@ extern View *gBtlCamView;
 
 void View_BuildProjection(View *view);
 void View_SetProjection(View *view, Vec4 *screenSize, f32 screenDist, f32 aspectX, f32 aspectY, f32 centerX,
-                        f32 centerY, f32 zMin, f32 zMax, f32 nearZ, f32 farZ, f32 unk258);
+                        f32 centerY, f32 zMin, f32 zMax, f32 nearZ, f32 farZ, f32 projScale);
 void View_UpdateMatrices(View *view, Vec4 *pos);
 void View_SetTransform(Mtx44 *dst0, Mtx44 *dst1, Vec4 *pos, Vec4 *rot);
 void View_Apply(View *view, s32 scissor);
@@ -140,7 +140,7 @@ void BtlCam_Reset(void);
 void BtlCam_Init(void);
 void BtlCam_Term(void);
 void BtlCam_UpdateView(s32 side);
-s32 BtlCam_TraceStage(Vec4 *out, Vec4 *from, Vec4 *to, f32 *frac, s32 *hitObj);
+s32 BtlCam_TraceStage(Vec4 *out, Vec4 *from, Vec4 *to, f32 *frac, s32 *hitZone);
 s32 BtlCam_GetDefaultView(void);
 void BtlCam_SetLayout(s32 split, s32 apply);
 s32 BtlCam_GetPriorityView(void);

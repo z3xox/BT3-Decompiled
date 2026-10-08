@@ -40,7 +40,7 @@ extern f32 BtlAnim_GetFrame(BtlMemberChr *chr);
 extern s32 BtlAnim_TestAttr(BtlMemberChr *chr, u64 mask);
 extern f32 BtlStat_GetScale7(BtlMemberChr *chr);
 extern s32 BtlOpp_GetPlayer(BtlMemberChr *chr);
-extern s32 BtlOpp_HasAbility(BtlMemberChr *chr, s32 n);
+extern s32 BtlOpp_HasAbility(BtlMemberChr *chr, s32 ability);
 extern f32 BtlParam_GetDamageTakenScale(BtlMemberChr *chr);
 extern s32 BtlCharApi_IsInTechnique(s32 objId);
 extern s32 BtlCharApi_IsInRushSequence(s32 objId);
@@ -67,7 +67,7 @@ extern void BtlOpp_GetTargetPos(BtlMemberChr *chr, Vec4 *out);
 extern f32 BtlOpp_GetRadius(BtlMemberChr *chr);
 extern void EftImpact_SpawnHit(BtlMemberHitFxReq *req);
 extern f32 BtlCharApi_GetHeight(s32 objId);
-extern u32 BtlObjAnim_QueryEvent(BtlMemberObj *obj, u64 a, s32 b, s32 c);
+extern u32 BtlObjAnim_QueryEvent(BtlMemberObj *obj, u64 mask, s32 layer, s32 what);
 extern s32 BtlObjAnim_MaskToNode(u32 mask);
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out);
 extern void BtlCharSnd_PlayCommon(BtlMemberChr *chr, s32 line);
@@ -78,47 +78,47 @@ extern f32 Vec3_Dot(Vec4 *a, Vec4 *b);
 extern BtlMemberRoster *gBtlChars;
 
 /* Sets a one-frame effect request bit. */
-void BtlChar_SetFxBit(BtlMemberChr *chr, s32 n) {
-    chr->fxBits[n >> 3] |= 1 << (n & 7);
+void BtlChar_SetFxBit(BtlMemberChr *chr, s32 bit) {
+    chr->fxBits[bit >> 3] |= 1 << (bit & 7);
 }
 
 /* Clears a one-frame effect request bit. */
-void BtlChar_ClearFxBit(BtlMemberChr *chr, s32 n) {
-    u8 mask = 1 << (n & 7);
+void BtlChar_ClearFxBit(BtlMemberChr *chr, s32 bit) {
+    u8 mask = 1 << (bit & 7);
 
-    chr->fxBits[n >> 3] &= ~mask;
+    chr->fxBits[bit >> 3] &= ~mask;
 }
 
 /* Tests an effect request bit of this frame. */
-s32 BtlChar_TestFxBit(BtlMemberChr *chr, s32 n) {
-    u8 mask = 1 << (n & 7);
+s32 BtlChar_TestFxBit(BtlMemberChr *chr, s32 bit) {
+    u8 mask = 1 << (bit & 7);
 
-    return (chr->fxBits[n >> 3] & mask) != 0;
+    return (chr->fxBits[bit >> 3] & mask) != 0;
 }
 
 /* Tests an effect request bit of the frame before. */
-s32 BtlChar_TestPrevFxBit(BtlMemberChr *chr, s32 n) {
-    u8 mask = 1 << (n & 7);
+s32 BtlChar_TestPrevFxBit(BtlMemberChr *chr, s32 bit) {
+    u8 mask = 1 << (bit & 7);
 
-    return (chr->prevFxBits[n >> 3] & mask) != 0;
+    return (chr->prevFxBits[bit >> 3] & mask) != 0;
 }
 
 /* Whether the bit is set now and was not last frame. */
-s32 BtlChar_IsFxBitNew(BtlMemberChr *chr, s32 n) {
+s32 BtlChar_IsFxBitNew(BtlMemberChr *chr, s32 bit) {
     s32 r = 0;
 
-    if (BtlChar_TestFxBit(chr, n)) {
-        r = BtlChar_TestPrevFxBit(chr, n) == 0;
+    if (BtlChar_TestFxBit(chr, bit)) {
+        r = BtlChar_TestPrevFxBit(chr, bit) == 0;
     }
     return r;
 }
 
 /* Whether the bit was set last frame and is not now. */
-s32 BtlChar_IsFxBitEnded(BtlMemberChr *chr, s32 n) {
+s32 BtlChar_IsFxBitEnded(BtlMemberChr *chr, s32 bit) {
     s32 r = 0;
 
-    if (!BtlChar_TestFxBit(chr, n)) {
-        r = BtlChar_TestPrevFxBit(chr, n) != 0;
+    if (!BtlChar_TestFxBit(chr, bit)) {
+        r = BtlChar_TestPrevFxBit(chr, bit) != 0;
     }
     return r;
 }
@@ -170,12 +170,12 @@ void BtlChar_SpawnFxBits3C(BtlMemberChr *chr) {
         kind = 4;
     }
     if (kind >= 0) {
-        s32 unkA24;
+        s32 area;
 
         req.objId = chr->objId;
-        unkA24 = BtlChar_GetObj(chr)->area;
+        area = BtlChar_GetObj(chr)->area;
         req.kind = kind;
-        req.area = unkA24;
+        req.area = area;
         switch (kind) {
         case 0:
         case 1:
@@ -197,7 +197,7 @@ void BtlChar_SpawnFxBits3C(BtlMemberChr *chr) {
     }
 }
 
-/* Spawns the effects requested by fx bits 0..2, by the kind in chr->unk12DC. */
+/* Spawns the effects requested by fx bits 0..2, by the kind in chr->formKind. */
 void BtlChar_SpawnFxBits0(BtlMemberChr *chr) {
     BtlMemberFx0Req req;
 
@@ -528,7 +528,7 @@ extern void EftShotFx_Start(s32 objId, s32 kind);
 #define EftImpact_SpawnHit ((void (*)(FxPosArg *arg))EftImpact_SpawnHit)
 extern void EftShock_Start(s32 *arg);
 extern void StgBlur_SetPasses(s32 view, s32 mode);
-extern void StgBlur_SetCenter(s32 view, Vec4 *pos, s32 arg);
+extern void StgBlur_SetCenter(s32 view, Vec4 *pos, s32 screenSpace);
 extern void StgBlur_SetColor0Rgba(s32 view, s32 r, s32 g, s32 b, s32 a);
 extern void StgBlur_SetColor1Rgba(s32 view, s32 r, s32 g, s32 b, s32 a);
 extern void StgBlur_SetColor2Rgba(s32 view, s32 r, s32 g, s32 b, s32 a);
@@ -563,7 +563,9 @@ void BtlFx_SpawnFlashReq2B(FxChr *chr) {
     }
 }
 
-/* Request 0x17: the hit spark at the recorded hit position, by the attack's class. */
+/* Request 0x17: the charge effect of a ki blast, by the blast's type. Fighter +0xDD0 / +0xDF0 (hitPos / hitKind in
+   this view) are the ki blast aim direction and the firing hand's node (aimDir / blastNode in btl_act_2.h); the
+   node goes to BtlObj_GetNodeSide for type 4. */
 void BtlFx_SpawnHitSparkReq17(FxChr *chr) {
     FxHitArg arg;
     s32 type;
@@ -830,7 +832,7 @@ extern s32 BtlStage_GetWaterLevel(f32 *height);
 extern s32 BtlObj_GetNodeSide(s32 kind);
 extern void EftBubble_StartBurst(s32 objId);
 extern void EftWater_SetWake(s32 objId, s32 off);
-extern void EftWater_AddSplashFor(s32 objId, Vec4 *pos, s32 arg, f32 speed);
+extern void EftWater_AddSplashFor(s32 objId, Vec4 *pos, s32 kind, f32 speed);
 extern void EftAbsorb_Start(FxArg2 *arg);
 extern void EftAbsorb_Stop(s32 objId);
 extern void EftAbsorb_StartHands(FxArg2 *arg);
@@ -843,7 +845,7 @@ extern void EftRay_StartHit(s32 objId, Vec4 *pos, s32 a, s32 b, s32 c, f32 scale
 #define EftImpact_SpawnHit ((void (*)(FxPosArg *arg))EftImpact_SpawnHit)
 extern void EftGndDust_SetSlide(s32 objId, s32 off, f32 scale);
 extern void EftGndDust_SetDash(s32 objId, s32 off, f32 scale);
-extern void EftGndDust_SpawnBurst(s32 objId, f32 a, f32 b);
+extern void EftGndDust_SpawnBurst(s32 objId, f32 scale, f32 bright);
 extern void EftGndDust_SpawnLanding(s32 objId, Vec4 *pos, Vec4 *normal, f32 scale);
 extern void EftGndDust_Stub(s32 objId, f32 scale);
 extern void EftGndDust_SpawnImpact(s32 objId, Vec4 *pos, f32 scale);
@@ -857,7 +859,7 @@ extern s32 BtlCharApi_IsModelNew(s32 objId);
 #define BtlMember_HasAbility ((s32 (*)(FxChr *chr, s32 param))BtlMember_HasAbility)
 extern void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 strength, f32 time);
 extern void BtlObjFlash_Start(FxObj *obj, s32 kind);
-extern void BtlObj_SetEyeFrame(FxObj *obj, s32 arg);
+extern void BtlObj_SetEyeFrame(FxObj *obj, s32 frame);
 extern s32 BtlObj_GetMouthMode(FxObj *obj);
 extern s32 BtlObj_GetEyeFrame(FxObj *obj);
 extern void BtlObj_SetSubState(FxObj *obj, s32 state, s32 arg);
@@ -877,9 +879,9 @@ extern f32 BtlKiBlast_GetRadius(FxChr *chr);
 extern f32 BtlKiBlast_GetUnk2C(FxChr *chr);
 extern s32 BtlObjAnim_GetEventArg(FxObj *obj, u64 mask);
 #define BtlObjAnim_MaskToNode ((s32 (*)(s32 bits))BtlObjAnim_MaskToNode)
-#define BtlObjAnim_QueryEvent ((s32 (*)(FxObj *obj, u64 a, s32 b, s32 c))BtlObjAnim_QueryEvent)
+#define BtlObjAnim_QueryEvent ((s32 (*)(FxObj *obj, u64 mask, s32 layer, s32 what))BtlObjAnim_QueryEvent)
 extern void Vec3_Normalize(Vec4 *out, Vec4 *in);
-extern void Vec3_RotateAxis(Vec4 *out, Vec4 *a, Vec4 *b, f32 s);
+extern void Vec3_RotateAxis(Vec4 *out, Vec4 *v, Vec4 *axis, f32 angle);
 extern void Vec3_RotateY(Vec4 *out, Vec4 *in, f32 s);
 extern void EftDisc_Throw(FxHitArg2 *arg);
 extern void EftDisc_SpawnFromNode(FxHitArg2 *arg);
@@ -1279,37 +1281,39 @@ void BtlFx_UpdateObjFlag80(FxChr *chr) {
 }
 
 /*
- * Animation event 4 (a hit landed on this fighter): one to n sparks at the hit position, the hit sound and a 0.1 s
- * buzz of the small motor. Reaction kind 0 jitters every spark with three BtlChar_RandF draws (x, y, z; +-0.2, or
- * -0.2..0 on y when the fighter is not above three times its body height); kinds 2..6 with flag 5 push the spark
- * sideways (2) or along the hit vector by the opponent distance.
+ * Animation event 4 (the fighter's animation fires its ki blast): launches one to n blasts (BtlKiBlast_GetHits) from
+ * the event's hand node along the aim direction (fighter +0xDD0, set by the ki blast actions), with the firing sound
+ * and a 0.1 s buzz of the small motor. `spread` is the blast record's volley spread mode: 0 jitters every direction
+ * with three BtlChar_RandF draws (x, y, z; +-0.2, or -0.2..0 on y when the fighter is not above three times its body
+ * height), 1 none; modes 2..6 with flag 5 (lock-on) turn the direction by an angle from the opponent distance, about
+ * the horizontal side axis (2) or about Y to either side (3 alternates, 4 / 5 fixed, 6 by the firing hand).
  */
 /*
  * Matching notes: every case of the size switch has its own body (the compiler merges the identical ones after
  * register allocation; written with shared bodies the function has fewer instructions in front of the loop, the
- * hit count and `code` then outrank the object pointer and the hoisted constant 2 for a saved register, and the
+ * hit count and `node` then outrank the object pointer and the hoisted constant 2 for a saved register, and the
  * registers come out differently). The two owner stores are in the order objId2, objId.
  */
 void BtlFx_FireKiBlast(FxChr *chr) {
     FxHitArg2 arg;
-    Vec4 hitPos;
+    Vec4 aimDir;
     Vec4 dir;
-    s32 code;
+    s32 node;
     FxObj *obj = BtlChar_GetObj(chr);
-    s32 react;
+    s32 spread;
     s32 count;
     s32 i;
-    f32 speed;
+    f32 height;
 
     if (BtlAnim_TestAttr(chr, 4)) {
-        react = BtlKiBlast_GetSpreadMode(chr);
-        code = BtlObjAnim_MaskToNode(BtlObjAnim_GetEventArg(obj, 4));
-        Vec4_Copy(&hitPos, &chr->hitPos);
+        spread = BtlKiBlast_GetSpreadMode(chr);
+        node = BtlObjAnim_MaskToNode(BtlObjAnim_GetEventArg(obj, 4));
+        Vec4_Copy(&aimDir, &chr->hitPos);
         count = BtlKiBlast_GetHits(chr);
         if (count <= 0) {
             count = 1;
         }
-        arg.code = code;
+        arg.code = node;
         arg.objId2 = chr->objId;
         arg.objId = chr->objId;
         arg.area = obj->area;
@@ -1379,13 +1383,13 @@ void BtlFx_FireKiBlast(FxChr *chr) {
             }
         }
         for (i = 0; i < count; i++) {
-            Vec4_Copy(&arg.pos, &hitPos);
-            switch (react) {
+            Vec4_Copy(&arg.pos, &aimDir);
+            switch (spread) {
             case 1:
                 break;
             case 0:
-                speed = BtlAct_GetHeight(chr);
-                if (!(BtlCharApi_GetHeight(chr->objId) * 3.0f < speed)) {
+                height = BtlAct_GetHeight(chr);
+                if (!(BtlCharApi_GetHeight(chr->objId) * 3.0f < height)) {
                     arg.pos.x += (BtlChar_RandF() - 0.5f) * 0.4f;
                     arg.pos.y += (BtlChar_RandF() - 1.0f) * 0.2f;
                 } else {
@@ -1409,30 +1413,30 @@ void BtlFx_FireKiBlast(FxChr *chr) {
                     if (d < 0.2f) {
                         d = 0.2f;
                     }
-                    if (react == 2) {
-                        dir.x = hitPos.z;
+                    if (spread == 2) {
+                        dir.x = aimDir.z;
                         dir.y = 0.0f;
-                        dir.z = -hitPos.x;
+                        dir.z = -aimDir.x;
                         Vec3_Normalize(&dir, &dir);
                         Vec3_RotateAxis(&arg.pos, &arg.pos, &dir, d);
                     } else {
-                        s32 back = 0;
+                        s32 mirror = 0;
 
-                        switch (react) {
+                        switch (spread) {
                         case 3:
-                            back = BtlChar_TestFlag(chr, 0x8D) != 0;
+                            mirror = BtlChar_TestFlag(chr, 0x8D) != 0;
                             BtlChar_ToggleHeldFlag(chr, 0x8D);
                             break;
                         case 4:
-                            back = 1;
+                            mirror = 1;
                             break;
                         case 5:
                             break;
                         case 6:
-                            back = BtlObj_GetNodeSide(code) == 0;
+                            mirror = BtlObj_GetNodeSide(node) == 0;
                             break;
                         }
-                        if (back) {
+                        if (mirror) {
                             Vec3_RotateY(&arg.pos, &arg.pos, -d);
                         } else {
                             Vec3_RotateY(&arg.pos, &arg.pos, d);

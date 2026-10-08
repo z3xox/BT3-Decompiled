@@ -492,7 +492,8 @@ typedef struct EftLineArg {
     /* 0x3C */ s32 unk3C;
 } EftLineArg; /* size 0x40 */
 
-/* Work of a line task (class gEftBillClass). Only the fields this file touches are named. */
+/* Work of a line task (class gEftBillClass; the same block as EftBill in eft_ground_dust.h, whose callbacks are
+   EftBill_*). Only the fields this file touches are named. */
 typedef struct EftLineWork {
     /* 0x000 */ EftLineArg arg;
     /* 0x040 */ EftLineCur cur;   /* EftLine_SetKey / EftLine_Animate */
@@ -513,7 +514,7 @@ typedef struct EftLineWork {
     /* 0x0F0 */ f32 width;        /* half width */
     /* 0x0F4 */ f32 length;
     /* 0x0F8 */ u8 unkF8[0x20];
-    /* 0x118 */ EftYTex tex0;     /* copies of tex->e[a] and tex->e[b] (EftLine_SetTex) */
+    /* 0x118 */ EftYTex tex0;     /* copies of tex->e[image] and tex->e[palette] (EftLine_SetTex) */
     /* 0x128 */ EftYTex tex1;
     /* 0x138 */ u64 gsTex0;       /* the TEX0 value drawn with */
 } EftLineWork; /* size 0x140 */
@@ -532,7 +533,7 @@ void EftQuad_DrawSprite(EftYVec *corner, EftYVec uv0, EftYVec uv1, EftYVec color
 void EftQuad_DrawFacing(EftYVec *corner, EftYVec uv0, EftYVec uv1, EftYVec color, s32 layer, s32 texIdx, s32 arg6,
                         s32 flip, EftYTex8 *tex);
 void EftQuad_SetSheet(EftQuadWork *w, u8 cols, u8 rows);
-void EftQuad_SetTex(EftQuadWork *w, EftYTex8 *tex, s32 a, s32 b);
+void EftQuad_SetTex(EftQuadWork *w, EftYTex8 *tex, s32 image, s32 palette);
 void EftQuad_LoadTex(EftQuadWork *w, EftYTex8 *tex);
 void EftQuad_SetLastKey(EftQuadWork *w);
 EftYTask *EftQuad_CreateEx(EftQuadDef *def, EftQuadDef2 *def2, EftYTex8 *tex, EftYVec pos, EftYVec dir, f32 size,
@@ -549,7 +550,7 @@ void EftQuad_SetDir(EftYTask *task, EftYVec dir);
 void EftQuad_SetSize(EftYTask *task, f32 size);
 void EftQuad_SetLife(EftYTask *task, f32 seconds);
 void EftQuad_SetTexTable(EftYTask *task, EftYTex8 *tex);
-void EftQuad_SetTexPair(EftYTask *task, EftYTex8 *tex, s32 a, s32 b);
+void EftQuad_SetTexPair(EftYTask *task, EftYTex8 *tex, s32 image, s32 palette);
 void EftQuad_SetDelay(EftYTask *task, s32 frames);
 void EftQuad_SetStopDelay(EftYTask *task, s32 frames);
 s32 EftQuad_SetViewOnly(EftYTask *task);
@@ -557,7 +558,7 @@ s32 EftQuad_IsAlive(EftYTask *task);
 void EftQuad_SetOwnOrigin(EftYTask *task, s32 on);
 void EftQuad_SetCut(EftYTask *task, s32 cut);
 
-void EftLine_SetTex(EftLineWork *w, EftYTex16 *tex, s32 a, s32 b);
+void EftLine_SetTex(EftLineWork *w, EftYTex16 *tex, s32 image, s32 palette);
 void EftLine_LoadTex(EftLineWork *w, EftLineArg *arg);
 void EftLine_SetKey(EftLineCur *out, EftLineArg *arg, s32 key);
 void EftLine_Animate(EftLineWork *w);

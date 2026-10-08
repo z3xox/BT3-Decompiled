@@ -96,9 +96,9 @@ void BtlFacade_ClearFixedCamera(void) {
     DemoCam_ClearFixed();
 }
 
-/* Puts the side's fighter object into sub-state 14 with an argument (0x24F5D8). */
-void BtlFacade_SetObjSubState14(s32 side, s32 arg) {
-    BtlObj_SetSubState(BtlObj_Get(BattleSide_GetObjId(side)), 0xE, arg);
+/* Makes the side's fighter object play the lip track `lip` points to (mouth mode 14, BOBJ_MOUTH_LIP_PTR). */
+void BtlFacade_SetObjSubState14(s32 side, s32 lip) {
+    BtlObj_SetSubState(BtlObj_Get(BattleSide_GetObjId(side)), 0xE, lip);
 }
 
 /* Puts the side's fighter object back to sub-state 0 if it is in sub-state 3. */
@@ -110,16 +110,16 @@ void BtlFacade_EndObjSubState3(s32 side) {
     }
 }
 
-/* Stores a value in word +8 of both sides' 0x1BBxxx controller and restarts it. */
-void BtlFacade_SetCpuParam8(s32 arg) {
-    BtlAiMgr_SetLevel(0, arg);
-    BtlAiMgr_SetLevel(1, arg);
+/* Sets the CPU level of both sides (BtlAiMgr_SetLevel: word +8 of the controller, which restarts). */
+void BtlFacade_SetCpuParam8(s32 level) {
+    BtlAiMgr_SetLevel(0, level);
+    BtlAiMgr_SetLevel(1, level);
 }
 
-/* Stores a value in word +4 of both sides' 0x1BBxxx controller and restarts it (no caller). */
-void BtlFacade_SetCpuParam4(s32 arg) {
-    BtlAiMgr_SetType(0, arg);
-    BtlAiMgr_SetType(1, arg);
+/* Sets the CPU type of both sides (BtlAiMgr_SetType: word +4 of the controller, which restarts; no caller). */
+void BtlFacade_SetCpuParam4(s32 type) {
+    BtlAiMgr_SetType(0, type);
+    BtlAiMgr_SetType(1, type);
 }
 
 /* Requests a fighter position (BtlCtrl_SetPos). */
@@ -361,15 +361,15 @@ s32 BtlFacade_CanCharAct(s32 side) {
 }
 
 /* Forces action 0 or 1 on a side and the matching reaction on the other. */
-void BtlFacade_ForceAction01(s32 side, s32 arg) {
+void BtlFacade_ForceAction01(s32 side, s32 second) {
     BtlCtrl_ForceReaction(side == 0, 0);
-    BtlCtrl_UseTechnique(side, arg != 0);
+    BtlCtrl_UseTechnique(side, second != 0);
 }
 
 /* Forces action 2 or 3 on a side and the matching reaction on the other. */
-void BtlFacade_ForceAction23(s32 side, s32 arg) {
+void BtlFacade_ForceAction23(s32 side, s32 second) {
     BtlCtrl_ForceReaction(side == 0, 0);
-    BtlCtrl_UseTechnique(side, arg == 0 ? 2 : 3);
+    BtlCtrl_UseTechnique(side, second == 0 ? 2 : 3);
 }
 
 /* Forces action 4 on a side and the matching reaction on the other. */
@@ -401,11 +401,11 @@ void BtlFacade_ForceBoth110(void) {
 }
 
 /* Forces one action per side. */
-void BtlFacade_ForceActions(s32 arg0, s32 arg1) {
+void BtlFacade_ForceActions(s32 kind0, s32 kind1) {
     s32 i;
 
     for (i = 0; i < 2; i++) {
-        BtlCtrl_UseTechnique(i, i == 0 ? arg0 : arg1);
+        BtlCtrl_UseTechnique(i, i == 0 ? kind0 : kind1);
     }
 }
 

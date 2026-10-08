@@ -6,7 +6,7 @@
 /*
  * GetWin, 0x25C2A8..0x25CFC0: the reward window of the menus ("title_get" movie: a title strip, an icon, up
  * to two lines of text or an amount of money). Called by the result code of the main executable
- * (0x2BDCE8..0x2BE5A0) and by the menu overlay. See battle/view_a.h.
+ * (0x2BDCE8..0x2BE5A0) and by the menu overlay. See ui/reward_window.h.
  *
  * The object starts here: its strings (0x2F30E0) and two jump tables (0x2F3190, 0x2F31C0) follow the padded
  * end of btl_script_cmd.c's jump tables.
@@ -20,8 +20,8 @@ extern void Flash_Create(Flash *flash, void *data, void *tex);
 extern void Flash_Destroy(Flash *flash);                                  /* destroys the movie */
 extern void Flash_Advance(Flash *flash);                                  /* steps the movie */
 extern void Flash_Draw(Flash *flash);                                  /* draws the movie */
-extern void Flash_Play(Flash *flash, s32 arg);
-extern void Flash_GotoLabel(Flash *flash, char *label, s32 arg);             /* starts the animation at a frame label */
+extern void Flash_Play(Flash *flash, s32 speed);
+extern void Flash_GotoLabel(Flash *flash, char *label, s32 restart);             /* starts the animation at a frame label */
 extern void Flash_FindLabel(Flash *flash, char *parent, char *name, FlashRef *out);
 extern void Flash_ClipSetFlags(Flash *flash, FlashRef *ref, s32 prop, s32 value);
 extern void Flash_ClipSetTex(Flash *flash, FlashRef *ref, s32 frame);        /* shows one frame of a clip */
@@ -31,9 +31,9 @@ extern s32 Font_CountLines(u16 *str);
 
 extern void Num_Draw_(Flash *flash, char *fmt, s32 first, s32 count, s32 value, s32 w, s32 h, s32 mode)
     __asm__("Num_Draw");
-/* text box module, after 0x2600B0 (not decompiled) */
-extern void TextBox_SetLineOffsets(TextBox *box, s32 a, s32 b, s32 c, s32 d, s32 e);
-extern void TextBox_AttachLine(Flash *flash, FlashRef *ref, s32 a, s32 b, s32 line, TextBox *box); /* draws a line in a clip */
+/* text box module (menu_util_1.c) */
+extern void TextBox_SetLineOffsets(TextBox *box, s32 y1, s32 y2, s32 y3, s32 y4, s32 y5);
+extern void TextBox_AttachLine(Flash *flash, FlashRef *ref, s32 x, s32 y, s32 line, TextBox *box); /* draws a line in a clip */
 
 /* Defined here: this object's .sdata (0x2FF0D0). */
 GetWin *gGetWin = NULL;
@@ -261,7 +261,10 @@ void GetWin_Next(void) {
     Snd_PlaySe(2, gGetWin->se);
 }
 
-/* Non-zero while one of the three animations runs. */
+/* Non-zero on the frame the movie fires its trigger 0. The field tested is the movie's trigger word (Flash.trig in
+   sys/flash.h: bit n is set by the movie's action "trig" "n" and cleared by every Flash_Advance), not a "running"
+   flag: the callers start an animation, then wait for this to become non-zero before they go on, so it marks the
+   point where an animation has finished coming in or going out. The name says the opposite. */
 s32 GetWin_IsAnimating(void) {
     if (gGetWin->flash[0].flags & 1) {
         return 1;

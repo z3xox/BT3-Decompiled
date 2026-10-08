@@ -407,7 +407,7 @@ typedef struct EftUPtclMgr {
     /* 0x4C */ s32 unk4C;
 } EftUPtclMgr;
 
-void EftPtcl_PickTexture(EftUPtclWork *w, EftUPtclTex *tex, s32 a, s32 b);
+void EftPtcl_PickTexture(EftUPtclWork *w, EftUPtclTex *tex, s32 image, s32 palette);
 void EftPtcl_UploadTexture(EftUPtclWork *w, EftUPtclWork *w2);
 void EftPtcl_SetKey(EftUPtclCur *cur, EftUPtclWork *w, s32 key);
 void EftPtcl_BlendKeys(EftUPtclWork *w);

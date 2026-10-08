@@ -62,9 +62,9 @@ extern void EftGfx_DrawPolyScaledZ(void *verts, s32 layer, s32 a2, s32 a3, s32 f
                                    f32 zScale);
 /* The same callee as in eft_aura.c; this argument order (registers are assigned per class, so it is the same call)
    is the one that reproduces the order the arguments are set up in. */
-extern void EftSpr_DrawRot(f32 x, f32 y, f32 z, u8 r, u8 g, u8 b, u8 a, s32 t0, s32 t1, s32 w, s32 h, f32 u0, f32 v0,
-                          f32 u1, f32 v1, f32 rot, s32 s0, u32 size, s32 s2, s32 s3, void *tex);
-extern u64 EftVram_AddImage(void *tex, s32 a, s32 b);
+extern void EftSpr_DrawRot(f32 x, f32 y, f32 z, u8 r, u8 g, u8 b, u8 a, s32 ofsX, s32 ofsY, s32 w, s32 h, f32 u0, f32 v0,
+                          f32 u1, f32 v1, f32 rot, s32 unused, u32 size, s32 ctx, s32 layer, void *tex);
+extern u64 EftVram_AddImage(void *tex, s32 tcc, s32 tfx);
 extern u64 EftVram_AddClut(void *tex);
 extern void EftTexSet_Load4(void *tex, s32 *entry);
 extern void BtlTask_SetDead(EftTask *task);                   /* kills the task */
@@ -302,10 +302,10 @@ void EftKiObj_DrawFrags(EftTask *task) {
 /* ---- chain effect (EftChain; its class callbacks and API continue in the second part)  ---------------------------------- */
 
 /* Picks the two texture entries of the effect from its set. */
-void EftChain_SetTex(EftArc *w, EftArcTexSet *set, s32 a, s32 b) {
-    w->texA = ((EftSTexEntry *)set)[a];
-    w->texB = ((EftSTexEntry *)set)[b];
-    w->arg.texIdx = b;
+void EftChain_SetTex(EftArc *w, EftArcTexSet *set, s32 idxA, s32 idxB) {
+    w->texA = ((EftSTexEntry *)set)[idxA];
+    w->texB = ((EftSTexEntry *)set)[idxB];
+    w->arg.texIdx = idxB;
 }
 
 /* Builds the effect's TEX0 value, once per frame per set entry (the set remembers the built ones). */
@@ -1510,14 +1510,14 @@ extern s32 BtlScene_IsEffectStopped(s32 objId, s32 type);
 #define BtlTaskList_AddTail ((EftTTask *(*)(void *list, void *cls, void *arg))BtlTaskList_AddTail)
 #define BtlTask_SetDead ((void (*)(EftTTask *task))BtlTask_SetDead)                    /* kills the task */
 extern void BtlTask_SetOwnerTag(EftTTask *task, s32 flags);         /* ors into the task flags */
-extern void EftTexSet_Keep32(void *tex, s32 a1, s32 a2);         /* steps a texture set's animation */
+extern void EftTexSet_Keep32(void *tex, s32 tcc, s32 tfx);         /* steps a texture set's animation */
 extern void EftTexSet_Load32(void *tex, s32 *entry);             /* builds a texture set from a pack entry */
 
 extern s32 EftCam_IsActive(void);
 extern f32 EftMath_WrapAngle(f32 angle);
 extern EftTVec *EftGfx_GetClipPlanes(void);
 extern void EftPrim_DrawTriangle(EftTIVec *p0, EftTIVec *p1, EftTIVec *p2, EftTVec *c0, EftTVec *c1, EftTVec *c2,
-                                 EftTVec *st0, EftTVec *st1, EftTVec *st2, s32 a9, s32 a10, s32 blend, s32 z,
+                                 EftTVec *st0, EftTVec *st1, EftTVec *st2, s32 a9, s32 a10, s32 layer, s32 z,
                                  u64 tex0);
 
 extern s32 BtlCharApi_GetOpponentObjId(s32 objId);
@@ -1525,7 +1525,7 @@ extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out);
 extern s32 BtlCharApi_IsInTechnique(s32 objId);
 extern s32 BtlCharApi_IsInClashA(s32 objId);
 
-#define EftChain_SetTex ((void (*)(EftChainWork *w, s32 a1, s32 a2, s32 a3))EftChain_SetTex)
+#define EftChain_SetTex ((void (*)(EftChainWork *w, s32 set, s32 idxA, s32 idxB))EftChain_SetTex)
 #define EftChain_DrawStrands ((void (*)(EftTTask *task))EftChain_DrawStrands)                    /* draws the strands */
 #define EftChain_Update ((void (*)(EftTTask *task))EftChain_Update)                    /* update callback of the chain task class */
 
@@ -1767,8 +1767,8 @@ s32 EftChain_SetSize(EftTTask *task, f32 size) {
     return 1;
 }
 
-/* Sets the part's parameter 3, clamped to 3..7. */
-s32 EftChain_SetParam3(EftTTask *task, s32 v) {
+/* Sets the node count (the part's parameter 3), clamped to 3..7. */
+s32 EftChain_SetParam3(EftTTask *task, s32 count) {
     EftChainWork *w;
 
     if (task == NULL) {
@@ -1781,17 +1781,17 @@ s32 EftChain_SetParam3(EftTTask *task, s32 v) {
     if (!(w->flags & EFT_CHAIN_ALIVE)) {
         return 0;
     }
-    w->nodeCount = v;
-    if (v < 3) {
+    w->nodeCount = count;
+    if (count < 3) {
         w->nodeCount = 3;
-    } else if (v >= 8) {
+    } else if (count >= 8) {
         w->nodeCount = 7;
     }
     return 1;
 }
 
-/* Sets the part's parameter 5. */
-s32 EftChain_SetParam5(EftTTask *task, f32 v) {
+/* Sets the start delay (the part's parameter 5). */
+s32 EftChain_SetParam5(EftTTask *task, f32 delay) {
     EftChainWork *w;
 
     if (task == NULL) {
@@ -1804,12 +1804,12 @@ s32 EftChain_SetParam5(EftTTask *task, f32 v) {
     if (!(w->flags & EFT_CHAIN_ALIVE)) {
         return 0;
     }
-    w->delay = v;
+    w->delay = delay;
     return 1;
 }
 
-/* Sets the part's parameter 6. */
-s32 EftChain_SetParam6(EftTTask *task, f32 v) {
+/* Sets the wait at the end (the part's parameter 6). */
+s32 EftChain_SetParam6(EftTTask *task, f32 endWait) {
     EftChainWork *w;
 
     if (task == NULL) {
@@ -1822,16 +1822,15 @@ s32 EftChain_SetParam6(EftTTask *task, f32 v) {
     if (!(w->flags & EFT_CHAIN_ALIVE)) {
         return 0;
     }
-    w->endWait = v;
+    w->endWait = endWait;
     return 1;
 }
 
 /* Hands three arguments to the strand setup (0x1793A8). No caller. */
-/* NON-MATCHING: 2 of 22 instructions (a `bne` that comes out `bnel`, and the branch target of the "not alive" test).
-   The original shape appears as soon as EftChain_SetTex is DEFINED earlier in the same file (checked in a scratch
-   file with a dummy definition): this function belongs to the object that holds 0x1793A8, i.e. this file is the
-   tail of the file before it and will match once the two are merged. */
-s32 EftChain_SetRes(EftTTask *task, s32 a1, s32 a2, s32 a3) {
+/* Matching note: compiled on its own this differs in 2 of 22 instructions (a `bne` that comes out `bnel`, and the
+   branch target of the "not alive" test). It matches only because EftChain_SetTex (0x1793A8) is DEFINED earlier in
+   the same file, which is why the two parts were merged into this one file. */
+s32 EftChain_SetRes(EftTTask *task, s32 set, s32 idxA, s32 idxB) {
     EftChainWork *w;
 
     if (task == NULL) {
@@ -1844,7 +1843,7 @@ s32 EftChain_SetRes(EftTTask *task, s32 a1, s32 a2, s32 a3) {
     if (!(w->flags & EFT_CHAIN_ALIVE)) {
         return 0;
     }
-    EftChain_SetTex(w, a1, a2, a3);
+    EftChain_SetTex(w, set, idxA, idxB);
     return 1;
 }
 
@@ -2075,7 +2074,7 @@ void EftRayMgr_Term(EftTTask *task) {
 
 /* Update callback of the manager class: steps the texture animation while a burst exists. */
 void EftRayMgr_Update(EftTTask *task) {
-    if (task->children->count != 0) {
+    if (task->children->count != 0) { /* `count` is the list's head pointer (BtlTaskList.head): list not empty */
         EftRay_StepTexture();
     }
 }
@@ -2258,7 +2257,7 @@ void EftRay_DrawRays(EftRayWork *w) {
     Vec4 node;
     EftTIVec scr;
     Vec4 v;
-    Vec4 v2;
+    Vec4 rotated;
     EftRay *ray;
     Vec4 *c;
     EftTVec *bp;
@@ -2316,8 +2315,8 @@ void EftRay_DrawRays(EftRayWork *w) {
             Vec4_Add(&v, &v, &off);
             Mtx_StoreIdentity(&m);
             Mtx_RotateZ(&m, &m, ray->angle);
-            Mtx_MulVec4(&v2, &m, &v);
-            Mtx_MulVec4(c, &w->mtx, &v2);
+            Mtx_MulVec4(&rotated, &m, &v);
+            Mtx_MulVec4(c, &w->mtx, &rotated);
             j++;
             bp++;
             c++;

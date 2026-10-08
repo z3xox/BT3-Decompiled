@@ -16,7 +16,8 @@
  * Presentation only: no simulation state, no pad, no random numbers.
  */
 
-/* Local view of the 0x7FC-byte progress block: only the control configuration is used. */
+/* Local view of the 0x7FC-byte progress block: only the word at +0x7F4 is used. training.c stores the tutorial
+   number there (`tutorial` in training.h and btl_param.h); the field name here is older. */
 typedef struct BtlTextProgress {
     /* 0x000 */ u8 unk0[0x7F4];
     /* 0x7F4 */ s32 controlType;
@@ -34,9 +35,9 @@ extern void Font_SetShadowColorRGBA(s32 r, s32 g, s32 b, s32 a);
 extern void Font_PrintAt(s32 x, s32 y, u16 *str);
 
 /* Draws the controls page inside a box: the title (sheet entry 0, row 4) centred at the top and the text for
-   the pad type and the control configuration (gProgress + 0x7F4) below it. */
+   the pad type and the tutorial number (gProgress + 0x7F4) below it. */
 void BtlText_DrawControls(u64 **pkt, s32 x0, s32 x1, s32 y0, s32 y1) {
-    s32 config = gProgress->controlType;
+    s32 tutorial = gProgress->controlType;
     s32 padType = BtlMenu_GetDefaultPadType();
 
     Font_PushStyle();
@@ -46,7 +47,7 @@ void BtlText_DrawControls(u64 **pkt, s32 x0, s32 x1, s32 y0, s32 y1) {
     Font_SetScale(1.0f);
     Font_SetColorRGBA(0xFF, 0xFF, 0xFF, 0x80);
     Font_SetShadowColorRGBA(0, 0x10, 0x10, 0x40);
-    Font_PrintAt(x0 + 0x10, y0 + 0x2A, BtlMenu_GetControlsText(padType, config));
+    Font_PrintAt(x0 + 0x10, y0 + 0x2A, BtlMenu_GetControlsText(padType, tutorial));
     Font_PopStyle();
 }
 
@@ -186,13 +187,13 @@ extern f32 Font_FitScale(u16 *str, s32 width);
 extern void Font_PrintAt(s32 x, s32 y, u16 *str);
 extern void Font_PushStyle(void);
 extern void Font_PopStyle(void);
-extern void Font_SetScale(f32 a);
+extern void Font_SetScale(f32 scale);
 extern void Font_SetScaleXY(f32 sx, f32 sy);
 extern void Font_GetScaleXY(f32 *sx, f32 *sy);
 extern void Font_SetClip(s32 x0, s32 y0, s32 x1, s32 y1);
 extern void Font_SetAlign(s32 align);
-extern void Font_SetFlags(s32 a);
-extern void Font_SetShadowMode(s32 a);
+extern void Font_SetFlags(s32 flags);
+extern void Font_SetShadowMode(s32 mode);
 extern void Font_SetColorRGBA(s32 r, s32 g, s32 b, s32 a);
 extern void Font_SetColor2RGBA(s32 r, s32 g, s32 b, s32 a);
 extern void Font_SetShadowColorRGBA(s32 r, s32 g, s32 b, s32 a);
@@ -706,20 +707,20 @@ typedef struct BtlSeqObj {
 
 extern void BtlFacade_SetCtrl10D(s32 side);
 extern BtlSeqObj *BtlObj_Get(s32 idx);
-extern void BtlObj_SetSubState(BtlSeqObj *obj, s32 a, s32 line); /* mouth / talk animation */
+extern void BtlObj_SetSubState(BtlSeqObj *obj, s32 mode, s32 line); /* mouth / talk animation */
 extern void BtlCtrl_StartEntrance(s32 side);        /* character flag 0xEF: entrance pose */
 extern void BtlCtrl_EndEntrance(s32 side);        /* character flag 0xF0: end of entrance */
 extern void BtlCtrl_StartWinPose(s32 side);        /* character flag 0xF1: win pose */
 extern void BtlCtrl_StartLosePose(s32 side);        /* character flag 0xF2: lose pose */
 extern s32 BtlCtrl_IsPoseReached(s32 side);         /* pose reached */
 extern void DemoCam_PlayObjAnim(s32 side, s32 cut); /* fighter camera cut */
-extern void DemoCam_SetScaleHeight(s32 a);
+extern void DemoCam_SetScaleHeight(s32 on);
 extern s32 DemoCam_PlayStageAnim(s32 cut);          /* stage camera cut */
 extern s32 DemoCam_IsActive(void);             /* camera cut still playing */
 extern s32 DemoCam_IsInUse(void);
 extern void DemoCam_Stop(void);            /* stop the camera cut */
 extern void ScrXfade_RequestCapture(void);
-extern void ScrXfade_Start(s32 a, f32 seconds);
+extern void ScrXfade_Start(s32 request, f32 seconds);
 extern s32 BtlScript_IsEventRunning(void);
 extern void BtlScript_AbortEvents(void);
 extern u8 *BtlScript_GetCurrentEvent(void);
@@ -732,9 +733,9 @@ extern s32 BtlPause_GetPadCount(void);
 extern void BtlPause_SetPad(s32 pad);
 extern s32 BtlPause_GetMenuPad(void);
 extern s32 BtlPause_GetPad(void);
-extern s32 PauseMenu_Update(s32 a, s32 b);     /* pause / result menu update */
+extern s32 PauseMenu_Update(s32 pad, s32 which);     /* pause / result menu update */
 extern void PauseMenu_Draw(void);
-extern void Snd_SetPause(s32 a, s32 b);
+extern void Snd_SetPause(s32 mask, s32 on);
 extern void Hud_ShowAll(s32 on);          /* HUD visibility bits */
 extern void Hud_ShowGauges(s32 on);
 extern void Hud_ShowTimer(s32 on);

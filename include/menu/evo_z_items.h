@@ -75,7 +75,7 @@ typedef struct VChrEntry {
     /* 0x08 */ u16 flags;
     /* 0x0A */ u16 costumes;
     /* 0x0C */ u16 cost;
-    /* 0x0E */ u16 baseLevel;
+    /* 0x0E */ u16 baseLevel;   /* the level counts item slots: base slot count (ZaChrEntry.slots); ChrTbl_GetLevel adds the saved level */
     /* 0x10 */ s32 exp[7];      /* experience needed for each level */
     /* 0x2C */ u8 unk2C[0x10];
 } VChrEntry; /* 0x3C */
@@ -159,7 +159,7 @@ typedef struct EvoZ {
     /* 0x001C */ void * dialogText;  /* section 39 */
     /* 0x0020 */ void * text[3];  /* sections 34, 35, 37 */
     /* 0x002C */ MFlash flash[EVOZ_FLASH_NUM];  /* sections 13, 23, 31: screen, character reel, item list */
-    /* 0x00B0 */ MTexRes * chipTex;
+    /* 0x00B0 */ MTexRes * chipTex;  /* the relocated chip file, drawn as the background picture (`bg` in UEvoZ, evo_z.h) */
     /* 0x00B4 */ u8 * tex0[43];  /* [42] = the portrait */
     /* 0x0160 */ u8 * tex1[25];  /* [0..6] the reel chips, [18..24] the chips before the last change */
     /* 0x01C4 */ u8 * tex2[26];

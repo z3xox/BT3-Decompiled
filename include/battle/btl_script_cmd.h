@@ -116,7 +116,7 @@ typedef struct BtlScriptCmdWindow {
     /* 0x1C */ s32 align;   /* -w */
     /* 0x20 */ s32 flags;
     /* 0x24 */ s32 shadowMode;   /* -T */
-    /* 0x28 */ u32 color28; /* -C */
+    /* 0x28 */ u32 color28; /* -C: the shadow colour (FontStyle.shadowColor) */
     /* 0x2C */ s16 shadowDx;   /* -O, first */
     /* 0x2E */ s16 shadowDy;   /* -O, second */
     /* 0x30 */ u8 unk30[0x18];

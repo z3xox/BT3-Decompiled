@@ -1100,7 +1100,7 @@ void ColSeg_NearestParallel(CpSeg *a, CpVec *la, CpSeg *b, CpVec *lb, s32 infini
                             CpVec *onB) {
     f32 s[2];
     CpVec tp;
-    f32 temp;
+    f32 param;
 
     ColSeg_NearestOnLine(&a->a, la, &b->a, 1, epsSq, onA, &s[0]);
     if (infinite == 1) {
@@ -1122,11 +1122,11 @@ void ColSeg_NearestParallel(CpSeg *a, CpVec *la, CpSeg *b, CpVec *lb, s32 infini
                 Vec4_Copy(onB, &b->b);
             }
         } else {
-            temp = 0.5f * (CP_MAX(0.0f, CP_MIN(1.0f, s[0])) + CP_MAX(0.0f, CP_MIN(1.0f, s[1])));
-            onA->x = a->a.x + temp * la->x;
-            onA->y = a->a.y + temp * la->y;
-            onA->z = a->a.z + temp * la->z;
-            ColSeg_NearestOnLine(&b->a, lb, onA, 1, epsSq, onB, &temp);
+            param = 0.5f * (CP_MAX(0.0f, CP_MIN(1.0f, s[0])) + CP_MAX(0.0f, CP_MIN(1.0f, s[1])));
+            onA->x = a->a.x + param * la->x;
+            onA->y = a->a.y + param * la->y;
+            onA->z = a->a.z + param * la->z;
+            ColSeg_NearestOnLine(&b->a, lb, onA, 1, epsSq, onB, &param);
         }
     }
 }
@@ -1173,7 +1173,7 @@ s32 ColSeg_Nearest(CpSeg *a, CpSeg *b, CpVec *onA, CpVec *onB) {
     CpVec ab;
     CpVec mid;
     CpVec vec;
-    f32 temp = 0.0f;
+    f32 param = 0.0f;
     f32 eps = 1e-6f;
     f32 epsSq = eps * eps;
     f32 l11;
@@ -1185,10 +1185,10 @@ s32 ColSeg_Nearest(CpSeg *a, CpSeg *b, CpVec *onA, CpVec *onB) {
     l22 = Vec3_Dot(&lb, &lb);
     if (l11 < epsSq) {
         Vec4_Copy(onA, &a->a);
-        ColSeg_NearestOnLine(&b->a, &lb, &a->a, 0, eps, onB, &temp);
+        ColSeg_NearestOnLine(&b->a, &lb, &a->a, 0, eps, onB, &param);
     } else if (l22 < epsSq) {
         Vec4_Copy(onB, &b->a);
-        ColSeg_NearestOnLine(&a->a, &la, &b->a, 0, eps, onA, &temp);
+        ColSeg_NearestOnLine(&a->a, &la, &b->a, 0, eps, onA, &param);
     } else {
         f32 l12;
         f32 detL;

@@ -45,7 +45,7 @@ extern void BtlAiCombo_Dispatch(BtlAiWork *ai);
 extern void BtlAiFollow_Dispatch(BtlAiWork *ai);
 extern void BtlAiAct36_Dispatch(BtlAiWork *ai);
 extern s32 BtlCharApi_IsInClashA(s32 objId);
-extern s32 BtlCharApi_FindIncomingBlast(s32 objId, s32 arg);
+extern s32 BtlCharApi_FindIncomingBlast(s32 objId, s32 mode);
 extern void BtlCharApi_MarkIncomingBlast(s32 objId);
 extern BtlAiChrSkills *BtlCharApi_GetSkillTable(s32 objId);
 extern BtlAiChrMoves *BtlCharApi_GetMoveTable(s32 objId);
@@ -64,9 +64,9 @@ extern s32 BtlCharApi_GetStunTimer(s32 objId);
 extern s32 BtlCharApi_GetPromptButtons(s32 objId);
 extern s32 BtlCharApi_GetStoryAiForce(s32 objId);
 extern f32 BtlCharApi_GetTechChargeB(s32 objId);
-extern s32 BtlCharApi_TestPoseBit80(s32 objId, s32 arg);
+extern s32 BtlCharApi_TestPoseBit80(s32 objId, s32 always);
 extern s32 BtlCharApi_TestFlagBE(s32 objId);
-extern s32 BtlCharApi_GetParamByte8F(s32 objId, s32 arg);
+extern s32 BtlCharApi_GetParamByte8F(s32 objId, s32 n);
 extern s32 BtlSide_GetKi(s32 objId); /* member entry + 0xC */
 extern s32 BtlSide_GetBlast(s32 objId); /* member entry + 0x14 */
 extern s32 BtlSide_IsPoweredUp(s32 objId); /* fighter flag 6 */

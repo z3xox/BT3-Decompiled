@@ -6,7 +6,8 @@
 #include "ui/menu_support.h"
 
 /*
- * Progress_Init, the menu helpers and the head of the text box module, 0x25DE68..0x2600B0. See battle/view_a.h.
+ * Progress_Init, the menu helpers and the text box module, 0x25DE68..0x260D20. See ui/reward_window.h and, for the
+ * second half of the text box (from 0x2600B0), ui/menu_support.h.
  *
  *   Progress_*     the block of state shared by the menus and the battle (gProgress)
  *   FlashAnim_*    frame animation of one movie clip: blinking eyes, a talking mouth, a sprite sheet, a
@@ -17,12 +18,11 @@
  *   BgmList_*      the music list
  *
  * Nearly all callers are in the menu overlay; Num_ToDigits and Num_CountDigits are also used by sys/loading.c.
- *   TextBox_*      0x25FE00..0x2600B0: the first functions of the text box module (a text file plus the style
- *                  its lines are drawn in), which continues after 0x2600B0
+ *   TextBox_*      0x25FE00..0x260D20: the text box module (a text file plus the style its lines are drawn in)
  *
  * One object: the powers of ten of Num_ToDigits (0x2F3250) and the jump table of TextBox_Init (0x2F3270) lie in
  * one 16-byte aligned read-only block (linked as two files the table landed at 0x2F3248), and the object goes on
- * past 0x2600B0. The TextBox part was written as view_a_f.c and merged in when the files were linked.
+ * past 0x2600B0 to 0x260D20.
  */
 
 extern void *memset(void *dst, s32 c, u32 n);
@@ -30,11 +30,11 @@ extern s32 sprintf(char *dst, const char *fmt, ...);
 
 extern void Flash_FindLabel(Flash *flash, char *parent, char *name, FlashRef *out);
 extern void Flash_ClipSetFlags(Flash *flash, FlashRef *ref, s32 prop, s32 value);
-extern void Flash_ClipSetOffset(Flash *flash, FlashRef *ref, s32 a, s32 b);
+extern void Flash_ClipSetOffset(Flash *flash, FlashRef *ref, s32 x, s32 y);
 extern void Flash_ClipSetTex(Flash *flash, FlashRef *ref, s32 frame);
 extern void Flash_ClipSetUv(Flash *flash, FlashRef *ref, FlashUv *uv);
 
-/* voice module, after 0x2600B0 (not decompiled) */
+/* voice module (menu_util_2.c) */
 extern void LipSync_Update(void);
 extern s32 LipSync_IsOpen(void); /* non-zero while a voice line plays */
 
@@ -283,8 +283,8 @@ void Num_ToDigits(u8 *digits, s32 value, s32 count, s32 zeroPad) {
 }
 
 /* Shows a digit string made by Num_ToDigits: one clip per digit (refs[i]), texture cell cells[digit]; a blank
- * hides the clip. (a2, a3) go to Flash_ClipSetOffset for every clip. */
-void Num_DrawDigits(Flash *flash, FlashRef *refs, s32 a2, s32 a3, FlashUv *cells, u8 *digits) {
+ * hides the clip. Every clip is given the offset (x, y) (Flash_ClipSetOffset). */
+void Num_DrawDigits(Flash *flash, FlashRef *refs, s32 x, s32 y, FlashUv *cells, u8 *digits) {
     s32 i;
 
     for (i = 0; *digits != 0xFF; i++) {
@@ -294,7 +294,7 @@ void Num_DrawDigits(Flash *flash, FlashRef *refs, s32 a2, s32 a3, FlashUv *cells
         } else {
             Flash_ClipSetFlags(flash, &refs[i], FLASH_PROP_VISIBLE, 0);
         }
-        Flash_ClipSetOffset(flash, &refs[i], a2, a3);
+        Flash_ClipSetOffset(flash, &refs[i], x, y);
         digits++;
     }
 }
@@ -968,9 +968,9 @@ void BgmList_ApplyUnlocks(s32 *count, s32 *ids) {
  * TextBox, 0x25FE00..0x2600B0.
  */
 
-/* text box module, after 0x2600B0 (not decompiled) */
-extern void TextBox_SetMaxWidth(TextBox *box, s32 a);
-extern void TextBox_SetLineOffsets(TextBox *box, s32 a, s32 b, s32 c, s32 d, s32 e);
+/* the second half of the module, below */
+extern void TextBox_SetMaxWidth(TextBox *box, s32 w);
+extern void TextBox_SetLineOffsets(TextBox *box, s32 y1, s32 y2, s32 y3, s32 y4, s32 y5);
 
 /* Clears a text box, binds it to a text file and applies one of seven style presets. */
 void TextBox_Init(TextBox *box, void *text, u32 preset) {
@@ -1014,25 +1014,29 @@ void TextBox_Init(TextBox *box, void *text, u32 preset) {
     }
 }
 
-void TextBox_SetAlign(TextBox *box, s32 value) {
-    box->align = value;
+/* Font_SetAlign value of the text. */
+void TextBox_SetAlign(TextBox *box, s32 align) {
+    box->align = align;
 }
 
-void TextBox_SetNoFlush(TextBox *box, s32 value) {
-    box->noFlush = value;
+/* 1: the text stays in the font queue instead of being drawn at once (see TextBox_DrawClip). */
+void TextBox_SetNoFlush(TextBox *box, s32 noFlush) {
+    box->noFlush = noFlush;
 }
 
-void TextBox_SetOffset(TextBox *box, s32 a, s32 b) {
-    box->x = a;
-    box->y = b;
+/* Offset added to the position of every line. */
+void TextBox_SetOffset(TextBox *box, s32 x, s32 y) {
+    box->x = x;
+    box->y = y;
 }
 
-/* Gives the box four values (a rectangle, by the look of it) and marks them valid. */
-void TextBox_SetRect(TextBox *box, s32 a, s32 b, s32 c, s32 d) {
-    box->clip[3] = d;
-    box->clip[0] = a;
-    box->clip[1] = c;
-    box->clip[2] = b;
+/* Sets the font clip rectangle of the text (TextBox_DrawClip hands clip[0..3] to Font_SetClip as x0, y0, x1, y1;
+   without it the clip is the whole screen, 0, 0, 0x1FF, 0x1BF). Note the argument order: both x first. */
+void TextBox_SetRect(TextBox *box, s32 x0, s32 x1, s32 y0, s32 y1) {
+    box->clip[3] = y1;
+    box->clip[0] = x0;
+    box->clip[1] = y0;
+    box->clip[2] = x1;
     box->flags |= TEXTBOX_FLAG_RECT;
 }
 
@@ -1045,7 +1049,8 @@ void TextBox_SetColor(TextBox *box, u32 rgba) {
     box->color[3] = rgba;
 }
 
-/* Sets the second colour from 0xRRGGBBAA. */
+/* Sets the colour of the text's shadow from 0xRRGGBBAA (without it the shadow is 0x20, 0x20, 0x20 at half the
+   clip's alpha). */
 void TextBox_SetColor2(TextBox *box, u32 rgba) {
     box->flags |= TEXTBOX_FLAG_COLOR2;
     box->shadow[0] = rgba >> 24;
@@ -1055,12 +1060,9 @@ void TextBox_SetColor2(TextBox *box, u32 rgba) {
 }
 
 
-/* ======== merged from src/battle/view_b.c ======== */
-
-
 /*
- * TextBox, second half: 0x2600B0..0x260D20. The module starts in menu_util_1.c (TextBox_Init at 0x25FE00) and this
- * is the same object; see battle/view_b.h for the complete layout of a text box.
+ * TextBox, second half: 0x2600B0..0x260D20 (the same object as the first half; it was decompiled as a separate
+ * file and merged in). See ui/menu_support.h for the complete layout of a text box (TextBoxFull).
  *
  * A text box is a text file plus the style its lines are drawn in. TextBox_AttachLine hangs one line on a movie
  * clip: it fills box->draw and registers TextBox_DrawClip as the clip's "draw over" callback, so the movie
@@ -1102,7 +1104,7 @@ void TextBox_SetMaxHeight(TextBox *box, s32 h) {
     TB(box)->flags |= TEXTBOX_FLAG_MAX_H;
 }
 
-/* Both limits. `unused` is not looked at. */
+/* Both limits. */
 void TextBox_SetMaxSize(TextBox *box, s32 w, s32 h) {
     TextBox_SetMaxWidth(box, w);
     TextBox_SetMaxHeight(box, h);

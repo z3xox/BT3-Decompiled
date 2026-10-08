@@ -1,0 +1,26 @@
+FIELD	include/battle/btl_char_action.h	BtlActVitals	gaugeB	ki	HIGH	Same member block as BtlMemberVitals (btl_char_member.h: ki at +0x0C); the bench recovery in BtlAct_UpdateGauges adds 1000 per second up to the +0x10 word.
+FIELD	include/battle/btl_char_action.h	BtlActVitals	gaugeBMax	kiMax	HIGH	Word +0x10 of the member block, kiMax in btl_char_member.h; used as the cap of the ki recovery.
+FIELD	include/battle/btl_char_action.h	BtlActChr	switchUnk20	switchVariant	HIGH	BtlAct_PrepareSwitch stores the target member's vitals.variant in it, and it is passed as the variant argument of BtlChange_RequestChara.
+FIELD	include/battle/btl_char_api_1.h	BtlCapiParam	flags0	charaFlags	HIGH	Word +0x00 of the parameter block at object +0x91C, which btl_param.h (BtlParam) names charaFlags.
+NAME	BtlCharApi_GetNodeUnk90	BtlCharApi_GetNodeLocalPos	MEDIUM	Copies the node's vector at +0x90, the field the node views name pos (the local translation; the world matrix is at +0x10).
+NAME	BtlCharApi_GetNodeMtx50	BtlCharApi_GetNodeParentMtx	MEDIUM	Copies the node's matrix at +0x50, which the field is named parent for (the parent's world matrix).
+FIELD	include/battle/btl_char_api_2.h	BtlCharApiChr	camUnk420	camEye	HIGH	Fighter +0x420 is ChrCam.eye (btl_char_cam.h, the camera block starts at +0x420).
+FIELD	include/battle/btl_char_api_2.h	BtlCharApiChr	camUnk460	camBodyPos	HIGH	Fighter +0x460 is ChrCam.bodyPos; BtlCharApi_GetCamBodyPos returns it.
+FIELD	include/battle/btl_char_api_2.h	BtlCharApiChr	camUnk494	camHit	HIGH	Fighter +0x494 is ChrCam.hit, the BtlCam_TraceStage result that BtlCharApi_GetCamPose returns.
+FIELD	include/battle/btl_char_api_2.h	BtlCharApiChr	camUnk4A0	camYaw	HIGH	Fighter +0x4A0 is ChrCam.yaw; BtlCharApi_GetCamYaw returns it.
+FIELD	include/battle/btl_char_api_2.h	BtlCharApiObj	attrCount	eventCount	HIGH	Object +0xCAE is eventCount in btl_obj_anim.h (BobjAnimPlayer +0x1E).
+FIELD	include/battle/btl_char_api_2.h	BtlCapiBChr	switchPrompt	techClass	HIGH	Fighter +0x1594 is techClass in btl_param.h, btl_input.h and btl_char_mgr.h; BtlCharApi_GetPromptButtons passes it to BtlSuper_GetPromptRowIndex as the technique class.
+FIELD	include/battle/btl_char_api_2.h	BtlCharApiMgr	sounds	oneShotSounds	MEDIUM	Manager +0x08 is the one-shot sound set array, beside loopSounds at +0x0C (note of group 03).
+NAME	BtlCharApi_GetMemberUnk60	BtlCharApi_GetMemberVariant	HIGH	Returns BtlMember_GetActiveGauge(chr)->variant, the model variant of the active member.
+NAME	BtlCharApi_ObjQuery24D610	BtlCharApi_ObjQueryAnimEvent	HIGH	It is BtlObjAnim_QueryEvent(obj, mask, 0, what) by object id.
+NAME	BtlCharApi_GetTechniqueProgress	BtlCharApi_GetTechniqueFramesLeft	MEDIUM	Returns framesLeftOverride or (frame of the next event with bit 1 - current frame) / frame step: updates left until the event, not a progress.
+NAME	BtlCharApi_GetOppSkillKind	BtlCharApi_GetOppTechniqueKind	MEDIUM	Reads the technique table through BtlSuper_GetAiKind while the opponent is in a technique action (BtlAct_IsTechniqueId).
+NAME	BtlCharApi_GetOppMoveKind	BtlCharApi_GetOppSkillKind	MEDIUM	Reads the skill table through BtlSkill_GetAiKind in actions 0xFD..0x102; apply only after the previous line, which frees the name.
+FIELD	include/battle/btl_char_cam.h	ChrCam	hitObj	hitZone	HIGH	BtlCam_TraceStage stores in it the BtlStage_FindZoneNear zone index it gave StgCol_TraceSphere (zoneIdx), not an object.
+FIELD	include/battle/btl_char_fx_1.h	FxChr	hitPos	aimDir	HIGH	Fighter +0xDD0 is written by the ki blast actions with BtlCharApi_CalcAimDir (aimDir in btl_act_2.h) and BtlFx_FireKiBlast uses it as the launch direction.
+FIELD	include/battle/btl_char_fx_1.h	FxChr	hitKind	blastNode	HIGH	Fighter +0xDF0 is blastNode in btl_act_2.h (result of BtlAct_PlaySubAnim); request 0x17 passes it to BtlObj_GetNodeSide.
+FIELD	include/battle/btl_char_fx_1.h	FxHitArg2	code	node	HIGH	BtlFx_FireKiBlast fills it with BtlObjAnim_MaskToNode(event argument); the callee's view (EftRArg) names it node.
+NAME	BtlPartner_SetObjFloats	BtlPartner_AddSway	HIGH	Its whole body is BtlObj_AddSway on the partner object (the fighter-side twin is BtlAct_AddSway).
+FIELD	include/battle/btl_char_hit.h	HitReact	unk38	shakeTimer	HIGH	React block +0x38 is fighter +0xFE8, shakeTimer in btl_char_action.h and btl_char_move.h; BtlHit_ApplyHit sets it to 3 for the no-flinch reaction 2.
+FIELD	include/battle/btl_char_hit.h	HitReact	unk48	blindTimer	HIGH	React block +0x48 is fighter +0xFF8, blindTimer in btl_char_action.h; BtlHit_CheckGrab stores BtlSkill_GetFrames of the grabbing skill slot in it.
+FIELD	include/battle/btl_char_mgr.h	BtlMgrChr	padFlagA	vibEnabled	HIGH	Fighter +0x15D0 is BtlCharVib.enabled (btl_char_util.h), set from the save flag 2 << pad at fighter reset.

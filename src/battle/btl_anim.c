@@ -32,7 +32,7 @@ extern void BtlObjAnim_ZeroRootAxes(void *handle, s32 a, s32 b, s32 c);
 extern void BtlObjAnim_RebaseRoot(void *handle);
 extern void BtlObjAnim_ClearNodeRot(void *handle, s32 node);
 extern void BtlObjAnim_Play(BtlStatObj *obj, s32 layer, s32 anim, s32 reset);
-extern void BtlObjAnim_PlayFrom(BtlStatObj *obj, s32 other, s32 anim, s32 arg);
+extern void BtlObjAnim_PlayFrom(BtlStatObj *obj, s32 other, s32 anim, s32 useTable);
 extern void BtlObjAnim_PromoteLayer(BtlStatObj *obj);                       /* the second layer becomes the main one */
 extern s32 BtlObjAnim_TestEvent(BtlStatObj *obj, u64 mask);              /* attribute test at the current frame */
 extern void BtlObj_SetEyeFrame(BtlStatObj *obj, s32 state);
@@ -99,14 +99,14 @@ void BtlAnim_Play(BtlStatChr *chr, s32 anim, f32 blend) {
     s32 n;
 
     if (BtlAnim_GetFlags(anim) & BTL_ANIM_F_20000000) {
-        s32 arg = 0;
+        s32 useTable = 0;
         BtlStatObj *obj2;
 
         if (BtlCharApi_IsInRushSequence(chr->objId)) {
-            arg = chr->unkEE4;
+            useTable = chr->unkEE4;
         }
         obj2 = BtlChar_GetObj(chr);
-        BtlObjAnim_PlayFrom(obj2, BtlOpp_GetObj(chr), anim, arg);
+        BtlObjAnim_PlayFrom(obj2, BtlOpp_GetObj(chr), anim, useTable);
         BtlAnim_HideModelNode10(obj->anim.handle, obj->model);
     } else {
         BtlObjAnim_Play(obj, 0, anim, 1);

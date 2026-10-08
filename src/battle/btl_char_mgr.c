@@ -28,7 +28,7 @@
  *                               Fight: BtlChar_ResetAll() (except in mode 1) and set BTL_CHARS_STARTED.
  *   2. BtlChars_SampleInput     skipped under PAUSE / LOADING. per fighter: stage 2, BtlInput_Sample.
  *   3. BtlChars_UpdateInput     skipped under PAUSE; under LOADING only BtlChars_ClearObjFlag2.
- *        frame counter          if started and BtlChars_IsTimeStopped() == 0: frame++, unk1C counts down
+ *        frame counter          if started and BtlChars_IsTimeStopped() == 0: frame++, stageTimer counts down
  *        BtlChars_CheckRoundReset
  *        BtlChars_UpdateFreeze  decides who is frozen this frame
  *        BtlCharSnd_ClearRequests          empties the manager's sound request list at +0xA0
@@ -115,11 +115,11 @@ extern s32 BtlCtrl_CanAct(s32 side);
 extern void Vec4_SetZero(void *vec);
 extern void BtlBodyHit_Update(void);
 extern void StgGround_UpdateFighter(BtlMgrObj *obj);
-extern void StgCol_UpdateFighter(BtlMgrObj *obj, s32 arg1, s32 arg2);
+extern void StgCol_UpdateFighter(BtlMgrObj *obj, s32 keepSphere, s32 grow);
 extern void BtlStat_ClearFrameMods(BtlMgrChr *chr);
 extern void BtlStat_Reset(BtlMgrChr *chr);
 extern void BtlStat_SetFrameMod(BtlMgrChr *chr, s32 idx, s32 val, s32 add);
-extern void BtlAnim_Play(BtlMgrChr *chr, s32 arg1, f32 arg2);
+extern void BtlAnim_Play(BtlMgrChr *chr, s32 anim, f32 blend);
 extern void BtlAnim_FlushRequest(BtlMgrChr *chr);
 extern void BtlAnim_SetObjRate(BtlMgrChr *chr, f32 rate);
 extern void BtlAnim_SetRate(BtlMgrChr *chr, f32 rate);
@@ -160,10 +160,10 @@ extern void BtlChange_Update(void);
 extern s32 BtlChars_IsTimeStopped(void);
 extern void BtlChar_ResetLook(BtlMgrChr *chr);
 extern void BtlChar_UpdateLookOffset(BtlMgrChr *chr);
-extern void BtlChar_SetLookEnabled(BtlMgrChr *chr, s32 arg1);
+extern void BtlChar_SetLookEnabled(BtlMgrChr *chr, s32 enabled);
 extern void BtlChar_UpdateHead(BtlMgrChr *chr);
 extern void BtlChar_ObjToPose(BtlMgrChr *chr);
-extern void BtlChar_PoseToObj(BtlMgrChr *chr, s32 arg1);
+extern void BtlChar_PoseToObj(BtlMgrChr *chr, s32 keepRoot);
 extern void BtlChar_UpdateLean(BtlMgrChr *chr);
 extern void BtlChar_PlaceAtStart(BtlMgrChr *chr);
 extern void BtlChar_PlaceRestart(BtlMgrChr *chr);
@@ -176,8 +176,8 @@ extern void BtlChar_PlaceWarp(BtlMgrChr *chr);
 extern void BtlChars_UpdateHold(void);
 extern void BtlChar_ClearSnapshots(BtlMgrChr *chr);
 extern void BtlChars_Snapshot(s32 pass);
-extern void BtlChar_GetSnapDelta(BtlMgrChr *chr, void *vec, s32 arg2, s32 arg3);
-extern void BtlChar_GetMoveSince(BtlMgrChr *chr, void *vec, s32 arg2);
+extern void BtlChar_GetSnapDelta(BtlMgrChr *chr, void *out, s32 from, s32 to);
+extern void BtlChar_GetMoveSince(BtlMgrChr *chr, void *out, s32 n);
 extern void BtlReplay_Rewind(BtlMgrChr *chr);
 extern void BtlReplay_ResetViewer(void);
 extern void BtlReplay_UpdateViewer(void);
@@ -226,9 +226,9 @@ extern void BtlObjAnim_UpdateEvents(BtlMgrObj *obj);
 extern void BtlObjBody_Warp(BtlMgrObj *obj, void *vec);
 extern void BtlObjHit_BuildVolumes(BtlMgrObj *obj);
 extern void BtlObjPose_CalcMatrices(BtlMgrObj *obj);
-extern void BtlObj_SetColorPreset(BtlMgrObj *obj, s32 arg1, s32 arg2);
+extern void BtlObj_SetColorPreset(BtlMgrObj *obj, s32 row, s32 set);
 extern void BtlObj_BindCommonTables(BtlMgrObj *obj);
-extern void BtlObj_SaveNodePositions(BtlMgrObj *obj, s32 arg1);
+extern void BtlObj_SaveNodePositions(BtlMgrObj *obj, s32 relative);
 extern void BtlObj_SetMoveVec(BtlMgrObj *obj, void *vec);
 extern void BtlObj_InitChains(BtlMgrObj *obj);
 extern void BtlObj_UpdateChains(BtlMgrObj *obj);
@@ -610,12 +610,12 @@ void BtlChars_UpdateFreeze(void) {
     for (i = 0; i < BtlChar_GetCount(); i++) {
         chr = BtlChar_Get(i);
         if (chr->freeze > 0) {
-            s32 v = chr->freeze - 1;
+            s32 left = chr->freeze - 1;
 
-            if (v < 0) {
-                v = 0;
+            if (left < 0) {
+                left = 0;
             }
-            chr->freeze = v;
+            chr->freeze = left;
         }
         if (chr->freezeNext != 0) {
             if (chr->freezeDelay != 0) {
@@ -1137,7 +1137,7 @@ void BtlChar_UpdateStage7(BtlMgrChr *chr) {
 /* Phase 4 body 4 (stage 8). */
 void BtlChar_UpdateStage8(BtlMgrChr *chr) {
     BtlMgrObj *obj;
-    s32 flag = 1;
+    s32 keepSphere = 1;
     s32 started;
 
     obj = BtlChar_GetObj(chr);
@@ -1150,7 +1150,7 @@ void BtlChar_UpdateStage8(BtlMgrChr *chr) {
     BtlObjPose_CalcMatrices(obj);
     if (BtlChar_TestFlag(chr, 0x55)) {
         BtlObjBody_Warp(obj, chr->bodyWarpPos);
-        flag = 0;
+        keepSphere = 0;
     }
     started = 0;
     if (gBtlChars->flags & BTL_CHARS_STARTED) {
@@ -1159,7 +1159,7 @@ void BtlChar_UpdateStage8(BtlMgrChr *chr) {
     if (BtlChars_IsTimeStopped()) {
         started = 0;
     }
-    StgCol_UpdateFighter(obj, flag, BtlCharApi_IsChanging(chr->objId) ? 0 : started);
+    StgCol_UpdateFighter(obj, keepSphere, BtlCharApi_IsChanging(chr->objId) ? 0 : started);
     StgGround_UpdateFighter(obj);
     BtlChar_ObjToPose(chr);
 }
@@ -1235,7 +1235,7 @@ void BtlChar_PostScene(BtlMgrChr *chr) {
     }
 }
 
-/* Phase 6 body 1: late per-fighter updates and the status-table penalty while gauge.unk30 is on. */
+/* Phase 6 body 1: late per-fighter updates and the status-table penalty while the active member's body is changed (gauge.bodyChanged). */
 void BtlChar_UpdateLate(BtlMgrChr *chr) {
     BtlMgrObj *obj = BtlChar_GetObj(chr);
 
@@ -1374,18 +1374,18 @@ void BtlChars_SampleInput(void) {
 
 /* Phase 1: resets the roster the first frame the sequence reaches Ready or Fight; returns 1 when it did. */
 s32 BtlChars_CheckStart(void) {
-    s32 ret = 0;
+    s32 didReset = 0;
 
     if (BtlSeq_GetState() == 2 || BtlSeq_GetState() == 3) {
         if (!(gBtlChars->flags & BTL_CHARS_STARTED)) {
             if (Battle_GetMode() != 1) {
                 BtlChar_ResetAll();
-                ret = 1;
+                didReset = 1;
             }
         }
         gBtlChars->flags |= BTL_CHARS_STARTED;
     }
-    return ret;
+    return didReset;
 }
 
 /* Phase 3: frame counter, round reset, hit-stop, then input and per-frame clears for every fighter. */

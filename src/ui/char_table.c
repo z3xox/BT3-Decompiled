@@ -7,7 +7,7 @@
  * ChrTbl / ItemSet, 0x260D20..0x2614B0: readers of the two tables of common file 4 (gCommonRes->data[2]): the
  * character entries (costume count, cost, level and experience) and the equippable items (what a set of items
  * adds up to, which characters may equip an item). The menu overlay calls nearly all of them; the battle calls
- * ItemSet_GetStats when a member is set up (BtlMember_ApplyItems). See battle/view_b.h.
+ * ItemSet_GetStats when a member is set up (BtlMember_ApplyItems). See ui/menu_support.h.
  */
 
 extern void *memset(void *dst, s32 c, u32 n);
@@ -35,7 +35,9 @@ s32 ChrTbl_GetCost(s32 chara) {
     return table[chara].cost;
 }
 
-/* The character's level: the table's base plus the saved level of a customisation slot or of a record. */
+/* The character's level: the table's base plus the saved level of a customisation slot or of a record. Both
+   callers (the menu's item panel and the Z-item screen) use the result as the number of item slots the character
+   has, the `capacity` of ItemSet_Fit. */
 s32 ChrTbl_GetLevel(s32 chara, s32 slot, s32 fromRec) {
     s32 level;
     ChrTblFile *file;

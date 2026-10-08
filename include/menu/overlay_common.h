@@ -283,6 +283,6 @@ typedef struct MTextBox {
 
 s32 MainMenu_Run(s32 section);
 s32 Title_Run(s32 section);
-s32 Progress_Main(s32 arg);
+s32 Progress_Main(s32 unused);
 
 #endif

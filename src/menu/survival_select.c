@@ -23,16 +23,16 @@ void SurvSel_ClipGoto(s32 movie, s32 level, char *label);
 void SurvSel_SetupBattle(void) {
     u16 items[8];
     SurvCourse *def = &gSurvSel->courses[gSurvSel->cur[0]];
-    s32 unk10;
-    s32 unk1FC;
+    s32 stageChange;
+    s32 changeAllowed;
     s32 announcer;
     s32 timeLimit;
     s32 stage;
     s32 bgm;
     s32 i;
 
-    unk10 = def->stageChange != 0;
-    unk1FC = def->changeAllowed != 0;
+    stageChange = def->stageChange != 0;
+    changeAllowed = def->changeAllowed != 0;
     announcer = def->announcer;
     timeLimit = def->timeLimit;
     stage = def->stage;
@@ -47,9 +47,9 @@ void SurvSel_SetupBattle(void) {
         bgm = 0x18;
     }
     Battle_ClearWork();
-    BattleSetup_SetRule(0, 3, bgm, timeLimit, announcer, stage, unk10);
+    BattleSetup_SetRule(0, 3, bgm, timeLimit, announcer, stage, stageChange);
     BattleSetup_SetSide(0, 0, 0, 1, 1, 1, 0, NULL);
-    BattleSetup_SetSide(1, 2, 1, 1, unk1FC, 1, 0, NULL);
+    BattleSetup_SetSide(1, 2, 1, 1, changeAllowed, 1, 0, NULL);
     BattleSetup_SetMember(1, 0, 0, 0, 0, 0, 100.0f, NULL);
     for (i = 0; i < SURV_OPP_NUM; i++) {
         SurvOpp *opp = &gSurvSel->opps[def->opp[i]];
@@ -169,7 +169,7 @@ void SurvSel_Draw(void) {
     MFlash *flash;
     s32 i;
     s32 n;
-    s32 t0, t1, t2;
+    s32 hours, minutes, seconds;
     s32 rank;
 
     Sprite_DrawPicture(gSurvSel->bg, 0, 0, 0x80);
@@ -221,12 +221,12 @@ void SurvSel_Draw(void) {
     Flash_FindLabel(flash, NULL, "mc_gekiha_text01", &ref);
     Flash_ClipSetUv(flash, &ref, &uv);
     Num_Draw(flash, "mc_gekiha_suji%02d", 0, 3, n, 0x20, 0x20, 0);
-    t1 = S_SAVE->surv[gSurvSel->cur[0]].minutes;
-    t0 = S_SAVE->surv[gSurvSel->cur[0]].hours;
-    t2 = S_SAVE->surv[gSurvSel->cur[0]].seconds;
-    Num_Draw(flash, "mc_time_suji%02d", 4, 2, t0, 0x20, 0x20, 1);
-    Num_Draw(flash, "mc_time_suji%02d", 2, 2, t1, 0x20, 0x20, 1);
-    Num_Draw(flash, "mc_time_suji%02d", 0, 2, t2, 0x20, 0x20, 1);
+    minutes = S_SAVE->surv[gSurvSel->cur[0]].minutes;
+    hours = S_SAVE->surv[gSurvSel->cur[0]].hours;
+    seconds = S_SAVE->surv[gSurvSel->cur[0]].seconds;
+    Num_Draw(flash, "mc_time_suji%02d", 4, 2, hours, 0x20, 0x20, 1);
+    Num_Draw(flash, "mc_time_suji%02d", 2, 2, minutes, 0x20, 0x20, 1);
+    Num_Draw(flash, "mc_time_suji%02d", 0, 2, seconds, 0x20, 0x20, 1);
     n = S_SAVE->surv[gSurvSel->cur[0]].score * 100;
     uv.x0 = 0;
     uv.y0 = 0x20;

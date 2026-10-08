@@ -281,7 +281,7 @@ s32 Tour_Main(void);
 typedef struct TourInfo {
     /* 0x00 */ s32 unk0[4];
     /* 0x10 */ s32 prize[2][3];    /* the two prize sums (zenny) for each of the three levels */
-    /* 0x28 */ s32 unk28[15];
+    /* 0x28 */ s32 unk28[15];       /* the rest of the prize table: the record is LTourPrize (tournament.h), prize[7][3] */
 } TourInfo; /* 0x64 */
 
 typedef struct TourMenu {

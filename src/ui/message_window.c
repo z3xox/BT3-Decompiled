@@ -4,7 +4,7 @@
 
 /*
  * MsgWin, 0x25CFC0..0x25D290: a message window that slides in from the left or the right and shows one line
- * of a text file ("mc_message_text"). Used all over the menu overlay. See battle/view_a.h.
+ * of a text file ("mc_message_text"). Used all over the menu overlay. See ui/reward_window.h.
  */
 
 extern void *memset(void *dst, s32 c, u32 n);
@@ -14,14 +14,14 @@ extern void Flash_Create(Flash *flash, void *data, void *tex);
 extern void Flash_Destroy(Flash *flash);
 extern void Flash_Advance(Flash *flash);
 extern void Flash_Draw(Flash *flash);
-extern void Flash_Play(Flash *flash, s32 arg);
-extern void Flash_GotoLabel(Flash *flash, char *label, s32 arg);
+extern void Flash_Play(Flash *flash, s32 speed);
+extern void Flash_GotoLabel(Flash *flash, char *label, s32 restart);
 extern void Flash_FindLabel(Flash *flash, char *parent, char *name, FlashRef *out);
 extern void Font_FlushAll(void);
 
-/* text box module, after 0x2600B0 (not decompiled) */
-extern void TextBox_AttachLine(Flash *flash, FlashRef *ref, s32 a, s32 b, s32 line, TextBox *box);
-extern void TextBox_SetSpacing(TextBox *box, s32 a, s32 b);
+/* text box module (menu_util_1.c) */
+extern void TextBox_AttachLine(Flash *flash, FlashRef *ref, s32 x, s32 y, s32 line, TextBox *box);
+extern void TextBox_SetSpacing(TextBox *box, s32 x, s32 y);
 
 /* Defined here: this object's .sdata (0x2FF0D8). */
 MsgWin *gMsgWin = NULL;
@@ -101,7 +101,7 @@ void MsgWin_SetSide(s32 side) {
     gMsgWin->side = side;
 }
 
-/* Passes two values to TextBox_SetSpacing for the window's text box. */
-void MsgWin_SetBoxParam(s32 a, s32 b) {
-    TextBox_SetSpacing(&gMsgWin->box, a, b);
+/* Sets the character and line spacing of the window's text (TextBox_SetSpacing). */
+void MsgWin_SetBoxParam(s32 spacingX, s32 spacingY) {
+    TextBox_SetSpacing(&gMsgWin->box, spacingX, spacingY);
 }

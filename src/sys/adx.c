@@ -14,7 +14,7 @@ extern void ADXT_SetOutputMono(s32 flag);
 
 /* game */
 extern f32 Mathf_Sin(f32 angle);          /* sinf of the angle wrapped to [-pi, pi] */
-extern s32 BtlScript_IsSlotBusy(s32 voice, s32 kind); /* D_00334788[voice][kind] != 0: the voice channel is reserved */
+extern s32 BtlScript_IsSlotBusy(s32 side, s32 window); /* gBtlScript.voice[side * 2 + window] != NULL (0x334788): the line slot is in use */
 
 #define ADX_CLAMP(x, lo, hi) ((x) < (lo) ? (lo) : (x) > (hi) ? (hi) : (x))
 

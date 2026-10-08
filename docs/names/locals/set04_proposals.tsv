@@ -1,0 +1,24 @@
+NAME	EftChain_SetParam3	EftChain_SetNodeCount	HIGH	Stores its argument in EftChainWork.nodeCount clamped to 3..7 (src/battle/eft_chain.c).
+NAME	EftChain_SetParam5	EftChain_SetDelay	HIGH	Stores its argument in EftChainWork.delay, the start delay the update counts down (src/battle/eft_chain.c).
+NAME	EftChain_SetParam6	EftChain_SetEndWait	HIGH	Stores its argument in EftChainWork.endWait, counted down once the effect is ending (src/battle/eft_chain.c).
+NAME	EftChain_SetRes	EftChain_SetTexPair	MEDIUM	Only forwards (set, idxA, idxB) to EftChain_SetTex, which copies two texture entries of the set.
+FIELD	include/battle/eft_aura.h	EftAuraCfgSpark	kind	emitNode	HIGH	Offset 0x4A4 + 8i is EftAuraDataSpark.node, which EftAuraMgr code passes to BtlCharApi_GetNodePos to place sparkPos[i] (eft_aura.c, gData->spark[i].node).
+FIELD	include/battle/eft_aura.h	EftAuraSpark	kind	emitNode	MEDIUM	EftAura_SpawnSpark stores the value read from EftAuraCfgSpark.kind, which is the emitter's model node; nothing reads it.
+FIELD	include/battle/eft_aura.h	EftAuraCfgFlame	node	nodeEnd	HIGH	Same record as EftAuraDataPart {node, nodeEnd, nodeRef}: +4 is the part's second node (eft_aura.c reads it as the end node of the flame segment).
+FIELD	include/battle/eft_emit.h	EftEmitArgA	res	texSet	HIGH	EftEmit_SpawnType18 passes set->array[1] + n * 0x108, a 16-entry texture set, and the receiver EftArcArg names +0x30 texSet.
+FIELD	include/battle/eft_emit.h	EftEmitArgA	texA	param	MEDIUM	The receiver of type 18 (EftArcArg, eft_chain.h) names +0x34 param (EftArcParam): a definition block, not a texture; types 5 and 16 share the argument.
+FIELD	include/battle/eft_emit.h	EftEmitArgA	texB	keys	MEDIUM	The receiver of type 18 (EftArcArg, eft_chain.h) names +0x38 keys (EftArcKeys): a definition block, not a texture.
+FIELD	include/battle/eft_emit.h	EftEmitArg17	texA	prm	MEDIUM	The receiver EftRibbonArg (eft_ribbon.h) names +0x38 prm (EftRibbonPrm): a definition block, not a texture.
+FIELD	include/battle/eft_emit.h	EftEmitArgA	rate	life	MEDIUM	The receiver EftArcArg names +0x28 life (seconds; <= 0 until told to end); EftRibbonArg names the same slot of type 17 life.
+FIELD	include/battle/eft_obj_tech.h	EftKCamArg	pack	anim	HIGH	EftCam_Start (eft_core.c) passes word +0 to DemoCam_SetAnim; eft_core.h EftCamArg names it anim.
+FIELD	include/battle/eft_core.h	EftCamArg	unk8	id	MEDIUM	Same block as EftKCamArg (eft_obj_tech.h), which names +8 id; EftCam_Start only copies it.
+FIELD	include/battle/eft_shot_tech.h	EftJDef	recType	level	HIGH	EftHit_Add (eft_core.c) does rec->level = rec->src->def->level from definition +0x02; rec->type is the constant EFT_HIT_TECH.
+FIELD	include/battle/eft_core.h	EftHitDef	kind	sub	MEDIUM	EftHitDef is the block EftShot_BuildParam fills (EftShotParam, eft_emit.h): +0x05 gets hitDirKind and is named sub there; frees the name kind for +0x04.
+FIELD	include/battle/eft_core.h	EftHitDef	cls	kind	MEDIUM	EftShot_BuildParam writes 0 skill / 1 technique / 2 ultimate to +0x04, named kind in EftShotParam and eft_obj_tech.h (apply after kind -> sub).
+FIELD	include/battle/eft_core.h	EftHitDef	unk0	id	MEDIUM	Same block as EftShotParam, whose +0x00 is the technique id (EftShot_BuildParam: p->id = d->id[n]).
+FIELD	include/battle/eft_core.h	EftHitDef	unk34	speed	MEDIUM	Same block as EftShotParam (+0x34 speed); EftHit_Add copies it to the slot that a ki blast fills with atk->speed.
+FIELD	include/battle/eft_core.h	EftHitDef	unk38	homing	MEDIUM	Same block as EftShotParam, whose +0x38 is homing (shot turn rate).
+FIELD	include/battle/eft_core.h	EftHitDef	unk6	node	MEDIUM	Same block as EftShotParam, whose +0x06 is node (EftShot_BuildParam: p->node = d->node[n]).
+FIELD	include/battle/eft_core.h	EftHitDef	unk9	shots	MEDIUM	Same block as EftShotParam, whose +0x09 is shots (number of shots); the clash test wants it below 2.
+FIELD	include/battle/eft_draw_modules.h	EftTTaskList	count	head	HIGH	Offset 4 of the list BtlTask_CreateChildList returns is BtlTaskList.head (eft_sprite_anim.h); EftRayMgr_Update only tests it against 0.
+NAME	BtlCharApi_ObjQuery24D610	BtlCharApi_ObjQueryAnimEvent	MEDIUM	Its body is BtlObjAnim_QueryEvent(obj, mask, 0, what) on the object (btl_char_api_2.c).

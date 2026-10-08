@@ -43,7 +43,7 @@ extern s32 BtlCharApi_ObjGetAttrKind(s32 objId, u64 mask);
 extern void BtlCharApi_ObjSetMaskBit3(s32 objId);
 extern void BtlCharApi_ObjClearMaskBit3(s32 objId);
 
-extern void EftEmit_LoadSet(void *arg, EftAbSet *set, s32 a2, s32 *pack, s32 a4, s32 id);
+extern void EftEmit_LoadSet(void *owner, EftAbSet *set, s32 head, s32 *pack, s32 common, s32 id);
 extern void EftEmit_FreeSet(EftAbSet *set);
 extern void EftEmit_BeginFrame(EftAbSet *set);
 extern s32 EftEmit_GetEndFrames(EftAbSet *set);
@@ -52,7 +52,7 @@ extern void EftEmit_TermState(EftAbSet *set, void *state);
 extern s32 EftEmit_GetFlagsFromMask(EftAbSet *set, void *state, s32 objId, s32 part, s32 sub, s32 end, s32 fast,
                                     s32 mask);
 extern void EftEmit_Spawn(EftAbSet *set, void *state, void *nodes, EftAbVec *pos, EftAbVec *dir, s32 objId, s32 node,
-                          s32 arg7, s32 part, s32 sub, s32 flags, f32 scale);
+                          s32 srcKind, s32 part, s32 sub, s32 flags, f32 scale);
 extern void EftEmit_KillAll(EftAbSet *set, void *state);
 extern s32 EftEmit_UpdateAlive(EftAbSet *set, void *state);
 extern void EftEmit_SetNode(void *nodes, s32 slot, s32 node, EftAbVec *pos);

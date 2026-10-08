@@ -32,8 +32,8 @@ static const s32 sUbRankChipTex[6] = { 13, 15, 16, 17, 18, 19 };
 void UbRank_SetupBattle(void) {
     u16 items[8];
     NRankRule *rule = gUbRank->curRule;
-    s32 unk14 = rule->changeAllowed != 0;
-    s32 unk4 = rule->stageChange != 0;
+    s32 changeAllowed = rule->changeAllowed != 0;
+    s32 stageChange = rule->stageChange != 0;
     s32 announcer = rule->announcer;
     s32 stage = rule->stage;
     s32 bgm = rule->bgm;
@@ -67,9 +67,9 @@ void UbRank_SetupBattle(void) {
     }
     Battle_ClearWork();
     health = 100.0f;
-    BattleSetup_SetRule(0, 2, bgm, timeLimit, announcer, stage, unk4);
+    BattleSetup_SetRule(0, 2, bgm, timeLimit, announcer, stage, stageChange);
     BattleSetup_SetSide(0, 0, 0, 1, 1, 0, 0, NULL);
-    BattleSetup_SetSide(1, 2, 1, 1, unk14, 0, 0, NULL);
+    BattleSetup_SetSide(1, 2, 1, 1, changeAllowed, 0, 0, NULL);
     BattleSetup_SetMember(0, 0, NPROG->chara, NPROG->color, 0, 0, health, NPROG->items);
     BattleSetup_SetMember(1, 0, gUbRank->curFoe->chara, gUbRank->curFoe->color, 0, gUbRank->curFoe->cpuLevel, health,
                           items);

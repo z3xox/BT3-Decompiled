@@ -420,8 +420,8 @@ void Rigid_SyncSpheres(RigidBody *body) {
  *   mass = radius^3 * 2.3561945 (3 pi / 4) * density;  inertia = (2 / 5) mass radius^2 * 20 on all three axes;
  *   sphere = prevSphere = { centre (0, 0, 0), radius };  flags = 1;  user = second argument.
  *
- * The float constant 2.35619449f (0x4016CBE3) of this function is D_002FE818, the last entry of this file's
- * .lit4 pool.
+ * The word at 0x2FE818 is not a variable: it is this function's float literal 2.35619449f (0x4016CBE3, 3 pi / 4),
+ * the last entry of this file's .lit4 pool.
  */
 /* FAKE MATCH (permuter): `body++; body--;` in front of the clear. The two statements combine to a self-move
    (`body = body`) that survives until after the first scheduling pass and vanishes later. All it does is add ONE

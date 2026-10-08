@@ -33,10 +33,10 @@ extern void *BtlTask_CreateChildList(void *task, s32 capacity, s32 workSize);
 extern void *BtlTaskList_AddTail(void *list, BtlTaskClass *cls, void *arg);
 extern void BtlTask_SetDead(void *task);
 extern void EftCam_Start(s32 *arg);
-extern void EftCam_SetHold(s32 arg);
+extern void EftCam_SetHold(s32 hold);
 extern void EftCam_Stop(void);
 extern void Gfx_AddDefaultEnv(void);
-extern void EftBurst_DrawModel(void *model, s32 arg);
+extern void EftBurst_DrawModel(void *model, s32 unused);
 extern void EftBurst_SetTexture(void *tex, s32 x, s32 y);
 extern void EftBurst_RelocateModel(void *model);
 extern void Res_RelocateOffsets(void *dst, void *base, void *table);
@@ -46,7 +46,7 @@ extern s32 BtlStage_GetFxResC(void);
 extern s32 BtlStage_GetFxResA(void);
 extern EftStageMarker *BtlStage_GetFxResC2(void);
 extern void EftTexSet_Load8(EftSteamTex *tex, s32 *data);
-extern u64 EftVram_AddTex(u64 *tex0, s32 a1, s32 a2);
+extern u64 EftVram_AddTex(u64 *tex0, s32 tcc, s32 tfx);
 extern s32 EftStage_IsDrawOn(void);
 extern void Vu0Cur_Push(void);
 extern void Vu0Cur_LoadMtx(Mtx44 *mtx);
@@ -97,7 +97,7 @@ extern f32 EftHit_GetRadiusA(EftWaterBlast *rec);
 extern void EftUtil_ClipSegToWater(EftEVec *out, Vec4 *a, Vec4 *b);
 extern s32 EftRec_GetDefClass(EftWaterBlast *rec);
 extern void EftTexSet_Load32(u8 *tex, s32 *data);
-extern void EftWater_UpdateTextures(s32 a0, s32 a1);
+extern void EftWater_UpdateTextures(s32 tcc, s32 tfx);
 /* The pool functions below are defined in the second part of this file (formerly eft_f.c) with that part's own
  * types; this part calls them through aliased declarations with its view types (same symbol, same code). */
 extern void EftWaterSplash_UpdateList_e(EftWaterSplash **head, EftWaterSplash **tail) __asm__("EftWaterSplash_UpdateList");
@@ -1362,7 +1362,7 @@ extern s32 ClipPoly_ClipPlane(EftWaterClipVtx *poly, EftWaterVec *plane, s32 n);
 extern void ClipPoly_ProjectCur(EftWaterIVec *xyz, EftWaterVec *stq, EftWaterClipVtx *poly, s32 n); /* projects it */
 extern EftWaterVec *EftGfx_GetClipPlanes(void);                                    /* the 5 clip planes of the view */
 extern s32 EftUtil_IsCamUnderWater(void); /* eft_shot.c: camera height against the water level; picks the depth bias */
-#define EftVram_AddTex ((u64 (*)(void *entry, s32 a1, s32 a2))EftVram_AddTex)                     /* advances a texture, returns TEX0 */
+#define EftVram_AddTex ((u64 (*)(void *entry, s32 tcc, s32 tfx))EftVram_AddTex)                     /* advances a texture, returns TEX0 */
 
 /* GS XYZF2 register value. */
 typedef struct EftWaterXyzf {
@@ -2858,12 +2858,12 @@ void EftWater_DrawSprayQuad(EftWaterVec *pos, EftWaterMtx *orient, EftWaterMtx *
 }
 
 /* Refreshes the TEX0 of the module's five textures (only while particles exist). */
-void EftWater_UpdateTextures(s32 a0, s32 a1) {
+void EftWater_UpdateTextures(s32 tcc, s32 tfx) {
     s32 i;
 
     if (gEftDust != NULL && gEftDust->dropCount + gEftDust->ringCount + gEftDust->sprayCount != 0) {
         for (i = 0; i < 5; i++) {
-            gEftDust->tex[i].tex0 = EftVram_AddTex(&gEftDust->tex[i], a0, a1);
+            gEftDust->tex[i].tex0 = EftVram_AddTex(&gEftDust->tex[i], tcc, tfx);
         }
     }
 }

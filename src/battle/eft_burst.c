@@ -745,13 +745,13 @@ void EftBurst_DrawModel(EftBurstModel *model, s32 unused) {
 }
 
 /* Uploads a texture unless it is already the current one. */
-void EftBurst_SetTexture(EftBurstTex *tex, s32 x, s32 y) {
+void EftBurst_SetTexture(EftBurstTex *tex, s32 tbp, s32 cbp) {
     EftBurstWork *w = gEftBurst;
 
     if (w->curTex != tex) {
         w->curTex = tex;
         if (tex != NULL) {
-            Tex_Upload(tex, x, y);
+            Tex_Upload(tex, tbp, cbp);
         }
     }
 }
@@ -1100,7 +1100,7 @@ extern void EftCam_SetHold(s32 arg);
 extern void EftCam_Stop(void);
 extern void Gfx_AddDefaultEnv(void);
 #define EftBurst_DrawModel ((void (*)(void *model, s32 arg))EftBurst_DrawModel)
-#define EftBurst_SetTexture ((void (*)(void *tex, s32 x, s32 y))EftBurst_SetTexture)
+#define EftBurst_SetTexture ((void (*)(void *tex, s32 tbp, s32 cbp))EftBurst_SetTexture)
 #define EftBurst_RelocateModel ((void (*)(void *model))EftBurst_RelocateModel)
 extern void Res_RelocateOffsets(void *dst, void *base, void *table);
 extern void Vec4_Copy(Vec4 *dst, Vec4 *src);
@@ -1109,7 +1109,7 @@ extern s32 BtlStage_GetFxResC(void);
 extern s32 BtlStage_GetFxResA(void);
 extern EftStageMarker *BtlStage_GetFxResC2(void);
 extern void EftTexSet_Load8(EftSteamTex *tex, s32 *data);
-extern u64 EftVram_AddTex(u64 *tex0, s32 a1, s32 a2);
+extern u64 EftVram_AddTex(u64 *tex0, s32 tcc, s32 tfx);
 extern s32 EftStage_IsDrawOn(void);
 extern void Vu0Cur_Push(void);
 extern void Vu0Cur_LoadMtx(Mtx44 *mtx);
@@ -1160,7 +1160,7 @@ extern f32 EftHit_GetRadiusA(EftWaterBlast *rec);
 extern void EftUtil_ClipSegToWater(EftEVec *out, Vec4 *a, Vec4 *b);
 extern s32 EftRec_GetDefClass(EftWaterBlast *rec);
 extern void EftTexSet_Load32(u8 *tex, s32 *data);
-extern void EftWater_UpdateTextures(s32 a0, s32 a1);
+extern void EftWater_UpdateTextures(s32 tcc, s32 tfx);
 extern void EftWaterSplash_UpdateList(EftWaterSplash **head, EftWaterSplash **tail);
 extern void EftWaterSplash_DrawList(void *head);
 extern void EftWaterTrail_Spawn(void **head, void **tail, s32 objId, EftWaterBlast *rec);

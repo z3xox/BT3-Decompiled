@@ -121,10 +121,10 @@ typedef struct BtlMgrChr {
     /* 0x09A4 */ BtlMgrMember members[BTL_CHR_MEMBER_MAX];
     /* 0x0CD8 */ s32 nextMember; /* member to switch to (actions 0xF3..0xF8) */
     /* 0x0CDC */ u8 unkCDC[0xCF4 - 0xCDC];
-    /* 0x0CF4 */ s32 switchEnabled;     /* BattleSide.unk200 */
+    /* 0x0CF4 */ s32 switchEnabled;     /* BattleSide.switchEnabled */
     /* 0x0CF8 */ u8 unkCF8[0xD40 - 0xCF8];
-    /* 0x0D40 */ s32 comboDamage;     /* maximum kept in BattleResult.unk1C[opponent] */
-    /* 0x0D44 */ s32 comboHits;     /* maximum kept in BattleResult.unk24[opponent] */
+    /* 0x0D40 */ s32 comboDamage;     /* maximum kept in BattleResult.maxComboDamage[opponent] */
+    /* 0x0D44 */ s32 comboHits;     /* maximum kept in BattleResult.maxComboHits[opponent] */
     /* 0x0D48 */ s32 comboTimer;
     /* 0x0D4C */ s32 comboNewHit;     /* cleared each frame */
     /* 0x0D50 */ s32 comboChanged;     /* cleared each frame */
@@ -157,7 +157,7 @@ typedef struct BtlMgrChr {
     /* 0x12E4 */ u8 unk12E4[0x12F8 - 0x12E4];
     /* 0x12F8 */ s32 fusionMember; /* member index of the fusion partner */
     /* 0x12FC */ s32 newObjVariant;
-    /* 0x1300 */ s32 changeAllowed;    /* BattleSide.unk1FC */
+    /* 0x1300 */ s32 changeAllowed;    /* BattleSide.changeAllowed */
     /* 0x1304 */ u8 unk1304[0x1310 - 0x1304];
     /* 0x1310 */ u64 bodyWarpPos[2]; /* passed to BtlObjBody_Warp with flag 0x55 */
     /* 0x1320 */ s32 freeze;     /* > 0: every phase skips this fighter (BtlChar_IsFrozen); counts down per frame */
@@ -171,8 +171,8 @@ typedef struct BtlMgrChr {
     /* 0x1590 */ s32 dirHeld;    /* -1 each frame */
     /* 0x1594 */ s32 techClass;    /* -1 each frame (BtlInputChr.techClass) */
     /* 0x1598 */ u8 unk1598[0x15D0 - 0x1598];
-    /* 0x15D0 */ s32 padFlagA;   /* (SaveData.flags & (2 << pad)) != 0 */
-    /* 0x15D4 */ s32 vibState[5]; /* cleared on a character swap */
+    /* 0x15D0 */ s32 padFlagA;   /* (SaveData.flags & (2 << pad)) != 0: vibration enabled, BtlCharVib.enabled (btl_char_util.h) */
+    /* 0x15D4 */ s32 vibState[5]; /* the rest of BtlCharVib: power (an f32), time, smallTime, phase, toggle; cleared on a character swap */
     /* 0x15E8 */ u32 *objTbl[3]; /* table inside each of the object's three files */
     /* 0x15F4 */ u8 unk15F4[0x1600 - 0x15F4];
 } BtlMgrChr; /* 0x1600 */
@@ -190,7 +190,7 @@ typedef struct BtlCharMgr {
     /* 0x020 */ u32 *tbl[6];     /* tables inside common file 2: header words 3, 5, 6, 7, 8, 9 */
     /* 0x038 */ u8 unk38[8];
     /* 0x040 */ u8 clash[0x60];  /* cleared by a reset */
-    /* 0x0A0 */ u8 snd[0x90];  /* cleared by a reset; four 0x20-byte records at +0xB0, count at +0x120 */
+    /* 0x0A0 */ u8 snd[0x90];  /* cleared by a reset; four 0x20-byte sound request records from +0xA0 on, their count at +0x120 */
     /* 0x130 */ u64 viewer;      /* cleared by a reset */
     /* 0x138 */ u8 change[0x140]; /* cleared by a reset; +0x274 is BtlChars_IsTimeStopped() */
     /* 0x278 */ u8 unk278[8];

@@ -7,7 +7,7 @@
  */
 
 extern BtlFlagChr *BtlChar_Get(s32 i);
-extern f32 BtlChar_GetSpacing(BtlFlagChr *chr, s32 arg);          /* lock-on range */
+extern f32 BtlChar_GetSpacing(BtlFlagChr *chr, s32 mode);          /* lock-on range */
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out);   /* world position of a model node */
 extern void ColSeg_Set(void *seg, Vec4 *a, Vec4 *b);      /* builds a segment from two points */
 extern s32 StgCol_TraceSegment(void *seg);                         /* segment against the stage */
@@ -71,16 +71,16 @@ void BtlChar_ClearFlag(BtlFlagChr *chr, u32 n) {
     chr->stamp[n] = chr->stage;
 }
 
-/* Drops flags a..b inclusive (in either order). */
-void BtlChar_ClearFlagRange(BtlFlagChr *chr, u32 a, u32 b) {
+/* Drops flags first..last inclusive (in either order). */
+void BtlChar_ClearFlagRange(BtlFlagChr *chr, u32 first, u32 last) {
     u32 n;
 
-    if (b < a) {
-        u32 t = a;
-        a = b;
-        b = t;
+    if (last < first) {
+        u32 t = first;
+        first = last;
+        last = t;
     }
-    for (n = a; n <= b; n++) {
+    for (n = first; n <= last; n++) {
         BtlChar_ClearFlag(chr, n);
     }
 }

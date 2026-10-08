@@ -56,7 +56,7 @@ void HistResult_SplitEpisode(s32 id, s32 *menu, s32 *item) {
 
 /* Lists what the won battle gives (gProgress->reward, filled when the battle was set up) and writes it to the
    save: items, characters, stages, newly listed sub menus and episodes, and the dragon ball the battle result
-   reports (BattleResult.unk44, 1-based). The points are doubled while item 0x88 is owned. */
+   reports (BattleResult.dragonBallFound, 1-based). The points are doubled while item 0x88 is owned. */
 void HistResult_BuildRewards(void) {
     s32 unlock[3];
     s32 menu;

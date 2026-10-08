@@ -482,7 +482,7 @@ Vec4 *EftGlow_GetColors(s32 type, s32 paramFlags) {
 
 /* ---- 2. rush-finish burst: fighter effect requests 0x28 (start), 0x29 (second stage), 0x2A (end) --------- */
 
-extern void EftEmit_LoadSet(void *arg, EftQEmitSet *set, s32 a2, s32 *pack, s32 a4, s32 a5);
+extern void EftEmit_LoadSet(void *owner, EftQEmitSet *set, s32 head, s32 *pack, s32 common, s32 idx);
 extern void EftEmit_FreeSet(EftQEmitSet *set);
 extern void EftEmit_BeginFrame(EftQEmitSet *set);
 extern s32 EftEmit_GetEndFrames(EftQEmitSet *set);
@@ -491,7 +491,7 @@ extern void EftEmit_TermState(EftQEmitSet *set, EftQEmitState *state);
 extern s32 EftEmit_GetFlagsFromMask(EftQEmitSet *set, EftQEmitState *state, s32 objId, s32 group, s32 sub, s32 end,
                                     s32 fast, s32 mask);
 extern void EftEmit_Spawn(EftQEmitSet *set, EftQEmitState *state, void *nodes, Vec4 *pos, Vec4 *dir, s32 objId, s32 node,
-                          s32 arg7, s32 group, s32 sub, s32 flags, f32 scale);
+                          s32 srcKind, s32 group, s32 sub, s32 flags, f32 scale);
 extern void EftEmit_KillAll(EftQEmitSet *set, EftQEmitState *state);
 extern s32 EftEmit_UpdateAlive(EftQEmitSet *set, EftQEmitState *state);
 extern void EftEmit_SetNode(void *nodes, s32 slot, s32 node, Vec4 *pos);

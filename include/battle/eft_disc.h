@@ -102,7 +102,7 @@ typedef struct EftDiscArg {
     /* 0x57 */ u8 kind;       /* 0 held ki blast, 1 thrown ki blast, 2 held technique piece, 3 thrown from a node,
                                  4 technique piece */
     /* 0x58 */ s32 lastHit;   /* non-zero: the hit record is marked "last hit" */
-    /* 0x5C */ s32 hand;      /* which hand holds it (nodes 0x14 / 0x15, else 0x22 / 0x23) */
+    /* 0x5C */ s32 hand;      /* which hand holds it: non-zero nodes 0x14 / 0x15, zero nodes 0x22 / 0x23 */
 } EftDiscArg; /* size 0x60 */
 
 /* What a fighter passes for a ki blast (FxHitArg2 of btl_char_fx_1.h, 0x50 bytes); the disc keeps a copy that its
@@ -209,7 +209,7 @@ void EftDisc_Term(EftPTask *task);
 void EftDisc_SpawnParts(EftPTask *task, s32 mode);
 void EftDisc_AddHit(EftPTask *task);
 void EftDisc_SetHeldAtk(EftPTask *task, EftDiscAtk *atk);
-void EftDisc_SetTex(EftDisc *w, EftPTexSet *tex, s32 a, s32 b);
+void EftDisc_SetTex(EftDisc *w, EftPTexSet *tex, s32 idxA, s32 idxB);
 void EftDisc_Home(EftPVec *out, EftPVec *pos, EftPVec *dir, s32 objId, f32 speed, f32 maxTurn, f32 bank);
 void EftDisc_RotateAboutAxis(EftPVec *out, EftPVec *v, EftPVec *axis, f32 angle);
 void EftDisc_StepTex(EftDisc *w);
@@ -227,7 +227,7 @@ void EftDisc_RequestEnd(EftPTask *task);
 void EftDisc_Kill(EftPTask *task);
 void EftDisc_SetSpin(EftPTask *task, f32 spin);
 void EftDisc_SetScale(EftPTask *task, f32 scale);
-s32 EftDisc_SetModelTex(EftPTask *task, void *tex, s32 a, s32 b);
+s32 EftDisc_SetModelTex(EftPTask *task, void *tex, s32 idxA, s32 idxB);
 void EftDisc_SetLastHit(EftPTask *task, s32 on);
 void EftDisc_SetFlag200(EftPTask *task);
 s32 EftDisc_IsAlive(EftPTask *task);

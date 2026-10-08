@@ -6,33 +6,35 @@
 #include "sys/list.h"
 
 /*
- * Menu support code of the main executable, 0x25C2A8..0x2600B0 (placeholder stem "view_a"). Six modules:
+ * Menu support code of the main executable, 0x25C2A8..0x2600B0 (src/ui). Six modules:
  *
  *   reward_window.c    0x25C2A8..0x25CFC0  GetWin    the "you got ..." reward window
  *   message_window.c  0x25CFC0..0x25D290  MsgWin    the left / right message window
  *   icon_window.c  0x25D290..0x25D468  IconWin   a small window with a changeable icon
  *   char_viewer.c  0x25D468..0x25DE68  ChrView   the character model viewer (own loop, orbit camera)
  *   menu_util_1.c  0x25DE68..0x25FE00  Progress_Init and the menu helpers (movie-clip animation, number
- *                                   drawing, cursor movement on the character / stage grids, unlock lists);
- *                                   three functions are INCLUDE_ASM
- *   view_a_f.c  0x25FE00..0x2600B0  TextBox   the head of the text box module, which goes on after 0x2600B0
+ *                                   drawing, cursor movement on the character / stage grids, unlock lists)
+ *   menu_util_1.c  0x25FE00..0x2600B0  TextBox   the head of the text box module, which goes on to 0x260D20 in the
+ *                                   same file (the rest of its declarations are in ui/menu_support.h)
  *
  * Almost every caller is in the menu overlay (DBZP.BIN).
  */
 
-/* ---- The Flash-like movie player (0x10D4F0.., not decompiled). Local view. ---- */
+/* ---- The Flash-like movie player (src/sys/flash.c; the full structures are in sys/flash.h). Local view. ---- */
 
 /* A playing movie. */
 typedef struct Flash {
-    /* 0x00 */ s32 unk0[3];
-    /* 0x0C */ s32 flags;   /* bit 0: a labelled animation is running (GetWin_IsAnimating) */
+    /* 0x00 */ s32 unk0[3]; /* [2] (+0x08) is Flash.flags of sys/flash.h: bit 1 (FLASH_PAD) is set and cleared by the
+                               movie itself (action "pad" "true" / "false"): the screen may take input */
+    /* 0x0C */ s32 flags;   /* Flash.trig of sys/flash.h, not flags: bit n is set for one frame by the movie's action
+                               "trig" "n". Bit 0 is what GetWin_IsAnimating tests */
     /* 0x10 */ s32 unk10[7];
 } Flash; /* size 0x2C */
 
 /* What Flash_FindLabel fills in: a handle to one movie clip. */
 typedef struct FlashRef {
-    /* 0x00 */ s32 id;      /* negative: not found */
-    /* 0x04 */ s32 unk4;
+    /* 0x00 */ s32 id;      /* negative: not found (`index` in sys/flash.h) */
+    /* 0x04 */ s32 unk4;    /* `more` in sys/flash.h: how many more clips share the name */
 } FlashRef; /* size 8 */
 
 /* Texture rectangle of a movie clip (argument of Flash_ClipSetUv). */
@@ -59,35 +61,35 @@ typedef struct FlashTexRes {
 /* A section of a pack file: the header word is a byte offset, rounded down to a multiple of 4. */
 #define PACK_AT(pack, n) ((void *)((u8 *)(pack) + ((((u32 *)(pack))[n] >> 2) << 2)))
 
-/* ---- TextBox (view_a_f.c; the module continues after 0x2600B0) ---- */
+/* ---- TextBox (menu_util_1.c; the flags and prototypes of the second half are in ui/menu_support.h) ---- */
 
-#define TEXTBOX_FLAG_RECT 1
-#define TEXTBOX_FLAG_COLOR 2
-#define TEXTBOX_FLAG_COLOR2 4
+#define TEXTBOX_FLAG_RECT 1    /* `clip` is set (TextBox_SetRect): the font clip rectangle */
+#define TEXTBOX_FLAG_COLOR 2   /* `color` is set (TextBox_SetColor) */
+#define TEXTBOX_FLAG_COLOR2 4  /* `shadow` is set (TextBox_SetColor2): the colour of the text's shadow */
 
-/* A text file with the style its lines are drawn in. */
+/* A text file with the style its lines are drawn in. The full layout is TextBoxFull in ui/menu_support.h. */
 typedef struct TextBox {
     /* 0x00 */ s32 flags;      /* TEXTBOX_FLAG_* */
     /* 0x04 */ void *text;     /* text file: line n is at text + (((u32 *)text)[n + 1] & ~3) */
     /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 x;       /* TextBox_SetOffset: 0 or 0x100 */
+    /* 0x0C */ s32 x;          /* TextBox_SetOffset: added to every line's position (0 or 0x100 in the presets) */
     /* 0x10 */ s32 y;
     /* 0x14 */ u8 unk14[0x1C];
     /* 0x30 */ u8 color[4];    /* r, g, b, a */
-    /* 0x34 */ u8 shadow[4];
-    /* 0x38 */ s32 clip[4];    /* TextBox_SetRect stores its arguments as [0], [2], [1], [3] */
+    /* 0x34 */ u8 shadow[4];   /* TextBox_SetColor2: colour of the text's shadow */
+    /* 0x38 */ s32 clip[4];    /* font clip x0, y0, x1, y1; TextBox_SetRect takes them as x0, x1, y0, y1 */
     /* 0x48 */ u8 unk48[8];
-    /* 0x50 */ s32 align;      /* 0 or 2 in the presets, 1 in the reward window */
+    /* 0x50 */ s32 align;      /* Font_SetAlign value: 0 or 2 in the presets, 1 in the reward window */
     /* 0x54 */ u8 unk54[0x2C];
-    /* 0x80 */ s32 noFlush;
+    /* 0x80 */ s32 noFlush;    /* 1: the text is left in the font queue instead of being drawn at once */
     /* 0x84 */ u8 unk84[8];
 } TextBox; /* size 0x8C */
 
 void TextBox_Init(TextBox *box, void *text, u32 preset);
-void TextBox_SetAlign(TextBox *box, s32 value);
-void TextBox_SetNoFlush(TextBox *box, s32 value);
-void TextBox_SetOffset(TextBox *box, s32 a, s32 b);
-void TextBox_SetRect(TextBox *box, s32 a, s32 b, s32 c, s32 d);
+void TextBox_SetAlign(TextBox *box, s32 align);
+void TextBox_SetNoFlush(TextBox *box, s32 noFlush);
+void TextBox_SetOffset(TextBox *box, s32 x, s32 y);
+void TextBox_SetRect(TextBox *box, s32 x0, s32 x1, s32 y0, s32 y1);
 void TextBox_SetColor(TextBox *box, u32 rgba);
 void TextBox_SetColor2(TextBox *box, u32 rgba);
 
@@ -154,7 +156,7 @@ void MsgWin_Open(void);
 void MsgWin_Close(void);
 void MsgWin_SetText(void *text);
 void MsgWin_SetSide(s32 side);
-void MsgWin_SetBoxParam(s32 a, s32 b);
+void MsgWin_SetBoxParam(s32 spacingX, s32 spacingY);
 
 /* ---- IconWin (icon_window.c) ---- */
 
@@ -264,24 +266,26 @@ typedef struct ProgressEntry {
 /* gProgress: the 0x7FC-byte block of state that survives between the menu and the battle. Local view. */
 typedef struct ViewProgress {
     /* 0x000 */ s32 unk0;
-    /* 0x004 */ s32 unk4;          /* 0x1C1 at start */
+    /* 0x004 */ s32 unk4;          /* 0x1C1 at start: first file id of the common files (`baseFile` in the menu headers) */
     /* 0x008 */ void *loadPack;    /* 0x3000 bytes */
     /* 0x00C */ void *loadRes;     /* 0x6800 bytes */
     /* 0x010 */ void *loadSprites; /* 0x380 bytes */
     /* 0x014 */ s32 flags;         /* PROGRESS_FLAG_* */
     /* 0x018 */ s32 mode;          /* the menu screen / game mode */
     /* 0x01C */ s32 unk1C[2];
-    /* 0x024 */ s32 unk24;         /* -1 at start */
+    /* 0x024 */ s32 unk24;         /* -1 at start: `demoPick` in ui/menu_support.h, the demo battle's last pairing */
     /* 0x028 */ s32 unk28[2];
     /* 0x030 */ u8 unk30[0x4C];    /* cleared per session */
     /* 0x07C */ u8 unk7C[0x3C4];   /* cleared per session */
     /* 0x440 */ ProgressEntry unk440[5]; /* cleared per session; unk0 = 0 */
     /* 0x530 */ ProgressEntry unk530[5]; /* unk0 = 1 */
     /* 0x620 */ s32 unk620;
-    /* 0x624 */ s32 unk624;        /* 2 in mode 0x28: the character list is shown without the unlock test */
+    /* 0x624 */ s32 unk624;        /* `battleType` in the menu headers; 2 in mode 0x28: the grid is built without the
+                                      random cell (CHRGRID_NO_RANDOM in ChrGrid_Build) */
     /* 0x628 */ s32 unk628[3];
     /* 0x634 */ u8 unk634[0x58];   /* cleared per session */
-    /* 0x68C */ u8 unk68C[0x144];  /* cleared per session */
+    /* 0x68C */ u8 unk68C[0x144];  /* cleared per session; +0x68C replayFlags, +0x69C the seven replay slot entries
+                                      (McFlowSlotInfo in sys/memcard_flow.c, ProgressTeam in ui/menu_support.h) */
     /* 0x7D0 */ s32 unk7D0;        /* cleared per session */
     /* 0x7D4 */ u8 unk7D4[0x28];   /* cleared per session */
 } ViewProgress; /* size 0x7FC */
@@ -334,7 +338,7 @@ void FlashAnim_ShowNext2(Flash *flash, FlashRef *ref, s32 frame);
 void FlashAnim_Sheet(Flash *flash, FlashRef *ref, s32 *timer, s32 *frame, FlashUv *uv, s32 cols, s32 rows, s32 period);
 void FlashAnim_Scroll(Flash *flash, FlashRef *ref, FlashUv *uv, f32 *x, f32 *y, f32 dx, f32 dy);
 void Num_ToDigits(u8 *digits, s32 value, s32 count, s32 zeroPad);
-void Num_DrawDigits(Flash *flash, FlashRef *refs, s32 a2, s32 a3, FlashUv *cells, u8 *digits);
+void Num_DrawDigits(Flash *flash, FlashRef *refs, s32 x, s32 y, FlashUv *cells, u8 *digits);
 s32 Num_Pow(s32 base, s32 exp);
 void Num_Draw(Flash *flash, char *fmt, s32 first, s32 count, s32 value, s32 w, s32 h, s32 mode);
 void Num_DrawChild(Flash *flash, char *parent, char *fmt, s32 first, s32 count, s32 value, s32 w, s32 h, s32 mode,

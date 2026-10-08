@@ -13,7 +13,7 @@ extern s32 DuelMenu_Run(s32 section); /* 0x356090 (next chunk): the duel menu's 
 extern s32 CharSel_Run(s32 section);  /* 0x348710: one-on-one character select; writes the battle setup */
 extern s32 TeamSel_Run(s32 section);  /* 0x351508: team character select (team and DP battles); writes the battle setup */
 
-s32 Duel_Mode41(s32 arg);
+s32 Duel_Mode41(s32 unused);
 
 /* Runs the duel mode's screens until one of them leaves the mode. */
 s32 Duel_Main(void) {
@@ -87,6 +87,6 @@ s32 Duel_Main(void) {
 }
 
 /* The screen of mode 41: nothing; reports "done". */
-s32 Duel_Mode41(s32 arg) {
+s32 Duel_Mode41(s32 unused) {
     return 1;
 }

@@ -62,16 +62,16 @@ extern void BtlAnim_FlushRequestKeep(BtlActChr *chr);
 extern void BtlAnim_FlushSubToMain(BtlActChr *chr);
 extern void BtlAnim_PlaySub(BtlActChr *chr, s32 motion);
 extern void BtlAnim_SetSubMix(BtlActChr *chr, f32 weight);
-extern void BtlAnim_SetObjRate(BtlActChr *chr, f32 v);              /* obj + 0xCB8 = v */
+extern void BtlAnim_SetObjRate(BtlActChr *chr, f32 rate);              /* obj + 0xCB8 = rate */
 extern s32 BtlAnim_GetId(BtlActChr *chr);                      /* chr->motion */
 extern s32 BtlAnim_GetPrevId(BtlActChr *chr);                      /* chr + 0x97C */
 extern u32 BtlAnim_GetFlags(s32 motion);                          /* roster motion flags */
 extern f32 BtlAnim_GetFrame(BtlActChr *chr);                      /* obj + 0xC78 */
 extern f32 BtlAnim_GetProgress(BtlActChr *chr);                      /* motion progress 0..1 */
 extern f32 BtlAnim_GetObjRate(BtlActChr *chr);                      /* obj + 0xCB8 */
-extern s32 BtlAnim_Advance(BtlActChr *chr, s32 arg);             /* motion finished */
-extern s32 BtlAnim_AdvanceThen(BtlActChr *chr, s32 motion, f32 blend, s32 arg); /* chain to motion when finished */
-extern void BtlAnim_AdvanceLoop(BtlActChr *chr, s32 arg);
+extern s32 BtlAnim_Advance(BtlActChr *chr, s32 flags);             /* motion finished */
+extern s32 BtlAnim_AdvanceThen(BtlActChr *chr, s32 motion, f32 blend, s32 flags); /* chain to motion when finished */
+extern void BtlAnim_AdvanceLoop(BtlActChr *chr, s32 flags);
 extern s32 BtlAnim_PassedFrame(BtlActChr *chr, f32 frame);
 extern s32 BtlAnim_IsNew(BtlActChr *chr);
 
@@ -87,7 +87,7 @@ extern void BtlMember_PrevSwitchTarget(BtlActChr *chr);
 extern void BtlMember_AddHealth(BtlActChr *chr, s32 amount);
 extern void BtlMember_AddKi(BtlActChr *chr, s32 amount);
 extern s32 BtlMember_HasKi(BtlActChr *chr, s32 amount);
-extern void BtlMember_SpendKi(BtlActChr *chr, s32 amount, s32 arg);
+extern void BtlMember_SpendKi(BtlActChr *chr, s32 amount, s32 force);
 extern void BtlMember_AddBlast(BtlActChr *chr, s32 amount);
 extern void BtlMember_SubMaxPower(BtlActChr *chr, s32 amount);
 extern s32 BtlMember_IsKiEmpty(BtlActChr *chr);
@@ -107,8 +107,8 @@ extern f32 BtlOpp_GetDistanceXZ(BtlActChr *chr);
 extern s32 BtlOpp_GetParamByte2(BtlActChr *chr);
 extern s32 BtlOpp_GetPlayer(BtlActChr *chr);
 extern void BtlOpp_GetNodePos(BtlActChr *chr, s32 node, Vec4 *out);
-extern void BtlMove_SetHeading(BtlActChr *chr, f32 a, f32 b);
-extern void BtlMove_Step(BtlActChr *chr, s32 a, s32 b, s32 c, f32 x, f32 y);
+extern void BtlMove_SetHeading(BtlActChr *chr, f32 yaw, f32 pitch);
+extern void BtlMove_Step(BtlActChr *chr, s32 yawMode, s32 pitchMode, s32 dirMode, f32 speed, f32 accel);
 extern void BtlMove_ApplyGravity(BtlActChr *chr);
 extern void BtlMove_SetLeanX(BtlActChr *chr, f32 speed);
 extern void BtlMove_ApplyImpulse(BtlActChr *chr);
@@ -117,7 +117,7 @@ extern void BtlMove_UpdateDefenseTimers(BtlActChr *chr);
 
 extern void BtlSkill_UpdateTimers(BtlActChr *chr);
 extern void BtlDecide_QueueAttack(BtlActChr *chr, s32 attack);          /* queue an attack */
-extern s32 BtlAct_QueueReaction(BtlActChr *chr, s32 arg);
+extern s32 BtlAct_QueueReaction(BtlActChr *chr, s32 reaction);
 extern s32 BtlAct_CheckStoryForced(BtlActChr *chr);
 extern s32 BtlAct_GetEvasionAttack(BtlActChr *chr);
 extern f32 BtlCharApi_GetHeight(s32 objId);
@@ -125,8 +125,8 @@ extern f32 BtlCharApi_GetGroundY(s32 objId);
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out);
 extern s32 BtlCharApi_IsInTechnique(s32 objId);
 extern u32 BtlParam_GetFlags(BtlActChr *chr);
-extern u32 BtlParam_GetFlags2(BtlActChr *chr);                       /* obj->unk91C->unk14 */
-extern u32 BtlParam_GetFlags3(BtlActChr *chr);                       /* obj->unk91C->unk18 */
+extern u32 BtlParam_GetFlags2(BtlActChr *chr);                       /* flags2 of the parameter block (object +0x91C, +0x14) */
+extern u32 BtlParam_GetFlags3(BtlActChr *chr);                       /* flags3 of the parameter block (+0x18) */
 extern s32 BtlParam_GetSizeClass(BtlActChr *chr);
 extern s32 BtlParam_GetKiRegenLimit(BtlActChr *chr);
 extern s32 BtlParam_GetGaugeB(BtlActChr *chr);
@@ -138,13 +138,13 @@ extern f32 BtlParam_GetGauge99CTime(BtlActChr *chr);
 extern s32 BtlParam_GetDashSound(BtlActChr *chr);
 extern s32 BtlParam_GetChargeLoopSound(BtlActChr *chr);
 extern s32 BtlParam_GetMaxPowerSound(BtlActChr *chr);
-extern f32 BtlMoveParam_GetSpeed(BtlActChr *chr, s32 arg);
+extern f32 BtlMoveParam_GetSpeed(BtlActChr *chr, s32 n);
 extern f32 BtlStage_GetTop(void);
 extern f32 BtlStage_GetBottom(void);
-extern s32 BtlObjAnim_QueryEvent(void *obj, u64 a, s32 b, s32 c);
-extern void BtlObj_SetColorMode(void *obj, s32 a, s32 b);
-extern void BtlObj_AddPush(void *obj, Vec4 *v, f32 arg);
-extern void BtlObj_AddSway(void *obj, f32 a, f32 b);
+extern s32 BtlObjAnim_QueryEvent(void *obj, u64 mask, s32 layer, s32 what);
+extern void BtlObj_SetColorMode(void *obj, s32 bit, s32 on);
+extern void BtlObj_AddPush(void *obj, Vec4 *v, f32 max);
+extern void BtlObj_AddSway(void *obj, f32 add, f32 max);
 
 extern BtlActRoster *gBtlChars;
 extern BtlActHandler gBtlActHandlers[BTLACT_COUNT];
@@ -419,7 +419,8 @@ void BtlAct_SetPitchMotion(BtlActChr *chr, s32 motionUp, s32 motionDown, s32 rec
     }
 }
 
-/* Flag 0x35 -> 1, flag 0x36 -> 0, else the saved value (when asked and valid) or motion flag 0x8000. */
+/* Flag 0x35 -> 1, flag 0x36 -> 0; else, when asked and the reaction is not 1, the saved hitBack word of the
+   last hit (fighter +0xFBC, "hit from behind"), not an air test; else motion flag 0x8000. */
 s32 BtlAct_IsAirMotion(BtlActChr *chr, s32 useSaved) {
     if (BtlChar_TestFlag(chr, 0x35)) {
         return 1;
@@ -436,7 +437,7 @@ s32 BtlAct_IsAirMotion(BtlActChr *chr, s32 useSaved) {
     return 0;
 }
 
-/* Picks the member to switch to and records its chara, costume and gauge word. */
+/* Picks the member to switch to and records its chara, costume and model variant. */
 void BtlAct_PrepareSwitch(BtlActChr *chr) {
     chr->switchMember = BtlMember_GetSwitchTarget(chr);
     chr->switchChara = BtlMember_Get(chr, chr->switchMember)->chara;
@@ -454,18 +455,18 @@ void BtlAct_PrepareSwitch(BtlActChr *chr) {
 }
 
 /* Gives the fighter's object a horizontal push of `speed` along a yaw. */
-void BtlAct_PushAngle(BtlActChr *chr, f32 angle, f32 speed, f32 arg) {
+void BtlAct_PushAngle(BtlActChr *chr, f32 angle, f32 speed, f32 max) {
     Vec4 v;
 
     v.x = Mathf_Sin(angle) * speed;
     v.y = 0.0f;
     v.z = Mathf_Cos(angle) * speed;
     v.w = 0.0f;
-    BtlObj_AddPush(BtlChar_GetObj(chr), &v, arg);
+    BtlObj_AddPush(BtlChar_GetObj(chr), &v, max);
 }
 
 /* Gives the fighter's object a push of `speed` along a direction (ignored when the direction is null). */
-void BtlAct_PushDir(BtlActChr *chr, Vec4 *dir, f32 speed, f32 arg) {
+void BtlAct_PushDir(BtlActChr *chr, Vec4 *dir, f32 speed, f32 max) {
     Vec4 v;
     f32 len;
 
@@ -473,13 +474,13 @@ void BtlAct_PushDir(BtlActChr *chr, Vec4 *dir, f32 speed, f32 arg) {
     if (!(len < 0.0001f)) {
         Vec4_Scale(&v, dir, 1.0f / len);
         Vec4_Scale(&v, &v, speed);
-        BtlObj_AddPush(BtlChar_GetObj(chr), &v, arg);
+        BtlObj_AddPush(BtlChar_GetObj(chr), &v, max);
     }
 }
 
 /* Forwards two floats to BtlObj_AddSway on the fighter's object. */
-void BtlAct_AddSway(BtlActChr *chr, f32 a, f32 b) {
-    BtlObj_AddSway(BtlChar_GetObj(chr), a, b);
+void BtlAct_AddSway(BtlActChr *chr, f32 add, f32 max) {
+    BtlObj_AddSway(BtlChar_GetObj(chr), add, max);
 }
 
 /* Whether an action id is one of the table-driven attacks (0x70..0xAD). */
@@ -520,7 +521,7 @@ s32 BtlAct_TestAttackSkill(BtlActChr *chr, s32 attack) {
 void BtlAct_PrepareAttack(BtlActChr *chr, s32 id) {
     BtlActAttackRec *rec;
     s32 i;
-    f32 v;
+    f32 rate;
 
     if (BtlAct_IsAttackId(id)) {
         rec = BtlAct_GetAttackRec(id - 0x70);
@@ -536,16 +537,16 @@ void BtlAct_PrepareAttack(BtlActChr *chr, s32 id) {
         chr->nextAttack.speed = rec->speed * 10.0f * 0.0092592593f;
         chr->nextAttack.leadIn = rec->leadIn;
         if (rec->rate > 0) {
-            v = rec->rate * 0.1f;
+            rate = rec->rate * 0.1f;
         } else {
-            v = 1.0f;
+            rate = 1.0f;
         }
-        chr->nextAttack.rate = v;
+        chr->nextAttack.rate = rate;
         chr->nextAttack.cancelAt = rec->cancelAt;
         chr->nextAttack.leadFrames = 0.0f;
         chr->nextAttack.chained = 0;
         /* Camera cut of the attack. With record flag 0x20 the choice depends on which side of the
-           fighter its camera sits (camSide < 0, since unk18 was just zeroed): the one place the
+           fighter its camera sits (camSide < 0, since leadFrames was just zeroed): the one place the
            camera pose is read by fighter logic. Otherwise it alternates with the frame counter. */
         if (rec->cutAlt < 0) {
             chr->nextAttack.cut = rec->cut;

@@ -75,7 +75,7 @@ BtlChangeReq *BtlChange_Alloc(void);
 BtlChangeReq *BtlChange_Pop(void);
 void BtlChange_Reset(void);
 void BtlChange_Update(void);
-void BtlChange_RequestChara(s32 player, s32 chara, s32 costume, s32 variant, s32 animChara, s32 unk18, s32 voiceChara);
+void BtlChange_RequestChara(s32 player, s32 chara, s32 costume, s32 variant, s32 animChara, s32 animChara2, s32 voiceChara);
 void BtlChange_RequestObject(s32 player, s32 id, s32 costume, s32 variant, s32 slot);
 void BtlChange_SetTaken(void);
 void BtlChange_SetLoaded(void);
@@ -114,8 +114,8 @@ typedef struct BtlCtlNode {
     /* 0x04 */ u32 flags;   /* bit 0 cleared by the head tracking */
     /* 0x08 */ u8 unk8[0x40 - 0x8];
     /* 0x40 */ Vec4 worldPos;
-    /* 0x50 */ Mtx44 mtx;
-    /* 0x90 */ Vec4 pos;
+    /* 0x50 */ Mtx44 mtx;   /* the parent's world matrix (the node's own is at +0x10) */
+    /* 0x90 */ Vec4 pos;    /* local translation */
     /* 0xA0 */ Quat rot;
 } BtlCtlNode;
 
@@ -194,7 +194,7 @@ typedef struct BtlCtlChr {
     /* 0x12C4 */ s32 savedFlagF; /* fighter flag 0xF at the time of the save */
     /* 0x12C8 */ s32 savedFlagE; /* fighter flag 0xE */
     /* 0x12CC */ u8 unk12CC[0x1310 - 0x12CC];
-    /* 0x1310 */ Vec4 bodyWarpPos;  /* copy of *obj->unkFA0 */
+    /* 0x1310 */ Vec4 bodyWarpPos;  /* copy of *obj->bodyPos */
     /* 0x1320 */ u8 unk1320[0x1560 - 0x1320];
     /* 0x1560 */ Vec4 warpPos;  /* taken by flag 0xFC */
     /* 0x1570 */ Vec4 warpRot;  /* taken by flag 0xFD */
@@ -238,10 +238,10 @@ void BtlChar_PlaceWarp(BtlCtlChr *chr);
 f32 BtlChar_GetSpacing(BtlCtlChr *chr, s32 mode);
 void BtlChars_UpdateHold(void);
 void BtlChar_SavePlacement(BtlCtlChr *chr);
-void BtlChar_SetSavedPlacement(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, Vec4 *unk1310, s32 flagF, s32 flagE);
-void BtlChar_RequestBodyWarp(BtlCtlChr *chr, Vec4 *v);
+void BtlChar_SetSavedPlacement(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, Vec4 *bodyWarpPos, s32 flagF, s32 flagE);
+void BtlChar_RequestBodyWarp(BtlCtlChr *chr, Vec4 *pos);
 void BtlChar_ResetBodyWarp(BtlCtlChr *chr);
-void BtlChar_RequestPlaceRelative(BtlCtlChr *chr, s32 arg1, s32 arg2, s32 self);
+void BtlChar_RequestPlaceRelative(BtlCtlChr *chr, s32 slot, s32 n, s32 self);
 void BtlChar_RequestPlaceOnPath(BtlCtlChr *chr);
 void BtlChar_ClearSnapshots(BtlCtlChr *chr);
 void BtlChar_Snapshot(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, s32 n);

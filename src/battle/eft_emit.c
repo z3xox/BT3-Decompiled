@@ -45,7 +45,7 @@ extern s32 BtlCharApi_GetPlayerEffectPack(s32 player, u32 n);
 extern void *BtlCharApi_GetPlayerSuperData(s32 player);
 extern void *BtlCharApi_GetPlayerSkillData(s32 player);
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out);
-extern s32 BtlCharApi_ObjQuery24D610(s32 objId, s32 arg1, s32 arg2);
+extern s32 BtlCharApi_ObjQuery24D610(s32 objId, s32 mask, s32 what);
 
 /* eft_shot.c */
 extern s32 EftShot_TestBits(s32 objId, s32 mask);
@@ -83,7 +83,7 @@ extern void EftTexSet_Load4(u8 *res, s32 *entry);
 extern void EftTexSet_Load8(u8 *res, s32 *entry);
 extern void EftTexSet_Load16(u8 *res, s32 *entry);
 extern s32 EftVolleyAim_GetNodeSide(s32 node);
-extern void EftVolleyAim_InitShot(s32 objId, EftVolleyShot *shot, s32 aimKind, s32 arg3, s32 index, s32 count, f32 a, f32 b);
+extern void EftVolleyAim_InitShot(s32 objId, EftVolleyShot *shot, s32 aimKind, s32 side, s32 index, s32 count, f32 speed, f32 maxTurn);
 extern void EftVolleyAim_Spread(s32 objId, Vec4 *dir, s32 a, s32 b, s32 c, s32 index, s32 count);
 extern void EftVolleyAim_Update(s32 objId, EftVolleyShot *shot, Vec4 *out, s32 flag, f32 time, f32 a, f32 b);
 
@@ -130,7 +130,7 @@ static inline s32 EftShot_TypeRow(s32 type) {
 /* The slot index is one function-scope variable set in both data branches (`n = slot;` / `n = slot - 2;`): in the
    technique branch the first cse pass folds `n + K` into `slot + (K - 2)` for the byte arrays, which works only
    while the block is not split, so the kind goes through a local (conditional move) instead of a store in each
-   arm. The order of the trailing stores (unk54, unk50, unk14) is the source order in all three branches: the
+   arm. The order of the trailing stores (groundScale, impactScale, unk14) is the source order in all three branches: the
    first scheduling pass moves the stores that end a register's life to the front. */
 void EftShot_BuildParam(s32 chr, s32 slot, EftShotParam *p, s32 blank) {
     s32 i;
@@ -371,7 +371,7 @@ void EftShot_CreateChar(s32 chr) {
 }
 
 /* Frames between the start of a technique's effect and its first shot, by kind of technique: 0.85 s; a technique
-   (kind 1) with unk5 == 5: 0.8 s; an ultimate (kind 2): 0.8 s with unk5 == 5, else 1.3 s, 0.7 s for technique
+   (kind 1) with sub == 5: 0.8 s; an ultimate (kind 2): 0.8 s with sub == 5, else 1.3 s, 0.7 s for technique
    0x268 and none for 0x290. (Two `return t;` statements: with a single return at the end the value sits in $f0
    from the start; the early return keeps it in $f1 and copies it at the exit.) */
 f32 EftShot_GetLeadTime(EftHSlot *slot) {
@@ -1465,19 +1465,19 @@ typedef struct EftEmitRayArg {
     /* 0x20 */ f32 life;
     /* 0x24 */ f32 length; /* scale * 100 (kind 0) or * 800 (kind 1) */
     /* 0x28 */ f32 width;
-    /* 0x2C */ f32 inner; /* EftSetDef.unk10 * scale */
-    /* 0x30 */ f32 jitter; /* EftSetDef.unk14 * scale */
+    /* 0x2C */ f32 inner; /* EftSetDef.offset * scale */
+    /* 0x30 */ f32 jitter; /* EftSetDef.offset2 * scale */
     /* 0x34 */ s32 mode;
-    /* 0x38 */ s32 count; /* EftSetDef.unk3 */
+    /* 0x38 */ s32 count; /* EftSetDef.count */
     /* 0x3C */ s32 chr;
     /* 0x40 */ s32 blend;
     /* 0x44 */ s32 space;
-    /* 0x48 */ s32 delay; /* EftSetDef.unk5 */
-    /* 0x4C */ s32 fadeFrames; /* EftSetDef.unk6 */
+    /* 0x48 */ s32 delay; /* EftSetDef.delay */
+    /* 0x4C */ s32 fadeFrames; /* EftSetDef.hold */
     /* 0x50 */ s32 autoKill;
 } EftEmitRayArg; /* size 0x60 */
 
-/* Type 0: a light of kind EftSetDef.unk4 (0 or 1) at the node. Each kind handles all its commands itself (the
+/* Type 0: a light of kind EftSetDef.mode (0 or 1) at the node. Each kind handles all its commands itself (the
    compiler merges the two tails); any other kind does nothing. The float parameters stand in front of `pos`. */
 void EftEmit_SpawnType0(EftSet *set, EftSetHandles *handles, s32 flags, s32 type, s32 chr, s32 idx, f32 size,
                         f32 scale, f32 rate, Vec4 *pos, Vec4 *dir) {
@@ -1696,11 +1696,12 @@ extern s32 EftRibbon_SetMaxNodes(void *obj, s32 v);
 extern s32 EftRibbon_SetDelay(void *obj, f32 v);
 extern s32 EftRibbon_SetFadeDelay(void *obj, f32 v);
 extern s32 EftRibbon_SetFadeTime(void *obj, f32 v);
-extern s32 EftRibbon_SetUnkD8(void *obj, s32 v);
+extern s32 EftRibbon_SetUnkD8(void *obj, s32 node);
 
-/* Type 17: an object between two points, the node position pushed along the direction by EftSetDef.unk10 and
-   pos2 pushed by EftSetDef.unk14. EFT_CMD_RESTART destroys the object and creates it again. */
-void EftEmit_SpawnType17(EftSet *set, EftSetHandles *handles, s32 flags, s32 type, s32 chr, s32 arg5, s32 idx,
+/* Type 17: an object between two points, the node position pushed along the direction by EftSetDef.offset and
+   pos2 pushed by EftSetDef.offset2. `node` is the model node the caller (EftEmit_Spawn) was given.
+   EFT_CMD_RESTART destroys the object and creates it again. */
+void EftEmit_SpawnType17(EftSet *set, EftSetHandles *handles, s32 flags, s32 type, s32 chr, s32 node, s32 idx,
                          f32 size, f32 scale, f32 rate, Vec4 *pos, Vec4 *pos2, Vec4 *dir) {
     EftSetGroup *g = &set->group[17];
     s32 create = 0;
@@ -1735,7 +1736,7 @@ void EftEmit_SpawnType17(EftSet *set, EftSetHandles *handles, s32 flags, s32 typ
             Vec4_Copy((Vec4 *)&arg.pos, &p);
         }
         H(n) = EftRibbon_Create(&arg);
-        EftRibbon_SetUnkD8(H(n), arg5);
+        EftRibbon_SetUnkD8(H(n), node);
         EftRibbon_SetDelay(H(n), part->delay);
         EftRibbon_SetFadeDelay(H(n), part->hold);
         EftRibbon_SetFadeTime(H(n), part->fade);
@@ -1776,14 +1777,14 @@ extern s32 EftChain_SetPos(void *obj, Vec4 *pos);
 extern s32 EftChain_Warp(void *obj, Vec4 *pos);
 extern s32 EftChain_SetDir(void *obj, Vec4 *dir);
 extern s32 EftChain_SetSize(void *obj, f32 size);
-extern s32 EftChain_SetParam3(void *obj, s32 v);
-extern s32 EftChain_SetParam5(void *obj, f32 v);
-extern s32 EftChain_SetParam6(void *obj, f32 v);
+extern s32 EftChain_SetParam3(void *obj, s32 count);
+extern s32 EftChain_SetParam5(void *obj, f32 delay);
+extern s32 EftChain_SetParam6(void *obj, f32 endWait);
 extern s32 EftChain_SetViewOnly(void *obj);
 extern s32 EftChain_SetType(void *obj, s32 type);
 
 /* Type 18. */
-void EftEmit_SpawnType18(EftSet *set, EftSetHandles *handles, s32 flags, s32 type, s32 chr, s32 arg5, s32 idx,
+void EftEmit_SpawnType18(EftSet *set, EftSetHandles *handles, s32 flags, s32 type, s32 chr, s32 node, s32 idx,
                          f32 size, f32 scale, f32 rate, Vec4 *pos, Vec4 *dir) {
     EftSetGroup *g = &set->group[18];
     s32 n = g->firstPart + idx;

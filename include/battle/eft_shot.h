@@ -54,8 +54,8 @@ typedef struct EftTexSet {
 typedef struct EftShotDef {
     /* 0x00 */ s16 id;
     /* 0x02 */ s16 level;
-    /* 0x04 */ s8 cls;
-    /* 0x05 */ s8 kind;
+    /* 0x04 */ s8 cls;         /* 0 skill, 1 technique, 2 ultimate (`kind` in eft_emit.h / eft_obj_tech.h) */
+    /* 0x05 */ s8 kind;        /* the sub-kind inside the class (`sub` / unk5 in those headers) */
     /* 0x06 */ u8 unk6[0x36];
     /* 0x3C */ s32 flags;      /* bit 0x2000 tested by EftShot_IsSlotFlag2000 */
     /* 0x40 */ u8 unk40[0x4C];
@@ -320,7 +320,7 @@ void EftSmoke_Draw(EftTask *task);
 void EftBound_UpdateAngle(EftBoundChar *work, EftBoundChar *src);
 void EftBound_BuildWall(EftBoundChar *work, EftBoundChar *src);
 void EftBound_DrawTri(EftMtxArg m, EftVecArg p0, EftVecArg p1, EftVecArg p2, EftVecArg st0, EftVecArg st1,
-                      EftVecArg st2, EftVecArg c0, EftVecArg c1, EftVecArg c2, s32 otZ, u64 tex0);
+                      EftVecArg st2, EftVecArg c0, EftVecArg c1, EftVecArg c2, s32 layer, u64 tex0);
 void EftBound_DrawMeshCulled(EftBoundMesh *mesh);
 void EftBound_DrawMesh(EftBoundMesh *mesh);
 void EftBound_Init(EftTask *task, s32 *arg);

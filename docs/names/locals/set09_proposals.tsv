@@ -1,0 +1,6 @@
+FIELD	include/menu/ub_score.h	PProgress	misRow	cursor	MEDIUM	gProgress +0x640 is written by MisSel_Input as UO_PROG->cursor (mission_select.c:445) and by SurvSel as S_PROG->cursor (survival_select.c:350); ub.h and survival.h both call it cursor.
+FIELD	include/menu/ub_score.h	PProgress	misRank	missionPage	HIGH	mission_result.c:151 computes mission = misRank * MISSEL_ROWS + misRow, so +0x63C is the page of the mission list; ub.h (UoProgress) names the same word missionPage.
+FIELD	include/menu/ub_rank.h	NProgress	ubKind	cursor	MEDIUM	gProgress +0x640 is the cursor the previous list screen left (ub.c:187 and ub_result.c:130 read UO_PROG->cursor for the same ladder / courses choice); ub.h and survival.h call it cursor.
+FIELD	include/menu/ub.h	UoProgress	course	ubChoice	MEDIUM	gProgress +0x688 is written as NPROG->ubChoice by both UbzSel_Input (course 0..4, ubz_select.c:353) and UbRank (ladder place, ub_rank.c:586), so it is not only a course.
+FIELD	include/menu/ub.h	UoProgress	discFlags	ubFlags	MEDIUM	gProgress +0x684 is ubFlags in NProgress (ub_rank.h:75, NPROG_UB_ bits) and the note in ub.h itself says bit 8 is that NPROG_UB_UPWARD bit.
+FIELD	include/menu/ub_score.h	UbSaveBody	unk778	unk778 (s32) + rank (s32 at 0x77C)	MEDIUM	unk778[2] element 1 is save +0x77C, which NSave (ub_rank.h) names rank, the place on the ladder (ub_rank.c:536 gSaveData->rank).

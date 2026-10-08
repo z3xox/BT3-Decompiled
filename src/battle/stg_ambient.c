@@ -46,7 +46,7 @@ extern StgAmb gStgAmb;
 s32 sceGsSetDefStoreImage(void *sp, s16 sbp, s16 sbw, s16 spsm, s16 x, s16 y, s16 w, s16 h);
 s32 sceGsExecStoreImage(void *sp, void *dst);
 void FlushCache(s32 mode);
-void GfxClut_InitPacket(void *tex, u16 arg);
+void GfxClut_InitPacket(void *tex, u16 cbp);
 void StgCurve_Build(StgFogPoint *pts, f32 *curve);
 void Vec4_Set(Vec4 *v, f32 x, f32 y, f32 z, f32 w);
 void GfxPost_DrawDepthClut(s32 a, s32 tbp, s32 cbp, u64 alpha);
@@ -449,7 +449,8 @@ s32 BtlStage_GetLightDir(Vec4 *out) {
     return 1;
 }
 
-/* Gives the place stored in section +0x2C: its first point and the yaw from it toward its second point. */
+/* Gives the first start placement (section +0x2C, StgDataA.starts): its position (y = 0) and the yaw from it
+   toward its target. */
 s32 BtlStage_GetPlace2C(Vec4 *pos, Vec4 *rot) {
     StgData *d;
     f32 *b;
@@ -1566,8 +1567,8 @@ s32 ScrWarp_Spawn(s32 view, Vec4 *pos, f32 seconds, f32 radius, f32 width, f32 s
 }
 
 /* Sets up the texture object of the table and remembers where its entries are. */
-void StgFog_SetupTex(StgFog *tone, u16 arg) {
-    GfxClut_InitPacket(tone, arg);
+void StgFog_SetupTex(StgFog *tone, u16 cbp) {
+    GfxClut_InitPacket(tone, cbp);
     tone->clut = tone->clutSrc;
 }
 
@@ -1596,10 +1597,10 @@ void StgFog_BuildClut(StgFog *tone, StgFogPoint *pts, s32 clearLast, f32 scale) 
 }
 
 /* Allocates the depth tone state. */
-void StgFog_Init(u16 arg) {
+void StgFog_Init(u16 cbp) {
     gStgFog = Heap_Alloc(sizeof(StgFog), 0x20, 0, 2);
     memset(gStgFog, 0, sizeof(StgFog));
-    StgFog_SetupTex(gStgFog, arg);
+    StgFog_SetupTex(gStgFog, cbp);
     StgFog_ResetColor();
 }
 

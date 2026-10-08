@@ -16,11 +16,11 @@ static const s32 sSimPopoSpeed[3] = { 6, 10, 14 };
 static const char sSimPopoClip[] __attribute__((aligned(8))) = "mc_popo%02d";
 
 /* Swaps two of the five figures: down, across, up. Returns 1 when the swap is over. */
-s32 SimPopo_Swap(USimDay *day, s32 a, s32 b) {
+s32 SimPopo_Swap(USimDay *day, s32 figA, s32 figB) {
     MFlashRef ref;
     char name[64];
     s32 done = 0;
-    s32 d;
+    s32 dist;
     MFlash *flash;
 
     switch (gSimPopoState) {
@@ -32,10 +32,10 @@ s32 SimPopo_Swap(USimDay *day, s32 a, s32 b) {
         }
         break;
     case 1:
-        d = sSimPopoX[b] - sSimPopoX[a];
+        dist = sSimPopoX[figB] - sSimPopoX[figA];
         gSimPopoDx += sSimPopoSpeed[gSimPopoSpeed];
-        if (gSimPopoDx >= d) {
-            gSimPopoDx = d;
+        if (gSimPopoDx >= dist) {
+            gSimPopoDx = dist;
             gSimPopoState = 2;
         }
         break;
@@ -51,18 +51,18 @@ s32 SimPopo_Swap(USimDay *day, s32 a, s32 b) {
         gSimPopoState = 0;
         gSimPopoDy = 0;
         gSimPopoDx = 0;
-        if (a == gSimPopoTarget) {
-            gSimPopoTarget = b;
-        } else if (b == gSimPopoTarget) {
-            gSimPopoTarget = a;
+        if (figA == gSimPopoTarget) {
+            gSimPopoTarget = figB;
+        } else if (figB == gSimPopoTarget) {
+            gSimPopoTarget = figA;
         }
         break;
     }
     flash = &day->flash[3];
-    sprintf(name, sSimPopoClip, a);
+    sprintf(name, sSimPopoClip, figA);
     Flash_FindLabel(flash, 0, name, &ref);
     Flash_ClipSetOffset(flash, &ref, gSimPopoDx, gSimPopoDy);
-    sprintf(name, sSimPopoClip, b);
+    sprintf(name, sSimPopoClip, figB);
     Flash_FindLabel(flash, 0, name, &ref);
     Flash_ClipSetOffset(flash, &ref, -gSimPopoDx, gSimPopoDy);
     return done;

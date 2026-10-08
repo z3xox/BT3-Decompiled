@@ -7,8 +7,8 @@
  *   Rand_Float01 / Rand_FloatRange  the VU0 R register (the PS2's 23-bit shift-register generator)
  *   Rand_Libc / Rand_IntRange       the C library rand()
  *
- * Rand_SeedFloat seeds both from one float. Rand_SeedFloat and Rand_Float01 contain VU0 instructions and stay
- * INCLUDE_ASM; an equivalent that assembles to the same bytes is kept above each one.
+ * Rand_SeedFloat seeds both from one float. Rand_SeedFloat and Rand_Float01 contain VU0 instructions, written
+ * here as inline assembly.
  */
 
 extern void srand(u32 seed);

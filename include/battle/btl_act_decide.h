@@ -73,14 +73,14 @@ typedef struct BtlActJChr {
     /* 0x0D8C */ s32 unkD8C;
     /* 0x0D90 */ s32 attackId;       /* id BtlAct_PrepareAttack was last called with */
     /* 0x0D94 */ u8 unkD94[0xE00 - 0xD94];
-    /* 0x0E00 */ s32 dodges;         /* automatic evasions left (first kind) */
-    /* 0x0E04 */ s32 dodgesB;        /* automatic evasions left (second kind) */
+    /* 0x0E00 */ s32 dodges;         /* stack count 0..3 of skill ids 0x0C / 0x32 (skillStackA in BtlActIChr): the skill is refused at 3, or above 0 when it does not stack */
+    /* 0x0E04 */ s32 dodgesB;        /* the same for skill id 0x37 (skillStackB in BtlActIChr) */
     /* 0x0E08 */ u8 unkE08[0xE40 - 0xE08];
     /* 0x0E40 */ s32 techDelay;      /* countdown: no technique input while > 0 */
     /* 0x0E44 */ u8 unkE44[0xE5C - 0xE44];
     /* 0x0E5C */ s32 skillCount3;         /* counter, full at 3 */
     /* 0x0E60 */ u8 unkE60[0xE9C - 0xE60];
-    /* 0x0E9C */ s32 thrSlot;         /* 0..2: variant added to the actions of reactions 29, 30 and 34 */
+    /* 0x0E9C */ s32 thrSlot;         /* throw block +0x0C (`slot` in ActGThrow and BtlCollThrow): 0..2, added to the actions of reactions 29, 30 and 34 */
     /* 0x0EA0 */ u8 unkEA0[0xFB0 - 0xEA0];
     /* 0x0FB0 */ s32 reaction;       /* HitReact.reaction */
     /* 0x0FB4 */ s32 reactSub;
@@ -119,7 +119,7 @@ s32 BtlAct_GetSkillAction(BtlActJChr *chr, s32 slot);
 s32 BtlAct_CanUseSkill(BtlActJChr *chr, u32 slot);
 s32 BtlAct_CheckSkillInput(BtlActJChr *chr);
 s32 BtlAct_QueueReaction(BtlActJChr *chr, u32 reaction);
-s32 BtlAct_GetLandingAction(BtlActJChr *chr, s32 arg1, u32 kind);
+s32 BtlAct_GetLandingAction(BtlActJChr *chr, s32 slot, u32 kind);
 s32 BtlAct_QueueFlag21Action(BtlActJChr *chr);
 s32 BtlAct_QueueFlag21ActionB(BtlActJChr *chr);
 s32 BtlAct_CheckRecoveryInput(BtlActJChr *chr, s32 held);

@@ -61,9 +61,9 @@ extern void BtlCharApi_GetFrameMove(s32 objId, EftPVec *out);
 extern void EftEmit_UpdateAlive(EftPSet *set, void *emit);
 extern void EftEmit_KillAll(EftPSet *set, void *emit);
 extern void EftEmit_TermState(EftPSet *set, void *emit);
-extern s32 EftEmit_GetFlagsFromReq(EftPSet *set, void *emit, s32 objId, s32 group, s32 part, s32 f1, s32 f4);
+extern s32 EftEmit_GetFlagsFromReq(EftPSet *set, void *emit, s32 objId, s32 group, s32 part, s32 ending, s32 kill);
 extern s32 EftEmit_GetResetFlags(EftPSet *set, void *emit, s32 group, s32 part);
-extern void EftEmit_SpawnOwn(EftPSet *set, void *emit, void *a2, void *a3, void *t0, s32 group, s32 part, s32 res,
+extern void EftEmit_SpawnOwn(EftPSet *set, void *emit, void *nodes, void *pos, void *dir, s32 group, s32 part, s32 res,
                              f32 scale);
 extern f32 EftEmit_GetTrailWidth(void *emit);
 
@@ -93,8 +93,8 @@ extern void ColSphere_Set(void *sphere, void *pos, f32 radius);
 extern s32 EftAim_GetDirKeep(EftPSrc *src, EftPVec *out, EftPVec *pos, s32 objId);
 
 extern void EftMesh_SetTex(void *model, void *tex);
-extern void EftMesh_SetLayer(void *model, s32 a1);
-extern void EftMesh_SetTexBase(void *model, s32 a1);
+extern void EftMesh_SetLayer(void *model, s32 blend);
+extern void EftMesh_SetTexBase(void *model, s32 base);
 extern void EftMesh_SetColor(void *model, u8 r, u8 g, u8 b, u8 a);
 extern void EftMesh_Draw(void *model);
 extern u64 EftVram_AddImage(EftPTexEntry *tex, s32 a, s32 b);
@@ -311,11 +311,11 @@ void EftDisc_SetHeldAtk(EftPTask *task, EftDiscAtk *atk) {
 }
 
 /* Binds the disc to a texture set and copies the two entries it animates. */
-void EftDisc_SetTex(EftDisc *w, EftPTexSet *tex, s32 a, s32 b) {
-    w->arg.texA = a;
+void EftDisc_SetTex(EftDisc *w, EftPTexSet *tex, s32 idxA, s32 idxB) {
+    w->arg.texA = idxA;
     w->tex = tex;
-    w->texA = *(a + tex->entry);
-    w->texB = *(b + tex->entry);
+    w->texA = *(idxA + tex->entry);
+    w->texB = *(idxB + tex->entry);
 }
 
 /*
@@ -808,7 +808,7 @@ void EftDisc_SetScale(EftPTask *task, f32 scale) {
 }
 
 /* Gives the disc's model another texture set and rebinds the two animated entries. */
-s32 EftDisc_SetModelTex(EftPTask *task, void *tex, s32 a, s32 b) {
+s32 EftDisc_SetModelTex(EftPTask *task, void *tex, s32 idxA, s32 idxB) {
     EftDisc *w;
 
     if (gEftDisc != NULL && task != NULL) {
@@ -818,7 +818,7 @@ s32 EftDisc_SetModelTex(EftPTask *task, void *tex, s32 a, s32 b) {
                 if (w->flags & EFT_DISC_ALIVE) {
                     EftMesh_SetTex(w->model, tex);
                     EftMesh_SetTexBase(w->model, 0);
-                    EftDisc_SetTex(w, *(EftPTexSet **)(w->model + 0x48), a, b);
+                    EftDisc_SetTex(w, *(EftPTexSet **)(w->model + 0x48), idxA, idxB);
                 }
             }
         }

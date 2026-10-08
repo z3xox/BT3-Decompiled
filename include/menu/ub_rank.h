@@ -37,8 +37,8 @@ extern void Flash_SetFlag(MFlash *flash, u32 mask, u8 on);
 extern void IconWin_SetIcon(s32 icon);
 extern void Save_AddItem(s32 idx);
 extern void Battle_ClearWork(void);
-extern void BattleSetup_SetRule(s32 screenMode, s32 mode, s32 bgm, s32 timeLimit, s32 announcer, s32 stage, s32 unk10);
-extern void BattleSetup_SetSide(s32 sideNo, s32 control, s32 pad, s32 memberCount, s32 unk1FC, s32 unk200, s32 lead,
+extern void BattleSetup_SetRule(s32 screenMode, s32 mode, s32 bgm, s32 timeLimit, s32 announcer, s32 stage, s32 stageChange);
+extern void BattleSetup_SetSide(s32 sideNo, s32 control, s32 pad, s32 memberCount, s32 changeAllowed, s32 switchEnabled, s32 lead,
                                 void *charaBits);
 extern void BattleSetup_SetMember(s32 sideNo, s32 idx, s32 chara, s32 costume, s32 variant, s32 cpuLevel, f32 health,
                                   u16 *items);
@@ -119,11 +119,11 @@ typedef struct NFoe {
 /* The rules of one course. */
 typedef struct NCourse {
     /* 0x00 */ s32 announcer;   /* N_RANDOM: Rand_Range(8) */
-    /* 0x04 */ s32 stageChange;        /* non-zero: BattleSetup_SetRule's last argument is 1 */
+    /* 0x04 */ s32 stageChange;        /* non-zero: the rule's stageChange (BattleSetup_SetRule's last argument) is 1 */
     /* 0x08 */ s32 timeLimit;
     /* 0x0C */ s32 stage;       /* N_RANDOM: Rand_Range(35) */
     /* 0x10 */ s32 bgm;         /* N_RANDOM: N_BGM_RANDOM */
-    /* 0x14 */ s32 changeAllowed;       /* non-zero: side 1's unk1FC is 1 */
+    /* 0x14 */ s32 changeAllowed;       /* non-zero: side 1's changeAllowed is 1 */
     /* 0x18 */ s32 foe[8];      /* indices into the NFoe table */
 } NCourse; /* 0x38 */
 

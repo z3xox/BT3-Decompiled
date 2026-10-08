@@ -79,7 +79,8 @@ typedef struct EftZapMgr {
     /* 0x0004 */ u8 unk4[0x17CC];
     /* 0x17D0 */ EftZapNode nodes[EFT_ZAP_NODES];
     /* 0x1E60 */ u8 unk1E60[0x41];
-    /* 0x1EA1 */ u8 nodeCur;   /* where the search for a free point starts */
+    /* 0x1EA1 */ u8 nodeCur;   /* where the search for a free point starts (the byte at +0x1EA0 is the same cursor for
+                                  the lines: EftZapPool.nextLine in eft_ribbon.h) */
 } EftZapMgr;
 
 /* A texture object of an effect pack as this module uses it (0x108 bytes each in the pack's table). */
@@ -118,10 +119,10 @@ typedef struct EftZapArg {
     /* 0x10 */ Vec4 dir;
     /* 0x20 */ Vec4 pos;
     /* 0x30 */ f32 size;
-    /* 0x34 */ f32 rate;
+    /* 0x34 */ f32 rate;      /* the life in seconds (`life` in EftZapInit, eft_ribbon.h); <= 0 = until stopped */
     /* 0x38 */ s32 texIdx;
     /* 0x3C */ s32 objId;
-    /* 0x40 */ u8 type;
+    /* 0x40 */ u8 type;       /* effect type EftZap_Update gives BtlScene_IsEffectStopped (eft_ribbon.c) */
     /* 0x41 */ u8 pad41[0xF];
 } EftZapArg; /* 0x50 */
 
@@ -153,11 +154,11 @@ typedef struct EftZap {
     /* 0x150 */ f32 curJ;
     /* 0x154 */ u8 unk154[0xC];
     /* 0x160 */ f32 delay;     /* frames (set from a part definition byte) */
-    /* 0x164 */ f32 fadeDelay; /* frames between stop and the fade; > 0 makes a stop gradual */
-    /* 0x168 */ f32 fadeTime;
-    /* 0x16C */ f32 fade;      /* > 0 makes a stop gradual */
+    /* 0x164 */ f32 fadeDelay; /* frames a stop is held back; > 0 makes a stop gradual (`holdTime` in eft_ribbon.h) */
+    /* 0x168 */ f32 fadeTime;  /* frames LEFT of the fade: counted down by EftZap_Update (`fadeFrame` in eft_ribbon.h) */
+    /* 0x16C */ f32 fade;      /* length of the fade in frames; > 0 makes a stop gradual (`fadeTime` in eft_ribbon.h) */
     /* 0x170 */ f32 frame;
-    /* 0x174 */ f32 rateFrames; /* rate x 30 */
+    /* 0x174 */ f32 rateFrames; /* arg.rate x 30: the life in frames, counted down by EftZap_Update (`life` in eft_ribbon.h) */
     /* 0x178 */ u8 texIdx;     /* which image of the texture object */
     /* 0x179 */ u8 pad179[3];
     /* 0x17C */ s32 flags;     /* EFT_ZAP_* */

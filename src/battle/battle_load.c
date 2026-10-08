@@ -42,14 +42,14 @@ extern s32 gBtlLoadObj;    /* object made from it */
 
 extern void Fade_Start(s32 idx, s32 dir, f32 seconds);
 extern s32 Fade_IsDone(s32 idx);
-extern void Snd_LoadBank(s32 mask, void *data, s32 arg);
+extern void Snd_LoadBank(s32 mask, void *data, s32 sync);
 extern void Snd_UnloadBank(s32 mask);
 extern void Res_RelocateOffsets(void *out, void *base, void *hdr);
 extern s32 BtlObj_Get(s32 id);
 
 /* Sound driver. */
 extern void Snd_Reset(void);                         /* clears the 8 bank slots' transfer state */
-extern void Snd_ReloadBank(s32 mask, void *data, s32 arg); /* reloads a bank from a buffer that stays allocated */
+extern void Snd_ReloadBank(s32 mask, void *data, s32 sync); /* reloads a bank from a buffer that stays allocated */
 extern s32 Snd_IsUploadDone(void);                          /* 1 when no bank slot has a transfer pending */
 
 extern void BtlScene_FreeChar(s32 side);
@@ -64,7 +64,7 @@ extern s32 EftBurst_IsBusy(void);
 extern void EftBurst_End(void);
 extern void StgNav_Rebind(void);
 extern void BtlStage_Term(void);
-extern void StgFx_SetDisabled(s32 arg);
+extern void StgFx_SetDisabled(s32 disabled);
 extern void StgFx_Reset(void);
 
 /* Fighters. */
@@ -82,19 +82,19 @@ extern s32 BtlSide_GetActiveMember(s32 side); /* member index */
 extern s32 BtlCtrl_IsSwitching(s32 side);
 
 /* Battle objects / models. */
-extern s32 BtlObj_Create(s32 slot, s32 model, s32 arg);
+extern s32 BtlObj_Create(s32 slot, s32 model, s32 active);
 extern s32 BtlObj_CreateChara(s32 id);
 extern void BtlObj_Rebind(s32 objId, s32 id);
 extern s32 BtlObj_RequestCharaModel(s32 side, s32 chara, s32 costume, s32 variant);
 extern void BtlRes_CommitReloadEx(void);
-extern void BtlObj_Init(s32 arg);
+extern void BtlObj_Init(s32 prealloc);
 extern void BtlObj_Term(void);
-extern s32 BtlRes_Request(s32 arg, s32 file, s32 file8, s32 file9);
+extern s32 BtlRes_Request(s32 fixed, s32 file, s32 file8, s32 file9);
 extern s32 BtlRes_GetSlot(s32 handle);
 extern void BtlRes_Reload(s32 id, s32 file, s32 file8, s32 file9);
 extern void BtlRes_CommitReload2(void);
-extern void BtlObjAnim_PlayAuto(s32 obj, s32 arg, s32 arg2);
-extern void BtlObjAnim_PlayModel(s32 obj, s32 arg, s32 arg2);
+extern void BtlObjAnim_PlayAuto(s32 obj, s32 anim, s32 mode);
+extern void BtlObjAnim_PlayModel(s32 obj, s32 anim, s32 mode);
 
 /* Script / message objects. */
 extern void Gsc_InitDefault(s32 *tbl);
@@ -102,7 +102,7 @@ extern void Gsc_Exit(void);
 extern s32 Gsc_LoadFile(void *data);
 extern void Gsc_UnloadFile(s32 script);
 extern s32 Gsc_StartMain(s32 script);
-extern void Gsc_RunAction(s32 script, s32 arg);
+extern void Gsc_RunAction(s32 script, s32 action);
 extern void BtlScript_Init(void);
 extern void BtlScript_Nop(void);
 extern void BtlScript_ScanEvents(s32 script);
@@ -649,7 +649,7 @@ void BtlLoad_PollCharaRequest(void) {
     s32 costume;
     s32 variant;
     s32 animChara;
-    s32 unk1C;
+    s32 anim1Chara;
     s32 voiceChara;
     s32 side;
     s32 modelOnly;
@@ -657,8 +657,8 @@ void BtlLoad_PollCharaRequest(void) {
 
     for (side = 0; side < 2; side++) {
         if (BtlChange_IsPendingType0(side)) {
-            BtlChange_GetArgs(&chara, &costume, &variant, &animChara, &unk1C, &voiceChara, NULL);
-            if (animChara < 0 && unk1C < 0 && voiceChara < 0) {
+            BtlChange_GetArgs(&chara, &costume, &variant, &animChara, &anim1Chara, &voiceChara, NULL);
+            if (animChara < 0 && anim1Chara < 0 && voiceChara < 0) {
                 modelOnly = 1;
             } else {
                 modelOnly = 0;
@@ -670,7 +670,7 @@ void BtlLoad_PollCharaRequest(void) {
             job->step = BtlLoad_StepChara;
             job->chara = chara;
             job->animChara = animChara;
-            job->anim1Chara = unk1C;
+            job->anim1Chara = anim1Chara;
             job->voiceChara = voiceChara;
             job->costume = costume;
             job->variant = variant;
@@ -1456,7 +1456,7 @@ void BattleSetup_SetOption14(s32 val) {
 }
 
 /* Sets the battle rules; bgm 24 means a random one of 0..23. */
-void BattleSetup_SetRule(s32 screenMode, s32 mode, s32 bgm, s32 timeLimit, s32 announcer, s32 stage, s32 unk10) {
+void BattleSetup_SetRule(s32 screenMode, s32 mode, s32 bgm, s32 timeLimit, s32 announcer, s32 stage, s32 stageChange) {
     BattleRule *rule = &SETUP()->rule;
 
     rule->screenMode = screenMode;
@@ -1468,21 +1468,21 @@ void BattleSetup_SetRule(s32 screenMode, s32 mode, s32 bgm, s32 timeLimit, s32 a
     }
     rule->timeLimit = timeLimit;
     rule->announcer = announcer;
-    rule->stageChange = unk10;
+    rule->stageChange = stageChange;
     rule->stage = stage;
     rule->curStage = stage;
 }
 
 /* Sets one side: who controls it, pad, team size, options, lead member and usable characters. */
-void BattleSetup_SetSide(s32 sideNo, s32 control, s32 pad, s32 memberCount, s32 unk1FC, s32 unk200, s32 lead,
+void BattleSetup_SetSide(s32 sideNo, s32 control, s32 pad, s32 memberCount, s32 changeAllowed, s32 switchEnabled, s32 lead,
                    BattleCharaBits *bits) {
     BattleSide *side = Side(sideNo);
 
     side->control = control;
     side->pad = pad;
     side->memberCount = memberCount;
-    side->switchEnabled = unk200;
-    side->changeAllowed = unk1FC;
+    side->switchEnabled = switchEnabled;
+    side->changeAllowed = changeAllowed;
     side->lead = lead;
     BattleSetup_InitCharaBits(&side->charaBits, bits);
 }

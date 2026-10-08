@@ -10,8 +10,8 @@
  * The wrap (Mathf_WrapAngle) is done by repeated float addition / subtraction of 2*pi, not by fmod, so the result
  * carries one rounding per turn removed, and an angle so large that adding 2*pi does not change it never ends.
  *
- * Mathf_WrapAngle, Mathf_SinFast and Mathf_Sqrt are assembly (VU0 or hand-written) and stay INCLUDE_ASM; an
- * equivalent that assembles to the same bytes is kept above each one.
+ * Mathf_WrapAngle, Mathf_SinFast and Mathf_Sqrt are assembly in the original (VU0 or hand-written) and are written
+ * here as __asm__ blocks that assemble to the same bytes; what each one computes is in the comment above it.
  */
 
 extern f32 sinf(f32 x);

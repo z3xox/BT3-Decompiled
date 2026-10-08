@@ -94,7 +94,7 @@ typedef struct EftHitTask {
 typedef struct EftHitDef {
     /* 0x00 */ s16 unk0;
     /* 0x02 */ s16 level;    /* copied to EftHitRec.level */
-    /* 0x04 */ s8 cls;       /* 0: "rush" class (EftHit_IsTechClass(rec, 0)) */
+    /* 0x04 */ s8 cls;       /* 0 skill, 1 technique, 2 ultimate (EftHit_IsTechClass(rec, 0) tests the skill class) */
     /* 0x05 */ s8 kind;      /* 0..2, 4, 7, 8, 9 tested */
     /* 0x06 */ s8 unk6;      /* copied to EftHitRec.unk4 */
     /* 0x07 */ s8 unk7;
@@ -140,7 +140,7 @@ typedef struct EftHitAtk {
     /* 0x1C */ s32 unk1C;
     /* 0x20 */ f32 speed;    /* copied to EftHitRec.shape.unk8 */
     /* 0x24 */ u8 unk24[0x30 - 0x24];
-    /* 0x30 */ s32 level;    /* copied to EftHitRec.level */
+    /* 0x30 */ s32 level;    /* copied to EftHitRec.level; FxHitArg2 calls this word `size` (0..3) */
 } EftHitAtk;
 
 /* Shape a record sweeps this frame. a and b point into gEftHitArena: the volume at the previous and at the
@@ -323,15 +323,15 @@ void EftMath_Lerp(EftVec out, EftVec *p, f32 t);
 void EftMath_TcbSpline(EftVec out, EftVec *p, f32 t, f32 tension, f32 bias, f32 continuity);
 EftVec *EftGfx_GetClipPlanes(void);
 void EftGfx_UpdateClipPlanes(void);
-s32 EftAim_GetDir(EftVec *out, s32 arg, s32 objId);
-s32 EftAim_GetDirKeep(EftHitSrc *src, EftVec *out, s32 arg, s32 objId);
+s32 EftAim_GetDir(EftVec *out, s32 from, s32 objId);
+s32 EftAim_GetDirKeep(EftHitSrc *src, EftVec *out, s32 from, s32 objId);
 void EftMath_RotateAboutAxis(EftVec *out, EftVec *v, EftVec *axis, f32 angle);
 void EftAim_Home(EftVec *out, EftVec *pos, EftVec *dir, s32 objId, f32 speed, f32 maxTurn);
-void EftGfx_DrawPolyAvgZ(EftGfxVert *verts, s32 arg1, s32 arg2, s32 arg3, s32 flip, u64 tex, s32 zOfs);
-void EftGfx_DrawPolyFixedZ(EftGfxVert *verts, s32 arg1, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex, s32 z);
-void EftGfx_DrawPolyAvgZFront(EftGfxVert *verts, s32 arg1, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex,
+void EftGfx_DrawPolyAvgZ(EftGfxVert *verts, s32 layer, s32 arg2, s32 arg3, s32 flip, u64 tex, s32 zOfs);
+void EftGfx_DrawPolyFixedZ(EftGfxVert *verts, s32 layer, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex, s32 z);
+void EftGfx_DrawPolyAvgZFront(EftGfxVert *verts, s32 layer, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex,
                               s32 zOfs);
-void EftGfx_DrawPolyScaledZ(EftGfxVert *verts, s32 arg1, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex,
+void EftGfx_DrawPolyScaledZ(EftGfxVert *verts, s32 layer, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex,
                             f32 zScale);
 void EftGfx_DrawSprite(EftVec *pos, EftVec *color, f32 w, f32 h, f32 u0, f32 v0, f32 u1, f32 v1, f32 rot, s32 layer,
                        s32 front, u64 tex0);

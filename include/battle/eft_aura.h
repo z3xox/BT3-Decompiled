@@ -101,7 +101,7 @@ void EftSpdLine_DrawStreaks(void);
 void EftSpdLine_BuildTrailQuad(Vec4 *out, EftSpdTrail *p);
 void EftSpdLine_BuildStreakQuad(Vec4 *out, EftSpdStreak *p);
 void EftSpdLine_DrawQuad(Vec4 *quad, Mtx44 *mtx, EftSpdTex *tex, f32 r, f32 g, f32 b, f32 a, u8 blend, s32 inView);
-void EftSpdLine_UpdateTexture(s32 a, s32 b);
+void EftSpdLine_UpdateTexture(s32 tcc, s32 tfx);
 
 /* ---- aura particles ------------------------------------------------------------------------------------- */
 
@@ -195,7 +195,7 @@ typedef struct EftAuraSpark {
     /* 0x00 */ s32 flags;   /* 1 fading out, 2, 4, 8 (aura flag 0x80), 0x10 (aura type 9 / 10) */
     /* 0x04 */ u8 objId;
     /* 0x05 */ u8 emitter;
-    /* 0x06 */ u8 kind;
+    /* 0x06 */ u8 kind;     /* the emitter's model node (set by EftAura_SpawnSpark; no reader found) */
     /* 0x07 */ u8 unk7;     /* 1 */
     /* 0x08 */ f32 age;
     /* 0x0C */ f32 life;
@@ -235,12 +235,12 @@ typedef struct EftAuraPool {
 
 typedef struct EftAuraCfgFlame {
     /* 0x0 */ u8 partNode;
-    /* 0x4 */ s32 node;  /* second model node of the part, or negative */
+    /* 0x4 */ s32 node;  /* second model node of the part, or negative (EftAuraDataPart.nodeEnd) */
     /* 0x8 */ s32 nodeRef;
 } EftAuraCfgFlame;
 
 typedef struct EftAuraCfgSpark {
-    /* 0x0 */ s32 kind;
+    /* 0x0 */ s32 kind;  /* not a kind: the model node the emitter sits on (EftAuraDataSpark.node) */
     /* 0x4 */ s32 node;  /* model node the spark is pulled towards, or negative */
 } EftAuraCfgSpark;
 
@@ -269,7 +269,9 @@ typedef struct EftAuraCfg {
     /* 0x1E0 */ f32 sparkSize[4][2];  /* {size, speed}: normal, flag 8, alt, alt + flag 8 */
     /* 0x200 */ f32 sparkMul[2][2];   /* {rotSpeed, speed} factors for flags 4 and 2 */
     /* 0x210 */ u8 unk210[0x200];
-    /* 0x410 */ EftAuraCfgFlame flame[EFT_AURA_SPARKS];
+    /* 0x410 */ EftAuraCfgFlame flame[EFT_AURA_SPARKS]; /* only the first EFT_AURA_PARTS (10) are flame records
+                                                           (EftAuraData.part); entries 10 and 11 lie over the
+                                                           fade node table at 0x488 */
     /* 0x4A0 */ s32 fadeNodeLast;
     /* 0x4A4 */ EftAuraCfgSpark spark[EFT_AURA_SPARKS];
 } EftAuraCfg;
@@ -331,7 +333,7 @@ void EftAura_AccelFlame(EftAuraFlame *f, f32 t);
 void EftAura_GetPartOffset(EftAura *aura, Vec4 *out, s32 objId, s32 part, f32 radial, f32 vertical);
 EftAuraSpark *EftAura_AllocSpark(void);
 void EftAura_FreeSparks(s32 objId);
-s32 EftAura_SpawnSpark(EftAura *aura, s32 objId, s32 emitter, s32 kind, Vec4 *offset, f32 follow);
+s32 EftAura_SpawnSpark(EftAura *aura, s32 objId, s32 emitter, s32 emitNode, Vec4 *offset, f32 follow);
 void EftAura_SpawnSparks(EftAura *aura, s32 objId, s32 emitter, s32 once);
 void EftAura_StepSparks(EftAura *aura, s32 objId);
 void EftAura_UpdateSparks(EftAura *aura, s32 objId, s32 *state);
@@ -486,8 +488,9 @@ typedef struct EftAuraDataPart {
     /* 0x8 */ s32 nodeRef;   /* node the flame leans away from, or negative */
 } EftAuraDataPart;
 
-/* A spark emitter. (eft_aura.h places these 4 bytes later with the fields {kind, node}: its `kind` is this `node`
-   and its `node` is the next entry's `unk0`.) */
+/* A spark emitter. (EftAuraCfgSpark above is the same table placed 4 bytes later with the fields {kind, node}: its
+   `kind` is this `node` and its `node` is the next entry's `unk0`. That later placement is the one that fits the
+   seven fade nodes the draw reads.) */
 typedef struct EftAuraDataSpark {
     /* 0x0 */ s32 unk0;
     /* 0x4 */ s32 node;      /* model node the emitter sits on */

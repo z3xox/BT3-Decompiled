@@ -884,7 +884,7 @@ f32 ChrCam_GetSideLimit(ChrCamChr *chr) {
     return a;
 }
 
-/* Requests a camera shake on this fighter's camera (ignored while cam->unk98 is 0). */
+/* Requests a camera shake on this fighter's camera (ignored while cam->shakeOn is 0). */
 void ChrCam_AddShake(ChrCamChr *chr, f32 strength, f32 time) {
     if (chr->cam.shakeOn != 0) {
         CamShake_Add(&chr->cam.shake, strength, time);
@@ -909,8 +909,8 @@ void ChrCam_UpdateDemo(ChrCamChr *chr) {
 
 /* Starts a camera cut from explicit (start, delta) pairs. */
 void ChrCam_SetCut(ChrCamChr *chr, Vec4 *vecA, Vec4 *vecADelta, Vec4 *vecB, Vec4 *vecBDelta, Vec4 *vecC,
-                   Vec4 *vecCDelta, s32 unk88, f32 valA, f32 valADelta, f32 valB, f32 valBDelta, f32 valC,
-                   f32 valCDelta, s32 unk8C, s32 unk90, s32 unk94, s32 time, s32 flags) {
+                   Vec4 *vecCDelta, s32 nodeA, f32 valA, f32 valADelta, f32 valB, f32 valBDelta, f32 valC,
+                   f32 valCDelta, s32 nodeA2, s32 nodeC, s32 nodeC2, s32 time, s32 flags) {
     ChrCamCut *cut = &chr->cut;
 
     Vec4_Copy(&chr->cut.vecA, vecA);
@@ -919,10 +919,10 @@ void ChrCam_SetCut(ChrCamChr *chr, Vec4 *vecA, Vec4 *vecADelta, Vec4 *vecB, Vec4
     Vec4_Copy(&chr->cut.vecBDelta, vecBDelta);
     Vec4_Copy(&chr->cut.vecC, vecC);
     Vec4_Copy(&chr->cut.vecCDelta, vecCDelta);
-    cut->nodeA = unk88;
-    cut->nodeA2 = unk8C;
-    cut->nodeC = unk90;
-    cut->nodeC2 = unk94;
+    cut->nodeA = nodeA;
+    cut->nodeA2 = nodeA2;
+    cut->nodeC = nodeC;
+    cut->nodeC2 = nodeC2;
     cut->valA = valA;
     cut->valADelta = valADelta;
     cut->valB = valB;
@@ -941,7 +941,7 @@ void ChrCam_SetCut(ChrCamChr *chr, Vec4 *vecA, Vec4 *vecADelta, Vec4 *vecB, Vec4
 }
 
 /* Starts a cut that begins where the camera is now: the running cut's current values, or the live camera. */
-void ChrCam_BlendToCut(ChrCamChr *chr, Vec4 *vecADelta, Vec4 *vecBDelta, Vec4 *vecCDelta, s32 unk8C, s32 unk94,
+void ChrCam_BlendToCut(ChrCamChr *chr, Vec4 *vecADelta, Vec4 *vecBDelta, Vec4 *vecCDelta, s32 nodeA2, s32 nodeC2,
                        f32 valADelta, f32 valBDelta, f32 valCDelta, s32 time, s32 flags) {
     Vec4 vecA;
     Vec4 vecB;
@@ -955,8 +955,8 @@ void ChrCam_BlendToCut(ChrCamChr *chr, Vec4 *vecADelta, Vec4 *vecBDelta, Vec4 *v
     ChrCam *cam;
     Vec4 *pb;
     Vec4 *pc;
-    s32 unk88;
-    s32 unk90;
+    s32 nodeA;
+    s32 nodeC;
     f32 t = 0.0f;
 
     if (cut->timer > 0 || (cut->flags & CHRCUT_F_HOLD)) {
@@ -971,15 +971,15 @@ void ChrCam_BlendToCut(ChrCamChr *chr, Vec4 *vecADelta, Vec4 *vecBDelta, Vec4 *v
         pc = &vecC;
         Vec4_Scale(pc, &chr->cut.vecCDelta, t);
         Vec4_Add(pc, &chr->cut.vecC, pc);
-        unk88 = cut->nodeA;
+        nodeA = cut->nodeA;
         valA = cut->valA + cut->valADelta * t;
         valB = cut->valB + cut->valBDelta * t;
-        unk90 = cut->nodeC;
+        nodeC = cut->nodeC;
         valC = cut->valC + cut->valCDelta * t;
     } else {
         cam = &chr->cam;
-        unk90 = -1;
-        unk88 = -1;
+        nodeC = -1;
+        nodeA = -1;
         pb = &vecB;
         valB = cam->rot.x;
         valA = cam->rot.y;
@@ -996,8 +996,8 @@ void ChrCam_BlendToCut(ChrCamChr *chr, Vec4 *vecADelta, Vec4 *vecBDelta, Vec4 *v
         Vec4_Copy(pc, &vecA);
     }
     flags &= ~9;
-    ChrCam_SetCut(chr, &vecA, vecADelta, pb, vecBDelta, pc, vecCDelta, unk88, valA, valADelta, valB, valBDelta,
-                  valC, valCDelta, unk8C, unk90, unk94, time, flags);
+    ChrCam_SetCut(chr, &vecA, vecADelta, pb, vecBDelta, pc, vecCDelta, nodeA, valA, valADelta, valB, valBDelta,
+                  valC, valCDelta, nodeA2, nodeC, nodeC2, time, flags);
 }
 
 /* Asks for cut `index` of table `table` (0: the character's own, 1: the common one); ChrCam_StartCut acts on it. */
@@ -1025,12 +1025,12 @@ void ChrCam_StartCut(ChrCamChr *chr) {
     Vec4 opp2;
     Vec4 mid2;
     ChrCamCutDef *def = NULL;
-    s32 unk88;
+    s32 nodeA;
     u8 *obj;
     u16 flags;
-    s32 unk8C;
-    s32 unk90;
-    s32 unk94;
+    s32 nodeA2;
+    s32 nodeC;
+    s32 nodeC2;
     f32 yaw;
     f32 scale;
     f32 pi;
@@ -1067,14 +1067,14 @@ void ChrCam_StartCut(ChrCamChr *chr) {
         if (flags & CHRCUTDEF_A_TRACK) {
             Vec4_SetZeroW1(&vecA);
             Vec4_SetZeroW1(&vecADelta);
-            unk88 = def->nodeA | CHRCUT_NODE_OPP;
-            unk8C = def->nodeA2 | CHRCUT_NODE_OPP;
+            nodeA = def->nodeA | CHRCUT_NODE_OPP;
+            nodeA2 = def->nodeA2 | CHRCUT_NODE_OPP;
         } else {
-            unk88 = -1;
+            nodeA = -1;
             BtlOpp_GetNodePos(chr, def->nodeA, &vecA);
             BtlOpp_GetNodePos(chr, def->nodeA2, &tmpA);
             Vec4_Sub(&vecADelta, &tmpA, &vecA);
-            unk8C = -1;
+            nodeA2 = -1;
         }
         Vec4_Copy(&vecB, *(Vec4 **)((u8 *)BtlOpp_GetObj(chr) + 0xFA0));
     } else if (flags & CHRCUTDEF_MID) {
@@ -1082,12 +1082,12 @@ void ChrCam_StartCut(ChrCamChr *chr) {
         scales[0] = BtlCharApi_GetHeight(chr->objId);
         scales[1] = BtlOpp_GetHeight(chr);
         scale = (scales[1] < scales[0]) ? scales[0] : scales[1];
-        unk88 = -1;
+        nodeA = -1;
         BtlCharApi_GetNodePos(chr->objId, def->nodeA, &own);
         half = 0.5f;
         BtlOpp_GetNodePos(chr, def->nodeA, &opp);
         Vec4_Lerp(&vecA, &own, &opp, half);
-        unk8C = -1;
+        nodeA2 = -1;
         BtlCharApi_GetNodePos(chr->objId, def->nodeA2, &own);
         BtlOpp_GetNodePos(chr, def->nodeA2, &opp);
         Vec4_Lerp(&mid, &own, &opp, half);
@@ -1096,8 +1096,8 @@ void ChrCam_StartCut(ChrCamChr *chr) {
         if (flags & CHRCUTDEF_A_TRACK) {
             Vec4_SetZeroW1(&vecA);
             Vec4_SetZeroW1(&vecADelta);
-            unk88 = def->nodeA | CHRCUT_NODE_MID;
-            unk8C = def->nodeA2 | CHRCUT_NODE_MID;
+            nodeA = def->nodeA | CHRCUT_NODE_MID;
+            nodeA2 = def->nodeA2 | CHRCUT_NODE_MID;
         }
     } else {
         yaw = BtlChar_GetPos(chr)->yaw;
@@ -1105,12 +1105,12 @@ void ChrCam_StartCut(ChrCamChr *chr) {
         if (flags & CHRCUTDEF_A_TRACK) {
             Vec4_SetZeroW1(&vecA);
             Vec4_SetZeroW1(&vecADelta);
-            unk88 = def->nodeA;
-            unk8C = def->nodeA2;
+            nodeA = def->nodeA;
+            nodeA2 = def->nodeA2;
         } else {
-            unk88 = -1;
+            nodeA = -1;
             BtlCharApi_GetNodePos(chr->objId, def->nodeA, &vecA);
-            unk8C = -1;
+            nodeA2 = -1;
             BtlCharApi_GetNodePos(chr->objId, def->nodeA2, &tmpB);
             Vec4_Sub(&vecADelta, &tmpB, &vecA);
         }
@@ -1119,57 +1119,57 @@ void ChrCam_StartCut(ChrCamChr *chr) {
     if (flags & CHRCUTDEF_C_OPP) {
         if (flags & CHRCUTDEF_C_TRACK) {
             Vec4_SetZeroW1(&vecC);
-            unk90 = def->nodeC | CHRCUT_NODE_OPP;
+            nodeC = def->nodeC | CHRCUT_NODE_OPP;
         } else {
             BtlOpp_GetNodePos(chr, def->nodeC, &vecC);
-            unk90 = -1;
+            nodeC = -1;
         }
     } else if (flags & CHRCUTDEF_C_MID) {
         if (flags & CHRCUTDEF_C_TRACK) {
             Vec4_SetZeroW1(&vecC);
-            unk90 = def->nodeC | CHRCUT_NODE_MID;
+            nodeC = def->nodeC | CHRCUT_NODE_MID;
         } else {
             BtlCharApi_GetNodePos(chr->objId, 3, &own2);
             BtlOpp_GetNodePos(chr, 3, &opp2);
-            unk90 = -1;
+            nodeC = -1;
             Vec4_Lerp(&vecC, &own2, &opp2, 0.5f);
         }
     } else {
         if (flags & CHRCUTDEF_C_TRACK) {
             Vec4_SetZeroW1(&vecC);
-            unk90 = def->nodeC;
+            nodeC = def->nodeC;
         } else {
             BtlCharApi_GetNodePos(chr->objId, def->nodeC, &vecC);
-            unk90 = -1;
+            nodeC = -1;
         }
     }
     if (flags & CHRCUTDEF_C2_OPP) {
         if (flags & CHRCUTDEF_C2_TRACK) {
             Vec4_SetZeroW1(&vecCDelta);
-            unk94 = def->nodeC2 | CHRCUT_NODE_OPP;
+            nodeC2 = def->nodeC2 | CHRCUT_NODE_OPP;
         } else {
             BtlOpp_GetNodePos(chr, def->nodeC2, &own2);
             Vec4_Sub(&vecCDelta, &own2, &vecC);
-            unk94 = -1;
+            nodeC2 = -1;
         }
     } else if (flags & CHRCUTDEF_C2_MID) {
         if (flags & CHRCUTDEF_C2_TRACK) {
             Vec4_SetZeroW1(&vecCDelta);
-            unk94 = def->nodeC2 | CHRCUT_NODE_MID;
+            nodeC2 = def->nodeC2 | CHRCUT_NODE_MID;
         } else {
             BtlCharApi_GetNodePos(chr->objId, 3, &own2);
             BtlOpp_GetNodePos(chr, 3, &opp2);
-            unk94 = -1;
+            nodeC2 = -1;
             Vec4_Lerp(&mid2, &own2, &opp2, 0.5f);
             Vec4_Sub(&vecCDelta, &mid2, &vecC);
         }
     } else {
         if (flags & CHRCUTDEF_C2_TRACK) {
             Vec4_SetZeroW1(&vecCDelta);
-            unk94 = def->nodeC2;
+            nodeC2 = def->nodeC2;
         } else {
             BtlCharApi_GetNodePos(chr->objId, def->nodeC2, &own2);
-            unk94 = -1;
+            nodeC2 = -1;
             Vec4_Sub(&vecCDelta, &own2, &vecC);
         }
     }
@@ -1189,11 +1189,11 @@ void ChrCam_StartCut(ChrCamChr *chr) {
     }
     cutFlags = def->cutFlags;
     if (flags & CHRCUTDEF_BLEND) {
-        ChrCam_BlendToCut(chr, &vecADelta, (Vec4 *)&gVu0ZeroVec, &vecCDelta, unk8C, unk94, valADelta, valBDelta,
+        ChrCam_BlendToCut(chr, &vecADelta, (Vec4 *)&gVu0ZeroVec, &vecCDelta, nodeA2, nodeC2, valADelta, valBDelta,
                           valCDelta, time, cutFlags);
     } else {
-        ChrCam_SetCut(chr, &vecA, &vecADelta, &vecB, (Vec4 *)&gVu0ZeroVec, &vecC, &vecCDelta, unk88, valA,
-                      valADelta, valB, valBDelta, valC, valCDelta, unk8C, unk90, unk94, time, cutFlags);
+        ChrCam_SetCut(chr, &vecA, &vecADelta, &vecB, (Vec4 *)&gVu0ZeroVec, &vecC, &vecCDelta, nodeA, valA,
+                      valADelta, valB, valBDelta, valC, valCDelta, nodeA2, nodeC, nodeC2, time, cutFlags);
     }
 }
 

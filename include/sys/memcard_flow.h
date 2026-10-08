@@ -4,11 +4,11 @@
 #include "types.h"
 
 /*
- * Memory-card dialog flows (0x1198D8..0x11EC10, src/sys/memcard_flow.c). Proper file name: sys/mc_flow.c.
+ * Memory-card dialog flows (0x1198D8..0x11EC10, src/sys/memcard_flow.c).
  *
  * One work area (gMcFlow, 0x39F90 bytes on heap 2) drives the confirmation dialog (Dialog_*, sys/dialog.c)
  * through one of eight state machines, one per kind of card operation. The card itself is handled by the
- * layer below (0x115478..0x1198D8, stem stgm_a), which is only called here.
+ * layer below (McCard_*, src/sys/memcard.c, 0x116B98..0x1198D8), which is only called here.
  *
  * Use: McFlow_Init(); McFlow_SetDoneCb() / McFlow_SetModeCb(); McFlow_Start(mode); then McFlow_Update()
  * once per frame until it returns 0; McFlow_Term(). The dialog must exist (Dialog_Init) before.
@@ -47,7 +47,10 @@ typedef struct McFlowHeader {
     /* 0x10 */ s32 chara[2][5];  /* the two teams (MCFLOW_NO_CHARA = empty) */
 } McFlowHeader; /* size 0x38 */
 
-/* The part of the card layer's request block that is filled here. */
+/* The part of the card layer's request block that is filled here. This is McCardFile of sys/memcard.h seen
+ * differently: there +0x318 is title[0x44] followed by iconName[3][0x40] (to 0x41C) and titleBreak is a u16.
+ * `title.text` here runs over the three icon names (only its first 0x44 bytes are title), and `unk418` is the
+ * last four bytes of iconName[2]. */
 typedef struct McFlowReq {
     /* 0x000 */ u8 *icon;        /* icon data inside the resource file */
     /* 0x004 */ s32 unk004[2];
@@ -57,7 +60,7 @@ typedef struct McFlowReq {
         char text[0x100];        /* icon.sys title, Shift-JIS */
         u64 align;               /* the strcpy into it is done in 8-byte pieces */
     } title;
-    /* 0x418 */ s32 unk418;
+    /* 0x418 */ s32 unk418;      /* the tail of McCardFile.iconName[2]; not used here */
     /* 0x41C */ s32 titleBreak;  /* byte offset of the line break in the title */
 } McFlowReq; /* size 0x420 */
 

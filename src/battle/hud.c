@@ -127,7 +127,7 @@ extern void HudPrompt_Init(HudNode **out, HudRes *res);
 extern void HudPrompt_Term(void);
 extern void HudPrompt_Reset(void);
 extern void HudPrompt_SelectSide(s32 side);                    /* select the side */
-extern void HudPrompt_SetButton(s32 side, s32 button, s32 arg);
+extern void HudPrompt_SetButton(s32 side, s32 button, s32 group);
 extern void HudPrompt_SetCommand(s32 side, s32 count, s32 *buttons, s32 *kinds, s32 idx);
 extern void HudPrompt_ClearCommand(s32 side);
 extern void HudPrompt_AcceptCommand(s32 side);

@@ -7,7 +7,7 @@
 
 /*
  * ShenCfm, 0x2BEB20..0x2BF370: the confirmation window of the wish screen ("reconfir": yes / no / details).
- * Built with -G0. See sys/late_a.h.
+ * Built with -G0. See ui/shen_wish.h.
  *
  * A separate object from shen_wish.c: its strings (0x2FC0F0..0x2FC280) repeat "fl_on_start", "fl_off_start" and
  * "fl_ok", which one translation unit would have emitted once. The first two come first because the inline
@@ -22,8 +22,8 @@ extern void Flash_Create(Flash *flash, void *data, void *tex);
 extern void Flash_Destroy(Flash *flash);
 extern void Flash_Advance(Flash *flash);
 extern void Flash_Draw(Flash *flash);
-extern void Flash_Play(Flash *flash, s32 arg);
-extern void Flash_GotoLabel(Flash *flash, char *label, s32 arg);
+extern void Flash_Play(Flash *flash, s32 speed);
+extern void Flash_GotoLabel(Flash *flash, char *label, s32 restart);
 extern void Flash_FindLabel(Flash *flash, char *parent, char *name, FlashRef *out);
 extern void Flash_ClipGotoLabel(Flash *flash, FlashRef *ref, char *label);
 extern void Flash_ClipSetColor(Flash *flash, FlashRef *ref, f32 v);

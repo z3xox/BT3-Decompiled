@@ -98,7 +98,7 @@ extern void EftSprAnim_SetColor(void *obj, Vec4 *color);
 extern void EftSprAnim_SetDrawFlags(void *obj, s32 layer);
 extern void EftSprAnim_KeepTextures(void *obj);                                  /* end of frame */
 extern void BtlTask_SetDead(EftAaTask *task);                            /* kills the task */
-extern u64 EftVram_AddTex(void *entry, s32 a1, s32 a2);                 /* advances a texture, returns TEX0 */
+extern u64 EftVram_AddTex(void *entry, s32 tcc, s32 tfx);                 /* advances a texture, returns TEX0 */
 extern void EftTexSet_Load16(u8 *res, s32 *entry);                        /* binds a resource set */
 
 extern EftAaView *gBtlCamView;
@@ -217,7 +217,7 @@ EftGroundPiece *EftGndDust_SpawnPiece(EftGroundWork *w, EftGroundDef *def, s32 f
 /* Starts one piece from explicit values. One draw of the VU0 generator: spin direction. */
 EftGroundPiece *EftGndDust_SpawnPieceEx(EftGroundWork *w, Vec4 *pos, Vec4 *dir, EftGroundRgba *colA, EftGroundRgba *colB,
                                        f32 sizeX, f32 sizeY, f32 growX, f32 growY, f32 speed, f32 drag, f32 rot,
-                                       f32 spin, s16 life, s16 fade, s16 tex, f32 unkB8, f32 gravity, s32 flags) {
+                                       f32 spin, s16 life, s16 fade, s16 tex, f32 growDamp, f32 gravity, s32 flags) {
     EftGroundPiece *p = EftGndDust_AllocPart(&w->active, w->free);
 
     if (p != NULL) {
@@ -237,7 +237,7 @@ EftGroundPiece *EftGndDust_SpawnPieceEx(EftGroundWork *w, Vec4 *pos, Vec4 *dir, 
         p->lifeMax = life;
         p->fade = fade;
         p->alpha = 1.0f;
-        p->growDamp = unkB8;
+        p->growDamp = growDamp;
         p->rot = rot;
         p->tex = tex;
         p->spin = spin;
@@ -269,8 +269,8 @@ void EftGndDust_SpawnBodyDust(EftGroundWork *w, EftGroundDef *def, f32 scale) {
     EftAaVec center;
     EftAaVec dir = { 0.0f, -1.0f, 0.0f, 1.0f };
     EftAaVec delta;
-    EftAaVec unkE0;
-    EftAaVec unkF0;
+    EftAaVec colA; /* written, never used */
+    EftAaVec colB; /* written, never used */
     f32 h;
     s32 i;
     s32 j;
@@ -318,8 +318,8 @@ void EftGndDust_SpawnBodyDust(EftGroundWork *w, EftGroundDef *def, f32 scale) {
             pos.z = start.z + (f32)j * step.z;
             Vec3_Sub((Vec4 *)&dir, (Vec4 *)&pos, (Vec4 *)&center);
             Vec3_Normalize((Vec4 *)&dir, (Vec4 *)&dir);
-            Vec4_Set((Vec4 *)&unkE0, 128.0f, 128.0f, 128.0f, 0.0f);
-            Vec4_Set((Vec4 *)&unkF0, 128.0f, 128.0f, 128.0f, 0x80 - rand() % 32);
+            Vec4_Set((Vec4 *)&colA, 128.0f, 128.0f, 128.0f, 0.0f);
+            Vec4_Set((Vec4 *)&colB, 128.0f, 128.0f, 128.0f, 0x80 - rand() % 32);
             dir.w = 1.0f;
             pos.w = 1.0f;
             Vec4_Copy(&def->pos, (Vec4 *)&pos);

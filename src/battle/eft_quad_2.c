@@ -43,11 +43,11 @@ extern void Vec3_Copy(EftYVec *dst, EftYVec *src); /* copies x, y, z */
 extern void Vec4_ToInt(EftYCol *dst, EftYVec *src); /* float vector to integer vector */
 extern void Vec4_Clamp(EftYVec *dst, EftYVec *src, f32 lo, f32 hi); /* clamps each component */
 extern void Vec3_ScaleAdd(EftYVec *dst, EftYVec *dir, EftYVec *base, f32 s); /* dst = base + dir * s */
-extern void EftGfx_DrawPolyFixedZ(EftYClipVtx *verts, s32 layer, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex,
+extern void EftGfx_DrawPolyFixedZ(EftYClipVtx *verts, s32 layer, s32 unusedA, s32 unusedB, s32 front, s32 flip, u64 tex,
                                   s32 z);
-extern void EftGfx_DrawPolyScaledZ(EftYClipVtx *verts, s32 layer, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex,
+extern void EftGfx_DrawPolyScaledZ(EftYClipVtx *verts, s32 layer, s32 unusedA, s32 unusedB, s32 front, s32 flip, u64 tex,
                                    f32 zScale);
-extern u64 EftVram_AddImage(EftYTex *tex, s32 a, s32 b);
+extern u64 EftVram_AddImage(EftYTex *tex, s32 tcc, s32 tfx);
 extern u64 EftVram_AddClut(EftYTex *tex);
 extern EftYTask *BtlTaskList_AddTail(void *list, void *cls, void *arg);
 extern s32 EftQuad_InitQuad(EftQuad *q, EftQuadWork *w); /* fills a new quad from the emitter's current values */
@@ -758,12 +758,12 @@ void EftQuad_SetSheet(EftQuadWork *w, u8 cols, u8 rows) {
 }
 
 /* Binds the emitter to two entries of a texture table. */
-void EftQuad_SetTex(EftQuadWork *w, EftYTex8 *tex, s32 a, s32 b) {
-    w->texB = b;
+void EftQuad_SetTex(EftQuadWork *w, EftYTex8 *tex, s32 image, s32 palette) {
+    w->texB = palette;
     w->tex = tex;
-    w->texA = a;
-    w->tex0 = *(a + tex->e);
-    w->tex1 = *(b + tex->e);
+    w->texA = image;
+    w->tex0 = *(image + tex->e);
+    w->tex1 = *(palette + tex->e);
 }
 
 /* Builds the GS TEX0 value of the emitter's texture pair into the table entry, once per entry. */
@@ -1107,7 +1107,7 @@ void EftQuad_SetTexTable(EftYTask *task, EftYTex8 *tex) {
 }
 
 /* Binds the emitter to two entries of a texture table. */
-void EftQuad_SetTexPair(EftYTask *task, EftYTex8 *tex, s32 a, s32 b) {
+void EftQuad_SetTexPair(EftYTask *task, EftYTex8 *tex, s32 image, s32 palette) {
     EftQuadWork *w;
 
     if (gEftQuadMgr == NULL) {
@@ -1126,7 +1126,7 @@ void EftQuad_SetTexPair(EftYTask *task, EftYTex8 *tex, s32 a, s32 b) {
     if (!(w->flags & EFT_QUADEM_ALIVE)) {
         return;
     }
-    EftQuad_SetTex(w, tex, a, b);
+    EftQuad_SetTex(w, tex, image, palette);
 }
 
 /* Sets the frames to wait before the emitter starts. */

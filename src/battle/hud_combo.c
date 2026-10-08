@@ -80,7 +80,8 @@ typedef struct HudCombo {
 /* The side's fighter object as BtlCtrl_GetObj returns it: only what this file reads. */
 typedef struct HudCObj {
     /* 0x00 */ u8 unk0[0xBC];
-    /* 0xBC */ void *skillScript; /* given to BtlMenu_SetScript2 before the name is drawn */
+    /* 0xBC */ void *skillScript; /* the fighter's skill text (`skillText` in pause_menu.c / hud_prompt.c), given to
+                                     BtlMenu_SetScript2 before the name is drawn */
 } HudCObj;
 
 /* 0x2FEB58: this object's .sdata word (the notice / prompt / timer pointers of hud_e*.c follow it). */

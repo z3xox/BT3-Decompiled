@@ -59,10 +59,10 @@ extern f32 BtlCharApi_GetHeight(s32 objId);        /* obj + 0xFF4 (10.0 without 
 extern f32 BtlCharApi_GetCenterHeight(s32 objId);
 extern f32 BtlCharApi_GetRadius(s32 objId);
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out);
-extern void BtlSuper_GetStagePlacement(BtlCtlChr *target, s32 arg1, s32 arg2, Vec4 *pos, Vec4 *rot);
-extern s32 BtlStage_FindZoneNear(s32 arg0, Vec4 *pos);
+extern void BtlSuper_GetStagePlacement(BtlCtlChr *target, s32 slot, s32 n, Vec4 *pos, Vec4 *rot);
+extern s32 BtlStage_FindZoneNear(s32 zone, Vec4 *pos);
 extern f32 BtlStage_GetTop(void);
-extern BtlCtlPath *BtlStage_GetPath(s32 arg0);
+extern BtlCtlPath *BtlStage_GetPath(s32 n);
 extern s32 BtlStage_GetStartPlace(s32 player, Vec4 *pos, Vec4 *rot, s32 restart);
 extern s32 BtlStage_GetPlace(Vec4 *pos, Vec4 *rot);
 extern void BtlObjBody_Reset(BtlCtlObj *obj);
@@ -432,18 +432,18 @@ void BtlChar_SavePlacement(BtlCtlChr *chr) {
 }
 
 /* Sets the saved placement from arguments. */
-void BtlChar_SetSavedPlacement(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, Vec4 *unk1310, s32 flagF, s32 flagE) {
+void BtlChar_SetSavedPlacement(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, Vec4 *bodyWarpPos, s32 flagF, s32 flagE) {
     Vec4_Copy(&chr->savedPos, pos);
     Vec4_Copy(&chr->savedRot, rot);
-    Vec4_Copy(&chr->bodyWarpPos, unk1310);
+    Vec4_Copy(&chr->bodyWarpPos, bodyWarpPos);
     chr->savedArea = BtlStage_FindZoneNear(-1, pos);
     chr->savedFlagF = flagF;
     chr->savedFlagE = flagE;
 }
 
 /* Stores a vector at +0x1310 and raises flag 0x55. */
-void BtlChar_RequestBodyWarp(BtlCtlChr *chr, Vec4 *v) {
-    Vec4_Copy(&chr->bodyWarpPos, v);
+void BtlChar_RequestBodyWarp(BtlCtlChr *chr, Vec4 *pos) {
+    Vec4_Copy(&chr->bodyWarpPos, pos);
     BtlChar_SetFlag(chr, 0x55);
 }
 
@@ -455,13 +455,13 @@ void BtlChar_ResetBodyWarp(BtlCtlChr *chr) {
 }
 
 /* Computes the relative placement offsets (from this fighter or from BtlOpp_GetPlayer's fighter) and raises flag 0xF6. */
-void BtlChar_RequestPlaceRelative(BtlCtlChr *chr, s32 arg1, s32 arg2, s32 self) {
+void BtlChar_RequestPlaceRelative(BtlCtlChr *chr, s32 slot, s32 n, s32 self) {
     BtlCtlChr *target = chr;
 
     if (!self) {
         target = BtlChar_Get(BtlOpp_GetPlayer(chr));
     }
-    BtlSuper_GetStagePlacement(target, arg1, arg2, &chr->relPos, &chr->relRot);
+    BtlSuper_GetStagePlacement(target, slot, n, &chr->relPos, &chr->relRot);
     BtlChar_SetFlag(chr, 0xF6);
 }
 

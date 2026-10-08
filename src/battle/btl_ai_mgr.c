@@ -64,18 +64,18 @@ extern s32 BtlCharApi_IsInputInjected(s32 objId);                   /* fighter +
 extern f32 BtlStage_GetRadius(void);                        /* stage limit: first float of the stage's +0x40 block */
 extern f32 BtlStage_GetInnerRadius(void);                        /* the same - 100 */
 extern f32 BtlStage_GetTop(void);                        /* second float of that block */
-extern void BtlStage_GetStartPlace(s32 objId, BtlAiVec *out, BtlAiVec *out2, s32 arg);
+extern void BtlStage_GetStartPlace(s32 objId, BtlAiVec *out, BtlAiVec *out2, s32 alt);
 
 /* Other AI code. */
 extern s32 StgCol_TraceSegment(BtlAiSegment *seg);           /* stage line test; fills the BtlAiHit block */
 extern BtlAiHit *StgCol_GetHit(void);
 extern void StgNav_FindPath(BtlAiVec *from, BtlAiVec *to, BtlAiMovePath *path);
 extern void BtlAiSeq_Reset(BtlAiSeq *act);           /* clears the action state */
-extern s32 AiThink_FindBasicColumn(s32 button, s32 arg);
+extern s32 AiThink_FindBasicColumn(s32 button, s32 code);
 extern void AiThink_BuildTotals(BtlAiWork *s);
 extern void AiThink_Think(BtlAiWork *s);
-extern void AiThink_BindData(s32 arg);                    /* binds the AI data section of gCommonRes */
-extern void AiThink_ResetSide(s32 side, s32 arg);          /* resets one side's controller from its fighter */
+extern void AiThink_BindData(s32 owned);                    /* binds the AI data section of gCommonRes */
+extern void AiThink_ResetSide(s32 side, s32 owned);          /* resets one side's controller from its fighter */
 extern void BtlAiPad_Clear(BtlAiOutput *out, s32 keep); /* clears the virtual pad */
 /* Writes the virtual pad. hold / press / once are AI button bits (BTLAI_BTN_*): hold is passed on every
    frame, press only for a button not marked 1 in the output's per-button word, once only for a button not
@@ -456,7 +456,7 @@ s32 BtlAiMove_Check(BtlAiWork *s) {
     BtlAiMoveWork *m = &s->move;
     BtlAiSeq *act = &s->seq;
     BtlAiMovePath *path = &s->move.path;
-    s32 state = BtlCharApi_GetAnimId(s->objId);
+    s32 anim = BtlCharApi_GetAnimId(s->objId);
 
     if (m->pathTimer > 0) {
         m->pathTimer--;
@@ -480,7 +480,7 @@ s32 BtlAiMove_Check(BtlAiWork *s) {
             if (path->count == 0) {
                 return 1;
             }
-            if ((u32)(state - 0x1F) < 4) {
+            if ((u32)(anim - 0x1F) < 4) {
                 return 4;
             }
             Vec3_Sub(&d, (BtlAiVec *)&path->pts[path->count - 1], &pos);
@@ -621,7 +621,7 @@ void BtlAiMove_Hold(BtlAiWork *s) {
     BtlAiActTable *tbl = gBtlAi->data->act;
     s32 hold;
     s32 cls;
-    s32 state = BtlCharApi_GetAnimId(s->objId);
+    s32 anim = BtlCharApi_GetAnimId(s->objId);
 
     hold = BTLAI_BTN_DASH;
     if (m->mode == 2) {
@@ -630,7 +630,7 @@ void BtlAiMove_Hold(BtlAiWork *s) {
     if (act->flags & BTLAI_ACT_BLOCKED_AHEAD) {
         hold |= BTLAI_BTN_ASCEND;
     }
-    cls = tbl->actClass[state];
+    cls = tbl->actClass[anim];
     x = y;
     if (cls == 10) {
         y = -1.0f;
@@ -722,14 +722,14 @@ void BtlAiMove_Run(BtlAiWork *s) {
 void BtlAiMove_End(BtlAiWork *s) {
     BtlAiSeq *act = &s->seq;
     BtlAiActTable *tbl = gBtlAi->data->act;
-    s32 state = BtlCharApi_GetAnimId(s->objId);
-    s32 cls = tbl->actClass[state];
+    s32 anim = BtlCharApi_GetAnimId(s->objId);
+    s32 cls = tbl->actClass[anim];
 
     BtlAiPad_Clear(&s->out, 1);
     if (cls == 10) {
         BtlAiPad_Set(s, 0, BTLAI_BTN_DASH, 0, 0, 0.0f, 0.0f);
     }
-    if ((u32)(state - 0x1F) < 4) {
+    if ((u32)(anim - 0x1F) < 4) {
         BtlAiPad_Set(s, BTLAI_BTN_ASCEND, 0, 0, 0, 0.0f, 0.0f);
     }
     if (cls == 0) {

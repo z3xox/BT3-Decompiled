@@ -223,7 +223,7 @@ void BtlColl_PlayContactSound(BtlCollHit *hit);
 void BtlColl_UpdateGround(BtlCollChr *chr);
 void BtlColl_ClearActionBits(BtlCollChr *chr);
 void BtlColl_AddActionBit(BtlCollChr *chr, s32 action);
-void BtlColl_SetFramesLeftOverride(BtlCollChr *chr, s32 v);
+void BtlColl_SetFramesLeftOverride(BtlCollChr *chr, s32 frames);
 void BtlColl_SetFramesToReach(BtlCollChr *chr, f32 scale);
 void BtlColl_NextPoolMember(BtlCollChr *chr); /* 0x1CDCA8: first function of src/battle/btl_char_member.c */
 

@@ -20,7 +20,7 @@ typedef struct FxPose {
     /* 0x80 [0x090] */ Vec4 dir;    /* a vector every "flash" effect gets as its second vector */
     /* 0x90 [0x0A0] */ f32 pitch;
     /* 0x94 [0x0A4] */ f32 yaw;       /* facing */
-    /* 0x98 [0x0A8] */ f32 speed;     /* reference speed: |vel| / speed > 0.5 starts the fast-move effect */
+    /* 0x98 [0x0A8] */ f32 speed;     /* the pose's speed along dir: |vel| / speed > 0.5 starts the fast-move effect */
     /* 0x9C [0x0AC] */ u8 unk9C[0xB0 - 0x9C];
     /* 0xB0 [0x0C0] */ Vec4 ground;    /* ground point under the fighter; .y is compared with the water level */
     /* 0xC0 [0x0D0] */ Vec4 groundNormal;    /* passed with ground to the ground dust (the ground normal: inferred) */
@@ -109,9 +109,9 @@ typedef struct FxChr {
     /* 0x0498 */ u8 unk498[0x4A0 - 0x498];
     /* 0x04A0 */ f32 camYaw;     /* fighter camera yaw */
     /* 0x04A4 */ u8 unk4A4[0xDD0 - 0x4A4];
-    /* 0x0DD0 */ Vec4 hitPos;    /* where the last hit landed (written by the hit code) */
+    /* 0x0DD0 */ Vec4 hitPos;    /* the ki blast aim direction (aimDir in btl_act_2.h, written by the ki blast actions with BtlCharApi_CalcAimDir); not a hit position */
     /* 0x0DE0 */ u8 unkDE0[0xDF0 - 0xDE0];
-    /* 0x0DF0 */ s32 hitKind;    /* effect kind of the hit spark of request 0x17 */
+    /* 0x0DF0 */ s32 hitKind;    /* model node the ki blast leaves from (blastNode in btl_act_2.h); request 0x17 passes it on as the effect's node */
     /* 0x0DF4 */ u8 unkDF4[0x1330 - 0xDF4];
     /* 0x1330 */ FxPartner partner;
     /* 0x133C */ s32 unk133C;
@@ -144,12 +144,12 @@ typedef struct FxHitArg {
     /* 0x1C */ f32 scale;
 } FxHitArg;
 
-/* Argument of the damage hit sparks (EftKiBlast_Fire and its four variants). */
+/* Launch argument of a ki blast (EftKiBlast_Fire and its four variants); pos carries the launch direction. */
 typedef struct FxHitArg2 {
     /* 0x00 */ Vec4 pos;
     /* 0x10 */ u16 objId;
     /* 0x12 */ u16 objId2;
-    /* 0x14 */ u16 code;     /* model part code of the animation event */
+    /* 0x14 */ u16 code;     /* model node of the animation event (BtlObjAnim_MaskToNode): the firing hand */
     /* 0x16 */ u16 area;    /* obj->unkA24 */
     /* 0x18 */ s16 level;    /* BtlKiBlast_GetCurrentKind: 0..11, its low two bits pick the size */
     /* 0x1A */ u8 type;      /* BtlKiBlast_GetType: picks the spark module (5, 4, 2, 3, other) */
@@ -287,9 +287,9 @@ s32 BtlPartner_StepAnim(FxChr *chr);
 void BtlPartner_SetFlag10(FxChr *chr, s32 on);
 void BtlPartner_LinkToOwner(FxChr *chr);
 FxObj *BtlPartner_GetObj(FxChr *chr);
-void BtlPartner_PushAngle(FxChr *chr, f32 yaw, f32 speed, f32 arg);
-void BtlPartner_PushDir(FxChr *chr, Vec4 *dir, f32 speed, f32 arg);
-void BtlPartner_SetObjFloats(FxChr *chr, f32 a, f32 b);
+void BtlPartner_PushAngle(FxChr *chr, f32 yaw, f32 speed, f32 max);
+void BtlPartner_PushDir(FxChr *chr, Vec4 *dir, f32 speed, f32 max);
+void BtlPartner_SetObjFloats(FxChr *chr, f32 add, f32 max);
 void BtlPartner_SetFlag80(FxChr *chr, s32 on);
 
 #endif

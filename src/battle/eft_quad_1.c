@@ -59,7 +59,7 @@ extern void EftQuad_ListRemove(EftPart9Ptcl **head, EftPart9Ptcl **tail, EftPart
 extern void EftQuad_CalcKeyDeltas(EftXTask *task);
 extern void EftQuad_Animate(EftXTask *task);
 extern void EftQuad_SetSheet(EftPart9 *em, s32 cols, s32 rows);     /* sets up the texture grid */
-extern void EftQuad_SetTex(EftPart9 *em, EftXTexSet *tex, s32 a, s32 b); /* chooses the textures */
+extern void EftQuad_SetTex(EftPart9 *em, EftXTexSet *tex, s32 image, s32 palette); /* chooses the textures */
 extern void EftQuad_LoadTex(EftPart9 *em, EftXTexSet *tex);        /* builds the blended TEX0 */
 extern void EftQuad_SetLastKey(EftPart9 *em);
 

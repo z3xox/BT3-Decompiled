@@ -57,7 +57,7 @@ extern u64 EftVram_AddClut(EftTTex *tex);                        /* steps a text
 extern void EftTexSet_Load8(void *tex, s32 *entry);              /* builds a texture set from a pack entry */
 
 extern s32 EftCam_IsActive(void);
-extern void EftGfx_DrawPolyScaledZ(EftTClipVtx *v, s32 blend, s32 a2, s32 a3, s32 a4, s32 a5, u64 tex0, f32 scale);
+extern void EftGfx_DrawPolyScaledZ(EftTClipVtx *v, s32 blend, s32 unused1, s32 unused2, s32 front, s32 flip, u64 tex0, f32 scale);
 
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out);
 extern s32 BtlCharApi_GetOpponentObjId(s32 objId);
@@ -73,7 +73,7 @@ void EftStreak_SpawnAll(EftStreakWork *w);
 EftStreak *EftStreak_Alloc(void);
 void EftStreak_Roll(EftStreak *s, EftStreakWork *w, f32 offset);
 void EftStreak_Step(EftStreakWork *w);
-void EftStreak_DrawWorld(Vec4 *corner, EftTVec uv0, EftTVec uv1, EftTVec color, s32 blend, s32 tex, s32 flag,
+void EftStreak_DrawWorld(Vec4 *corner, EftTVec uv0, EftTVec uv1, EftTVec color, s32 blend, s32 tex, s32 front,
                          EftStreakMgr *mgr);
 void EftStreak_DrawScreen(Vec4 *corner, EftTVec color, s32 blend, s32 segs, s32 z, u64 tex0);
 void EftStreak_StepTexture(EftStreakWork *w);
@@ -515,7 +515,7 @@ void EftStreak_Step(EftStreakWork *w) {
 }
 
 /* A quad in the world: two clipped triangles; uv0 / uv1 hold the texture coordinates of two corners each. */
-void EftStreak_DrawWorld(Vec4 *corner, EftTVec uv0, EftTVec uv1, EftTVec color, s32 blend, s32 tex, s32 flag,
+void EftStreak_DrawWorld(Vec4 *corner, EftTVec uv0, EftTVec uv1, EftTVec color, s32 blend, s32 tex, s32 front,
                          EftStreakMgr *mgr) {
     Vec4 p[4];
     Vec4 st[4];
@@ -532,11 +532,11 @@ void EftStreak_DrawWorld(Vec4 *corner, EftTVec uv0, EftTVec uv1, EftTVec color, 
     ClipVtx_Set(&tri[0], &p[0], &st[0], (Vec4 *)&color);
     ClipVtx_Set(&tri[1], &p[1], &st[1], (Vec4 *)&color);
     ClipVtx_Set(&tri[2], &p[2], &st[2], (Vec4 *)&color);
-    EftGfx_DrawPolyScaledZ(tri, blend, 1, 0, flag, 0, mgr->tex[tex].tex0, 2.0f);
+    EftGfx_DrawPolyScaledZ(tri, blend, 1, 0, front, 0, mgr->tex[tex].tex0, 2.0f);
     ClipVtx_Set(&tri[0], &p[1], &st[1], (Vec4 *)&color);
     ClipVtx_Set(&tri[1], &p[2], &st[2], (Vec4 *)&color);
     ClipVtx_Set(&tri[2], &p[3], &st[3], (Vec4 *)&color);
-    EftGfx_DrawPolyScaledZ(tri, blend, 1, 0, flag, 0, mgr->tex[tex].tex0, 2.0f);
+    EftGfx_DrawPolyScaledZ(tri, blend, 1, 0, front, 0, mgr->tex[tex].tex0, 2.0f);
 }
 
 /* Links a packet into the chain of a depth slot (clamped to 0..0xFFF); layers 2 and 3 are 0 and 1. */

@@ -6,7 +6,7 @@
 /*
  * ShenSave, 0x2BF370..0x2BF6B0: the save screen that follows the wish screen (gProgress->mode 71). Nothing of
  * its own is drawn: the screen is the memory-card flow's dialog over a black fade. Built with -G0. See
- * sys/late_a.h.
+ * ui/shen_wish.h.
  */
 
 extern void *memset(void *dst, s32 c, u32 n);
@@ -25,7 +25,7 @@ extern void ColorFade_Draw(void);
 extern s32 ColorFade_IsInDone(void);
 extern void Dialog_Init(u32 *file, u32 *msgTbl, s32 size);
 extern void Dialog_Term(void);
-/* sys/mcflow_a.c. McFlow_Init takes no argument; this caller passes 1. */
+/* sys/memcard_flow.c. McFlow_Init takes no argument; this caller passes 1. */
 extern void McFlow_Init(s32 unused);
 extern void McFlow_Term(void);
 extern void McFlow_Start(s32 mode);

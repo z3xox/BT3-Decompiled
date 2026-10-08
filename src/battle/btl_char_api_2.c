@@ -35,10 +35,10 @@ extern void Vec4_SetZeroW1(Vec4 *dst);                    /* dst = 0 */
 extern void Vec4_SetZero(Vec4 *dst);                    /* dst = 0 */
 extern f32 Vec3_Dist(Vec4 *a, Vec4 *b);              /* distance between two points */
 
-extern f32 BtlAnim_GetFrame(BtlCharApiChr *chr);            /* BtlObj_Get(chr->objId)->unkC78 */
-extern s32 BtlAnim_GetId(BtlCharApiChr *chr);            /* chr->unk974 */
-extern void *BtlAnim_GetFlags(s32 idx);                     /* gBtlChars->unk20[idx], idx < 0x19E */
-extern s32 BtlAnim_TestAttr(BtlCharApiChr *chr, u64 mask);  /* 0 while chr->unk990 > 0, else BtlObjAnim_TestEvent on its object */
+extern f32 BtlAnim_GetFrame(BtlCharApiChr *chr);            /* BtlObj_Get(chr->objId)->animFrame */
+extern s32 BtlAnim_GetId(BtlCharApiChr *chr);            /* chr->motion */
+extern void *BtlAnim_GetFlags(s32 idx);                     /* gBtlChars->motionFlags[idx], idx < 0x19E */
+extern s32 BtlAnim_TestAttr(BtlCharApiChr *chr, u64 mask);  /* 0 while chr->prevStall > 0, else BtlObjAnim_TestEvent on its object */
 extern void ChrCam_AddShake(BtlCharApiChr *chr, f32 a, f32 b); /* CamShake_Add(&chr->camShake, a, b) if chr->camShakeOn */
 extern s32 ChrCam_IsCutActive(BtlCharApiChr *chr);
 extern BtlCharApiVitals *BtlMember_GetActiveGauge(BtlCharApiChr *chr); /* the active member's vitals */
@@ -50,9 +50,9 @@ extern s32 BtlOpp_GetObjId(BtlCharApiChr *chr);            /* object id of the o
 extern f32 BtlUtil_ClampF(f32 v, f32 lo, f32 hi);         /* clamp */
 extern BtlCharApiObj *BtlChar_GetObj(BtlCharApiChr *chr); /* BtlObj_Get(chr->objId) */
 extern Vec4 *BtlChar_GetPos(BtlCharApiChr *chr);          /* &chr->pos */
-extern s32 BtlChar_IsFrozen(BtlCharApiChr *chr);            /* chr->unk1320 > 0 */
+extern s32 BtlChar_IsFrozen(BtlCharApiChr *chr);            /* chr->freeze > 0 */
 extern s32 BtlChar_IsDead(BtlCharApiChr *chr);            /* vitals->hp < 1 */
-extern s32 BtlChar_IsBodyChanged(BtlCharApiChr *chr);            /* vitals->unk30 != 0 */
+extern s32 BtlChar_IsBodyChanged(BtlCharApiChr *chr);            /* vitals->bodyChanged != 0 */
 extern void BtlChar_SetVibration(BtlCharApiChr *chr, f32 power, f32 time);
 extern void BtlChar_SetSmallVibration(BtlCharApiChr *chr, f32 time);
 extern s32 BtlAct_GetCurrent(BtlCharApiChr *chr);            /* chr->action */
@@ -69,7 +69,7 @@ extern s32 BtlSuper_IsThrow(BtlCharApiChr *chr, s32 slot);
 extern s32 BtlObjAnim_TestEvent(BtlCharApiObj *obj, u64 mask);
 extern s32 BtlObjAnim_GetEventArg(BtlCharApiObj *obj, u64 mask);
 extern s32 BtlObjAnim_MaskToNode(s32 bits);
-extern s32 BtlObjAnim_QueryEvent(BtlCharApiObj *obj, u64 arg1, s32 arg2, s32 arg3);
+extern s32 BtlObjAnim_QueryEvent(BtlCharApiObj *obj, u64 mask, s32 layer, s32 what);
 extern void BtlObj_SetColorMode(BtlCharApiObj *obj, s32 bit, s32 on);
 
 extern s32 DemoCam_IsActive(void);
@@ -132,7 +132,7 @@ s32 BtlCharApi_TestFlagA4(s32 objId) {
     return 0;
 }
 
-/* Word +0x60 of the fighter's active member block. */
+/* Model variant of the fighter's active member (member block +0x60, gauge word +0x20). */
 s32 BtlCharApi_GetMemberUnk60(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
@@ -269,8 +269,8 @@ s32 BtlCharApi_GetSoundCount(s32 side) {
     return count;
 }
 
-/* The n-th live sound of a side: its handle, the table word for its byte +8, its word +4. */
-void BtlCharApi_GetSound(s32 side, s32 n, s32 *handle, s32 *out3, s32 *out4) {
+/* The n-th live looping sound of a side: its handle, the bank mask of its kind byte (+8), its sound id (+4). */
+void BtlCharApi_GetSound(s32 side, s32 n, s32 *handle, s32 *bankMask, s32 *id) {
     s32 count = 0;
     s32 i;
     BtlCharApiSound *e;
@@ -285,11 +285,11 @@ void BtlCharApi_GetSound(s32 side, s32 n, s32 *handle, s32 *out3, s32 *out4) {
                 if (handle != NULL) {
                     *handle = e->handle;
                 }
-                if (out3 != NULL) {
-                    *out3 = BtlCharSnd_GetBankMask(e->kind);
+                if (bankMask != NULL) {
+                    *bankMask = BtlCharSnd_GetBankMask(e->kind);
                 }
-                if (out4 != NULL) {
-                    *out4 = e->id;
+                if (id != NULL) {
+                    *id = e->id;
                 }
                 return;
             }
@@ -501,24 +501,25 @@ s32 BtlCharApi_ObjGetAttrKind(s32 objId, u64 mask) {
     return 0;
 }
 
-/* Object float +0xC78, raised by the fighter's +0xEFC entries while it is in actions 0x12D..0x12F / 0x139..0x13B. */
+/* The animation frame (object float +0xC78); in a rush sequence (actions 0x12D..0x12F / 0x139..0x13B) plus the
+   lengths (stepFrame[i] + 1, fighter +0xEFC) of the steps before the current one. */
 f32 BtlCharApi_GetRushSequenceFrame(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
-    f32 value;
-    s32 n;
+    f32 frame;
+    s32 steps;
     s32 i;
 
     if (chr == NULL) {
         return 0.0f;
     }
-    value = BtlAnim_GetFrame(chr);
+    frame = BtlAnim_GetFrame(chr);
     if (BtlCharApi_IsInRushSequence(objId)) {
-        n = BtlAct_GetMotionLevel(chr, BtlAnim_GetId(chr));
-        for (i = 0; i < n; i++) {
-            value += chr->stepFrame[i] + 1.0f;
+        steps = BtlAct_GetMotionLevel(chr, BtlAnim_GetId(chr));
+        for (i = 0; i < steps; i++) {
+            frame += chr->stepFrame[i] + 1.0f;
         }
     }
-    return value;
+    return frame;
 }
 
 /* Object float +0xC78. */
@@ -541,17 +542,18 @@ f32 BtlCharApi_ObjGetAnimStep(s32 objId) {
     return 0.0f;
 }
 
-/* BtlObjAnim_QueryEvent(obj, arg1, 0, arg2) on the object. */
-s32 BtlCharApi_ObjQuery24D610(s32 objId, s32 arg1, s32 arg2) {
+/* BtlObjAnim_QueryEvent(obj, mask, 0, what) on the object: an event query on layer 0 of its animation
+   (what 0 = frame of the first event with a mask bit, 1 = the first still ahead, 3 = how many, ...). */
+s32 BtlCharApi_ObjQuery24D610(s32 objId, s32 mask, s32 what) {
     BtlCharApiObj *obj = BtlObj_Get(objId);
 
     if (obj != NULL) {
-        return BtlObjAnim_QueryEvent(obj, arg1, 0, arg2);
+        return BtlObjAnim_QueryEvent(obj, mask, 0, what);
     }
     return 0;
 }
 
-/* Fighter word +0x974. */
+/* The fighter's animation id: BtlAnim_GetId(chr). */
 s32 BtlCharApi_GetAnimId(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
@@ -561,7 +563,7 @@ s32 BtlCharApi_GetAnimId(s32 objId) {
     return 0;
 }
 
-/* The manager's table entry for fighter word +0x974. */
+/* The flags of the fighter's animation: BtlAnim_GetFlags(BtlAnim_GetId(chr)). */
 void *BtlCharApi_GetAnimFlags(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
@@ -581,7 +583,7 @@ s32 BtlCharApi_TestFlag2B(s32 objId) {
     return 0;
 }
 
-/* Copies the fighter camera's position and rotation (zeroes them for a non-fighter); returns fighter +0x494. */
+/* Copies the fighter camera's position and rotation (zeroes them for a non-fighter); returns fighter +0x494, the camera's stage-trace result (1 = the stage is between target and eye). */
 s32 BtlCharApi_GetCamPose(s32 objId, Vec4 *pos, Vec4 *rot) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
@@ -595,7 +597,7 @@ s32 BtlCharApi_GetCamPose(s32 objId, Vec4 *pos, Vec4 *rot) {
     return 0;
 }
 
-/* Float at fighter +0x4A0. */
+/* Float at fighter +0x4A0: the yaw of the follow camera, the reference direction of stick movement. */
 f32 BtlCharApi_GetCamYaw(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
@@ -615,8 +617,9 @@ s32 BtlCharApi_HasCamPriority(s32 objId) {
     return 0;
 }
 
-/* Shakes the camera of every fighter whose +0x420 point is within `far` of pos, scaled by closeness. */
-void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 arg3, f32 arg4) {
+/* Shakes the camera of every fighter whose camera eye (+0x420) is within `far` of pos; strength and time are
+   scaled by closeness (full at `near`). */
+void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 strength, f32 time) {
     s32 i;
     BtlCharApiChr *chr;
     f32 dist;
@@ -633,7 +636,7 @@ void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 arg3, f32 arg4) 
         dist = Vec3_Dist(&chr->camUnk420, pos);
         if (dist < far) {
             rate = BtlUtil_ClampF(1.0f - (dist - near) / (far - near), 0.0f, 1.0f);
-            ChrCam_AddShake(chr, arg3 * rate, arg4 * rate);
+            ChrCam_AddShake(chr, strength * rate, time * rate);
         }
     }
 }
@@ -672,7 +675,7 @@ s32 BtlCharApi_IsCamShown(s32 objId) {
     return chr->side == BtlCam_GetDefaultView();
 }
 
-/* Copies the vector at fighter +0x460. */
+/* Copies the vector at fighter +0x460: the camera's copy of the body position (object +0xFA0). */
 void BtlCharApi_GetCamBodyPos(s32 objId, Vec4 *out) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
@@ -893,7 +896,7 @@ extern u32 BtlAtk_GetId(BtlCapiBChr *chr);                /* attack id in use */
 extern s32 BtlAtk_GetFlags(BtlCapiBChr *chr);                /* its attribute word */
 extern s32 BtlAtk_GetArmorIgnoreOf(BtlCapiBChr *chr, s32 level);     /* s8 +0x2C of the record of attack `level` (BtlAtk_GetRecordOf) */
 extern s32 BtlParam_GetFlags(BtlCapiBChr *chr);                /* param->flags */
-extern s32 BtlParam_GetCharaFlags(BtlCapiBChr *chr);                /* param->unk0 */
+extern s32 BtlParam_GetCharaFlags(BtlCapiBChr *chr);                /* param->charaFlags */
 extern s32 BtlParam_GetDefaultSlot(BtlCapiBChr *chr);                /* param->transformSlot */
 extern s32 BtlParam_GetSlotId(BtlCapiBChr *chr, s32 slot);      /* param->transformId[slot] */
 extern s32 BtlParam_GetSlotCost(BtlCapiBChr *chr, s32 slot);      /* param->transformCost[slot] * 100000 */
@@ -903,18 +906,18 @@ extern s32 BtlParam_GetCostAE(BtlCapiBChr *chr, s32 slot);      /* param->fusion
 extern s32 BtlParam_GetBlastLimitA(BtlCapiBChr *chr);                /* param->blastLimit less abilities 0x11 / 0x10 / 0xF */
 extern s32 BtlParam_GetBlastLimitB(BtlCapiBChr *chr);                /* param->blastLimitB */
 extern s32 BtlParam_GetGaugeB(BtlCapiBChr *chr);                /* param word +0x2C */
-extern s32 BtlParam_GetComboFinish(BtlCapiBChr *chr, s32 n);         /* param->unk8F[n] */
+extern s32 BtlParam_GetComboFinish(BtlCapiBChr *chr, s32 n);         /* param->comboFinish[n] */
 extern s32 BtlKiBlast_GetFlagsOfHit(BtlCapiBBlastRec *rec);           /* flag word of the blast's definition */
 #define BtlSuper_GetFlags ((s32 (*)(BtlCapiBChr *chr, s32 cls))BtlSuper_GetFlags)       /* skills->flags[cls - 2] */
-extern s32 BtlSuper_GetType(BtlCapiBChr *chr, s32 cls);       /* skills->unk13C[cls] */
+extern s32 BtlSuper_GetType(BtlCapiBChr *chr, s32 cls);       /* skills->type[cls] */
 extern s32 BtlSuper_GetKiCost(BtlCapiBChr *chr, s32 cls);       /* skills->cost[cls], halved with ability 0x2B */
-extern s32 BtlSuper_GetPromptRowIndex(BtlCapiBChr *chr, s32 n);         /* skills->unk227[n] */
+extern s32 BtlSuper_GetPromptRowIndex(BtlCapiBChr *chr, s32 n);         /* skills->promptRow[n] */
 extern s32 BtlSuper_GetAiKind(BtlCapiBChr *chr, s32 cls);       /* skills->kind[cls] */
 extern s32 BtlSkill_GetFlags(BtlCapiBChr *chr, s32 slot);      /* moves->flags[slot] */
 extern s32 BtlSkill_GetAiKind(BtlCapiBChr *chr, s32 slot);      /* moves->kind[slot] */
 extern s32 BtlSkill_GetBlastCost(BtlCapiBChr *chr, s32 slot);      /* moves->stock[slot] (-1 with ability 0x15, min 1) * 100000 */
 
-extern s32 BtlCharApi_ObjQuery24D610(s32 objId, s32 arg1, s32 arg2);
+extern s32 BtlCharApi_ObjQuery24D610(s32 objId, s32 mask, s32 what);
 extern f32 BtlCharApi_ObjGetAnimFrame(s32 objId);
 extern f32 BtlCharApi_ObjGetAnimStep(s32 objId);
 
@@ -1096,7 +1099,7 @@ s32 BtlCharApi_FindIncomingBlast(s32 objId, s32 mode) {
     return -1;
 }
 
-/* 1 when some blast that is not the fighter's own is level with it or moving away from it (no caller). */
+/* 1 when some blast that is not the fighter's own is level with it or moving away from it (called from btl_ai_seq.c). */
 s32 BtlCharApi_IsBlastPassing(s32 objId) {
     Vec4 pos;
     Vec4 toBlast;
@@ -1146,13 +1149,14 @@ void BtlCharApi_MarkIncomingBlast(s32 objId) {
     }
 }
 
-/* Progress of the technique the fighter is performing: fighter +0x1294 when it is >= 0, else
-   (BtlCharApi_ObjQuery24D610(objId, 1, 1) - object +0xC78) / object +0xC80; -1 when there is none. */
+/* Not a progress: the number of updates left until the next animation event with attribute bit 1. Fighter +0x1294
+   when it is >= 0, else (frame of that event, BtlCharApi_ObjQuery24D610(objId, 1, 1), - the current frame, object
+   +0xC78) / the frame step, object +0xC80; -1 when no such event is ahead. */
 f32 BtlCharApi_GetTechniqueProgress(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
-    s32 frame;
-    f32 start;
-    f32 len;
+    s32 eventFrame;
+    f32 curFrame;
+    f32 step;
 
     if (chr == NULL) {
         return 0.0f;
@@ -1160,14 +1164,14 @@ f32 BtlCharApi_GetTechniqueProgress(s32 objId) {
     if (chr->framesLeftOverride >= 0) {
         return chr->framesLeftOverride;
     }
-    frame = BtlCharApi_ObjQuery24D610(objId, 1, 1);
-    if (frame < 0) {
+    eventFrame = BtlCharApi_ObjQuery24D610(objId, 1, 1);
+    if (eventFrame < 0) {
         return -1.0f;
     }
-    start = BtlCharApi_ObjGetAnimFrame(objId);
-    len = BtlCharApi_ObjGetAnimStep(objId);
-    if (0.01f < len) {
-        return ((f32)frame - start) / len;
+    curFrame = BtlCharApi_ObjGetAnimFrame(objId);
+    step = BtlCharApi_ObjGetAnimStep(objId);
+    if (0.01f < step) {
+        return ((f32)eventFrame - curFrame) / step;
     }
     return -1.0f;
 }
@@ -1285,7 +1289,7 @@ s32 BtlCharApi_GetSwitchGauge(s32 objId) {
     return 0;
 }
 
-/* BtlMove_IsBlockedByOpponent of the fighter (no caller). */
+/* BtlMove_IsBlockedByOpponent of the fighter (called from btl_ai_seq.c). */
 s32 BtlCharApi_IsBlockedByOpponent(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
@@ -1395,7 +1399,7 @@ s32 BtlCharApi_GetTransformCost(s32 objId) {
 }
 
 /* Picks a fusion slot the side can pay for: the only one, a random one of two, or of three slot 0 / 1 / 2 with
-   35 / 20 / 45 %; -1 if none (no caller). Draws Rand_Range(100) always and Rand_Range(2) for two candidates. */
+   35 / 20 / 45 %; -1 if none (called from btl_ai_seq.c). Draws Rand_Range(100) always and Rand_Range(2) for two candidates. */
 s32 BtlCharApi_PickFusionSlot(s32 objId) {
     s32 list[3];
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
@@ -1432,7 +1436,7 @@ s32 BtlCharApi_PickFusionSlot(s32 objId) {
 }
 
 /* Picks a transformation slot the side can pay for (slot 3 also counts with cost 0, and is then taken with 2 %);
-   -1 if none (no caller). Draws Rand_Range(100) always and Rand_Range(2) for two candidates without slot 3. */
+   -1 if none (called from btl_ai_seq.c). Draws Rand_Range(100) always and Rand_Range(2) for two candidates without slot 3. */
 s32 BtlCharApi_PickTransformSlot(s32 objId) {
     s32 list[4];
     s32 n = 0;
@@ -1560,7 +1564,7 @@ s32 BtlCharApi_GetParamFlags3(s32 objId) {
     return 0;
 }
 
-/* Number of team members of the fighter's side (no caller). */
+/* Number of team members of the fighter's side (called from btl_ai_seq.c). */
 s32 BtlCharApi_GetMemberCount(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
@@ -1570,7 +1574,7 @@ s32 BtlCharApi_GetMemberCount(s32 objId) {
     return 0;
 }
 
-/* Index of the member that is fighting (no caller). */
+/* Index of the member that is fighting (called from btl_ai_seq.c). */
 s32 BtlCharApi_GetActiveMember(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
@@ -1580,7 +1584,7 @@ s32 BtlCharApi_GetActiveMember(s32 objId) {
     return 0;
 }
 
-/* Index of the member a switch would bring in (no caller). */
+/* Index of the member a switch would bring in (called from btl_ai_seq.c). */
 s32 BtlCharApi_GetSwitchTarget(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
@@ -1590,7 +1594,7 @@ s32 BtlCharApi_GetSwitchTarget(s32 objId) {
     return 0;
 }
 
-/* Health of a member as a percentage, at least 1 while it has any (no caller). */
+/* Health of a member as a percentage, at least 1 while it has any (called from btl_ai_seq.c). */
 s32 BtlCharApi_GetMemberHpPercent(s32 objId, s32 member) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
     BtlCapiBGauge *g;
@@ -1610,7 +1614,7 @@ s32 BtlCharApi_GetMemberHpPercent(s32 objId, s32 member) {
     return 0;
 }
 
-/* Ki of a member as a percentage, at least 1 while it has any (no caller). */
+/* Ki of a member as a percentage, at least 1 while it has any (called from btl_ai_seq.c). */
 s32 BtlCharApi_GetMemberKiPercent(s32 objId, s32 member) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
     BtlCapiBGauge *g;
@@ -1630,7 +1634,8 @@ s32 BtlCharApi_GetMemberKiPercent(s32 objId, s32 member) {
     return 0;
 }
 
-/* Kind byte of the technique the opponent is performing, -1 if it is not in a technique action. */
+/* Kind byte of the technique the opponent is performing, -1 if it is not in a technique action. Despite the
+   "Skill" of the name this reads the technique table (BtlSuper_*, object +0x92C). */
 s32 BtlCharApi_GetOppSkillKind(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
     BtlCapiBChr *opp;
@@ -1667,21 +1672,21 @@ s32 BtlCharApi_TestOppSkillFlags(s32 objId) {
     BtlCapiBChr *opp;
     s32 cls;
     s32 flags;
-    s32 unk;
+    s32 type;
 
     if (chr != NULL) {
         opp = BtlChar_Get(BtlOpp_GetPlayer(chr));
         if (BtlAct_IsTechniqueId(BtlAct_GetCurrent(opp))) {
             cls = BtlAct_GetCurrentClass(opp);
             flags = BtlSuper_GetFlags(opp, cls);
-            unk = BtlSuper_GetType(opp, cls);
+            type = BtlSuper_GetType(opp, cls);
             if (flags & 1) {
                 return 1;
             }
             if ((flags & 2) && 0.9f < chr->techCharge) {
                 return 1;
             }
-            return unk == 1;
+            return type == 1;
         }
         return 0;
     }
@@ -1703,7 +1708,8 @@ s32 BtlCharApi_GetOppSkillClass(s32 objId) {
     return BtlAct_GetCurrentClass(opp);
 }
 
-/* Kind byte of the move the opponent is performing (action 0xFD..0x102), -1 if none. */
+/* Kind byte of the move the opponent is performing (action 0xFD..0x102), -1 if none. This one reads the skill
+   table (BtlSkill_*, object +0x930, the two slots this header calls moves). */
 s32 BtlCharApi_GetOppMoveKind(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
     BtlCapiBChr *opp;
@@ -1784,11 +1790,11 @@ s32 BtlCharApi_GetStunTimer(s32 objId) {
     return 0;
 }
 
-/* Buttons the open prompt (fighter +0x1594 >= 2) wants, as bits of the fighter's button word: 4 with flag 0xA3, else
+/* Buttons the prompt of the watched technique class (fighter +0x1594 >= 2) wants, as bits of the fighter's button word: 4 with flag 0xA3, else
    0x08 plus the direction bit 0x10 / 0x20 / 0x40 / 0x80 of the prompt's entry; 0 with flag 0xA2 or no prompt. */
 s32 BtlCharApi_GetPromptButtons(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
-    BtlCapiBPrompt *p;
+    BtlCapiBPrompt *prompt;
 
     if (chr == NULL) {
         return 0;
@@ -1796,14 +1802,14 @@ s32 BtlCharApi_GetPromptButtons(s32 objId) {
     if (chr->switchPrompt < 2) {
         return 0;
     }
-    p = &gBtlChars->prompts[BtlSuper_GetPromptRowIndex(chr, chr->switchPrompt)];
+    prompt = &gBtlChars->prompts[BtlSuper_GetPromptRowIndex(chr, chr->switchPrompt)];
     if (BtlChar_TestFlag(chr, 0xA2)) {
         return 0;
     }
     if (BtlChar_TestFlag(chr, 0xA3)) {
         return 4;
     }
-    switch (p->button) {
+    switch (prompt->button) {
     case 0:
         return 0x18;
     case 1:
@@ -1914,7 +1920,7 @@ f32 BtlCharApi_GetTechChargeB(s32 objId) {
     return 0.0f;
 }
 
-/* Fighter +0xD74 minus +0xD70, or -1 when +0xD74 is 0 (no caller). */
+/* Fighter +0xD74 minus +0xD70, or -1 when +0xD74 is 0 (called by BtlAiSeq_RollPowerUpChain). */
 s32 BtlCharApi_GetVanishStrikesLeft(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
@@ -2712,33 +2718,34 @@ s32 BtlChange_IsPendingType1(s32 player) {
     return q->state == type;
 }
 
-/* Copies the seven parameter words of the request being served (any pointer may be NULL). */
-void BtlChange_GetArgs(s32 *a, s32 *b, s32 *c, s32 *d, s32 *e, s32 *f, s32 *g) {
+/* Copies the seven parameter words of the request being served (any pointer may be NULL). The names are those of
+   a character request; for an object request `chara` is the object's id and only `slot` of the last four is used. */
+void BtlChange_GetArgs(s32 *chara, s32 *costume, s32 *variant, s32 *animChara, s32 *animChara2, s32 *voiceChara, s32 *slot) {
     BtlCapiBChangeQueue *q = &gBtlChars->change;
 
     if (q->cur == NULL) {
         return;
     }
-    if (a != NULL) {
-        *a = q->cur->arg[0];
+    if (chara != NULL) {
+        *chara = q->cur->arg[0];
     }
-    if (b != NULL) {
-        *b = q->cur->arg[1];
+    if (costume != NULL) {
+        *costume = q->cur->arg[1];
     }
-    if (c != NULL) {
-        *c = q->cur->arg[2];
+    if (variant != NULL) {
+        *variant = q->cur->arg[2];
     }
-    if (d != NULL) {
-        *d = q->cur->arg[3];
+    if (animChara != NULL) {
+        *animChara = q->cur->arg[3];
     }
-    if (e != NULL) {
-        *e = q->cur->arg[4];
+    if (animChara2 != NULL) {
+        *animChara2 = q->cur->arg[4];
     }
-    if (f != NULL) {
-        *f = q->cur->arg[5];
+    if (voiceChara != NULL) {
+        *voiceChara = q->cur->arg[5];
     }
-    if (g != NULL) {
-        *g = q->cur->arg[6];
+    if (slot != NULL) {
+        *slot = q->cur->arg[6];
     }
 }
 

@@ -4,19 +4,18 @@
 #include "types.h"
 
 /*
- * Menu support code of the main executable, 0x2600B0..0x263098 (placeholder stem "view_b"). Five parts:
+ * Menu support code of the main executable, 0x2600B0..0x263098 (src/ui). Five parts:
  *
- *   view_b.c    0x2600B0..0x260D20  TextBox    the rest of the text box module (it starts in menu_util_1.c and is
- *                                              the same object); TextBox_DrawClip is INCLUDE_ASM
+ *   menu_util_1.c  0x2600B0..0x260D20  TextBox    the rest of the text box module (it starts at 0x25FE00 in the
+ *                                              same file and is the same object)
  *   char_table.c  0x260D20..0x2614B0  ChrTbl / ItemSet / ItemTbl  readers of the character and item tables
  *   menu_util_2.c  0x2614B0..0x261ED8  MenuUtil   voice line with mouth movement (LipSync), sound options, CPU level
  *                                              mapping, the CPU against CPU demo battle, small text helpers
- *   shen_scene.c  0x261ED8..0x262FF0  ShenScene  the 3D backdrop of the dragon (wish) screen; ShenScene_StepSeq is
- *                                              INCLUDE_ASM
- *   debug_stubs.c  0x262FF0..0x263098  Dbg        empty debug functions (the head of sys/debug.c)
+ *   shen_scene.c  0x261ED8..0x262FF0  ShenScene  the 3D backdrop of the dragon (wish) screen
+ *   sys/debug_stubs.c  0x262FF0..0x263098  Dbg    empty debug functions (the head of sys/debug.c)
  */
 
-/* ---- TextBox (view_b.c): the full layout of the 0x8C-byte TextBox of battle/view_a.h ---- */
+/* ---- TextBox (menu_util_1.c): the full layout of the 0x8C-byte TextBox of ui/reward_window.h ---- */
 
 #define TEXTBOX_FLAG_MAX_W 8      /* shrink the line horizontally to maxW */
 #define TEXTBOX_FLAG_MAX_H 0x10   /* shrink the line vertically to maxH */
@@ -51,14 +50,14 @@ typedef struct TextBoxFull {
     /* 0x28 */ s32 maxW;
     /* 0x2C */ s32 maxH;
     /* 0x30 */ u8 color[4];
-    /* 0x34 */ u8 shadow[4];   /* "color2" in reward_window.h */
-    /* 0x38 */ s32 clip[4];    /* "rect" in reward_window.h */
+    /* 0x34 */ u8 shadow[4];   /* TextBox_SetColor2 (flag TEXTBOX_FLAG_COLOR2) */
+    /* 0x38 */ s32 clip[4];    /* x0, y0, x1, y1; TextBox_SetRect (flag TEXTBOX_FLAG_RECT) */
     /* 0x48 */ s32 spacingX;
     /* 0x4C */ s32 spacingY;
     /* 0x50 */ TextBoxDraw draw; /* +0x50 align (TextBox_SetAlign), +0x80 noFlush (TextBox_SetNoFlush) */
 } TextBoxFull; /* size 0x8C */
 
-/* The drawing state a movie clip hands to its "draw over" callback (FlashProp in sys/gfxm_c.h). Local view. */
+/* The drawing state a movie clip hands to its "draw over" callback (FlashProp in sys/flash.h). Local view. */
 typedef struct TextBoxClipProp {
     /* 0x00 */ u8 unk0[0x38];
     /* 0x38 */ f32 x;          /* translation of the clip's matrix */
@@ -89,14 +88,15 @@ void TextBox_AttachString(struct Flash *flash, struct FlashRef *ref, s32 x, s32 
 #define CHRTBL_LINK_NONE 0xFF
 #define CHRTBL_FLAG_0 1         /* picks which ItemTblEntry flag says "this character may equip the item" */
 
-/* Character entry, 0x3C bytes, section 1 of the file (ChrViewInfo in battle/view_a.h is the same entry). */
+/* Character entry, 0x3C bytes, section 1 of the file (ChrViewInfo in ui/reward_window.h is the same entry). */
 typedef struct ChrTblEntry {
     /* 0x00 */ s32 aiType;      /* AI type of the character when no AI item is equipped */
     /* 0x04 */ s32 unk4;
     /* 0x08 */ u16 flags;       /* CHRTBL_FLAG_* */
     /* 0x0A */ u16 costumes;    /* number of costumes (guess) */
     /* 0x0C */ u16 cost;        /* summed over a team and compared with a limit by the menu: DP cost (guess) */
-    /* 0x0E */ u16 baseLevel;   /* added to the saved level */
+    /* 0x0E */ u16 baseLevel;   /* added to the saved level (ChrTbl_GetLevel); the callers use the sum as the number of
+                                   item slots, so this is the character's base slot count (`slots` in ZaChrEntry) */
     /* 0x10 */ s32 exp[CHRTBL_EXP_COUNT]; /* indexed by the saved level; a zero ends the list */
     /* 0x2C */ u8 link[CHRTBL_LINK_COUNT]; /* ids of the other forms of the character, 0xFF = none */
     /* 0x30 */ f32 targetY;     /* character viewer camera */
@@ -117,7 +117,7 @@ typedef struct ChrTblEntry {
 #define ITEMSET_USABLE 7
 #define ITEMSET_STAT_COUNT 4
 
-/* Item entry, 0x28 bytes, section 2 of the file (ItemInfo in sys/save.h, GetWinItem in battle/view_a.h). */
+/* Item entry, 0x28 bytes, section 2 of the file (ItemInfo in sys/save.h, GetWinItem in ui/reward_window.h). */
 typedef struct ItemTblEntry {
     /* 0x00 */ u8 type;         /* ITEMTBL_TYPE_* */
     /* 0x01 */ u8 unk1[2];
@@ -181,7 +181,9 @@ typedef struct LipPack {
 
 #define VOICE_LANG2_OFFSET 0x55C /* added to a menu voice id when SaveData.flags bit 0 is set */
 
-/* A team record of the progress block: two rows of five character ids. */
+/* A team record of the progress block: two rows of five character ids. These are the replay slot entries the
+ * memory-card flow fills from the replay files' headers (McFlowSlotInfo in sys/memcard_flow.c; MCFLOW_REPLAY_SLOTS
+ * is 7 as well, and the seven entries end at +0x7D0). */
 #define PROGRESS_TEAM_COUNT 7
 #define PROGRESS_TEAM_EMPTY 0xA4  /* CHRGRID_ID_EMPTY */
 
@@ -190,7 +192,7 @@ typedef struct ProgressTeam {
     /* 0x04 */ s32 chara[2][5];
 } ProgressTeam; /* size 0x2C */
 
-/* gProgress as this file uses it (ViewProgress in battle/view_a.h has the other fields). Local view. */
+/* gProgress as menu_util_2.c uses it (ViewProgress in ui/reward_window.h has the other fields). Local view. */
 typedef struct MenuUtilProgress {
     /* 0x000 */ u8 unk0[0x14];
     /* 0x014 */ s32 flags;       /* 0x100: the menu animations are frozen */
@@ -235,7 +237,7 @@ void LipSync_Clear(void);
 #define SHENSCENE_ACTOR_BALLS 1   /* BtlObj type 3: what is on screen before the dragon appears */
 #define SHENSCENE_FILE_STAGE 0x194 /* + dragon: the backdrop */
 
-/* ShenSeq.state: what the wish screen (sys/late_a.c) reads and requests. */
+/* ShenSeq.state: what the wish screen (ui/shen_wish.c) reads and requests. */
 #define SHENSCENE_STATE_INTRO 0   /* the summoning plays; also set again when the farewell starts */
 #define SHENSCENE_STATE_READY 1   /* the dragon is there: the screen may take input */
 #define SHENSCENE_STATE_ENDED 2   /* the sequence is over */
@@ -273,7 +275,7 @@ typedef struct ShenScene {
     /* 0x00 */ ShenJob job;
     /* 0x0C */ ShenActor actor[SHENSCENE_ACTOR_COUNT];
     /* 0x5C */ ShenSeq seq;
-    /* 0x7C */ s32 dragon;      /* 0..2: which dragon (SHEN_DRAGON_* in sys/late_a.h) */
+    /* 0x7C */ s32 dragon;      /* 0..2: which dragon (SHEN_DRAGON_* in ui/shen_wish.h) */
     /* 0x80 */ f32 time;        /* + 2 per frame; never read */
     /* 0x84 */ s32 frame;       /* frames run; times the repeating sound */
 } ShenScene; /* size 0x88 */

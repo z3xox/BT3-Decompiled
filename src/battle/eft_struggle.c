@@ -85,7 +85,7 @@ extern EftRSphere *EftHitArena_AllocSphere(void);
 extern void EftHit_SetShapeSpheres(EftRRec *rec, EftRSphere *a, EftRSphere *b);
 extern void ColSphere_Set(EftRSphere *sphere, EftRVec *pos, f32 radius);
 
-extern void EftEmit_LoadSet(void *arg, void *set, s32 a2, s32 *pack, s32 a4, s32 a5);
+extern void EftEmit_LoadSet(void *owner, void *set, s32 head, s32 *pack, s32 common, s32 idx);
 extern void EftEmit_FreeSet(void *set);
 extern void EftEmit_BeginFrame(void *set);
 extern s32 EftEmit_GetEndFrames(EftRSet *set);
@@ -95,7 +95,7 @@ extern s32 EftEmit_GetFlagsFromMask(EftRSet *set, EftRState *state, s32 objId, s
                                     s32 mask);
 extern s32 EftEmit_GetResetFlags(EftRSet *set, EftRState *state, s32 part, s32 sub);
 extern void EftEmit_Spawn(EftRSet *set, EftRState *state, EftRNodes *nodes, EftRVec *pos, EftRVec *dir, s32 objId,
-                          s32 node, s32 arg7, s32 part, s32 sub, s32 flags, f32 scale);
+                          s32 node, s32 srcKind, s32 part, s32 sub, s32 flags, f32 scale);
 extern void EftEmit_KillAll(EftRSet *set, EftRState *state);
 extern s32 EftEmit_UpdateAlive(EftRSet *set, EftRState *state);
 extern void EftEmit_SetNode(EftRNodes *nodes, s32 slot, s32 node, EftRVec *pos);
@@ -419,8 +419,8 @@ void EftStruggle_Init(EftRTask *task, EftStruggleArg *arg) {
     EftStruggle *w = task->work;
     EftRRec *r0;
     EftRRec *r1;
-    f32 p0;
-    f32 p1;
+    f32 radius0;
+    f32 radius1;
     f32 one;
 
     memset(w, 0, sizeof(EftStruggle));
@@ -428,30 +428,30 @@ void EftStruggle_Init(EftRTask *task, EftStruggleArg *arg) {
     w->bias = w->arg.ratio;
     r0 = &w->arg.rec[0];
     r1 = &w->arg.rec[1];
-    p0 = EftStruggle_GetRecRadius(r0);
-    p1 = EftStruggle_GetRecRadius(r1);
-    if (p1 < p0) {
-        EftRSrc *s0 = r0->src;
-        EftRSrc *s1 = r1->src;
-        EftRDef *d0 = s0->def;
-        EftRDef *d1 = s1->def;
+    radius0 = EftStruggle_GetRecRadius(r0);
+    radius1 = EftStruggle_GetRecRadius(r1);
+    if (radius1 < radius0) {
+        EftRSrc *src0 = r0->src;
+        EftRSrc *src1 = r1->src;
+        EftRDef *def0 = src0->def;
+        EftRDef *def1 = src1->def;
 
-        gEftStruggle->side[0].power = d0->power;
+        gEftStruggle->side[0].power = def0->power;
         gEftStruggle->side[0].objId = r0->objId;
-        gEftStruggle->side[1].power = d1->power;
+        gEftStruggle->side[1].power = def1->power;
         gEftStruggle->side[1].objId = r1->objId;
         gEftStruggle->maxPower = gEftStruggle->side[0].power > gEftStruggle->side[1].power
                                      ? gEftStruggle->side[0].power
                                      : gEftStruggle->side[1].power;
     } else {
-        EftRSrc *s0 = r0->src;
-        EftRSrc *s1 = r1->src;
-        EftRDef *d0 = s0->def;
-        EftRDef *d1 = s1->def;
+        EftRSrc *src0 = r0->src;
+        EftRSrc *src1 = r1->src;
+        EftRDef *def0 = src0->def;
+        EftRDef *def1 = src1->def;
 
-        gEftStruggle->side[0].power = d0->power;
+        gEftStruggle->side[0].power = def0->power;
         gEftStruggle->side[0].objId = r0->objId;
-        gEftStruggle->side[1].power = d1->power;
+        gEftStruggle->side[1].power = def1->power;
         gEftStruggle->side[1].objId = r1->objId;
         gEftStruggle->maxPower = gEftStruggle->side[0].power > gEftStruggle->side[1].power
                                      ? gEftStruggle->side[0].power
@@ -519,8 +519,8 @@ void EftStruggle_Step(EftRTask *task) {
     EftRRec *r1;
     f32 one;
     f32 t;
-    f32 p0;
-    f32 p1;
+    f32 power0;
+    f32 power1;
     f32 k;
     f32 tmp;
 
@@ -538,13 +538,13 @@ void EftStruggle_Step(EftRTask *task) {
     EftClashSpark_SetScale(w->spark, one);
     r1 = &w->arg.rec[1];
     t = one;
-    p0 = gEftStruggle->side[0].power;
+    power0 = gEftStruggle->side[0].power;
     k = 13.0f;
-    p1 = gEftStruggle->side[1].power;
-    tmp = p0;
+    power1 = gEftStruggle->side[1].power;
+    tmp = power0;
     if (gEftStruggle->side[0].objId != r0->objId) {
-        p0 = p1;
-        p1 = tmp;
+        power0 = power1;
+        power1 = tmp;
     }
     w->bias = (BtlCharApi_GetClashBias() + t) * 0.5f;
     if (w->bias < 0.0f) {
@@ -556,13 +556,13 @@ void EftStruggle_Step(EftRTask *task) {
     Vec3_Lerp(&w->pos, &r1->pose.start, &r0->pose.start, w->bias);
     w->pos.w = one;
     t = r0->src->def->scale;
-    t = p0 * t * k;
+    t = power0 * t * k;
     Vec4_Sub(&v, &r0->pose.start, &w->pos);
     Vec3_Normalize(&v, &v);
     Vec3_Scale(&v, &v, t);
     Vec3_Add(&r0->task->pos, &w->pos, &v);
     t = r1->src->def->scale;
-    t = p1 * t * k;
+    t = power1 * t * k;
     Vec4_Sub(&v, &r1->pose.start, &w->pos);
     Vec3_Normalize(&v, &v);
     Vec3_Scale(&v, &v, t);

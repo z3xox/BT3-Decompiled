@@ -47,11 +47,11 @@ extern void BtlChar_ClearFlagRange(BtlSuperChr *chr, u32 a, u32 b);
 extern s32 BtlChar_IsFlagRaised(BtlSuperChr *chr, u32 n);
 extern void BtlChar_SetFxBit(BtlSuperChr *chr, s32 n);
 extern void BtlCharSnd_PlayCommon(BtlSuperChr *chr, s32 id);
-extern void ChrCam_RequestCut(BtlSuperChr *chr, s32 arg1, s32 arg2);
+extern void ChrCam_RequestCut(BtlSuperChr *chr, s32 table, s32 index);
 extern void ChrCam_EndCut(BtlSuperChr *chr);
 extern void ChrCam_AddShake(BtlSuperChr *chr, f32 strength, f32 time);
 extern void BtlCharApi_RumbleNear(Vec4 *pos, f32 near, f32 far, f32 power, f32 time);
-extern void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 arg3, f32 arg4);
+extern void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 strength, f32 time);
 extern void BtlChar_SetVibration(BtlSuperChr *chr, f32 power, f32 seconds);
 extern void BtlChar_Vibrate(BtlSuperChr *chr, f32 power, f32 seconds);
 extern f32 BtlUtil_WrapAngle(f32 a);
@@ -60,7 +60,7 @@ extern s32 BtlUtil_Clamp(s32 v, s32 lo, s32 hi);
 extern void BtlAct_Request(BtlSuperChr *chr, s32 id);
 extern s32 BtlAct_GetRequested(BtlSuperChr *chr);
 extern s32 BtlAct_IsTechniqueId(s32 id);
-extern void BtlAct_PushAngle(BtlSuperChr *chr, f32 angle, f32 speed, f32 arg);
+extern void BtlAct_PushAngle(BtlSuperChr *chr, f32 angle, f32 speed, f32 max);
 extern void BtlAct_AddSway(BtlSuperChr *chr, f32 a, f32 b);
 extern void BtlAnim_PlaySub(BtlSuperChr *chr, s32 anim);
 extern void BtlAnim_SetStep(BtlSuperChr *chr, f32 step);
@@ -103,7 +103,7 @@ extern s32 BtlMember_HasAbility(BtlSuperChr *chr, s32 n);
 extern void BtlChar_ResetLook(BtlSuperChr *chr);
 extern void BtlChar_SavePlacement(BtlSuperChr *chr);
 extern s32 BtlInput_TestAction(BtlSuperChr *chr, s32 id, s32 want);
-extern void BtlChange_RequestChara(s32 player, s32 chara, s32 costume, s32 variant, s32 animChara, s32 unk18,
+extern void BtlChange_RequestChara(s32 player, s32 chara, s32 costume, s32 variant, s32 animChara, s32 anim1Chara,
                                    s32 voiceChara);
 extern s32 BtlChange_IsLoadedFor(s32 player);
 extern void BtlChange_SetReady(s32 player);
@@ -121,7 +121,7 @@ extern s32 BtlSuper_GetStepCount(BtlSuperChr *chr, s32 cls);  /* number of rush 
 extern s32 BtlSuper_GetDrain(BtlSuperChr *chr, s32 cls);  /* health drained */
 extern s32 BtlSuper_GetCooldownFrames(BtlSuperChr *chr, s32 cls);  /* cooldown: seconds * 30 */
 extern s32 BtlSuper_GetChargeLimitFrames(BtlSuperChr *chr, s32 cls);  /* charge time: seconds * 30 */
-extern s32 BtlSuper_GetDamage(BtlSuperChr *chr, s32 cls, s32 a2, s32 a3); /* damage */
+extern s32 BtlSuper_GetDamage(BtlSuperChr *chr, s32 cls, s32 guard, s32 total); /* damage */
 extern s32 BtlSuper_GetKiCost(BtlSuperChr *chr, s32 cls);  /* ki cost (halved with ability 0x2B) */
 extern s32 BtlSuper_IsThrow(BtlSuperChr *chr, s32 cls);  /* one of the technique's four reactions is 0x22 (a catch) */
 /* Animation event query on the object: mode 0 = frame of the first event with `mask`, 3 = how many. */
@@ -455,7 +455,7 @@ void BtlSuper_SetupRushDamage(BtlSuperChr *chr, s32 cls, s32 fromAnim) {
     s32 drain;
     s32 from;
     s32 to;
-    s32 tmp;
+    s32 halfSpan;
     s32 rem;
     s32 immune;
 
@@ -526,11 +526,11 @@ void BtlSuper_SetupRushDamage(BtlSuperChr *chr, s32 cls, s32 fromAnim) {
                 }
                 chr->dmgDrainHealthStart = drain;
                 chr->drainHealth = drain;
-                tmp = (to - from) / 2;
-                if (tmp <= immune) {
-                    tmp = 1;
+                halfSpan = (to - from) / 2;
+                if (halfSpan <= immune) {
+                    halfSpan = 1;
                 }
-                chr->drainHealthStep = drain / tmp + 1;
+                chr->drainHealthStep = drain / halfSpan + 1;
                 chr->drainFrom = from;
                 chr->drainTo = to;
             }
@@ -1652,9 +1652,9 @@ extern f32 BtlUtil_ClampF(f32 v, f32 lo, f32 hi);
 extern void BtlChar_SetSmallVibration(ActGChr *chr, f32 seconds);
 #define BtlChar_ResetLook ((void (*)(ActGChr *chr))BtlChar_ResetLook)
 #define ChrCam_EndCut ((void (*)(ActGChr *chr))ChrCam_EndCut)
-#define ChrCam_RequestCut ((void (*)(ActGChr *chr, s32 arg1, s32 arg2))ChrCam_RequestCut)
+#define ChrCam_RequestCut ((void (*)(ActGChr *chr, s32 table, s32 index))ChrCam_RequestCut)
 #define BtlInput_TestAction ((s32 (*)(ActGChr *chr, s32 id, s32 want))BtlInput_TestAction)
-#define BtlMember_SpendKi ((void (*)(ActGChr *chr, s32 amount, s32 arg2))BtlMember_SpendKi)
+#define BtlMember_SpendKi ((void (*)(ActGChr *chr, s32 amount, s32 force))BtlMember_SpendKi)
 extern f32 BtlOpp_GetGapXZ(ActGChr *chr);
 extern void BtlColl_SetFramesToReach(ActGChr *chr, f32 scale);
 
@@ -1696,7 +1696,7 @@ extern void BtlMove_SteerAtOpponent(ActGChr *chr, f32 closeSpeed, f32 yawAccel, 
 #define BtlSuper_Leave ((void (*)(ActGChr *chr, s32 slot))BtlSuper_Leave)
 #define BtlSuper_Finish ((void (*)(ActGChr *chr, s32 slot))BtlSuper_Finish)
 #define BtlSuper_SetRushFlags ((void (*)(ActGChr *chr))BtlSuper_SetRushFlags)
-extern s32 BtlAct_GetLandingAction(ActGChr *chr, s32 slot, s32 arg2);
+extern s32 BtlAct_GetLandingAction(ActGChr *chr, s32 slot, s32 kind);
 extern f32 BtlOpp_GetTargetYaw(ActGChr *chr);
 #define BtlMove_SetHeading ((void (*)(ActGChr *chr, f32 yaw, f32 pitch))BtlMove_SetHeading)
 extern void BtlMove_MoveVertical(ActGChr *chr, f32 speed, f32 accel);
@@ -1705,13 +1705,13 @@ extern s32 BtlSuper_GetClashPower(ActGChr *chr, s32 slot);
 #define BtlMember_HasAbility ((s32 (*)(ActGChr *chr, s32 n))BtlMember_HasAbility)
 #define BtlMember_GetActiveGauge ((ActGGauge *(*)(ActGChr *chr))BtlMember_GetActiveGauge)
 #define BtlAct_SetPitchMotion ((void (*)(ActGChr *chr, s32 motionUp, s32 motionDown, s32 recalc))BtlAct_SetPitchMotion)
-#define BtlAct_PushAngle ((void (*)(ActGChr *chr, f32 angle, f32 speed, f32 arg))BtlAct_PushAngle)
+#define BtlAct_PushAngle ((void (*)(ActGChr *chr, f32 angle, f32 speed, f32 max))BtlAct_PushAngle)
 #define BtlAct_SetFormCurrent ((void (*)(ActGChr *chr))BtlAct_SetFormCurrent)
 extern void BtlAct_SetFormRandom(ActGChr *chr);
 #define ChrCam_AddShake ((void (*)(ActGChr *chr, f32 strength, f32 time))ChrCam_AddShake)
 #define BtlChar_ClearFlagRange ((void (*)(ActGChr *chr, u32 a, u32 b))BtlChar_ClearFlagRange)
 #define BtlChar_SavePlacement ((void (*)(ActGChr *chr))BtlChar_SavePlacement)
-extern void BtlChange_RequestChara(s32 player, s32 chara, s32 costume, s32 variant, s32 animChara, s32 unk18, s32 voiceChara);
+extern void BtlChange_RequestChara(s32 player, s32 chara, s32 costume, s32 variant, s32 animChara, s32 anim1Chara, s32 voiceChara);
 extern s32 BtlChange_IsLoadedFor(s32 player);
 extern void BtlChange_SetReady(s32 player);
 extern void BtlChange_SetDone(s32 player);
@@ -2094,18 +2094,21 @@ void BtlAct_SuperRushStrikeHandler(ActGChr *chr, s32 phase) {
  * relative to each other. Everything is driven by the throw block at chr + 0xE90, which BtlColl_StartThrow /
  * BtlColl_StartRushCatch filled on the attacker and copied to the victim:
  *
- *   tech      technique id: 0x280 sets work[0] bit 2 (the attacker turns into a random character at the end, flag
- *             0xA6 while it runs), 0x2E8 links the partner object to its owner, 0x2E4 raises flag 0x13B in step 0
- *   unk10     number of steps; unk50: place the pair in step 0 as well
- *   unk18     step that waits for a partner object: unk20..unk2C is the BtlChange_RequestObject request made on
- *             entry (work[0] bit 1); from the next step on the partner plays animation 0x19D + n
- *   unk1C     step in which the victim's model is reloaded when unk4C is set (BtlAct_SetFormCurrent: the damaged
- *             variant); unk48: the attacker's model is reloaded in the last step
- *   unk14     landing kind passed to BtlAct_GetLandingAction for the victim's next action
- *   unk30, unk60, unk64   turn the victim (flag 0x94) to the attacker-relative yaw / pitch, mirrored when hit from
- *             the front; otherwise a victim hit from behind is simply turned around
- *   unk34     the victim ends in the neutral action 0xB;  unk40: a dead victim goes to action 0xEB
- *   unk5C     the attacker is put on the ground when the action ends
+ *   tech      technique id: 0x280 sets work[0] bit 2 (at the end the attacker turns into one of six fixed
+ *             characters, picked by the frame counter in BtlAct_SetFormRandom; flag 0xA6 while it runs), 0x2E8
+ *             links the partner object to its owner, 0x2E4 raises flag 0x13B in step 0
+ *   stepCount       number of steps; placeFirstStep: place the pair in step 0 as well
+ *   partnerStep     step that waits for a partner object: partnerChara..partnerSlot is the
+ *             BtlChange_RequestObject request made on entry (work[0] bit 1); from the next step on the partner
+ *             plays animation 0x19D + n
+ *   lastStep  step in which the victim's model is reloaded when defReload is set (BtlAct_SetFormCurrent: the
+ *             damaged variant); atkReload: the attacker's model is reloaded in the last step
+ *   landingKind     landing kind passed to BtlAct_GetLandingAction for the victim's next action
+ *   turnVictim, turnYaw, turnPitch   turn the victim (flag 0x94) to the attacker-relative yaw / pitch, mirrored
+ *             when hit from the front; otherwise a victim hit from behind is simply turned around
+ *   failed    the victim ends in the neutral action 0xB;  koSkipLanding: a dead victim goes to action 0xEB
+ *   raiseAtEnd      when the action ends the attacker is raised by its own height (BtlAct_GetHeight); without
+ *             it the attacker gets held flag 0xE
  *
  * A step ends on the animation event flag 0x31; steps that wait for a model load wait for BtlChange_IsLoadedFor,
  * then BtlChange_SetReady / BtlChange_SetDone (flag 0x55 marks the swap). The frame reached in each step is kept
@@ -2117,9 +2120,10 @@ void BtlAct_SuperRushStrikeHandler(ActGChr *chr, s32 phase) {
  * an attacker whose technique has flag B 0x2000 loses all health but 1 (BtlMember_Damage(chr, health - 1, 0x5B)).
  *
  * decide (work[1]): attacker -> flags 0x8C, 0x33, 3 s on the stage timer, BtlSuper_Finish. Victim -> flag 0x33
- * and one of: 0xB (unk34), 0xEB (dead and unk40), or the landing action with flags 0x1D / 0x1E held and flag
+ * and one of: 0xB (failed), 0xEB (dead and koSkipLanding), or the landing action with flags 0x1D / 0x1E held and flag
  * 0x35 when hit from behind.
- * leave: flags 0x37 and 0xCD; the attacker also runs BtlSuper_Leave, lands or goes airborne (held flag 0xE),
+ * leave: flags 0x37 and 0xCD; the attacker also runs BtlSuper_Leave, is raised by its height (raiseAtEnd) or gets
+ * held flag 0xE,
  * releases the partner object and adds 3 s to the stage timer.
  */
 void BtlAct_SuperRushSequenceHandler(ActGChr *chr, s32 phase) {
@@ -2813,11 +2817,11 @@ void BtlAct_SuperRushFinishHandler(ActGChr *chr, s32 phase) {
 
 /*
  * Actions 0x133..0x135 (queued for hit reactions 0x1D and 0x1E, slot from the throw block): the victim of a rush
- * technique that catches without a sequence. Animation 0x16; with throw block unk44 (reaction 0x1E) it loops, with
+ * technique that catches without a sequence. Animation 0x16; with throw block caughtLoop (reaction 0x1E) it loops, with
  * common sound 0x12, until flag 0xAF is no longer set; otherwise it plays once. Flags 0x95, 0x96, 0x136 and the
  * rush flags every frame. Then, exactly as the victim side of the sequence: flags 0x1D / 0x1E held, turn by the
- * throw block (unk30, unk60, unk64) around the direction to the opponent, flag 0x35 when hit from behind, and
- * the landing action BtlAct_GetLandingAction(chr, slot, thr.unk14). Leaving raises flag 0x33.
+ * throw block (turnVictim, turnYaw, turnPitch) around the direction to the opponent, flag 0x35 when hit from behind, and
+ * the landing action BtlAct_GetLandingAction(chr, slot, thr.landingKind). Leaving raises flag 0x33.
  */
 void BtlAct_SuperRushCaughtHandler(ActGChr *chr, s32 phase) {
     s32 slot = BtlAct_GetCurrentClass(chr);
