@@ -158,60 +158,77 @@ s32 EftGeyser_GetSteamWork(EftTask *task) {
     return EftSteam_GetWork(fx);
 }
 
+/*
+ * The emitter descriptions as the two starters below build them. The three vectors are a union with a 128-bit
+ * word (so the type has TImode), and each description is one aggregate initialiser with every member given.
+ * Both are needed for the match: with a plain structure of four floats the first scheduling pass orders the
+ * stores of each vector differently (the first component last instead of first), and with a member left out
+ * the whole block is cleared first. Layouts as EftSmokeArg (eft_shot.h) and EftSteamArg (eft_water.h), without
+ * their trailing padding members.
+ */
+typedef union EftGeyserQVec {
+    struct {
+        f32 x, y, z, w;
+    } v;
+    u128 q;
+} EftGeyserQVec;
+
+typedef struct EftGeyserSmokeInit {
+    /* 0x00 */ EftGeyserQVec pos;
+    /* 0x10 */ EftGeyserQVec colorA; /* ambient r, g, b, a */
+    /* 0x20 */ EftGeyserQVec colorB; /* diffuse r, g, b, a */
+    /* 0x30 */ f32 unk30;            /* size */
+    /* 0x34 */ f32 unk34;            /* alpha */
+    /* 0x38 */ f32 unk38;            /* speed */
+    /* 0x3C */ f32 unk3C;            /* damp */
+    /* 0x40 */ s32 unk40;            /* lifeBase */
+    /* 0x44 */ s32 unk44;            /* lifeRange */
+    /* 0x48 */ s32 unk48;            /* rate */
+} EftGeyserSmokeInit; /* size 0x50 */
+
+typedef struct EftGeyserSteamInit {
+    /* 0x00 */ EftGeyserQVec pos;
+    /* 0x10 */ EftGeyserQVec unk10; /* direction (0, 0, 0, 1) */
+    /* 0x20 */ EftGeyserQVec color;
+    /* 0x30 */ f32 unk30;           /* speed */
+    /* 0x34 */ f32 gravity;         /* 9.8 / 30 */
+    /* 0x38 */ f32 unk38;           /* size */
+    /* 0x3C */ s32 unk3C;           /* life */
+    /* 0x40 */ f32 unk40;
+    /* 0x44 */ f32 unk44;
+    /* 0x48 */ f32 unk48;
+    /* 0x4C */ f32 unk4C;
+    /* 0x50 */ s32 unk50;
+} EftGeyserSteamInit; /* size 0x60 */
+
 /* Starts the geyser's smoke emitter with the colours of the stage's record. Two rand() calls (the
    description's unk38 and unk48). */
-#if 0
-/* Not matching: 17 of 162 instructions, all in the block that fills `init`. Same instructions and constants,
- * but the stores are scheduled in another order: the original emits them in field order except colorA.y (after
- * colorA.z) and colorB.y (last), this emits the last store of each shared constant first and the others at the
- * end; 2.0 and 0.985 then swap $f4 / $f5. Tried: field order permutations, chained assignments, an inline
- * setter, float-array fields, an initializer list.
- * Second pass (cleanup 2): the order is the first scheduling pass's, and it follows a simple rule that the natural
- * code obeys elsewhere (EftPrim_DrawBillboard's UV stores): among stores that are ready together, those whose
- * source register DIES there go first in source order, then the others in source order. With one register per
- * constant (which is what CSE makes of any spelling tried) that rule cannot give the original order: it would
- * need the x store of each vector (colorA.x, colorB.x, and pos.w / colorA.w) to be the last use of its own value.
- * So in the original the first component of each vector did not share its value with the others at that point.
- * A hill-climb over all orders of the 19 statements (build/scratch_cleanup2_A/search.py) stops at 11 differing
- * instructions, with an order that is not credible as source; the field-order attempt is kept. */
 void EftGeyser_StartSmoke(EftTask *task) {
-    EftGeyserSmokeArg arg;
-    EftGeyserSmokeArg init;
     EftGeyserView *w = task->work;
-    u8 *rec;
     f32 r = 0.0f;
     Vec4 *pos = &w->pos;
+    EftGeyserSmokeInit arg = { { { pos->x, pos->y, pos->z, 1.0f } },
+                               { { 32.0f, 32.0f, 32.0f, r } },
+                               { { 192.0f, 192.0f, 192.0f, r } },
+                               2.0f,
+                               64.0f,
+                               1.0f,
+                               0.985f,
+                               90,
+                               30,
+                               3 };
+    u8 *rec;
 
-    init.pos.x = pos->x;
-    init.pos.y = pos->y;
-    init.pos.z = pos->z;
-    init.pos.w = 1.0f;
-    init.colorA.x = 32.0f;
-    init.colorA.y = 32.0f;
-    init.colorA.z = 32.0f;
-    init.colorA.w = r;
-    init.colorB.x = 192.0f;
-    init.colorB.y = 192.0f;
-    init.colorB.z = 192.0f;
-    init.colorB.w = r;
-    init.unk30 = 2.0f;
-    init.unk34 = 64.0f;
-    init.unk38 = 1.0f;
-    init.unk3C = 0.985f;
-    init.unk40 = 90;
-    init.unk44 = 30;
-    init.unk48 = 3;
-    arg = init;
     rec = BtlStage_GetFxResB2();
     if (rec != NULL) {
-        arg.colorA.x = rec[0x1C];
-        arg.colorA.y = rec[0x1D];
-        arg.colorA.z = rec[0x1E];
-        arg.colorA.w = rec[0x1F];
-        arg.colorB.x = rec[0x20];
-        arg.colorB.y = rec[0x21];
-        arg.colorB.z = rec[0x22];
-        arg.colorB.w = rec[0x23];
+        arg.colorA.v.x = rec[0x1C];
+        arg.colorA.v.y = rec[0x1D];
+        arg.colorA.v.z = rec[0x1E];
+        arg.colorA.v.w = rec[0x1F];
+        arg.colorB.v.x = rec[0x20];
+        arg.colorB.v.y = rec[0x21];
+        arg.colorB.v.z = rec[0x22];
+        arg.colorB.v.w = rec[0x23];
         r = (f32)rand() / 2147483647.0f * 5.0f - 2.5f;
         arg.unk48 = rand() % 2 + 2;
         arg.unk38 = w->unkB4 / 150.0f + r;
@@ -221,67 +238,44 @@ void EftGeyser_StartSmoke(EftTask *task) {
             arg.unk38 = -arg.unk38;
         }
         if (w->smoke == 0) {
-            w->smoke = EftSmoke_Create(&arg);
+            w->smoke = EftSmoke_Create((EftGeyserSmokeArg *)&arg);
         }
     }
 }
-#endif
-INCLUDE_ASM("asm/nonmatchings/battle/eft_stage_2", EftGeyser_StartSmoke);
 
 /* Starts the geyser's steam emitter with the colour of the stage's record, and pauses it. */
-#if 0
-/* Not matching: 19 of 126 instructions, the same store-order problem as EftGeyser_StartSmoke: the original stores
- * color.x right after unk10.w and color.y / color.z / unk44 last; this stores color.x with them. The three
- * position loads then alternate $f1 / $f0 the other way round.
- * Second pass: see EftGeyser_StartSmoke. Here the original order is exactly "color.x has a value of its own,
- * color.y / z / w share another": then x and w are both last uses and go first, y / z / unk44 wait. No spelling
- * found gives two values (chained assignments in every grouping, copies of color.x, a brace initialiser: that one
- * also clears the tail and is 19 instructions longer). The memset + unk10.w pair does look like the compiler's
- * own expansion of a mostly-zero `{ 0, 0, 0, 1 }` constructor. The search over statement orders stops at 12. */
 void EftGeyser_StartSteam(EftTask *task) {
-    EftGeyserSteamArg arg;
-    EftGeyserSteamArg init;
     EftGeyserView *w = task->work;
-    u8 *rec;
     Vec4 *pos = &w->pos;
+    EftGeyserSteamInit arg = { { { pos->x, pos->y, pos->z, 1.0f } },
+                               { { 0.0f, 0.0f, 0.0f, 1.0f } },
+                               { { 128.0f, 128.0f, 128.0f, 128.0f } },
+                               8.0f,
+                               9.8f / 30.0f,
+                               4.8f,
+                               25,
+                               15.0f,
+                               0.5f,
+                               2.0f,
+                               0.5f,
+                               5 };
+    u8 *rec;
 
-    init.pos.x = pos->x;
-    init.pos.y = pos->y;
-    init.pos.z = pos->z;
-    init.pos.w = 1.0f;
-    memset(&init.unk10, 0, sizeof(init.unk10));
-    init.unk10.w = 1.0f;
-    init.color.x = 128.0f;
-    init.color.y = 128.0f;
-    init.color.z = 128.0f;
-    init.color.w = 128.0f;
-    init.unk30 = 8.0f;
-    init.gravity = 9.8f / 30.0f;
-    init.unk38 = 4.8f;
-    init.unk3C = 25;
-    init.unk40 = 15.0f;
-    init.unk44 = 0.5f;
-    init.unk48 = 2.0f;
-    init.unk4C = 0.5f;
-    init.unk50 = 5;
-    arg = init;
     rec = BtlStage_GetFxResC2();
     if (rec != NULL) {
-        arg.color.x = rec[0x1A];
-        arg.color.y = rec[0x1B];
-        arg.color.z = rec[0x1C];
-        arg.color.w = rec[0x1D];
+        arg.color.v.x = rec[0x1A];
+        arg.color.v.y = rec[0x1B];
+        arg.color.v.z = rec[0x1C];
+        arg.color.v.w = rec[0x1D];
         arg.unk30 = w->unkB4 / 150.0f + 8.0f;
         arg.unk38 = w->unkB0 / 10.0f * 4.8f;
         arg.unk3C = w->unkB4 / 150.0f + 25.0f;
         if (w->steam == 0) {
-            w->steam = EftSteam_Create(&arg);
+            w->steam = EftSteam_Create((EftGeyserSteamArg *)&arg);
             EftSteam_SetPaused(w->steam, 1);
         }
     }
 }
-#endif
-INCLUDE_ASM("asm/nonmatchings/battle/eft_stage_2", EftGeyser_StartSteam);
 
 /* Outcode of a clip-space point: which of the six planes +-w it is outside of. */
 s32 EftWeather_ClipCode(Vec4 *v) {

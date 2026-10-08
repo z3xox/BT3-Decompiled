@@ -12,11 +12,9 @@
  * camera is under water draws one rand() per frame plus five per bubble it spawns, and nothing in split-screen
  * (EftBubble_UpdateAmbient). rand() is shared with the rest of the game.
  *
- * Three functions are INCLUDE_ASM with the attempt in `#if 0` above them: EftPrim_DrawBillboard,
- * EftPrim_DrawTriangle, EftGeyser_DrawColumn.
- * With every attempt enabled the file's .lit4 (0x2FC368..0x2FC400) and .rodata (0x2EC620..0x2EC720) come out
- * identical to the original; as shipped, the C emits .lit4 0x2FC370..0x2FC3FC (EftBubble_EmitBody's ten constants
- * come first), the bone table at 0x2EC620 and the jump table at 0x2EC6C0.
+ * Every function is C. The file's .lit4 (0x2FC368..0x2FC400, the last word being EftGeyser_DrawColumn's 1/3) and
+ * .rodata (0x2EC620..0x2EC720: the bone table, the jump table at 0x2EC6C0 and EftGeyser_DrawColumn's texture
+ * coordinate table at 0x2EC6E0) come out identical to the original.
  */
 
 /* ---- local views of other modules ---- */
@@ -106,7 +104,7 @@ extern void ClipVtx_Set(void *out, Vec4 *pos, Vec4 *uv, Vec4 *color); /* fills o
 extern void Vec4_Mul(Vec4 *dst, Vec4 *a, Vec4 *b);     /* per-component product */
 extern void Vec4_ToInt(EftBIVec *dst, Vec4 *src);        /* float to fixed vector */
 extern void Mtx_ProjectPoint(EftBIVec *out, Mtx44 *m, Vec4 *pos); /* project with a matrix */
-extern void Vec3_ScaleAdd(Vec4 *dst, Vec4 *dir, Vec4 *base, f32 s); /* dst = base + dir * s */
+extern void Vec3_ScaleAdd(Vec4 *dst, Vec4 *dir, f32 s, Vec4 *base); /* dst = base + dir * s */
 extern f32 EftMath_WrapAngle(f32 angle);                        /* wraps an angle into -pi..pi */
 extern void EftGfx_UpdateClipPlanes(void);
 extern void EftGfx_DrawPolyFixedZ(void *verts, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, u64 tex0, s32 z);
@@ -1578,12 +1576,139 @@ void EftGeyser_Restart(EftBTask *task, EftGeyser *w) {
     EftSmoke_SetPos(w->emitterA, w);
 }
 
+/* Queues one gouraud textured quad (a 4-vertex strip) in the order table at depth slot z, list `layer` (< 0 = list
+   0 without alpha blending). Nothing when the alphas of the first three corners are all 0 or less. With `repeat`
+   a packet that sets CLAMP_1 and CLAMP_2 to 0 (texture repeat) is queued in front. The quad version of
+   EftMesh_QueueTri (eft_mesh.c), from which the parameter list is taken; flag2 is not used, and only the
+   textured packet exists here. */
+/* Matching notes: it has to be an inline function called with constants. `abe` is then a variable assigned in
+   two places (the second one unreachable for layer 0), which keeps `(abe << 6) | 0x1C` a run-time expression as
+   in the original; written out in the caller the compiler folds it to one constant. */
+static inline void EftGeyser_QueueQuad(EftBIVec *p0, EftBIVec *p1, EftBIVec *p2, EftBIVec *p3, Vec4 *c0, Vec4 *c1,
+                                       Vec4 *c2, Vec4 *c3, Vec4 *t0, Vec4 *t1, Vec4 *t2, Vec4 *t3, s32 repeat,
+                                       s32 flag2, s32 hasTex, s32 layer, s32 z, u64 tex0) {
+    s64 abe = 1;
+
+    if (c0->w <= 0.0f && c1->w <= 0.0f && c2->w <= 0.0f) {
+        return;
+    }
+    if (layer < 0) {
+        layer = 0;
+        abe = 0;
+    }
+    if (repeat) {
+        EftBClampPkt *p;
+        s32 l;
+        OtEntry *e;
+
+        l = layer;
+        if (l >= 2) {
+            l -= 2;
+        }
+        if (z < 0) {
+            e = &gOtZ[0].layer[l];
+        } else if (z >= 0x1000) {
+            e = &gOtZ[0xFFF].layer[l];
+        } else {
+            e = &gOtZ[z].layer[l];
+        }
+        p = (EftBClampPkt *)gOtCur;
+        gOtCur = (u32 *)(p + 1);
+        p->dmaTag = 0x20000003;
+        p->vif1 = 0x50000003;
+        p->gifTag = 0x1000000000008002;
+        p->regs = 0xE;
+        p->clamp1Reg = 8;
+        p->clamp2Reg = 9;
+        p->next = NULL;
+        p->vif0 = 0x10000000;
+        p->clamp1 = 0;
+        p->clamp2 = 0;
+        e->tail->next = (OtPrim *)p;
+        e->tail = (OtPrim *)p;
+    }
+    if (hasTex) {
+        EftBStripPkt *p = (EftBStripPkt *)gOtCur;
+        s32 l;
+        OtEntry *e;
+
+        gOtCur = (u32 *)(p + 1);
+        p->prim = ((s64)abe << 6) | 0x1C;
+        p->dmaTag = 0x20000008;
+        p->vif0 = 0x10000000;
+        p->vif1 = 0x50000008;
+        p->gifTag = 0xE400000000008001;
+        p->regs = 0x42142142142160;
+        p->next = NULL;
+        p->rgbaq0.r = c0->x;
+        p->rgbaq0.g = c0->y;
+        p->rgbaq0.b = c0->z;
+        p->rgbaq0.a = c0->w;
+        p->rgbaq0.q = t0->z;
+        p->rgbaq1.r = c1->x;
+        p->rgbaq1.g = c1->y;
+        p->rgbaq1.b = c1->z;
+        p->rgbaq1.a = c1->w;
+        p->rgbaq1.q = t1->z;
+        p->rgbaq2.r = c2->x;
+        p->rgbaq2.g = c2->y;
+        p->rgbaq2.b = c2->z;
+        p->rgbaq2.a = c2->w;
+        p->rgbaq2.q = t2->z;
+        p->rgbaq3.r = c3->x;
+        p->rgbaq3.g = c3->y;
+        p->rgbaq3.b = c3->z;
+        p->rgbaq3.a = c3->w;
+        p->rgbaq3.q = t3->z;
+        p->tex0 = tex0;
+        p->st0.s = t0->x;
+        p->st0.t = t0->y;
+        p->st1.s = t1->x;
+        p->st1.t = t1->y;
+        p->st2.s = t2->x;
+        p->st2.t = t2->y;
+        p->st3.s = t3->x;
+        p->st3.t = t3->y;
+        p->xyz0.x = p0->x;
+        p->xyz0.y = p0->y;
+        p->xyz0.z = p0->z;
+        p->xyz0.f = 0xFF;
+        p->xyz1.x = p1->x;
+        p->xyz1.y = p1->y;
+        p->xyz1.z = p1->z;
+        p->xyz1.f = 0xFF;
+        p->xyz2.x = p2->x;
+        p->xyz2.y = p2->y;
+        p->xyz2.z = p2->z;
+        p->xyz2.f = 0xFF;
+        p->xyz3.x = p3->x;
+        p->xyz3.y = p3->y;
+        p->xyz3.z = p3->z;
+        p->xyz3.f = 0xFF;
+        l = layer;
+        if (l >= 2) {
+            l -= 2;
+        }
+        if (z < 0) {
+            e = &gOtZ[0].layer[l];
+        } else if (z >= 0x1000) {
+            e = &gOtZ[0xFFF].layer[l];
+        } else {
+            e = &gOtZ[z].layer[l];
+        }
+        e->tail->next = (OtPrim *)p;
+        e->tail = (OtPrim *)p;
+    }
+}
+
 /* Draws the column as a ribbon of three camera-facing segments between four points spaced a quarter of the
    height apart, upwards from the base. The texture runs once along the ribbon and scrolls by texV; the colour is
-   the current colour scaled by 0x137F60(), and the top edge has alpha 0. */
-#if 0
-/* NON-MATCHING: not matched (register allocation throughout; 631 instructions). Written from the
-   disassembly: same calls in the same order, same packets. */
+   the current colour scaled by EftStage_GetTintScale(), and the top edge has alpha 0. */
+/* Matching notes: the segment loop walks a pointer (`next = p + 1` ... `p = next`), with a counter of its own;
+   `i` is not initialised where it is declared (the first scheduling pass moves the `i = 0` of the first loop up
+   in front of the two calls by itself, and an initialiser there leaves a `use` marker behind the Vec4_Copy call
+   that costs one issue slot and changes the order of the table copy); the table is declared behind the scalars;
+   Vec3_ScaleAdd takes its scale before the base pointer. */
 void EftGeyser_DrawColumn(EftBTask *task) {
     Vec4 pt[4];
     Vec4 cam;
@@ -1594,12 +1719,6 @@ void EftGeyser_DrawColumn(EftBTask *task) {
     EftBIVec scr[4];
     Vec4 quad[4];
     Vec4 uv[4];
-    EftBVec uvInit[4] = {
-        { 0.0f, 0.0f, 1.0f, 1.0f },
-        { 1.0f, 0.0f, 1.0f, 1.0f },
-        { 0.0f, 1.0f, 1.0f, 1.0f },
-        { 1.0f, 1.0f, 1.0f, 1.0f },
-    };
     s32 first = 1;
     EftGeyser *w = task->work;
     f32 v = 0.33333334f;
@@ -1607,14 +1726,18 @@ void EftGeyser_DrawColumn(EftBTask *task) {
     f32 vPrev = 0.0f;
     f32 width = w->cur.width;
     f32 texV = w->texV;
-    f32 fade;
     s32 i;
+    EftBVec uvInit[4] = {
+        { 0.0f, 0.0f, 1.0f, 1.0f },
+        { 1.0f, 0.0f, 1.0f, 1.0f },
+        { 0.0f, 1.0f, 1.0f, 1.0f },
+        { 1.0f, 1.0f, 1.0f, 1.0f },
+    };
+    f32 fade;
+    s32 n;
     s32 z;
-    s32 abe;
-    u64 tex0;
-    EftBClampPkt *q;
-    EftBStripPkt *p;
-    OtEntry *e;
+    Vec4 *p;
+    Vec4 *next;
 
     fade = EftStage_GetTintScale();
     Vec4_Copy(&cam, &gBtlCamView->pos);
@@ -1631,132 +1754,44 @@ void EftGeyser_DrawColumn(EftBTask *task) {
     Vec3_Scale(&col[1], &w->cur.curColor, fade);
     Vec3_Scale(&col[2], &w->cur.curColor, fade);
     Vec3_Scale(&col[3], &w->cur.curColor, fade);
-    for (i = 0; i < 3; i++) {
-        Vec4_Sub(&side, &pt[i + 1], &pt[i]);
-        Vec4_Sub(&toCam, &pt[i], &cam);
+    p = pt;
+    for (n = 0; n < 3; n++) {
+        next = p + 1;
+        Vec4_Sub(&side, next, p);
+        Vec4_Sub(&toCam, p, &cam);
         Vec3_Cross(&side, &side, &toCam);
         Vec3_Normalize(&side, &side);
         if (first) {
-            Vec3_ScaleAdd(&quad[0], &side, &pt[i], width);
-            Vec3_ScaleAdd(&quad[1], &side, &pt[i], -width);
+            Vec3_ScaleAdd(&quad[0], &side, width, p);
+            Vec3_ScaleAdd(&quad[1], &side, -width, p);
             first = 0;
         } else {
             Vec4_Copy(&quad[0], &prev[0]);
             Vec4_Copy(&quad[1], &prev[1]);
         }
-        Vec3_ScaleAdd(&quad[2], &side, &pt[i + 1], width);
-        Vec3_ScaleAdd(&quad[3], &side, &pt[i + 1], -width);
+        Vec3_ScaleAdd(&quad[2], &side, width, next);
+        Vec3_ScaleAdd(&quad[3], &side, -width, next);
         Vec4_Copy(&prev[0], &quad[2]);
         Vec4_Copy(&prev[1], &quad[3]);
-        quad[0].w = quad[3].w = quad[2].w = quad[1].w = 1.0f;
+        quad[0].w = quad[1].w = quad[2].w = quad[3].w = 1.0f;
         if (Vu0Cur_ProjectPoints(scr, quad, 4)) {
-            uv[1].y = vPrev + texV;
-            uv[3].y = v + texV;
+            z = (scr[0].z + scr[1].z + scr[2].z + scr[3].z) >> 10;
             uv[0].y = vPrev + texV;
-            z = (scr[0].z + scr[2].z + (scr[3].z + scr[1].z)) >> 10;
+            uv[1].y = vPrev + texV;
             uv[2].y = v + texV;
-            if (i == 2) {
+            uv[3].y = v + texV;
+            if (n == 2) {
                 col[2].w = 0.0f;
                 col[3].w = 0.0f;
             }
-            abe = 1;
-            tex0 = w->tex->tex[1].tex0;
-            if (!(col[0].w <= 0.0f && col[1].w <= 0.0f && col[2].w <= 0.0f)) {
-                if (z < 0) {
-                    e = &gOtZ[0].layer[0];
-                } else if (z >= 0x1000) {
-                    e = &gOtZ[0xFFF].layer[0];
-                } else {
-                    e = &gOtZ[z].layer[0];
-                }
-                q = (EftBClampPkt *)gOtCur;
-                gOtCur = (u32 *)(q + 1);
-                q->dmaTag = 0x20000003;
-                q->vif1 = 0x50000003;
-                q->gifTag = 0x1000000000008002;
-                q->regs = 0xE;
-                q->clamp1Reg = 8;
-                q->clamp2Reg = 9;
-                q->next = NULL;
-                q->vif0 = 0x10000000;
-                q->clamp1 = 0;
-                q->clamp2 = 0;
-                e->tail->next = (OtPrim *)q;
-                e->tail = (OtPrim *)q;
-                p = (EftBStripPkt *)gOtCur;
-                gOtCur = (u32 *)(p + 1);
-                p->vif0 = 0x10000000;
-                p->prim = ((u64)abe << 6) | 0x1C;
-                p->dmaTag = 0x20000008;
-                p->vif1 = 0x50000008;
-                p->gifTag = 0xE400000000008001;
-                p->regs = 0x42142142142160;
-                p->next = NULL;
-                p->rgbaq0.r = col[0].x;
-                p->rgbaq0.g = col[0].y;
-                p->rgbaq0.b = col[0].z;
-                p->rgbaq0.a = col[0].w;
-                p->rgbaq0.q = uv[0].z;
-                p->rgbaq1.r = col[1].x;
-                p->rgbaq1.g = col[1].y;
-                p->rgbaq1.b = col[1].z;
-                p->rgbaq1.a = col[1].w;
-                p->rgbaq1.q = uv[1].z;
-                p->rgbaq2.r = col[2].x;
-                p->rgbaq2.g = col[2].y;
-                p->rgbaq2.b = col[2].z;
-                p->rgbaq2.a = col[2].w;
-                p->rgbaq2.q = uv[2].z;
-                p->rgbaq3.r = col[3].x;
-                p->rgbaq3.g = col[3].y;
-                p->rgbaq3.b = col[3].z;
-                p->rgbaq3.a = col[3].w;
-                p->tex0 = tex0;
-                p->rgbaq3.q = uv[3].z;
-                p->st0.s = uv[0].x;
-                p->st0.t = uv[0].y;
-                p->st1.s = uv[1].x;
-                p->st1.t = uv[1].y;
-                p->st2.s = uv[2].x;
-                p->st2.t = uv[2].y;
-                p->st3.s = uv[3].x;
-                p->st3.t = uv[3].y;
-                p->xyz0.x = scr[0].x;
-                p->xyz0.y = scr[0].y;
-                p->xyz0.z = scr[0].z;
-                p->xyz0.f = 0xFF;
-                p->xyz1.x = scr[1].x;
-                p->xyz1.y = scr[1].y;
-                p->xyz1.z = scr[1].z;
-                p->xyz1.f = 0xFF;
-                p->xyz2.x = scr[2].x;
-                p->xyz2.y = scr[2].y;
-                p->xyz2.z = scr[2].z;
-                p->xyz2.f = 0xFF;
-                p->xyz3.x = scr[3].x;
-                p->xyz3.y = scr[3].y;
-                p->xyz3.z = scr[3].z;
-                p->xyz3.f = 0xFF;
-                if (z < 0) {
-                    e = &gOtZ[0].layer[0];
-                } else if (z >= 0x1000) {
-                    e = &gOtZ[0xFFF].layer[0];
-                } else {
-                    e = &gOtZ[z].layer[0];
-                }
-                e->tail->next = (OtPrim *)p;
-                e->tail = (OtPrim *)p;
-            }
+            EftGeyser_QueueQuad(&scr[0], &scr[1], &scr[2], &scr[3], &col[0], &col[1], &col[2], &col[3], &uv[0], &uv[1],
+                                &uv[2], &uv[3], 1, 0, 1, 0, z, w->tex->tex[1].tex0);
             vPrev += dv;
             v += dv;
-            if (i >= 2) {
+            if (n >= 2) {
                 v = 1.0f;
             }
         }
+        p = next;
     }
 }
-#else
-RODATA_ALIGN16();
-INCLUDE_RODATA("asm/nonmatchings/battle/eft_stage_1", D_002EC6E0);
-INCLUDE_ASM("asm/nonmatchings/battle/eft_stage_1", EftGeyser_DrawColumn);
-#endif
