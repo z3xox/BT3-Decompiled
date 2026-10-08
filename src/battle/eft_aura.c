@@ -2881,7 +2881,7 @@ LIT4_WORD(D_002FC9EC, 0x4EFFFFFF);
 LIT4_WORD(D_002FC9F0, 0x3F199999);
 LIT4_WORD(D_002FC9F4, 0x3F169696);
 LIT4_WORD(D_002FC9F8, 0x3CA3D70A);
-INCLUDE_ASM("asm/nonmatchings/battle/eft_n", EftBolt_Shape);
+INCLUDE_ASM("asm/nonmatchings/battle/eft_aura", EftBolt_Shape);
 #endif
 
 /* One frame of a bolt's joints: reveals them (from the start, or towards the end once the bolt is retracting),
@@ -3162,7 +3162,7 @@ void EftBolt_Draw(EftBoltWork *work, EftBolt *bolt, f32 alpha) {
     }
 }
 #else
-INCLUDE_ASM("asm/nonmatchings/battle/eft_n", EftBolt_Draw);
+INCLUDE_ASM("asm/nonmatchings/battle/eft_aura", EftBolt_Draw);
 #endif
 
 /* Sets a bolt up between two model nodes: its origin, end points along the two given directions, axis and normal,

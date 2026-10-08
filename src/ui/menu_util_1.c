@@ -1183,7 +1183,7 @@ s32 TextBox_DrawClip(TextBoxDraw *draw, TextBoxClipProp *prop) {
     }
 }
 #else
-INCLUDE_ASM("asm/nonmatchings/battle/view_b", TextBox_DrawClip);
+INCLUDE_ASM("asm/nonmatchings/ui/menu_util_1", TextBox_DrawClip);
 #endif
 
 /* Fills box->draw for one string and hangs it on a clip. */
