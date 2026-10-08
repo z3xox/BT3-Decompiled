@@ -223,7 +223,7 @@ s32 ChrView_StepLoad(ChrViewJob *job) {
 
 /* Job run once by ChrView_Init: reads the backdrop file. */
 s32 ChrView_StepLoadStage(ChrViewJob *job) {
-    ChrViewCommon *res = (ChrViewCommon *)gCommonRes->unk20;
+    ChrViewCommon *res = (ChrViewCommon *)gCommonRes->battleRes;
 
     switch (job->state) {
     case 0:
@@ -392,6 +392,6 @@ void ChrView_Term(void) {
     Ot_Term();
     Dma_ResetBuffers();
     Adx_StopAll();
-    Heap_Free(((ChrViewCommon *)gCommonRes->unk20)->stage);
+    Heap_Free(((ChrViewCommon *)gCommonRes->battleRes)->stage);
     Fade_ResetAll();
 }

@@ -327,7 +327,7 @@ s32 ShenScene_StepSeq(ShenSeq *seq) {
 
 /* Load job: requests the backdrop and the two models of this dragon, then creates their objects. */
 s32 ShenScene_StepLoad(ShenJob *job) {
-    ShenCommon *res = (ShenCommon *)gCommonRes->unk20;
+    ShenCommon *res = (ShenCommon *)gCommonRes->battleRes;
     ShenActor *actor;
     s32 i;
     void *slot;
@@ -552,6 +552,6 @@ void ShenScene_Term(void) {
     Ot_Term();
     Dma_ResetBuffers();
     Adx_StopAll();
-    Heap_Free(((ShenCommon *)gCommonRes->unk20)->stage);
+    Heap_Free(((ShenCommon *)gCommonRes->battleRes)->stage);
     Fade_ResetAll();
 }

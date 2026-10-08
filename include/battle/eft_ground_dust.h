@@ -169,9 +169,9 @@ typedef struct EftGndDustArg {
     /* 0x48 */ f32 grow;       /* size growth per frame */
     /* 0x4C */ f32 bright;     /* factor on r, g, b */
     /* 0x50 */ f32 speed;
-    /* 0x54 */ f32 unk54;      /* random speed range, also added to the acceleration */
+    /* 0x54 */ f32 speedRand;      /* random speed range, also added to the acceleration */
     /* 0x58 */ f32 drag;       /* factor on the velocity per frame */
-    /* 0x5C */ f32 unk5C;      /* acceleration per unit of scale */
+    /* 0x5C */ f32 gravity;      /* acceleration per unit of scale */
     /* 0x60 */ f32 scale;
 } EftGndDustArg; /* size 0x70 */
 

@@ -163,7 +163,7 @@ s32 BtlStage_HasFeature(u32 kind) {
 
 /* Returns member `index` of the stage file, NULL when it is empty. */
 void *BtlStage_GetFileMember(s32 index) {
-    u32 *file = ((BattleRes *)gCommonRes->unk20)->stage;
+    u32 *file = ((BattleRes *)gCommonRes->battleRes)->stage;
     u32 *ret = NULL;
 
     if ((index + file)[4] != (index + file)[3]) {

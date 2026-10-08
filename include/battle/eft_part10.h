@@ -106,30 +106,30 @@ typedef struct EftPart10Def {
     /* 0x024 */ f32 sizeRange[EFT_PART10_KEYS][3];
     /* 0x048 */ f32 angle[EFT_PART10_KEYS];  /* start angle, turns */
     /* 0x054 */ f32 angleRange[EFT_PART10_KEYS];
-    /* 0x060 */ f32 unkC0[EFT_PART10_KEYS];  /* half turns */
-    /* 0x06C */ f32 unkC8[EFT_PART10_KEYS];
-    /* 0x078 */ f32 unkD0[EFT_PART10_KEYS];
-    /* 0x084 */ f32 unkD8[EFT_PART10_KEYS];
+    /* 0x060 */ f32 spinX[EFT_PART10_KEYS];  /* half turns */
+    /* 0x06C */ f32 spinXRange[EFT_PART10_KEYS];
+    /* 0x078 */ f32 spinY[EFT_PART10_KEYS];
+    /* 0x084 */ f32 spinYRange[EFT_PART10_KEYS];
     /* 0x090 */ f32 spin[EFT_PART10_KEYS];  /* spin, half turns */
     /* 0x09C */ f32 spinRange[EFT_PART10_KEYS];
-    /* 0x0A8 */ f32 unkF0[EFT_PART10_KEYS];  /* burst direction jitter */
-    /* 0x0B4 */ f32 unkF8[EFT_PART10_KEYS];
-    /* 0x0C0 */ f32 unk100[EFT_PART10_KEYS];
-    /* 0x0CC */ f32 unk108[EFT_PART10_KEYS];
+    /* 0x0A8 */ f32 angA[EFT_PART10_KEYS];  /* burst direction jitter */
+    /* 0x0B4 */ f32 angARange[EFT_PART10_KEYS];
+    /* 0x0C0 */ f32 angB[EFT_PART10_KEYS];
+    /* 0x0CC */ f32 angBRange[EFT_PART10_KEYS];
     /* 0x0D8 */ f32 speed[EFT_PART10_KEYS];
     /* 0x0E4 */ f32 speedRange[EFT_PART10_KEYS];
     /* 0x0F0 */ f32 speedBase[EFT_PART10_KEYS];
-    /* 0x0FC */ f32 unk128[EFT_PART10_KEYS];
-    /* 0x108 */ f32 unk130[EFT_PART10_KEYS];
+    /* 0x0FC */ f32 distVel[EFT_PART10_KEYS];
+    /* 0x108 */ f32 distVelRange[EFT_PART10_KEYS];
     /* 0x114 */ f32 scaleX[EFT_PART10_KEYS];
     /* 0x120 */ f32 scaleY[EFT_PART10_KEYS];
     /* 0x12C */ f32 life[EFT_PART10_KEYS];  /* seconds */
     /* 0x138 */ f32 lifeRange[EFT_PART10_KEYS];
-    /* 0x144 */ f32 unk158[EFT_PART10_KEYS];  /* seconds */
-    /* 0x150 */ f32 unk160[EFT_PART10_KEYS];
-    /* 0x15C */ f32 unk168[EFT_PART10_KEYS][2];
-    /* 0x174 */ f32 unk178[EFT_PART10_KEYS];
-    /* 0x180 */ f32 unk180;
+    /* 0x144 */ f32 wait[EFT_PART10_KEYS];  /* seconds */
+    /* 0x150 */ f32 waitRange[EFT_PART10_KEYS];
+    /* 0x15C */ f32 pulse[EFT_PART10_KEYS][2];
+    /* 0x174 */ f32 pulseTime[EFT_PART10_KEYS];
+    /* 0x180 */ f32 twistStep;
     /* 0x184 */ f32 spinA[3];                   /* emitter spin (flag 0x40): three keys or one range */
     /* 0x190 */ f32 spinARange[3];
     /* 0x19C */ f32 spinB[3];
@@ -141,20 +141,20 @@ typedef struct EftPart10Def {
     /* 0x1DC */ f32 spinMid;                    /* 0..1 */
     /* 0x1E0 */ f32 keyTime;                    /* seconds the key-frame animation lasts */
     /* 0x1E4 */ f32 keyMid;                     /* 0..1: where the middle key is */
-    /* 0x1E8 */ f32 unk1E8;
-    /* 0x1EC */ f32 unk1EC;
+    /* 0x1E8 */ f32 fadeIn;
+    /* 0x1EC */ f32 fadeOut;
     /* 0x1F0 */ f32 sizeMid;                    /* 0..1: where a particle's middle size is */
     /* 0x1F4 */ s32 flags;
     /* 0x1F8 */ u8 texCols;
     /* 0x1F9 */ u8 texRows;
-    /* 0x1FA */ u8 unk1FA;
+    /* 0x1FA */ u8 texStep;
     /* 0x1FB */ u8 layer;
-    /* 0x1FC */ f32 unk1FC;
-    /* 0x200 */ f32 unk200;
-    /* 0x204 */ f32 unk204;
-    /* 0x208 */ f32 unk208;
+    /* 0x1FC */ f32 ringFrom;
+    /* 0x200 */ f32 ringTo;
+    /* 0x204 */ f32 yaw;
+    /* 0x208 */ f32 pitch;
     /* 0x20C */ u8 drawMode;                    /* 1: facing the camera */
-    /* 0x20D */ u8 unk20D;
+    /* 0x20D */ u8 colorMode;
 } EftPart10Def;
 
 /* Emitter definition, second block (EftEmitRes.unk4). */
@@ -167,8 +167,8 @@ typedef struct EftPart10Def2 {
     /* 0x0D8 */ f32 stretchY[EFT_PART10_KEYS][2];
     /* 0x0F0 */ f32 stretchZ[EFT_PART10_KEYS][2];
     /* 0x108 */ f32 stretchTime[EFT_PART10_KEYS];
-    /* 0x114 */ f32 unk248[EFT_PART10_KEYS];
-    /* 0x120 */ f32 unk250[EFT_PART10_KEYS];
+    /* 0x114 */ f32 fade0[EFT_PART10_KEYS];
+    /* 0x120 */ f32 fade1[EFT_PART10_KEYS];
 } EftPart10Def2;
 
 struct EftPart10Ptcl;
@@ -193,31 +193,31 @@ typedef struct EftPart10Ptcl {
     /* 0x0A0 */ Vec4 uv0;                       /* texture coordinates of corners 0 and 1 */
     /* 0x0B0 */ Vec4 uv1;                       /* of corners 2 and 3 */
     /* 0x0C0 */ f32 speed;
-    /* 0x0C4 */ f32 unkC4;
-    /* 0x0C8 */ f32 unkC8;
-    /* 0x0CC */ f32 unkCC;
+    /* 0x0C4 */ f32 distVel;
+    /* 0x0C8 */ f32 angX;
+    /* 0x0CC */ f32 angY;
     /* 0x0D0 */ f32 angle;
-    /* 0x0D4 */ f32 unkD4;
-    /* 0x0D8 */ f32 unkD8;
+    /* 0x0D4 */ f32 spinX;
+    /* 0x0D8 */ f32 spinY;
     /* 0x0DC */ f32 spin;
     /* 0x0E0 */ f32 size;
     /* 0x0E4 */ f32 sizeStep0;                  /* per frame until life * sizeMid */
     /* 0x0E8 */ f32 sizeStep1;
-    /* 0x0EC */ f32 unkEC;
-    /* 0x0F0 */ f32 unkF0;
-    /* 0x0F4 */ f32 unkF4;                      /* extra size factor */
-    /* 0x0F8 */ f32 unkF8;
-    /* 0x0FC */ f32 unkFC;
-    /* 0x100 */ f32 unk100;
+    /* 0x0EC */ f32 fadeIn;
+    /* 0x0F0 */ f32 fadeOut;
+    /* 0x0F4 */ f32 pulseScale;                      /* extra size factor */
+    /* 0x0F8 */ f32 pulse0;
+    /* 0x0FC */ f32 pulseT;
+    /* 0x100 */ f32 pulseTime;
     /* 0x104 */ f32 stretchStep[3];
     /* 0x110 */ f32 stretch[3];
     /* 0x11C */ f32 stretchAge;
     /* 0x120 */ f32 stretchTime;
-    /* 0x124 */ f32 unk124;
-    /* 0x128 */ f32 unk128;
-    /* 0x12C */ f32 unk12C;
+    /* 0x124 */ f32 fadeT;
+    /* 0x128 */ f32 fadeTime;
+    /* 0x12C */ f32 pulseD;
     /* 0x130 */ f32 texFrame;
-    /* 0x134 */ f32 unk134;
+    /* 0x134 */ f32 delay;
     /* 0x138 */ f32 life;                       /* frames */
     /* 0x13C */ f32 age;
     /* 0x140 */ s32 flags;                      /* 0 = free slot */
@@ -250,30 +250,30 @@ typedef struct EftPart10 {
     /* 0x0A4 */ f32 dSizeRange[3];
     /* 0x0B0 */ EftPart10Key angle;
     /* 0x0B8 */ EftPart10Key angleRange;
-    /* 0x0C0 */ EftPart10Key unkC0;
-    /* 0x0C8 */ EftPart10Key unkC8;
-    /* 0x0D0 */ EftPart10Key unkD0;
-    /* 0x0D8 */ EftPart10Key unkD8;
+    /* 0x0C0 */ EftPart10Key spinX;
+    /* 0x0C8 */ EftPart10Key spinXRange;
+    /* 0x0D0 */ EftPart10Key spinY;
+    /* 0x0D8 */ EftPart10Key spinYRange;
     /* 0x0E0 */ EftPart10Key spin;
     /* 0x0E8 */ EftPart10Key spinRange;
-    /* 0x0F0 */ EftPart10Key unkF0;
-    /* 0x0F8 */ EftPart10Key unkF8;
-    /* 0x100 */ EftPart10Key unk100;
-    /* 0x108 */ EftPart10Key unk108;
+    /* 0x0F0 */ EftPart10Key angA;
+    /* 0x0F8 */ EftPart10Key angARange;
+    /* 0x100 */ EftPart10Key angB;
+    /* 0x108 */ EftPart10Key angBRange;
     /* 0x110 */ EftPart10Key speed;
     /* 0x118 */ EftPart10Key speedRange;
     /* 0x120 */ EftPart10Key speedBase;
-    /* 0x128 */ EftPart10Key unk128;
-    /* 0x130 */ EftPart10Key unk130;
+    /* 0x128 */ EftPart10Key distVel;
+    /* 0x130 */ EftPart10Key distVelRange;
     /* 0x138 */ EftPart10Key scaleX;
     /* 0x140 */ EftPart10Key scaleY;
     /* 0x148 */ EftPart10Key life;
     /* 0x150 */ EftPart10Key lifeRange;
-    /* 0x158 */ EftPart10Key unk158;
-    /* 0x160 */ EftPart10Key unk160;
-    /* 0x168 */ EftPart10Key2 unk168;
-    /* 0x170 */ EftPart10Key2 dUnk168;
-    /* 0x178 */ EftPart10Key unk178;
+    /* 0x158 */ EftPart10Key wait;
+    /* 0x160 */ EftPart10Key waitRange;
+    /* 0x168 */ EftPart10Key2 pulse;
+    /* 0x170 */ EftPart10Key2 dPulse;
+    /* 0x178 */ EftPart10Key pulseTime;
     /* 0x180 */ f32 keyTime;                    /* frames */
     /* 0x184 */ f32 keyMid;                     /* frames */
     /* 0x188 */ u8 unk188[8];
@@ -292,8 +292,8 @@ typedef struct EftPart10 {
     /* 0x230 */ EftPart10Key2 stretchZ;
     /* 0x238 */ EftPart10Key2 dStretchZ;
     /* 0x240 */ EftPart10Key stretchTime;
-    /* 0x248 */ EftPart10Key unk248;
-    /* 0x250 */ EftPart10Key unk250;
+    /* 0x248 */ EftPart10Key fade0;
+    /* 0x250 */ EftPart10Key fade1;
     /* 0x258 */ f32 spinA;                      /* emitter spin per frame */
     /* 0x25C */ f32 spinB;
     /* 0x260 */ f32 rotA;                       /* emitter angles */
@@ -304,9 +304,9 @@ typedef struct EftPart10 {
     /* 0x278 */ f32 dSpinB[2];
     /* 0x280 */ f32 dScale[2];
     /* 0x288 */ f32 dCount[2];
-    /* 0x290 */ f32 unk290;
-    /* 0x294 */ f32 unk294;
-    /* 0x298 */ f32 unk298;
+    /* 0x290 */ f32 twist;
+    /* 0x294 */ f32 yaw;
+    /* 0x298 */ f32 pitch;
     /* 0x29C */ u8 unk29C[0x100];               /* texture grid cells (see the init at 0x18C238) */
     /* 0x39C */ f32 texFrames;
     /* 0x3A0 */ f32 age;                        /* frames */

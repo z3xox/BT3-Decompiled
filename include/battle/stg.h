@@ -119,19 +119,19 @@ typedef struct StgDataA {
     /* 0x28 */ s32 startCount;  StgPlace *starts;      /* 0x2C: one per player */
     /* 0x30 */ s32 altCount;    StgPlace *altStarts;   /* 0x34 */
     /* 0x38 */ s32 placeCount;  StgPlace *places;      /* 0x3C */
-    /* 0x40 */ s32 count40;     StgVec *list40;        /* 0x44: 0x10 bytes each, not negated */
-    /* 0x48 */ s32 count48;     void *list48;          /* 0x4C */
-    /* 0x50 */ s32 count50;     void *list50;          /* 0x54 */
-    /* 0x58 */ s32 count58;     StgPlace *list58;      /* 0x5C: 0x20 bytes each, y z of the first vector negated */
-    /* 0x60 */ s32 count60;     StgRec18 *list60;      /* 0x64: 0x18 bytes each */
-    /* 0x68 */ s32 count68;     void *list68;          /* 0x6C */
-    /* 0x70 */ s32 count70;     void *list70;          /* 0x74 */
-    /* 0x78 */ s32 count78;     void *list78;          /* 0x7C: light colours (btl_obj.c) */
-    /* 0x80 */ s32 count80;     void *list80;          /* 0x84 */
-    /* 0x88 */ s32 count88;     void *list88;          /* 0x8C */
-    /* 0x90 */ s32 count90;     void *list90;          /* 0x94 */
+    /* 0x40 */ s32 depthTintCount;     StgVec *depthTints;        /* 0x44: 0x10 bytes each, not negated */
+    /* 0x48 */ s32 glareCount;     void *glare;          /* 0x4C */
+    /* 0x50 */ s32 fogCount;     void *fog;          /* 0x54 */
+    /* 0x58 */ s32 surfCount;     StgPlace *surf;      /* 0x5C: 0x20 bytes each, y z of the first vector negated */
+    /* 0x60 */ s32 weatherCount;     StgRec18 *weather;      /* 0x64: 0x18 bytes each */
+    /* 0x68 */ s32 dustCount;     void *dust;          /* 0x6C */
+    /* 0x70 */ s32 flagCount;     void *flags;          /* 0x74 */
+    /* 0x78 */ s32 lightColorCount;     void *lightColors;          /* 0x7C: light colours (btl_obj.c) */
+    /* 0x80 */ s32 tintCount;     void *tint;          /* 0x84 */
+    /* 0x88 */ s32 ambientCount;     void *ambient;          /* 0x8C */
+    /* 0x90 */ s32 waterCount;     void *water;          /* 0x94 */
     /* 0x98 */ s32 count98;     void *list98;          /* 0x9C */
-    /* 0xA0 */ s32 countA0;     void *listA0;          /* 0xA4 */
+    /* 0xA0 */ s32 hazeCount;     void *haze;          /* 0xA4 */
 } StgDataA;
 
 /* A culling / path-finding zone: an axis-aligned rectangle on the ground plane. */

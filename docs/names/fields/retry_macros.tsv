@@ -1,0 +1,141 @@
+include/battle/btl_char_mgr.h	BtlMgrObj	unk1660	charaWork	HIGH	BtlObj and BObj name +0x1660 charaWork (BtlObj_GetCharaWork); four other views call it work; the word at +0x18028 is BobjWork.retarget
+include/battle/eft_emit.h	EftShotParam	unk2	level	HIGH	EftHitDef.level in eft_core.h (eft_core.c:122 copies def->level to the hit record's level); EftJDef in eft_shot_tech.h calls the same word recType, the less supported of the two.
+include/battle/eft_emit.h	EftShotParam	unk5	sub	MEDIUM	EftKDef.sub in eft_obj_tech.h (5 = rush technique, as tested by EftShot_GetLeadTime); uncertain because EftHitDef / EftDetDef / EftShotDef call it kind (taken here by 0x04) and its source field is hitDirKind in btl_tech.h.
+include/battle/eft_emit.h	EftShotParam	unk6	node	MEDIUM	EftOwnerParam.node in eft_sweep.h (handed to EftEmit_Spawn at eft_sweep.c:505); uncertain because EftHitDef only says it is copied to EftHitRec.unk4 and its source fields are unknown.
+include/battle/eft_emit.h	EftShotParam	unk7	KEEP	KEEP	Always written 0 and never read here.
+include/battle/eft_emit.h	EftShotParam	unk8	hitShape	HIGH	EftOwnerParam.hitShape / EftTechDef.hitShape (0 two spheres, 1 two boxes); EftJDef, EftKDef, EftODef, EftHitDef call it shape.
+include/battle/eft_emit.h	EftShotParam	unkA	maxHits	MEDIUM	EftHitDef.maxHits in eft_core.h (read by eft_core.c:425 and 870); uncertain because the source field is hitsC (hit factor 3, less 1) in btl_tech.h.
+include/battle/eft_emit.h	EftShotParam	unkB	KEEP	KEEP	Copied from skill +0x42 / super +0x9F, both unknown, and never read here.
+include/battle/eft_emit.h	EftShotParam	unkC	aimMode	MEDIUM	EftHitDef.aimMode in eft_core.h (eft_core.c:1441: 0 = aim on every call); only that one view names it and BuildParam always writes 0.
+include/battle/eft_emit.h	EftShotParam	unkE	nodes	HIGH	EftOwnerParam.nodes[6] in eft_sweep.h (fighter node per node slot); the default BuildParam writes is node 3 for all six.
+include/battle/eft_emit.h	EftShotParam	unk14	KEEP	KEEP	-1 or super +0x162, never read in this file and unnamed in every other view.
+include/battle/eft_emit.h	EftShotParam	unk15	KEEP	KEEP	Never written or read (padding byte).
+include/battle/eft_emit.h	EftShotParam	unk16	frames	HIGH	EftKDef.frames[6] in eft_obj_tech.h (frame numbers of the six events, -1 none); the defaults 0 / 10 / 20 / -1 fit.
+include/battle/eft_emit.h	EftShotParam	unk22	KEEP	KEEP	Always written 0, never read here.
+include/battle/eft_emit.h	EftShotParam	unk24	KEEP	KEEP	Always written 0, never read here.
+include/battle/eft_emit.h	EftShotParam	unk26	KEEP	KEEP	Never used (padding in front of life).
+include/battle/eft_emit.h	EftShotParam	unk2C	shotLife	MEDIUM	EftJDef.shotLife in eft_shot_tech.h (frames a blast object lives, eft_shot_tech.c:1726); uncertain because EftKDef / EftTechDef declare the same word as an unknown s32.
+include/battle/eft_emit.h	EftShotParam	unk30	scale	HIGH	EftJDef.scale / EftKDef.scale / EftOwnerParam.scale (EftTechDef calls it size); EftVolley_Init copies it to the scale given to the shots.
+include/battle/eft_emit.h	EftShotParam	unk34	speed	HIGH	EftJDef / EftKDef / EftOwnerParam / EftTechDef all name 0x34 speed; source is shotSpeed in btl_tech.h and it is the speed argument of the shots.
+include/battle/eft_emit.h	EftShotParam	unk38	homing	HIGH	EftJDef.homing / EftKDef.homing / EftODef.homing (largest turn per frame); source is shotTurn in btl_tech.h and it is the maxTurn argument of EftVolleyAim_Update.
+include/battle/eft_emit.h	EftShotParam	unk40	impactFx	MEDIUM	EftHitDef.impactFx in eft_core.h (effect id of the impact on a fighter); only that view names it and EftJDef / EftTechDef declare 0x40 as an s32.
+include/battle/eft_emit.h	EftShotParam	unk42	groundFx	HIGH	EftHitDef.groundFx in eft_core.h and EftOwnerParam.markEffect in eft_sweep.h agree: the effect started where the technique touches the stage.
+include/battle/eft_emit.h	EftShotParam	unk46	KEEP	KEEP	Never written or read.
+include/battle/eft_emit.h	EftShotParam	unk48	blurOn	HIGH	EftJDef.blurOn in eft_shot_tech.h and EftOwnerParam.lightOnBit in eft_sweep.h: index of the event that starts the stage tint.
+include/battle/eft_emit.h	EftShotParam	unk4A	blurOff	HIGH	EftJDef.blurOff / EftOwnerParam.lightOffBit: index of the event that ends the stage tint.
+include/battle/eft_emit.h	EftShotParam	unk4C	shotSpeed	MEDIUM	EftKDef.shotSpeed in eft_obj_tech.h (eft_obj_tech.c:422 takes it as the object's speed); only that view names it and how it differs from speed at 0x34 is not shown here.
+include/battle/eft_emit.h	EftShotParam	unk50	impactScale	MEDIUM	EftHitDef.impactScale in eft_core.h; only that view names it.
+include/battle/eft_emit.h	EftShotParam	unk54	groundScale	HIGH	EftHitDef.groundScale in eft_core.h and EftOwnerParam.markSize in eft_sweep.h agree: size of the stage impact effect.
+include/battle/eft_emit.h	EftShotParam	unk58	subKind	HIGH	EftJDef.subKind[8] in eft_shot_tech.h; EftTechDef says the same (kind of the effect EftStreak_Start starts at the n-th event, negative = none).
+include/battle/eft_emit.h	EftShotParam	unk60	subAngle	HIGH	EftJDef.subAngle[8] in eft_shot_tech.h; EftTechDef says its angle in degrees.
+include/battle/eft_emit.h	EftShotParam	unk80	subArg	MEDIUM	EftJDef.subArg in eft_shot_tech.h (eft_shot_tech.c:1873); the name only says it goes with the sub-effects, its meaning is not established.
+include/battle/eft_emit.h	EftShotParam	unk82	KEEP	KEEP	Never written or read (padding).
+include/battle/eft_emit.h	EftShotParam	unk84	hitScale	MEDIUM	EftHitDef names 0x84 scale (returned by EftHit_GetScale into the hit shape's scale) but scale is proposed for 0x30 here; uncertain how the two scales relate.
+include/battle/eft_emit.h	EftShotParam	unk88	power	MEDIUM	EftRDef.power in eft_struggle.h (struggle power); only that view names it.
+include/battle/eft_ground_dust.h	EftGndDustArg	unk54	speedRand	HIGH	EftGroundDef.speedRand in eft_char_parts.h (same argument); speed = speed + unk54 * Rand_Float01() at eft_ground_dust.c:1312.
+include/battle/eft_ground_dust.h	EftGndDustArg	unk5C	gravity	HIGH	EftGroundDef.gravity in eft_char_parts.h; scales the acceleration vector at eft_ground_dust.c:1298.
+include/battle/eft_part10.h	EftPart10Def	unkC0	spinX	HIGH	key track copied to emitter 0xC0; EftPart10_InitPtcl draws particle 0xD4 from [unkC0, unkC0 + unkC8] * pi, the per-frame step of the angle applied with Vu0Cur_RotateX (angVel[0] in eft_link_2.h)
+include/battle/eft_part10.h	EftPart10Def	unkC8	spinXRange	HIGH	random range added to unkC0 in EftPart10_InitPtcl
+include/battle/eft_part10.h	EftPart10Def	unkD0	spinY	HIGH	as unkC0 for particle 0xD8, the per-frame step of the angle applied with Vu0Cur_RotateY (angVel[1] in eft_link_2.h)
+include/battle/eft_part10.h	EftPart10Def	unkD8	spinYRange	HIGH	random range added to unkD0 in EftPart10_InitPtcl
+include/battle/eft_part10.h	EftPart10Def	unkF0	angA	HIGH	emitter 0xF0, which eft_link_2.h names angA: EftPart10_EmitRings adds rand(angA, angA + angARange) * pi to the first emission angle
+include/battle/eft_part10.h	EftPart10Def	unkF8	angARange	HIGH	emitter 0xF8, angARange in eft_link_2.h
+include/battle/eft_part10.h	EftPart10Def	unk100	angB	HIGH	emitter 0x100, angB in eft_link_2.h: jitter of the second emission angle
+include/battle/eft_part10.h	EftPart10Def	unk108	angBRange	HIGH	emitter 0x108, angBRange in eft_link_2.h
+include/battle/eft_part10.h	EftPart10Def	unk128	distVel	HIGH	EftPart10_InitPtcl draws particle 0xC4 from [unk128, unk128 + unk130] * size; eft_link_2.h names 0xC4 distVel and EftPart10_Step adds it to the distance every frame
+include/battle/eft_part10.h	EftPart10Def	unk130	distVelRange	HIGH	random range added to unk128 in EftPart10_InitPtcl
+include/battle/eft_part10.h	EftPart10Def	unk158	wait	HIGH	seconds: EftPart10_InitPtcl draws from [unk158, unk158 + unk160] * 30 into particle 0x134, the start delay; named wait / waitRange like the same pair of EftLinkDef because the emitter already has a delay
+include/battle/eft_part10.h	EftPart10Def	unk160	waitRange	HIGH	random range added to unk158 in EftPart10_InitPtcl
+include/battle/eft_part10.h	EftPart10Def	unk168	pulse	HIGH	two values per key: with definition flag 0x80 the particle scale pulse starts at [0] and swings by [1] - [0] (pulse0 / pulseD in eft_link_2.h); same pair as EftLinkDef.pulse
+include/battle/eft_part10.h	EftPart10Def	unk178	pulseTime	HIGH	times 30 it becomes particle 0x100, which eft_link_2.h names pulseTime (frames of half a scale pulse)
+include/battle/eft_part10.h	EftPart10Def	unk180	twistStep	HIGH	eft_link_2.h names 0x180 twistStep: EftPart10_EmitRings adds twistStep * pi to the emitter twist per emitted particle
+include/battle/eft_part10.h	EftPart10Def	unk1E8	fadeIn	HIGH	eft_link_2.h names 0x1E8 fadeIn: fraction of the life over which a particle fades in (p->unkEC = life * unk1E8)
+include/battle/eft_part10.h	EftPart10Def	unk1EC	fadeOut	HIGH	eft_link_2.h names 0x1EC fadeOut: fraction of the life at which the fade out starts (p->unkF0 = life * (1 - unk1EC))
+include/battle/eft_part10.h	EftPart10Def	unk1FA	texStep	HIGH	eft_link_2.h names 0x1FA texStep: the sheet frame advances when age % texStep == 0
+include/battle/eft_part10.h	EftPart10Def	unk1FC	ringFrom	HIGH	eft_link_2.h names 0x1FC ringFrom: count * ringFrom is the first ring slot EftPart10_EmitRings fills
+include/battle/eft_part10.h	EftPart10Def	unk200	ringTo	HIGH	eft_link_2.h names 0x200 ringTo: count * ringTo is the last ring slot
+include/battle/eft_part10.h	EftPart10Def	unk204	yaw	HIGH	eft_link_2.h names 0x204 yaw: the emitter init stores WrapAngle(yaw * pi) at emitter 0x294
+include/battle/eft_part10.h	EftPart10Def	unk208	pitch	HIGH	eft_link_2.h names 0x208 pitch: the emitter init stores WrapAngle(pitch * pi) at emitter 0x298
+include/battle/eft_part10.h	EftPart10Def	unk20D	colorMode	HIGH	EftPart10_InitPtcl: 1 leaves particle flag 0x80 clear, 2 sets it at random, anything else sets it; EftPart10_Step ramps the colour from color0 by colorStep only with that flag
+include/battle/eft_part10.h	EftPart10Def2	unk248	fade0	HIGH	eft_link_2.h names the emitter copy (0x248) fade0: fraction of the life at which the colour ramp starts (same pair as EftLinkDef2.fade0 / fade1)
+include/battle/eft_part10.h	EftPart10Def2	unk250	fade1	HIGH	eft_link_2.h names the emitter copy (0x250) fade1: fraction of the life at which the colour ramp ends
+include/battle/eft_part10.h	EftPart10Ptcl	unkC4	distVel	HIGH	eft_link_2.h names 0xC4 distVel; EftPart10_Step does dist += distVel (dist is 0xC0, which this view calls speed)
+include/battle/eft_part10.h	EftPart10Ptcl	unkC8	angX	HIGH	ang[0] in eft_link_2.h: cleared at init, stepped by 0xD4, wrapped and applied with Vu0Cur_RotateX; 0xD0 (ang[2]) is angle in this view
+include/battle/eft_part10.h	EftPart10Ptcl	unkCC	angY	HIGH	ang[1] in eft_link_2.h: cleared at init, stepped by 0xD8, wrapped and applied with Vu0Cur_RotateY
+include/battle/eft_part10.h	EftPart10Ptcl	unkD4	spinX	HIGH	angVel[0] in eft_link_2.h: added to 0xC8 every frame; 0xDC (angVel[2]) is spin in this view
+include/battle/eft_part10.h	EftPart10Ptcl	unkD8	spinY	HIGH	angVel[1] in eft_link_2.h: added to 0xCC every frame
+include/battle/eft_part10.h	EftPart10Ptcl	unkEC	fadeIn	HIGH	eft_link_2.h names 0xEC fadeIn: frames of the fade in (alpha = age / fadeIn)
+include/battle/eft_part10.h	EftPart10Ptcl	unkF0	fadeOut	HIGH	eft_link_2.h names 0xF0 fadeOut: frames of the fade out at the end of the life
+include/battle/eft_part10.h	EftPart10Ptcl	unkF4	pulseScale	HIGH	current value of the scale pulse (pulse0 + pulseD * t, or 1.0), multiplied into the drawn size; eft_link_2.h calls it scale, a name this view already uses for the vector at 0x20
+include/battle/eft_part10.h	EftPart10Ptcl	unkF8	pulse0	HIGH	eft_link_2.h names 0xF8 pulse0: low value of the scale pulse
+include/battle/eft_part10.h	EftPart10Ptcl	unkFC	pulseT	HIGH	eft_link_2.h names 0xFC pulseT: frame counter of the scale pulse, running up and down
+include/battle/eft_part10.h	EftPart10Ptcl	unk100	pulseTime	HIGH	eft_link_2.h names 0x100 pulseTime: frames of half a scale pulse
+include/battle/eft_part10.h	EftPart10Ptcl	unk124	fadeT	HIGH	eft_link_2.h names 0x124 fadeT: frame counter of the colour ramp, stepped while fade0 <= age / life < fade1
+include/battle/eft_part10.h	EftPart10Ptcl	unk128	fadeTime	HIGH	eft_link_2.h names 0x128 fadeTime: length of the colour ramp in frames, life * (fade1 - fade0)
+include/battle/eft_part10.h	EftPart10Ptcl	unk12C	pulseD	HIGH	eft_link_2.h names 0x12C pulseD: high - low value of the scale pulse
+include/battle/eft_part10.h	EftPart10Ptcl	unk134	delay	HIGH	eft_link_2.h names 0x134 delay: frames counted down before the particle starts
+include/battle/eft_part10.h	EftPart10	unkC0	spinX	HIGH	current value of the definition track of the same name; see EftPart10Def.unkC0
+include/battle/eft_part10.h	EftPart10	unkC8	spinXRange	HIGH	see EftPart10Def.unkC8
+include/battle/eft_part10.h	EftPart10	unkD0	spinY	HIGH	see EftPart10Def.unkD0
+include/battle/eft_part10.h	EftPart10	unkD8	spinYRange	HIGH	see EftPart10Def.unkD8
+include/battle/eft_part10.h	EftPart10	unkF0	angA	HIGH	eft_link_2.h names emitter 0xF0 angA (jitter of the first emission angle in EftPart10_EmitRings)
+include/battle/eft_part10.h	EftPart10	unkF8	angARange	HIGH	eft_link_2.h names emitter 0xF8 angARange
+include/battle/eft_part10.h	EftPart10	unk100	angB	HIGH	eft_link_2.h names emitter 0x100 angB
+include/battle/eft_part10.h	EftPart10	unk108	angBRange	HIGH	eft_link_2.h names emitter 0x108 angBRange
+include/battle/eft_part10.h	EftPart10	unk128	distVel	HIGH	see EftPart10Def.unk128
+include/battle/eft_part10.h	EftPart10	unk130	distVelRange	HIGH	see EftPart10Def.unk130
+include/battle/eft_part10.h	EftPart10	unk158	wait	HIGH	see EftPart10Def.unk158; delay is already a member of this structure
+include/battle/eft_part10.h	EftPart10	unk160	waitRange	HIGH	see EftPart10Def.unk160
+include/battle/eft_part10.h	EftPart10	unk168	pulse	HIGH	see EftPart10Def.unk168: low and high value of the particle scale pulse
+include/battle/eft_part10.h	EftPart10	dUnk168	dPulse	HIGH	change of unk168 over the current key segment (EftPart10_StartKeys / UpdateKeys); follows the rename of unk168
+include/battle/eft_part10.h	EftPart10	unk178	pulseTime	HIGH	see EftPart10Def.unk178
+include/battle/eft_part10.h	EftPart10	unk248	fade0	HIGH	eft_link_2.h names emitter 0x248 fade0: EftPart10_Step steps the colour ramp while fade0 <= age / life < fade1
+include/battle/eft_part10.h	EftPart10	unk250	fade1	HIGH	eft_link_2.h names emitter 0x250 fade1
+include/battle/eft_part10.h	EftPart10	unk290	twist	HIGH	eft_link_2.h names 0x290 twist: accumulated by twistStep per emitted particle and added to the particle start angle in EftPart10_InitPtcl
+include/battle/eft_part10.h	EftPart10	unk294	yaw	HIGH	eft_link_2.h names 0x294 yaw: WrapAngle(def yaw * pi), applied to every particle in EftPart10_Step
+include/battle/eft_part10.h	EftPart10	unk298	pitch	HIGH	eft_link_2.h names 0x298 pitch: WrapAngle(def pitch * pi)
+include/battle/stg.h	StgDataA	unk0	KEEP	KEEP	first word of the stage parameter block, unread in every view (StgMData, StgAnimData)
+include/battle/stg.h	StgDataA	unk4	KEEP	KEEP	second word of the stage parameter block, unread in every view
+include/battle/stg.h	StgDataA	count40	depthTintCount	HIGH	count of the list BtlStage_GetList40(i) returns, read as StgDepthTintParam (gfx_post.c:1691, sys/gfx_post.h: depth tint of one medium)
+include/battle/stg.h	StgDataA	list40	depthTints	HIGH	entries are StgDepthTintParam (gfx_post.h: Entry of stage section +0x40); [0] air, [1] under water
+include/battle/stg.h	StgDataA	count48	glareCount	HIGH	count of the section BtlStage_GetList48 returns, read as StgGlareParam (gfx_post.c:1539)
+include/battle/stg.h	StgDataA	list48	glare	HIGH	StgGlareParam of sys/gfx_post.h (Stage section +0x48)
+include/battle/stg.h	StgDataA	count50	fogCount	HIGH	count of the section handed to StgFog_SetParams (screen_fx.c:601)
+include/battle/stg.h	StgDataA	list50	fog	HIGH	StgFogParams of stg_ambient.h: StgFog_SetParams(BtlStage_GetList50())
+include/battle/stg.h	StgDataA	count58	surfCount	HIGH	count of the section BtlStage_GetList58 returns: StgSurfRec, the record of the reflecting surface (eft_stage_2.c:994)
+include/battle/stg.h	StgDataA	list58	surf	HIGH	StgSurfRec of eft_stage_2.h (The stage record for the reflecting surface)
+include/battle/stg.h	StgDataA	count60	weatherCount	HIGH	count of the section BtlStage_GetList60 returns: StgWeatherRec (eft_stage_2.c:308)
+include/battle/stg.h	StgDataA	list60	weather	HIGH	StgWeatherRec of eft_stage_2.h: wind, size, flags bit 0 weather on
+include/battle/stg.h	StgDataA	count68	dustCount	HIGH	count of the section BtlStage_GetList68 returns: EftGndDustStage, the stage dust record (eft_ground_dust.c:1220)
+include/battle/stg.h	StgDataA	list68	dust	HIGH	EftGndDustStage of eft_ground_dust.h (Stage dust record)
+include/battle/stg.h	StgDataA	count70	flagCount	HIGH	count of the word list stg_ambient.h StgData names flags at +0x74 (n70 != 0 is tested before flags[0])
+include/battle/stg.h	StgDataA	list70	flags	HIGH	StgData (stg_ambient.h) names +0x74 flags: the STG_FLAG_* word
+include/battle/stg.h	StgDataA	count78	lightColorCount	HIGH	count of the list BtlStage_GetLightColors returns
+include/battle/stg.h	StgDataA	list78	lightColors	HIGH	returned by BtlStage_GetLightColors; the header comment says light colours (btl_obj.c)
+include/battle/stg.h	StgDataA	count80	tintCount	MEDIUM	count of the section BtlStage_GetList80 returns; see list80 for the doubt
+include/battle/stg.h	StgDataA	list80	tint	MEDIUM	bytes 0..6 replace the two end colours of StgTint slot 0 (screen_fx.c:827) and byte 7 is a maximum used with the weather colour (eft_stage_2.c:523); uncertain whether tint covers all of the record
+include/battle/stg.h	StgDataA	count88	ambientCount	HIGH	count word before the pointer StgData names ambient
+include/battle/stg.h	StgDataA	list88	ambient	HIGH	StgData (stg_ambient.h) names +0x8C ambient: the r, g, b the ambient colour getter and setter use (stg_ambient.c:379, 404)
+include/battle/stg.h	StgDataA	count90	waterCount	HIGH	count of the section BtlStage_GetList90 returns: GfxWaterStage (sys/gfx_screen.h)
+include/battle/stg.h	StgDataA	list90	water	HIGH	GfxWaterStage: flags bit 0 the stage has water, then r g b a (gfx_screen.c:850, eft_stage_2.c:884)
+include/battle/stg.h	StgDataA	count98	KEEP	KEEP	BtlStage_GetList98 has no caller; only BtlStage_HasFeature(4) tests bit 0 of the first word and nobody asks for feature 4
+include/battle/stg.h	StgDataA	list98	KEEP	KEEP	see count98: no reader of the section
+include/battle/stg.h	StgDataA	countA0	hazeCount	HIGH	count of the section BtlStage_GetListA0 returns: StgHazeParam
+include/battle/stg.h	StgDataA	listA0	haze	HIGH	StgHazeParam of screen_fx.h (Haze section of the stage parameter file): StgHaze_SetParams(BtlStage_GetListA0())
+include/sys/common.h	CommonRes	unk10	KEEP	KEEP	no code reads or writes the word between the file pointers and their sizes
+include/sys/common.h	CommonRes	unk20	battleRes	HIGH	stg.c, stg_parts.c and stg_ambient.c cast its address to BattleRes, and battle_work.h says BattleRes is the 0x50 bytes at gCommonRes + 0x20
+include/sys/save.h	SaveData	unk0	sumHigh	HIGH	McCard_Checksum (memcard.c:923) stores the high byte of the 16-bit block checksum in word 0; the menu views (MSave, QSave, LSave, VSave) call the pair sum[2]
+include/sys/save.h	SaveData	unk4	sumLow	HIGH	McCard_Checksum stores the low byte of the block checksum in word 1; second word of sum[2] in the menu views
+include/sys/save.h	SaveData	unkC	level	HIGH	MSaveBody (history.h) and LSaveBody (tournament.h) name +0xC level: the difficulty chosen in the history menu, 0..2
+include/sys/save.h	SaveData	unk208	ubFlags	HIGH	PSave (ub_score.h), SSave (survival.h), QSaveBody (sim_day.h) and UbSaveBody name +0x208 ubFlags; ub.h and ub_rank.h still call it unk208 (bit 0x10 = all-courses reward given)
+include/sys/save.h	SaveData	unk20C	missionPages	HIGH	UoSave (ub.h) names +0x20C missionPages: pages of five missions the list shows; 5 by default, 20 after Save_UnlockAll, sim event 17 adds one
+include/sys/save.h	SaveData	unk77C	rank	HIGH	UoSave (ub.h) and NSave (ub_rank.h) name +0x77C rank: the player's place on the ladder, 99 by default
+include/sys/save.h	SaveData	unkA08	tourFlags	HIGH	tour_menu.c: bit n = tournament n sent its invitation (TOUR_INVITE), plus TOUR_SAVE_STARTED and TOUR_SAVE_EXPLAINED; only the tournament menu uses it
+include/sys/save.h	SaveData	unkA0C	tourHour	HIGH	the hour 0..23 of the tournament mode's clock: TourMenu_CheckInvite picks the tournament from it, tour_menu.c:184 draws it as mc_timer, main_menu.c and entry_select.c step it and wrap at 24
+include/sys/save.h	SaveData	unkA10	tourLevel	HIGH	TOUR_INVITE sets it to Rand_Range(3) (the invited tournament's random level); tour_menu.c:448 copies it to cursor[TOURMENU_LV_LEVEL] and line 189 picks the prize column with it
+include/sys/save.h	SaveData	unk1008	shopFlags	HIGH	bit 0 = the shop has new stock to announce (set by Shop_CheckStockLevel and the history outro, cleared when the greeting SHOP_LINE_GREET_NEW is said), bit 1 = the last stock level was given
+include/sys/save.h	SaveData	unk100C	stockLevel	HIGH	shop.c:283 compares it with WItemEntry.stockLevel to decide what is sold; raised by the first completion of a saga and by Shop_CheckStockLevel, capped at 5
+include/sys/save.h	SaveData	unk1208	dcFlags	HIGH	ZSave (dc.h) names +0x1208 dcFlags: bit 0 = the guide's introduction of the Data Center was heard
+include/sys/save.h	SaveData	unk168C	KEEP	KEEP	two words between keyEdit and the camera options; no code or view uses them
+include/sys/save.h	SaveData	unk1694	camDistMode	HIGH	copied through BattleOption.optA to fighter +0x49C, which btl_char_cam.h names distMode (0..2 preset of ChrCam_GetOffset); the option screen shows it as the three-way type with a picture
+include/sys/save.h	SaveData	unk1698	camShakeOff	HIGH	copied through BattleOption.optB to fighter +0x4B8 as (optB == 0), which btl_char_api_2.h names camShakeOn; a two-way on/off picker on the screen page

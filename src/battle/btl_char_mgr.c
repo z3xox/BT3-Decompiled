@@ -234,7 +234,7 @@ extern void BtlObj_InitChains(BtlMgrObj *obj);
 extern void BtlObj_UpdateChains(BtlMgrObj *obj);
 
 /* The word of the object's +0x1660 block that mirrors BtlChar_IsBodyChanged(). */
-#define OBJ_WORD_18028(obj) (*(s32 *)((obj)->unk1660 + 0x18028))
+#define OBJ_WORD_18028(obj) (*(s32 *)((obj)->charaWork + 0x18028))
 
 /* A table inside a data file: the header word gives its byte offset. */
 #define FILE_TABLE(file, word) ((u32 *)(file) + ((u32 *)(file))[word] / 4)

@@ -1403,10 +1403,10 @@ void BattleSetup_DefaultOptions(void) {
 
     if (opt->isSet == 0) {
         memset(opt, 0, sizeof(BattleOption));
-        opt->optA[0] = gSaveData->unk1694;
-        opt->optA[1] = gSaveData->unk1694;
-        opt->optB[0] = gSaveData->unk1698;
-        opt->optB[1] = gSaveData->unk1698;
+        opt->optA[0] = gSaveData->camDistMode;
+        opt->optA[1] = gSaveData->camDistMode;
+        opt->optB[0] = gSaveData->camShakeOff;
+        opt->optB[1] = gSaveData->camShakeOff;
     }
 }
 
@@ -1449,10 +1449,10 @@ void BattleSetup_SetOption14(s32 val) {
     memset(opt, 0, sizeof(BattleOption));
     opt->isSet = 1;
     opt->unk14 = val;
-    opt->optA[0] = gSaveData->unk1694;
-    opt->optA[1] = gSaveData->unk1694;
-    opt->optB[0] = gSaveData->unk1698;
-    opt->optB[1] = gSaveData->unk1698;
+    opt->optA[0] = gSaveData->camDistMode;
+    opt->optA[1] = gSaveData->camDistMode;
+    opt->optB[0] = gSaveData->camShakeOff;
+    opt->optB[1] = gSaveData->camShakeOff;
 }
 
 /* Sets the battle rules; bgm 24 means a random one of 0..23. */

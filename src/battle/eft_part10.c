@@ -241,24 +241,24 @@ s32 EftPart10_InitPtcl(EftPart10Ptcl *p, EftPart10 *em) {
     Vec4_Set(&p->pos, 0.0f, 0.0f, 0.0f, 1.0f);
     Vec4_Set(&p->scale, em->scaleX.v, em->scaleY.v, 0.0f, 1.0f);
     p->speed = em->speedBase.v + Rand_FloatRange(em->speed.v, em->speed.v + em->speedRange.v);
-    p->unkC4 = Rand_FloatRange(em->unk128.v, em->unk128.v + em->unk130.v);
-    p->unkC4 *= em->size;
+    p->distVel = Rand_FloatRange(em->distVel.v, em->distVel.v + em->distVelRange.v);
+    p->distVel *= em->size;
     life = Rand_FloatRange(em->life.v, em->life.v + em->lifeRange.v) * 30.0f;
     p->age = 0.0f;
     p->life = life;
     if (life <= 0.0f) {
         return 0;
     }
-    t = Rand_FloatRange(em->unk158.v, em->unk158.v + em->unk160.v) * 30.0f;
+    t = Rand_FloatRange(em->wait.v, em->wait.v + em->waitRange.v) * 30.0f;
     p->flags = 0;
     p->next = NULL;
     p->prev = NULL;
-    p->unkC8 = 0.0f;
-    p->unkCC = 0.0f;
-    p->unk134 = t;
-    p->angle = (Rand_FloatRange(em->angle.v, em->angle.v + em->angleRange.v) + em->unk290) * 6.2831853f;
-    p->unkD4 = Rand_FloatRange(em->unkC0.v, em->unkC0.v + em->unkC8.v) * 3.14159265f;
-    p->unkD8 = Rand_FloatRange(em->unkD0.v, em->unkD0.v + em->unkD8.v) * 3.14159265f;
+    p->angX = 0.0f;
+    p->angY = 0.0f;
+    p->delay = t;
+    p->angle = (Rand_FloatRange(em->angle.v, em->angle.v + em->angleRange.v) + em->twist) * 6.2831853f;
+    p->spinX = Rand_FloatRange(em->spinX.v, em->spinX.v + em->spinXRange.v) * 3.14159265f;
+    p->spinY = Rand_FloatRange(em->spinY.v, em->spinY.v + em->spinYRange.v) * 3.14159265f;
     p->spin = Rand_FloatRange(em->spin.v, em->spin.v + em->spinRange.v) * 3.14159265f;
     if (def->flags & 4) {
         if (!(rand() & 1)) {
@@ -285,25 +285,25 @@ s32 EftPart10_InitPtcl(EftPart10Ptcl *p, EftPart10 *em) {
     p->sizeStep1 = (size.z - size.y) / (p->life * (1.0f - def->sizeMid));
     p->size = size.x;
     if (def->flags & 0x80) {
-        p->unk100 = em->unk178.v * 30.0f;
-        p->unkFC = 0.0f;
-        p->unk12C = em->unk168.b - em->unk168.a;
-        p->unkF8 = em->unk168.a;
-        p->unkF4 = em->unk168.a;
+        p->pulseTime = em->pulseTime.v * 30.0f;
+        p->pulseT = 0.0f;
+        p->pulseD = em->pulse.b - em->pulse.a;
+        p->pulse0 = em->pulse.a;
+        p->pulseScale = em->pulse.a;
     } else {
-        p->unkF4 = 1.0f;
+        p->pulseScale = 1.0f;
     }
-    if (def->unk20D == 2) {
+    if (def->colorMode == 2) {
         if (!(rand() & 1)) {
             p->flags |= EFT_PART10_P_UNK80;
         }
-    } else if (def->unk20D != 1) {
+    } else if (def->colorMode != 1) {
         p->flags |= EFT_PART10_P_UNK80;
     }
-    p->unk128 = p->life * (em->unk250.v - em->unk248.v);
-    p->unk124 = 0.0f;
-    if (p->unk128 <= p->unk124) {
-        p->unk128 = p->life;
+    p->fadeTime = p->life * (em->fade1.v - em->fade0.v);
+    p->fadeT = 0.0f;
+    if (p->fadeTime <= p->fadeT) {
+        p->fadeTime = p->life;
     }
     p->color0.x = Rand_FloatRange(em->color.x, em->color.x + em->colorRange.x);
     p->color0.y = Rand_FloatRange(em->color.y, em->color.y + em->colorRange.y);
@@ -318,8 +318,8 @@ s32 EftPart10_InitPtcl(EftPart10Ptcl *p, EftPart10 *em) {
     Vec4_Copy(&p->color, &p->color0);
     p->color.w = 0.0f;
     Vec3_Sub(&p->colorStep, &end, &p->color);
-    p->unkEC = p->life * def->unk1E8;
-    p->unkF0 = p->life * (1.0f - def->unk1EC);
+    p->fadeIn = p->life * def->fadeIn;
+    p->fadeOut = p->life * (1.0f - def->fadeOut);
     if (def->flags & 0x100) {
         p->stretchTime = em->stretchTime.v * 30.0f;
         p->stretchAge = 0.0f;
@@ -353,7 +353,7 @@ void EftPart10_BuildCorners(EftPart10Ptcl *p, EftPart10 *em) {
     Vec4_Set(&p->corner[1], p->size * -0.5f, p->size * 0.5f, 0.0f, 1.0f);
     Vec4_Set(&p->corner[2], p->size * 0.5f, p->size * -0.5f, 0.0f, 1.0f);
     Vec4_Set(&p->corner[3], p->size * 0.5f, p->size * 0.5f, 0.0f, 1.0f);
-    Vu0Cur_ScaleDiagUniform(em->size * em->scale * p->unkF4);
+    Vu0Cur_ScaleDiagUniform(em->size * em->scale * p->pulseScale);
     Vu0Cur_Translate(&p->scale);
     Vu0Cur_RotateZ(p->angle);
     Vec3_Normalize(&dir, &p->pos);
@@ -834,30 +834,30 @@ void EftPart10_StartKeys(EftPart10 *em) {
         em->dSizeRange[2] = def->sizeRange[seg][2] - def->sizeRange[seg - 1][2];
         em->angle.d = def->angle[seg] - def->angle[seg - 1];
         em->angleRange.d = def->angleRange[seg] - def->angleRange[seg - 1];
-        em->unkC0.d = def->unkC0[seg] - def->unkC0[seg - 1];
-        em->unkD0.d = def->unkD0[seg] - def->unkD0[seg - 1];
+        em->spinX.d = def->spinX[seg] - def->spinX[seg - 1];
+        em->spinY.d = def->spinY[seg] - def->spinY[seg - 1];
         em->spin.d = def->spin[seg] - def->spin[seg - 1];
-        em->unkC8.d = def->unkC8[seg] - def->unkC8[seg - 1];
-        em->unkD8.d = def->unkD8[seg] - def->unkD8[seg - 1];
+        em->spinXRange.d = def->spinXRange[seg] - def->spinXRange[seg - 1];
+        em->spinYRange.d = def->spinYRange[seg] - def->spinYRange[seg - 1];
         em->spinRange.d = def->spinRange[seg] - def->spinRange[seg - 1];
-        em->unkF0.d = def->unkF0[seg] - def->unkF0[seg - 1];
-        em->unkF8.d = def->unkF8[seg] - def->unkF8[seg - 1];
-        em->unk100.d = def->unk100[seg] - def->unk100[seg - 1];
-        em->unk108.d = def->unk108[seg] - def->unk108[seg - 1];
+        em->angA.d = def->angA[seg] - def->angA[seg - 1];
+        em->angARange.d = def->angARange[seg] - def->angARange[seg - 1];
+        em->angB.d = def->angB[seg] - def->angB[seg - 1];
+        em->angBRange.d = def->angBRange[seg] - def->angBRange[seg - 1];
         em->speed.d = def->speed[seg] - def->speed[seg - 1];
         em->speedRange.d = def->speedRange[seg] - def->speedRange[seg - 1];
         em->speedBase.d = def->speedBase[seg] - def->speedBase[seg - 1];
-        em->unk128.d = def->unk128[seg] - def->unk128[seg - 1];
-        em->unk130.d = def->unk130[seg] - def->unk130[seg - 1];
+        em->distVel.d = def->distVel[seg] - def->distVel[seg - 1];
+        em->distVelRange.d = def->distVelRange[seg] - def->distVelRange[seg - 1];
         em->scaleX.d = def->scaleX[seg] - def->scaleX[seg - 1];
         em->scaleY.d = def->scaleY[seg] - def->scaleY[seg - 1];
         em->life.d = def->life[seg] - def->life[seg - 1];
         em->lifeRange.d = def->lifeRange[seg] - def->lifeRange[seg - 1];
-        em->unk158.d = def->unk158[seg] - def->unk158[seg - 1];
-        em->unk160.d = def->unk160[seg] - def->unk160[seg - 1];
-        em->dUnk168.a = def->unk168[seg][0] - def->unk168[seg - 1][0];
-        em->dUnk168.b = def->unk168[seg][1] - def->unk168[seg - 1][1];
-        em->unk178.d = def->unk178[seg] - def->unk178[seg - 1];
+        em->wait.d = def->wait[seg] - def->wait[seg - 1];
+        em->waitRange.d = def->waitRange[seg] - def->waitRange[seg - 1];
+        em->dPulse.a = def->pulse[seg][0] - def->pulse[seg - 1][0];
+        em->dPulse.b = def->pulse[seg][1] - def->pulse[seg - 1][1];
+        em->pulseTime.d = def->pulseTime[seg] - def->pulseTime[seg - 1];
         em->dStretchX.a = def2->stretchX[seg][0] - def2->stretchX[seg - 1][0];
         em->dStretchX.b = def2->stretchX[seg][1] - def2->stretchX[seg - 1][1];
         em->dStretchY.a = def2->stretchY[seg][0] - def2->stretchY[seg - 1][0];
@@ -865,8 +865,8 @@ void EftPart10_StartKeys(EftPart10 *em) {
         em->dStretchZ.a = def2->stretchZ[seg][0] - def2->stretchZ[seg - 1][0];
         em->dStretchZ.b = def2->stretchZ[seg][1] - def2->stretchZ[seg - 1][1];
         em->stretchTime.d = def2->stretchTime[seg] - def2->stretchTime[seg - 1];
-        em->unk248.d = def2->unk248[seg] - def2->unk248[seg - 1];
-        em->unk250.d = def2->unk250[seg] - def2->unk250[seg - 1];
+        em->fade0.d = def2->fade0[seg] - def2->fade0[seg - 1];
+        em->fade1.d = def2->fade1[seg] - def2->fade1[seg - 1];
         Vec4_Sub(&em->dColor, &def2->color[seg], &def2->color[seg - 1]);
         Vec4_Sub(&em->dEndColor, &def2->endColor[seg], &def2->endColor[seg - 1]);
         Vec4_Sub(&em->dColorRange, &def2->colorRange[seg], &def2->colorRange[seg - 1]);
@@ -903,30 +903,30 @@ void EftPart10_UpdateKeys(EftPart10 *em) {
     em->kSizeRange[2] = def->sizeRange[seg][2] + em->dSizeRange[2] * t;
     em->angle.v = def->angle[seg] + em->angle.d * t;
     em->angleRange.v = def->angleRange[seg] + em->angleRange.d * t;
-    em->unkC0.v = def->unkC0[seg] + em->unkC0.d * t;
-    em->unkD0.v = def->unkD0[seg] + em->unkD0.d * t;
+    em->spinX.v = def->spinX[seg] + em->spinX.d * t;
+    em->spinY.v = def->spinY[seg] + em->spinY.d * t;
     em->spin.v = def->spin[seg] + em->spin.d * t;
-    em->unkC8.v = def->unkC8[seg] + em->unkC8.d * t;
-    em->unkD8.v = def->unkD8[seg] + em->unkD8.d * t;
+    em->spinXRange.v = def->spinXRange[seg] + em->spinXRange.d * t;
+    em->spinYRange.v = def->spinYRange[seg] + em->spinYRange.d * t;
     em->spinRange.v = def->spinRange[seg] + em->spinRange.d * t;
-    em->unkF0.v = def->unkF0[seg] + em->unkF0.d * t;
-    em->unk100.v = def->unk100[seg] + em->unk100.d * t;
-    em->unkF8.v = def->unkF8[seg] + em->unkF8.d * t;
-    em->unk108.v = def->unk108[seg] + em->unk108.d * t;
+    em->angA.v = def->angA[seg] + em->angA.d * t;
+    em->angB.v = def->angB[seg] + em->angB.d * t;
+    em->angARange.v = def->angARange[seg] + em->angARange.d * t;
+    em->angBRange.v = def->angBRange[seg] + em->angBRange.d * t;
     em->speed.v = def->speed[seg] + em->speed.d * t;
     em->speedRange.v = def->speedRange[seg] + em->speedRange.d * t;
     em->speedBase.v = def->speedBase[seg] + em->speedBase.d * t;
-    em->unk128.v = def->unk128[seg] + em->unk128.d * t;
-    em->unk130.v = def->unk130[seg] + em->unk130.d * t;
+    em->distVel.v = def->distVel[seg] + em->distVel.d * t;
+    em->distVelRange.v = def->distVelRange[seg] + em->distVelRange.d * t;
     em->scaleX.v = def->scaleX[seg] + em->scaleX.d * t;
     em->scaleY.v = def->scaleY[seg] + em->scaleY.d * t;
     em->life.v = def->life[seg] + em->life.d * t;
     em->lifeRange.v = def->lifeRange[seg] + em->lifeRange.d * t;
-    em->unk158.v = def->unk158[seg] + em->unk158.d * t;
-    em->unk160.v = def->unk160[seg] + em->unk160.d * t;
-    em->unk168.a = def->unk168[seg][0] + em->dUnk168.a * t;
-    em->unk168.b = def->unk168[seg][1] + em->dUnk168.b * t;
-    em->unk178.v = def->unk178[seg] + em->unk178.d * t;
+    em->wait.v = def->wait[seg] + em->wait.d * t;
+    em->waitRange.v = def->waitRange[seg] + em->waitRange.d * t;
+    em->pulse.a = def->pulse[seg][0] + em->dPulse.a * t;
+    em->pulse.b = def->pulse[seg][1] + em->dPulse.b * t;
+    em->pulseTime.v = def->pulseTime[seg] + em->pulseTime.d * t;
     em->stretchX.a = def2->stretchX[seg][0] + em->dStretchX.a * t;
     em->stretchX.b = def2->stretchX[seg][1] + em->dStretchX.b * t;
     em->stretchY.a = def2->stretchY[seg][0] + em->dStretchY.a * t;
@@ -934,8 +934,8 @@ void EftPart10_UpdateKeys(EftPart10 *em) {
     em->stretchZ.a = def2->stretchZ[seg][0] + em->dStretchZ.a * t;
     em->stretchZ.b = def2->stretchZ[seg][1] + em->dStretchZ.b * t;
     em->stretchTime.v = def2->stretchTime[seg] + em->stretchTime.d * t;
-    em->unk248.v = def2->unk248[seg] + em->unk248.d * t;
-    em->unk250.v = def2->unk250[seg] + em->unk250.d * t;
+    em->fade0.v = def2->fade0[seg] + em->fade0.d * t;
+    em->fade1.v = def2->fade1[seg] + em->fade1.d * t;
     Vec3_Scale(p, &em->dColor, t);
     Vec4_Add(&em->color, &def2->color[seg], p);
     Vec3_Scale(p, &em->dEndColor, t);
@@ -960,30 +960,30 @@ void EftPart10_SetKey(EftPart10 *em, s32 idx) {
     def2 = em->def2;
     em->angle.v = def->angle[idx];
     em->angleRange.v = def->angleRange[idx];
-    em->unkC0.v = def->unkC0[idx];
-    em->unkC8.v = def->unkC8[idx];
-    em->unkD0.v = def->unkD0[idx];
-    em->unkD8.v = def->unkD8[idx];
+    em->spinX.v = def->spinX[idx];
+    em->spinXRange.v = def->spinXRange[idx];
+    em->spinY.v = def->spinY[idx];
+    em->spinYRange.v = def->spinYRange[idx];
     em->spin.v = def->spin[idx];
     em->spinRange.v = def->spinRange[idx];
-    em->unkF0.v = def->unkF0[idx];
-    em->unkF8.v = def->unkF8[idx];
-    em->unk100.v = def->unk100[idx];
-    em->unk108.v = def->unk108[idx];
+    em->angA.v = def->angA[idx];
+    em->angARange.v = def->angARange[idx];
+    em->angB.v = def->angB[idx];
+    em->angBRange.v = def->angBRange[idx];
     em->speed.v = def->speed[idx];
     em->speedRange.v = def->speedRange[idx];
     em->speedBase.v = def->speedBase[idx];
-    em->unk128.v = def->unk128[idx];
-    em->unk130.v = def->unk130[idx];
+    em->distVel.v = def->distVel[idx];
+    em->distVelRange.v = def->distVelRange[idx];
     em->scaleX.v = def->scaleX[idx];
     em->scaleY.v = def->scaleY[idx];
     em->life.v = def->life[idx];
     em->lifeRange.v = def->lifeRange[idx];
-    em->unk158.v = def->unk158[idx];
-    em->unk160.v = def->unk160[idx];
-    em->unk168.a = def->unk168[idx][0];
-    em->unk168.b = def->unk168[idx][1];
-    em->unk178.v = def->unk178[idx];
+    em->wait.v = def->wait[idx];
+    em->waitRange.v = def->waitRange[idx];
+    em->pulse.a = def->pulse[idx][0];
+    em->pulse.b = def->pulse[idx][1];
+    em->pulseTime.v = def->pulseTime[idx];
     em->stretchX.a = def2->stretchX[idx][0];
     em->stretchX.b = def2->stretchX[idx][1];
     em->stretchY.a = def2->stretchY[idx][0];
@@ -991,8 +991,8 @@ void EftPart10_SetKey(EftPart10 *em, s32 idx) {
     em->stretchZ.a = def2->stretchZ[idx][0];
     em->stretchZ.b = def2->stretchZ[idx][1];
     em->stretchTime.v = def2->stretchTime[idx];
-    em->unk248.v = def2->unk248[idx];
-    em->unk250.v = def2->unk250[idx];
+    em->fade0.v = def2->fade0[idx];
+    em->fade1.v = def2->fade1[idx];
     Vec4_Copy(&em->color, &def2->color[idx]);
     Vec4_Copy(&em->endColor, &def2->endColor[idx]);
     Vec4_Copy(&em->colorRange, &def2->colorRange[idx]);

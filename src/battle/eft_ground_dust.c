@@ -1022,9 +1022,9 @@ void EftGndDust_SetSlide(s32 objId, s32 stop, f32 bright) {
         arg.grow = 0.1f;
         arg.bright = bright;
         arg.speed = 1.1f;
-        arg.unk54 = 0.0f;
+        arg.speedRand = 0.0f;
         arg.drag = 1.0f;
-        arg.unk5C = 0.0f;
+        arg.gravity = 0.0f;
         arg.scale = BtlScene_GetCharScale(objId);
         gEftGndDust->slide[objId] = EftGndDust_Create(&arg, 1);
         if (gEftGndDust->slide[objId] == NULL) {
@@ -1071,9 +1071,9 @@ void EftGndDust_SetDash(s32 objId, s32 stop, f32 bright) {
         arg.grow = 0.05f;
         arg.bright = bright;
         arg.speed = 1.1f;
-        arg.unk54 = 0.01f;
+        arg.speedRand = 0.01f;
         arg.drag = 1.0f;
-        arg.unk5C = 0.005f;
+        arg.gravity = 0.005f;
         arg.scale = BtlScene_GetCharScale(objId);
         gEftGndDust->dash[objId] = EftGndDust_Create(&arg, 2);
         if (gEftGndDust->dash[objId] == NULL) {
@@ -1196,7 +1196,7 @@ void EftGndDust_InitTemplate(void) {
         t->colA[3] = 80;
         t->colA[2] = 35;
         t->pool = 0;
-        t->unk54 = 0.0f;
+        t->speedRand = 0.0f;
         t->colB[0] = 80;
         t->colA[1] = 55;
         t->colB[1] = 65;
@@ -1213,7 +1213,7 @@ void EftGndDust_InitTemplate(void) {
         t->life = 30;
         t->bright = 1.0f;
         t->fade = 30;
-        t->unk5C = 0.0f;
+        t->gravity = 0.0f;
         t->rMin = 17;
         t->rMax = 40;
         t->scale = 1.0f;
@@ -1228,7 +1228,7 @@ void EftGndDust_InitTemplate(void) {
             t->colB[2] = stg->colB[2];
             t->colB[3] = stg->colB[3];
             t->speed = stg->speed;
-            t->unk54 = stg->speedRand;
+            t->speedRand = stg->speedRand;
             t->size = stg->size;
             t->rMin = stg->rMin;
             t->rMax = stg->rMax;
@@ -1295,7 +1295,7 @@ void EftGndDustPuff_Init(EftZTask *task, EftGndDustArg *arg) {
         Vec4_Set(&p->base, 0.0f, 0.0f, 0.0f, 1.0f);
         Vec4_Set(&p->size, 1.0f, 1.0f, 1.0f, 1.0f);
         Vec4_Set(&p->grow, arg->grow, arg->grow, 1.0f, 1.0f);
-        Vec3_Scale(&p->accel, V(&arg->accel), arg->unk5C * arg->scale + arg->unk54);
+        Vec3_Scale(&p->accel, V(&arg->accel), arg->gravity * arg->scale + arg->speedRand);
         *(EftZCol *)p->colA = *(EftZCol *)arg->colA;
         *(EftZCol *)p->colB = *(EftZCol *)arg->colB;
         p->dir.x = Rand_Float01() * 2.0f - 1.0f;
@@ -1309,7 +1309,7 @@ void EftGndDustPuff_Init(EftZTask *task, EftGndDustArg *arg) {
         p->pos.y = arg->pos.y + p->dir.y * (rMin + Rand_Float01() * (rMax - rMin));
         p->pos.z = arg->pos.z + p->dir.z * (rMin + Rand_Float01() * (rMax - rMin));
         p->pos.w = 1.0f;
-        p->speed = arg->speed + arg->unk54 * Rand_Float01();
+        p->speed = arg->speed + arg->speedRand * Rand_Float01();
         p->drag = arg->drag;
         p->lifeMax = p->life = (f32)arg->life;
         p->fadeLen = p->fade = (f32)arg->fade;
@@ -1677,9 +1677,9 @@ void EftGndDustLand_Init(EftZTask *task, void *param) {
     arg->rMax = 0;
     arg->spin = 0;
     arg->speed = 0.0f;
-    arg->unk54 = 0.0f;
+    arg->speedRand = 0.0f;
     arg->drag = 1.0f;
-    arg->unk5C = 0.0f;
+    arg->gravity = 0.0f;
     start = RANDF() * 6.2831853f;
     colA = *(EftZCol *)arg->colA;
     colB = *(EftZCol *)arg->colB;
@@ -1852,9 +1852,9 @@ void EftGndDustImpact_Init(EftZTask *task, void *param) {
     arg->rMax = 0;
     arg->spin = 0;
     arg->speed = 0.0f;
-    arg->unk54 = 0.0f;
+    arg->speedRand = 0.0f;
     arg->drag = 1.0f;
-    arg->unk5C = 0.0f;
+    arg->gravity = 0.0f;
     step = 2.0943951f;
     start = RANDF() * 6.2831853f;
     for (i = 0; i < 2; i++) {

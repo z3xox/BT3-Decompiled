@@ -139,23 +139,23 @@ void EftShot_BuildParam(s32 chr, s32 slot, EftShotParam *p, s32 blank) {
     memset(p, 0, sizeof(EftShotParam));
     if (blank) {
         p->id = 0;
-        p->unk2 = 100;
+        p->level = 100;
         p->kind = 1;
-        p->unk5 = 0;
-        p->unk6 = 0;
+        p->sub = 0;
+        p->node = 0;
         p->unk7 = 0;
-        p->unk8 = 0;
+        p->hitShape = 0;
         p->shots = 1;
-        p->unkA = 0;
+        p->maxHits = 0;
         p->unkB = 0;
-        p->unkC = 0;
+        p->aimMode = 0;
         p->type = 0;
-        p->unkE[0] = 3;
-        p->unkE[1] = 3;
-        p->unkE[2] = 3;
-        p->unkE[3] = 3;
-        p->unkE[4] = 3;
-        p->unkE[5] = 3;
+        p->nodes[0] = 3;
+        p->nodes[1] = 3;
+        p->nodes[2] = 3;
+        p->nodes[3] = 3;
+        p->nodes[4] = 3;
+        p->nodes[5] = 3;
         p->unk16[0] = 0;
         p->unk16[1] = 10;
         p->unk16[2] = 20;
@@ -165,50 +165,50 @@ void EftShot_BuildParam(s32 chr, s32 slot, EftShotParam *p, s32 blank) {
         p->unk22 = 0;
         p->unk24 = 0;
         p->life = 120;
-        p->unk2C = 0.0f;
-        p->unk30 = 1.0f;
+        p->shotLife = 0.0f;
+        p->scale = 1.0f;
         p->unk34 = 40.0f;
-        p->unk38 = 0.0f;
+        p->homing = 0.0f;
         p->flags = 0;
-        p->unk40 = 0;
-        p->unk42 = 0;
+        p->impactFx = 0;
+        p->groundFx = 0;
         p->volley = 1;
-        p->unk48 = 0;
-        p->unk4A = 0;
-        p->unk4C = 0.0f;
-        p->unk54 = 1.0f;
-        p->unk50 = 1.0f;
+        p->blurOn = 0;
+        p->blurOff = 0;
+        p->shotSpeed = 0.0f;
+        p->groundScale = 1.0f;
+        p->impactScale = 1.0f;
         p->unk14 = -1;
         for (i = 0; i < 8; i++) {
-            p->unk58[i] = -1;
-            p->unk60[i] = 0.0f;
+            p->subKind[i] = -1;
+            p->subAngle[i] = 0.0f;
         }
-        p->unk84 = 0.1f;
-        p->unk88 = 1.0f;
-        p->unk80 = 0;
+        p->hitScale = 0.1f;
+        p->power = 1.0f;
+        p->subArg = 0;
     } else if (slot < 2) {
         EftSkillSrc *d = BtlCharApi_GetPlayerSkillData(chr);
 
         n = slot;
 
         p->id = d->id[n];
-        p->unk2 = d->level[n];
+        p->level = d->level[n];
         p->kind = 0;
-        p->unk5 = d->hitDirKind[n];
-        p->unk6 = d->node[n];
+        p->sub = d->hitDirKind[n];
+        p->node = d->node[n];
         p->unk7 = 0;
-        p->unk8 = d->hitShape[n];
+        p->hitShape = d->hitShape[n];
         p->shots = d->shots[n];
-        p->unkA = d->hitsC[n];
+        p->maxHits = d->hitsC[n];
         p->unkB = d->unk42[n];
-        p->unkC = 0;
+        p->aimMode = 0;
         p->type = d->type[n];
-        p->unkE[0] = d->nodes[0][n];
-        p->unkE[1] = d->nodes[1][n];
-        p->unkE[2] = d->nodes[2][n];
-        p->unkE[3] = d->nodes[3][n];
-        p->unkE[4] = d->nodes[4][n];
-        p->unkE[5] = d->nodes[5][n];
+        p->nodes[0] = d->nodes[0][n];
+        p->nodes[1] = d->nodes[1][n];
+        p->nodes[2] = d->nodes[2][n];
+        p->nodes[3] = d->nodes[3][n];
+        p->nodes[4] = d->nodes[4][n];
+        p->nodes[5] = d->nodes[5][n];
         p->unk16[0] = (s8)d->frames[0][n];
         p->unk16[1] = (s8)d->frames[1][n];
         p->unk16[2] = (s8)d->frames[2][n];
@@ -218,27 +218,27 @@ void EftShot_BuildParam(s32 chr, s32 slot, EftShotParam *p, s32 blank) {
         p->unk22 = 0;
         p->unk24 = 0;
         p->life = d->time[n] * 30.0f;
-        p->unk2C = 0.0f;
-        p->unk30 = d->scale[n];
+        p->shotLife = 0.0f;
+        p->scale = d->scale[n];
         p->unk34 = d->shotSpeed[n];
-        p->unk38 = d->shotTurn[n];
+        p->homing = d->shotTurn[n];
         p->flags = d->flags[n];
-        p->unk40 = (s8)d->impactFx[n];
-        p->unk42 = (s8)d->groundFx[n];
+        p->impactFx = (s8)d->impactFx[n];
+        p->groundFx = (s8)d->groundFx[n];
         p->volley = (s8)d->hitsB[n];
-        p->unk4C = 0.0f;
-        p->unk48 = (s8)d->blurOn[n];
-        p->unk4A = (s8)d->blurOff[n];
-        p->unk54 = 1.0f;
-        p->unk50 = 1.0f;
+        p->shotSpeed = 0.0f;
+        p->blurOn = (s8)d->blurOn[n];
+        p->blurOff = (s8)d->blurOff[n];
+        p->groundScale = 1.0f;
+        p->impactScale = 1.0f;
         p->unk14 = -1;
         for (i = 0; i < 8; i++) {
-            p->unk58[i] = -1;
-            p->unk60[i] = 0.0f;
+            p->subKind[i] = -1;
+            p->subAngle[i] = 0.0f;
         }
-        p->unk84 = 0.1f;
-        p->unk88 = 1.0f;
-        p->unk80 = 0;
+        p->hitScale = 0.1f;
+        p->power = 1.0f;
+        p->subArg = 0;
     } else {
         EftSuperSrc *d = BtlCharApi_GetPlayerSuperData(chr);
         s32 kind;
@@ -246,24 +246,24 @@ void EftShot_BuildParam(s32 chr, s32 slot, EftShotParam *p, s32 blank) {
         n = slot - 2;
 
         p->id = d->id[n];
-        p->unk2 = d->level[n];
+        p->level = d->level[n];
         kind = slot == 4 ? 2 : 1;
         p->kind = kind;
-        p->unk5 = d->hitDirKind[n];
-        p->unk6 = d->node[n];
+        p->sub = d->hitDirKind[n];
+        p->node = d->node[n];
         p->unk7 = 0;
-        p->unk8 = d->hitShape[n];
+        p->hitShape = d->hitShape[n];
         p->shots = d->shots[n];
-        p->unkA = d->hitsC[n];
+        p->maxHits = d->hitsC[n];
         p->unkB = d->unk9F[n];
-        p->unkC = 0;
+        p->aimMode = 0;
         p->type = d->type[n];
-        p->unkE[0] = d->nodes[0][n];
-        p->unkE[1] = d->nodes[1][n];
-        p->unkE[2] = d->nodes[2][n];
-        p->unkE[3] = d->nodes[3][n];
-        p->unkE[4] = d->nodes[4][n];
-        p->unkE[5] = d->nodes[5][n];
+        p->nodes[0] = d->nodes[0][n];
+        p->nodes[1] = d->nodes[1][n];
+        p->nodes[2] = d->nodes[2][n];
+        p->nodes[3] = d->nodes[3][n];
+        p->nodes[4] = d->nodes[4][n];
+        p->nodes[5] = d->nodes[5][n];
         p->unk16[0] = -1;
         p->unk16[1] = -1;
         p->unk16[2] = -1;
@@ -273,27 +273,27 @@ void EftShot_BuildParam(s32 chr, s32 slot, EftShotParam *p, s32 blank) {
         p->unk22 = 0;
         p->unk24 = 0;
         p->life = d->time[n] * 30.0f;
-        p->unk2C = d->shotLife[n];
-        p->unk30 = d->scale[n];
+        p->shotLife = d->shotLife[n];
+        p->scale = d->scale[n];
         p->unk34 = d->shotSpeed[n];
-        p->unk38 = d->shotTurn[n];
+        p->homing = d->shotTurn[n];
         p->flags = d->flags[n];
-        p->unk40 = (s8)d->impactFx[n];
-        p->unk42 = (s8)d->groundFx[n];
+        p->impactFx = (s8)d->impactFx[n];
+        p->groundFx = (s8)d->groundFx[n];
         p->volley = (s8)d->hitsB[n];
-        p->unk4C = d->unk214[n];
-        p->unk48 = (s8)d->blurOn[n];
-        p->unk4A = (s8)d->blurOff[n];
-        p->unk54 = d->groundScale[n];
-        p->unk50 = d->impactScale[n];
+        p->shotSpeed = d->unk214[n];
+        p->blurOn = (s8)d->blurOn[n];
+        p->blurOff = (s8)d->blurOff[n];
+        p->groundScale = d->groundScale[n];
+        p->impactScale = d->impactScale[n];
         p->unk14 = d->unk162[n];
         for (i = 0; i < 8; i++) {
-            p->unk58[i] = d->subKind[i][n];
-            p->unk60[i] = d->subAngle[i][n];
+            p->subKind[i] = d->subKind[i][n];
+            p->subAngle[i] = d->subAngle[i][n];
         }
-        p->unk80 = (s8)d->subArg[n];
-        p->unk84 = d->hitScale[n];
-        p->unk88 = d->power[n];
+        p->subArg = (s8)d->subArg[n];
+        p->hitScale = d->hitScale[n];
+        p->power = d->power[n];
     }
 }
 
@@ -338,7 +338,7 @@ void EftShot_Start(EftHStartArg *arg) {
     s->unk40 = 0;
     s->param->life = arg->time * 30.0f;
     s->param->unk34 = arg->speed;
-    s->param->unk38 = arg->homing;
+    s->param->homing = arg->homing;
     if (s->param->kind == 0) {
         s->param->life = 60;
     }
@@ -385,13 +385,13 @@ f32 EftShot_GetLeadTime(EftHSlot *slot) {
         case 0:
             break;
         case 1:
-            if (p->unk5 == 5) {
+            if (p->sub == 5) {
                 t = 0.8f * 30.0f;
             }
             break;
         case 2:
             t = 0.8f * 30.0f;
-            if (p->unk5 != 5) {
+            if (p->sub != 5) {
                 t = 1.3f * 30.0f;
             }
             if (p->id == 0x268) {
@@ -733,9 +733,9 @@ void EftVolley_Init(EftHTask *task, EftHSlot *arg) {
     w->slot = slot;
     p = slot->param;
     w->speed = p->unk34;
-    w->homing = p->unk38;
-    w->unkC = p->unk30;
-    w->scale = p->unk30;
+    w->homing = p->homing;
+    w->unkC = p->scale;
+    w->scale = p->scale;
     w->unk14 = w->unkC;
     w->pack = set;
     EftEmit_InitState(set, &w->state);

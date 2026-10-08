@@ -363,9 +363,9 @@ void MainMenu_Update(void) {
 
 /* Counts the choices made on the main menu in the save, 0..23. */
 #define MAINMENU_COUNT() \
-    gSaveData->unkA0C++; \
-    if (gSaveData->unkA0C >= 24) { \
-        gSaveData->unkA0C = 0; \
+    gSaveData->tourHour++; \
+    if (gSaveData->tourHour >= 24) { \
+        gSaveData->tourHour = 0; \
     }
 
 /* Pad 0: up / down move the cursor (the ring scrolls at the ends), confirm enters a mode, cancel leaves. */

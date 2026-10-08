@@ -1126,9 +1126,9 @@ s32 Tour_Main(void) {
                 /* back from the bracket without a battle to play: the mode's clock advances one hour */
                 Adx_StopAll();
                 gProgress->mode = 33;
-                gSaveData->unkA0C++;
-                if (gSaveData->unkA0C >= TOUR_HOURS) {
-                    gSaveData->unkA0C = 0;
+                gSaveData->tourHour++;
+                if (gSaveData->tourHour >= TOUR_HOURS) {
+                    gSaveData->tourHour = 0;
                 }
             }
             break;

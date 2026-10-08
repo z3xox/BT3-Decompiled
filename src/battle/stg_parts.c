@@ -80,7 +80,7 @@ extern Vec4 gStgLastLightVecB;  /* gStgLastLightVecB */
 extern Vec4 gVu0ZeroVecW1;        /* zero vector */
 extern StgView *gBtlCamView;
 
-#define STG_RES ((BattleRes *)gCommonRes->unk20)
+#define STG_RES ((BattleRes *)gCommonRes->battleRes)
 
 void StgDbg_ClearState(void);
 void StgDbg_BindFile(void);
@@ -668,24 +668,24 @@ void BtlStage_BindData(BtlStage *stage, StgDataA *base) {
         d = gBtlStage->data;
         STG_RELOC(objDefs);
         STG_RELOC(env);
-        STG_RELOC(list88);
+        STG_RELOC(ambient);
         STG_RELOC(light);
         STG_RELOC(points);
         STG_RELOC(starts);
         STG_RELOC(altStarts);
         STG_RELOC(places);
-        STG_RELOC(list40);
-        STG_RELOC(list48);
-        STG_RELOC(list50);
-        STG_RELOC(list90);
-        STG_RELOC(listA0);
+        STG_RELOC(depthTints);
+        STG_RELOC(glare);
+        STG_RELOC(fog);
+        STG_RELOC(water);
+        STG_RELOC(haze);
         STG_RELOC(list98);
-        STG_RELOC(list60);
-        STG_RELOC(list68);
-        STG_RELOC(list70);
-        STG_RELOC(list58);
-        STG_RELOC(list78);
-        STG_RELOC(list80);
+        STG_RELOC(weather);
+        STG_RELOC(dust);
+        STG_RELOC(flags);
+        STG_RELOC(surf);
+        STG_RELOC(lightColors);
+        STG_RELOC(tint);
         for (i = 0; i < d->objCount; i++) {
             d->objDefs[i].pos.y = -d->objDefs[i].pos.y;
             d->objDefs[i].pos.z = -d->objDefs[i].pos.z;
@@ -721,13 +721,13 @@ void BtlStage_BindData(BtlStage *stage, StgDataA *base) {
             d->places[i].target.y = -d->places[i].target.y;
             d->places[i].target.z = -d->places[i].target.z;
         }
-        for (i = 0; i < d->count60; i++) {
-            d->list60[i].y = -d->list60[i].y;
-            d->list60[i].z = -d->list60[i].z;
+        for (i = 0; i < d->weatherCount; i++) {
+            d->weather[i].y = -d->weather[i].y;
+            d->weather[i].z = -d->weather[i].z;
         }
-        for (i = 0; i < d->count58; i++) {
-            d->list58[i].pos.y = -d->list58[i].pos.y;
-            d->list58[i].pos.z = -d->list58[i].pos.z;
+        for (i = 0; i < d->surfCount; i++) {
+            d->surf[i].pos.y = -d->surf[i].pos.y;
+            d->surf[i].pos.z = -d->surf[i].pos.z;
         }
     }
 }
@@ -937,10 +937,10 @@ StgVec *BtlStage_GetList40(s32 idx) {
     if (d == NULL) {
         return NULL;
     }
-    if (!(idx < d->count40)) {
+    if (!(idx < d->depthTintCount)) {
         return NULL;
     }
-    return &d->list40[idx];
+    return &d->depthTints[idx];
 }
 
 #define STG_LIST_GETTER(name, count, list)   \
@@ -961,13 +961,13 @@ StgVec *BtlStage_GetList40(s32 idx) {
     }
 
 /* The lists of the stage data that have no index: the pointer when the count is positive, else NULL. */
-STG_LIST_GETTER(BtlStage_GetList48, count48, list48)
-STG_LIST_GETTER(BtlStage_GetList50, count50, list50)
-STG_LIST_GETTER(BtlStage_GetList90, count90, list90)
-STG_LIST_GETTER(BtlStage_GetListA0, countA0, listA0)
+STG_LIST_GETTER(BtlStage_GetList48, glareCount, glare)
+STG_LIST_GETTER(BtlStage_GetList50, fogCount, fog)
+STG_LIST_GETTER(BtlStage_GetList90, waterCount, water)
+STG_LIST_GETTER(BtlStage_GetListA0, hazeCount, haze)
 STG_LIST_GETTER(BtlStage_GetList98, count98, list98)
-STG_LIST_GETTER(BtlStage_GetList60, count60, list60)
-STG_LIST_GETTER(BtlStage_GetList68, count68, list68)
-STG_LIST_GETTER(BtlStage_GetList58, count58, list58)
-STG_LIST_GETTER(BtlStage_GetLightColors, count78, list78)
-STG_LIST_GETTER(BtlStage_GetList80, count80, list80)
+STG_LIST_GETTER(BtlStage_GetList60, weatherCount, weather)
+STG_LIST_GETTER(BtlStage_GetList68, dustCount, dust)
+STG_LIST_GETTER(BtlStage_GetList58, surfCount, surf)
+STG_LIST_GETTER(BtlStage_GetLightColors, lightColorCount, lightColors)
+STG_LIST_GETTER(BtlStage_GetList80, tintCount, tint)

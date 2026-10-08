@@ -16,7 +16,7 @@ void Shop_CheckStockLevel(void) {
     s32 i;
     s32 flags;
 
-    if (!(gSaveData->unk1008 & 2)) {
+    if (!(gSaveData->shopFlags & 2)) {
         for (i = 0; i < SHOP_ITEM_MAX; i++) {
             flags = gShop->items[i].flags;
             if (flags & WITEM_HIDDEN) {
@@ -32,12 +32,12 @@ void Shop_CheckStockLevel(void) {
             owned += gSaveData->item[i] & 1;
         }
         if (owned == total - 1) {
-            gSaveData->unk100C++;
-            if ((u32)gSaveData->unk100C >= 6) {
-                gSaveData->unk100C = 5;
+            gSaveData->stockLevel++;
+            if ((u32)gSaveData->stockLevel >= 6) {
+                gSaveData->stockLevel = 5;
             }
-            gSaveData->unk1008 |= 1;
-            gSaveData->unk1008 |= 2;
+            gSaveData->shopFlags |= 1;
+            gSaveData->shopFlags |= 2;
         }
     }
 }
@@ -280,7 +280,7 @@ void Shop_Init(s32 section) {
                 if (!(flags & WITEM_SOLD)) {
                     continue;
                 }
-                if ((u32)gSaveData->unk100C < gShop->items[i].stockLevel) {
+                if ((u32)gSaveData->stockLevel < gShop->items[i].stockLevel) {
                     continue;
                 }
             }
@@ -1307,9 +1307,9 @@ s32 Shop_Run(s32 section) {
         if (ColorFade_IsInDone()) {
             if (!(gShop->flags & SHOP_GREETED) && (gShop->flash[SHOP_FL_MAIN].flags & MFLASH_PAD)) {
                 gShop->flags |= SHOP_GREETED;
-                if (gSaveData->unk1008 & 1) {
+                if (gSaveData->shopFlags & 1) {
                     gShop->voiceLine = gShop->guide * SHOP_GUIDE_LINES + SHOP_LINE_GREET_NEW;
-                    gSaveData->unk1008 &= ~1;
+                    gSaveData->shopFlags &= ~1;
                 } else {
                     gShop->voiceLine = gShop->guide * SHOP_GUIDE_LINES + SHOP_LINE_GREET;
                 }

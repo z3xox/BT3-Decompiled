@@ -85,7 +85,7 @@ typedef struct BtlMgrObj {
     /* 0x0A40 */ u32 flags;      /* bit 1: drawn in front / highlighted (see BtlChars_UpdateObjFlag2),
                                     bit 30: BtlMgrGauge.unk20 */
     /* 0x0A44 */ u8 unkA44[0x1660 - 0xA44];
-    /* 0x1660 */ u8 *unk1660;    /* block whose word at + 0x18028 mirrors BtlChar_IsBodyChanged() */
+    /* 0x1660 */ u8 *charaWork;    /* block whose word at + 0x18028 mirrors BtlChar_IsBodyChanged() */
 } BtlMgrObj;
 
 /* Partial view of a fighter (0x1600 bytes, BtlChar_Get). */

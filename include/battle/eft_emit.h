@@ -64,18 +64,18 @@ typedef struct EftHTask {
    or BtlSuperData (slots 2..4). Offsets on the right are the source fields, [i] indexed by slot or slot - 2. */
 typedef struct EftShotParam {
     /* 0x00 */ s16 id;        /* technique id                     skill +0x10[i]   super +0x18[i] */
-    /* 0x02 */ s16 unk2;      /*                                  skill +0x14[i]   super +0x1E[i] */
+    /* 0x02 */ s16 level;      /*                                  skill +0x14[i]   super +0x1E[i] */
     /* 0x04 */ s8 kind;       /* 0 skill, 1 technique, 2 ultimate */
-    /* 0x05 */ s8 unk5;       /*                                  skill +0x62[i]   super +0x141[i] */
-    /* 0x06 */ s8 unk6;       /*                                  skill +0x38[i]   super +0x90[i] */
+    /* 0x05 */ s8 sub;       /*                                  skill +0x62[i]   super +0x141[i] */
+    /* 0x06 */ s8 node;       /*                                  skill +0x38[i]   super +0x90[i] */
     /* 0x07 */ s8 unk7;
-    /* 0x08 */ s8 unk8;       /*                                  skill +0x3E[i]   super +0x99[i] */
+    /* 0x08 */ s8 hitShape;       /*                                  skill +0x3E[i]   super +0x99[i] */
     /* 0x09 */ s8 shots;      /* number of shots                  skill +0x3A[i]   super +0x93[i] */
-    /* 0x0A */ s8 unkA;       /*                                  skill +0x40[i]   super +0x9C[i] */
+    /* 0x0A */ s8 maxHits;       /*                                  skill +0x40[i]   super +0x9C[i] */
     /* 0x0B */ s8 unkB;       /*                                  skill +0x42[i]   super +0x9F[i] */
-    /* 0x0C */ s8 unkC;
+    /* 0x0C */ s8 aimMode;
     /* 0x0D */ s8 type;       /* effect type, -1 none             skill +0x60[i]   super +0x138[i] */
-    /* 0x0E */ s8 unkE[6];    /*                                  skill +0x48..    super +0xA8.. (stride 3) */
+    /* 0x0E */ s8 nodes[6];    /*                                  skill +0x48..    super +0xA8.. (stride 3) */
     /* 0x14 */ s8 unk14;      /*                                  -1               super +0x162[i] */
     /* 0x15 */ s8 unk15;
     /* 0x16 */ s16 unk16[6];  /*                                  skill +0x54..    -1 */
@@ -83,26 +83,26 @@ typedef struct EftShotParam {
     /* 0x24 */ s16 unk24;
     /* 0x26 */ s16 unk26;
     /* 0x28 */ s32 life;      /* frames: seconds * 30             skill +0x18[i]   super +0x24[i] */
-    /* 0x2C */ f32 unk2C;     /*                                  0                super +0x30[i] */
-    /* 0x30 */ f32 unk30;     /*                                  skill +0x30[i]   super +0x6C[i] */
+    /* 0x2C */ f32 shotLife;     /*                                  0                super +0x30[i] */
+    /* 0x30 */ f32 scale;     /*                                  skill +0x30[i]   super +0x6C[i] */
     /* 0x34 */ f32 unk34;     /* shot speed, 10 km/h              skill +0x20[i]   super +0x54[i] */
-    /* 0x38 */ f32 unk38;     /* shot turn rate, degrees / s      skill +0x28[i]   super +0x60[i] */
+    /* 0x38 */ f32 homing;     /* shot turn rate, degrees / s      skill +0x28[i]   super +0x60[i] */
     /* 0x3C */ s32 flags;     /*                                  skill +0x00[i]   super +0x00[i] */
-    /* 0x40 */ s16 unk40;     /*                                  skill +0x46[i]   super +0xA5[i] */
-    /* 0x42 */ s16 unk42;     /*                                  skill +0x44[i]   super +0xA2[i] */
+    /* 0x40 */ s16 impactFx;     /*                                  skill +0x46[i]   super +0xA5[i] */
+    /* 0x42 */ s16 groundFx;     /*                                  skill +0x44[i]   super +0xA2[i] */
     /* 0x44 */ s16 volley;    /* shots per fire event             skill +0x3C[i]   super +0x96[i] */
     /* 0x46 */ s16 unk46;
-    /* 0x48 */ s16 unk48;     /*                                  skill +0x6E[i]   super +0x15C[i] */
-    /* 0x4A */ s16 unk4A;     /*                                  skill +0x70[i]   super +0x15F[i] */
-    /* 0x4C */ f32 unk4C;     /*                                  0                super +0x214[i] */
-    /* 0x50 */ f32 unk50;     /*                                  1.0              super +0x84[i] */
-    /* 0x54 */ f32 unk54;     /*                                  1.0              super +0x78[i] */
-    /* 0x58 */ s8 unk58[8];   /*                                  -1               super +0xBA.. (stride 3) */
-    /* 0x60 */ f32 unk60[8];  /*                                  0                super +0xD4.. (stride 3) */
-    /* 0x80 */ s16 unk80;     /*                                  0                super +0x134[i] */
+    /* 0x48 */ s16 blurOn;     /*                                  skill +0x6E[i]   super +0x15C[i] */
+    /* 0x4A */ s16 blurOff;     /*                                  skill +0x70[i]   super +0x15F[i] */
+    /* 0x4C */ f32 shotSpeed;     /*                                  0                super +0x214[i] */
+    /* 0x50 */ f32 impactScale;     /*                                  1.0              super +0x84[i] */
+    /* 0x54 */ f32 groundScale;     /*                                  1.0              super +0x78[i] */
+    /* 0x58 */ s8 subKind[8];   /*                                  -1               super +0xBA.. (stride 3) */
+    /* 0x60 */ f32 subAngle[8];  /*                                  0                super +0xD4.. (stride 3) */
+    /* 0x80 */ s16 subArg;     /*                                  0                super +0x134[i] */
     /* 0x82 */ s16 unk82;
-    /* 0x84 */ f32 unk84;     /*                                  0.1              super +0x48[i] */
-    /* 0x88 */ f32 unk88;     /*                                  1.0              super +0x3C[i] */
+    /* 0x84 */ f32 hitScale;     /*                                  0.1              super +0x48[i] */
+    /* 0x88 */ f32 power;     /*                                  1.0              super +0x3C[i] */
 } EftShotParam; /* size 0x8C */
 
 /* Request to start a technique's effect; the argument of EftShot_Start, kept at the start of the slot. */

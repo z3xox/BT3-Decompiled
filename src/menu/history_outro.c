@@ -61,8 +61,8 @@ void HistOutro_GuideGoto(s32 movie, s32 side, s32 out) {
 /* The first completion of this saga counts (the outro was not seen yet). */
 #define OUTRO_COUNT(n) \
     if (!(gSaveData->slot[n].flags & SAVESLOT_OUTRO_SEEN)) { \
-        gSaveData->unk100C++; \
-        gSaveData->unk1008 |= 1; \
+        gSaveData->stockLevel++; \
+        gSaveData->shopFlags |= 1; \
     }
 
 #define OUTRO_BGM 0x10B1C

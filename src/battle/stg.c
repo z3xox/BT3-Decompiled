@@ -100,7 +100,7 @@ extern Vec4 gStgLastLightVecB;  /* gStgLastLightVecB */
 extern Vec4 gVu0ZeroVecW1;        /* zero vector */
 extern StgView *gBtlCamView;
 
-#define STG_RES ((BattleRes *)gCommonRes->unk20)
+#define STG_RES ((BattleRes *)gCommonRes->battleRes)
 
 void StgDbg_ClearState(void);
 void StgDbg_BindFile(void);

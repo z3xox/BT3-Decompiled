@@ -16,7 +16,7 @@ typedef struct CommonRes {
     /* 0x04 */ void *data[COMMON_FILE_COUNT];  /* files 2, 3, 4 */
     /* 0x10 */ s32 unk10;
     /* 0x14 */ s32 size[COMMON_FILE_COUNT];    /* byte sizes of files 2, 3, 4 */
-    /* 0x20 */ u8 unk20[0x50];
+    /* 0x20 */ u8 battleRes[0x50];
 } CommonRes;
 
 extern CommonRes *gCommonRes;

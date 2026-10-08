@@ -381,7 +381,7 @@ s32 Option_Input(void) {
             if (cur == OPT_ITEM_TYPE) {
                 OPT_PLATE(OPT_CLIP_ROW_SCREEN, "fl_ok");
                 gOption->state = gOption->cursor;
-                gOption->type = gSaveData->unk1694;
+                gOption->type = gSaveData->camDistMode;
                 gOption->valueOld = gOption->type;
                 Flash_GotoLabel(&gOption->flash[0], "fl_type_in", 1);
                 Snd_PlaySe(1, 1);
@@ -390,7 +390,7 @@ s32 Option_Input(void) {
                 OPT_PLATE(OPT_CLIP_PICK, "fl_off_start");
                 gOption->value = 1;
                 OPT_PLATE(OPT_CLIP_PICK, "fl_off_start");
-                gOption->value = gSaveData->unk1698;
+                gOption->value = gSaveData->camShakeOff;
                 OPT_PLATE(OPT_CLIP_PICK, "fl_on_start");
                 gOption->valueOld = gOption->value;
                 OPT_PLATE(OPT_CLIP_ROW_SCREEN, "fl_ok");
@@ -446,7 +446,7 @@ s32 Option_Input(void) {
             if (gOption->valueOld != gOption->type) {
                 gOption->dirty = 1;
             }
-            gSaveData->unk1694 = gOption->type;
+            gSaveData->camDistMode = gOption->type;
             gOption->state = OPT_ITEM_SCREEN;
             OPT_PLATE(OPT_CLIP_ROW_SCREEN, "fl_on_start");
             Flash_GotoLabel(&gOption->flash[0], "fl_type_out", 1);
@@ -1141,7 +1141,7 @@ s32 Option_Input(void) {
                 if (gOption->valueOld != gOption->value) {
                     gOption->dirty = 1;
                 }
-                gSaveData->unk1698 = gOption->value;
+                gSaveData->camShakeOff = gOption->value;
                 gOption->state = OPT_ITEM_SCREEN;
                 gOption->cursor = OPT_ITEM_SCR2;
                 Flash_GotoLabel(&gOption->flash[0], "fl_value_out", 1);
@@ -1176,7 +1176,7 @@ s32 Option_Input(void) {
                 gOption->voiceLine = 11;
                 OPT_VOICE(gOption->voiceLine);
             } else if (gOption->state == OPT_ITEM_SCR2) {
-                gOption->value = gSaveData->unk1698;
+                gOption->value = gSaveData->camShakeOff;
                 OPT_PLATE(OPT_CLIP_PICK, "fl_on_start");
                 gOption->state = OPT_ITEM_SCREEN;
                 OPT_PLATE(OPT_CLIP_ROW_SCREEN, "fl_on_start");
@@ -1459,7 +1459,7 @@ void Option_Draw(void) {
                 Option_SetMenuText(flash, &ref, name, uv);
             }
             Flash_FindLabel(flash, NULL, "mc_layout_bg", &ref);
-            Flash_ClipSetTex(flash, &ref, gSaveData->unk1694 * 2);
+            Flash_ClipSetTex(flash, &ref, gSaveData->camDistMode * 2);
             Flash_FindLabel(flash, NULL, "mc_layout_window", &ref);
             Flash_ClipSetTex(flash, &ref, 0);
             uv.x0 = 0;
@@ -2097,13 +2097,13 @@ void Option_UpdateReset(void) {
             break;
         case 2:
             if (gOption->state == YOPT_SCR_RESET) {
-                if (gSaveData->screenX != 0 || gSaveData->screenY != 0 || gSaveData->unk1694 != 0 ||
-                    gSaveData->unk1698 != 0) {
+                if (gSaveData->screenX != 0 || gSaveData->screenY != 0 || gSaveData->camDistMode != 0 ||
+                    gSaveData->camShakeOff != 0) {
                     gOption->dirty = 1;
                 }
                 gSaveData->screenX = gSaveData->screenY = 0;
-                gSaveData->unk1694 = 0;
-                gSaveData->unk1698 = 0;
+                gSaveData->camDistMode = 0;
+                gSaveData->camShakeOff = 0;
             } else if (gOption->state == YOPT_ADJUST_RESET) {
                 if (gSaveData->screenX != 0 || gSaveData->screenY != 0) {
                     gOption->dirty = 1;

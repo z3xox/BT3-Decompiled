@@ -20,17 +20,17 @@ extern void StreamSe_FadeOutStep(s32 se);
 
 /* The hour's tournament sends its invitation once: it becomes the open one and gets a random level. */
 #define TOUR_INVITE(n) \
-    if (!(gSaveData->unkA08 & (1 << (n)))) { \
+    if (!(gSaveData->tourFlags & (1 << (n)))) { \
         gTourMenu->flags |= TOURMENU_INVITE; \
         gTourMenu->invite = (n); \
-        gSaveData->unkA08 &= ~TOUR_SAVE_INVITE_MASK; \
-        gSaveData->unkA08 |= 1 << (n); \
-        gSaveData->unkA10 = Rand_Range(3); \
+        gSaveData->tourFlags &= ~TOUR_SAVE_INVITE_MASK; \
+        gSaveData->tourFlags |= 1 << (n); \
+        gSaveData->tourLevel = Rand_Range(3); \
     }
 
 /* Which tournament is held at the current hour of the mode's clock (gSaveData->unkA0C, 0..23). */
 void TourMenu_CheckInvite(void) {
-    s32 hour = gSaveData->unkA0C;
+    s32 hour = gSaveData->tourHour;
 
     if (hour >= 7 && hour <= 12) {
         TOUR_INVITE(TOUR_WORLD);
@@ -57,8 +57,8 @@ void TourMenu_Init(s32 section) {
     memset(gTourMenu, 0, sizeof(TourMenu));
     gTourMenu->pack = (u32 *)MPACK_AT(gMenuArc4, section);
     gTourMenu->res = Sprite_Unpack(gTourMenu->pack, NULL, NULL);
-    if (!(gSaveData->unkA08 & TOUR_SAVE_STARTED)) {
-        gSaveData->unkA0C = 7;
+    if (!(gSaveData->tourFlags & TOUR_SAVE_STARTED)) {
+        gSaveData->tourHour = 7;
     }
     TourMenu_CheckInvite();
     TM_RES(1);
@@ -181,12 +181,12 @@ void TourMenu_Draw(void) {
     Flash_FindLabel(flash, NULL, "mc_guide_satan_mouth", &ref);
     FlashAnim_Talk(flash, &ref, &gTourMenu->talk, 0);
     /* the clock */
-    Num_DrawChild(flash, "mc_timer", "mc_timer_num%02d", 2, 2, gSaveData->unkA0C, 0x40, 0x40, 1, 0);
+    Num_DrawChild(flash, "mc_timer", "mc_timer_num%02d", 2, 2, gSaveData->tourHour, 0x40, 0x40, 1, 0);
     for (i = 0; i < 2; i++) {
         /* the two prizes of the tournament under the cursor, at the open tournament's level */
         sprintf(name, "mc_menu_text_zenny%d", i);
         Num_DrawChild(flash, name, "menu_text_num%d", 0, 7,
-                      gTourMenu->info[gTourMenu->cursor[TOURMENU_LV_TOUR]].prize[i][gSaveData->unkA10], 0x20, 0x20,
+                      gTourMenu->info[gTourMenu->cursor[TOURMENU_LV_TOUR]].prize[i][gSaveData->tourLevel], 0x20, 0x20,
                       gTourMenu->cursor[TOURMENU_LV_TOP] == 1 ? 2 : 0, 0);
     }
     for (i = 0; i < 2; i++) {
@@ -214,7 +214,7 @@ void TourMenu_Draw(void) {
         uv.x1 = 0x200;
         sprintf(name, "mc_taikai_plate_%02d", i + 1);
         Flash_FindLabel(flash, NULL, name, &ref);
-        if (gTourMenu->cursor[TOURMENU_LV_TOP] != 1 && !(gSaveData->unkA08 & (s32)(1U << i))) {
+        if (gTourMenu->cursor[TOURMENU_LV_TOP] != 1 && !(gSaveData->tourFlags & (s32)(1U << i))) {
             Flash_ClipSetColor(flash, &ref, 0.5f);
         } else {
             Flash_ClipSetColor(flash, &ref, 1.0f);
@@ -408,7 +408,7 @@ void TourMenu_Input(s32 *result) {
             switch (gTourMenu->cursor[TOURMENU_LV_TOP]) {
             case 0:
                 /* only the open tournament can be entered for prizes */
-                if (gSaveData->unkA08 & (s32)(1U << gTourMenu->cursor[TOURMENU_LV_TOUR])) {
+                if (gSaveData->tourFlags & (s32)(1U << gTourMenu->cursor[TOURMENU_LV_TOUR])) {
                     Flash_GotoLabel(&gTourMenu->flash[0], "fl_taikai_setumei_in", 1);
                     TourMenu_ClipGoto(0, 1, "fl_ok");
                     TourMenu_ClipGoto(0, 2, "fl_on_start");
@@ -445,7 +445,7 @@ void TourMenu_Input(s32 *result) {
             if (gTourMenu->cursor[TOURMENU_LV_TOP] != 1) {
                 /* the open tournament has its level fixed */
                 gTourMenu->voiceLine++;
-                gTourMenu->cursor[TOURMENU_LV_LEVEL] = gSaveData->unkA10;
+                gTourMenu->cursor[TOURMENU_LV_LEVEL] = gSaveData->tourLevel;
             }
             TourMenu_ClipGoto(0, 3, "fl_on_start");
             Voice_PlayWithSubtitle(gTourMenu->subtitles, TOUR_VOICE_BASE, gTourMenu->voiceLine);
@@ -550,7 +550,7 @@ void TourMenu_UpdateSeq(void) {
         TM_SAY(gTourMenu->voiceLine);
         break;
     case 7:
-        gSaveData->unkA08 |= TOUR_SAVE_STARTED;
+        gSaveData->tourFlags |= TOUR_SAVE_STARTED;
         if (gTourMenu->flags & TOURMENU_INVITE) {
             gTourMenu->voiceLine = -1;
             Voice_StopWithLip();
@@ -607,7 +607,7 @@ void TourMenu_UpdateSeq(void) {
         }
         break;
     case 0x39:
-        if (!(gSaveData->unkA08 & TOUR_SAVE_EXPLAINED)) {
+        if (!(gSaveData->tourFlags & TOUR_SAVE_EXPLAINED)) {
             gTourMenu->seq = 0x65;
         } else {
             gTourMenu->voiceLine = 3;
@@ -638,7 +638,7 @@ void TourMenu_UpdateSeq(void) {
         }
         break;
     case 0x69:
-        gSaveData->unkA08 |= TOUR_SAVE_EXPLAINED;
+        gSaveData->tourFlags |= TOUR_SAVE_EXPLAINED;
         gTourMenu->voiceLine = 3;
         TM_SAY(gTourMenu->voiceLine);
         Flash_GotoLabel(&gTourMenu->flash[0], "fl_menu_in", 1);
@@ -809,7 +809,7 @@ s32 TourMenu_Run(s32 section) {
         }
         if (!(gTourMenu->flags & TOURMENU_GREETED) && (gTourMenu->flash[0].flags & MFLASH_PAD)) {
             gTourMenu->flags |= TOURMENU_GREETED;
-            if (!(gSaveData->unkA08 & TOUR_SAVE_STARTED)) {
+            if (!(gSaveData->tourFlags & TOUR_SAVE_STARTED)) {
                 gTourMenu->seq = 1;
             } else if (gTourMenu->flags & TOURMENU_INVITE) {
                 gTourMenu->seq = 0x33;

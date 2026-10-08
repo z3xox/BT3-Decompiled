@@ -43,8 +43,8 @@ void Save_UnlockAll(SaveData *opt) {
     for (i = 0; i < SAVE_REC_COUNT; i++) {
         opt->rec[i].chara = -1;
     }
-    opt->unk20C = 20;
-    opt->unk208 |= 1;
+    opt->missionPages = 20;
+    opt->ubFlags |= 1;
     for (i = 0; i < SAVE_SLOT_COUNT; i++) {
         slot[i].flags |= 3;
         v = opt->slot[i].val;
@@ -65,7 +65,7 @@ void Save_SetDefaults(SaveData *opt) {
     opt->slot[0].flags |= 3;
     opt->slot[0].val[0] |= 1;
     opt->slot[0].val[2] |= 1;
-    opt->unkC = 1;
+    opt->level = 1;
     Save_ResetRules();
     for (i = 0; i < SAVE_CHARA_COUNT; i++) {
         switch (i) {
@@ -134,8 +134,8 @@ void Save_SetDefaults(SaveData *opt) {
     for (i = 0; i < SAVE_REC_COUNT; i++) {
         opt->rec[i].chara = -1;
     }
-    opt->unk20C = 5;
-    opt->unk77C = 99;
+    opt->missionPages = 5;
+    opt->rank = 99;
     for (i = 0; i < SAVE_PAD_COUNT; i++) {
         opt->key[i][0] = 2;
         opt->key[i][1] = 1;
@@ -155,7 +155,7 @@ void Save_SetDefaults(SaveData *opt) {
         opt->keyEdit[i][7] = 7;
     }
     opt->flags |= SAVE_FLAG_DEFAULT;
-    opt->unk1694 = 0;
+    opt->camDistMode = 0;
     opt->bgmVolume = SAVE_VOLUME_DEFAULT;
     opt->seVolume = SAVE_VOLUME_DEFAULT;
 }
