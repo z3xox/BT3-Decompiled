@@ -920,3 +920,18 @@ About the compiler (inferred from its source and dumps by the agents):
 
 Fake matches made tonight (byte-identical, the real source form not found): ObjShadow_BuildPacket (ten empty asm
 statements), DemoCam_Update (`gDemoCam->fixed = gDemoCam->fixed;`), and the width variable in DcPass_DrawStatus.
+
+More of the same night (the geyser functions):
+- **A vector in an aggregate initialiser is a union with a 128-bit word** (`union { struct { f32 x, y, z, w; } v;
+  u128 q; }`) when each nested vector's first component is stored out of place. The whole argument is ONE
+  initialiser with every member given, not assignments. (EftGeyser_StartSteam / StartSmoke; probably also the
+  stand-ins in FxLineArg and EftEmitRayArg, not tried)
+- **A member left out of an initialiser clears the whole block first**: if the original has no such memset, the
+  struct's tail is padding, not members.
+- **A packet builder as an inline function called with constants** keeps a variable unfolded (a run-time `dsll 6
+  / or` on a constant 1): inside, `s64 abe = 1; if (layer < 0) { layer = 0; abe = 0; }`. The quad twin of
+  EftMesh_QueueTri. (EftGeyser_DrawColumn)
+- **A segment loop walks a pointer with its own counter** (`p = pt; for (n = 0; n < 3; n++) { next = p + 1; ...; p
+  = next; }`); `s32 i;` without an initialiser and `for (i = 0; ...)`: an `i = 0` far above its loop was moved
+  there by the scheduler, and `s32 i = 0;` adds a hidden marker behind the call in front of the loop.
+- **Check the argument order of a helper only this function uses** (`Vec3_ScaleAdd(dst, dir, f32 s, base)`).
