@@ -5,20 +5,22 @@ tree afterwards (git checkout). Files are given as battle/eft_x_c (no src/, no .
 import sys, subprocess, re, os
 R = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 def run(cmd): return subprocess.run(cmd, cwd=R, shell=True, capture_output=True, text=True)
-def main(files, keep=False):
+def main(files, keep=False, hoist=True):
     a, rest = files[0], files[1:]
     src = open(f'{R}/src/{a}.c').read()
     for b in rest:
         src += f'\n\n/* ======== merged from src/{b}.c ======== */\n\n' + open(f'{R}/src/{b}.c').read()
         os.remove(f'{R}/src/{b}.c')
-    # the later parts' #include lines go up to the first part's, so that every declaration is seen before any code
-    lines = src.split('\n'); mark = [i for i, l in enumerate(lines) if l.startswith('/* ======== merged from')]
-    first_inc = max([i for i, l in enumerate(lines[:mark[0]]) if l.startswith('#include')] or [0])
-    late = [l for i, l in enumerate(lines) if i > mark[0] and l.startswith('#include')]
-    seen = set(l for l in lines[:mark[0]] if l.startswith('#include'))
-    late = [l for k, l in enumerate(late) if l not in seen and l not in late[:k]]
-    lines = [l for i, l in enumerate(lines) if not (i > mark[0] and l.startswith('#include'))]
-    lines[first_inc + 1:first_inc + 1] = late
+    lines = src.split('\n')
+    if hoist:
+        # the later parts' #include lines go up to the first part's, so that every declaration is seen before any code
+        lines = src.split('\n'); mark = [i for i, l in enumerate(lines) if l.startswith('/* ======== merged from')]
+        first_inc = max([i for i, l in enumerate(lines[:mark[0]]) if l.startswith('#include')] or [0])
+        late = [l for i, l in enumerate(lines) if i > mark[0] and l.startswith('#include')]
+        seen = set(l for l in lines[:mark[0]] if l.startswith('#include'))
+        late = [l for k, l in enumerate(late) if l not in seen and l not in late[:k]]
+        lines = [l for i, l in enumerate(lines) if not (i > mark[0] and l.startswith('#include'))]
+        lines[first_inc + 1:first_inc + 1] = late
     open(f'{R}/src/{a}.c', 'w').write('\n'.join(lines))
     for y in ('config/SLUS_216.78.yaml', 'config/DBZP.yaml'):
         out = []
@@ -28,6 +30,11 @@ def main(files, keep=False):
                 if m.group(2) == 'c':
                     continue  # the second file's code follows the first's in the same object
                 l = m.group(1) + m.group(2) + m.group(3) + a + m.group(5)
+            d = re.match(r'^(\s*- \{start: 0x[0-9A-Fa-f]+, type: )([.\w]+)(, name: )([\w/]+)(.*)$', l)
+            if d and d.group(4) in rest:
+                if d.group(2) == 'c':
+                    continue
+                l = d.group(1) + d.group(2) + d.group(3) + a + d.group(5)
             out.append(l)
         open(f'{R}/{y}', 'w').write('\n'.join(out))
     run('rm -f build/SLUS_216.78.rom build/DBZP.BIN build/SLUS_216.78.elf build/DBZP.elf')
@@ -99,4 +106,4 @@ def main(files, keep=False):
         run('.venv/bin/python configure.py > /dev/null 2>&1; ninja > /dev/null 2>&1')
     return verdict
 if __name__ == '__main__':
-    main([x for x in sys.argv[1:] if x != '--keep'], '--keep' in sys.argv)
+    main([x for x in sys.argv[1:] if not x.startswith('--')], '--keep' in sys.argv, '--no-hoist' not in sys.argv)
