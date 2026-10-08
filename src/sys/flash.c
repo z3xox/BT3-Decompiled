@@ -6,7 +6,6 @@
  * Proper name: flash_data.c (or the head of flash.c).
  */
 #include "sys/flash.h"
-#include "sys/flash_part2.h"
 #include "sys/heap.h"
 #include "sys/dma.h"
 #include "sys/gfx.h"
