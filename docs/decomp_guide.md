@@ -1006,3 +1006,17 @@ More of the same night (the geyser functions):
   (EftShot_BuildParam)
 - On a function full of address arithmetic, compare structure, not fdiff's count: the right form looked worse
   (488 of 489) than the wrong one (424 of 499) until the last piece was in.
+- **A dead initialiser outside an inner loop** (`s32 ctx = 0;`, assigned inside the loop) is a second set that
+  stops the loop pass moving a hoisted chain out of the enclosing loop; flow deletes it later without a trace.
+  (EftSprAnim_DrawQuad / DrawQuadSubdiv: the blocker of all earlier rounds)
+- **`s32 scr[4][4]`, not an array of a 4-aligned struct**: with the 2-D array all member addresses share one
+  base, and the loop pass combines them into pointers (`addiu s2,v0,8` as a pointer's start value is the sign).
+  372 differing instructions to 15 in EftBolt_Draw.
+- **The packet header in the canonical order** (prim, tag, vif0, vif1, gif0, gif1, next): with prim not first
+  the 64-bit constants shift from a0..a3 to a1..t0. Where two functions share an inline builder, score a header
+  order on both.
+- **An if / else with identical arms**: a float compare whose branch is gone marks where the arms started; a
+  constant that is not hoisted shows its statement stood outside the arms. Variables that live across a call
+  and ones that do not are separate variables (sharing one cost a twelfth saved float register).
+  (EftBolt_Shape; its `base = &p0;` between two calls is a possible fake, found by the permuter)
+- **An inline function's pointer parameter order** decides which address temporary is born first.
