@@ -652,7 +652,6 @@ segments:
       - [0x1FE330, .lit4, battle/hud_prompt]
       - [0x1FE3CC, .lit4, battle/stg_rigid]
       - [0x1FE3F4, .lit4, battle/col_box]
-      - [0x1FE408, lit4, cod/1FE408]
       - [0x1FE48C, .lit4, battle/col_primitives]
       - [0x1FE4B8, .lit4, sys/font]
       - [0x1FE4BC, .lit4, battle/btl_demo_cam]

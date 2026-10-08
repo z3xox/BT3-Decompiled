@@ -12,7 +12,7 @@
  *   0x231590  the two walks of a mesh's box tree (collect indices / callback per leaf)
  *   0x2317C0  Col_NearEq, Col_LineLineParams
  *   0x231930  oriented box against oriented box (ColObb_Overlaps)
- *   0x231F38  ColObb_Contact (dead code, left in assembly)
+ *   0x231F38  ColObb_Contact (dead code: nothing calls it)
  *
  * Everything here is compiled C on the FPU; no function contains VU0 code. The vector helpers it CALLS are
  * hand-written VU0 routines (Vec4_Copy, Vec4_Sub, Vec3_Dot, Mtx_MulVec4, Vec3_Copy, Vec3_LengthSq,
@@ -626,28 +626,36 @@ s32 ColObb_Overlaps(ColObb *a, ColObb *b) {
 }
 
 /*
- * Contact between two oriented boxes: least-penetration axis, then a contact normal and point. 0 when the boxes
- * are apart. NO CALLER anywhere in the game (dead code), and it does not do what it was meant to:
+ * Contact between two oriented boxes: least-penetration axis (code 0..2 a face of a, 3..5 a face of b, 6 + 3 i + j
+ * the cross product of a.axis[i] and b.axis[j]), then a contact normal and point. 0 when the boxes are apart; the
+ * smallest overlap is left in *depth. NO CALLER anywhere in the game (dead code), and it does not do what it was
+ * meant to. Everything below is as built (verified by the match):
  *   - the nine edge-edge axes are only considered when two ways of computing the same quantity DISAGREE by more
- *     than 1e-6 (an inverted check, like the one in Col_LineLineParams), and the first of them never is;
- *   - Col_LineLineParams returns 0, 0 for unit axes, so an edge contact is just the chosen corner of box a.
- * Left in assembly (0x4258 bytes, a nine-way jump table at 0x2F2170 whose cases are written out by hand).
- * What differs in the attempt below: it folds the nine edge cases into one indexed block, so it produces no jump
- * table and a different frame; only the fifteen-axis search and the two face cases follow the original's shape.
+ *     than 1e-6 (an inverted check, like the one in Col_LineLineParams), and the first of them (code 6) never is:
+ *     its length is taken from row 0 of R instead of column 0 and then compared with itself;
+ *   - Col_LineLineParams returns 0, 0 for unit axes, so an edge contact is just the chosen corner of box a;
+ *   - edge case 4 (code 10) tests its helper vector for box a before filling it, so the test sees the zeros of
+ *     the memset and always takes the first branch (0 > -1e-5); edge case 6 (code 12) leaves one component of
+ *     that vector unscaled; edge case 0 alone does not clear the vector first;
+ *   - if no axis is ever kept (only possible with NaNs), code stays -1 and the face-of-a branch indexes R and dA
+ *     with -1.
+ * The fifteen axes and the nine edge cases are written out one by one, as in the original (the compiler output
+ * has a block per axis and a nine-way jump table at 0x2F2170 whose cases differ in exactly these details).
+ * What the match needs: Col_NearEq known to be `const` (see the header); the axes indexed as component arrays in
+ * the face cases (ColObbV); one function-level 12-byte scratch (`tmp`) that holds the three corner signs of the
+ * face cases and the helper vector of the edge cases at the same stack slot; `w` local to each half of a case.
  */
-#if 0
 extern f32 D_002FEBA8[];     /* 0x2FEBA8: FLT_MAX (initialised data, reached with lui / lwc1, so not a small extern) */
 extern f32 sqrtf(f32 x);
+extern void *memset(void *dst, s32 c, u32 n);
 extern void Vec3_Normalize(ColVec *dst, ColVec *src);
 
-#define COL_AXIS_KEEP(code_)   \
-    if (d < 0.0f) {            \
-        return 0;              \
-    }                          \
-    if (d < *depth) {          \
-        *depth = d;            \
-        code = (code_);        \
-    }
+/* The same box with its vectors as component arrays: the face cases index the axes through this view. */
+typedef struct ColObbV {
+    /* 0x00 */ ColVecA center;
+    /* 0x10 */ ColVecA half;
+    /* 0x20 */ ColVecA axis[3];
+} ColObbV;
 
 s32 ColObb_Contact(ColObb *a, ColObb *b, ColVec *normal, ColVec *point, f32 *depth) {
     ColVec diff;
@@ -658,7 +666,12 @@ s32 ColObb_Contact(ColObb *a, ColObb *b, ColVec *normal, ColVec *point, f32 *dep
     ColVecA pA;
     ColVecA pB;
     ColVec n;
-    s32 sgn[3];
+    s32 sA[2];
+    s32 sB[2];
+    union {
+        s32 i[3];
+        f32 f[3];
+    } tmp;
     f32 s;
     f32 u;
     f32 t;
@@ -667,185 +680,913 @@ s32 ColObb_Contact(ColObb *a, ColObb *b, ColVec *normal, ColVec *point, f32 *dep
     f32 sum;
     f32 d;
     f32 len;
-    f32 w;
-    f32 *ha = &a->half.x;
-    f32 *hb = &b->half.x;
     s32 code = -1;
-    s32 i;
-    s32 j;
-    s32 i1;
-    s32 i2;
-    s32 j1;
-    s32 j2;
-    s32 k;
-    s32 m;
     s32 eq;
 
     *depth = D_002FEBA8[0];
     Vec4_Sub(&diff, &b->center, &a->center);
 
-    /* faces of a: codes 0..2 */
-    for (i = 0; i < 3; i++) {
-        R.m[i][0] = Vec3_Dot(&a->axis[i], &b->axis[0]);
-        R.m[i][1] = Vec3_Dot(&a->axis[i], &b->axis[1]);
-        R.m[i][2] = Vec3_Dot(&a->axis[i], &b->axis[2]);
-        dA.v[i] = Vec3_Dot(&a->axis[i], &diff);
-        absR.m[i][0] = __builtin_fabsf(R.m[i][0]);
-        absR.m[i][1] = __builtin_fabsf(R.m[i][1]);
-        absR.m[i][2] = __builtin_fabsf(R.m[i][2]);
-        t = __builtin_fabsf(dA.v[i]);
-        rb = hb[0] * absR.m[i][0] + hb[1] * absR.m[i][1] + hb[2] * absR.m[i][2];
-        sum = ha[i] + rb;
-        d = sum - t;
-        COL_AXIS_KEEP(i)
+    R.m[0][0] = Vec3_Dot(&a->axis[0], &b->axis[0]);
+    R.m[0][1] = Vec3_Dot(&a->axis[0], &b->axis[1]);
+    R.m[0][2] = Vec3_Dot(&a->axis[0], &b->axis[2]);
+    dA.v[0] = Vec3_Dot(&a->axis[0], &diff);
+    absR.m[0][0] = __builtin_fabsf(R.m[0][0]);
+    absR.m[0][1] = __builtin_fabsf(R.m[0][1]);
+    absR.m[0][2] = __builtin_fabsf(R.m[0][2]);
+    t = __builtin_fabsf(dA.v[0]);
+    rb = b->half.x * absR.m[0][0] + b->half.y * absR.m[0][1] + b->half.z * absR.m[0][2];
+    sum = a->half.x + rb;
+    d = sum - t;
+    if (d < 0.0f) {
+        return 0;
     }
-    /* faces of b: codes 3..5 */
-    for (j = 0; j < 3; j++) {
-        dB.v[j] = Vec3_Dot(&b->axis[j], &diff);
-        t = __builtin_fabsf(dB.v[j]);
-        ra = ha[0] * absR.m[0][j] + ha[1] * absR.m[1][j] + ha[2] * absR.m[2][j];
-        sum = ra + hb[j];
-        d = sum - t;
-        COL_AXIS_KEEP(j + 3)
+    if (d < *depth) {
+        *depth = d;
+        code = 0;
     }
-    /* edge of a x edge of b: codes 6 + 3 i + j. lo / hi are the other two indices in ascending order. */
-    for (i = 0; i < 3; i++) {
-        i1 = (i == 0) ? 1 : 0;
-        i2 = (i == 2) ? 1 : 2;
-        for (j = 0; j < 3; j++) {
-            j1 = (j == 0) ? 1 : 0;
-            j2 = (j == 2) ? 1 : 2;
-            /* length of the cross product, from column j of R; code 6 alone takes it from row i */
-            if (i == 0 && j == 0) {
-                len = sqrtf(R.m[0][2] * R.m[0][2] + R.m[0][1] * R.m[0][1]);
-            } else {
-                len = sqrtf(R.m[i2][j] * R.m[i2][j] + R.m[i1][j] * R.m[i1][j]);
+    R.m[1][0] = Vec3_Dot(&a->axis[1], &b->axis[0]);
+    R.m[1][1] = Vec3_Dot(&a->axis[1], &b->axis[1]);
+    R.m[1][2] = Vec3_Dot(&a->axis[1], &b->axis[2]);
+    dA.v[1] = Vec3_Dot(&a->axis[1], &diff);
+    absR.m[1][0] = __builtin_fabsf(R.m[1][0]);
+    absR.m[1][1] = __builtin_fabsf(R.m[1][1]);
+    absR.m[1][2] = __builtin_fabsf(R.m[1][2]);
+    t = __builtin_fabsf(dA.v[1]);
+    rb = b->half.x * absR.m[1][0] + b->half.y * absR.m[1][1] + b->half.z * absR.m[1][2];
+    sum = a->half.y + rb;
+    d = sum - t;
+    if (d < 0.0f) {
+        return 0;
+    }
+    if (d < *depth) {
+        *depth = d;
+        code = 1;
+    }
+    R.m[2][0] = Vec3_Dot(&a->axis[2], &b->axis[0]);
+    R.m[2][1] = Vec3_Dot(&a->axis[2], &b->axis[1]);
+    R.m[2][2] = Vec3_Dot(&a->axis[2], &b->axis[2]);
+    dA.v[2] = Vec3_Dot(&a->axis[2], &diff);
+    absR.m[2][0] = __builtin_fabsf(R.m[2][0]);
+    absR.m[2][1] = __builtin_fabsf(R.m[2][1]);
+    absR.m[2][2] = __builtin_fabsf(R.m[2][2]);
+    t = __builtin_fabsf(dA.v[2]);
+    rb = b->half.x * absR.m[2][0] + b->half.y * absR.m[2][1] + b->half.z * absR.m[2][2];
+    sum = a->half.z + rb;
+    d = sum - t;
+    if (d < 0.0f) {
+        return 0;
+    }
+    if (d < *depth) {
+        *depth = d;
+        code = 2;
+    }
+    dB.v[0] = Vec3_Dot(&b->axis[0], &diff);
+    t = __builtin_fabsf(dB.v[0]);
+    ra = a->half.x * absR.m[0][0] + a->half.y * absR.m[1][0] + a->half.z * absR.m[2][0];
+    sum = ra + b->half.x;
+    d = sum - t;
+    if (d < 0.0f) {
+        return 0;
+    }
+    if (d < *depth) {
+        *depth = d;
+        code = 3;
+    }
+    dB.v[1] = Vec3_Dot(&b->axis[1], &diff);
+    t = __builtin_fabsf(dB.v[1]);
+    ra = a->half.x * absR.m[0][1] + a->half.y * absR.m[1][1] + a->half.z * absR.m[2][1];
+    sum = ra + b->half.y;
+    d = sum - t;
+    if (d < 0.0f) {
+        return 0;
+    }
+    if (d < *depth) {
+        *depth = d;
+        code = 4;
+    }
+    dB.v[2] = Vec3_Dot(&b->axis[2], &diff);
+    t = __builtin_fabsf(dB.v[2]);
+    ra = a->half.x * absR.m[0][2] + a->half.y * absR.m[1][2] + a->half.z * absR.m[2][2];
+    sum = ra + b->half.z;
+    d = sum - t;
+    if (d < 0.0f) {
+        return 0;
+    }
+    if (d < *depth) {
+        *depth = d;
+        code = 5;
+    }
+    /* code 6: a.axis[0] x b.axis[0] */
+    t = __builtin_fabsf(dA.v[2] * R.m[1][0] - dA.v[1] * R.m[2][0]);
+    len = sqrtf(R.m[0][2] * R.m[0][2] + R.m[0][1] * R.m[0][1]);
+    eq = Col_NearEq(__builtin_fabsf(dB.v[1] * R.m[0][2] - dB.v[2] * R.m[0][1]), t, 0.000001f);
+    eq |= Col_NearEq(len, len, 0.000001f);
+    if (eq == 0) {
+        if (len == 0.0f) {
+            len = 0.000001f;
+        }
+        ra = a->half.y * absR.m[2][0] + a->half.z * absR.m[1][0];
+        rb = b->half.y * absR.m[0][2] + b->half.z * absR.m[0][1];
+        sum = ra + rb;
+        d = (sum - t) / len;
+        if (d != 0.0f) {
+            if (d < 0.0f) {
+                return 0;
             }
-            t = __builtin_fabsf(dA.v[i2] * R.m[i1][j] - dA.v[i1] * R.m[i2][j]);
-            /* the same two values again, from b's side */
-            eq = Col_NearEq(__builtin_fabsf(dB.v[j1] * R.m[i][j2] - dB.v[j2] * R.m[i][j1]), t, 0.000001f);
-            eq |= Col_NearEq(len, sqrtf(R.m[i][j2] * R.m[i][j2] + R.m[i][j1] * R.m[i][j1]), 0.000001f);
-            if (eq == 0) {
-                ra = ha[i1] * absR.m[i2][j] + ha[i2] * absR.m[i1][j];
-                rb = hb[j1] * absR.m[i][j2] + hb[j2] * absR.m[i][j1];
-                sum = ra + rb;
-                if (len == 0.0f) {
-                    len = 0.000001f;
-                }
-                d = (sum - t) / len;
-                if (d != 0.0f) {
-                    COL_AXIS_KEEP(6 + i * 3 + j)
-                }
+            if (d < *depth) {
+                *depth = d;
+                code = 6;
+            }
+        }
+    }
+    /* code 7: a.axis[0] x b.axis[1] */
+    t = __builtin_fabsf(dA.v[2] * R.m[1][1] - dA.v[1] * R.m[2][1]);
+    len = sqrtf(R.m[2][1] * R.m[2][1] + R.m[1][1] * R.m[1][1]);
+    eq = Col_NearEq(__builtin_fabsf(dB.v[0] * R.m[0][2] - dB.v[2] * R.m[0][0]), t, 0.000001f);
+    eq |= Col_NearEq(len, sqrtf(R.m[0][2] * R.m[0][2] + R.m[0][0] * R.m[0][0]), 0.000001f);
+    if (eq == 0) {
+        ra = a->half.y * absR.m[2][1] + a->half.z * absR.m[1][1];
+        rb = b->half.x * absR.m[0][2] + b->half.z * absR.m[0][0];
+        sum = ra + rb;
+        if (len == 0.0f) {
+            len = 0.000001f;
+        }
+        d = (sum - t) / len;
+        if (d != 0.0f) {
+            if (d < 0.0f) {
+                return 0;
+            }
+            if (d < *depth) {
+                *depth = d;
+                code = 7;
+            }
+        }
+    }
+    /* code 8: a.axis[0] x b.axis[2] */
+    t = __builtin_fabsf(dA.v[2] * R.m[1][2] - dA.v[1] * R.m[2][2]);
+    len = sqrtf(R.m[2][2] * R.m[2][2] + R.m[1][2] * R.m[1][2]);
+    eq = Col_NearEq(__builtin_fabsf(dB.v[0] * R.m[0][1] - dB.v[1] * R.m[0][0]), t, 0.000001f);
+    eq |= Col_NearEq(len, sqrtf(R.m[0][1] * R.m[0][1] + R.m[0][0] * R.m[0][0]), 0.000001f);
+    if (eq == 0) {
+        ra = a->half.y * absR.m[2][2] + a->half.z * absR.m[1][2];
+        rb = b->half.x * absR.m[0][1] + b->half.y * absR.m[0][0];
+        sum = ra + rb;
+        if (len == 0.0f) {
+            len = 0.000001f;
+        }
+        d = (sum - t) / len;
+        if (d != 0.0f) {
+            if (d < 0.0f) {
+                return 0;
+            }
+            if (d < *depth) {
+                *depth = d;
+                code = 8;
+            }
+        }
+    }
+    /* code 9: a.axis[1] x b.axis[0] */
+    t = __builtin_fabsf(dA.v[0] * R.m[2][0] - dA.v[2] * R.m[0][0]);
+    len = sqrtf(R.m[2][0] * R.m[2][0] + R.m[0][0] * R.m[0][0]);
+    eq = Col_NearEq(__builtin_fabsf(dB.v[1] * R.m[1][2] - dB.v[2] * R.m[1][1]), t, 0.000001f);
+    eq |= Col_NearEq(len, sqrtf(R.m[1][2] * R.m[1][2] + R.m[1][1] * R.m[1][1]), 0.000001f);
+    if (eq == 0) {
+        ra = a->half.x * absR.m[2][0] + a->half.z * absR.m[0][0];
+        rb = b->half.y * absR.m[1][2] + b->half.z * absR.m[1][1];
+        sum = ra + rb;
+        if (len == 0.0f) {
+            len = 0.000001f;
+        }
+        d = (sum - t) / len;
+        if (d != 0.0f) {
+            if (d < 0.0f) {
+                return 0;
+            }
+            if (d < *depth) {
+                *depth = d;
+                code = 9;
+            }
+        }
+    }
+    /* code 10: a.axis[1] x b.axis[1] */
+    t = __builtin_fabsf(dA.v[0] * R.m[2][1] - dA.v[2] * R.m[0][1]);
+    len = sqrtf(R.m[2][1] * R.m[2][1] + R.m[0][1] * R.m[0][1]);
+    eq = Col_NearEq(__builtin_fabsf(dB.v[0] * R.m[1][2] - dB.v[2] * R.m[1][0]), t, 0.000001f);
+    eq |= Col_NearEq(len, sqrtf(R.m[1][2] * R.m[1][2] + R.m[1][0] * R.m[1][0]), 0.000001f);
+    if (eq == 0) {
+        ra = a->half.x * absR.m[2][1] + a->half.z * absR.m[0][1];
+        rb = b->half.x * absR.m[1][2] + b->half.z * absR.m[1][0];
+        sum = ra + rb;
+        if (len == 0.0f) {
+            len = 0.000001f;
+        }
+        d = (sum - t) / len;
+        if (d != 0.0f) {
+            if (d < 0.0f) {
+                return 0;
+            }
+            if (d < *depth) {
+                *depth = d;
+                code = 10;
+            }
+        }
+    }
+    /* code 11: a.axis[1] x b.axis[2] */
+    t = __builtin_fabsf(dA.v[0] * R.m[2][2] - dA.v[2] * R.m[0][2]);
+    len = sqrtf(R.m[2][2] * R.m[2][2] + R.m[0][2] * R.m[0][2]);
+    eq = Col_NearEq(__builtin_fabsf(dB.v[0] * R.m[1][1] - dB.v[1] * R.m[1][0]), t, 0.000001f);
+    eq |= Col_NearEq(len, sqrtf(R.m[1][1] * R.m[1][1] + R.m[1][0] * R.m[1][0]), 0.000001f);
+    if (eq == 0) {
+        ra = a->half.x * absR.m[2][2] + a->half.z * absR.m[0][2];
+        rb = b->half.x * absR.m[1][1] + b->half.y * absR.m[1][0];
+        sum = ra + rb;
+        if (len == 0.0f) {
+            len = 0.000001f;
+        }
+        d = (sum - t) / len;
+        if (d != 0.0f) {
+            if (d < 0.0f) {
+                return 0;
+            }
+            if (d < *depth) {
+                *depth = d;
+                code = 11;
+            }
+        }
+    }
+    /* code 12: a.axis[2] x b.axis[0] */
+    t = __builtin_fabsf(dA.v[1] * R.m[0][0] - dA.v[0] * R.m[1][0]);
+    len = sqrtf(R.m[1][0] * R.m[1][0] + R.m[0][0] * R.m[0][0]);
+    eq = Col_NearEq(__builtin_fabsf(dB.v[1] * R.m[2][2] - dB.v[2] * R.m[2][1]), t, 0.000001f);
+    eq |= Col_NearEq(len, sqrtf(R.m[2][2] * R.m[2][2] + R.m[2][1] * R.m[2][1]), 0.000001f);
+    if (eq == 0) {
+        ra = a->half.x * absR.m[1][0] + a->half.y * absR.m[0][0];
+        rb = b->half.y * absR.m[2][2] + b->half.z * absR.m[2][1];
+        sum = ra + rb;
+        if (len == 0.0f) {
+            len = 0.000001f;
+        }
+        d = (sum - t) / len;
+        if (d != 0.0f) {
+            if (d < 0.0f) {
+                return 0;
+            }
+            if (d < *depth) {
+                *depth = d;
+                code = 12;
+            }
+        }
+    }
+    /* code 13: a.axis[2] x b.axis[1] */
+    t = __builtin_fabsf(dA.v[1] * R.m[0][1] - dA.v[0] * R.m[1][1]);
+    len = sqrtf(R.m[1][1] * R.m[1][1] + R.m[0][1] * R.m[0][1]);
+    eq = Col_NearEq(__builtin_fabsf(dB.v[0] * R.m[2][2] - dB.v[2] * R.m[2][0]), t, 0.000001f);
+    eq |= Col_NearEq(len, sqrtf(R.m[2][2] * R.m[2][2] + R.m[2][0] * R.m[2][0]), 0.000001f);
+    if (eq == 0) {
+        ra = a->half.x * absR.m[1][1] + a->half.y * absR.m[0][1];
+        rb = b->half.x * absR.m[2][2] + b->half.z * absR.m[2][0];
+        sum = ra + rb;
+        if (len == 0.0f) {
+            len = 0.000001f;
+        }
+        d = (sum - t) / len;
+        if (d != 0.0f) {
+            if (d < 0.0f) {
+                return 0;
+            }
+            if (d < *depth) {
+                *depth = d;
+                code = 13;
+            }
+        }
+    }
+    /* code 14: a.axis[2] x b.axis[2] */
+    t = __builtin_fabsf(dA.v[1] * R.m[0][2] - dA.v[0] * R.m[1][2]);
+    len = sqrtf(R.m[1][2] * R.m[1][2] + R.m[0][2] * R.m[0][2]);
+    eq = Col_NearEq(__builtin_fabsf(dB.v[0] * R.m[2][1] - dB.v[1] * R.m[2][0]), t, 0.000001f);
+    eq |= Col_NearEq(len, sqrtf(R.m[2][1] * R.m[2][1] + R.m[2][0] * R.m[2][0]), 0.000001f);
+    if (eq == 0) {
+        ra = a->half.x * absR.m[1][2] + a->half.y * absR.m[0][2];
+        rb = b->half.x * absR.m[2][1] + b->half.y * absR.m[2][0];
+        sum = ra + rb;
+        if (len == 0.0f) {
+            len = 0.000001f;
+        }
+        d = (sum - t) / len;
+        if (d != 0.0f) {
+            if (d < 0.0f) {
+                return 0;
+            }
+            if (d < *depth) {
+                *depth = d;
+                code = 14;
             }
         }
     }
 
     if (code < 3) {
-        /* face of a: the corner of b that is deepest along the axis */
-        sgn[0] = (R.m[code][0] > -0.00001f) ? 1 : -1;
-        sgn[1] = (R.m[code][1] > -0.00001f) ? 1 : -1;
-        sgn[2] = (R.m[code][2] > -0.00001f) ? 1 : -1;
+        tmp.i[0] = (R.m[code][0] > -0.00001f) ? 1 : -1;
+        tmp.i[1] = (R.m[code][1] > -0.00001f) ? 1 : -1;
+        tmp.i[2] = (R.m[code][2] > -0.00001f) ? 1 : -1;
         if (!(dA.v[code] > 0.0f)) {
-            normal->x = a->axis[code].x;
-            normal->y = a->axis[code].y;
-            normal->z = a->axis[code].z;
-            point->x = b->center.x + sgn[0] * b->axis[0].x * hb[0] + sgn[1] * b->axis[1].x * hb[1] +
-                       sgn[2] * b->axis[2].x * hb[2];
-            point->y = b->center.y + sgn[0] * b->axis[0].y * hb[0] + sgn[1] * b->axis[1].y * hb[1] +
-                       sgn[2] * b->axis[2].y * hb[2];
-            point->z = b->center.z + sgn[0] * b->axis[0].z * hb[0] + sgn[1] * b->axis[1].z * hb[1] +
-                       sgn[2] * b->axis[2].z * hb[2];
+            normal->x = ((ColObbV *)a)->axis[code].v[0];
+            normal->y = ((ColObbV *)a)->axis[code].v[1];
+            normal->z = ((ColObbV *)a)->axis[code].v[2];
+            point->x = b->center.x + tmp.i[0] * b->axis[0].x * b->half.x + tmp.i[1] * b->axis[1].x * b->half.y +
+                       tmp.i[2] * b->axis[2].x * b->half.z;
+                point->y = b->center.y + tmp.i[0] * b->axis[0].y * b->half.x + tmp.i[1] * b->axis[1].y * b->half.y +
+                       tmp.i[2] * b->axis[2].y * b->half.z;
+                point->z = b->center.z + tmp.i[0] * b->axis[0].z * b->half.x + tmp.i[1] * b->axis[1].z * b->half.y +
+                       tmp.i[2] * b->axis[2].z * b->half.z;
         } else {
-            normal->x = -a->axis[code].x;
-            normal->y = -a->axis[code].y;
-            normal->z = -a->axis[code].z;
-            point->x = b->center.x - sgn[0] * b->axis[0].x * hb[0] - sgn[1] * b->axis[1].x * hb[1] -
-                       sgn[2] * b->axis[2].x * hb[2];
-            point->y = b->center.y - sgn[0] * b->axis[0].y * hb[0] - sgn[1] * b->axis[1].y * hb[1] -
-                       sgn[2] * b->axis[2].y * hb[2];
-            point->z = b->center.z - sgn[0] * b->axis[0].z * hb[0] - sgn[1] * b->axis[1].z * hb[1] -
-                       sgn[2] * b->axis[2].z * hb[2];
+            normal->x = -((ColObbV *)a)->axis[code].v[0];
+            normal->y = -((ColObbV *)a)->axis[code].v[1];
+            normal->z = -((ColObbV *)a)->axis[code].v[2];
+            point->x = b->center.x - tmp.i[0] * b->axis[0].x * b->half.x - tmp.i[1] * b->axis[1].x * b->half.y -
+                       tmp.i[2] * b->axis[2].x * b->half.z;
+                point->y = b->center.y - tmp.i[0] * b->axis[0].y * b->half.x - tmp.i[1] * b->axis[1].y * b->half.y -
+                       tmp.i[2] * b->axis[2].y * b->half.z;
+                point->z = b->center.z - tmp.i[0] * b->axis[0].z * b->half.x - tmp.i[1] * b->axis[1].z * b->half.y -
+                       tmp.i[2] * b->axis[2].z * b->half.z;
         }
     } else if (code < 6) {
-        /* face of b: the corner of a that is deepest along the axis (the two branches mirror the ones above) */
-        k = code - 3;
-        sgn[0] = (R.m[0][k] > -0.00001f) ? 1 : -1;
-        sgn[1] = (R.m[1][k] > -0.00001f) ? 1 : -1;
-        sgn[2] = (R.m[2][k] > -0.00001f) ? 1 : -1;
-        if (!(Vec3_Dot(&b->axis[k], &diff) > 0.0f)) {
-            normal->x = b->axis[k].x;
-            normal->y = b->axis[k].y;
-            normal->z = b->axis[k].z;
-            point->x = a->center.x - sgn[0] * a->axis[0].x * ha[0] - sgn[1] * a->axis[1].x * ha[1] -
-                       sgn[2] * a->axis[2].x * ha[2];
-            point->y = a->center.y - sgn[0] * a->axis[0].y * ha[0] - sgn[1] * a->axis[1].y * ha[1] -
-                       sgn[2] * a->axis[2].y * ha[2];
-            point->z = a->center.z - sgn[0] * a->axis[0].z * ha[0] - sgn[1] * a->axis[1].z * ha[1] -
-                       sgn[2] * a->axis[2].z * ha[2];
+        tmp.i[0] = (R.m[0][code - 3] > -0.00001f) ? 1 : -1;
+        tmp.i[1] = (R.m[1][code - 3] > -0.00001f) ? 1 : -1;
+        tmp.i[2] = (R.m[2][code - 3] > -0.00001f) ? 1 : -1;
+        if (!(Vec3_Dot(&b->axis[code - 3], &diff) > 0.0f)) {
+            normal->x = ((ColObbV *)b)->axis[code - 3].v[0];
+            normal->y = ((ColObbV *)b)->axis[code - 3].v[1];
+            normal->z = ((ColObbV *)b)->axis[code - 3].v[2];
+            point->x = a->center.x - tmp.i[0] * a->axis[0].x * a->half.x - tmp.i[1] * a->axis[1].x * a->half.y -
+                       tmp.i[2] * a->axis[2].x * a->half.z;
+                point->y = a->center.y - tmp.i[0] * a->axis[0].y * a->half.x - tmp.i[1] * a->axis[1].y * a->half.y -
+                       tmp.i[2] * a->axis[2].y * a->half.z;
+                point->z = a->center.z - tmp.i[0] * a->axis[0].z * a->half.x - tmp.i[1] * a->axis[1].z * a->half.y -
+                       tmp.i[2] * a->axis[2].z * a->half.z;
         } else {
-            normal->x = -b->axis[k].x;
-            normal->y = -b->axis[k].y;
-            normal->z = -b->axis[k].z;
-            point->x = a->center.x + sgn[0] * a->axis[0].x * ha[0] + sgn[1] * a->axis[1].x * ha[1] +
-                       sgn[2] * a->axis[2].x * ha[2];
-            point->y = a->center.y + sgn[0] * a->axis[0].y * ha[0] + sgn[1] * a->axis[1].y * ha[1] +
-                       sgn[2] * a->axis[2].y * ha[2];
-            point->z = a->center.z + sgn[0] * a->axis[0].z * ha[0] + sgn[1] * a->axis[1].z * ha[1] +
-                       sgn[2] * a->axis[2].z * ha[2];
+            normal->x = -((ColObbV *)b)->axis[code - 3].v[0];
+            normal->y = -((ColObbV *)b)->axis[code - 3].v[1];
+            normal->z = -((ColObbV *)b)->axis[code - 3].v[2];
+            point->x = a->center.x + tmp.i[0] * a->axis[0].x * a->half.x + tmp.i[1] * a->axis[1].x * a->half.y +
+                       tmp.i[2] * a->axis[2].x * a->half.z;
+                point->y = a->center.y + tmp.i[0] * a->axis[0].y * a->half.x + tmp.i[1] * a->axis[1].y * a->half.y +
+                       tmp.i[2] * a->axis[2].y * a->half.z;
+                point->z = a->center.z + tmp.i[0] * a->axis[0].z * a->half.x + tmp.i[1] * a->axis[1].z * a->half.y +
+                       tmp.i[2] * a->axis[2].z * a->half.z;
         }
-    } else if ((u32)(code - 6) < 9) {
-        /* edge against edge (read from case 0 of the jump table; the other eight permute the indices) */
-        f32 sa1;
-        f32 sa2;
-        f32 sb1;
-        f32 sb2;
+    } else {
+        switch (code - 6) {
+        case 0: /* a.axis[0] x b.axis[0] */ {
+            sA[0] = (R.m[2][0] < 0.0f) ? 1 : -1;
+            sA[1] = (0.0f < R.m[1][0]) ? 1 : -1;
+            sB[0] = (R.m[0][2] < 0.0f) ? 1 : -1;
+            sB[1] = (0.0f < R.m[0][1]) ? 1 : -1;
+            {
+                f32 w = -R.m[2][0] * dA.v[1] + R.m[1][0] * dA.v[2];
 
-        i = (code - 6) / 3;
-        j = (code - 6) % 3;
-        i1 = (i + 1) % 3;
-        i2 = (i + 2) % 3;
-        j1 = (j + 1) % 3;
-        j2 = (j + 2) % 3;
-        sa1 = (R.m[i2][j] < 0.0f) ? 1 : -1;
-        sa2 = (0.0f < R.m[i1][j]) ? 1 : -1;
-        sb1 = (R.m[i][j2] < 0.0f) ? 1 : -1;
-        sb2 = (0.0f < R.m[i][j1]) ? 1 : -1;
-        /* the edge of a: its far end along -axis i, on the side the cross axis points to */
-        w = -R.m[i2][j] * dA.v[i1] + R.m[i1][j] * dA.v[i2];
-        if (ha[i1] * sa1 * (-R.m[i2][j] * w) + ha[i2] * sa2 * (R.m[i1][j] * w) > -0.00001f) {
-            for (m = 0; m < 3; m++) {
-                pA.v[m] = (&a->center.x)[m] + -(&a->axis[i].x)[m] * ha[i] + (&a->axis[i1].x)[m] * ha[i1] * sa1 +
-                          (&a->axis[i2].x)[m] * ha[i2] * sa2;
+                tmp.f[0] = 0.0f;
+                tmp.f[1] = -R.m[2][0] * w;
+                tmp.f[2] = R.m[1][0] * w;
+                if (a->half.y * sA[0] * tmp.f[1] + a->half.z * sA[1] * tmp.f[2] > -0.00001f) {
+                    pA.v[0] = a->center.x + -a->axis[0].x * a->half.x + a->axis[1].x * a->half.y * sA[0] +
+                              a->axis[2].x * a->half.z * sA[1];
+                    pA.v[1] = a->center.y + -a->axis[0].y * a->half.x + a->axis[1].y * a->half.y * sA[0] +
+                              a->axis[2].y * a->half.z * sA[1];
+                    pA.v[2] = a->center.z + -a->axis[0].z * a->half.x + a->axis[1].z * a->half.y * sA[0] +
+                              a->axis[2].z * a->half.z * sA[1];
+                } else {
+                    pA.v[0] = a->center.x + -a->axis[0].x * a->half.x + -a->axis[1].x * a->half.y * sA[0] +
+                              -a->axis[2].x * a->half.z * sA[1];
+                    pA.v[1] = a->center.y + -a->axis[0].y * a->half.x + -a->axis[1].y * a->half.y * sA[0] +
+                              -a->axis[2].y * a->half.z * sA[1];
+                    pA.v[2] = a->center.z + -a->axis[0].z * a->half.x + -a->axis[1].z * a->half.y * sA[0] +
+                              -a->axis[2].z * a->half.z * sA[1];
+                }
             }
-        } else {
-            for (m = 0; m < 3; m++) {
-                pA.v[m] = (&a->center.x)[m] + -(&a->axis[i].x)[m] * ha[i] + -(&a->axis[i1].x)[m] * ha[i1] * sa1 +
-                          -(&a->axis[i2].x)[m] * ha[i2] * sa2;
+            {
+                f32 w = -R.m[0][2] * dB.v[1] + R.m[0][1] * dB.v[2];
+
+                tmp.f[0] = 0.0f;
+                tmp.f[1] = -R.m[0][2] * w;
+                tmp.f[2] = R.m[0][1] * w;
+                if (b->half.y * sB[0] * tmp.f[1] + b->half.z * sB[1] * tmp.f[2] > -0.00001f) {
+                    pB.v[0] = b->center.x + -b->axis[0].x * b->half.x + -b->axis[1].x * b->half.y * sB[0] +
+                              -b->axis[2].x * b->half.z * sB[1];
+                    pB.v[1] = b->center.y + -b->axis[0].y * b->half.x + -b->axis[1].y * b->half.y * sB[0] +
+                              -b->axis[2].y * b->half.z * sB[1];
+                    pB.v[2] = b->center.z + -b->axis[0].z * b->half.x + -b->axis[1].z * b->half.y * sB[0] +
+                              -b->axis[2].z * b->half.z * sB[1];
+                } else {
+                    pB.v[0] = b->center.x + -b->axis[0].x * b->half.x + b->axis[1].x * b->half.y * sB[0] +
+                              b->axis[2].x * b->half.z * sB[1];
+                    pB.v[1] = b->center.y + -b->axis[0].y * b->half.x + b->axis[1].y * b->half.y * sB[0] +
+                              b->axis[2].y * b->half.z * sB[1];
+                    pB.v[2] = b->center.z + -b->axis[0].z * b->half.x + b->axis[1].z * b->half.y * sB[0] +
+                              b->axis[2].z * b->half.z * sB[1];
+                }
             }
+            Col_LineLineParams(&s, &u, (ColVec *)&pA, &a->axis[0], (ColVec *)&pB, &b->axis[0]);
+            point->x = pA.v[0] + a->axis[0].x * s;
+            point->y = pA.v[1] + a->axis[0].y * s;
+            point->z = pA.v[2] + a->axis[0].z * s;
+            n.x = pB.v[0] + b->axis[0].x * u - point->x;
+            n.y = pB.v[1] + b->axis[0].y * u - point->y;
+            n.z = pB.v[2] + b->axis[0].z * u - point->z;
+            Vec3_Normalize(normal, &n);
+            break;
         }
-        /* the edge of b, with the opposite choice */
-        w = -R.m[i][j2] * dB.v[j1] + R.m[i][j1] * dB.v[j2];
-        if (hb[j1] * sb1 * (-R.m[i][j2] * w) + hb[j2] * sb2 * (R.m[i][j1] * w) > -0.00001f) {
-            for (m = 0; m < 3; m++) {
-                pB.v[m] = (&b->center.x)[m] + -(&b->axis[j].x)[m] * hb[j] + -(&b->axis[j1].x)[m] * hb[j1] * sb1 +
-                          -(&b->axis[j2].x)[m] * hb[j2] * sb2;
+        case 1: /* a.axis[0] x b.axis[1] */ {
+            sA[0] = (R.m[2][1] < 0.0f) ? 1 : -1;
+            sA[1] = (0.0f < R.m[1][1]) ? 1 : -1;
+            sB[0] = (0.0f < R.m[0][2]) ? 1 : -1;
+            sB[1] = (R.m[0][0] < 0.0f) ? 1 : -1;
+            {
+                f32 w = -R.m[2][1] * dA.v[1] + R.m[1][1] * dA.v[2];
+
+                memset(&tmp, 0, sizeof(tmp));
+                tmp.f[0] = 0.0f;
+                tmp.f[1] = -R.m[2][1] * w;
+                tmp.f[2] = R.m[1][1] * w;
+                if (a->half.y * sA[0] * tmp.f[1] + a->half.z * sA[1] * tmp.f[2] > -0.00001f) {
+                    pA.v[0] = a->center.x + -a->axis[0].x * a->half.x + a->axis[1].x * a->half.y * sA[0] +
+                              a->axis[2].x * a->half.z * sA[1];
+                    pA.v[1] = a->center.y + -a->axis[0].y * a->half.x + a->axis[1].y * a->half.y * sA[0] +
+                              a->axis[2].y * a->half.z * sA[1];
+                    pA.v[2] = a->center.z + -a->axis[0].z * a->half.x + a->axis[1].z * a->half.y * sA[0] +
+                              a->axis[2].z * a->half.z * sA[1];
+                } else {
+                    pA.v[0] = a->center.x + -a->axis[0].x * a->half.x + -a->axis[1].x * a->half.y * sA[0] +
+                              -a->axis[2].x * a->half.z * sA[1];
+                    pA.v[1] = a->center.y + -a->axis[0].y * a->half.x + -a->axis[1].y * a->half.y * sA[0] +
+                              -a->axis[2].y * a->half.z * sA[1];
+                    pA.v[2] = a->center.z + -a->axis[0].z * a->half.x + -a->axis[1].z * a->half.y * sA[0] +
+                              -a->axis[2].z * a->half.z * sA[1];
+                }
             }
-        } else {
-            for (m = 0; m < 3; m++) {
-                pB.v[m] = (&b->center.x)[m] + -(&b->axis[j].x)[m] * hb[j] + (&b->axis[j1].x)[m] * hb[j1] * sb1 +
-                          (&b->axis[j2].x)[m] * hb[j2] * sb2;
+            {
+                f32 w = R.m[0][2] * dB.v[0] - R.m[0][0] * dB.v[2];
+
+                memset(&tmp, 0, sizeof(tmp));
+                tmp.f[0] = R.m[0][2] * w;
+                tmp.f[1] = 0.0f;
+                tmp.f[2] = -R.m[0][0] * w;
+                if (b->half.x * sB[0] * tmp.f[0] + b->half.z * sB[1] * tmp.f[2] > -0.00001f) {
+                    pB.v[0] = b->center.x + -b->axis[0].x * b->half.x * sB[0] + -b->axis[1].x * b->half.y +
+                              -b->axis[2].x * b->half.z * sB[1];
+                    pB.v[1] = b->center.y + -b->axis[0].y * b->half.x * sB[0] + -b->axis[1].y * b->half.y +
+                              -b->axis[2].y * b->half.z * sB[1];
+                    pB.v[2] = b->center.z + -b->axis[0].z * b->half.x * sB[0] + -b->axis[1].z * b->half.y +
+                              -b->axis[2].z * b->half.z * sB[1];
+                } else {
+                    pB.v[0] = b->center.x + b->axis[0].x * b->half.x * sB[0] + -b->axis[1].x * b->half.y +
+                              b->axis[2].x * b->half.z * sB[1];
+                    pB.v[1] = b->center.y + b->axis[0].y * b->half.x * sB[0] + -b->axis[1].y * b->half.y +
+                              b->axis[2].y * b->half.z * sB[1];
+                    pB.v[2] = b->center.z + b->axis[0].z * b->half.x * sB[0] + -b->axis[1].z * b->half.y +
+                              b->axis[2].z * b->half.z * sB[1];
+                }
             }
+            Col_LineLineParams(&s, &u, (ColVec *)&pA, &a->axis[0], (ColVec *)&pB, &b->axis[1]);
+            point->x = pA.v[0] + a->axis[0].x * s;
+            point->y = pA.v[1] + a->axis[0].y * s;
+            point->z = pA.v[2] + a->axis[0].z * s;
+            n.x = pB.v[0] + b->axis[1].x * u - point->x;
+            n.y = pB.v[1] + b->axis[1].y * u - point->y;
+            n.z = pB.v[2] + b->axis[1].z * u - point->z;
+            Vec3_Normalize(normal, &n);
+            break;
         }
-        Col_LineLineParams(&s, &u, (ColVec *)&pA, &a->axis[i], (ColVec *)&pB, &b->axis[j]);
-        point->x = pA.v[0] + a->axis[i].x * s;
-        point->y = pA.v[1] + a->axis[i].y * s;
-        point->z = pA.v[2] + a->axis[i].z * s;
-        n.x = pB.v[0] + b->axis[j].x * u - point->x;
-        n.y = pB.v[1] + b->axis[j].y * u - point->y;
-        n.z = pB.v[2] + b->axis[j].z * u - point->z;
-        Vec3_Normalize(normal, &n);
+        case 2: /* a.axis[0] x b.axis[2] */ {
+            sA[0] = (R.m[2][2] < 0.0f) ? 1 : -1;
+            sA[1] = (0.0f < R.m[1][2]) ? 1 : -1;
+            sB[0] = (R.m[0][1] < 0.0f) ? 1 : -1;
+            sB[1] = (0.0f < R.m[0][0]) ? 1 : -1;
+            {
+                f32 w = -R.m[2][2] * dA.v[1] + R.m[1][2] * dA.v[2];
+
+                memset(&tmp, 0, sizeof(tmp));
+                tmp.f[0] = 0.0f;
+                tmp.f[1] = -R.m[2][2] * w;
+                tmp.f[2] = R.m[1][2] * w;
+                if (a->half.y * sA[0] * tmp.f[1] + a->half.z * sA[1] * tmp.f[2] > -0.00001f) {
+                    pA.v[0] = a->center.x + -a->axis[0].x * a->half.x + a->axis[1].x * a->half.y * sA[0] +
+                              a->axis[2].x * a->half.z * sA[1];
+                    pA.v[1] = a->center.y + -a->axis[0].y * a->half.x + a->axis[1].y * a->half.y * sA[0] +
+                              a->axis[2].y * a->half.z * sA[1];
+                    pA.v[2] = a->center.z + -a->axis[0].z * a->half.x + a->axis[1].z * a->half.y * sA[0] +
+                              a->axis[2].z * a->half.z * sA[1];
+                } else {
+                    pA.v[0] = a->center.x + -a->axis[0].x * a->half.x + -a->axis[1].x * a->half.y * sA[0] +
+                              -a->axis[2].x * a->half.z * sA[1];
+                    pA.v[1] = a->center.y + -a->axis[0].y * a->half.x + -a->axis[1].y * a->half.y * sA[0] +
+                              -a->axis[2].y * a->half.z * sA[1];
+                    pA.v[2] = a->center.z + -a->axis[0].z * a->half.x + -a->axis[1].z * a->half.y * sA[0] +
+                              -a->axis[2].z * a->half.z * sA[1];
+                }
+            }
+            {
+                f32 w = -R.m[0][1] * dB.v[0] + R.m[0][0] * dB.v[1];
+
+                memset(&tmp, 0, sizeof(tmp));
+                tmp.f[0] = -R.m[0][1] * w;
+                tmp.f[1] = R.m[0][0] * w;
+                tmp.f[2] = 0.0f;
+                if (b->half.x * sB[0] * tmp.f[0] + b->half.y * sB[1] * tmp.f[1] > -0.00001f) {
+                    pB.v[0] = b->center.x + -b->axis[0].x * b->half.x * sB[0] +
+                              -b->axis[1].x * b->half.y * sB[1] + -b->axis[2].x * b->half.z;
+                    pB.v[1] = b->center.y + -b->axis[0].y * b->half.x * sB[0] +
+                              -b->axis[1].y * b->half.y * sB[1] + -b->axis[2].y * b->half.z;
+                    pB.v[2] = b->center.z + -b->axis[0].z * b->half.x * sB[0] +
+                              -b->axis[1].z * b->half.y * sB[1] + -b->axis[2].z * b->half.z;
+                } else {
+                    pB.v[0] = b->center.x + b->axis[0].x * b->half.x * sB[0] +
+                              b->axis[1].x * b->half.y * sB[1] + -b->axis[2].x * b->half.z;
+                    pB.v[1] = b->center.y + b->axis[0].y * b->half.x * sB[0] +
+                              b->axis[1].y * b->half.y * sB[1] + -b->axis[2].y * b->half.z;
+                    pB.v[2] = b->center.z + b->axis[0].z * b->half.x * sB[0] +
+                              b->axis[1].z * b->half.y * sB[1] + -b->axis[2].z * b->half.z;
+                }
+            }
+            Col_LineLineParams(&s, &u, (ColVec *)&pA, &a->axis[0], (ColVec *)&pB, &b->axis[2]);
+            point->x = pA.v[0] + a->axis[0].x * s;
+            point->y = pA.v[1] + a->axis[0].y * s;
+            point->z = pA.v[2] + a->axis[0].z * s;
+            n.x = pB.v[0] + b->axis[2].x * u - point->x;
+            n.y = pB.v[1] + b->axis[2].y * u - point->y;
+            n.z = pB.v[2] + b->axis[2].z * u - point->z;
+            Vec3_Normalize(normal, &n);
+            break;
+        }
+        case 3: /* a.axis[1] x b.axis[0] */ {
+            sA[0] = (0.0f < R.m[2][0]) ? 1 : -1;
+            sA[1] = (R.m[0][0] < 0.0f) ? 1 : -1;
+            sB[0] = (R.m[1][2] < 0.0f) ? 1 : -1;
+            sB[1] = (0.0f < R.m[1][1]) ? 1 : -1;
+            {
+                f32 w = R.m[2][0] * dA.v[0] - R.m[0][0] * dA.v[2];
+
+                memset(&tmp, 0, sizeof(tmp));
+                tmp.f[0] = R.m[2][0] * w;
+                tmp.f[1] = 0.0f;
+                tmp.f[2] = -R.m[0][0] * w;
+                if (a->half.x * sA[0] * tmp.f[0] + a->half.z * sA[1] * tmp.f[2] > -0.00001f) {
+                    pA.v[0] = a->center.x + a->axis[0].x * a->half.x * sA[0] + -a->axis[1].x * a->half.y +
+                              a->axis[2].x * a->half.z * sA[1];
+                    pA.v[1] = a->center.y + a->axis[0].y * a->half.x * sA[0] + -a->axis[1].y * a->half.y +
+                              a->axis[2].y * a->half.z * sA[1];
+                    pA.v[2] = a->center.z + a->axis[0].z * a->half.x * sA[0] + -a->axis[1].z * a->half.y +
+                              a->axis[2].z * a->half.z * sA[1];
+                } else {
+                    pA.v[0] = a->center.x + -a->axis[0].x * a->half.x * sA[0] + -a->axis[1].x * a->half.y +
+                              -a->axis[2].x * a->half.z * sA[1];
+                    pA.v[1] = a->center.y + -a->axis[0].y * a->half.x * sA[0] + -a->axis[1].y * a->half.y +
+                              -a->axis[2].y * a->half.z * sA[1];
+                    pA.v[2] = a->center.z + -a->axis[0].z * a->half.x * sA[0] + -a->axis[1].z * a->half.y +
+                              -a->axis[2].z * a->half.z * sA[1];
+                }
+            }
+            {
+                f32 w = -R.m[1][2] * dB.v[1] + R.m[1][1] * dB.v[2];
+
+                memset(&tmp, 0, sizeof(tmp));
+                tmp.f[0] = 0.0f;
+                tmp.f[1] = -R.m[1][2] * w;
+                tmp.f[2] = R.m[1][1] * w;
+                if (b->half.y * sB[0] * tmp.f[1] + b->half.z * sB[1] * tmp.f[2] > -0.00001f) {
+                    pB.v[0] = b->center.x + -b->axis[0].x * b->half.x + -b->axis[1].x * b->half.y * sB[0] +
+                              -b->axis[2].x * b->half.z * sB[1];
+                    pB.v[1] = b->center.y + -b->axis[0].y * b->half.x + -b->axis[1].y * b->half.y * sB[0] +
+                              -b->axis[2].y * b->half.z * sB[1];
+                    pB.v[2] = b->center.z + -b->axis[0].z * b->half.x + -b->axis[1].z * b->half.y * sB[0] +
+                              -b->axis[2].z * b->half.z * sB[1];
+                } else {
+                    pB.v[0] = b->center.x + -b->axis[0].x * b->half.x + b->axis[1].x * b->half.y * sB[0] +
+                              b->axis[2].x * b->half.z * sB[1];
+                    pB.v[1] = b->center.y + -b->axis[0].y * b->half.x + b->axis[1].y * b->half.y * sB[0] +
+                              b->axis[2].y * b->half.z * sB[1];
+                    pB.v[2] = b->center.z + -b->axis[0].z * b->half.x + b->axis[1].z * b->half.y * sB[0] +
+                              b->axis[2].z * b->half.z * sB[1];
+                }
+            }
+            Col_LineLineParams(&s, &u, (ColVec *)&pA, &a->axis[1], (ColVec *)&pB, &b->axis[0]);
+            point->x = pA.v[0] + a->axis[1].x * s;
+            point->y = pA.v[1] + a->axis[1].y * s;
+            point->z = pA.v[2] + a->axis[1].z * s;
+            n.x = pB.v[0] + b->axis[0].x * u - point->x;
+            n.y = pB.v[1] + b->axis[0].y * u - point->y;
+            n.z = pB.v[2] + b->axis[0].z * u - point->z;
+            Vec3_Normalize(normal, &n);
+            break;
+        }
+        case 4: /* a.axis[1] x b.axis[1] */ {
+            sA[0] = (0.0f < R.m[2][1]) ? 1 : -1;
+            sA[1] = (R.m[0][1] < 0.0f) ? 1 : -1;
+            sB[0] = (0.0f < R.m[1][2]) ? 1 : -1;
+            sB[1] = (R.m[1][0] < 0.0f) ? 1 : -1;
+            {
+                f32 w = R.m[2][1] * dA.v[0] - R.m[0][1] * dA.v[2];
+                f32 dp;
+
+                memset(&tmp, 0, sizeof(tmp));
+                /* as built: the test reads the vector before it is filled, so it sees the zeros of the memset */
+                dp = a->half.x * sA[0] * tmp.f[0] + a->half.z * sA[1] * tmp.f[2];
+                tmp.f[0] = R.m[2][1] * w;
+                tmp.f[1] = 0.0f;
+                tmp.f[2] = -R.m[0][1] * w;
+                if (dp > -0.00001f) {
+                    pA.v[0] = a->center.x + a->axis[0].x * a->half.x * sA[0] + -a->axis[1].x * a->half.y +
+                              a->axis[2].x * a->half.z * sA[1];
+                    pA.v[1] = a->center.y + a->axis[0].y * a->half.x * sA[0] + -a->axis[1].y * a->half.y +
+                              a->axis[2].y * a->half.z * sA[1];
+                    pA.v[2] = a->center.z + a->axis[0].z * a->half.x * sA[0] + -a->axis[1].z * a->half.y +
+                              a->axis[2].z * a->half.z * sA[1];
+                } else {
+                    pA.v[0] = a->center.x + -a->axis[0].x * a->half.x * sA[0] + -a->axis[1].x * a->half.y +
+                              -a->axis[2].x * a->half.z * sA[1];
+                    pA.v[1] = a->center.y + -a->axis[0].y * a->half.x * sA[0] + -a->axis[1].y * a->half.y +
+                              -a->axis[2].y * a->half.z * sA[1];
+                    pA.v[2] = a->center.z + -a->axis[0].z * a->half.x * sA[0] + -a->axis[1].z * a->half.y +
+                              -a->axis[2].z * a->half.z * sA[1];
+                }
+            }
+            {
+                f32 w = R.m[1][2] * dB.v[0] - R.m[1][0] * dB.v[2];
+
+                memset(&tmp, 0, sizeof(tmp));
+                tmp.f[0] = R.m[1][2] * w;
+                tmp.f[1] = 0.0f;
+                tmp.f[2] = -R.m[1][0] * w;
+                if (b->half.x * sB[0] * tmp.f[0] + b->half.z * sB[1] * tmp.f[2] > -0.00001f) {
+                    pB.v[0] = b->center.x + -b->axis[0].x * b->half.x * sB[0] + -b->axis[1].x * b->half.y +
+                              -b->axis[2].x * b->half.z * sB[1];
+                    pB.v[1] = b->center.y + -b->axis[0].y * b->half.x * sB[0] + -b->axis[1].y * b->half.y +
+                              -b->axis[2].y * b->half.z * sB[1];
+                    pB.v[2] = b->center.z + -b->axis[0].z * b->half.x * sB[0] + -b->axis[1].z * b->half.y +
+                              -b->axis[2].z * b->half.z * sB[1];
+                } else {
+                    pB.v[0] = b->center.x + b->axis[0].x * b->half.x * sB[0] + -b->axis[1].x * b->half.y +
+                              b->axis[2].x * b->half.z * sB[1];
+                    pB.v[1] = b->center.y + b->axis[0].y * b->half.x * sB[0] + -b->axis[1].y * b->half.y +
+                              b->axis[2].y * b->half.z * sB[1];
+                    pB.v[2] = b->center.z + b->axis[0].z * b->half.x * sB[0] + -b->axis[1].z * b->half.y +
+                              b->axis[2].z * b->half.z * sB[1];
+                }
+            }
+            Col_LineLineParams(&s, &u, (ColVec *)&pA, &a->axis[1], (ColVec *)&pB, &b->axis[1]);
+            point->x = pA.v[0] + a->axis[1].x * s;
+            point->y = pA.v[1] + a->axis[1].y * s;
+            point->z = pA.v[2] + a->axis[1].z * s;
+            n.x = pB.v[0] + b->axis[1].x * u - point->x;
+            n.y = pB.v[1] + b->axis[1].y * u - point->y;
+            n.z = pB.v[2] + b->axis[1].z * u - point->z;
+            Vec3_Normalize(normal, &n);
+            break;
+        }
+        case 5: /* a.axis[1] x b.axis[2] */ {
+            sA[0] = (0.0f < R.m[2][2]) ? 1 : -1;
+            sA[1] = (R.m[0][2] < 0.0f) ? 1 : -1;
+            sB[0] = (R.m[1][1] < 0.0f) ? 1 : -1;
+            sB[1] = (0.0f < R.m[1][0]) ? 1 : -1;
+            {
+                f32 w = R.m[2][2] * dA.v[0] - R.m[0][2] * dA.v[2];
+
+                memset(&tmp, 0, sizeof(tmp));
+                tmp.f[0] = R.m[2][2] * w;
+                tmp.f[1] = 0.0f;
+                tmp.f[2] = -R.m[0][2] * w;
+                if (a->half.x * sA[0] * tmp.f[0] + a->half.z * sA[1] * tmp.f[2] > -0.00001f) {
+                    pA.v[0] = a->center.x + a->axis[0].x * a->half.x * sA[0] + -a->axis[1].x * a->half.y +
+                              a->axis[2].x * a->half.z * sA[1];
+                    pA.v[1] = a->center.y + a->axis[0].y * a->half.x * sA[0] + -a->axis[1].y * a->half.y +
+                              a->axis[2].y * a->half.z * sA[1];
+                    pA.v[2] = a->center.z + a->axis[0].z * a->half.x * sA[0] + -a->axis[1].z * a->half.y +
+                              a->axis[2].z * a->half.z * sA[1];
+                } else {
+                    pA.v[0] = a->center.x + -a->axis[0].x * a->half.x * sA[0] + -a->axis[1].x * a->half.y +
+                              -a->axis[2].x * a->half.z * sA[1];
+                    pA.v[1] = a->center.y + -a->axis[0].y * a->half.x * sA[0] + -a->axis[1].y * a->half.y +
+                              -a->axis[2].y * a->half.z * sA[1];
+                    pA.v[2] = a->center.z + -a->axis[0].z * a->half.x * sA[0] + -a->axis[1].z * a->half.y +
+                              -a->axis[2].z * a->half.z * sA[1];
+                }
+            }
+            {
+                f32 w = -R.m[1][1] * dB.v[0] + R.m[1][0] * dB.v[1];
+
+                memset(&tmp, 0, sizeof(tmp));
+                tmp.f[0] = -R.m[1][1] * w;
+                tmp.f[1] = R.m[1][0] * w;
+                tmp.f[2] = 0.0f;
+                if (b->half.x * sB[0] * tmp.f[0] + b->half.y * sB[1] * tmp.f[1] > -0.00001f) {
+                    pB.v[0] = b->center.x + -b->axis[0].x * b->half.x * sB[0] +
+                              -b->axis[1].x * b->half.y * sB[1] + -b->axis[2].x * b->half.z;
+                    pB.v[1] = b->center.y + -b->axis[0].y * b->half.x * sB[0] +
+                              -b->axis[1].y * b->half.y * sB[1] + -b->axis[2].y * b->half.z;
+                    pB.v[2] = b->center.z + -b->axis[0].z * b->half.x * sB[0] +
+                              -b->axis[1].z * b->half.y * sB[1] + -b->axis[2].z * b->half.z;
+                } else {
+                    pB.v[0] = b->center.x + b->axis[0].x * b->half.x * sB[0] +
+                              b->axis[1].x * b->half.y * sB[1] + -b->axis[2].x * b->half.z;
+                    pB.v[1] = b->center.y + b->axis[0].y * b->half.x * sB[0] +
+                              b->axis[1].y * b->half.y * sB[1] + -b->axis[2].y * b->half.z;
+                    pB.v[2] = b->center.z + b->axis[0].z * b->half.x * sB[0] +
+                              b->axis[1].z * b->half.y * sB[1] + -b->axis[2].z * b->half.z;
+                }
+            }
+            Col_LineLineParams(&s, &u, (ColVec *)&pA, &a->axis[1], (ColVec *)&pB, &b->axis[2]);
+            point->x = pA.v[0] + a->axis[1].x * s;
+            point->y = pA.v[1] + a->axis[1].y * s;
+            point->z = pA.v[2] + a->axis[1].z * s;
+            n.x = pB.v[0] + b->axis[2].x * u - point->x;
+            n.y = pB.v[1] + b->axis[2].y * u - point->y;
+            n.z = pB.v[2] + b->axis[2].z * u - point->z;
+            Vec3_Normalize(normal, &n);
+            break;
+        }
+        case 6: /* a.axis[2] x b.axis[0] */ {
+            sA[0] = (R.m[1][0] < 0.0f) ? 1 : -1;
+            sA[1] = (0.0f < R.m[0][0]) ? 1 : -1;
+            sB[0] = (R.m[2][2] < 0.0f) ? 1 : -1;
+            sB[1] = (0.0f < R.m[2][1]) ? 1 : -1;
+            {
+                f32 w = -R.m[1][0] * dA.v[0] + R.m[0][0] * dA.v[1];
+
+                memset(&tmp, 0, sizeof(tmp));
+                tmp.f[0] = -R.m[1][0] * w;
+                tmp.f[1] = R.m[0][0];   /* as built: not scaled by w */
+                tmp.f[2] = 0.0f;
+                if (a->half.x * sA[0] * tmp.f[0] + a->half.y * sA[1] * tmp.f[1] > -0.00001f) {
+                    pA.v[0] = a->center.x + a->axis[0].x * a->half.x * sA[0] +
+                              a->axis[1].x * a->half.y * sA[1] + -a->axis[2].x * a->half.z;
+                    pA.v[1] = a->center.y + a->axis[0].y * a->half.x * sA[0] +
+                              a->axis[1].y * a->half.y * sA[1] + -a->axis[2].y * a->half.z;
+                    pA.v[2] = a->center.z + a->axis[0].z * a->half.x * sA[0] +
+                              a->axis[1].z * a->half.y * sA[1] + -a->axis[2].z * a->half.z;
+                } else {
+                    pA.v[0] = a->center.x + -a->axis[0].x * a->half.x * sA[0] +
+                              -a->axis[1].x * a->half.y * sA[1] + -a->axis[2].x * a->half.z;
+                    pA.v[1] = a->center.y + -a->axis[0].y * a->half.x * sA[0] +
+                              -a->axis[1].y * a->half.y * sA[1] + -a->axis[2].y * a->half.z;
+                    pA.v[2] = a->center.z + -a->axis[0].z * a->half.x * sA[0] +
+                              -a->axis[1].z * a->half.y * sA[1] + -a->axis[2].z * a->half.z;
+                }
+            }
+            {
+                f32 w = -R.m[2][2] * dB.v[1] + R.m[2][1] * dB.v[2];
+
+                memset(&tmp, 0, sizeof(tmp));
+                tmp.f[0] = 0.0f;
+                tmp.f[1] = -R.m[2][2] * w;
+                tmp.f[2] = R.m[2][1] * w;
+                if (b->half.y * sB[0] * tmp.f[1] + b->half.z * sB[1] * tmp.f[2] > -0.00001f) {
+                    pB.v[0] = b->center.x + -b->axis[0].x * b->half.x + -b->axis[1].x * b->half.y * sB[0] +
+                              -b->axis[2].x * b->half.z * sB[1];
+                    pB.v[1] = b->center.y + -b->axis[0].y * b->half.x + -b->axis[1].y * b->half.y * sB[0] +
+                              -b->axis[2].y * b->half.z * sB[1];
+                    pB.v[2] = b->center.z + -b->axis[0].z * b->half.x + -b->axis[1].z * b->half.y * sB[0] +
+                              -b->axis[2].z * b->half.z * sB[1];
+                } else {
+                    pB.v[0] = b->center.x + -b->axis[0].x * b->half.x + b->axis[1].x * b->half.y * sB[0] +
+                              b->axis[2].x * b->half.z * sB[1];
+                    pB.v[1] = b->center.y + -b->axis[0].y * b->half.x + b->axis[1].y * b->half.y * sB[0] +
+                              b->axis[2].y * b->half.z * sB[1];
+                    pB.v[2] = b->center.z + -b->axis[0].z * b->half.x + b->axis[1].z * b->half.y * sB[0] +
+                              b->axis[2].z * b->half.z * sB[1];
+                }
+            }
+            Col_LineLineParams(&s, &u, (ColVec *)&pA, &a->axis[2], (ColVec *)&pB, &b->axis[0]);
+            point->x = pA.v[0] + a->axis[2].x * s;
+            point->y = pA.v[1] + a->axis[2].y * s;
+            point->z = pA.v[2] + a->axis[2].z * s;
+            n.x = pB.v[0] + b->axis[0].x * u - point->x;
+            n.y = pB.v[1] + b->axis[0].y * u - point->y;
+            n.z = pB.v[2] + b->axis[0].z * u - point->z;
+            Vec3_Normalize(normal, &n);
+            break;
+        }
+        case 7: /* a.axis[2] x b.axis[1] */ {
+            sA[0] = (R.m[1][1] < 0.0f) ? 1 : -1;
+            sA[1] = (0.0f < R.m[0][1]) ? 1 : -1;
+            sB[0] = (0.0f < R.m[2][2]) ? 1 : -1;
+            sB[1] = (R.m[2][0] < 0.0f) ? 1 : -1;
+            {
+                f32 w = -R.m[1][1] * dA.v[0] + R.m[0][1] * dA.v[1];
+
+                memset(&tmp, 0, sizeof(tmp));
+                tmp.f[0] = -R.m[1][1] * w;
+                tmp.f[1] = R.m[0][1] * w;
+                tmp.f[2] = 0.0f;
+                if (a->half.x * sA[0] * tmp.f[0] + a->half.y * sA[1] * tmp.f[1] > -0.00001f) {
+                    pA.v[0] = a->center.x + a->axis[0].x * a->half.x * sA[0] +
+                              a->axis[1].x * a->half.y * sA[1] + -a->axis[2].x * a->half.z;
+                    pA.v[1] = a->center.y + a->axis[0].y * a->half.x * sA[0] +
+                              a->axis[1].y * a->half.y * sA[1] + -a->axis[2].y * a->half.z;
+                    pA.v[2] = a->center.z + a->axis[0].z * a->half.x * sA[0] +
+                              a->axis[1].z * a->half.y * sA[1] + -a->axis[2].z * a->half.z;
+                } else {
+                    pA.v[0] = a->center.x + -a->axis[0].x * a->half.x * sA[0] +
+                              -a->axis[1].x * a->half.y * sA[1] + -a->axis[2].x * a->half.z;
+                    pA.v[1] = a->center.y + -a->axis[0].y * a->half.x * sA[0] +
+                              -a->axis[1].y * a->half.y * sA[1] + -a->axis[2].y * a->half.z;
+                    pA.v[2] = a->center.z + -a->axis[0].z * a->half.x * sA[0] +
+                              -a->axis[1].z * a->half.y * sA[1] + -a->axis[2].z * a->half.z;
+                }
+            }
+            {
+                f32 w = R.m[2][2] * dB.v[0] - R.m[2][0] * dB.v[2];
+
+                memset(&tmp, 0, sizeof(tmp));
+                tmp.f[0] = R.m[2][2] * w;
+                tmp.f[1] = 0.0f;
+                tmp.f[2] = -R.m[2][0] * w;
+                if (b->half.x * sB[0] * tmp.f[0] + b->half.z * sB[1] * tmp.f[2] > -0.00001f) {
+                    pB.v[0] = b->center.x + -b->axis[0].x * b->half.x * sB[0] + -b->axis[1].x * b->half.y +
+                              -b->axis[2].x * b->half.z * sB[1];
+                    pB.v[1] = b->center.y + -b->axis[0].y * b->half.x * sB[0] + -b->axis[1].y * b->half.y +
+                              -b->axis[2].y * b->half.z * sB[1];
+                    pB.v[2] = b->center.z + -b->axis[0].z * b->half.x * sB[0] + -b->axis[1].z * b->half.y +
+                              -b->axis[2].z * b->half.z * sB[1];
+                } else {
+                    pB.v[0] = b->center.x + b->axis[0].x * b->half.x * sB[0] + -b->axis[1].x * b->half.y +
+                              b->axis[2].x * b->half.z * sB[1];
+                    pB.v[1] = b->center.y + b->axis[0].y * b->half.x * sB[0] + -b->axis[1].y * b->half.y +
+                              b->axis[2].y * b->half.z * sB[1];
+                    pB.v[2] = b->center.z + b->axis[0].z * b->half.x * sB[0] + -b->axis[1].z * b->half.y +
+                              b->axis[2].z * b->half.z * sB[1];
+                }
+            }
+            Col_LineLineParams(&s, &u, (ColVec *)&pA, &a->axis[2], (ColVec *)&pB, &b->axis[1]);
+            point->x = pA.v[0] + a->axis[2].x * s;
+            point->y = pA.v[1] + a->axis[2].y * s;
+            point->z = pA.v[2] + a->axis[2].z * s;
+            n.x = pB.v[0] + b->axis[1].x * u - point->x;
+            n.y = pB.v[1] + b->axis[1].y * u - point->y;
+            n.z = pB.v[2] + b->axis[1].z * u - point->z;
+            Vec3_Normalize(normal, &n);
+            break;
+        }
+        case 8: /* a.axis[2] x b.axis[2] */ {
+            sA[0] = (R.m[1][2] < 0.0f) ? 1 : -1;
+            sA[1] = (0.0f < R.m[0][2]) ? 1 : -1;
+            sB[0] = (R.m[2][1] < 0.0f) ? 1 : -1;
+            sB[1] = (0.0f < R.m[2][0]) ? 1 : -1;
+            {
+                f32 w = -R.m[1][2] * dA.v[0] + R.m[0][2] * dA.v[1];
+
+                memset(&tmp, 0, sizeof(tmp));
+                tmp.f[0] = -R.m[1][2] * w;
+                tmp.f[1] = R.m[0][2] * w;
+                tmp.f[2] = 0.0f;
+                if (a->half.x * sA[0] * tmp.f[0] + a->half.y * sA[1] * tmp.f[1] > -0.00001f) {
+                    pA.v[0] = a->center.x + a->axis[0].x * a->half.x * sA[0] +
+                              a->axis[1].x * a->half.y * sA[1] + -a->axis[2].x * a->half.z;
+                    pA.v[1] = a->center.y + a->axis[0].y * a->half.x * sA[0] +
+                              a->axis[1].y * a->half.y * sA[1] + -a->axis[2].y * a->half.z;
+                    pA.v[2] = a->center.z + a->axis[0].z * a->half.x * sA[0] +
+                              a->axis[1].z * a->half.y * sA[1] + -a->axis[2].z * a->half.z;
+                } else {
+                    pA.v[0] = a->center.x + -a->axis[0].x * a->half.x * sA[0] +
+                              -a->axis[1].x * a->half.y * sA[1] + -a->axis[2].x * a->half.z;
+                    pA.v[1] = a->center.y + -a->axis[0].y * a->half.x * sA[0] +
+                              -a->axis[1].y * a->half.y * sA[1] + -a->axis[2].y * a->half.z;
+                    pA.v[2] = a->center.z + -a->axis[0].z * a->half.x * sA[0] +
+                              -a->axis[1].z * a->half.y * sA[1] + -a->axis[2].z * a->half.z;
+                }
+            }
+            {
+                f32 w = -R.m[2][1] * dB.v[0] + R.m[2][0] * dB.v[1];
+
+                memset(&tmp, 0, sizeof(tmp));
+                tmp.f[0] = -R.m[2][1] * w;
+                tmp.f[1] = R.m[2][0] * w;
+                tmp.f[2] = 0.0f;
+                if (b->half.x * sB[0] * tmp.f[0] + b->half.y * sB[1] * tmp.f[1] > -0.00001f) {
+                    pB.v[0] = b->center.x + -b->axis[0].x * b->half.x * sB[0] +
+                              -b->axis[1].x * b->half.y * sB[1] + -b->axis[2].x * b->half.z;
+                    pB.v[1] = b->center.y + -b->axis[0].y * b->half.x * sB[0] +
+                              -b->axis[1].y * b->half.y * sB[1] + -b->axis[2].y * b->half.z;
+                    pB.v[2] = b->center.z + -b->axis[0].z * b->half.x * sB[0] +
+                              -b->axis[1].z * b->half.y * sB[1] + -b->axis[2].z * b->half.z;
+                } else {
+                    pB.v[0] = b->center.x + b->axis[0].x * b->half.x * sB[0] +
+                              b->axis[1].x * b->half.y * sB[1] + -b->axis[2].x * b->half.z;
+                    pB.v[1] = b->center.y + b->axis[0].y * b->half.x * sB[0] +
+                              b->axis[1].y * b->half.y * sB[1] + -b->axis[2].y * b->half.z;
+                    pB.v[2] = b->center.z + b->axis[0].z * b->half.x * sB[0] +
+                              b->axis[1].z * b->half.y * sB[1] + -b->axis[2].z * b->half.z;
+                }
+            }
+            Col_LineLineParams(&s, &u, (ColVec *)&pA, &a->axis[2], (ColVec *)&pB, &b->axis[2]);
+            point->x = pA.v[0] + a->axis[2].x * s;
+            point->y = pA.v[1] + a->axis[2].y * s;
+            point->z = pA.v[2] + a->axis[2].z * s;
+            n.x = pB.v[0] + b->axis[2].x * u - point->x;
+            n.y = pB.v[1] + b->axis[2].y * u - point->y;
+            n.z = pB.v[2] + b->axis[2].z * u - point->z;
+            Vec3_Normalize(normal, &n);
+            break;
+        }
+        }
     }
     return 1;
 }
-#endif
-INCLUDE_ASM("asm/nonmatchings/battle/col_box", ColObb_Contact);

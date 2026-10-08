@@ -150,7 +150,10 @@ void ColMesh_CollectNode(ColNode *nodes, ColBox *box, s32 idx);
 s32 ColMesh_CollectBox(s32 max, u16 *buf, ColMesh *mesh, ColBox *box);
 void ColMesh_WalkNode(ColNode *nodes, ColBox *box, s32 idx);
 s32 ColMesh_WalkBox(ColMesh *mesh, ColBox *box, void *ctx, ColMeshCb cb);
-s32 Col_NearEq(f32 a, f32 b, f32 eps);
+/* `const`: the result depends on the arguments only. ColObb_Contact matches only when the compiler knows this (it
+ * keeps values read from the stack in registers across these calls). The original most likely had the function
+ * `static`, which this compiler turns into the same thing by itself; nothing outside col_box.c calls it. */
+s32 Col_NearEq(f32 a, f32 b, f32 eps) __attribute__((const));
 void Col_LineLineParams(f32 *s, f32 *t, ColVec *p1, ColVec *d1, ColVec *p2, ColVec *d2);
 s32 ColObb_Overlaps(ColObb *a, ColObb *b);
 s32 ColObb_Contact(ColObb *a, ColObb *b, ColVec *normal, ColVec *point, f32 *depth);
