@@ -192,43 +192,43 @@ void EftShot_BuildParam(s32 chr, s32 slot, EftShotParam *p, s32 blank) {
         n = slot;
 
         p->id = d->id[n];
-        p->unk2 = d->unk14[n];
+        p->unk2 = d->level[n];
         p->kind = 0;
-        p->unk5 = d->unk62[n];
-        p->unk6 = d->unk38[n];
+        p->unk5 = d->hitDirKind[n];
+        p->unk6 = d->node[n];
         p->unk7 = 0;
-        p->unk8 = d->unk3E[n];
-        p->shots = d->unk3A[n];
-        p->unkA = d->unk40[n];
+        p->unk8 = d->hitShape[n];
+        p->shots = d->shots[n];
+        p->unkA = d->hitsC[n];
         p->unkB = d->unk42[n];
         p->unkC = 0;
         p->type = d->type[n];
-        p->unkE[0] = d->unk48[0][n];
-        p->unkE[1] = d->unk48[1][n];
-        p->unkE[2] = d->unk48[2][n];
-        p->unkE[3] = d->unk48[3][n];
-        p->unkE[4] = d->unk48[4][n];
-        p->unkE[5] = d->unk48[5][n];
-        p->unk16[0] = (s8)d->unk54[0][n];
-        p->unk16[1] = (s8)d->unk54[1][n];
-        p->unk16[2] = (s8)d->unk54[2][n];
-        p->unk16[3] = (s8)d->unk54[3][n];
-        p->unk16[4] = (s8)d->unk54[4][n];
-        p->unk16[5] = (s8)d->unk54[5][n];
+        p->unkE[0] = d->nodes[0][n];
+        p->unkE[1] = d->nodes[1][n];
+        p->unkE[2] = d->nodes[2][n];
+        p->unkE[3] = d->nodes[3][n];
+        p->unkE[4] = d->nodes[4][n];
+        p->unkE[5] = d->nodes[5][n];
+        p->unk16[0] = (s8)d->frames[0][n];
+        p->unk16[1] = (s8)d->frames[1][n];
+        p->unk16[2] = (s8)d->frames[2][n];
+        p->unk16[3] = (s8)d->frames[3][n];
+        p->unk16[4] = (s8)d->frames[4][n];
+        p->unk16[5] = (s8)d->frames[5][n];
         p->unk22 = 0;
         p->unk24 = 0;
         p->life = d->time[n] * 30.0f;
         p->unk2C = 0.0f;
-        p->unk30 = d->unk30[n];
-        p->unk34 = d->unk20[n];
-        p->unk38 = d->unk28[n];
+        p->unk30 = d->scale[n];
+        p->unk34 = d->shotSpeed[n];
+        p->unk38 = d->shotTurn[n];
         p->flags = d->flags[n];
-        p->unk40 = (s8)d->unk46[n];
-        p->unk42 = (s8)d->unk44[n];
-        p->volley = (s8)d->unk3C[n];
+        p->unk40 = (s8)d->impactFx[n];
+        p->unk42 = (s8)d->groundFx[n];
+        p->volley = (s8)d->hitsB[n];
         p->unk4C = 0.0f;
-        p->unk48 = (s8)d->unk6E[n];
-        p->unk4A = (s8)d->unk70[n];
+        p->unk48 = (s8)d->blurOn[n];
+        p->unk4A = (s8)d->blurOff[n];
         p->unk54 = 1.0f;
         p->unk50 = 1.0f;
         p->unk14 = -1;
@@ -246,24 +246,24 @@ void EftShot_BuildParam(s32 chr, s32 slot, EftShotParam *p, s32 blank) {
         n = slot - 2;
 
         p->id = d->id[n];
-        p->unk2 = d->unk1E[n];
+        p->unk2 = d->level[n];
         kind = slot == 4 ? 2 : 1;
         p->kind = kind;
-        p->unk5 = d->unk13B[n];
-        p->unk6 = d->unk90[n];
+        p->unk5 = d->hitDirKind[n];
+        p->unk6 = d->node[n];
         p->unk7 = 0;
-        p->unk8 = d->unk99[n];
-        p->shots = d->unk93[n];
-        p->unkA = d->unk9C[n];
+        p->unk8 = d->hitShape[n];
+        p->shots = d->shots[n];
+        p->unkA = d->hitsC[n];
         p->unkB = d->unk9F[n];
         p->unkC = 0;
         p->type = d->type[n];
-        p->unkE[0] = d->unkA8[0][n];
-        p->unkE[1] = d->unkA8[1][n];
-        p->unkE[2] = d->unkA8[2][n];
-        p->unkE[3] = d->unkA8[3][n];
-        p->unkE[4] = d->unkA8[4][n];
-        p->unkE[5] = d->unkA8[5][n];
+        p->unkE[0] = d->nodes[0][n];
+        p->unkE[1] = d->nodes[1][n];
+        p->unkE[2] = d->nodes[2][n];
+        p->unkE[3] = d->nodes[3][n];
+        p->unkE[4] = d->nodes[4][n];
+        p->unkE[5] = d->nodes[5][n];
         p->unk16[0] = -1;
         p->unk16[1] = -1;
         p->unk16[2] = -1;
@@ -273,27 +273,27 @@ void EftShot_BuildParam(s32 chr, s32 slot, EftShotParam *p, s32 blank) {
         p->unk22 = 0;
         p->unk24 = 0;
         p->life = d->time[n] * 30.0f;
-        p->unk2C = d->unk30[n];
-        p->unk30 = d->unk6C[n];
-        p->unk34 = d->unk54[n];
-        p->unk38 = d->unk60[n];
+        p->unk2C = d->shotLife[n];
+        p->unk30 = d->scale[n];
+        p->unk34 = d->shotSpeed[n];
+        p->unk38 = d->shotTurn[n];
         p->flags = d->flags[n];
-        p->unk40 = (s8)d->unkA5[n];
-        p->unk42 = (s8)d->unkA2[n];
-        p->volley = (s8)d->unk96[n];
+        p->unk40 = (s8)d->impactFx[n];
+        p->unk42 = (s8)d->groundFx[n];
+        p->volley = (s8)d->hitsB[n];
         p->unk4C = d->unk214[n];
-        p->unk48 = (s8)d->unk15C[n];
-        p->unk4A = (s8)d->unk15F[n];
-        p->unk54 = d->unk78[n];
-        p->unk50 = d->unk84[n];
+        p->unk48 = (s8)d->blurOn[n];
+        p->unk4A = (s8)d->blurOff[n];
+        p->unk54 = d->groundScale[n];
+        p->unk50 = d->impactScale[n];
         p->unk14 = d->unk162[n];
         for (i = 0; i < 8; i++) {
-            p->unk58[i] = d->unkBA[i][n];
-            p->unk60[i] = d->unkD4[i][n];
+            p->unk58[i] = d->subKind[i][n];
+            p->unk60[i] = d->subAngle[i][n];
         }
-        p->unk80 = (s8)d->unk134[n];
-        p->unk84 = d->unk48[n];
-        p->unk88 = d->unk3C[n];
+        p->unk80 = (s8)d->subArg[n];
+        p->unk84 = d->hitScale[n];
+        p->unk88 = d->power[n];
     }
 }
 
@@ -337,8 +337,8 @@ void EftShot_Start(EftHStartArg *arg) {
     s->arg = *arg;
     s->unk40 = 0;
     s->param->life = arg->time * 30.0f;
-    s->param->unk34 = arg->unk14;
-    s->param->unk38 = arg->unk18;
+    s->param->unk34 = arg->speed;
+    s->param->unk38 = arg->homing;
     if (s->param->kind == 0) {
         s->param->life = 60;
     }
@@ -501,7 +501,7 @@ void EftVolley_Fire(s32 objId, EftHTask *task, s32 phase, s32 sub) {
         if (shot != NULL) {
             s32 count = slot->param->shots;
             EftVolleyShotArg arg = { slot,       w->pack, &w->pose, shot,     &shot->dir, w->fired,
-                                     count,      phase,   sub,      0.0f,     w->unk10,   w->unk4 };
+                                     count,      phase,   sub,      0.0f,     w->scale,   w->speed };
             s32 node;
             EftVolleyPose *sp;
 
@@ -531,11 +531,11 @@ void EftVolley_Fire(s32 objId, EftHTask *task, s32 phase, s32 sub) {
                 arg.time = (f32)slot->param->life / 30.0f;
                 if (!(w->flags & EFT_VOLLEY_ID1C6)) {
                     if (!(shot->flags & 4)) {
-                        w->unk13C8 = EftVolleyAim_GetNodeSide(w->pose.node);
+                        w->nodeSide = EftVolleyAim_GetNodeSide(w->pose.node);
                     }
                     shot->flags |= 4;
-                    EftVolleyAim_InitShot(objId, shot, EftEmit_GetAimKind(w->pack), w->unk13C8, w->fired, count, w->unk4,
-                                  w->unk8);
+                    EftVolleyAim_InitShot(objId, shot, EftEmit_GetAimKind(w->pack), w->nodeSide, w->fired, count, w->speed,
+                                  w->homing);
                 }
             }
             if (w->flags & EFT_VOLLEY_EXTRA) {
@@ -622,7 +622,7 @@ s32 EftVolley_UpdateShots(s32 objId, EftHTask *task) {
                 flag2 = 1;
             }
             if (shot->flags & 4) {
-                EftVolleyAim_Update(objId, shot, &shot->unk30, flag2, shot->time, w->unk4, w->unk8);
+                EftVolleyAim_Update(objId, shot, &shot->offset, flag2, shot->time, w->speed, w->homing);
                 EftBlastObj_SetTarget(shot->handle, 1, shot);
             }
             if (w->flags & EFT_VOLLEY_ENDING) {
@@ -708,7 +708,7 @@ void EftVolley_UpdateParts(s32 objId, EftHTask *task, EftSet *set, s32 reset) {
                     flags = 2;
                 }
                 if (flags != 0) {
-                    EftEmit_SpawnOwn(set, &w->state, &w->pose, &w->unk60, &w->dir, type, i, flags, w->unk10);
+                    EftEmit_SpawnOwn(set, &w->state, &w->pose, &w->pos, &w->dir, type, i, flags, w->scale);
                 }
             }
         }
@@ -732,10 +732,10 @@ void EftVolley_Init(EftHTask *task, EftHSlot *arg) {
     memset(w, 0, sizeof(EftVolleyWork));
     w->slot = slot;
     p = slot->param;
-    w->unk4 = p->unk34;
-    w->unk8 = p->unk38;
+    w->speed = p->unk34;
+    w->homing = p->unk38;
     w->unkC = p->unk30;
-    w->unk10 = p->unk30;
+    w->scale = p->unk30;
     w->unk14 = w->unkC;
     w->pack = set;
     EftEmit_InitState(set, &w->state);
@@ -790,9 +790,9 @@ void EftVolley_Update(EftHTask *task) {
         case 0:
             if (EftShot_TestBits(slot->arg.chr, 4)) {
                 w->flags |= EFT_VOLLEY_AIMED2;
-                Vec4_Copy(&w->unk50, &w->pose.nodePos);
-                Vec4_Copy(&w->unk60, &w->unk50);
-                EftVolley_Aim(slot->arg.chr, task, &w->unk60, 1);
+                Vec4_Copy(&w->firePos, &w->pose.nodePos);
+                Vec4_Copy(&w->pos, &w->firePos);
+                EftVolley_Aim(slot->arg.chr, task, &w->pos, 1);
                 task->state = 1;
             }
             break;
@@ -801,9 +801,9 @@ void EftVolley_Update(EftHTask *task) {
             break;
         case 2:
             if (EftShot_TestBits(slot->arg.chr, 4) && (slot->param->flags & 0x800)) {
-                Vec4_Copy(&w->unk50, &w->pose.nodePos);
-                Vec4_Copy(&w->unk60, &w->unk50);
-                EftVolley_Aim(slot->arg.chr, task, &w->unk60, 1);
+                Vec4_Copy(&w->firePos, &w->pose.nodePos);
+                Vec4_Copy(&w->pos, &w->firePos);
+                EftVolley_Aim(slot->arg.chr, task, &w->pos, 1);
             }
             if (EftShot_TestBits(slot->arg.chr, 8)) {
                 w->flags |= EFT_VOLLEY_ENDING | EFT_VOLLEY_8;
@@ -1114,7 +1114,7 @@ void EftEmit_BeginFrame(EftSet *set) {
 
 /* Header byte 0x21. */
 s32 EftEmit_GetHead21(EftSet *set) {
-    return set->head->unk21;
+    return set->head->flags;
 }
 
 /* Header byte 0x26. */
@@ -1124,7 +1124,7 @@ s32 EftEmit_GetHead26(EftSet *set) {
 
 /* Header byte 6: how EftVolley_Aim bends the direction. */
 s32 EftEmit_GetAimKind(EftSet *set) {
-    return set->head->unk6;
+    return set->head->aimKind;
 }
 
 /* Header byte 0x22. */
@@ -1144,7 +1144,7 @@ f32 EftEmit_GetHead28(EftSet *set) {
 
 /* Header byte 0x20: frames an instance lives on after its end was asked. */
 s32 EftEmit_GetEndFrames(EftSet *set) {
-    return set->head->unk20;
+    return set->head->endFrames;
 }
 
 /* Header byte 0x27: bit per phase the set has emitters for. */
@@ -1163,7 +1163,7 @@ s32 EftEmit_IsPartDeferred(EftSet *set, s32 type, s32 idx) {
     s32 n = set->group[type].firstPart + idx;
     s32 ret = 0;
     s32 phase = set->parts[n].phase;
-    s32 a = set->parts[n].unkA;
+    s32 a = set->parts[n].node;
 
     if ((set->head->phaseMask >> phase) & 1) {
         if (a == 5) {
@@ -1212,16 +1212,16 @@ void EftEmit_InitState(EftSet *set, EftSetState *st) {
     parts = set->parts;
     for (i = 0; i < head->nParts; i++) {
         st->flag[i] = 0;
-        st->unk168[i] = parts[i].unk1C;
+        st->scale[i] = parts[i].scale0;
     }
-    st->unk2A8 = head->unk8;
-    st->unk2B0 = head->unk14 * 30.0f;
-    st->unk2AC = st->unk2B0 * head->unk18;
-    st->unk2B4 = 0.0f;
-    st->unk2B8 = head->unk2C;
-    st->unk2C0 = head->unk38 * 30.0f;
-    st->unk2BC = st->unk2C0 * head->unk3C;
-    st->unk2C4 = 0.0f;
+    st->trailWidth = head->width0;
+    st->trailFrames = head->widthTime * 30.0f;
+    st->trailSplitFrames = st->trailFrames * head->widthSplit;
+    st->trailTime = 0.0f;
+    st->width2 = head->b0;
+    st->frames2 = head->bTime * 30.0f;
+    st->splitFrames2 = st->frames2 * head->bSplit;
+    st->time2 = 0.0f;
     h = st->handle[0];
     for (j = 0; j < 2; j++, h += 40) {
         for (i = 39; i >= 0; i--) {
@@ -1387,10 +1387,10 @@ s32 EftEmit_GetFlags(EftSet *set, EftSetState *st, s32 objId, s32 type, s32 idx,
             flags |= EFT_CMD_SCALE;
         }
         if (!(f2 & 4)) {
-            s32 a = part->unkA;
+            s32 a = part->node;
 
             if (f2 & 0x20) {
-                a = part->unk36;
+                a = part->altNode;
             }
             if (a == 5) {
                 flags |= EFT_CMD_DIR;
@@ -1413,10 +1413,10 @@ s32 EftEmit_GetResetFlags(EftSet *set, EftSetState *st, s32 type, s32 idx) {
 
     if (f & 2) {
         if (!(f & 4)) {
-            s32 a = part->unkA;
+            s32 a = part->node;
 
             if (f & 0x20) {
-                a = part->unk36;
+                a = part->altNode;
             }
             flags = 0x30;
             if (type != 0x11 && a != 5) {
@@ -1483,7 +1483,7 @@ void EftEmit_SpawnType0(EftSet *set, EftSetHandles *handles, s32 flags, s32 type
                         f32 scale, f32 rate, Vec4 *pos, Vec4 *dir) {
     s32 n = set->group[0].firstPart + idx;
     EftSetDef *part = &set->parts[n];
-    s32 kind = part->unk4;
+    s32 kind = part->mode;
 
     switch (kind) {
     case 0:
@@ -1493,15 +1493,15 @@ void EftEmit_SpawnType0(EftSet *set, EftSetHandles *handles, s32 flags, s32 type
                                   rate,
                                   scale * 100.0f,
                                   size,
-                                  part->unk10 * scale,
-                                  part->unk14 * scale,
+                                  part->offset * scale,
+                                  part->offset2 * scale,
                                   1,
-                                  part->unk3,
+                                  part->count,
                                   chr,
                                   1,
                                   0,
-                                  (f32)part->unk5,
-                                  (f32)part->unk6,
+                                  (f32)part->delay,
+                                  (f32)part->hold,
                                   0 };
 
             if (part->phase == 2) {
@@ -1527,15 +1527,15 @@ void EftEmit_SpawnType0(EftSet *set, EftSetHandles *handles, s32 flags, s32 type
                                   rate,
                                   scale * 800.0f,
                                   2.0f,
-                                  part->unk10 * scale,
-                                  part->unk14 * scale,
+                                  part->offset * scale,
+                                  part->offset2 * scale,
                                   3,
-                                  part->unk3,
+                                  part->count,
                                   chr,
                                   1,
                                   1,
-                                  (f32)part->unk5,
-                                  (f32)part->unk6,
+                                  (f32)part->delay,
+                                  (f32)part->hold,
                                   1 };
 
             Vec4_Copy((Vec4 *)&arg.pos, pos);
@@ -1571,13 +1571,13 @@ void EftEmit_SpawnType2(EftSet *set, EftSetHandles *handles, s32 flags, s32 type
     EftSetDef *part = &set->parts[n];
     Vec4 p;
 
-    Vec3_ScaleAdd(&p, dir, pos, part->unk10 * scale);
+    Vec3_ScaleAdd(&p, dir, pos, part->offset * scale);
     p.w = 1.0f;
     if (flags & EFT_CMD_START) {
         if (H(n) == NULL) {
             u8 *res = set->array[3] + (g->catFirst + part->res) * 0x48;
             s32 *tex = set->pair[g->firstPair + idx].a;
-            EftEmitArg2 arg = { chr, type, part->unk2, 0, tex, res, rate };
+            EftEmitArg2 arg = { chr, type, part->texIdx, 0, tex, res, rate };
 
             H(n) = EftRays_Create(&arg);
             EftRays_SetSize(H(n), size);
@@ -1586,9 +1586,9 @@ void EftEmit_SpawnType2(EftSet *set, EftSetHandles *handles, s32 flags, s32 type
             } else {
                 EftRays_SetPos(H(n), &p);
             }
-            EftRays_SetDelay(H(n), part->unk5);
-            EftRays_SetHold(H(n), part->unk6);
-            EftRays_SetFade(H(n), part->unk7);
+            EftRays_SetDelay(H(n), part->delay);
+            EftRays_SetHold(H(n), part->hold);
+            EftRays_SetFade(H(n), part->fade);
             EftEmit_TagTask(H(n), chr, type);
         }
     }
@@ -1633,7 +1633,7 @@ void EftEmit_SpawnType16(EftSet *set, EftSetHandles *handles, s32 flags, s32 typ
     EftSetDef *part = &set->parts[n];
     Vec4 p;
 
-    Vec3_ScaleAdd(&p, dir, pos, part->unk10 * scale);
+    Vec3_ScaleAdd(&p, dir, pos, part->offset * scale);
     p.w = 1.0f;
     if (flags & EFT_CMD_START) {
         if (H(n) == NULL) {
@@ -1645,7 +1645,7 @@ void EftEmit_SpawnType16(EftSet *set, EftSetHandles *handles, s32 flags, s32 typ
             res += ri * 0x108;
             texB = set->pairAt[EFT_SET_PAIR + g->firstPair + idx].b;
             {
-                EftEmitArgA arg = { ZERO_VEC, ZERO_VEC, chr, part->unk2, rate, size, res, texA, texB };
+                EftEmitArgA arg = { ZERO_VEC, ZERO_VEC, chr, part->texIdx, rate, size, res, texA, texB };
 
                 if (part->flags & 0x40) {
                     Vec4_Copy((Vec4 *)&arg.pos, pos);
@@ -1654,8 +1654,8 @@ void EftEmit_SpawnType16(EftSet *set, EftSetHandles *handles, s32 flags, s32 typ
                 }
                 Vec4_Copy((Vec4 *)&arg.dir, dir);
                 H(n) = EftBill_Create(&arg);
-                EftBill_SetDelay(H(n), part->unk5);
-                EftBill_SetEndDelay(H(n), part->unk6);
+                EftBill_SetDelay(H(n), part->delay);
+                EftBill_SetEndDelay(H(n), part->hold);
                 if (part->flags & 0x20) {
                     EftBill_SetFront(H(n));
                 }
@@ -1709,9 +1709,9 @@ void EftEmit_SpawnType17(EftSet *set, EftSetHandles *handles, s32 flags, s32 typ
     Vec4 p;
     Vec4 p2;
 
-    Vec3_ScaleAdd(&p, dir, pos, part->unk10 * scale);
+    Vec3_ScaleAdd(&p, dir, pos, part->offset * scale);
     p.w = 1.0f;
-    Vec3_ScaleAdd(&p2, dir, pos2, part->unk14 * scale);
+    Vec3_ScaleAdd(&p2, dir, pos2, part->offset2 * scale);
     p2.w = 1.0f;
     if ((flags & EFT_CMD_START) && H(n) == NULL) {
         create = 1;
@@ -1726,7 +1726,7 @@ void EftEmit_SpawnType17(EftSet *set, EftSetHandles *handles, s32 flags, s32 typ
         u8 *res = set->array[1] + (g->catFirst + part->res) * 0x108;
         s32 *texA = set->pairAt[EFT_SET_PAIR + g->firstPair + idx].a;
         s32 *texB = set->pairAt[EFT_SET_PAIR + g->firstPair + idx].b;
-        EftEmitArg17 arg = { ZERO_VEC, ZERO_VEC, type, chr, part->unk2, rate, size, res, texA, texB };
+        EftEmitArg17 arg = { ZERO_VEC, ZERO_VEC, type, chr, part->texIdx, rate, size, res, texA, texB };
 
         Vec4_Copy((Vec4 *)&arg.dir, dir);
         if (part->flags & 0x40) {
@@ -1736,11 +1736,11 @@ void EftEmit_SpawnType17(EftSet *set, EftSetHandles *handles, s32 flags, s32 typ
         }
         H(n) = EftRibbon_Create(&arg);
         EftRibbon_SetUnkD8(H(n), arg5);
-        EftRibbon_SetDelay(H(n), part->unk5);
-        EftRibbon_SetFadeDelay(H(n), part->unk6);
-        EftRibbon_SetFadeTime(H(n), part->unk7);
-        if (part->unk34 & 2) {
-            EftRibbon_SetMaxNodes(H(n), part->unk3);
+        EftRibbon_SetDelay(H(n), part->delay);
+        EftRibbon_SetFadeDelay(H(n), part->hold);
+        EftRibbon_SetFadeTime(H(n), part->fade);
+        if (part->flags2 & 2) {
+            EftRibbon_SetMaxNodes(H(n), part->count);
         }
         EftEmit_TagTask(H(n), chr, type);
     }
@@ -1790,14 +1790,14 @@ void EftEmit_SpawnType18(EftSet *set, EftSetHandles *handles, s32 flags, s32 typ
     EftSetDef *part = &set->parts[n];
     Vec4 p;
 
-    Vec3_ScaleAdd(&p, dir, pos, part->unk10 * scale);
+    Vec3_ScaleAdd(&p, dir, pos, part->offset * scale);
     p.w = 1.0f;
     if (flags & EFT_CMD_START) {
         if (H(n) == NULL) {
             u8 *res = set->array[1] + (g->catFirst + part->res) * 0x108;
             s32 *texA = set->pairAt[EFT_SET_PAIR + g->firstPair + idx].a;
             s32 *texB = set->pairAt[EFT_SET_PAIR + g->firstPair + idx].b;
-            EftEmitArgA arg = { ZERO_VEC, ZERO_VEC, chr, part->unk2, rate, size, res, texA, texB };
+            EftEmitArgA arg = { ZERO_VEC, ZERO_VEC, chr, part->texIdx, rate, size, res, texA, texB };
 
             Vec4_Copy((Vec4 *)&arg.dir, dir);
             if (part->flags & 0x40) {
@@ -1806,9 +1806,9 @@ void EftEmit_SpawnType18(EftSet *set, EftSetHandles *handles, s32 flags, s32 typ
                 Vec4_Copy((Vec4 *)&arg.pos, &p);
             }
             H(n) = EftChain_Create(&arg);
-            EftChain_SetParam3(H(n), part->unk3);
-            EftChain_SetParam5(H(n), part->unk5);
-            EftChain_SetParam6(H(n), part->unk6);
+            EftChain_SetParam3(H(n), part->count);
+            EftChain_SetParam5(H(n), part->delay);
+            EftChain_SetParam6(H(n), part->hold);
             if (part->flags & 0x20) {
                 EftChain_SetViewOnly(H(n));
             }
@@ -1863,7 +1863,7 @@ void EftEmit_SpawnType14(EftSet *set, EftSetHandles *handles, s32 flags, s32 typ
     EftSetDef *part = &set->parts[n];
     Vec4 p;
 
-    Vec3_ScaleAdd(&p, dir, pos, part->unk10 * scale);
+    Vec3_ScaleAdd(&p, dir, pos, part->offset * scale);
     p.w = 1.0f;
     if (flags & EFT_CMD_START) {
         if (H(n) == NULL) {
@@ -1873,7 +1873,7 @@ void EftEmit_SpawnType14(EftSet *set, EftSetHandles *handles, s32 flags, s32 typ
             res += (g->catFirst + part->res) * 0x208;
             tex = set->pair[g->firstPair + idx].a;
             {
-                EftEmitArg14 arg = { chr, part->unk4, rate, ZERO_VEC, ZERO_VEC, size, tex, res };
+                EftEmitArg14 arg = { chr, part->mode, rate, ZERO_VEC, ZERO_VEC, size, tex, res };
 
                 if (part->flags & 0x40) {
                     Vec4_Copy((Vec4 *)&arg.pos, pos);
@@ -1882,9 +1882,9 @@ void EftEmit_SpawnType14(EftSet *set, EftSetHandles *handles, s32 flags, s32 typ
                 }
                 Vec4_Copy((Vec4 *)&arg.dir, dir);
                 H(n) = EftAnimPart_Create(&arg);
-                EftAnimPart_SetDelay(H(n), part->unk5);
-                EftAnimPart_SetHold(H(n), part->unk6);
-                EftAnimPart_SetFade(H(n), part->unk7);
+                EftAnimPart_SetDelay(H(n), part->delay);
+                EftAnimPart_SetHold(H(n), part->hold);
+                EftAnimPart_SetFade(H(n), part->fade);
                 EftAnimPart_SetType(H(n), type);
                 EftEmit_TagTask(H(n), chr, type);
             }
@@ -1935,7 +1935,7 @@ void EftEmit_SpawnType5(EftSet *set, EftSetHandles *handles, s32 flags, s32 type
     EftSetDef *part = &set->parts[n];
     Vec4 p;
 
-    Vec3_ScaleAdd(&p, dir, pos, part->unk10 * scale);
+    Vec3_ScaleAdd(&p, dir, pos, part->offset * scale);
     p.w = 1.0f;
     if (flags & EFT_CMD_START) {
         if (H(n) == NULL) {
@@ -1947,7 +1947,7 @@ void EftEmit_SpawnType5(EftSet *set, EftSetHandles *handles, s32 flags, s32 type
             res += ri * 0x108;
             texB = set->pairAt[EFT_SET_PAIR + g->firstPair + idx].b;
             {
-                EftEmitArgA arg = { ZERO_VEC, ZERO_VEC, chr, part->unk2, rate, size, res, texA, texB };
+                EftEmitArgA arg = { ZERO_VEC, ZERO_VEC, chr, part->texIdx, rate, size, res, texA, texB };
 
                 if (part->flags & 0x40) {
                     Vec4_Copy((Vec4 *)&arg.pos, pos);
@@ -1956,13 +1956,13 @@ void EftEmit_SpawnType5(EftSet *set, EftSetHandles *handles, s32 flags, s32 type
                 }
                 Vec4_Copy((Vec4 *)&arg.dir, dir);
                 H(n) = EftPtcl_Create(&arg);
-                EftPtcl_SetStartDelay(H(n), part->unk5);
-                EftPtcl_SetStopDelay(H(n), part->unk6);
-                EftPtcl_SetLinger(H(n), part->unk7);
+                EftPtcl_SetStartDelay(H(n), part->delay);
+                EftPtcl_SetStopDelay(H(n), part->hold);
+                EftPtcl_SetLinger(H(n), part->fade);
                 if (part->flags & 0x20) {
                     EftPtcl_SetFront(H(n));
                 }
-                if (part->unk34 & 8) {
+                if (part->flags2 & 8) {
                     EftPtcl_SetFlag40(H(n), 1);
                 }
                 EftPtcl_SetType(H(n), type);

@@ -154,5 +154,5 @@ include/battle/btl_char_cam.h	ChrCamCut	unk90	nodeC	HIGH	def->nodeC or -1: the n
 include/battle/btl_char_cam.h	ChrCamCut	unk94	nodeC2	HIGH	def->nodeC2 or -1: the node the look-at moves towards
 include/battle/btl_char_cam.h	ChrCamMgr	unk274	timeStopped	HIGH	BtlChars_IsTimeStopped() returns roster +0x274 (btl_char_mgr.h); forces rate 1 and no swing here
 include/battle/btl_char_cam.h	ChrCamChr	unk4	pad	HIGH	fighter +0x04 is the pad index in every view (BtlMgrChr.pad, BtlCharApiChr.pad); not read in this file
-include/battle/btl_char_cam.h	ChrCamChr	unk8	index	HIGH	fighter +0x08: BtlMgrChr.index and BtlMemberChr.index (roster index again) in the views that call +0x00 side as this one does; the views that call +0x00 player call this one side
+include/battle/btl_char_cam.h	ChrCamChr	unk8	index	HIGH	fighter +0x08: BtlMgrChr.index and BtlMemberChr.index (roster index again) in the views that call +0x00 side as this one does; the views that call +0x00 player call this one side; rename_fields.py will refuse it until the word index is taken out of the objId comment in the same structure
 include/battle/btl_char_cam.h	ChrCamChr	unk974	motion	HIGH	BtlActChr.motion at +0x974 (BtlAnim_GetId returns it; BtlStatChr has anim.cur)

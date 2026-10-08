@@ -452,7 +452,7 @@ void EftBill_Init(EftZTask *task, EftBillArg *arg) {
     }
     if (def->flags & 1) {
         w->keyTime = def->keyTime * 30.0f;
-        w->unkE4 = w->keyTime * def->unk18;
+        w->keySplit = w->keyTime * def->keySplit;
         EftLine_SetKey(key, w, 0);
     } else {
         EftLine_SetKey(key, w, 2);
@@ -484,7 +484,7 @@ void EftBill_Init(EftZTask *task, EftBillArg *arg) {
         w->v1 = w->u1 = w->dv = w->du = 1.0f;
         w->v0 = 0.0f;
     }
-    EftLine_SetTex(w, arg->res, arg->unk24, arg->unk24);
+    EftLine_SetTex(w, arg->res, arg->texIdx, arg->texIdx);
 }
 
 /* Item term: clears the flags. */
@@ -1228,7 +1228,7 @@ void EftGndDust_InitTemplate(void) {
             t->colB[2] = stg->colB[2];
             t->colB[3] = stg->colB[3];
             t->speed = stg->speed;
-            t->unk54 = stg->unk54;
+            t->unk54 = stg->speedRand;
             t->size = stg->size;
             t->rMin = stg->rMin;
             t->rMax = stg->rMax;
@@ -1267,7 +1267,7 @@ void EftGndDustMgr_Term(EftZTask *task) {
 /* Manager update: clears a field of the texture. */
 void EftGndDustMgr_Update(EftZTask *task) {
     if (gEftGndDust != NULL) {
-        gEftGndDust->texPtr->unk84 = 0;
+        gEftGndDust->texPtr->loaded = 0;
     }
 }
 

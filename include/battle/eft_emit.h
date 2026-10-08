@@ -112,8 +112,8 @@ typedef struct EftHStartArg {
     /* 0x08 */ s32 unk8;
     /* 0x0C */ s32 unkC;
     /* 0x10 */ f32 time;  /* seconds; replaces EftShotParam.life */
-    /* 0x14 */ f32 unk14; /* replaces EftShotParam.unk34 */
-    /* 0x18 */ f32 unk18; /* replaces EftShotParam.unk38 */
+    /* 0x14 */ f32 speed; /* replaces EftShotParam.unk34 */
+    /* 0x18 */ f32 homing; /* replaces EftShotParam.unk38 */
 } EftHStartArg; /* size 0x1C */
 
 /* One technique slot of one character. */
@@ -134,7 +134,7 @@ typedef struct EftHChar {
     /* 0x1E0 */ EftShotParam param[6];
     /* 0x528 */ void *list;   /* child list of the character task: the group tasks */
     /* 0x52C */ EftHTask *task; /* character task (class 0x2C36E8) */
-    /* 0x530 */ s32 unk530;   /* slot last started (0x14ABB0) */
+    /* 0x530 */ s32 curSlot;   /* slot last started (0x14ABB0) */
     /* 0x534 */ u8 unk534[0xC];
 } EftHChar; /* size 0x540 */
 
@@ -156,61 +156,61 @@ typedef struct EftSkillSrc {
     /* 0x00 */ s32 flags[2];
     /* 0x08 */ s32 unk8[2];
     /* 0x10 */ u16 id[2];
-    /* 0x14 */ u16 unk14[2];
+    /* 0x14 */ u16 level[2];
     /* 0x18 */ f32 time[2];
-    /* 0x20 */ f32 unk20[2];
-    /* 0x28 */ f32 unk28[2];
-    /* 0x30 */ f32 unk30[2];
-    /* 0x38 */ u8 unk38[2];
-    /* 0x3A */ u8 unk3A[2];
-    /* 0x3C */ u8 unk3C[2];
-    /* 0x3E */ u8 unk3E[2];
-    /* 0x40 */ u8 unk40[2];
+    /* 0x20 */ f32 shotSpeed[2];
+    /* 0x28 */ f32 shotTurn[2];
+    /* 0x30 */ f32 scale[2];
+    /* 0x38 */ u8 node[2];
+    /* 0x3A */ u8 shots[2];
+    /* 0x3C */ u8 hitsB[2];
+    /* 0x3E */ u8 hitShape[2];
+    /* 0x40 */ u8 hitsC[2];
     /* 0x42 */ u8 unk42[2];
-    /* 0x44 */ u8 unk44[2];
-    /* 0x46 */ u8 unk46[2];
-    /* 0x48 */ u8 unk48[6][2];
-    /* 0x54 */ u8 unk54[6][2];
+    /* 0x44 */ u8 groundFx[2];
+    /* 0x46 */ u8 impactFx[2];
+    /* 0x48 */ u8 nodes[6][2];
+    /* 0x54 */ u8 frames[6][2];
     /* 0x60 */ u8 type[2];
-    /* 0x62 */ u8 unk62[2];
+    /* 0x62 */ u8 hitDirKind[2];
     /* 0x64 */ u8 unk64[0xA];
-    /* 0x6E */ u8 unk6E[2];
-    /* 0x70 */ u8 unk70[2];
+    /* 0x6E */ u8 blurOn[2];
+    /* 0x70 */ u8 blurOff[2];
 } EftSkillSrc;
 
 typedef struct EftSuperSrc {
     /* 0x000 */ s32 flags[3];
     /* 0x00C */ s32 unkC[3];
     /* 0x018 */ u16 id[3];
-    /* 0x01E */ u16 unk1E[3];
+    /* 0x01E */ u16 level[3];
     /* 0x024 */ f32 time[3];
-    /* 0x030 */ f32 unk30[3];
-    /* 0x03C */ f32 unk3C[3];
-    /* 0x048 */ f32 unk48[3];
-    /* 0x054 */ f32 unk54[3];
-    /* 0x060 */ f32 unk60[3];
-    /* 0x06C */ f32 unk6C[3];
-    /* 0x078 */ f32 unk78[3];
-    /* 0x084 */ f32 unk84[3];
-    /* 0x090 */ u8 unk90[3];
-    /* 0x093 */ u8 unk93[3];
-    /* 0x096 */ u8 unk96[3];
-    /* 0x099 */ u8 unk99[3];
-    /* 0x09C */ u8 unk9C[3];
+    /* 0x030 */ f32 shotLife[3];
+    /* 0x03C */ f32 power[3];
+    /* 0x048 */ f32 hitScale[3];
+    /* 0x054 */ f32 shotSpeed[3];
+    /* 0x060 */ f32 shotTurn[3];
+    /* 0x06C */ f32 scale[3];
+    /* 0x078 */ f32 groundScale[3];
+    /* 0x084 */ f32 impactScale[3];
+    /* 0x090 */ u8 node[3];
+    /* 0x093 */ u8 shots[3];
+    /* 0x096 */ u8 hitsB[3];
+    /* 0x099 */ u8 hitShape[3];
+    /* 0x09C */ u8 hitsC[3];
     /* 0x09F */ u8 unk9F[3];
-    /* 0x0A2 */ u8 unkA2[3];
-    /* 0x0A5 */ u8 unkA5[3];
-    /* 0x0A8 */ u8 unkA8[6][3];
-    /* 0x0BA */ u8 unkBA[8][3];
+    /* 0x0A2 */ u8 groundFx[3];
+    /* 0x0A5 */ u8 impactFx[3];
+    /* 0x0A8 */ u8 nodes[6][3];
+    /* 0x0BA */ u8 subKind[8][3];
     /* 0x0D2 */ u8 unkD2[2];
-    /* 0x0D4 */ f32 unkD4[8][3];
-    /* 0x134 */ u8 unk134[3];
+    /* 0x0D4 */ f32 subAngle[8][3];
+    /* 0x134 */ u8 subArg[3];
     /* 0x137 */ u8 unk137;
     /* 0x138 */ u8 type[3];
-    /* 0x13B */ u8 unk13B[3];
+    /* 0x13B */ u8 hitDirKind[3];
     /* 0x13E */ u8 unk13E[0x1E];
-    /* 0x15C */ u8 unk15C[3];
-    /* 0x15F */ u8 unk15F[3];
+    /* 0x15C */ u8 blurOn[3];
+    /* 0x15F */ u8 blurOff[3];
     /* 0x162 */ u8 unk162[3];
     /* 0x165 */ u8 unk165[0xAF];
     /* 0x214 */ f32 unk214[3];
@@ -226,25 +226,25 @@ typedef struct EftSetHead {
     /* 0x00 */ u32 mask;    /* bit per group kind */
     /* 0x04 */ u8 nGroups;
     /* 0x05 */ u8 nParts;   /* total over all groups */
-    /* 0x06 */ u8 unk6;     /* EftEmit_GetAimKind: 7 = straight up, 8 = lifted 45 degrees */
+    /* 0x06 */ u8 aimKind;     /* EftEmit_GetAimKind: 7 = straight up, 8 = lifted 45 degrees */
     /* 0x07 */ u8 unk7;
-    /* 0x08 */ f32 unk8;
+    /* 0x08 */ f32 width0;
     /* 0x0C */ f32 unkC[2];
-    /* 0x14 */ f32 unk14;   /* seconds */
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
-    /* 0x20 */ u8 unk20;    /* frames the shots effect keeps running after its end was asked */
-    /* 0x21 */ u8 unk21;
+    /* 0x14 */ f32 widthTime;   /* seconds */
+    /* 0x18 */ f32 widthSplit;
+    /* 0x1C */ f32 widthStep;
+    /* 0x20 */ u8 endFrames;    /* frames the shots effect keeps running after its end was asked */
+    /* 0x21 */ u8 flags;
     /* 0x22 */ u8 unk22;
     /* 0x23 */ u8 unk23[2];
     /* 0x25 */ u8 unk25;
     /* 0x26 */ u8 unk26;
     /* 0x27 */ u8 phaseMask; /* bit per phase (EftSetDef.phase) the pack has parts for */
     /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
+    /* 0x2C */ f32 b0;
     /* 0x30 */ f32 unk30[2];
-    /* 0x38 */ f32 unk38;   /* seconds */
-    /* 0x3C */ f32 unk3C;
+    /* 0x38 */ f32 bTime;   /* seconds */
+    /* 0x3C */ f32 bSplit;
 } EftSetHead; /* size 0x40 */
 
 /* One group of parts of the same kind. */
@@ -259,24 +259,24 @@ typedef struct EftSetGroupDef {
 typedef struct EftSetDef {
     /* 0x00 */ u8 flags;    /* 2, 0x20, 0x40, 0x80 */
     /* 0x01 */ u8 res;      /* resource index inside the group */
-    /* 0x02 */ u8 unk2;
-    /* 0x03 */ u8 unk3;
-    /* 0x04 */ u8 unk4;     /* kind 0: 0 or 1, which light */
-    /* 0x05 */ u8 unk5;
-    /* 0x06 */ u8 unk6;
-    /* 0x07 */ u8 unk7;
+    /* 0x02 */ u8 texIdx;
+    /* 0x03 */ u8 count;
+    /* 0x04 */ u8 mode;     /* kind 0: 0 or 1, which light */
+    /* 0x05 */ u8 delay;
+    /* 0x06 */ u8 hold;
+    /* 0x07 */ u8 fade;
     /* 0x08 */ u8 phase;    /* phase that starts the part: 0, 1, 3, 4, 5 by event; 2 at the end; 6 never stopped */
     /* 0x09 */ u8 endPhase; /* event that stops it: 1, 2, 4, 5, 6 */
-    /* 0x0A */ u8 unkA;
+    /* 0x0A */ u8 node;
     /* 0x0B */ u8 unkB[5];
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ f32 unk1C;
+    /* 0x10 */ f32 offset;
+    /* 0x14 */ f32 offset2;
+    /* 0x18 */ f32 rate;
+    /* 0x1C */ f32 scale0;
     /* 0x20 */ u8 unk20[0x14];
-    /* 0x34 */ u8 unk34;
-    /* 0x35 */ u8 unk35;
-    /* 0x36 */ u8 unk36;
+    /* 0x34 */ u8 flags2;
+    /* 0x35 */ u8 cond;
+    /* 0x36 */ u8 altNode;
     /* 0x37 */ u8 unk37[9];
 } EftSetDef; /* size 0x40 */
 
@@ -327,16 +327,16 @@ typedef struct EftSet {
 typedef struct EftSetState {
     /* 0x000 */ void *handle[2][40]; /* task of each part, by part index */
     /* 0x140 */ u8 flag[40];         /* 2 started, 4 stopped, 0x20, 0x40, 0x80 */
-    /* 0x168 */ f32 unk168[40];      /* EftSetDef.unk1C */
+    /* 0x168 */ f32 scale[40];      /* EftSetDef.unk1C */
     /* 0x208 */ u8 unk208[0xA0];
-    /* 0x2A8 */ f32 unk2A8;
-    /* 0x2AC */ f32 unk2AC;
-    /* 0x2B0 */ f32 unk2B0;
-    /* 0x2B4 */ f32 unk2B4;
-    /* 0x2B8 */ f32 unk2B8;
-    /* 0x2BC */ f32 unk2BC;
-    /* 0x2C0 */ f32 unk2C0;
-    /* 0x2C4 */ f32 unk2C4;
+    /* 0x2A8 */ f32 trailWidth;
+    /* 0x2AC */ f32 trailSplitFrames;
+    /* 0x2B0 */ f32 trailFrames;
+    /* 0x2B4 */ f32 trailTime;
+    /* 0x2B8 */ f32 width2;
+    /* 0x2BC */ f32 splitFrames2;
+    /* 0x2C0 */ f32 frames2;
+    /* 0x2C4 */ f32 time2;
     /* 0x2C8 */ void *owner;
 } EftSetState; /* size 0x2CC */
 
@@ -371,26 +371,26 @@ typedef struct Vec4Q {
 typedef struct EftEmitLightArg {
     /* 0x00 */ Vec4Q pos;
     /* 0x10 */ s32 color[4]; /* r, g, b, a */
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;    /* scale * 100 (kind 0) or * 800 (kind 1) */
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;    /* EftSetDef.unk10 * scale */
-    /* 0x30 */ f32 unk30;    /* EftSetDef.unk14 * scale */
-    /* 0x34 */ s32 unk34;
-    /* 0x38 */ s32 unk38;    /* EftSetDef.unk3 */
+    /* 0x20 */ f32 life;
+    /* 0x24 */ f32 length;    /* scale * 100 (kind 0) or * 800 (kind 1) */
+    /* 0x28 */ f32 width;
+    /* 0x2C */ f32 inner;    /* EftSetDef.unk10 * scale */
+    /* 0x30 */ f32 jitter;    /* EftSetDef.unk14 * scale */
+    /* 0x34 */ s32 mode;
+    /* 0x38 */ s32 count;    /* EftSetDef.unk3 */
     /* 0x3C */ s32 chr;
-    /* 0x40 */ s32 unk40;
-    /* 0x44 */ s32 unk44;
-    /* 0x48 */ s32 unk48;    /* EftSetDef.unk5 */
-    /* 0x4C */ s32 unk4C;    /* EftSetDef.unk6 */
-    /* 0x50 */ s32 unk50;
+    /* 0x40 */ s32 blend;
+    /* 0x44 */ s32 space;
+    /* 0x48 */ s32 delay;    /* EftSetDef.unk5 */
+    /* 0x4C */ s32 fadeFrames;    /* EftSetDef.unk6 */
+    /* 0x50 */ s32 autoKill;
 } EftEmitLightArg; /* size 0x60 */
 
 /* Type 2 (0x168600). */
 typedef struct EftEmitArg2 {
     /* 0x00 */ u8 chr;
     /* 0x01 */ u8 type;
-    /* 0x02 */ u8 unk2;   /* EftSetDef.unk2 */
+    /* 0x02 */ u8 texIdx;   /* EftSetDef.texIdx */
     /* 0x03 */ u8 unk3;
     /* 0x04 */ s32 *tex;  /* EftSetPair.a */
     /* 0x08 */ u8 *res;   /* resource object, kind 3 */
@@ -402,7 +402,7 @@ typedef struct EftEmitArgA {
     /* 0x00 */ Vec4Q pos;
     /* 0x10 */ Vec4Q dir;
     /* 0x20 */ s32 chr;
-    /* 0x24 */ s32 unk24; /* EftSetDef.unk2 */
+    /* 0x24 */ s32 texIdx; /* EftSetDef.unk2 */
     /* 0x28 */ f32 rate;
     /* 0x2C */ f32 size;
     /* 0x30 */ u8 *res;   /* resource object, kind 1 */
@@ -416,7 +416,7 @@ typedef struct EftEmitArg17 {
     /* 0x10 */ Vec4Q dir;
     /* 0x20 */ s32 type;
     /* 0x24 */ s32 chr;
-    /* 0x28 */ s32 unk28; /* EftSetDef.unk2 */
+    /* 0x28 */ s32 texIdx; /* EftSetDef.unk2 */
     /* 0x2C */ f32 rate;
     /* 0x30 */ f32 size;
     /* 0x34 */ u8 *res;   /* resource object, kind 1 */
@@ -427,7 +427,7 @@ typedef struct EftEmitArg17 {
 /* Type 14 (0x19D730). */
 typedef struct EftEmitArg14 {
     /* 0x00 */ s32 chr;
-    /* 0x04 */ s32 unk4;  /* EftSetDef.unk4 */
+    /* 0x04 */ s32 mode;  /* EftSetDef.mode */
     /* 0x08 */ f32 rate;
     /* 0x10 */ Vec4Q pos;
     /* 0x20 */ Vec4Q dir;
@@ -458,7 +458,7 @@ typedef struct EftVolleyShot {
     /* 0x00 */ Vec4 pos;
     /* 0x10 */ Vec4 dir;
     /* 0x20 */ Vec4 unk20;
-    /* 0x30 */ Vec4 unk30;
+    /* 0x30 */ Vec4 offset;
     /* 0x40 */ s32 flags;   /* 1 fired, 2, 4 */
     /* 0x44 */ f32 time;    /* frames since fired */
     /* 0x48 */ void *handle; /* shot task (0x16A400 class); NULL: free */
@@ -477,8 +477,8 @@ typedef struct EftVolleyShotArg {
     /* 0x1C */ s32 phase;
     /* 0x20 */ s32 sub;
     /* 0x24 */ f32 time;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;
+    /* 0x28 */ f32 scale;
+    /* 0x2C */ f32 speed;
 } EftVolleyShotArg; /* size 0x30 */
 
 /* EftVolleyWork.flags */
@@ -498,10 +498,10 @@ typedef struct EftVolleyShotArg {
 /* Data of an EftVolley instance task. */
 typedef struct EftVolleyWork {
     /* 0x0000 */ s32 flags;
-    /* 0x0004 */ f32 unk4;   /* EftShotParam.unk34 */
-    /* 0x0008 */ f32 unk8;   /* EftShotParam.unk38 */
+    /* 0x0004 */ f32 speed;   /* EftShotParam.unk34 */
+    /* 0x0008 */ f32 homing;   /* EftShotParam.unk38 */
     /* 0x000C */ f32 unkC;   /* EftShotParam.unk30 */
-    /* 0x0010 */ f32 unk10;  /* EftShotParam.unk30 */
+    /* 0x0010 */ f32 scale;  /* EftShotParam.unk30 */
     /* 0x0014 */ f32 unk14;  /* EftShotParam.unk30 */
     /* 0x0018 */ f32 unk18;
     /* 0x001C */ f32 endTime;  /* frames since the end was asked */
@@ -509,8 +509,8 @@ typedef struct EftVolleyWork {
     /* 0x0024 */ u8 unk24[0xC];
     /* 0x0030 */ Vec4 aim;
     /* 0x0040 */ Vec4 dir;
-    /* 0x0050 */ Vec4 unk50;
-    /* 0x0060 */ Vec4 unk60;
+    /* 0x0050 */ Vec4 firePos;
+    /* 0x0060 */ Vec4 pos;
     /* 0x0070 */ u8 unk70[0x20];
     /* 0x0090 */ EftHSlot *slot;
     /* 0x0094 */ EftSetState state;
@@ -521,7 +521,7 @@ typedef struct EftVolleyWork {
     /* 0x0F20 */ EftVolleyPose shotPose[2];
     /* 0x13C0 */ s32 fired;   /* shots fired */
     /* 0x13C4 */ s32 volleys; /* fire events of phase 1 */
-    /* 0x13C8 */ s32 unk13C8;
+    /* 0x13C8 */ s32 nodeSide;
     /* 0x13CC */ s32 unk13CC;
 } EftVolleyWork; /* size 0x13D0 */
 

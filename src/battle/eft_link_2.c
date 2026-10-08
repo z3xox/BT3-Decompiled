@@ -256,8 +256,8 @@ void EftLink_SetKey(EftWLink *w, s32 i) {
     w->twist = def->twist[i];
     w->ofsX = def->ofsX[i];
     w->ofsY = def->ofsY[i];
-    w->unk1A0 = def->unk84[i];
-    w->unk1A8 = def->unk90[i];
+    w->ofsAlongMin = def->ofsAlongMin[i];
+    w->ofsAlongMax = def->ofsAlongMax[i];
     w->dist = def->dist[i];
     w->distRange = def->distRange[i];
     w->distBase = def->distBase[i];
@@ -704,7 +704,7 @@ void EftLink_DrawBillboardClipped(Vec4 *pos, f32 w, f32 h, Vec4 *color, Vec4 *sc
     Vec4_Set(&c[3], w, h, 0.0f, 1.0f);
     Mtx_Translate(&m, &gEftLink->camMtx, scale);
     Mtx_RotateZ(&m, &m, rot);
-    Mtx_InverseRT(&inv, &gBtlCamView->unk40);
+    Mtx_InverseRT(&inv, &gBtlCamView->world2view2);
     inv.m[3][0] = 0.0f;
     inv.m[3][1] = 0.0f;
     inv.m[3][2] = 0.0f;
@@ -1361,7 +1361,7 @@ void EftPart10_Init(EftWTask *task, EftPart10Arg *arg) {
     if (def->flags & 0x40) {
         EftPart10_InitSpin(w);
     } else {
-        w->unk258 = 0.0f;
+        w->spinA = 0.0f;
         w->scale = 1.0f;
         w->stopDelay = 0.0f;
         w->count = def->count;
@@ -1429,7 +1429,7 @@ void EftPart10_Update(EftWTask *task) {
             w->frame += 1.0f;
             if (w->flags & 0x40000) {
                 EftPart10_StartKeys(w);
-                if (w->frame >= w->unk180) {
+                if (w->frame >= w->keyTime) {
                     EftPart10_SetKey(w, 2);
                     w->flags &= ~0x40000;
                 }
@@ -1485,7 +1485,7 @@ void EftPart10_Draw(EftWTask *task) {
     EftW_MemsetCall(&pos, 0, sizeof(Vec4));
     pos.w = 1.0f;
     Vu0Cur_Push();
-    Vu0Cur_LoadMtx(&gBtlCamView->unk140);
+    Vu0Cur_LoadMtx(&gBtlCamView->world2screen);
     for (grp = w->grpHead; grp != NULL; grp = grp->next) {
         for (p = grp->head; p != NULL; p = p->next) {
             if (p->flags & 0x40) {
@@ -1494,11 +1494,11 @@ void EftPart10_Draw(EftWTask *task) {
 
                     Vec3_Add(&pos, &p->pos, &w->arg.pos);
                     if (def->flags & 8) {
-                        EftPart10_DrawBillboardClipped(&pos, half, half, &p->col, &p->unk20, p->uv0.x, p->uv0.y,
+                        EftPart10_DrawBillboardClipped(&pos, half, half, &p->col, &p->axisScale, p->uv0.x, p->uv0.y,
                                                        p->uv1.z, p->uv1.w, p->ang[2], def->blend,
                                                        (w->flags >> 10) & 1, EFTW_TEX0(w->arg.tex, w->texIdx), 2.0f);
                     } else {
-                        EftPart10_DrawBillboard(&pos, &p->col, half * 16.0f, (s32)p->unk20.x << 4, (s32)p->unk20.y << 4,
+                        EftPart10_DrawBillboard(&pos, &p->col, half * 16.0f, (s32)p->axisScale.x << 4, (s32)p->axisScale.y << 4,
                                                 half * 16.0f, p->uv0.x, p->uv0.y, def->blend, p->uv1.z,
                                                 p->uv1.w, (w->flags >> 10) & 1, EFTW_TEX0(w->arg.tex, w->texIdx),
                                                 p->ang[2]);

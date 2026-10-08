@@ -54,7 +54,7 @@ typedef struct EftBillDef {
     /* 0x0C */ f32 fadeIn;     /* seconds */
     /* 0x10 */ f32 fadeOut;    /* seconds */
     /* 0x14 */ f32 keyTime;    /* seconds of the key animation */
-    /* 0x18 */ f32 unk18;
+    /* 0x18 */ f32 keySplit;
     /* 0x1C */ u8 unk1C[0x6C];
     /* 0x88 */ f32 spinRange;  /* random spin per frame, +- this */
     /* 0x8C */ f32 angleRange; /* random start angle, +- this */
@@ -65,12 +65,12 @@ typedef struct EftBillArg {
     /* 0x00 */ EftZVec pos;
     /* 0x10 */ EftZVec dir;
     /* 0x20 */ s32 chr;        /* owner object id */
-    /* 0x24 */ s32 unk24;
+    /* 0x24 */ s32 texIdx;
     /* 0x28 */ f32 life;       /* seconds; <= 0: lives until stopped */
     /* 0x2C */ f32 size;       /* scale of width and height */
     /* 0x30 */ void *res;
     /* 0x34 */ EftBillDef *def;
-    /* 0x38 */ void *unk38;
+    /* 0x38 */ void *def2;
 } EftBillArg; /* size 0x40 */
 
 /* Current key values, written by 0x195130 / 0x1952E8. */
@@ -126,7 +126,7 @@ typedef struct EftBill {
     /* 0x0D8 */ f32 unkD8;
     /* 0x0DC */ f32 keyTimer;
     /* 0x0E0 */ f32 keyTime;   /* frames */
-    /* 0x0E4 */ f32 unkE4;
+    /* 0x0E4 */ f32 keySplit;
     /* 0x0E8 */ f32 angle;
     /* 0x0EC */ f32 spin;
     /* 0x0F0 */ f32 w;
@@ -234,7 +234,7 @@ typedef struct EftGndDustEmit {
 /* Animated texture loaded by 0x1AE2A8. */
 typedef struct EftGndDustTex {
     /* 0x00 */ u8 unk0[0x84];
-    /* 0x84 */ s32 unk84;      /* cleared every frame by the manager */
+    /* 0x84 */ s32 loaded;      /* cleared every frame by the manager */
 } EftGndDustTex; /* size 0x88 */
 
 /* gEftGndDust: 0x6340 bytes from the effect pool. */
@@ -259,7 +259,7 @@ typedef struct EftGndDustStage {
     /* 0x04 */ u8 colA[4];
     /* 0x08 */ u8 colB[4];
     /* 0x0C */ f32 speed;
-    /* 0x10 */ f32 unk54;
+    /* 0x10 */ f32 speedRand;
     /* 0x14 */ u16 size;
     /* 0x16 */ u8 rMin;
     /* 0x17 */ u8 rMax;

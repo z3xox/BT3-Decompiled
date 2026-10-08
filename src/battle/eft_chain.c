@@ -1717,7 +1717,7 @@ s32 EftChain_Warp(EftTTask *task, Vec4 *pos) {
 
             while (*pp != NULL) {
                 link = *pp;
-                Vec3_Add4(&link->pos, (Vec4 *)&w->arg.pos, m, &link->unk0, &link->unk10);
+                Vec3_Add4(&link->pos, (Vec4 *)&w->arg.pos, m, &link->relPos, &link->jit);
                 link->pos.w = 1.0f;
                 pp = &link->next;
             }
@@ -1781,11 +1781,11 @@ s32 EftChain_SetParam3(EftTTask *task, s32 v) {
     if (!(w->flags & EFT_CHAIN_ALIVE)) {
         return 0;
     }
-    w->unkE90 = v;
+    w->nodeCount = v;
     if (v < 3) {
-        w->unkE90 = 3;
+        w->nodeCount = 3;
     } else if (v >= 8) {
-        w->unkE90 = 7;
+        w->nodeCount = 7;
     }
     return 1;
 }
@@ -1804,7 +1804,7 @@ s32 EftChain_SetParam5(EftTTask *task, f32 v) {
     if (!(w->flags & EFT_CHAIN_ALIVE)) {
         return 0;
     }
-    w->unkEA0 = v;
+    w->delay = v;
     return 1;
 }
 
@@ -1822,7 +1822,7 @@ s32 EftChain_SetParam6(EftTTask *task, f32 v) {
     if (!(w->flags & EFT_CHAIN_ALIVE)) {
         return 0;
     }
-    w->unkEA4 = v;
+    w->endWait = v;
     return 1;
 }
 

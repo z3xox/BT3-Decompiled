@@ -46,7 +46,7 @@ typedef struct EftTTask {
 
 /* A list of child tasks as BtlTask_CreateChildList returns it; only the test the ray manager makes. */
 typedef struct EftTTaskList {
-    /* 0x00 */ s32 unk0;
+    /* 0x00 */ s32 parent;
     /* 0x04 */ s32 count;         /* live children */
 } EftTTaskList;
 
@@ -81,7 +81,7 @@ typedef struct EftChainArg {
     /* 0x00 */ EftTVec pos;
     /* 0x10 */ EftTVec dir;
     /* 0x20 */ s32 objId;
-    /* 0x24 */ s32 unk24;
+    /* 0x24 */ s32 texIdx;
     /* 0x28 */ f32 rate;
     /* 0x2C */ f32 size;
     /* 0x30 */ u8 *res;
@@ -91,8 +91,8 @@ typedef struct EftChainArg {
 
 /* One link of a strand. */
 typedef struct EftChainLink {
-    /* 0x00 */ Vec4 unk0;
-    /* 0x10 */ Vec4 unk10;
+    /* 0x00 */ Vec4 relPos;
+    /* 0x10 */ Vec4 jit;
     /* 0x20 */ Vec4 pos;
     /* 0x30 */ u8 unk30[0x24];
     /* 0x54 */ struct EftChainLink *next;
@@ -103,7 +103,7 @@ typedef struct EftChainStrand {
     /* 0x00 */ Mtx44 mtx;
     /* 0x40 */ u8 unk40[0x20];
     /* 0x60 */ EftChainLink *head;
-    /* 0x64 */ s32 unk64;
+    /* 0x64 */ s32 count;
     /* 0x68 */ s32 flags;         /* bit 0: in use */
     /* 0x6C */ u8 unk6C[0x64];
 } EftChainStrand; /* size 0xD0 */
@@ -123,10 +123,10 @@ typedef struct EftChainWork {
     /* 0xE80 */ s32 flags;        /* EFT_CHAIN_* */
     /* 0xE84 */ u8 type;          /* owner's effect type, for the scene's "is this effect hidden / stopped" tests */
     /* 0xE85 */ u8 unkE85[0xB];
-    /* 0xE90 */ s32 unkE90;       /* module parameter 3, kept in 3..7 */
+    /* 0xE90 */ s32 nodeCount;       /* module parameter 3, kept in 3..7 */
     /* 0xE94 */ u8 unkE94[0xC];
-    /* 0xEA0 */ f32 unkEA0;       /* module parameter 5 */
-    /* 0xEA4 */ f32 unkEA4;       /* module parameter 6; the pack library zeroes it for a fading stop */
+    /* 0xEA0 */ f32 delay;       /* module parameter 5 */
+    /* 0xEA4 */ f32 endWait;       /* module parameter 6; the pack library zeroes it for a fading stop */
     /* 0xEA8 */ u8 unkEA8[0xC];
     /* 0xEB4 */ f32 pitch;
     /* 0xEB8 */ f32 yaw;
@@ -136,7 +136,7 @@ typedef struct EftChainWork {
 /* gEftChain (0x2FEA64). */
 typedef struct EftChainMgr {
     /* 0x0 */ u8 *buf;            /* 0xBB80 bytes */
-    /* 0x4 */ s32 unk4;
+    /* 0x4 */ s32 cursor;
 } EftChainMgr;
 
 /* ---- ray burst (part kind 0) ------------------------------------------------------------------------------ */
