@@ -486,12 +486,8 @@ void HudPrompt_UpdateButton(HudENode *node) {
    type (gHudPromptCueDefs[gPad[0].status], or lastStatus when the status is 4 or more). cueState: 0 start,
    1 fading in (0.28 s), 2 shown, 3 fading out, anything else hidden (and set to 4). The base pulses between
    1.44 and 1.92 times its size every 0.1 s; with cueDim it stays at 1.2 and the alpha is halved. */
-/* INCLUDE_ASM: the C below is the same code except for the registers of four temporaries (14 instructions): the
-   original keeps the sprite array pointer in $v1, side * 0x1C0 in $v0, the pad pointer in $a0 and the type in
-   $v1; this compiles to $v0, $v1, $v1, $a0. It is a local-allocation order question (which of the two block-local
-   values is given $v0 first); no order of the declarations changes it (checked over 400 orders), and computing
-   the sprite pointers after the type test gives the original registers but moves them behind the branch. */
-#if 0
+/* The pad type must be an if / else that assigns `type` in both arms (status in its own variable): the copy
+   `type = status` then sits behind the compare in the first block, which is what gives the original registers. */
 void HudPrompt_UpdateCue(void) {
     Ramp *ramp = &gHudPrompt->cueRamp;
     s32 *state = &gHudPrompt->cueState;
@@ -499,14 +495,16 @@ void HudPrompt_UpdateCue(void) {
     s32 side = gHudPrompt->side;
     HudESprite *icon = &gHudPrompt->spr[5];
     HudESprite *base = &gHudPrompt->spr[4];
-    s32 *status = &gPad[side].status;
-    s32 type = status[0];
+    s32 status = gPad[side].status;
     Ramp *pulse = &gHudPrompt->cuePulse;
     HudPromptIconDef *def;
+    s32 type;
     f32 s;
 
-    if (type >= 4) {
-        type = status[1]; /* lastStatus */
+    if (status >= 4) {
+        type = gPad[side].lastStatus;
+    } else {
+        type = status;
     }
     if (side != 0) {
         return;
@@ -569,18 +567,6 @@ void HudPrompt_UpdateCue(void) {
     HudSprite_SetColor(base, 0x80, 0x80, 0x80, (u8)(alpha * 128.0f));
     HudSprite_Move(base, 1, -2);
 }
-#endif
-LIT4_WORD(D_002FE384, 0x3E8F5C28); /* 0.28f */
-LIT4_WORD(D_002FE388, 0x3DCCCCCC); /* 0.1f */
-LIT4_WORD(D_002FE38C, 0x3DCCCCCC); /* 0.1f */
-LIT4_WORD(D_002FE390, 0x3DCCCCCC); /* 0.1f */
-LIT4_WORD(D_002FE394, 0x3F999999); /* 1.2f */
-LIT4_WORD(D_002FE398, 0x3ECCCCCC); /* 0.4f */
-LIT4_WORD(D_002FE39C, 0x3F999999); /* 1.2f */
-LIT4_WORD(D_002FE3A0, 0x3F999999); /* 1.2f */
-void HudPrompt_UpdateCue(void);
-RODATA_ALIGN16(); /* its jump table is at 0x2F20E0; the table before it ends at 0x2F20D8 */
-INCLUDE_ASM("asm/nonmatchings/battle/hud_prompt", HudPrompt_UpdateCue);
 
 /* Draw of node 24: base, icon (from the icon sheet, or the part's own sheet for kind 12), second picture, glow. */
 void HudPrompt_DrawButton(void) {

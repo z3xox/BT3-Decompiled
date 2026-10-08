@@ -233,29 +233,12 @@ void HudGauge_UpdateHpTrail(void) {
  * Random draws (Rand_IntRange, libc rand): per spark 1 or more for the frame, then 2 for the jitter; none while
  * paused. While paused the frame index is the spark's own number.
  *
- * Not matching (behaviour is the same). With the do-while below every register is the original's, but the
- * compiler rotates the loop: the third and fourth compare are placed in front of the Rand_IntRange call and the
- * loop is entered by a jump (351 instructions against 349). Written as `retry: n = Rand_IntRange(0, 9);
- * if (same) goto retry;` the order is the original's, but n * 8 is kept in $a2 (i * 8 in $s1, the sprite in
- * $s0) where the original has one register $s0 for both offsets and the sprite in $s1; `for (;;)` with one
- * compound `if (differs) break;` gives that too. No form tried gave both.
- * Cleanup 4 (RTL dumps; 50 more loop forms, all in one of the two families above: 19 or 41 to 45 differing):
- * - The rotation is made when the loop is expanded (expand_end_loop "roll a loop exit at the top to the end"):
- *   it scans from the loop top for conditional jumps to the loop's exit label and stops 30 RTL instructions
- *   after the top once it has one. The `&&` chain's first two tests (13 instructions each) are inside that
- *   window, so everything behind the second test is moved in front of the loop. `break` statements count as
- *   exits too (`if (a) break; if (b) break; ...` rotates the same way); one compound `if (a || b || c || d)
- *   break;`, `continue` forms, a ternary chain, a flag variable or `goto retry` do not rotate.
- * - In every unrotated form the registers go wrong for ONE reason: gcse (PRE) makes `n * 8` behind the `if`
- *   partially redundant and puts `n8 = i8` on the edge "paused -> join". In the rotated form the if-conversion
- *   pass (15.ce) moves that copy in front of the paused test, so i8 lives in one block, local-alloc gives it
- *   s0 and n8 follows by preference (the original's registers). Unrotated, the copy stays in its own block
- *   behind the loop, i8 becomes a global pseudo crossing the call, n8 (no call crossed) takes a2 first, the
- *   sprite gets s0 and i8 s1. So the original needs: no qualified exit in the first 30 instructions AND the
- *   copy hoisted (or `i * 8` and `n * 8` one pseudo from the start). Not found: `spr[53 + n]` after `n = i`,
- *   `n = i` in front of / behind `spr`, a `same` flag, nested do-while (0). */
-void HudGauge_UpdateAura(void);
-#if 0
+ * Matching notes. The paused case has to be an `if / else` that assigns `n = i` in its own arm: gcse then puts
+ * the copy "n * 8 = i * 8" in that arm's block, which lies between the test and the loop, and the if-conversion
+ * pass hoists it above the test (so i * 8 and n * 8 share $s0). With `n = i;` in front of an `if (!paused)` the
+ * copy lands behind the loop and stays there. The redraw loop must not be a do-while or have several `break`s:
+ * expand_end_loop would rotate it (it rolls the part up to the last exit jump found within 30 instructions of the
+ * loop top to the end, unless that jump is the loop's last instruction). */
 void HudGauge_UpdateAura(void) {
     s32 ofs[2];
     s16 tbl[10][4] = {
@@ -281,12 +264,16 @@ void HudGauge_UpdateAura(void) {
     }
     for (i = 0; i < 10; i++) {
         spr = &gHudGauge->spr[53 + i];
-        n = i;
-        if (!HUDG_PAUSED()) {
-            do {
+        if (HUDG_PAUSED()) {
+            n = i;
+        } else {
+            for (;;) {
                 n = Rand_IntRange(0, 9);
-            } while (tbl[n][0] == spr->uv[0] && tbl[n][1] == spr->uv[1] && tbl[n][2] == spr->uv[2] &&
-                     tbl[n][3] == spr->uv[3]);
+                if (tbl[n][0] != spr->uv[0] || tbl[n][1] != spr->uv[1] || tbl[n][2] != spr->uv[2] ||
+                    tbl[n][3] != spr->uv[3]) {
+                    break;
+                }
+            }
         }
         spr->uv[0] = tbl[n][0];
         spr->uv[1] = tbl[n][1];
@@ -324,9 +311,6 @@ void HudGauge_UpdateAura(void) {
     HudSprite_InitPlain(spr, 0xFF, 0, 0, (u8)(ramp->value * 44.0f));
     HudSprite_SetRect(spr, 0, 0x180, 0, 0x6C);
 }
-#endif
-INCLUDE_RODATA("asm/nonmatchings/battle/hud_gauge_2", D_002F1B90);
-INCLUDE_ASM("asm/nonmatchings/battle/hud_gauge_2", HudGauge_UpdateAura);
 
 /* Update of node 4 (ki): trailing ki (400 a frame, at least 606 / 800 for a gap over 20000 / 40000), then three
  * layers of five bars: the trailing ki (sprites 20..24), the ki (25..29) and the reserve (15..19, pulsing red).
