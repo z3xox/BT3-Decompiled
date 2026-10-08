@@ -280,7 +280,7 @@ s32 BtlText_CheckLineMask(u16 **cursor, s32 side) {
         break;
     }
     p += 2;
-    shift = work->unk10;
+    shift = work->padType;
     *cursor = p;
     return (mask >> shift) & 1;
 }
@@ -503,7 +503,7 @@ void BtlText_DrawList(void *pkt, s32 x0, s32 x1, s32 y0, s32 y1, s32 mode) {
                     Font_PrintAt(x0 + 0xF, y, p + 1);
                     y += 0x1C;
                     Font_SetColor2RGBA(0x80, 0x80, 0x80, 0x80);
-                    if (work->unk10 == 1) {
+                    if (work->padType == 1) {
                         if (FontIcon_GetPadTagSize(p + 1) > 0x20) {
                             y += 0x14;
                         }

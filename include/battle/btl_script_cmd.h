@@ -108,17 +108,17 @@
 typedef struct BtlScriptCmdWindow {
     /* 0x00 */ f32 scaleX;  /* -a */
     /* 0x04 */ f32 scaleY;
-    /* 0x08 */ f32 unk8;    /* -s */
+    /* 0x08 */ f32 scale;    /* -s */
     /* 0x0C */ u32 color;   /* -c: r | g << 8 | b << 16 | a << 24 */
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;   /* -p, first */
-    /* 0x18 */ s32 unk18;   /* -p, second */
-    /* 0x1C */ s32 unk1C;   /* -w */
-    /* 0x20 */ s32 unk20;
-    /* 0x24 */ s32 unk24;   /* -T */
+    /* 0x10 */ s32 color2;
+    /* 0x14 */ s32 spacingX;   /* -p, first */
+    /* 0x18 */ s32 spacingY;   /* -p, second */
+    /* 0x1C */ s32 align;   /* -w */
+    /* 0x20 */ s32 flags;
+    /* 0x24 */ s32 shadowMode;   /* -T */
     /* 0x28 */ u32 color28; /* -C */
-    /* 0x2C */ s16 unk2C;   /* -O, first */
-    /* 0x2E */ s16 unk2E;   /* -O, second */
+    /* 0x2C */ s16 shadowDx;   /* -O, first */
+    /* 0x2E */ s16 shadowDy;   /* -O, second */
     /* 0x30 */ u8 unk30[0x18];
     /* 0x48 */ s32 x;       /* -d */
     /* 0x4C */ s32 y;
@@ -163,11 +163,11 @@ typedef struct BtlScriptCmdButton {
 
 /* What command 16 fills: gProgress + 0x40. */
 typedef struct BtlScriptCmdReward {
-    /* 0x00 */ s32 unk0[3];  /* operands 0..2 */
-    /* 0x0C */ s32 unkC[3];  /* operands 3..5 */
-    /* 0x18 */ s32 unk18[3]; /* operands 9..11 */
-    /* 0x24 */ s32 unk24[3]; /* operands 6..8 */
-    /* 0x30 */ s32 unk30[3]; /* operands 12..14 */
+    /* 0x00 */ s32 points[3];  /* operands 0..2 */
+    /* 0x0C */ s32 item[3];  /* operands 3..5 */
+    /* 0x18 */ s32 chara[3]; /* operands 9..11 */
+    /* 0x24 */ s32 stage[3]; /* operands 6..8 */
+    /* 0x30 */ s32 episode[3]; /* operands 12..14 */
 } BtlScriptCmdReward; /* size 0x3C */
 
 /* The part of the progress struct (gProgress) the handlers touch; local view. */

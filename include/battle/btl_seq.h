@@ -150,8 +150,8 @@ typedef struct BtlTextList {
 typedef struct BtlTextWork {
     /* 0x00 */ u8 unk0[0xC];
     /* 0x0C */ s32 side;   /* which list is shown */
-    /* 0x10 */ s32 unk10;  /* bit number tested against a line's mask digit */
-    /* 0x14 */ s32 unk14;
+    /* 0x10 */ s32 padType;  /* bit number tested against a line's mask digit */
+    /* 0x14 */ s32 top;
     /* 0x18 */ u16 *text;  /* BtlMenu_GetScript() */
     /* 0x1C */ u16 *text2; /* BtlMenu_GetScript2() */
     /* 0x20 */ BtlTextList list[2];

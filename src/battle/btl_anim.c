@@ -256,7 +256,7 @@ void BtlAnim_PlaySub(BtlStatChr *chr, s32 anim) {
 
 /* Sets object + 0xC8C. */
 void BtlAnim_SetSubMix(BtlStatChr *chr, f32 v) {
-    BtlChar_GetObj(chr)->anim.unk14C = v;
+    BtlChar_GetObj(chr)->anim.mix = v;
 }
 
 /* Sets the frames added per advance. */

@@ -106,3 +106,18 @@ Group 01 (battle.h .. btl_act_decide.h):
   moves it to the result with a 1-in-8 chance when a stage object breaks; history_result.c sets the bit). BattleRes.unk8 is the HUD sprite file.
 - The +0x1C word of the form request / BtlJob (switchUnk18, form1C, the unk18 argument of BtlChange_RequestChara) is the character for the
   second resource file (0x599 + n * 10): `anim1Chara` proposed; the other spellings should follow.
+
+Group 06 (btl_script_cmd.h .. eft_disc.h):
+- eft_aura.h, EftAuraCfgSpark against EftAuraDataSpark: two views of one table shifted by 4 bytes; EftAuraCfgSpark.kind is the emitter node.
+- eft_aura.h, EftAuraCfg.flame[EFT_AURA_SPARKS] at 0x410: the table has 10 entries (EFT_AURA_PARTS); entries 10 and 11 overlap fadeNode[].
+- eft_aura.h, EftAuraCfgFlame.unk0 (u8) and .node: in EftAuraDataPart the record is s32 node, nodeEnd, nodeRef: this `node` is the other's nodeEnd.
+- eft_detect.h, EftDetStageCtx.unk50 comment ("the place of the hit"): it is the sweep's movement vector (CpSweep.delta).
+- btl_script_cmd.h, BtlScriptCmdWindow.color28 is FontStyle's shadowColor; its unk30[0x18] covers FontStyle's clip rectangle, userFlags and
+  three callbacks; x / y at 0x48 lie past the 0x48-byte FontStyle.
+- eft_disc.h, EftDiscAtk: 0x1B is `level` while FxHitArg2 / EftKiPropArg call 0x18 `level` and EftHitAtk / BtlCollAtk call 0x18 `kind`: two
+  conventions for one launch block; its `node` at 0x14 is `code` elsewhere; objId at 0x12 against objId at 0x10 + objId2 at 0x12 in FxHitArg2.
+- eft_core.h, EftHitAtk.level at 0x30: FxHitArg2 calls that word `size` (0..3).
+- btl_tech.h, BtlKiBlastData.unk28: getter BtlKiBlast_GetRadius, but the effect views call the slot `scale`.
+- btl_tech.h, BtlTechBParam.unk8F[0xC7 - 0x8F] runs over fields BtlParam names from 0x98 on (transTarget and others).
+- The word after `count` in the texture sets: `stepped` (eft_disc.h, eft_rays.h), `ready` (eft_orb_tail.h, eft_part10.h), `built` (eft_chain.h).
+- Ten MEDIUM names in btl_tech.h follow the existing getter's name only (poweredDashLimit, landingKind, throwObjectSlot, ...).

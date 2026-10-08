@@ -470,7 +470,7 @@ EftPGlowPart *EftGlow_SpawnPart(EftPGlow *e, s32 objId, f32 angle, EftPVec *scal
     p->size = (k->size[0] + k->size[1] * ((f32)rand() / 2147483647.0f)) * e->scale;
     p->widthScale = k->widthScale[0] + k->widthScale[1] * ((f32)rand() / 2147483647.0f);
     p->taper = k->taper[0] + k->taper[1] * ((f32)rand() / 2147483647.0f);
-    p->offset.w = k->unk28[0] + k->unk28[1] * ((f32)rand() / 2147483647.0f);
+    p->offset.w = k->push[0] + k->push[1] * ((f32)rand() / 2147483647.0f);
     p->offset.x = scale->x * k->offset[0];
     p->offset.y = scale->y * k->offset[1];
     p->offset.z = scale->z * k->offset[2];

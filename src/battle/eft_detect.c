@@ -675,7 +675,7 @@ s32 BtlBodyHit_Test(EftDetObj *atk, EftDetObj *def) {
     EftDetObjWork *defWork;
     EftDetPart **body;
 
-    if (atk->unkCAD < 0) {
+    if (atk->hitNo < 0) {
         return 0;
     }
     work = atk->work;
@@ -1290,7 +1290,7 @@ s32 EftDet_TestStage(EftDetShape *shape, s32 isBlast, s32 objectsOnly) {
         idx = StgCol_FirstBit(result.objMask);
         if (idx >= 0) {
             if (BtlStage_DamageObj(idx, isBlast == 1 ? 1 : 999999)) {
-                BtlStage_DestroyObj(-1, idx, &ctx.unk50);
+                BtlStage_DestroyObj(-1, idx, &ctx.delta);
                 return 0;
             }
         }

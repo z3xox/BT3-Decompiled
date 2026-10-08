@@ -195,8 +195,8 @@ EftGroundPiece *EftGndDust_SpawnPiece(EftGroundWork *w, EftGroundDef *def, s32 f
         p->drag = def->drag;
         p->lifeMax = p->life = (f32)def->life;
         p->fade = p->fadeMax = (f32)def->fade;
-        p->unkB4 = 1.0f;
-        p->unkB8 = 1.0f;
+        p->alpha = 1.0f;
+        p->growDamp = 1.0f;
         p->rot = rot;
         p->tex = def->tex;
         spin = (f32)def->spin * 0.1f;
@@ -236,8 +236,8 @@ EftGroundPiece *EftGndDust_SpawnPieceEx(EftGroundWork *w, Vec4 *pos, Vec4 *dir, 
         p->fadeMax = fade;
         p->lifeMax = life;
         p->fade = fade;
-        p->unkB4 = 1.0f;
-        p->unkB8 = unkB8;
+        p->alpha = 1.0f;
+        p->growDamp = unkB8;
         p->rot = rot;
         p->tex = tex;
         p->spin = spin;
@@ -1665,8 +1665,8 @@ void EftOrbTailMgr_Init(EftAaTask *task) {
     gEftOrbTail->w = BtlPool_Alloc(BtlPool_GetCurrent(), sizeof(EftAaOrbTailWork));
     memset(gEftOrbTail->w, 0, sizeof(EftAaOrbTailWork));
     EftTexSet_Load16(gEftOrbTail->w->res0, BtlScene_GetCommonEntry(0x259));
-    gEftOrbTail->w->unk0 = BtlScene_GetCommonEntry(0x25B);
-    gEftOrbTail->w->unk4 = BtlScene_GetCommonEntry(0x25A);
+    gEftOrbTail->w->param = BtlScene_GetCommonEntry(0x25B);
+    gEftOrbTail->w->color = BtlScene_GetCommonEntry(0x25A);
     {
         s32 idsC[7] = { 0x261, 0x262, 0x263, 0x264, 0x265, 0x266, 0x267 };
         s32 idsB[3] = { 0x25D, 0x25F, 0x260 };
@@ -1676,10 +1676,10 @@ void EftOrbTailMgr_Init(EftAaTask *task) {
             EftTexSet_Load16(gEftOrbTail->w->res[i], BtlScene_GetCommonEntry(idsA[i]));
         }
         for (i = 0; i < 3; i++) {
-            gEftOrbTail->w->unk428[i] = BtlScene_GetCommonEntry(idsB[i]);
+            gEftOrbTail->w->burstImage[i] = BtlScene_GetCommonEntry(idsB[i]);
         }
         for (i = 0; i < 7; i++) {
-            gEftOrbTail->w->unk434[i] = BtlScene_GetCommonEntry(idsC[i]);
+            gEftOrbTail->w->burstPalette[i] = BtlScene_GetCommonEntry(idsC[i]);
         }
     }
     gEftOrbTail->w->list = BtlTask_CreateChildList(task, 2, 0x1E0);

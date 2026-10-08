@@ -54,15 +54,15 @@ typedef struct BtlTechBParam {
     /* 0x5C */ f32 unk5C;
     /* 0x60 */ f32 hitReactScale; /* multiplies the reaction scale of a hit taken (BtlHit_ApplyHit) */
     /* 0x64 */ f32 gauge99CTime;  /* seconds the fighter +0x99C gauge takes to fill */
-    /* 0x68 */ f32 unk68;
-    /* 0x6C */ f32 unk6C;
-    /* 0x70 */ s16 unk70;         /* copied to fighter +0xD6C every frame */
-    /* 0x72 */ s16 unk72;         /* copied to fighter +0xD74 every frame */
+    /* 0x68 */ f32 stepCancelRatio;
+    /* 0x6C */ f32 backStepCancelRatio;
+    /* 0x70 */ s16 poweredDashLimit;         /* copied to fighter +0xD6C every frame */
+    /* 0x72 */ s16 poweredVanishLimit;         /* copied to fighter +0xD74 every frame */
     /* 0x74 */ f32 chargeRateA;   /* attack charge rate at gauge +0xD80 == 0 (BtlAct_GetChargeRate) */
     /* 0x78 */ f32 chargeRateB;   /* attack charge rate at gauge +0xD80 == 100000 */
     /* 0x7C */ f32 damageTaken;   /* multiplier of the damage the character takes (BtlMember_Damage) */
     /* 0x80 */ u8 unk80[0x8F - 0x80];
-    /* 0x8F */ u8 unk8F[0xC7 - 0x8F]; /* BtlParam_GetComboFinish indexes it; from 0x98 on BtlParam has other fields */
+    /* 0x8F */ u8 comboFinish[0xC7 - 0x8F]; /* BtlParam_GetComboFinish indexes it; from 0x98 on BtlParam has other fields */
     /* 0xC7 */ u8 unkC7;          /* percent; BtlParam_GetUnkC7Scale */
     /* 0xC8 */ f32 unkC8;
 } BtlTechBParam;
@@ -87,10 +87,10 @@ typedef struct BtlKiBlastData {
     /* 0x25 */ s8 reactS800;    /* victim state bit 0x800; 0: react */
     /* 0x26 */ s8 reactS4000;   /* victim state bit 0x4000 or action 0xDF; 0: react */
     /* 0x27 */ s8 reactS200;    /* victim state bit 0x200; 0: react */
-    /* 0x28 */ f32 unk28;
+    /* 0x28 */ f32 radius;
     /* 0x2C */ f32 unk2C;
     /* 0x30 */ s8 hits;         /* number of hits the damage and the knock-back are spread over */
-    /* 0x31 */ s8 unk31;
+    /* 0x31 */ s8 spreadMode;
     /* 0x32 */ u8 unk32[2];
 } BtlKiBlastData; /* size 0x34 */
 
@@ -111,7 +111,7 @@ typedef struct BtlSuperData {
     /* 0x000 */ u32 flagsA[3];        /* BtlSuper_GetFlagsA */
     /* 0x00C */ u32 flags[3];         /* BtlSuper_GetFlags */
     /* 0x018 */ s16 id[3];            /* technique id; 0x268, 0x27F, 0x2CD, 0x2D5 are special-cased here */
-    /* 0x01E */ s16 unk1E[3];
+    /* 0x01E */ s16 clashPower[3];
     /* 0x024 */ f32 shotTime[3];      /* seconds */
     /* 0x030 */ u8 unk30[0x54 - 0x30];
     /* 0x054 */ f32 shotSpeed[3];     /* 10 km/h */
@@ -130,12 +130,12 @@ typedef struct BtlSuperData {
     /* 0x144 */ s8 reactAlt[3];       /* hit flag 0x10; <= 0: react */
     /* 0x147 */ s8 reactS800[3];      /* victim state bit 0x800 */
     /* 0x14A */ s8 reactAltS800[3];   /* both; <= 0: reactS800 */
-    /* 0x14D */ s8 unk14D[3];
+    /* 0x14D */ s8 landingKind[3];
     /* 0x150 */ s8 guardKind[3];
     /* 0x153 */ s8 hitSound[2][3];    /* [hit flag 0x10][slot - 2] */
     /* 0x159 */ s8 steps[3];          /* steps of a rush; < 1 counts as 1 */
     /* 0x15C */ u8 unk15C[0x165 - 0x15C];
-    /* 0x165 */ s8 unk165[3];
+    /* 0x165 */ s8 aiKind[3];
     /* 0x168 */ s8 lastStep[3];       /* < 0: steps - 1 */
     /* 0x16B */ u8 unk16B;
     /* 0x16C */ f32 push[3];          /* knock-back speed, 10 km/h */
@@ -154,9 +154,9 @@ typedef struct BtlSuperData {
     /* 0x208 */ s16 throwChara[3];    /* < 0x100: a character the throw brings in */
     /* 0x20E */ s16 throwCharaAlt[3];
     /* 0x214 */ u8 unk214[0x220 - 0x214];
-    /* 0x220 */ s8 unk220[3];
-    /* 0x223 */ s8 unk223[3];         /* < 0: 999 */
-    /* 0x226 */ s8 unk226[3];
+    /* 0x220 */ s8 throwPartnerStep[3];
+    /* 0x223 */ s8 stageFxEndStep[3];         /* < 0: 999 */
+    /* 0x226 */ s8 throwObjectSlot[3];
     /* 0x229 */ s8 promptRow[3];      /* row of the roster's prompt table (+0x34) */
     /* 0x22C */ f32 time22C[3];       /* seconds */
     /* 0x238 */ f32 time238[3];       /* seconds */
@@ -195,7 +195,7 @@ typedef struct BtlSkillData {
     /* 0x98 */ s8 statLevel2[2];   /* level added to stat 2 */
     /* 0x9A */ s8 statLevel1[2];   /* level added to stat 1 */
     /* 0x9C */ s8 statLevel3[2];   /* level added to stat 3 */
-    /* 0x9E */ s8 unk9E[2];
+    /* 0x9E */ s8 aiKind[2];
     /* 0xA0 */ f32 time[2];        /* seconds: duration of the effect / of the stun */
     /* 0xA8 */ s32 healthPct[2];   /* percent of the maximum health given (negative: taken) */
     /* 0xB0 */ s32 ki[2];          /* ki given (negative: taken) */
@@ -268,7 +268,7 @@ typedef struct BtlTechBGauge {
     /* 0x00 */ s32 health;
     /* 0x04 */ s32 healthMax;
     /* 0x08 */ u8 unk8[0x20 - 0x8];
-    /* 0x20 */ s32 unk20;
+    /* 0x20 */ s32 variant;
 } BtlTechBGauge;
 
 /* Fighter (0x1600 bytes). */
@@ -278,7 +278,7 @@ typedef struct BtlTechBChr {
     /* 0x0DF0 */ u8 unkDF0[0xE44 - 0xDF0];
     /* 0x0E44 */ f32 techCharge;     /* 0..1: charge of the technique */
     /* 0x0E48 */ u8 unkE48[0xE5C - 0xE48];
-    /* 0x0E5C */ s32 unkE5C;         /* 0..3 (skill 0x41 raises it): scales technique 0x268 */
+    /* 0x0E5C */ s32 skillCount3;         /* 0..3 (skill 0x41 raises it): scales technique 0x268 */
     /* 0x0E60 */ s32 unkE60;         /* 0..5: scales technique 0x2CD by 20 % each */
     /* 0x0E64 */ u8 unkE64[0x15E8 - 0xE64];
     /* 0x15E8 */ BtlTechPlaceTbl *place[3]; /* by slot - 2: tables inside the object's three files */

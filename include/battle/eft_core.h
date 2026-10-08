@@ -101,7 +101,7 @@ typedef struct EftHitDef {
     /* 0x08 */ s8 shape;     /* 0: spheres, 1: boxes (read by the tasks that build the record) */
     /* 0x09 */ s8 unk9;      /* < 2 for a technique that can clash */
     /* 0x0A */ s8 maxHits;   /* > 0: multi-hit */
-    /* 0x0B */ s8 unkB;
+    /* 0x0B */ s8 hitInterval;
     /* 0x0C */ s8 aimMode;   /* EftAim_GetDirKeep: 0 = aim every call, else aim once and keep */
     /* 0x0D */ u8 unkD[0x34 - 0xD];
     /* 0x34 */ f32 unk34;    /* copied to EftHitRec.shape.unk8 */
@@ -132,13 +132,13 @@ typedef struct EftHitSrc {
 typedef struct EftHitAtk {
     /* 0x00 */ u8 unk0[0x12];
     /* 0x12 */ s16 objId;
-    /* 0x14 */ s16 unk14;
+    /* 0x14 */ s16 code;
     /* 0x16 */ s16 unk16;    /* copied to EftHitRec.unkF0 */
     /* 0x18 */ s16 kind;
-    /* 0x1A */ u8 unk1A;     /* 1: second impact variant */
+    /* 0x1A */ u8 type;     /* 1: second impact variant */
     /* 0x1B */ u8 unk1B;     /* copied to EftHitRec.unk4 */
     /* 0x1C */ s32 unk1C;
-    /* 0x20 */ f32 unk20;    /* copied to EftHitRec.shape.unk8 */
+    /* 0x20 */ f32 speed;    /* copied to EftHitRec.shape.unk8 */
     /* 0x24 */ u8 unk24[0x30 - 0x24];
     /* 0x30 */ s32 level;    /* copied to EftHitRec.level */
 } EftHitAtk;
@@ -173,7 +173,7 @@ typedef struct EftHitRec {
     /* 0x004 */ s32 unk4;     /* def->unk6 or atk->unk1B */
     /* 0x008 */ s32 level;    /* def->level or atk->level: the stronger record wins a clash */
     /* 0x00C */ s32 type;     /* EFT_HIT_* */
-    /* 0x010 */ EftVec unk10; /* filled by the task (first of the four vectors it copies) */
+    /* 0x010 */ EftVec origin; /* filled by the task (first of the four vectors it copies) */
     /* 0x020 */ EftVec pos;
     /* 0x030 */ EftVec prevPos;
     /* 0x040 */ EftVec vel;

@@ -91,7 +91,7 @@ typedef struct BtlAnimObj {
     /* 0x140 */ f32 step;        /* object + 0xC80: frames added per advance */
     /* 0x144 */ f32 blend;       /* object + 0xC84: blend counter, runs down to 0 */
     /* 0x148 */ f32 blendStep;   /* object + 0xC88 */
-    /* 0x14C */ f32 unk14C;      /* object + 0xC8C: BtlAnim_SetSubMix */
+    /* 0x14C */ f32 mix;      /* object + 0xC8C: BtlAnim_SetSubMix */
     /* 0x150 */ u8 unk150[0x178 - 0x150];
     /* 0x178 */ f32 rate;        /* object + 0xCB8: BtlAnim_SetObjRate, 1.0 every frame */
 } BtlAnimObj;

@@ -63,7 +63,7 @@ typedef struct EftKiPropArg {
     /* 0x1C */ s16 frames;    /* life in frames */
     /* 0x1E */ s16 unk1E;
     /* 0x20 */ f32 speed;
-    /* 0x24 */ f32 unk24;
+    /* 0x24 */ f32 turn;
     /* 0x28 */ f32 scale;
     /* 0x2C */ f32 unk2C;
     /* 0x30 */ s32 unk30[8];
@@ -138,7 +138,7 @@ typedef struct EftKiPropMgr {
 /* Texture set an arc effect is given: 16 entries and a mask of the entries whose TEX0 is built. */
 typedef struct EftArcTexSet {
     /* 0x000 */ EftSTexEntry entry[16];
-    /* 0x100 */ s32 unk100;
+    /* 0x100 */ s32 count;
     /* 0x104 */ s32 built;
 } EftArcTexSet;
 

@@ -82,12 +82,12 @@ f32 BtlParam_GetUnk5C(BtlTechBChr *chr) {
 
 /* Parameter +0x68 (float; BtlAct_StepHandler). */
 f32 BtlParam_GetStepCancelRatio(BtlTechBChr *chr) {
-    return BtlChar_GetObj(chr)->param->unk68;
+    return BtlChar_GetObj(chr)->param->stepCancelRatio;
 }
 
 /* Parameter +0x6C (float; BtlAct_StepHandler). */
 f32 BtlParam_GetBackStepCancelRatio(BtlTechBChr *chr) {
-    return BtlChar_GetObj(chr)->param->unk6C;
+    return BtlChar_GetObj(chr)->param->backStepCancelRatio;
 }
 
 /* Parameter +0x60: multiplies the reaction scale of a hit this character takes (BtlHit_ApplyHit). */
@@ -97,12 +97,12 @@ f32 BtlParam_GetHitReactScale(BtlTechBChr *chr) {
 
 /* Parameter +0x70 (s16): copied to fighter +0xD6C every frame. */
 s32 BtlParam_GetPoweredDashLimit(BtlTechBChr *chr) {
-    return BtlChar_GetObj(chr)->param->unk70;
+    return BtlChar_GetObj(chr)->param->poweredDashLimit;
 }
 
 /* Parameter +0x72 (s16): copied to fighter +0xD74 every frame. */
 s32 BtlParam_GetPoweredVanishLimit(BtlTechBChr *chr) {
-    return BtlChar_GetObj(chr)->param->unk72;
+    return BtlChar_GetObj(chr)->param->poweredVanishLimit;
 }
 
 /* Parameter +0x74: attack charge rate at gauge 0 (BtlAct_GetChargeRate); x1.2 with ability 0x4A. */
@@ -160,7 +160,7 @@ f32 BtlParam_GetUnkC8(BtlTechBChr *chr) {
 
 /* Parameter byte +0x8F + n. */
 s32 BtlParam_GetComboFinish(BtlTechBChr *chr, s32 n) {
-    return BtlChar_GetObj(chr)->param->unk8F[n];
+    return BtlChar_GetObj(chr)->param->comboFinish[n];
 }
 
 /* Common sound of a dash / burst start: 0x1D with parameter flag 0x10, else 0x1C. */
@@ -637,17 +637,17 @@ s32 BtlKiBlast_GetFramesOf(BtlTechBChr *chr, u32 kind) {
 
 /* Record +0x31. */
 s32 BtlKiBlast_GetSpreadMode(BtlTechBChr *chr) {
-    return BtlKiBlast_GetCurrent(chr, NULL)->unk31;
+    return BtlKiBlast_GetCurrent(chr, NULL)->spreadMode;
 }
 
 /* The same for a hit record. */
 s32 BtlKiBlast_GetSpreadModeOfHit(BtlTechBHit *hit) {
-    return BtlKiBlast_GetOfHit(hit, NULL, NULL)->unk31;
+    return BtlKiBlast_GetOfHit(hit, NULL, NULL)->spreadMode;
 }
 
 /* The same for a kind. */
 s32 BtlKiBlast_GetSpreadModeOf(BtlTechBChr *chr, u32 kind) {
-    return BtlKiBlast_Get(chr, kind)->unk31;
+    return BtlKiBlast_Get(chr, kind)->spreadMode;
 }
 
 /* Reaction id of a hit (record +0x24, BtlKiBlast_MapReact). */
@@ -784,17 +784,17 @@ s32 BtlKiBlast_GetHitsOf(BtlTechBChr *chr, u32 kind) {
 
 /* Record +0x28 (float). */
 f32 BtlKiBlast_GetRadius(BtlTechBChr *chr) {
-    return BtlKiBlast_GetCurrent(chr, NULL)->unk28;
+    return BtlKiBlast_GetCurrent(chr, NULL)->radius;
 }
 
 /* The same for a hit record. */
 f32 BtlKiBlast_GetRadiusOfHit(BtlTechBHit *hit) {
-    return BtlKiBlast_GetOfHit(hit, NULL, NULL)->unk28;
+    return BtlKiBlast_GetOfHit(hit, NULL, NULL)->radius;
 }
 
 /* The same for a kind. */
 f32 BtlKiBlast_GetRadiusOf(BtlTechBChr *chr, u32 kind) {
-    return BtlKiBlast_Get(chr, kind)->unk28;
+    return BtlKiBlast_Get(chr, kind)->radius;
 }
 
 /* Record +0x2C (float). */
@@ -1008,7 +1008,7 @@ s32 BtlSuper_GetId(BtlTechBChr *chr, s32 slot) {
 
 /* Table +0x1E (s16): compared with hit +0x8 by BtlColl_TryDodge. */
 s32 BtlSuper_GetClashPower(BtlTechBChr *chr, s32 slot) {
-    return BtlChar_GetObj(chr)->super->unk1E[slot - 2];
+    return BtlChar_GetObj(chr)->super->clashPower[slot - 2];
 }
 
 /* Table +0x24 (seconds). */
@@ -1097,7 +1097,7 @@ s32 BtlSuper_GetReactAltS800(BtlTechBChr *chr, s32 slot) {
 
 /* Table +0x14D (copied into the throw description). */
 s32 BtlSuper_GetLandingKind(BtlTechBChr *chr, s32 slot) {
-    return BtlChar_GetObj(chr)->super->unk14D[slot - 2];
+    return BtlChar_GetObj(chr)->super->landingKind[slot - 2];
 }
 
 /* Table +0x150: what a guard does against the technique. */
@@ -1260,7 +1260,7 @@ s32 BtlSuper_GetThrowGauge20(BtlTechBChr *chr, s32 slot) {
     slot -= 2;
     if (tbl->throwChara[slot] < 0x100) {
         if (tbl->flags[slot] & 0x40000000) {
-            return BtlMember_GetActiveGauge(chr)->unk20;
+            return BtlMember_GetActiveGauge(chr)->variant;
         }
     }
     return 0;
@@ -1268,12 +1268,12 @@ s32 BtlSuper_GetThrowGauge20(BtlTechBChr *chr, s32 slot) {
 
 /* Table +0x220 (s8; throw description +0x18). */
 s32 BtlSuper_GetThrowPartnerStep(BtlTechBChr *chr, s32 slot) {
-    return BtlChar_GetObj(chr)->super->unk220[slot - 2];
+    return BtlChar_GetObj(chr)->super->throwPartnerStep[slot - 2];
 }
 
 /* Table +0x223 (s8); 999 when negative. */
 s32 BtlSuper_GetStageFxEndStep(BtlTechBChr *chr, s32 slot) {
-    s32 n = BtlChar_GetObj(chr)->super->unk223[slot - 2];
+    s32 n = BtlChar_GetObj(chr)->super->stageFxEndStep[slot - 2];
 
     if (n < 0) {
         n = 999;
@@ -1283,7 +1283,7 @@ s32 BtlSuper_GetStageFxEndStep(BtlTechBChr *chr, s32 slot) {
 
 /* Table +0x226 (s8; throw description +0x2C). */
 s32 BtlSuper_GetThrowObjectSlot(BtlTechBChr *chr, s32 slot) {
-    return BtlChar_GetObj(chr)->super->unk226[slot - 2];
+    return BtlChar_GetObj(chr)->super->throwObjectSlot[slot - 2];
 }
 
 /* Table +0x229: row of the roster's prompt table. */
@@ -1298,7 +1298,7 @@ BtlTechBPromptRow *BtlSuper_GetPromptRow(BtlTechBChr *chr, s32 slot) {
 
 /* Table +0x165 (s8). */
 s32 BtlSuper_GetAiKind(BtlTechBChr *chr, s32 slot) {
-    return BtlChar_GetObj(chr)->super->unk165[slot - 2];
+    return BtlChar_GetObj(chr)->super->aiKind[slot - 2];
 }
 
 /* Table +0x168, or the step count - 1 when negative. */
@@ -1367,7 +1367,7 @@ s32 BtlSuper_GetDamage(BtlTechBChr *chr, s32 slot, s32 guard, s32 total) {
     }
     switch (BtlSuper_GetId(chr, slot)) {
     case 0x268:
-        switch (chr->unkE5C) {
+        switch (chr->skillCount3) {
         case 1:
             damage += damage / 2;
             break;
@@ -1520,7 +1520,7 @@ s32 BtlSkill_GetSequence(BtlTechBChr *chr, s32 slot) {
 
 /* Table +0x9E (s8). */
 s32 BtlSkill_GetAiKind(BtlTechBChr *chr, s32 slot) {
-    return BtlChar_GetObj(chr)->skill->unk9E[slot];
+    return BtlChar_GetObj(chr)->skill->aiKind[slot];
 }
 
 /* Table +0x66: how long the skill's stat modifiers last (BTL_STAT_KIND_*). */

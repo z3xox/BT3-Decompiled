@@ -132,7 +132,7 @@ void EftHit_Add(EftHitRec *rec) {
     if (rec->atk != NULL) {
         rec->objId = rec->atk->objId;
         rec->unkF0 = rec->atk->unk16;
-        rec->shape.unk8 = rec->atk->unk20;
+        rec->shape.unk8 = rec->atk->speed;
         rec->unk4 = rec->atk->unk1B;
         rec->level = rec->atk->level;
         rec->type = EFT_HIT_BLAST;
@@ -433,7 +433,7 @@ s32 EftHit_GetHitInterval(EftHitRec *rec) {
         return 0;
     }
     if (rec->src != NULL) {
-        return rec->src->def->unkB;
+        return rec->src->def->hitInterval;
     }
     return 0;
 }
@@ -890,7 +890,7 @@ void EftHit_SpawnBlastImpact(EftHitRec *rec) {
     arg = (EftImpactArg){ rec->task->pos, { 0.0f, 0.0f, 0.0f, 0.0f }, 0, rec->objId, 0 };
     Vec4_Sub(&arg.dir, &rec->pos, &rec->prevPos);
     Vec3_Normalize(&arg.dir, &arg.dir);
-    if (atk->unk1A == 1) {
+    if (atk->type == 1) {
         arg.id = 1;
         scale = 0.6f;
     }

@@ -112,12 +112,12 @@ void EftSpdLine_UpdateTexture(s32 a, s32 b);
 typedef struct EftAura {
     /* 0x000 */ s32 flags;       /* 1 active, 2 faded out, 0x10 / 0x20 variant (set by EftAura_Start), 0x80 */
     /* 0x004 */ u32 altMask;     /* bit per body part, toggled at every flame spawn */
-    /* 0x008 */ s32 fadeA;       /* 1 = unk50 falls to 0, else rises to 1 */
-    /* 0x00C */ s32 fadeB;       /* the same for unk58 */
+    /* 0x008 */ s32 fadeA;       /* 1 = alphaFade falls to 0, else rises to 1 */
+    /* 0x00C */ s32 fadeB;       /* the same for sizeFade */
     /* 0x010 */ s32 type;        /* 9 and 10 select the long-lived variant */
     /* 0x014 */ s32 unk14;
     /* 0x018 */ s32 colorCount;  /* number of colour entries to pick from */
-    /* 0x01C */ s32 unk1C;
+    /* 0x01C */ s32 texFirst;
     /* 0x020 */ s32 texCount;    /* flame flag 0x100: unk6 = rand() % texCount */
     /* 0x024 */ s32 partsStarted; /* body parts that have had their first flame, 0..10 */
     /* 0x028 */ s32 fade;        /* 0 steady, 1 fading in, 2 / 3 fading out (3 sets flag 2 at the end) */
@@ -130,10 +130,10 @@ typedef struct EftAura {
     /* 0x044 */ f32 lifeScale;   /* 1, or 1.2 during a burst */
     /* 0x048 */ f32 level;       /* aura strength */
     /* 0x04C */ f32 burstLevel;  /* 0..1 */
-    /* 0x050 */ f32 unk50;       /* 0..1, driven by fadeA; multiplies the spark alpha */
-    /* 0x054 */ f32 unk54;       /* its rate */
-    /* 0x058 */ f32 unk58;       /* 0..1, driven by fadeB */
-    /* 0x05C */ f32 unk5C;       /* its rate */
+    /* 0x050 */ f32 alphaFade;       /* 0..1, driven by fadeA; multiplies the spark alpha */
+    /* 0x054 */ f32 alphaFadeRate;       /* its rate */
+    /* 0x058 */ f32 sizeFade;       /* 0..1, driven by fadeB */
+    /* 0x05C */ f32 sizeFadeRate;       /* its rate */
     /* 0x060 */ f32 scale;       /* body scale */
     /* 0x064 */ u8 unk64[0xC];
     /* 0x070 */ Vec4 pos;        /* fighter root */
@@ -142,7 +142,7 @@ typedef struct EftAura {
     /* 0x130 */ Vec4 partPrev[EFT_AURA_PARTS];  /* the frame before */
     /* 0x1D0 */ Vec4 partEnd[EFT_AURA_PARTS];   /* second node of a part (cfg->flame[i].node) */
     /* 0x270 */ u8 unk270[0xA0];
-    /* 0x310 */ Vec4 unk310;     /* centre the flames are pushed away from (x, z) */
+    /* 0x310 */ Vec4 pushCentre;     /* centre the flames are pushed away from (x, z) */
     /* 0x320 */ Vec4 axis;       /* aura axis (x, z) */
     /* 0x330 */ Vec4 sparkPos[EFT_AURA_SPARKS];
     /* 0x3F0 */ Vec4 colorStart; /* flame colour, w = alpha */
@@ -157,11 +157,11 @@ typedef struct EftAuraFlame {
     /* 0x00 */ s32 flags;   /* low bits: 1 fade-in done, 2 fading out, 4 successor spawned, 8 / 0x10 size phases 2 / 3
                                started; from EftAura_GetFlameFlags: 0x20 / 0x40 burst 1 / 2, 0x80, 0x100, 0x200 long life,
                                0x400 / 0x800 alternate kinds, 0x1000 invisible */
-    /* 0x04 */ u8 unk4;
+    /* 0x04 */ u8 shape;
     /* 0x05 */ u8 kind;     /* 0, 1 or 2: row of the parameter tables */
     /* 0x06 */ u8 tex;
     /* 0x07 */ u8 objId;
-    /* 0x08 */ u8 unk8;     /* cfg->flame[part].unk0 */
+    /* 0x08 */ u8 partNode;     /* cfg->flame[part].unk0 */
     /* 0x09 */ u8 part;
     /* 0x0A */ u8 flip;     /* rand() % 2 */
     /* 0x0B */ u8 alt;      /* 1 with flag 0x800 */
@@ -218,7 +218,7 @@ typedef struct EftAuraSpark {
 
 /* gEftAuraPool */
 typedef struct EftAuraPool {
-    /* 0x000 */ s32 unk0;
+    /* 0x000 */ s32 count;
     /* 0x004 */ s32 flameMax;
     /* 0x008 */ s32 sparkMax;
     /* 0x00C */ EftAuraFlame *flames;
@@ -234,9 +234,9 @@ typedef struct EftAuraPool {
 } EftAuraPool;
 
 typedef struct EftAuraCfgFlame {
-    /* 0x0 */ u8 unk0;
+    /* 0x0 */ u8 partNode;
     /* 0x4 */ s32 node;  /* second model node of the part, or negative */
-    /* 0x8 */ s32 unk8;
+    /* 0x8 */ s32 nodeRef;
 } EftAuraCfgFlame;
 
 typedef struct EftAuraCfgSpark {
@@ -252,10 +252,10 @@ typedef struct EftAuraCfg {
     /* 0x19C */ f32 burstHold;
     /* 0x1A0 */ f32 unk1A0;
     /* 0x1A4 */ f32 burstSpeed;
-    /* 0x1A8 */ f32 unk1A8;
-    /* 0x1AC */ f32 unk1AC;
-    /* 0x1B0 */ f32 unk1B0;
-    /* 0x1B4 */ f32 unk1B4;
+    /* 0x1A8 */ f32 sizeFadeInTime;
+    /* 0x1AC */ f32 sizeFadeOutTime;
+    /* 0x1B0 */ f32 alphaFadeInTime;
+    /* 0x1B4 */ f32 alphaFadeOutTime;
     /* 0x1B8 */ f32 sparkFadeIn;
     /* 0x1BC */ f32 sparkFadeOut;
     /* 0x1C0 */ f32 sparkLife;
@@ -270,7 +270,7 @@ typedef struct EftAuraCfg {
     /* 0x200 */ f32 sparkMul[2][2];   /* {rotSpeed, speed} factors for flags 4 and 2 */
     /* 0x210 */ u8 unk210[0x200];
     /* 0x410 */ EftAuraCfgFlame flame[EFT_AURA_SPARKS];
-    /* 0x4A0 */ s32 unk4A0;
+    /* 0x4A0 */ s32 fadeNodeLast;
     /* 0x4A4 */ EftAuraCfgSpark spark[EFT_AURA_SPARKS];
 } EftAuraCfg;
 
@@ -404,10 +404,10 @@ typedef struct EftAuraWork {
     /* 0x044 */ f32 lifeScale;
     /* 0x048 */ f32 level;
     /* 0x04C */ f32 burstLevel;
-    /* 0x050 */ f32 unk50;
-    /* 0x054 */ f32 unk54;
-    /* 0x058 */ f32 unk58;
-    /* 0x05C */ f32 unk5C;
+    /* 0x050 */ f32 alphaFade;
+    /* 0x054 */ f32 alphaFadeRate;
+    /* 0x058 */ f32 sizeFade;
+    /* 0x05C */ f32 sizeFadeRate;
     /* 0x060 */ f32 scale;       /* fighter height / 19.35, at least 0.7 */
     /* 0x064 */ EftAuraArg arg;
     /* 0x06C */ s32 unk6C;
@@ -417,7 +417,7 @@ typedef struct EftAuraWork {
     /* 0x130 */ Vec4 partPrev[EFT_AURA_PARTS];
     /* 0x1D0 */ Vec4 partEnd[EFT_AURA_PARTS];
     /* 0x270 */ Vec4 partRef[EFT_AURA_PARTS];  /* third node of a part: flames lean away from it */
-    /* 0x310 */ Vec4 unk310;     /* node 0x30 */
+    /* 0x310 */ Vec4 pushCentre;     /* node 0x30 */
     /* 0x320 */ Vec4 axis;       /* node 0x11 */
     /* 0x330 */ Vec4 sparkPos[EFT_AURA_SPARKS];
     /* 0x3F0 */ Vec4 colorStart;
@@ -439,7 +439,7 @@ typedef struct EftNTexEntry {
 typedef struct EftNTexSet {
     /* 0x000 */ EftNTexEntry entry[32];
     /* 0x200 */ s32 count;
-    /* 0x204 */ s32 unk204;
+    /* 0x204 */ s32 stepped;
 } EftNTexSet; /* 0x208 */
 
 /* A texture set of the aura manager with its pack data. */
@@ -641,7 +641,7 @@ typedef struct EftBoltPair {
 
 /* gEftBoltPool (0x478 bytes, allocated at 0x1682F0 in the next file). */
 typedef struct EftBoltPool {
-    /* 0x000 */ s32 unk0;
+    /* 0x000 */ s32 count;
     /* 0x004 */ s32 segMax;
     /* 0x008 */ EftBoltSeg *segs;
     /* 0x00C */ s32 segNext;     /* where the search for a free joint starts */

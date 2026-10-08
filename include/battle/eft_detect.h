@@ -125,7 +125,7 @@ typedef struct EftDetRec {
     /* 0x004 */ s32 unk4;
     /* 0x008 */ s32 level;
     /* 0x00C */ s32 type;       /* 0 ki blast, 1 technique */
-    /* 0x010 */ EftDetVec unk10;
+    /* 0x010 */ EftDetVec origin;
     /* 0x020 */ EftDetVec pos;
     /* 0x030 */ EftDetVec prevPos;
     /* 0x040 */ EftDetVec vel;
@@ -149,8 +149,8 @@ typedef struct EftDetStageCtx {
     /* 0x20 */ f32 radius;
     /* 0x24 */ f32 unk24[3];
     /* 0x30 */ EftDetVec unk30[2];
-    /* 0x50 */ EftDetVec unk50;    /* handed to BtlStage_DestroyObj as the place of the hit */
-    /* 0x60 */ EftDetVec unk60;
+    /* 0x50 */ EftDetVec delta;    /* handed to BtlStage_DestroyObj as the place of the hit */
+    /* 0x60 */ EftDetVec dir;
     /* 0x70 */ f32 length;         /* compared with the radius to pick the first "best distance" */
     /* 0x74 */ f32 unk74[3];
     /* 0x80 */ EftDetShape *shape;
@@ -168,7 +168,7 @@ typedef struct EftDetNode {
 /* Polygon header of a collision mesh (StgColPoly of battle/eft_det_b.h). */
 typedef struct EftDetPoly {
     /* 0x00 */ s32 flags;       /* 0x8000000: not solid */
-    /* 0x04 */ s32 unk4[3];
+    /* 0x04 */ s32 vtx[3];
     /* 0x10 */ EftDetVec nrm;
 } EftDetPoly;
 
@@ -244,7 +244,7 @@ typedef struct EftDetObj {
     /* 0x0980 */ u8 unk980[0xA24 - 0x980];
     /* 0x0A24 */ s32 area;              /* stage zone of the fighter */
     /* 0x0A28 */ u8 unkA28[0xCAD - 0xA28];
-    /* 0x0CAD */ s8 unkCAD;             /* < 0: the fighter's strikes are not tested */
+    /* 0x0CAD */ s8 hitNo;             /* < 0: the fighter's strikes are not tested */
     /* 0x0CAE */ u8 unkCAE[0xF50 - 0xCAE];
     /* 0x0F50 */ EftDetPart *parts;     /* start of the body block */
     /* 0x0F54 */ u8 unkF54[0xFA0 - 0xF54];

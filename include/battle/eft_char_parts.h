@@ -35,13 +35,13 @@ typedef struct EftAaScr {
     /* 0x0 */ s32 x;
     /* 0x4 */ s32 y;
     /* 0x8 */ s32 z;
-    /* 0xC */ s32 unkC;
+    /* 0xC */ s32 w;
 } EftAaScr;
 
 /* The part of a task (0x1AD150..) the callbacks here use. */
 typedef struct EftAaTask {
     /* 0x00 */ u8 flags;       /* bit 0: killed */
-    /* 0x01 */ u8 unk1;
+    /* 0x01 */ u8 chr;
     /* 0x02 */ u16 id;         /* serial number; a handle is valid while it still matches */
     /* 0x04 */ u8 unk4[0x24];
     /* 0x28 */ void **cls;     /* task class; cls[0] is the update callback */
@@ -77,7 +77,7 @@ typedef struct EftGroundPiece {
     /* 0x00 */ ListNode node;
     /* 0x08 */ u8 unk8[8];
     /* 0x10 */ Vec4 pos;
-    /* 0x20 */ Vec4 unk20;
+    /* 0x20 */ Vec4 base;
     /* 0x30 */ Vec4 dir;        /* unit direction of travel */
     /* 0x40 */ Vec4 color;      /* 128, 128, 128, 128 */
     /* 0x50 */ Vec4 vel;        /* dir * speed */
@@ -96,8 +96,8 @@ typedef struct EftGroundPiece {
     /* 0xA8 */ f32 spin;        /* roll per frame; the sign is random */
     /* 0xAC */ f32 speed;
     /* 0xB0 */ f32 drag;
-    /* 0xB4 */ f32 unkB4;       /* 1 */
-    /* 0xB8 */ f32 unkB8;       /* 1 */
+    /* 0xB4 */ f32 alpha;       /* 1 */
+    /* 0xB8 */ f32 growDamp;       /* 1 */
     /* 0xBC */ s32 flags;       /* 2 = alive, plus the caller's bits */
 } EftGroundPiece; /* size 0xC0 */
 
@@ -132,7 +132,7 @@ typedef struct EftGroundTexEntry {
 /* Texture slots of a piece class: TEX0 values fetched on demand. */
 typedef struct EftGroundTex {
     /* 0x00 */ EftGroundTexEntry entry[8];
-    /* 0x80 */ s32 unk80;
+    /* 0x80 */ s32 count;
     /* 0x84 */ s32 loaded;      /* bit per entry */
 } EftGroundTex;
 
@@ -326,12 +326,12 @@ typedef struct EftAnimPart {
 /* ---- next module's manager ------------------------------------------------------------------------------ */
 
 typedef struct EftAaOrbTailWork {
-    /* 0x0000 */ s32 *unk0;       /* common entry 0x25B */
-    /* 0x0004 */ s32 *unk4;       /* common entry 0x25A */
+    /* 0x0000 */ s32 *param;       /* common entry 0x25B */
+    /* 0x0004 */ s32 *color;       /* common entry 0x25A */
     /* 0x0008 */ u8 res0[0x108];  /* resource set of common entry 0x259 */
     /* 0x0110 */ u8 res[3][0x108];/* resource sets of common entries 0x25C, 0x25E, 0x25E */
-    /* 0x0428 */ s32 *unk428[3];  /* common entries 0x25D, 0x25F, 0x260 */
-    /* 0x0434 */ s32 *unk434[7];  /* common entries 0x261..0x267 */
+    /* 0x0428 */ s32 *burstImage[3];  /* common entries 0x25D, 0x25F, 0x260 */
+    /* 0x0434 */ s32 *burstPalette[7];  /* common entries 0x261..0x267 */
     /* 0x0450 */ u8 unk450[0xB958 - 0x450];
     /* 0xB958 */ void *list;      /* two 0x1E0-byte tasks */
     /* 0xB95C */ u8 unkB95C[4];

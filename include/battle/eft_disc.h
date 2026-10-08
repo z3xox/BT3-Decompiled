@@ -113,8 +113,8 @@ typedef struct EftDiscAtk {
     /* 0x12 */ s16 objId;
     /* 0x14 */ s16 node;
     /* 0x16 */ s16 unk16;
-    /* 0x18 */ s16 unk18;
-    /* 0x1A */ u8 unk1A;
+    /* 0x18 */ s16 kind;
+    /* 0x1A */ u8 type;
     /* 0x1B */ u8 level;     /* 2, 4, 6: texture pair 1, 2, 3 */
     /* 0x1C */ s16 life;     /* frames */
     /* 0x1E */ s16 unk1E;
@@ -252,14 +252,14 @@ typedef struct EftPGlow {
     /* 0x000 */ s32 flags;      /* 1 active, 2 fading out (set by eft_trail.c), 4 finished, 8 a paired quad was spawned
                                    for this node, 0x20 textured variant */
     /* 0x004 */ s32 nodeMask;   /* bit n toggles each time node n spawns: alternates the quad's side */
-    /* 0x008 */ s32 unk8;
+    /* 0x008 */ s32 paramFlags;
     /* 0x00C */ s32 kind;       /* BtlCharApi_GetActionFxKind at start: 3 rising, 4 falling, 5 node axis */
     /* 0x010 */ s32 step;
     /* 0x014 */ s32 node;       /* node the next quad spawns at, 0..9 */
     /* 0x018 */ s32 count;      /* quads spawned at this node, 0..3 */
     /* 0x01C */ s32 unk1C[2];
     /* 0x024 */ s32 layers;     /* number of entries of color[] in use */
-    /* 0x028 */ s32 unk28;
+    /* 0x028 */ s32 texFirst;
     /* 0x02C */ s32 texCount;   /* textured variant: number of textures */
     /* 0x030 */ s32 live;       /* quads alive, counted by EftGlow_StepParts */
     /* 0x034 */ s32 fade;       /* 0 steady, 1 fading in, 2 fading out */
@@ -377,7 +377,7 @@ typedef struct EftPGlowKind {
     /* 0x10 */ f32 size[2];
     /* 0x18 */ f32 widthScale[2];
     /* 0x20 */ f32 taper[2];
-    /* 0x28 */ f32 unk28[2];
+    /* 0x28 */ f32 push[2];
     /* 0x30 */ f32 offset[3];
 } EftPGlowKind; /* size 0x3C */
 

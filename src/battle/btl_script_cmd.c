@@ -505,7 +505,7 @@ s32 BtlScriptCmd_SetWindow(u32 phase, void *taskWork) {
             win->scaleX = Gsc_GetFloatOr(1.0f);
             win->scaleY = Gsc_GetFloatOr(1.0f);
             Gsc_FindOption('s');
-            win->unk8 = Gsc_GetFloatOr(1.0f);
+            win->scale = Gsc_GetFloatOr(1.0f);
             Gsc_FindOption('c');
             r = Gsc_GetIntOr(0xFF);
             g = Gsc_GetIntOr(0xFF);
@@ -513,15 +513,15 @@ s32 BtlScriptCmd_SetWindow(u32 phase, void *taskWork) {
             a = Gsc_GetIntOr(0x80);
             win->color = r | (a << 24) | ((b << 16) | (g << 8));
             Gsc_FindOption('p');
-            win->unk14 = Gsc_GetIntOr(2);
-            win->unk18 = Gsc_GetIntOr(5);
+            win->spacingX = Gsc_GetIntOr(2);
+            win->spacingY = Gsc_GetIntOr(5);
             Gsc_FindOption('w');
-            win->unk1C = Gsc_GetIntOr(0);
+            win->align = Gsc_GetIntOr(0);
             Gsc_FindOption('T');
-            win->unk24 = Gsc_GetIntOr(2);
+            win->shadowMode = Gsc_GetIntOr(2);
             Gsc_FindOption('O');
-            win->unk2C = Gsc_GetIntOr(1);
-            win->unk2E = Gsc_GetIntOr(2);
+            win->shadowDx = Gsc_GetIntOr(1);
+            win->shadowDy = Gsc_GetIntOr(2);
             Gsc_FindOption('C');
             r = Gsc_GetIntOr(0xFF);
             g = Gsc_GetIntOr(0xFF);
@@ -1212,21 +1212,21 @@ s32 BtlScriptCmd_SetRewards(u32 phase, void *taskWork) {
     BtlScriptCmdReward *reward = &gProgress->reward;
 
     if (phase == GSC_PHASE_BEGIN || phase == GSC_PHASE_BEGIN_ABORT) {
-        reward->unk0[0] = Gsc_GetInt();
-        reward->unk0[1] = Gsc_GetInt();
-        reward->unk0[2] = Gsc_GetInt();
-        reward->unkC[0] = Gsc_GetInt();
-        reward->unkC[1] = Gsc_GetInt();
-        reward->unkC[2] = Gsc_GetInt();
-        reward->unk24[0] = Gsc_GetInt();
-        reward->unk24[1] = Gsc_GetInt();
-        reward->unk24[2] = Gsc_GetInt();
-        reward->unk18[0] = Gsc_GetInt();
-        reward->unk18[1] = Gsc_GetInt();
-        reward->unk18[2] = Gsc_GetInt();
-        reward->unk30[0] = Gsc_GetInt();
-        reward->unk30[1] = Gsc_GetInt();
-        reward->unk30[2] = Gsc_GetInt();
+        reward->points[0] = Gsc_GetInt();
+        reward->points[1] = Gsc_GetInt();
+        reward->points[2] = Gsc_GetInt();
+        reward->item[0] = Gsc_GetInt();
+        reward->item[1] = Gsc_GetInt();
+        reward->item[2] = Gsc_GetInt();
+        reward->stage[0] = Gsc_GetInt();
+        reward->stage[1] = Gsc_GetInt();
+        reward->stage[2] = Gsc_GetInt();
+        reward->chara[0] = Gsc_GetInt();
+        reward->chara[1] = Gsc_GetInt();
+        reward->chara[2] = Gsc_GetInt();
+        reward->episode[0] = Gsc_GetInt();
+        reward->episode[1] = Gsc_GetInt();
+        reward->episode[2] = Gsc_GetInt();
     }
     return 1;
 }

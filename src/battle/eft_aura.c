@@ -552,7 +552,7 @@ void EftAura_GetFlameSideDir(EftAura *aura, Vec4 *out, s32 objId, f32 power, f32
         side = -side;
     }
     Vec4_Scale(&dir, &dir, side);
-    Vec4_Set(&centre, aura->unk310.x, 0.0f, aura->unk310.z, one);
+    Vec4_Set(&centre, aura->pushCentre.x, 0.0f, aura->pushCentre.z, one);
     Vec3_Sub(out, &centre, &aura->pos);
     out->w = one;
     Vec3_Normalize(out, out);
@@ -899,7 +899,7 @@ void EftAura_DrawSparks(EftAura *aura, s32 objId, f32 alpha) {
     if (aura->flags & 0x20) {
         a = alpha;
     } else {
-        a = aura->alpha * aura->unk50 * alpha;
+        a = aura->alpha * aura->alphaFade * alpha;
     }
     while (*link != NULL) {
         s = *link;
@@ -1138,17 +1138,17 @@ s32 EftAura_SpawnFlame(EftAura *aura, s32 objId, s32 part, Vec4 *pos, Vec4 *offs
     burst = aura->burstLevel;
     f->objId = objId;
     f->part = part;
-    f->unk8 = gEftAuraCfg->flame[part].unk0;
+    f->partNode = gEftAuraCfg->flame[part].partNode;
     f->flags = EftAura_GetFlameFlags(aura, objId, second, alt);
     if (second == 0) {
-        f->unk4 = 0;
+        f->shape = 0;
         if (f->flags & 0x400) {
             f->kind = 1;
         } else {
             f->kind = 0;
         }
     } else {
-        f->unk4 = 1;
+        f->shape = 1;
         f->kind = 2;
     }
     f->life = f->time = EftAura_GetFlameLife(f->flags, burst);
@@ -1294,15 +1294,15 @@ void EftAura_Start(EftAura *aura, s32 *arg, s32 reset) {
         aura->flags |= 0x10;
     }
     if (reset) {
-        aura->unk5C = 0.0f;
+        aura->sizeFadeRate = 0.0f;
         aura->burst = 0;
         aura->burstLevel = 0.0f;
         aura->fadeA = 0;
-        aura->unk54 = 0.0f;
+        aura->alphaFadeRate = 0.0f;
         aura->fadeB = 0;
         aura->lifeScale = 1.0f;
-        aura->unk50 = 1.0f;
-        aura->unk58 = 1.0f;
+        aura->alphaFade = 1.0f;
+        aura->sizeFade = 1.0f;
         aura->fade = 1;
     }
 }
@@ -1460,37 +1460,37 @@ void EftAura_UpdateState(EftAura *aura, s32 objId) {
     }
     aura->burstSpeed = gEftAuraCfg->burstSpeed * aura->burstLevel;
     if (aura->fadeA == 1) {
-        if (0.0f < aura->unk50) {
-            aura->unk50 -= 1.0f / gEftAuraCfg->unk1B4;
-            if (aura->unk50 <= 0.0f) {
-                aura->unk50 = 0.0f;
-                aura->unk54 = 0.0f;
+        if (0.0f < aura->alphaFade) {
+            aura->alphaFade -= 1.0f / gEftAuraCfg->alphaFadeOutTime;
+            if (aura->alphaFade <= 0.0f) {
+                aura->alphaFade = 0.0f;
+                aura->alphaFadeRate = 0.0f;
                 aura->fadeA = 0;
             }
         }
-    } else if (aura->unk50 < 1.0f) {
-        aura->unk54 += 1.0f / gEftAuraCfg->unk1B0;
-        aura->unk50 += aura->unk54;
-        if (1.0f <= aura->unk50) {
-            aura->unk50 = 1.0f;
-            aura->unk54 = 0.0f;
+    } else if (aura->alphaFade < 1.0f) {
+        aura->alphaFadeRate += 1.0f / gEftAuraCfg->alphaFadeInTime;
+        aura->alphaFade += aura->alphaFadeRate;
+        if (1.0f <= aura->alphaFade) {
+            aura->alphaFade = 1.0f;
+            aura->alphaFadeRate = 0.0f;
         }
     }
     if (aura->fadeB == 1) {
-        if (0.0f < aura->unk58) {
-            aura->unk58 -= 1.0f / gEftAuraCfg->unk1AC;
-            if (aura->unk58 <= 0.0f) {
-                aura->unk58 = 0.0f;
-                aura->unk5C = 0.0f;
+        if (0.0f < aura->sizeFade) {
+            aura->sizeFade -= 1.0f / gEftAuraCfg->sizeFadeOutTime;
+            if (aura->sizeFade <= 0.0f) {
+                aura->sizeFade = 0.0f;
+                aura->sizeFadeRate = 0.0f;
                 aura->fadeB = 0;
             }
         }
-    } else if (aura->unk58 < 1.0f) {
-        aura->unk5C += 1.0f / gEftAuraCfg->unk1A8;
-        aura->unk58 += aura->unk5C;
-        if (1.0f <= aura->unk58) {
-            aura->unk58 = 1.0f;
-            aura->unk5C = 0.0f;
+    } else if (aura->sizeFade < 1.0f) {
+        aura->sizeFadeRate += 1.0f / gEftAuraCfg->sizeFadeInTime;
+        aura->sizeFade += aura->sizeFadeRate;
+        if (1.0f <= aura->sizeFade) {
+            aura->sizeFade = 1.0f;
+            aura->sizeFadeRate = 0.0f;
         }
     }
     if (aura->fade != 0) {
@@ -1859,7 +1859,7 @@ void EftAura_DrawFlames(EftAuraWork *aura, s32 objId, f32 alpha) {
     for (i = 0; i < 7; i++) {
         BtlCharApi_GetNodePos(objId, gData->fadeNode[i], &node[i]);
     }
-    a = aura->alpha * aura->unk50 * alpha;
+    a = aura->alpha * aura->alphaFade * alpha;
     Dbg_ProfMark(gBattleProf);
     for (link = &gPool->flameUsed; *link != NULL; link = &f->next) {
         f = *link;
@@ -1881,12 +1881,12 @@ void EftAura_DrawFlames(EftAuraWork *aura, s32 objId, f32 alpha) {
         }
         Vec3_Normalize(&ndir, &dir);
         EftAura_BuildFlameMtx(&mtx, &ndir, &f->pos);
-        w = f->stretch * f->scale * aura->unk58;
-        h = f->size * f->scale * aura->unk58;
+        w = f->stretch * f->scale * aura->sizeFade;
+        h = f->size * f->scale * aura->sizeFade;
         for (i = 0; i < 4; i++) {
-            c.x = corner[f->unk4][i].x * w;
-            c.y = corner[f->unk4][i].y * f->scale;
-            c.z = corner[f->unk4][i].z * h;
+            c.x = corner[f->shape][i].x * w;
+            c.y = corner[f->shape][i].y * f->scale;
+            c.z = corner[f->shape][i].z * h;
             c.w = 1.0f;
             if (i >= 2) {
                 c.z *= f->end;
@@ -1905,7 +1905,7 @@ void EftAura_DrawFlames(EftAuraWork *aura, s32 objId, f32 alpha) {
                 clipped = 1;
                 break;
             }
-            Vec4_Scale(&st[i], &uv[f->unk4 * 2 + f->flip][i], 1.0f / (f32)scr[i].w);
+            Vec4_Scale(&st[i], &uv[f->shape * 2 + f->flip][i], 1.0f / (f32)scr[i].w);
             fade[i] = EftAura_GetNodeFade(f->objId, &p, node, aura->scale);
             if (i < 2) {
                 fade[i] *= 0.1f;
@@ -2164,7 +2164,7 @@ void EftAuraTask_Update(EftNTask *task) {
             BtlCharApi_GetNodePos(*objId, gData->spark[i].node, &aura->sparkPos[i]);
         }
         BtlCharApi_GetNodePos(*objId, 3, &aura->pos);
-        BtlCharApi_GetNodePos(*objId, 0x30, &aura->unk310);
+        BtlCharApi_GetNodePos(*objId, 0x30, &aura->pushCentre);
         BtlCharApi_GetNodePos(*objId, 0x11, &aura->axis);
         for (i = 0; i < EFT_AURA_PARTS; i++) {
             BtlCharApi_GetNodePos(*objId, gData->part[i].node, &aura->part[i]);
