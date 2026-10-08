@@ -382,7 +382,6 @@ segments:
       - [0x130B38, c, battle/col_a]
       - [0x136190, c, battle/col_b]
       - [0x139BB0, c, battle/col_c]
-      - [0x13C310, c, battle/col_c_b]
       - [0x13D1E8, c, battle/btl_demo_cam]
       - [0x13E040, c, battle/btl_cam]
       - [0x13F620, c, battle/orbit_cam]
