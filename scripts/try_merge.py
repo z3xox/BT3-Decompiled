@@ -5,8 +5,21 @@ tree afterwards (git checkout). Files are given as battle/eft_x_c (no src/, no .
 import sys, subprocess, re, os
 R = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 def run(cmd): return subprocess.run(cmd, cwd=R, shell=True, capture_output=True, text=True)
+def sizes(obj):
+    """section name -> size of an object file"""
+    r = subprocess.run(['readelf', '-SW', obj], capture_output=True, text=True).stdout
+    d = {}
+    for m in re.finditer(r'\]\s+(\.[\w.]+)\s+\w+\s+[0-9a-f]+\s+[0-9a-f]+\s+([0-9a-f]+)', r):
+        if m.group(1) in ('.text', '.rodata', '.lit4', '.lit8', '.sdata', '.data', '.sbss', '.bss'):
+            d[m.group(1)] = d.get(m.group(1), 0) + int(m.group(2), 16)
+    return d
+
 def main(files, keep=False, hoist=True):
     a, rest = files[0], files[1:]
+    before = {}
+    for f in files:
+        for k, v in sizes(f'{R}/build/src/{f}.o').items():
+            before[k] = before.get(k, 0) + v
     src = open(f'{R}/src/{a}.c').read()
     for b in rest:
         src += f'\n\n/* ======== merged from src/{b}.c ======== */\n\n' + open(f'{R}/src/{b}.c').read()
@@ -59,7 +72,7 @@ def main(files, keep=False, hoist=True):
             if '{' in t.split(';')[0]:
                 return False
             return '(' in t or t.lstrip().startswith('extern')
-        todo = set()
+        todo = set(); recast = set()
         for name, places in by.items():
             here = sorted(n for f, n, w in places if f == mine)
             other = [1 for f, n, w in places if f != mine]
@@ -67,11 +80,32 @@ def main(files, keep=False, hoist=True):
             if other:
                 todo.update(decls)                               # a header declares it
             elif len(decls) == len(here):
-                todo.update(here[:-1])                           # only declarations: the last stays
+                recast.update(here[1:])                          # only declarations: the later ones become casts
             else:
                 todo.update(decls)                               # a definition is there: the declarations go
         todo = sorted(todo, reverse=True)
-        if not todo:
+        if not todo and not recast:
+            break
+        # A later declaration of something the first part declared otherwise: the part that follows keeps its own
+        # view through a cast, as the hand-made merges do (`#define Name ((ret (*)(args))Name)`), which leaves the
+        # generated code as it was.
+        done_any = bool(todo)
+        for n in sorted(recast, reverse=True):
+            i = n - 1; t = Lc[i]
+            m = re.match(r'^\s*(?:extern\s+)?([\w\s]+?[\s\*]+)(\w+)\s*\(([^;{]*)\)\s*;(.*)$', t)
+            v = re.match(r'^\s*extern\s+([\w\s]+?)([\s\*]+)(\w+)\s*((?:\[[^\]]*\])*)\s*;(.*)$', t)
+            if m:
+                Lc[i] = '#define %s ((%s(*)(%s))%s)%s' % (m.group(2), m.group(1), m.group(3), m.group(2), m.group(4))
+            elif v and not v.group(4):
+                Lc[i] = '#define %s (*(%s%s*)&%s)%s' % (v.group(3), v.group(1), v.group(2).strip() + ' ' if v.group(2).strip() else ' ', v.group(3), v.group(5))
+            elif v:
+                Lc[i] = '#define %s ((%s%s*)%s)%s' % (v.group(3), v.group(1), ' ' + v.group(2).strip(), v.group(3), v.group(5))
+            else:
+                continue
+            done_any = True
+        if recast:
+            open(f'{R}/src/{a}.c', 'w').write('\n'.join(Lc))
+        if not done_any:
             break
         L = open(f'{R}/src/{a}.c').read().split('\n')
         for n in todo:
@@ -100,6 +134,9 @@ def main(files, keep=False, hoist=True):
         elif have2:
             n = int(run("cmp -l build/DBZP.BIN disc/BIN/DBZP.BIN | wc -l").stdout.strip() or 0)
         verdict = 'BUILDS, %d BYTES DIFFER (%s)' % (n, 'main executable' if not same1 else 'overlay')
+        after = sizes(f'{R}/build/src/{a}.o')
+        delta = ['%s %+d' % (k, after.get(k, 0) - before.get(k, 0)) for k in sorted(set(before) | set(after)) if after.get(k, 0) != before.get(k, 0)]
+        verdict += '; section sizes: ' + (', '.join(delta) if delta else 'unchanged (the data is placed elsewhere, or the code differs in place)')
     print(f'{" + ".join(files)}: {verdict}' + (f'  [{dropped} declarations reconciled]' if dropped else ''), flush=True)
     if not keep:
         run('git checkout -- src config && git clean -fdq src config')
