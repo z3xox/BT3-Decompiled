@@ -240,8 +240,9 @@ s32 Shen_ClampCursor(s32 *cursor) {
 }
 
 /*
- * Name format of the five row plates. A named object because Shen_DrawList, which is still assembly, refers to
- * it by address; the compiler emitted it as an ordinary string literal of Shen_PlayPlateOk (0x2FBDA8).
+ * Name format of the five row plates. A named object from the time Shen_DrawList was assembly and referred to
+ * it by address; the compiler emitted it as an ordinary string literal of Shen_PlayPlateOk (0x2FBDA8). Shen_DrawList
+ * is C now, so it can become a literal again (check the read-only data layout when doing so).
  */
 const char gShenPlateFmt[] __attribute__((aligned(8))) = "mc_menu_plate_%d";
 
@@ -343,7 +344,7 @@ static inline s32 Shen_IsOwned(s32 kind, s32 n) {
 
 /*
  * Clip names used only by Shen_DrawList (0x2FBE60, 0x2FBE70). Named objects for the same reason as
- * gShenPlateFmt; once the function is C again they are plain string literals.
+ * gShenPlateFmt; they can become plain string literals again.
  */
 const char gShenIconClip[] __attribute__((aligned(8))) = "mc_icon_play";
 const char gShenTextClip[] __attribute__((aligned(8))) = "mc_menu_text_off";
@@ -356,20 +357,18 @@ const char gShenTextClip[] __attribute__((aligned(8))) = "mc_menu_text_off";
  * 64x64 sheet), the two scissor callbacks on the icon and on the plate, half brightness for a wish the save
  * already has, and the wish's name: line `node->no` of the row's text box, +4 for dragon 1, +11 for dragon 2.
  *
- * NON-MATCHING. The attempt does the same thing, with the same frame and the same instruction count (229);
- * what differs is which of the two registers that hold `&ref` each call uses. The compiler keeps two copies
- * of that address: one in a saved register for the label / callback calls, one rebuilt in front of the two
- * brightness calls and the text call. In the original the Flash_FindLabel of "mc_menu_text_off" uses the saved
- * copy (so that copy is s3 and the constant 0x40 and the row counter move to s4 / s5), and the compare with 2
- * of the line number uses the register that holds 2 (`xor v1,v1,s6`); here that call rebuilds the address and
- * the compare is `xori v1,v1,2`. No arrangement of the tail (inline helpers, a pointer variable, where the
- * line number is worked out) reproduced it: build/scratch_late_a/dl*.py.
+ * Three things made it match:
+ *  - `node = work->top` stands in front of Shen_SetArrowUvs (the load is in the call's delay slot);
+ *  - the line number of dragon 2 reads `node->no` again (`line = node->no + 11`): two instructions at first, so the
+ *    test is turned into a conditional move only behind the loop pass, with the 2 in a register (`xor v1,v1,s6`).
+ *    `line += 11` is converted at once and compares with the immediate (`xori`);
+ *  - FAKE MATCH: the dead store of `&ref` to a hard register behind the Flash_FindLabel of the text clip. It
+ *    emits nothing. It is a second use of that call's `&ref` temporary inside its basic block; with one use the
+ *    loop pass substitutes the address back into the call (the address is then rebuilt there and the shared copy
+ *    lives in another register), with two the temporary joins the hoisted copy the other six label / callback
+ *    calls use. The original probably had a call here that the compiler could delete (a `const` function or a
+ *    stripped check taking `&ref`): `extern s32 f(FlashRef *) __attribute__((const)); f(&ref);` matches too.
  */
-#if 0
-static inline void Shen_FindClip(Flash *flash, const char *parent, const char *name, FlashRef *ref) {
-    Flash_FindLabel(flash, parent, name, ref);
-}
-
 void Shen_DrawList(ShenWork *work) {
     char name[0x100];
     FlashRef ref;
@@ -378,8 +377,8 @@ void Shen_DrawList(ShenWork *work) {
     ShenNode *node;
     s32 i;
 
-    Shen_SetArrowUvs(flash);
     node = work->top;
+    Shen_SetArrowUvs(flash);
     for (i = 0; i < 5; i++) {
         sprintf(name, gShenPlateFmt, i + 1);
         switch (node->wish.kind) {
@@ -429,7 +428,10 @@ void Shen_DrawList(ShenWork *work) {
         } else {
             Flash_ClipSetColor(flash, &ref, 1.0f);
         }
-        Shen_FindClip(flash, name, gShenTextClip, &ref);
+        Flash_FindLabel(flash, name, gShenTextClip, &ref);
+        {
+            register FlashRef *probe __asm__("$5") = &ref; /* FAKE MATCH, see above */
+        }
         {
             s32 no = node->no;
             s32 line;
@@ -439,7 +441,7 @@ void Shen_DrawList(ShenWork *work) {
             } else {
                 line = no;
                 if (work->dragon == SHEN_DRAGON_2) {
-                    line += 11;
+                    line = node->no + 11;
                 }
             }
             TextBox_AttachLine(flash, &ref, 0, 0, line, &work->box[i]);
@@ -451,8 +453,6 @@ void Shen_DrawList(ShenWork *work) {
         }
     }
 }
-#endif
-INCLUDE_ASM("asm/nonmatchings/ui/shen_wish", Shen_DrawList);
 
 /* Sets the reward window up for the wish under the cursor. */
 void Shen_SetupGetWin(ShenWork *work) {
@@ -474,22 +474,6 @@ void Shen_SetupGetWin(ShenWork *work) {
     }
 }
 
-/*
- * Draws which dragon comes and copies its wishes from the wish file into the list.
- *
- * One Rand_Range(100) draw `r`. With bit 0 of gSaveData->slot[8].flags set: r < 40 dragon 0, 40..59 dragon 1,
- * 60..99 dragon 2. Without it: r < 50 dragon 0, else dragon 1 (dragon 2 cannot come). Dragon 1 lists seven
- * wishes and grants three; the others list four and grant one. The dragon number also goes to the backdrop
- * (ShenScene_Init).
- *
- * NON-MATCHING: 4 of 121 instructions, a swap of two registers. Both hold `&work->list`: s2, computed once per
- * arm, and s4, a copy made after ShenList_Build. The original passes the copy to ShenList_Find in the loop and
- * stores s2 to work->out / work->top; this attempt passes s2 and stores the copy to work->top. Everything else
- * is identical. Some 4000 arrangements of the three arms were tried (build/scratch_late_a/bl*.py).
- * Second cleanup pass, 14 more without effect (`&work->list` written out at the stores, at the helper call or
- * both; `list` set in front of ShenList_Build or once for all arms: 29 to 94 differences).
- */
-#if 0
 /* Copies `count` wishes into the nodes of a list. */
 static inline void ShenList_Fill(ShenNode *head, ShenWish *src, s32 count) {
     s32 i;
@@ -499,12 +483,23 @@ static inline void ShenList_Fill(ShenNode *head, ShenWish *src, s32 count) {
     }
 }
 
+/*
+ * Draws which dragon comes and copies its wishes from the wish file into the list.
+ *
+ * One Rand_Range(100) draw `r`. With bit 0 of gSaveData->slot[8].flags set: r < 40 dragon 0, 40..59 dragon 1,
+ * 60..99 dragon 2. Without it: r < 50 dragon 0, else dragon 1 (dragon 2 cannot come). Dragon 1 lists seven
+ * wishes and grants three; the others list four and grant one. The dragon number also goes to the backdrop
+ * (ShenScene_Init).
+ *
+ * `&work->list` is written out at every use and both list pointers are set once behind the three arms: the
+ * compiler then keeps one register for the address (ShenList_Build, the two stores) and gives the loop a copy
+ * of its own, as the original does. A `list` variable, or the `out` store inside the arms, changes that.
+ */
 void Shen_BuildList(ShenWork *work, ShenWishFile *file) {
     s32 a;
     s32 b;
     s32 c;
     s32 r;
-    ShenNode *list;
 
     if (gSaveData->slot[8].flags & 1) {
         a = 40;
@@ -521,30 +516,23 @@ void Shen_BuildList(ShenWork *work, ShenWishFile *file) {
         work->wishMax = 1;
         ShenScene_Init(SHEN_DRAGON_2);
         ShenList_Build(&work->list, 4);
-        list = &work->list;
-        ShenList_Fill(list, file->list2, 4);
-        work->out = list;
+        ShenList_Fill(&work->list, file->list2, 4);
     } else if (r >= a && r < b) {
         work->dragon = SHEN_DRAGON_1;
         work->wishMax = 3;
         ShenScene_Init(SHEN_DRAGON_1);
         ShenList_Build(&work->list, 7);
-        list = &work->list;
-        ShenList_Fill(list, file->list1, 7);
-        work->out = list;
+        ShenList_Fill(&work->list, file->list1, 7);
     } else {
         work->dragon = SHEN_DRAGON_0;
         work->wishMax = 1;
         ShenScene_Init(SHEN_DRAGON_0);
         ShenList_Build(&work->list, 4);
-        list = &work->list;
-        ShenList_Fill(list, file->list0, 4);
-        work->out = list;
+        ShenList_Fill(&work->list, file->list0, 4);
     }
-    work->top = list;
+    work->top = &work->list;
+    work->out = &work->list;
 }
-#endif
-INCLUDE_ASM("asm/nonmatchings/ui/shen_wish", Shen_BuildList);
 
 /* Unpacks the screen's pack file and builds the list movie, the windows and the wish list. */
 void Shen_Init(ShenWork *work, s32 section) {

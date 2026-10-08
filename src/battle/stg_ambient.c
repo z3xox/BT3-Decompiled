@@ -41,7 +41,9 @@ void *memset(void *, s32, u32);
 
 extern StgAmb gStgAmb;
 
-void sceGsSetDefStoreImage(void *sp, s16 sbp, s16 sbw, s16 spsm, s16 x, s16 y, s16 w, s16 h);
+/* Returns int as in the SDK: with `void` the first call of ScrXfade_StoreHalf does not set v0 and the scheduler
+   orders the instructions in front of it differently. */
+s32 sceGsSetDefStoreImage(void *sp, s16 sbp, s16 sbw, s16 spsm, s16 x, s16 y, s16 w, s16 h);
 s32 sceGsExecStoreImage(void *sp, void *dst);
 void FlushCache(s32 mode);
 void GfxClut_InitPacket(void *tex, u16 arg);
@@ -996,7 +998,6 @@ void ScrXfade_Capture(void) {
 }
 
 /* Reads w x h pixels at frame block `sbp` into buffer `index` and builds the packet that uploads them again. */
-#if 0 /* 4 of 121 instructions differ: before the first call the original emits `sra a1,a0,16` / `move a0,sp` ahead of the two `addu` that form p and e; this C emits the two `addu` first. Everything else is identical. Second cleanup, about 30 more variants, none changed the four instructions: declaration / assignment order of p, e, tag; xf as a local or gScrXfade at each use; `&xf->chain[index]` (53 differ); sbp as s32 with a cast at the call, a local copy of sbp or si; other prototypes for sceGsSetDefStoreImage; `&p[14]` for the image address; p or e assigned after the call (34+ differ). In the second scheduling pass the two `addu` and the two argument loads have equal priority, so the order comes from the first pass, where this C schedules the `addu` of p early (it feeds the load of buf[index], which is on the path to sceGsExecStoreImage); the original must have had that chain one step shorter or the argument chain one step longer. */
 void ScrXfade_StoreHalf(s16 sbp, u16 w, u16 h, s32 index) {
     u8 si[0x70];
     ScrXfade *xf = gScrXfade;
@@ -1050,9 +1051,6 @@ void ScrXfade_StoreHalf(s16 sbp, u16 w, u16 h, s32 index) {
     p[1] = GS_TEXFLUSH;
     p[0] = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle/stg_ambient", ScrXfade_StoreHalf);
-#endif
 
 /* Uploads the captured halves as a 512 x 448 texture at block `tbp` and draws it over the frame. */
 void ScrXfade_Draw(s32 unused, s32 tbp, u8 alpha) {

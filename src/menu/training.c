@@ -486,6 +486,16 @@ void Train_SaveCursor(void) {
  * read into a local in front of the two initialisations, `found` as a parameter of a nested inline, `do { }
  * while (0)` around the initialisation or the loop, `if (found < n)` written out with a do / while: all give
  * the same 11 (10 for the written-out test).
+ *
+ * Third pass (2026-10-08, build/scratch_lists/): still 11. What the original needs at the combine pass is
+ * `found = 0; i = found; t = found <u n` with the copy `i = found` alive: a two-instruction combination whose
+ * first destination stays live fails, so the copy shields the compare (the fold is the three-instruction chain
+ * `found = 0` / compare / branch). Nothing written in C keeps that copy: the inliner and both CSE passes turn
+ * `i = found` into `i = 0` whenever `found = 0` is visible in the block (`for (i = found; ...)` inlined or written
+ * out, `found` set from a zero variable of an outer block, `found` reset at the end of the page loop instead of
+ * its top: 11 to 92 differ; `found` hidden behind an empty asm keeps the copy but the loop pass then no longer
+ * knows that i starts at 0 and builds the skip pointer with `sll` / `addu`: 65 differ). The original copy
+ * therefore survived CSE while the loop pass still saw a constant start value; no source form for that is known.
  */
 #if 0
 /* The lesson records of a class. */
