@@ -935,3 +935,14 @@ More of the same night (the geyser functions):
   = next; }`); `s32 i;` without an initialiser and `for (i = 0; ...)`: an `i = 0` far above its loop was moved
   there by the scheduler, and `s32 i = 0;` adds a hidden marker behind the call in front of the loop.
 - **Check the argument order of a helper only this function uses** (`Vec3_ScaleAdd(dst, dir, f32 s, base)`).
+- **Copy chains in front of stores** (`addu v1,a2,v0 / move a3,v1 / move a2,a3`): adjacent ONE-element array
+  members indexed by the same variable (`p->a[i]`, `p->b[i]`, `p->c[i]`), not one array with constant offsets.
+  (Ot_Reset; worth trying on StgPanBlur_UpdateView and the other copy-chain cases)
+- **Ten blocks**: inter-block moves by the first scheduling pass (an argument load above a branch it belongs
+  behind) mean the function had at most 10 basic blocks and 100 instructions there; an `else` arm that makes an
+  eleventh cannot be the original form.
+- **Delay slots (reorg.c)**: a slot emptied as redundant in the first relax round is refilled in the second
+  (`beqzl` + the first epilogue load); one emptied in the last round stays `nop`. `beqz / nop` where we get `beqzl
+  / ld` means the redundancy only appeared in round two. Cross-jumping starts only from an unconditional jump;
+  a block that falls into the common label without a jump of its own is never merged away. (PadWatch_GetMissing
+  and BtlScene_IsEffectHidden are open on exactly these points: 2 and about 12 instructions.)
