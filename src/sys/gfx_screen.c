@@ -857,34 +857,21 @@ void GfxWater_LoadStageColor(void) {
     }
 }
 
-ASM_STUB_BEGIN(); /* compiled so that GfxWater_Draw sees the definition (it decides a branch-likely there); the assembler skips it */
-/* NOT MATCHING: 96 of 639 instructions differ (was about 390 aligned), and the instruction count is now the
-   original's. Same operations and the same six .lit4 constants (0x2FC2A0..0x2FC2B4: pi, 2 pi, 2 pi, 0.8, 0.2,
-   44.8; bits compared) plus the .sdata word 0x2FE8D0 = 224.
-   Found in the third cleanup (each of these removed a block of differences):
-   - `h = 0xE0` and `srcH = 0x1C0` are VARIABLES set at the top (as in StgHaze_Draw / StgBlur_Draw). That is
-     why the original loads 0xE00 into a register for the gv clamp (`h << 4`), keeps `(s64)h << 34` apart
-     from the `| 0xA` of the second CLAMP word, multiplies `srcH * row` with a real `mult`, and converts 224
-     to float from a constant-pool word in .sdata (`fh = h`: the old attempt read D_002FE8D0 as a global).
-   - the copy loop is the twin of the first loop of StgPanBlur_DrawView (same statements, other constants):
-     `step = w / n` unshifted and `(i * step) << 4` in the loop.
-   - there is no `y` variable: `cy = h * row / 5`. The slot at sp+0x234 that looked like one is the loop
-     pass's strength-reduced `h * row` (it sits BEHIND the `view * 4` that gcse creates, so it was made later
-     than any declared variable).
-   - the three row loops share one counter (the original keeps it in s3 throughout).
-   What still differs:
-   1. float registers of the inner body: the original has ph in f20, d in f21, dx in f22; this has d, dx, ph
-      (allocation priority: ph needs about a third more references). In the original the result of the
-      SECOND sqrtf is computed straight into f20 (`sqrt.s f20,f12`, a callee-saved register, so that pseudo
-      is live across a call) and copied to d; the first goes through f0. `ph = sqrtf(..); d = ph;` is folded
-      back by cse.
-   2. the 9-register packet header: the original loads x0 early and builds the ZBUF constant late; the first
-      CLAMP word is `x0 << 4 | 0x1C0 << 34 | x1 << 14 | 0xA` with the two constants NOT merged, which
-      `(s64)srcH << 34` reproduces locally but then the function's first third changes (the phase update
-      stops spilling `view * 4`), so it is not in this attempt.
-   3. in the last loop the original loads gv before gu (`gv << 16 | gu` makes other things worse).
-   Also tried: `rows = 6` as a variable with `rows - 1` as the divisor (worse everywhere, although the
-   original divides by a 5 held in a register without a zero check). */
+/* Matching notes (matched 2026-10-08; .lit4 constants 0x2FC2A0..0x2FC2B4: pi, 2 pi, 2 pi, 0.8, 0.2, 44.8 and the
+   .sdata word 0x2FE8D0 = 224, bits compared):
+   - `h = 0xE0` and `srcH = 0x1C0` are VARIABLES set at the top (as in StgHaze_Draw / StgBlur_Draw): the original
+     loads 0xE00 into a register for the gv clamp, multiplies `srcH * row` with a real `mult` and converts 224 to
+     float from a constant-pool word in .sdata (`fh = h`).
+   - the copy loop is the twin of the first loop of StgPanBlur_DrawView; there is no `y` variable
+     (`cy = h * row / 5`); the three row loops share one counter.
+   - the first CLAMP word is the macro `GS_SET_CLAMP(2, 2, x0, x1, 0, srcH)` with its `0 << 24` term: written out by
+     hand in any term order the 9-register header, the reload registers and with them the first third of the
+     function come out differently.
+   - there is no phase variable: `d * 0.2f` is written in both cosf arguments of a wave. The shared product is then
+     a block-local temporary that crosses one call (f20), which is what puts d in f21, dx in f22 and the second
+     square root straight into f20.
+   - the strip loop sets a `sy` variable in front of each vertex (like `sx`): that decides the load order of gu / gv
+     and their registers. */
 /* Draws the underwater wobble for one view: advances the view's two phases, builds a 6 x N grid of texel positions
    pushed around two wave centres, copies the view into the half-height buffer at page 0x150 and draws it back over
    the screen as five triangle strips tinted with the view's colour. */
@@ -904,6 +891,7 @@ void GfxWater_DrawView(s32 split, s32 view) {
     s32 n;
     s32 step;
     s32 sx;
+    s32 sy;
     u32 rgba;
     u64 *p;
     f32 fw;
@@ -913,7 +901,6 @@ void GfxWater_DrawView(s32 split, s32 view) {
     f32 dx;
     f32 dy;
     f32 d;
-    f32 ph;
     s32 h = 0xE0;
     s32 srcH = 0x1C0;
 
@@ -965,15 +952,13 @@ void GfxWater_DrawView(s32 split, s32 view) {
                 dx = fx - fw * 0.2f;
                 dy = fy - 224 * 0.2f;
                 d = sqrtf(dx * dx + dy * dy);
-                ph = d * 0.2f;
-                gu[row][col] += (s32)(cosf(gGfxWater[view].phaseU + ph) * (dx / d) * 3.0f * 16.0f);
-                gv[row][col] += (s32)(cosf(gGfxWater[view].phaseU + ph) * (dy / d) * 3.0f * 16.0f);
+                gu[row][col] += (s32)(cosf(gGfxWater[view].phaseU + d * 0.2f) * (dx / d) * 3.0f * 16.0f);
+                gv[row][col] += (s32)(cosf(gGfxWater[view].phaseU + d * 0.2f) * (dy / d) * 3.0f * 16.0f);
                 dx = fx - fw * 0.8f;
                 dy = fy - 0.8f * fh;
                 d = sqrtf(dx * dx + dy * dy);
-                ph = d * 0.2f;
-                gu[row][col] += (s32)(cosf(gGfxWater[view].phaseV + ph) * (dx / d) * 3.0f * 16.0f);
-                gv[row][col] += (s32)(cosf(gGfxWater[view].phaseV + ph) * (dy / d) * 3.0f * 16.0f);
+                gu[row][col] += (s32)(cosf(gGfxWater[view].phaseV + d * 0.2f) * (dx / d) * 3.0f * 16.0f);
+                gv[row][col] += (s32)(cosf(gGfxWater[view].phaseV + d * 0.2f) * (dy / d) * 3.0f * 16.0f);
             }
             if (gu[row][col] < 0) {
                 gu[row][col] = 0;
@@ -1015,7 +1000,7 @@ void GfxWater_DrawView(s32 split, s32 view) {
     p[0] = ((s64)(w - 1) << 16) | ((u64)0xDF << 48);
     p[1] = GS_SCISSOR_1;
     p += 2;
-    p[0] = ((s64)x0 << 4) | ((u64)0x1C0 << 34) | ((s64)x1 << 14) | 0xA;
+    p[0] = GS_SET_CLAMP(2, 2, x0, x1, 0, srcH);
     p[1] = GS_CLAMP_1;
     p += 2;
     p[0] = 0x44;
@@ -1072,11 +1057,13 @@ void GfxWater_DrawView(s32 split, s32 view) {
         p += 2;
         for (col = 0; col < cols; col++) {
             sx = ((x0 + col * srcW / (cols - 1)) << 4) + GFX_OFX;
+            sy = ((srcH * row / 5) << 4) + GFX_OFY;
             p[0] = (s64)gu[row][col] | ((s64)gv[row][col] << 16);
-            p[1] = (s64)sx | ((s64)(((srcH * row / 5) << 4) + GFX_OFY) << 16);
+            p[1] = (s64)sx | ((s64)sy << 16);
             p += 2;
+            sy = ((srcH * (row + 1) / 5) << 4) + GFX_OFY;
             p[0] = (s64)gu[row + 1][col] | ((s64)gv[row + 1][col] << 16);
-            p[1] = (s64)sx | ((s64)(((srcH * (row + 1) / 5) << 4) + GFX_OFY) << 16);
+            p[1] = (s64)sx | ((s64)sy << 16);
             p += 2;
         }
     }
@@ -1092,8 +1079,6 @@ void GfxWater_DrawView(s32 split, s32 view) {
     Dma_EndDirect(p);
 }
 
-ASM_STUB_END();
-INCLUDE_ASM("asm/nonmatchings/sys/gfx_screen", GfxWater_DrawView);
 
 /* Draws the underwater wobble for every view whose camera is below the stage's water level. */
 void GfxWater_Draw(void) {

@@ -550,7 +550,6 @@ segments:
       - [0x1FC0F0, .rodata, ui/shen_confirm]
       - [0x1FC280, .lit4, sys/gfx_post] # .lit4
       - [0x1FC290, .lit4, sys/gfx_screen]
-      - [0x1FC2A0, lit4, cod/1FC2A0]
       - [0x1FC2B8, .lit4, sys/flash]
       - [0x1FC2C0, .lit4, battle/obj_render]
       - [0x1FC2CC, .lit4, battle/obj_shadow]
@@ -673,6 +672,7 @@ segments:
       - [0x1FE81C, .lit4, sys/ramp]
       - [0x1FE820, lit4, cod/1FE820]
       - [0x1FE880, sdata, cod/1FE880] # .sdata
+      - [0x1FE8D0, .sdata, sys/gfx_screen]
       - [0x1FE8D8, .sdata, sys/flash]
       - [0x1FE8E0, .sdata, sys/flash]
       - [0x1FE914, .sdata, battle/stg_model_anim]
