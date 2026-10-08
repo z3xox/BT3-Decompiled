@@ -1,12 +1,12 @@
 #include "common.h"
-#include "battle/eft_t.h"
+#include "battle/eft_draw_modules.h"
 
 /*
  * 0x1809C0..0x182CE8: the module of task class 0x2C3EC0 (EftShotFx_*), the teleport ("vanish") lines: black
  * vertical streaks on a fighter's body and in a column around it. Written as two files and merged at
  * integration (one object in the original: its .rodata is tables, jump table, constants in that order): this
  * first part is the head, 0x1809C0..0x180BF8; the second part (formerly eft_u.c, 0x180BF8..0x182CE8) has the
- * other callbacks and all of the drawing (include/battle/eft_u.h has the full work layout).
+ * other callbacks and all of the drawing (include/battle/eft_shot_fx_particle.h has the full work layout).
  * Here: the request entry the fighter effect layer calls (requests 0xC..0xF give kinds 0..3, and object
  * animation event bit 42 gives kind 0), its slot finder, and the class's init callback.
  * Drawing only: a request is an object id and two frame counters.
@@ -22,7 +22,7 @@ extern void EftTexSet_Load4(EftTTex *tex, s32 *entry); /* builds a texture set f
 extern EftTShotFxMgr *gEftShotFx;
 
 /* The module's two file-scope tables (0x2ECEC0 body segments, 0x2ED0E8 column slices; layouts in
- * include/battle/eft_u.h). They come first in this object's .rodata, in front of the jump table of
+ * include/battle/eft_shot_fx_particle.h). They come first in this object's .rodata, in front of the jump table of
  * EftShotFx_Request (0x2ED180), so they belong to this file. The second part reads them through non-const
  * `extern` declarations (as const data defined here its loads change), so they are emitted from the original. */
 INCLUDE_RODATA("asm/nonmatchings/battle/eft_shot_fx", gEftShotFxSegs);
@@ -114,12 +114,12 @@ void EftShotFxMgr_Init(EftTTask *task) {
  * Second part (formerly eft_u.c), with its own header and view types. Names the first part already declared with
  * other types are reached through cast macros (the generated code is the same).
  * ------------------------------------------------------------------------------------------------------------ */
-#include "battle/eft_u.h"
+#include "battle/eft_shot_fx_particle.h"
 #include "sys/gfx_ot.h"
 
 /*
  * Vanish lines (module EftShotFx), 0x180BF8..0x182CE8: the rest of the module that starts at 0x1809C0 in
- * the first part. See include/battle/eft_u.h. The black vertical streaks of a teleport: on the body and in a column
+ * the first part. See include/battle/eft_shot_fx_particle.h. The black vertical streaks of a teleport: on the body and in a column
  * around it, for fighter effect requests 0xC..0xF.
  * Drawing only: reads fighters through BtlCharApi_GetHeight / BtlCharApi_GetNodePos, writes nothing outside its
  * own pool and the display list. Random values come from libc rand().

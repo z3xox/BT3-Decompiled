@@ -1,4 +1,4 @@
-#include "menu/menu_u.h"
+#include "menu/sim_event_evo_z.h"
 
 /* SimEvent, 0x391B70..0x391E28: gSimEvent[33]. Read-only data: its jump table, 0x3BAF60..0x3BAFA8. */
 

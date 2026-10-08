@@ -8,7 +8,7 @@
  * src/battle/eft_link_2.c, 0x1895E8..0x18D618: two sprite particle modules of the effect pack library (EftEmit_*,
  * include/battle/eft_sweep.h). Both are presentation only.
  *
- * 1. 0x1895E8..0x18C190  EftLink_*, second half of effect pack part kind 15 (first half: eft_link_1.c / eft_v.h).
+ * 1. 0x1895E8..0x18C190  EftLink_*, second half of effect pack part kind 15 (first half: eft_link_1.c / eft_particle_unused.h).
  *    An emitter lays sprites out between two points (pos, pos2). This file has its sprite pool (200 sprites
  *    of 0x150 bytes in the manager block gEftLink, shared by all emitters), the sprite life cycle, the four
  *    draw routines and the handle API called by EftEmit_SpawnType15.
@@ -17,7 +17,7 @@
  *    (0x2C3F68: 12 emitter tasks of 0x3D0 bytes, 150 rings, 150 particles), the emitter class callbacks
  *    (0x2C3F80), ring emission and the particle step.
  *
- * All structs are this file's views of objects eft_v.h / eft_part10.h also describe; offsets are from the matching
+ * All structs are this file's views of objects eft_particle_unused.h / eft_part10.h also describe; offsets are from the matching
  * code, names from how this file uses them. Where the views disagree the notes say which code verifies what.
  *
  * Emitter flags (both modules, +0x398 / +0x3C0): 1 alive, 2 dead, 4 stopped (no new sprites), 8 stop delay

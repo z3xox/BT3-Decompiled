@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_p.h"
+#include "menu/ub_score.h"
 #include "sys/pad.h"
 
 /* The screen's work area (.data, 0x3B7380). */

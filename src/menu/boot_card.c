@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_i.h"
+#include "menu/training.h"
 
 BootCard *gBootCard = NULL; /* 0x3B5908 */
 

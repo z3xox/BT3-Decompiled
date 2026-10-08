@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_k.h"
+#include "menu/bracket.h"
 
 /*
  * TourBg, 0x366F58..0x3673F8: the backdrop of the tournament screens (a picture and a movie of drifting clouds),

@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_l.h"
+#include "menu/tournament.h"
 #include "sys/pad.h"
 
 /*

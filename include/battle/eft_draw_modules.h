@@ -367,7 +367,7 @@ typedef struct EftStreakRoot {
     /* 0x0 */ EftStreakMgr *mgr;
 } EftStreakRoot;
 
-/* ---- vanish lines (class 0x2C3EC0; the full layout is EftShotFxWork / EftTShotFxReq in eft_u.h) ------------- */
+/* ---- vanish lines (class 0x2C3EC0; the full layout is EftShotFxWork / EftTShotFxReq in eft_shot_fx_particle.h) ------------- */
 
 typedef struct EftTShotFxReq {
     /* 0x0 */ s32 objId;

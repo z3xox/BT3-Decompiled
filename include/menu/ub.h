@@ -1,7 +1,7 @@
 #ifndef MENU_MENU_O_H
 #define MENU_MENU_O_H
 
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 
 /*
  * Menu overlay DBZP.BIN, 0x376920..0x37AFF8 (placeholder stem "menu_o"): the mode group 13..30 (main-menu item 1,
@@ -20,7 +20,7 @@
  * chunk's own views.
  */
 
-/* ---- Main executable, beyond what menu_a.h declares ---- */
+/* ---- Main executable, beyond what overlay_common.h declares ---- */
 
 extern s32 Rand_Libc(void);     /* the C library rand(), not the shared Mersenne Twister */
 extern void TextBox_Init(MTextBox *box, void *text, u32 preset);
@@ -64,7 +64,7 @@ extern void BattleSetup_Finish(void);
 
 /* ---- gProgress and gSaveData as this chunk uses them ---- */
 
-/* What was chosen for one fighter (TsMember of include/menu/menu_e.h). */
+/* What was chosen for one fighter (TsMember of include/menu/team_select.h). */
 typedef struct UoMember {
     /* 0x00 */ s32 unk0[6];
     /* 0x18 */ s32 color;       /* costume */
@@ -89,9 +89,9 @@ typedef struct UoProgress {
     /* 0x64C */ u8 unk64C[0x28];
     /* 0x674 */ s32 unk674;     /* counted up each time mode 23 goes back to mode 22 */
     /* 0x678 */ s32 unk678[3];
-    /* 0x684 */ s32 discFlags;  /* UB_DISC_; bit 8 is read by the result screen (menu_n.h: ubFlags, where bit 8 is
+    /* 0x684 */ s32 discFlags;  /* UB_DISC_; bit 8 is read by the result screen (ub_rank.h: ubFlags, where bit 8 is
                                    NPROG_UB_UPWARD: the place challenged on the ladder is above the player's) */
-    /* 0x688 */ s32 course;     /* copied to UbResult.course when cursor == 1 (menu_n.h: ubChoice) */
+    /* 0x688 */ s32 course;     /* copied to UbResult.course when cursor == 1 (ub_rank.h: ubChoice) */
 } UoProgress;
 
 #define UO_PROG ((UoProgress *)gProgress)
@@ -112,7 +112,7 @@ typedef struct UoMissionRec {
     /* 0x8 */ s32 score;        /* shown * 100 */
 } UoMissionRec;
 
-/* Best result of one course (NCourseRec of include/menu/menu_n.h). */
+/* Best result of one course (NCourseRec of include/menu/ub_rank.h). */
 typedef struct UoCourseRec {
     /* 0x0 */ u8 cleared;
     /* 0x1 */ u8 rank;
@@ -124,7 +124,7 @@ typedef struct UoCourseRec {
 #define UO_COURSE_NUM 5
 
 /*
- * gSaveData as this chunk reads it: one flat structure. (menu_c.h's view nests a body behind the 8-byte checksum;
+ * gSaveData as this chunk reads it: one flat structure. (history.h's view nests a body behind the 8-byte checksum;
  * here the flat form is the one that reproduces the address arithmetic: 0x28C splits into 0x280 + 0xC.)
  */
 typedef struct UoSave {
@@ -134,7 +134,7 @@ typedef struct UoSave {
     /* 0x0210 */ u8 unk210[0x7C];
     /* 0x028C */ UoMissionRec mission[100];
     /* 0x073C */ u8 unk73C[0x40];
-    /* 0x077C */ s32 rank;              /* the player's place on the ladder (menu_n.h: 99 by default, 0 = first) */
+    /* 0x077C */ s32 rank;              /* the player's place on the ladder (ub_rank.h: 99 by default, 0 = first) */
     /* 0x0780 */ UoCourseRec course[UO_COURSE_NUM];
     /* 0x07BC */ u8 unk7BC[0x286C];
     /* 0x3028 */ s32 money;             /* Z points */

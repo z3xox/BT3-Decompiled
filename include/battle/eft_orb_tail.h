@@ -255,7 +255,7 @@ void EftOrbTail_Stub4(void);
 
 /* ---- transformation effect ---------------------------------------------------------------- */
 
-/* An emitter set of the effect pack library (eft_emit.h / eft_l.h EftModel); only what this file reads. */
+/* An emitter set of the effect pack library (eft_emit.h / eft_tech_modules.h EftModel); only what this file reads. */
 typedef struct EftAbPartDef {
     /* 0x0 */ u8 unk0;
     /* 0x1 */ u8 count;            /* emitters in the group */
@@ -424,7 +424,7 @@ typedef struct EftRbnNode {
 
 #define EFT_RBN_NODES 500
 
-/* Work block of a ribbon task (include/battle/eft_ac.h EftRibbon has the fields the rest of the module uses). */
+/* Work block of a ribbon task (include/battle/eft_ribbon.h EftRibbon has the fields the rest of the module uses). */
 typedef struct EftRbn {
     /* 0x000 */ EftRbnNode *head;
     /* 0x004 */ EftRbnNode *tail;

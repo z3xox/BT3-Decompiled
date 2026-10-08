@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_u.h"
+#include "menu/sim_event_evo_z.h"
 
 /* The customising screen's work pointer (0x3BB140): this object owns it. */
 UEvoZ *gEvoZ = NULL;

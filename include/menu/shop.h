@@ -1,9 +1,9 @@
 #ifndef MENU_MENU_W_H
 #define MENU_MENU_W_H
 
-/* menu_a.h declares Snd_PlaySe as returning nothing; it returns s32 (see include/menu/menu_h.h). */
+/* overlay_common.h declares Snd_PlaySe as returning nothing; it returns s32 (see include/menu/char_reference.h). */
 #define Snd_PlaySe Snd_PlaySe_menuA
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 #include "sys/pad.h"
 #include "sys/common.h"
 #include "sys/save.h"
@@ -17,14 +17,14 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
  *   menu_w.c    0x39A978..0x39E940  Shop     tail of the item shop object (mode 50); head: src/menu/shop.c
  *                                            -- now merged into src/menu/shop.c, which includes this header
  *   evo_mode.c  0x39E940..0x39EB08  EvoMode_Main, the handler of modes 48..50
- *   evo_top.c  0x39EB08..0x39FAA8  EvoTop   the mode's top menu (mode 48); declared in include/menu/menu_x.h
+ *   evo_top.c  0x39EB08..0x39FAA8  EvoTop   the mode's top menu (mode 48); declared in include/menu/evo_top_option.h
  *
- * The Shop layout below is this chunk's own view (the previous chunk's include/menu/menu_v.h declares the same
+ * The Shop layout below is this chunk's own view (the previous chunk's include/menu/evo_z_items.h declares the same
  * structure from the head of the object only and was still changing; unify them when the two files are merged:
  * this one has the fields from 0x22C to 0x284 and the ShopList fields at +0x10 / +0x1C worked out).
  */
 
-/* ---- Main executable, beyond what menu_a.h declares ---- */
+/* ---- Main executable, beyond what overlay_common.h declares ---- */
 
 extern void Flash_ClipSetCallbackA(MFlash *flash, MFlashRef *ref, void *fn, void *arg);
 extern void Flash_ClipSetCallbackB(MFlash *flash, MFlashRef *ref, void *fn, void *arg);
@@ -194,6 +194,6 @@ s32 Shop_Run(s32 section);
 
 s32 EvoMode_Main(void);
 
-/* EvoTop (evo_top.c, the whole object since the merge with menu_x.c): see include/menu/menu_x.h. */
+/* EvoTop (evo_top.c, the whole object since the merge with menu_x.c): see include/menu/evo_top_option.h. */
 
 #endif

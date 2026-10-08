@@ -9,14 +9,14 @@
  *   main_menu.c    0x334C00..0x336A90  MainMenu   the main menu (mode 4)
  *   progress.c  0x336A90..0x336FC0  Progress_Main, the overlay entry and mode dispatcher
  *   title.c  0x336FC0..0x338020  Title      the title screen (mode 1)
- *   mode_menu.c  0x338020..0x33A360  ModeMenu   the per-mode sub menu (layout in menu_b.h)
+ *   mode_menu.c  0x338020..0x33A360  ModeMenu   the per-mode sub menu (layout in mode_menu.h)
  *
  * The overlay is compiled with -G0: nothing is reached through $gp, not even the main executable's small data.
  */
 
 /* ---- Local views of main-executable types (the two Flash headers under include/ conflict). ---- */
 
-/* A movie instance (include/sys/gfxm_c.h has the full layout). */
+/* A movie instance (include/sys/flash_part2.h has the full layout). */
 typedef struct MFlash {
     /* 0x00 */ u8 *data;
     /* 0x04 */ void **tex;
@@ -262,7 +262,7 @@ typedef struct MTextBox {
     u8 unk0[0x8C];
 } MTextBox;
 
-/* The work struct (ModeMenu) and its item table are in include/menu/menu_b.h (the object was first decompiled in
+/* The work struct (ModeMenu) and its item table are in include/menu/mode_menu.h (the object was first decompiled in
    two halves; the head's partial view that stood here is gone). */
 #define MODEMENU_FLASH_NUM 1
 #define MODEMENU_ITEM_MAX 16

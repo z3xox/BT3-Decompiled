@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_g.h"
+#include "menu/duel.h"
 #include "sys/pad.h"
 #include "sys/save.h"
 #include "sys/common.h"

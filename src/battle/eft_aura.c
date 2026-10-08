@@ -1,6 +1,6 @@
 #include "common.h"
 #include "battle/eft_aura.h"
-#include "battle/eft_n.h"
+#include "battle/eft_aura_part2.h"
 #include "sys/gfx_ot.h"
 
 /*
@@ -1577,7 +1577,7 @@ void EftAura_BuildFlameMtx(Mtx44 *out, Vec4 *dir, Vec4 *pos) {
 
 
 /*
- * Effect tasks, 0x1637A0..0x167E68. See include/battle/eft_n.h.
+ * Effect tasks, 0x1637A0..0x167E68. See include/battle/eft_aura_part2.h.
  *
  * All 47 functions are C (EftAura_DrawFlames since cleanup W1, EftBolt_Shape and EftBolt_Draw since 2026-10-08).
  * The file's .lit4 is the whole of 0x2FC97C..0x2FCAAC.

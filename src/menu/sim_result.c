@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_r.h"
+#include "menu/sim_top.h"
 #include "sys/pad.h"
 
 /* The screen's work area (.data, 0x3B741C). */

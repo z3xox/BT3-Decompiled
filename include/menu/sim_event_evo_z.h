@@ -1,19 +1,19 @@
 #ifndef MENU_MENU_U_H
 #define MENU_MENU_U_H
 
-/* menu_a.h declares Snd_PlaySe as returning nothing; it returns s32 (see include/menu/menu_h.h). */
+/* overlay_common.h declares Snd_PlaySe as returning nothing; it returns s32 (see include/menu/char_reference.h). */
 #define Snd_PlaySe Snd_PlaySe_menuA
 #define Rand_Range Rand_Range_menuA
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 #undef Snd_PlaySe
 #undef Rand_Range
 #include "sys/pad.h"
 #include "sys/common.h"
 extern s32 Snd_PlaySe(u32 mask, s32 id);
-/* menu_a.h has u32 Rand_Range(u32); the shell game (sim_event_shell.c) only matches with a signed result. */
+/* overlay_common.h has u32 Rand_Range(u32); the shell game (sim_event_shell.c) only matches with a signed result. */
 extern s32 Rand_Range(s32 n);
 
-/* The day screen's work area (mode 22): a local view of SimDay (include/menu/menu_q.h has the full layout). */
+/* The day screen's work area (mode 22): a local view of SimDay (include/menu/sim_day.h has the full layout). */
 typedef struct USimDay {
     /* 0x000 */ u8 unk0[0x20];
     /* 0x020 */ MFlash flash[7];    /* [4] = the movie of training 2 and of the mini games */
@@ -43,7 +43,7 @@ typedef struct USimDay {
     /* 0xB8C */ s32 unkB8C;         /* answer of the yes / no window (SimDay_Cmd(0x11)) */
 } USimDay;
 
-/* One rank of a training (SimTrain of include/menu/menu_q.h). */
+/* One rank of a training (SimTrain of include/menu/sim_day.h). */
 typedef struct USimTrain {
     /* 0x00 */ s32 param;       /* rock game: rocks thrown; = hits needed to win */
     /* 0x04 */ s32 speed;       /* rock game: the rock moves speed * 3 + 3 a frame */
@@ -94,7 +94,7 @@ extern void SimDay_GiveItem(void);
 extern void SimDay_Cmd(s32 cmd);
 
 /* ---- EvoZ (evo_z_1.c): the character customising screen of mode 49. The object goes on in the next chunk
- * (EvoZ_Load, 0x395E30, is the last function of this source file); include/menu/menu_v.h has that chunk's view
+ * (EvoZ_Load, 0x395E30, is the last function of this source file); include/menu/evo_z_items.h has that chunk's view
  * of the same work area. Everything below is a local view. ---- */
 
 extern void TextBox_Init(MTextBox *box, void *text, u32 preset);
@@ -139,7 +139,7 @@ extern void ChrGrid_Build(s32 *outCount, UChrCell *out, s32 *inCount, UChrCell *
                           UChrCell *custom);
 extern s32 ChrGrid_IsSelectable(UChrCell *cells, s32 index);
 
-/* The grid list of a screen pack: count, then the cells from 0x10 (VChrGridList of menu_v.h). */
+/* The grid list of a screen pack: count, then the cells from 0x10 (VChrGridList of evo_z_items.h). */
 typedef struct UChrGridList {
     /* 0x00 */ s32 count;
     /* 0x04 */ s32 unk4[3];
@@ -175,7 +175,7 @@ typedef struct UEvoZSide {
 #define UEVOZ_ITEM_MAX 350
 #define UEVOZ_TABS 4               /* all items, then one tab per item type */
 
-/* The item list (same layout as the shop's lists, ShopList in menu_v.h). */
+/* The item list (same layout as the shop's lists, ShopList in evo_z_items.h). */
 typedef struct UEvoZList {
     /* 0x0000 (0x1A98) */ s32 cur[UEVOZ_TABS];
     /* 0x0010 (0x1AA8) */ s32 tab;

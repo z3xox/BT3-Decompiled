@@ -50,7 +50,7 @@ typedef struct BtlCapiChr {
     /* 0x0100 */ u8 unk100[0xD78 - 0x100];
     /* 0x0D78 */ f32 charge;        /* 0..1: how far the current attack was charged (btl_param.h) */
     /* 0x0D7C */ u8 unkD7C[0xDEC - 0xD7C];
-    /* 0x0DEC */ f32 blastCharge;   /* 0..1: progress of the charged ki blast (btl_act_d.h) */
+    /* 0x0DEC */ f32 blastCharge;   /* 0..1: progress of the charged ki blast (btl_act_2_part2.h) */
     /* 0x0DF0 */ u8 unkDF0[0xE90 - 0xDF0];
     /* 0x0E90 */ s32 thrTech;       /* +0xE90 is the throw / rush description (BtlCollThrow in btl_char_coll.h) */
     /* 0x0E94 */ s32 thrAtkSide;    /* player index of the attacker */

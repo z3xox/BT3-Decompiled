@@ -1,9 +1,9 @@
 #ifndef MENU_MENU_S_H
 #define MENU_MENU_S_H
 
-/* menu_a.h declares Snd_PlaySe as returning nothing; it returns s32 (see include/menu/menu_h.h). */
+/* overlay_common.h declares Snd_PlaySe as returning nothing; it returns s32 (see include/menu/char_reference.h). */
 #define Snd_PlaySe Snd_PlaySe_menuA
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 #undef Snd_PlaySe
 extern s32 Snd_PlaySe(u32 mask, s32 id);
 
@@ -13,7 +13,7 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
  *
  *   (menu_s.c)  0x388618..0x388EE0  SimTop      tail of the entry screen of the "sim" sub family (mode 20): merged
  *                                               into src/menu/sim_top.c, where the object starts (0x387880;
- *                                               work pointer 0x3B7420); its view is in include/menu/menu_r.h
+ *                                               work pointer 0x3B7420); its view is in include/menu/sim_top.h
  *   survival_select.c  0x388EE0..0x38A308  SurvSel     the course select of the survival sub family (mode 17; movie
  *                                               labels "fl_survival_%02d_in"), a whole object (work pointer
  *                                               0x3B743C). Its first function writes the battle setup.
@@ -26,7 +26,7 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
  * All names are guesses from what the code does. The structures are this chunk's own views.
  */
 
-/* ---- Main executable, beyond what menu_a.h declares ---- */
+/* ---- Main executable, beyond what overlay_common.h declares ---- */
 
 extern s32 Rand_Libc(void);           /* libc rand(), not the shared Mersenne Twister */
 extern void TextBox_Init(MTextBox *box, void *text, u32 preset);
@@ -69,7 +69,7 @@ typedef struct SProgress {
 
 #define S_PROG ((SProgress *)gProgress)
 
-/* Best result of one survival course (UbSaveBestB of include/menu/menu_p.h, written by UbScore_SaveBestB). */
+/* Best result of one survival course (UbSaveBestB of include/menu/ub_score.h, written by UbScore_SaveBestB). */
 typedef struct SSaveSurv {
     /* 0x00 */ s32 defeated;    /* opponents beaten: the score sheet's fourth line */
     /* 0x04 */ s32 score;       /* shown * 100 */
@@ -82,8 +82,8 @@ typedef struct SSaveSurv {
 #define SURV_COURSE_NUM 3       /* rows of the course select (the save has room for five records) */
 
 /*
- * The save, flat (include/sys/save.h). The nested form of include/menu/menu_c.h does not reproduce these screens'
- * address arithmetic: 0x73C splits into 0x730 (added to the index) + 0xC, as in include/menu/menu_o.h.
+ * The save, flat (include/sys/save.h). The nested form of include/menu/history.h does not reproduce these screens'
+ * address arithmetic: 0x73C splits into 0x730 (added to the index) + 0xC, as in include/menu/ub.h.
  */
 typedef struct SSave {
     /* 0x0000 */ u8 unk0[0x208];
@@ -136,7 +136,7 @@ extern void UbScore_PlateGoto(MFlash *flash, s32 kind, s32 on);
 extern s32 UbScore_SaveBestB(s32 course, s32 total, SScore *score); /* 1 = a new record was written */
 extern s32 UbScore_GetRewardItem(s32 idx);  /* gUbRewardItems[idx]; idx 3 = item 0x6A */
 
-/* ---- SimTop: the former menu_s.c is merged into src/menu/sim_top.c; its view is in include/menu/menu_r.h ---- */
+/* ---- SimTop: the former menu_s.c is merged into src/menu/sim_top.c; its view is in include/menu/sim_top.h ---- */
 
 /* ---- SurvSel (survival_select.c) ---- */
 
@@ -147,7 +147,7 @@ extern s32 UbScore_GetRewardItem(s32 idx);  /* gUbRewardItems[idx]; idx 3 = item
 #define SURVSEL_FLASH_NUM 1
 #define SURVSEL_IDLE_FRAMES 0x708
 
-/* Section 12: one course (0xE0 bytes). The head is MisSelDef's (include/menu/menu_o.h). */
+/* Section 12: one course (0xE0 bytes). The head is MisSelDef's (include/menu/ub.h). */
 typedef struct SurvCourse {
     /* 0x00 */ s32 announcer;   /* BattleSetup_SetRule's fifth argument; SURV_RANDOM = Rand_Range(8) */
     /* 0x04 */ s32 unk4;        /* non-zero: BattleSetup_SetRule's last argument is 1 */
@@ -158,7 +158,7 @@ typedef struct SurvCourse {
     /* 0x18 */ s32 opp[SURV_OPP_NUM]; /* indices into section 13 */
 } SurvCourse; /* 0xE0 */
 
-/* Section 13: one opponent (0x2C bytes; MisSelOpp of include/menu/menu_o.h). */
+/* Section 13: one opponent (0x2C bytes; MisSelOpp of include/menu/ub.h). */
 typedef struct SurvOpp {
     /* 0x00 */ s32 chara;       /* SURV_RANDOM = drawn from section 14 */
     /* 0x04 */ s32 costume;
@@ -276,6 +276,6 @@ void SurvResult_Input(s32 *result);
 s32 SurvResult_Run(s32 section);
 
 /* ---- SimEvent handlers (sim_event_1.c): merged with menu_t.c; SimTrainTbl, the outcome globals and the
- * prototypes of SimEv00..02 are in include/menu/menu_t.h now (the SimDayS view is replaced by TSimDay). ---- */
+ * prototypes of SimEv00..02 are in include/menu/sim_event_card.h now (the SimDayS view is replaced by TSimDay). ---- */
 
 #endif

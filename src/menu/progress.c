@@ -1,7 +1,7 @@
 #include "common.h"
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 
-/* The menu archives, one per group of modes (overlay .data, 0x3B0E84..0x3B0EB8); see menu_a.h. */
+/* The menu archives, one per group of modes (overlay .data, 0x3B0E84..0x3B0EB8); see overlay_common.h. */
 void *gMenuArc0 = NULL;
 void *gMenuArc1 = NULL;
 void *gMenuArc2 = NULL;

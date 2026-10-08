@@ -2,7 +2,7 @@
 #define MENU_MENU_Y_H
 
 #include "types.h"
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 #include "sys/save.h"
 #include "sys/pad.h"
 
@@ -12,12 +12,12 @@
  *   (menu_y.c)  0x3A3848..0x3A65E8  Option   tail of the option screen object (mode 62, handler 0x39FAA8; work
  *                                            pointer 0x3BC364): now merged into src/menu/option.c
  *   dc_list.c  0x3A65E8..0x3A9850  DcList   the Data Center's custom character list (mode 55, handler 0x3A9850;
- *                                            menu_z.c, its tail, was merged in): declared in menu_z.h
+ *                                            menu_z.c, its tail, was merged in): declared in dc.h
  *
  * All names are guesses from what the code does. The structures are this chunk's own views.
  */
 
-/* ---- Main executable, beyond what menu_a.h declares ---- */
+/* ---- Main executable, beyond what overlay_common.h declares ---- */
 
 extern void Sprite_SetScissor(s32 x0, s32 x1, s32 y0, s32 y1);
 extern void Flash_ClipSetCallbackA(MFlash *flash, MFlashRef *ref, void *fn, void *arg);
@@ -38,7 +38,7 @@ extern void SndOpt_Apply(void);
 extern void Dialog_Init(void *file, void *msgTbl, s32 size);
 extern void Dialog_Term(void);
 
-/* Snd_PlaySe returns a value in the original (menu_a.h declares it void). */
+/* Snd_PlaySe returns a value in the original (overlay_common.h declares it void). */
 #define Snd_PlaySe ((s32 (*)(u32, s32))Snd_PlaySe)
 
 /* Voice_GetStat result when nothing is playing. */
@@ -46,10 +46,10 @@ extern void Dialog_Term(void);
 
 /* ---- Option (option.c): the option screen of mode 62 ---- */
 
-/* The work area (Option, gOption) is declared in include/menu/menu_x.h; src/menu/option.c, the whole object
+/* The work area (Option, gOption) is declared in include/menu/evo_top_option.h; src/menu/option.c, the whole object
    since menu_y.c was merged into it, includes that header first. */
 
-/* Option.state values this chunk tests (menu_x.h: OPT_ITEM_ / OPT_ST_). */
+/* Option.state values this chunk tests (evo_top_option.h: OPT_ITEM_ / OPT_ST_). */
 #define YOPT_SCREEN 2          /* top page row: screen page */
 #define YOPT_SOUND 3
 #define YOPT_CTRL 4
@@ -92,6 +92,6 @@ void Option_OnSaved(void);
 void Option_Term(void);
 
 
-/* DcList (dc_list.c, the whole object since menu_z.c was merged into it): see include/menu/menu_z.h. */
+/* DcList (dc_list.c, the whole object since menu_z.c was merged into it): see include/menu/dc.h. */
 
 #endif

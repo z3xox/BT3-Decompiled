@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_o.h"
+#include "menu/ub.h"
 
 /*
  * Ub_Main, 0x379908..0x379F58: the handler of gProgress->mode 13..30 (main-menu item 1; archive gMenuArc3 = file

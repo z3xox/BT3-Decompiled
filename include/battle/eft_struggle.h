@@ -422,7 +422,7 @@ typedef struct EftKiObj {
     /* 0x1D8 */ s32 unk1D8[2];
 } EftKiObj; /* size 0x1E0 */
 
-/* Argument of the explosion effect EftImpact_SpawnBlast (eft_v.h's EftImpactArg), passed by value. */
+/* Argument of the explosion effect EftImpact_SpawnBlast (eft_particle_unused.h's EftImpactArg), passed by value. */
 typedef struct EftRBlastFx {
     /* 0x00 */ EftRVec pos;
     /* 0x10 */ EftRVec dir;

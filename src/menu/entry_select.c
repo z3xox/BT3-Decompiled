@@ -1,6 +1,6 @@
 #include "common.h"
-#include "menu/menu_i.h"
-#include "menu/menu_j.h"
+#include "menu/training.h"
+#include "menu/tour_entry.h"
 #include "sys/pad.h"
 #include "sys/save.h"
 

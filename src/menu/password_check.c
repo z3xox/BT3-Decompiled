@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_za.h"
+#include "menu/dc_password_replay.h"
 
 /*
  * Menu overlay DBZP.BIN, 0x3AEAB0..0x3AF290: PassChk, what the password entry screen needs to judge a decoded

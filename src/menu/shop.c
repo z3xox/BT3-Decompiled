@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_w.h"
+#include "menu/shop.h"
 
 /* The shop's work pointer (0x3BB148): this object owns it. */
 Shop *gShop = NULL;
@@ -332,8 +332,8 @@ void Shop_Init(s32 section) {
 
 /*
  * Merged (integration step 11): the former src/menu/menu_w.c (0x39A978..0x39E940) follows, so this file is the
- * whole Shop object, 0x399790..0x39E940. Both halves use the Shop view of include/menu/menu_w.h (the head's
- * partial view in menu_v.h is gone: page -> cursor[0], VItemEntry -> WItemEntry, VITEM_* -> WITEM_*,
+ * whole Shop object, 0x399790..0x39E940. Both halves use the Shop view of include/menu/shop.h (the head's
+ * partial view in evo_z_items.h is gone: page -> cursor[0], VItemEntry -> WItemEntry, VITEM_* -> WITEM_*,
  * VLIST_* -> SHOP_*).
  */
 

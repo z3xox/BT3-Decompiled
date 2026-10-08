@@ -1,6 +1,6 @@
 #include "common.h"
 #include "battle/btl_char_api_2.h"
-#include "battle/btl_capi_b.h"
+#include "battle/btl_char_api_2_part2.h"
 
 /*
  * Fighter interface, 0x207020..0x208430: 58 accessors keyed by battle object id (or by nothing), used by the camera,
@@ -821,7 +821,7 @@ s32 BtlCharApi_TestFlag60(s32 objId) {
 
 
 /*
- * Fighter interface, second part, 0x208430..0x20BA80. See include/battle/btl_capi_b.h for the groups.
+ * Fighter interface, second part, 0x208430..0x20BA80. See include/battle/btl_char_api_2_part2.h for the groups.
  *
  * This continues src/battle/btl_char_api_2.c (same accessor style, and the float pool 0x2FE0CC..0x2FE0E0 used here
  * follows that file's run). Callees outside the file are named by address when they have no name yet; what each does

@@ -1,7 +1,7 @@
 #ifndef MENU_MENU_M_H
 #define MENU_MENU_M_H
 
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 
 /*
  * Menu overlay DBZP.BIN, 0x36DBE8..0x372148 (placeholder stem "menu_m"): the two character selects of the mode
@@ -15,10 +15,10 @@
  *                                               frame loop) come from the next chunk, menu_n
  *
  * All names are guesses from what the code does ("Ub" = the group of modes 13..30). The structures are this
- * chunk's own views; the member record and the grid cell are those of include/menu/menu_e.h (TsMember, TsCell).
+ * chunk's own views; the member record and the grid cell are those of include/menu/team_select.h (TsMember, TsCell).
  */
 
-/* ---- Main executable, beyond what menu_a.h declares ---- */
+/* ---- Main executable, beyond what overlay_common.h declares ---- */
 
 extern void Flash_ClipSetOffset(MFlash *flash, MFlashRef *ref, s32 x, s32 y);
 extern void TextBox_Init(MTextBox *box, void *text, u32 preset);
@@ -76,7 +76,7 @@ typedef struct UbSave {
 
 #define UB_SAVE ((UbSave *)gSaveData)
 
-/* What was chosen for one fighter (TsMember of include/menu/menu_e.h). Kept in gProgress between screens. */
+/* What was chosen for one fighter (TsMember of include/menu/team_select.h). Kept in gProgress between screens. */
 typedef struct UbMember {
     /* 0x00 */ s32 col;         /* cursor column in the character grid */
     /* 0x04 */ s32 row;         /* cursor row */
@@ -127,7 +127,7 @@ extern void ItemHelp_Open(void);                      /* item help window: open 
 extern void ItemHelp_Close(void);                      /* item help window: close */
 
 /* SoloSel (the former menu_m.c, 0x36DBE8..0x36E028) is now part of solo_select.c; its work area is SoloSel of
-   include/menu/menu_l.h. */
+   include/menu/tournament.h. */
 
 /* flags of both screens */
 #define UBSEL_STARTED 2         /* the first chip was lit */

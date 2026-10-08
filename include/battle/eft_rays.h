@@ -60,7 +60,7 @@ typedef struct EftOTexSet {
     /* 0x204 */ s32 unk204;
 } EftOTexSet; /* size 0x208 */
 
-/* ---- EftBolt (body lightning; EftBoltWork / EftBoltPool in eft_n.h) -------------------------------------- */
+/* ---- EftBolt (body lightning; EftBoltWork / EftBoltPool in eft_aura_part2.h) -------------------------------------- */
 
 /* One animated texture of the module. */
 typedef struct EftOBoltTex {

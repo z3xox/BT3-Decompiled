@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_w.h"
+#include "menu/shop.h"
 
 /*
  * Menu overlay DBZP.BIN, 0x39E940..0x39EB08: the handler of progress modes 48..50, "Evolution Z" (main-menu

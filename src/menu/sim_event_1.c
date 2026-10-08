@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_t.h"
+#include "menu/sim_event_card.h"
 
 /*
  * SimEvent handlers, 0x38C360..0x38CB38: gSimEvent[0..2] (table 0x3B7388, run by SimEvent_Run of
@@ -247,7 +247,7 @@ s32 SimEv02(TSimDay *day) {
 /*
  * Merged (integration step 11): this file is sim_event_1.c (gSimEvent[0..2], 0x38C360..0x38CB38) followed by the
  * former menu_t.c (gSimEvent[3..27], 0x38CB38..0x3900D0): one object, 0x38C360..0x3900D0. Both halves now use
- * the TSimDay view of include/menu/menu_t.h (the head's SimDayS of menu_s.h is gone: step -> seq, wait ->
+ * the TSimDay view of include/menu/sim_event_card.h (the head's SimDayS of survival.h is gone: step -> seq, wait ->
  * seqTimer, SIMDAY_* -> SIMEV_*). The two header comments are kept as written.
  */
 

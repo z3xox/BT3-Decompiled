@@ -1,5 +1,5 @@
 #include "common.h"
-#include "battle/eft_l.h"
+#include "battle/eft_tech_modules.h"
 
 /*
  * Technique effect type 4, the "ring shot", 0x15C728..0x15E5D0: gEftShotClass row 5 (manager 0x2C39B8, task

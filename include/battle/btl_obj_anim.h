@@ -298,7 +298,7 @@ typedef struct BobjVec3 {
     /* 0x08 */ f32 z;
 } BobjVec3;
 
-/* Texture table header (BObjTexTable of bobj_b.h): `count` records of 0x40 bytes at `rec`. */
+/* Texture table header (BObjTexTable of btl_obj_anim_part2.h): `count` records of 0x40 bytes at `rec`. */
 typedef struct BobjTexTable {
     /* 0x00 */ u32 count;
     /* 0x04 */ u8 unk04[0xC];
@@ -382,7 +382,7 @@ typedef struct BobjFace {
     /* 0x0C */ s32 blinkTime;   /* updates the eyes stay shut */
     /* 0x10 */ s32 eye;         /* eye texture: 1 = shut, 0 = the model's own, or the forced number */
     /* 0x14 */ s32 eyeForced;
-    /* 0x18 */ s32 mode;        /* mouth mode 0..14 (BOBJ_MOUTH_* of bobj_b.h) */
+    /* 0x18 */ s32 mode;        /* mouth mode 0..14 (BOBJ_MOUTH_* of btl_obj_anim_part2.h) */
     /* 0x1C */ s32 shape;       /* mouth texture set, 0 = closed */
     /* 0x20 */ BobjJawKey *jawKeys;
     /* 0x24 */ BobjTalkStep *talkKeys;

@@ -1,7 +1,7 @@
 #ifndef MENU_MENU_J_H
 #define MENU_MENU_J_H
 
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 
 /*
  * Menu overlay DBZP.BIN, 0x35F650..0x364358 (placeholder stem "menu_j"): Dragon World Tour (the tournament mode,
@@ -11,11 +11,11 @@
  *                                             modes 33..35: merged into entry_select.c, where the object starts)
  *   tour_menu.c  0x3623A8..0x364DA8  TourMenu  the tournament menu (mode 33); merged with the former menu_k.c
  *
- * ESel below is the one view of the EntrySel work area (entry_select.c includes menu_i.h and then this header; the
- * partial view that menu_i.h had is gone).
+ * ESel below is the one view of the EntrySel work area (entry_select.c includes training.h and then this header; the
+ * partial view that training.h had is gone).
  */
 
-/* ---- Main executable, beyond what menu_a.h declares ---- */
+/* ---- Main executable, beyond what overlay_common.h declares ---- */
 
 extern void Flash_ClipSetOffset(MFlash *flash, MFlashRef *ref, s32 x, s32 y);
 extern void TextBox_AttachLine(MFlash *flash, MFlashRef *ref, s32 x, s32 y, s32 line, MTextBox *box);

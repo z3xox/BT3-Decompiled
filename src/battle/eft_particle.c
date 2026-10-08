@@ -1,11 +1,11 @@
 #include "common.h"
-#include "battle/eft_u.h"
+#include "battle/eft_shot_fx_particle.h"
 
 /*
  * Particle emitter (effect pack part kind 5), 0x182CE8..0x1871A8. Written as two files and merged at integration
  * (EftPtcl_SetTexture only matches with EftPtcl_PickTexture defined above it): this first part,
  * 0x182CE8..0x1853C8, is the head of the EftPtcl module; the second part (formerly eft_v.c, 0x1853C8..0x1871A8)
- * has its task code. See include/battle/eft_u.h and eft_v.h. Drawing only: nothing here reads or writes a fighter, a battle
+ * has its task code. See include/battle/eft_shot_fx_particle.h and eft_particle_unused.h. Drawing only: nothing here reads or writes a fighter, a battle
  * object or a hit record; every random value comes from libc rand().
  */
 
@@ -761,7 +761,7 @@ void EftPtcl_StepPtcls(EftUPtclWork *w, EftUPtclWork *w2) {
 #define EftPtcl_FreePtcls EftPtcl_FreePtcls__p2
 #define EftPtcl_Spawn EftPtcl_Spawn__p2
 #define EftPtcl_StepPtcls EftPtcl_StepPtcls__p2
-#include "battle/eft_v_ext.h"
+#include "battle/eft_particle_ext.h"
 #undef gEftPtcl
 #undef Vec4_Set
 #undef Vec4_Copy
@@ -807,7 +807,7 @@ void EftPtcl_StepPtcls(EftUPtclWork *w, EftUPtclWork *w2) {
 
 /*
  * Effect code 0x1853C8..0x1871A8: the tail of the particle emitter module, effect pack part kind 5 (see
- * include/battle/eft_v.h). The head of the module, 0x182CE8..0x1853C8, is the SAME translation unit:
+ * include/battle/eft_particle_unused.h). The head of the module, 0x182CE8..0x1853C8, is the SAME translation unit:
  * EftPtcl_SetTexture only matches when EftPtcl_PickTexture is defined above it in the same file.
  *
  * Drawing only. Nothing here creates, moves or reads a hit record, calls a fighter, stage or camera function that

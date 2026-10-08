@@ -1,9 +1,9 @@
 #ifndef MENU_MENU_T_H
 #define MENU_MENU_T_H
 
-/* menu_a.h declares Snd_PlaySe as returning nothing; it returns s32 (see include/menu/menu_h.h). */
+/* overlay_common.h declares Snd_PlaySe as returning nothing; it returns s32 (see include/menu/char_reference.h). */
 #define Snd_PlaySe Snd_PlaySe_menuA
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 #undef Snd_PlaySe
 extern s32 Snd_PlaySe(u32 mask, s32 id);
 
@@ -25,10 +25,10 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
  *
  * SimEvent_Run (sim_event.c) calls gSimEvent[day->event](day) once a frame while the day screen is in its
  * script state; a handler runs step day->seq and returns 1 when the event is over. All names are guesses from
- * what the code does. The structures are this chunk's own views (include/menu/menu_q.h has the full SimDay).
+ * what the code does. The structures are this chunk's own views (include/menu/sim_day.h has the full SimDay).
  */
 
-/* ---- Main executable, beyond what menu_a.h declares ---- */
+/* ---- Main executable, beyond what overlay_common.h declares ---- */
 
 extern s32 rand(void);                /* libc rand(), not the shared Mersenne Twister */
 extern void *memcpy(void *dst, const void *src, u32 n);
@@ -39,7 +39,7 @@ extern void StreamSe_Stop(s32 se);
 
 typedef struct TProgress {
     /* 0x000 */ u8 unk0[0x674];
-    /* 0x674 */ s32 turn;           /* SimState.turn of menu_q.h: turns played in this run */
+    /* 0x674 */ s32 turn;           /* SimState.turn of sim_day.h: turns played in this run */
 } TProgress;
 
 #define TPROG ((TProgress *)gProgress)
@@ -51,13 +51,13 @@ typedef struct TSave {
 
 extern TSave *gSaveData;
 
-/* ---- The day screen's work area (SimDay of include/menu/menu_q.h): what the handlers touch ---- */
+/* ---- The day screen's work area (SimDay of include/menu/sim_day.h): what the handlers touch ---- */
 
 #define SIMEV_FLASH_CARD 2          /* the movie of the card game */
 
 #define SIMTRAIN_OUTCOMES 6
 
-/* Section 29 of the day screen's pack: one block per training (0xC0 bytes). (From menu_s.h, with sim_event_1.c.) */
+/* Section 29 of the day screen's pack: one block per training (0xC0 bytes). (From survival.h, with sim_event_1.c.) */
 typedef struct SimTrainTbl {
     /* 0x00 */ s32 weight[3][SIMTRAIN_OUTCOMES]; /* by times the training was repeated: chance of each outcome, of 100 */
     /* 0x48 */ s32 hp[SIMTRAIN_OUTCOMES];        /* change of stat 2 */
@@ -95,7 +95,7 @@ typedef struct TSimDay {
 
 #define SIMEV_WAIT_KEY 0x80         /* the handler waits for the confirm button */
 #define SIMEV_FLAG200 0x200
-#define SIMEV_LEVEL_UP 0x400        /* SIMDAY_LEVEL_UP of menu_q.h */
+#define SIMEV_LEVEL_UP 0x400        /* SIMDAY_LEVEL_UP of sim_day.h */
 #define SIMEV_FLAG800 0x800         /* the next training comes out as outcome 0 (sim_event_1.c) */
 #define SIMEV_FLAG1000 0x1000       /* the next training comes out as outcome 5 */
 
@@ -115,7 +115,7 @@ typedef struct TSimDay {
 #define SIMEV_STAT_HP 2             /* per cent */
 #define SIMEV_STAT_POINT 3
 
-/* One rank of a training (SimTrain of menu_q.h); gSimTrain0 is the card game. */
+/* One rank of a training (SimTrain of sim_day.h); gSimTrain0 is the card game. */
 typedef struct TSimTrain {
     /* 0x00 */ s32 param;           /* cards on the table */
     /* 0x04 */ s32 seconds;         /* how long the cards stay face up */

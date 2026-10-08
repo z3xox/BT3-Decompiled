@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_v.h"
+#include "menu/evo_z_items.h"
 
 /*
  * Menu overlay DBZP.BIN, 0x396838..0x399240: the second source file of the character customising screen

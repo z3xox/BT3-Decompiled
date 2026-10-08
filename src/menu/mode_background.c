@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_b.h"
+#include "menu/mode_menu.h"
 
 ModeBg *gModeBg = NULL; /* 0x3B12F4 */
 

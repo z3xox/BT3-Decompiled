@@ -1,6 +1,6 @@
 #include "common.h"
-#include "menu/menu_h.h"
-#include "menu/menu_i.h"
+#include "menu/char_reference.h"
+#include "menu/training.h"
 #include "sys/pad.h"
 
 Train *gTrain = NULL; /* 0x3B4BA8 */

@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_x.h"
+#include "menu/evo_top_option.h"
 #include "sys/pad.h"
 
 /*
@@ -23,7 +23,7 @@
  * (it is side-effect free, which changes how the branch around its call is filled).
  */
 
-/* MsgWin_Init takes three arguments (menu_a.h declares a fourth, unused one as s32); a pointer is passed here. */
+/* MsgWin_Init takes three arguments (overlay_common.h declares a fourth, unused one as s32); a pointer is passed here. */
 extern void MsgWin_Init4(void *pack, void *text, s32 side, void *arg) __asm__("MsgWin_Init");
 
 /* Starts a line of the guide's voice with its subtitle. */

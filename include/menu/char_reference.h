@@ -1,24 +1,24 @@
 #ifndef MENU_MENU_H_H
 #define MENU_MENU_H_H
 
-/* menu_a.h declares Snd_PlaySe as returning nothing; it returns s32 (include/sys/snd.h), and the code after a call
+/* overlay_common.h declares Snd_PlaySe as returning nothing; it returns s32 (include/sys/snd.h), and the code after a call
    shows it (the next value goes to v1, not v0). Hide that declaration and give the right one. */
 #define Snd_PlaySe Snd_PlaySe_menuA
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 #undef Snd_PlaySe
 extern s32 Snd_PlaySe(u32 mask, s32 id);
 
 /*
  * Menu overlay DBZP.BIN, 0x356090..0x35A558 (placeholder stem "menu_h"). Four pieces:
  *
- *   (menu_h.c  0x356090..0x3562B8  DuelMenu_Run: merged into duel_menu.c, the object it ends; view in menu_g.h)
+ *   (menu_h.c  0x356090..0x3562B8  DuelMenu_Run: merged into duel_menu.c, the object it ends; view in duel.h)
  *   char_reference.c  0x3562B8..0x3590A8  CharRef     the character reference screen (mode 60)
  *   reference_training_mode.c  0x3590A8..0x359358  the handlers of mode 60 and of modes 44..45 (not part of the CharRef object;
  *                                               possibly the head of the Train object)
  *   training.c  0x359358..0x35D660  Train       the training menu (mode 44), with menu_i.c (0x35A558..) merged in
  */
 
-/* ---- Main executable, beyond what menu_a.h declares ---- */
+/* ---- Main executable, beyond what overlay_common.h declares ---- */
 
 extern s32 rand(void);
 extern char *strcpy(char *, const char *);

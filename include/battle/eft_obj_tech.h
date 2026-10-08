@@ -7,7 +7,7 @@
 /*
  * Views local to src/battle/eft_obj_tech.c (0x157398..0x15B550). See the comment at the top of that file.
  * Everything here is a partial view: other effect files describe the same blocks under their own names
- * (EftJTask / EftJDef / EftJSrc / EftJSet in eft_shot_tech.h, EftTask / EftTechDef / EftTechArg / EftModel in eft_l.h are
+ * (EftJTask / EftJDef / EftJSrc / EftJSet in eft_shot_tech.h, EftTask / EftTechDef / EftTechArg / EftModel in eft_tech_modules.h are
  * the same task, definition, shot slot and emitter set).
  */
 

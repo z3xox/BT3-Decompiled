@@ -1,7 +1,7 @@
 #ifndef MENU_MENU_E_H
 #define MENU_MENU_E_H
 
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 
 /*
  * Menu overlay DBZP.BIN, 0x348710..0x34D368 (placeholder stem "menu_e"). Two pieces (the .data words are
@@ -9,12 +9,12 @@
  *
  *   (menu_e.c)  0x348710..0x348D78  CharSel_Run: the frame loop and the battle hand-off of the one-on-one
  *                                   character select; now the end of src/menu/char_select.c, which uses the
- *                                   CharSel view of include/menu/menu_d.h (the partial view that was here
+ *                                   CharSel view of include/menu/char_select.h (the partial view that was here
  *                                   is gone)
  *   team_select.c  0x348D78..0x351C38  TeamSel: the team character select (teams of up to five, with or without
  *                                   a DP limit; work pointer 0x3B38D8). Written as two chunks (the cut was
  *                                   at 0x34D368, in front of Update / Input / Run), now one file; what the
- *                                   second chunk added to the layouts is in include/menu/menu_f.h, which
+ *                                   second chunk added to the layouts is in include/menu/team_select_part2.h, which
  *                                   includes this header.
  *
  * All names are guesses from what the code does. The structures below are this chunk's own views.
@@ -66,7 +66,7 @@ typedef struct TsTeam {
     TsMember member[TS_MEMBER_MAX];
 } TsTeam; /* 0xF0 */
 
-/* gProgress as the versus screens use it (menu_a.h has the head). */
+/* gProgress as the versus screens use it (overlay_common.h has the head). */
 typedef struct TsProgress {
     /* 0x000 */ u8 unk0[0x14];
     /* 0x014 */ s32 flags;

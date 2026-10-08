@@ -1,7 +1,7 @@
 #ifndef MENU_MENU_P_H
 #define MENU_MENU_P_H
 
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 
 /*
  * Menu overlay DBZP.BIN, 0x37AFF8..0x37F430 (placeholder stem "menu_p"): screens of the mode group 13..30
@@ -14,11 +14,11 @@
  *   ub_score.c  0x37EE18..0x37F850  UbScore    the score sheet module (its tail was written as menu_q.c and
  *                                              merged into ub_score.c)
  *
- * All names are guesses from what the code does ("Ub" = the group of modes 13..30, as in menu_m.h). The
+ * All names are guesses from what the code does ("Ub" = the group of modes 13..30, as in ub_team_select.h). The
  * structures are this chunk's own views.
  */
 
-/* ---- Main executable, beyond what menu_a.h declares ---- */
+/* ---- Main executable, beyond what overlay_common.h declares ---- */
 
 extern void Sprite_SetScissor(s32 x0, s32 x1, s32 y0, s32 y1);
 extern void Flash_ClipSetCallbackA(MFlash *flash, MFlashRef *ref, void *fn, void *arg);
@@ -37,7 +37,7 @@ extern s32 Rand_Libc(void);
 extern void Save_AddItem(s32 idx);
 
 /*
- * Snd_PlaySe returns a value in the original (menu_a.h declares it void): with a void call the register that holds
+ * Snd_PlaySe returns a value in the original (overlay_common.h declares it void): with a void call the register that holds
  * the work pointer after the call is v0 instead of v1 and the branches of the pad handlers merge differently.
  */
 #define Snd_PlaySe ((s32 (*)(u32, s32))Snd_PlaySe)
@@ -174,8 +174,8 @@ s32 UbScore_SaveBestC(s32 course, s32 total, UbScore *score);
 s32 UbScore_GetRewardItem(s32 idx);
 
 /*
- * gSaveData as the module's record functions use it (the views of the tail half, formerly QSave* of menu_q.h):
- * the body behind the 8-byte checksum, nested as in include/menu/menu_c.h (it reproduces the address arithmetic).
+ * gSaveData as the module's record functions use it (the views of the tail half, formerly QSave* of sim_day.h):
+ * the body behind the 8-byte checksum, nested as in include/menu/history.h (it reproduces the address arithmetic).
  */
 
 /* An entry of the ranking of the mode 22 ladder, best first. */
@@ -226,7 +226,7 @@ typedef struct UbSave {
 
 #define UB_SAVE (&((UbSave *)gSaveData)->body)
 
-/* ---- MisSel: merged into src/menu/mission_select.c, built with include/menu/menu_o.h (which has its layout) ---- */
+/* ---- MisSel: merged into src/menu/mission_select.c, built with include/menu/ub.h (which has its layout) ---- */
 
 #define MISSEL_ROWS 5           /* missions on a page of the mission select */
 

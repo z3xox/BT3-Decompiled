@@ -1,5 +1,5 @@
 #include "common.h"
-#include "battle/hud_d.h"
+#include "battle/hud_node.h"
 #include "sys/dma.h"
 #include "sys/gfx.h"
 #include "sys/mathf.h"

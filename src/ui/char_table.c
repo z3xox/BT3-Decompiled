@@ -1,5 +1,5 @@
 #include "common.h"
-#include "battle/view_b.h"
+#include "ui/menu_support.h"
 #include "sys/common.h"
 #include "sys/save.h"
 

@@ -6,12 +6,12 @@
  * Proper name: flash_data.c (or the head of flash.c).
  */
 #include "sys/flash.h"
-#include "sys/gfxm_c.h"
+#include "sys/flash_part2.h"
 #include "sys/heap.h"
 #include "sys/dma.h"
 #include "sys/gfx.h"
 #include "sys/tex_file.h"
-#include "sys/gfxm_d.h"
+#include "sys/flash_part3.h"
 
 extern void *memcpy(void *dst, const void *src, u32 size);
 extern void *memset(void *dst, s32 c, u32 n);
@@ -237,7 +237,7 @@ void Flash_ReadMtx(u8 *data, FlashMtx *m, s32 *ofs) {
 /* ======== merged from src/sys/gfxm_c.c ======== */
 
 /*
- * The Flash-like movie player (0x10AD58..0x10EC18). The data is a converted SWF: see include/sys/gfxm_c.h and
+ * The Flash-like movie player (0x10AD58..0x10EC18). The data is a converted SWF: see include/sys/flash_part2.h and
  * docs. Continues src/sys/flash.c (the low-level readers), very likely the same original object.
  * Proper name: flash.c.
  */

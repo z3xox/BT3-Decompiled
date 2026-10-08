@@ -1,7 +1,7 @@
 #ifndef MENU_MENU_N_H
 #define MENU_MENU_N_H
 
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 
 /*
  * Menu overlay DBZP.BIN, 0x372148..0x376920 (placeholder stem "menu_n"): screens of the mode group 13..30
@@ -14,7 +14,7 @@
  *   ub_rank.c  0x373A68..0x3760C8  UbRank     mode 26: the ranking ladder of 100 places (challenge a place above,
  *                                              intruders) and its battle set-up
  *   ub_result.c  0x3760C8..0x3782A8  UbResult   the result screen of modes 27 / 30 (Run is 0x378138); merged with
- *                                              its tail (menu_o.c) and built with include/menu/menu_o.h, not with
+ *                                              its tail (menu_o.c) and built with include/menu/ub.h, not with
  *                                              this header
  *
  * All names are guesses from what the code does. (inferred, from the game itself: modes 24..30 are the two modes
@@ -22,7 +22,7 @@
  * The structures are this chunk's own views.
  */
 
-/* ---- Main executable, beyond what menu_a.h declares ---- */
+/* ---- Main executable, beyond what overlay_common.h declares ---- */
 
 extern s32 Rand_Libc(void);
 extern void TextBox_Init(MTextBox *box, void *text, u32 preset);
@@ -64,7 +64,7 @@ typedef struct NProgress {
     /* 0x014 */ s32 flags;
     /* 0x018 */ s32 mode;
     /* 0x01C */ u8 unk1C[0x43C];
-    /* 0x458 */ s32 color;      /* costume of the player's fighter (team.member[0].color of menu_m.h) */
+    /* 0x458 */ s32 color;      /* costume of the player's fighter (team.member[0].color of ub_team_select.h) */
     /* 0x45C */ s32 chara;      /* the player's fighter (team.member[0].chara) */
     /* 0x460 */ u16 items[8];   /* its items (team.member[0].items) */
     /* 0x470 */ u8 unk470[0x1D0];

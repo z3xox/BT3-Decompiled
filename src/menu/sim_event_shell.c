@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_u.h"
+#include "menu/sim_event_evo_z.h"
 
 /*
  * SimEvent, 0x391E28..0x392A30: the shell game (gSimEvent[34]) with its three helpers. One source file: its
@@ -98,10 +98,10 @@ void SimPopo_CursorOff(USimDay *day) {
  *
  * Case 6: the training table is `const` (it is defined so in sim_day.c). A load from a const object cannot
  * conflict with a store, so the scheduler is free to put the store of the target behind the index arithmetic;
- * with the non-const declaration of menu_u.h the store was tied to the load and 15 instructions differed. The
+ * with the non-const declaration of sim_event_evo_z.h the store was tied to the load and 15 instructions differed. The
  * statement order there is Count, Speed, Won (Won, Speed, Count matches as well).
  */
-/* The const view of the table: menu_u.h declares it without `const`, which this file cannot redeclare. The same
+/* The const view of the table: sim_event_evo_z.h declares it without `const`, which this file cannot redeclare. The same
    symbol; to be replaced by a `const` in the header. */
 
 s32 SimEv34(USimDay *day) {

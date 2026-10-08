@@ -6,7 +6,7 @@
  * Effect tasks, 0x178AB0..0x17EE68. Written as two files and merged at integration (EftChain_SetRes only matches
  * with EftChain_SetTex, 0x1793A8, defined above it): the first part, 0x178AB0..0x17CB40, see
  * include/battle/eft_chain.h; the second part (formerly eft_t.c, 0x17CB40..0x17EE68: the chain module's tail and the
- * ray burst), see include/battle/eft_t.h and the comment at its start.
+ * ray burst), see include/battle/eft_draw_modules.h and the comment at its start.
  */
 
 #define RAND_MAX_F 2147483647.0f
@@ -1444,11 +1444,11 @@ void EftChain_Update(EftTask *task) {
  * Second part (formerly eft_t.c), with its own header and view types. Names the first part already declared with
  * other types are reached through cast macros (the generated code is the same).
  * ------------------------------------------------------------------------------------------------------------ */
-#include "battle/eft_t.h"
+#include "battle/eft_draw_modules.h"
 #include "sys/gfx_ot.h"
 
 /*
- * 0x17CB40..0x17EE68. Two drawing-only effect modules (see include/battle/eft_t.h):
+ * 0x17CB40..0x17EE68. Two drawing-only effect modules (see include/battle/eft_draw_modules.h):
  *
  * 1. 0x17CB40..0x17D290: the tail of the "chain" module, effect pack part kind 18. Its task code (init 0x17C698,
  *    term 0x17C8A8, update 0x17C8F8, the drawing at 0x17C358) is in the file before this one; here are the last

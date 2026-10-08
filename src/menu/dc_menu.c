@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_z.h"
+#include "menu/dc.h"
 
 /*
  * Menu overlay DBZP.BIN, 0x3A9A70..0x3AAF30: DcMenu, the top menu of the Data Center (progress mode 53): three

@@ -1,5 +1,5 @@
 #include "common.h"
-#include "battle/eft_t.h"
+#include "battle/eft_draw_modules.h"
 #include "sys/gfx_ot.h"
 
 /*

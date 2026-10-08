@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_h.h"
+#include "menu/char_reference.h"
 
 /*
  * 0x3590A8..0x359358: two of the handlers Progress_Main dispatches to. They emit no data. They are not part of

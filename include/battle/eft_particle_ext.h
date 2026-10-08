@@ -7,7 +7,7 @@
  * files share. Not meant to be included by anything else.
  */
 
-#include "battle/eft_v.h"
+#include "battle/eft_particle_unused.h"
 #include "sys/math3d.h"
 #include "sys/gfx_ot.h"
 

@@ -3,7 +3,7 @@
 
 /*
  * Fighter action handlers, first group: 0x1E3158..0x1EA5F8 (two parts: to 0x1E6CC0, and from there; the second
- * part has its own header comment below and its own view of the fighter, include/battle/btl_act_b.h).
+ * part has its own header comment below and its own view of the fighter, include/battle/btl_act_1_part2.h).
  *
  * Continues the object of btl_char_action.c (its float pool and jump tables run on): the handler of
  * actions 7..0xA, the attack charge helpers, the shared attack follow-up helpers, and the handlers of
@@ -1841,7 +1841,7 @@ s32 BtlAct_RushFinishHandler(BtlActAChr *chr, s32 phase) {
  * Second part (formerly btl_act_b.c), written against its own view of the fighter. Functions already declared above with
  * the first part's types are reached through cast macros.
  * ------------------------------------------------------------------------------------------------------------ */
-#include "battle/btl_act_b.h"
+#include "battle/btl_act_1_part2.h"
 
 /*
  * Fighter action handlers, second slice: 0x1E6CC0..0x1EA5F8.

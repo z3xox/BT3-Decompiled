@@ -3,7 +3,7 @@
 #include "sys/dma.h"
 #include "sys/gfx.h"
 #include "sys/sprite.h"
-#include "battle/hud_d.h"
+#include "battle/hud_node.h"
 
 /*
  * Battle HUD: the sprite library, 0x224B50-0x226488 (it ends with HudSprite_Draw and the node setters of

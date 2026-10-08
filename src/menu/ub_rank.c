@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_n.h"
+#include "menu/ub_rank.h"
 #include "sys/pad.h"
 
 /*

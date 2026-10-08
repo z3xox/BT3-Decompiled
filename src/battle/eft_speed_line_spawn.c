@@ -1,5 +1,5 @@
 #include "common.h"
-#include "battle/eft_l.h"
+#include "battle/eft_tech_modules.h"
 
 /*
  * Speed-line spawners, 0x15EF18..0x15F728: the first two functions of the speed-line module (class D_002C3A18,

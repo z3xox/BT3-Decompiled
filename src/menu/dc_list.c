@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_z.h"
+#include "menu/dc.h"
 
 /*
  * Menu overlay DBZP.BIN, 0x3A65E8..0x3A9850: the DcList object, the list of saved custom characters of the Data

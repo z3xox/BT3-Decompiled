@@ -7,7 +7,7 @@
 #include "common.h"
 #include "battle/stg_collision.h"
 #include "battle/btl_ai_int.h"
-#include "battle/btl_ai_seq_a.h"
+#include "battle/btl_ai_seq.h"
 
 /* Clears the sequence runner: empty stack, every entry {1, 0}. */
 void BtlAiSeq_Reset(DetAiSeq *seq) {

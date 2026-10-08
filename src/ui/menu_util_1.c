@@ -3,7 +3,7 @@
 #include "sys/heap.h"
 #include "sys/rand.h"
 #include "sys/save.h"
-#include "battle/view_b.h"
+#include "ui/menu_support.h"
 
 /*
  * Progress_Init, the menu helpers and the head of the text box module, 0x25DE68..0x2600B0. See battle/view_a.h.

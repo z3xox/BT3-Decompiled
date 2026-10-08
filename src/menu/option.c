@@ -1,6 +1,6 @@
 #include "common.h"
-#include "menu/menu_x.h"
-#include "menu/menu_y.h"
+#include "menu/evo_top_option.h"
+#include "menu/option.h"
 #include "sys/pad.h"
 #include "sys/save.h"
 

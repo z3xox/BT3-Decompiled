@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_t.h"
+#include "menu/sim_event_card.h"
 #include "sys/pad.h"
 
 /*

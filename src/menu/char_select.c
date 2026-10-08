@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_d.h"
+#include "menu/char_select.h"
 #include "sys/common.h"
 #include "sys/pad.h"
 #include "sys/save.h"
@@ -7,7 +7,7 @@
 /*
  * CharSel, 0x342190..0x348D78: the character / stage / music select of the versus modes (progress modes 38..41
  * with archive 5, 44..45 with archive 6). One object, written in three chunks (char_select.c 0x342190..0x342588,
- * menu_d.c 0x342588..0x348710, menu_e.c 0x348710..0x348D78) and merged here; layouts in include/menu/menu_d.h.
+ * menu_d.c 0x342588..0x348710, menu_e.c 0x348710..0x348D78) and merged here; layouts in include/menu/char_select.h.
  * Its read-only data starts with the chip tables of the first functions at 0x3B38F0; its work pointer gCharSel
  * is the word at 0x3B38D4, right behind the previous object's jump table.
  *

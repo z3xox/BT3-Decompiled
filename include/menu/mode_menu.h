@@ -13,11 +13,11 @@
  *
  * ModeMenu is the story mode's episode list (mode 7): gProgress->subMenu is the saga (0..7), an item an episode.
  */
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 
 /* ---- ModeMenu (mode_menu.c) ---- */
 
-/* One entry per item in section 6 of the sub menu's own archive (menu_a.h has the head's view, ModeMenuText). */
+/* One entry per item in section 6 of the sub menu's own archive (overlay_common.h has the head's view, ModeMenuText). */
 typedef struct ModeMenuDescr {
     /* 0x00 */ s32 count;      /* description lines (up to 3) */
     /* 0x04 */ s32 line;       /* first line in the text file, and the first narration voice line */
@@ -167,6 +167,6 @@ s32 HistOutro_Run(s32 section);
 s32 Hist_Main(void);
 
 /* ---- HistSel (history_select.c): the saga select of the story mode. Its work struct, flags and functions are in
-   include/menu/menu_c.h (the full layout; the head-only view that was here is gone). ---- */
+   include/menu/history.h (the full layout; the head-only view that was here is gone). ---- */
 
 #endif

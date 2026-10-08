@@ -17,7 +17,7 @@
  *                       kind 5) whose task code is in the second part of eft_particle.c (formerly eft_v.c): texture choice, key values, the particle pool,
  *                       creation and the per-frame step of the particles.
  *
- * All structs are this file's views (eft_t.h and eft_v.h have shorter views of the same objects).
+ * All structs are this file's views (eft_draw_modules.h and eft_particle_unused.h have shorter views of the same objects).
  */
 
 /* A vector passed by value: 16-byte aligned (argument copies use ld / sd), unlike Vec4 in sys/math3d.h. */
@@ -362,7 +362,7 @@ typedef struct EftUPtcl {
 #define EFT_UPTCL_DETACHED 0x100     /* no longer follows the emitter */
 #define EFT_UPTCL_VISIBLE 0x400
 
-/* Work block of an emitter task (EftPtclWork in eft_v.h). */
+/* Work block of an emitter task (EftPtclWork in eft_particle_unused.h). */
 typedef struct EftUPtclWork {
     /* 0x000 */ EftUPtclArg arg;
     /* 0x040 */ EftUPtclCur cur;

@@ -1,9 +1,9 @@
 #include "common.h"
-#include "battle/eft_v_ext.h"
+#include "battle/eft_particle_ext.h"
 
 /*
  * Effect code 0x187C50..0x1895E8: the first half of the sprite chain module, effect pack part kind 15 (see
- * include/battle/eft_v.h); the module continues at 0x1895E8 in another file.
+ * include/battle/eft_particle_unused.h); the module continues at 0x1895E8 in another file.
  *
  * Drawing only. Read from the simulation: BtlScene_IsEffectStopped. Random numbers: the VU0 register through
  * Rand_FloatRange (EftLink_Place: one per sprite per frame; EftLink_InitGrow: three), appearance only.

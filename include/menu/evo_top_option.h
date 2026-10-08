@@ -1,9 +1,9 @@
 #ifndef MENU_MENU_X_H
 #define MENU_MENU_X_H
 
-/* menu_a.h declares Snd_PlaySe as returning nothing; it returns s32 (the code after a call shows it). */
+/* overlay_common.h declares Snd_PlaySe as returning nothing; it returns s32 (the code after a call shows it). */
 #define Snd_PlaySe Snd_PlaySe_menuA
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 #undef Snd_PlaySe
 extern s32 Snd_PlaySe(u32 mask, s32 id);
 
@@ -16,10 +16,10 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
  *
  *   option_mode.c  0x39FAA8..0x39FBB8  OptMode_Main, the handler of mode 62 (the options)
  *   option.c  0x39FBB8..0x3A65E8  Option      the options screen object (menu_y.c, its tail, was merged in;
- *                                               include/menu/menu_y.h has the prototypes that half added)
+ *                                               include/menu/option.h has the prototypes that half added)
  */
 
-/* ---- Main executable, beyond what menu_a.h declares ---- */
+/* ---- Main executable, beyond what overlay_common.h declares ---- */
 
 extern void Sprite_SetScissor(s32 x0, s32 x1, s32 y0, s32 y1);
 extern void Flash_ClipSetCallbackA(MFlash *flash, MFlashRef *ref, void *fn, void *arg);

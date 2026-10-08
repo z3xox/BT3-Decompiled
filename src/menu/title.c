@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 #include "sys/pad.h"
 
 /* The screen's work (overlay .data, 0x3B0EB8). */

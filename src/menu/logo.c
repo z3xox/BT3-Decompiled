@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_i.h"
+#include "menu/training.h"
 #include "sys/pad.h"
 
 Logo *gLogo = NULL; /* 0x3B590C */

@@ -2,7 +2,7 @@
 #define MENU_MENU_C_H
 
 #include "types.h"
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 #include "sys/save.h"
 
 /*
@@ -17,11 +17,11 @@
  *   history_save.c  0x341E08..0x342190  HistSave    the save screen (mode 10)
  *   char_select.c  0x342190..0x342588  CharSel     head of the character select object (body: src/menu/menu_d.c)
  *
- * HistSel below is the layout of the whole structure (include/menu/menu_b.h had a view from the object's head
+ * HistSel below is the layout of the whole structure (include/menu/mode_menu.h had a view from the object's head
  * only; it was removed when the two halves were merged).
  */
 
-/* gProgress as the mode 6..10 screens use it (menu_a.h's MenuProgress has no names past 0x38). */
+/* gProgress as the mode 6..10 screens use it (overlay_common.h's MenuProgress has no names past 0x38). */
 typedef struct HistReward {
     /* 0x00 */ s32 points[3];   /* by level */
     /* 0x0C */ s32 item[3];     /* item ids, -1 = none */

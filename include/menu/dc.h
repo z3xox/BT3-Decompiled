@@ -1,9 +1,9 @@
 #ifndef MENU_MENU_Z_H
 #define MENU_MENU_Z_H
 
-/* menu_a.h declares Snd_PlaySe as returning nothing; it returns s32 (see include/menu/menu_h.h). */
+/* overlay_common.h declares Snd_PlaySe as returning nothing; it returns s32 (see include/menu/char_reference.h). */
 #define Snd_PlaySe Snd_PlaySe_menuA
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 #include "sys/pad.h"
 #include "sys/common.h"
 #include "sys/save.h"
@@ -25,7 +25,7 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
  * Every structure here is this chunk's own view: the neighbours' headers were not written yet.
  */
 
-/* ---- Main executable, beyond what menu_a.h declares ---- */
+/* ---- Main executable, beyond what overlay_common.h declares ---- */
 
 extern s32 atoi(const char *);
 extern char *strcpy(char *, const char *);
@@ -96,7 +96,7 @@ typedef struct ZStatus {
 
 extern void ItemSet_GetBonus(u16 *items, ZItemEntry *table, s32 *out);
 
-/* gProgress as this mode uses it (menu_a.h's MenuProgress has no names here). */
+/* gProgress as this mode uses it (overlay_common.h's MenuProgress has no names here). */
 typedef struct ZProgress {
     /* 0x000 */ s32 unk0;
     /* 0x004 */ s32 baseFile;

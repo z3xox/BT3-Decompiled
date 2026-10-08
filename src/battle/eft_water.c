@@ -3,7 +3,7 @@
 #include "sys/gfx_ot.h"
 
 /*
- * Effect code 0x13F430..0x147050. See include/battle/eft_water.h and eft_f.h for the modules and their layouts.
+ * Effect code 0x13F430..0x147050. See include/battle/eft_water.h and eft_water_part2.h for the modules and their layouts.
  * As linked: the former head of this file (0x13EA00..0x13F430, the transition task) moved to the end of
  * eft_burst.c, and the former eft_f.c (0x142CA0..0x147050) is appended below as the second part:
  * EftWaterRing_Update only matches with EftWater_GetSurfaceY defined earlier in its file.
@@ -1295,16 +1295,16 @@ void EftWater_AddSplash(EftWaterSplash **head, EftWaterSplash **tail, EftEVec po
 #undef EftWaterMist_Spawn
 #undef EftWaterMist_UpdateList
 #undef EftWaterMist_DrawList
-/* eft_f.h declares the module state with its own view type: hide that declaration and cast. */
+/* eft_water_part2.h declares the module state with its own view type: hide that declaration and cast. */
 #define gEftDust gEftDust_fDecl
-#include "battle/eft_f.h"
+#include "battle/eft_water_part2.h"
 #undef gEftDust
 #define gEftDust ((EftWaterView *)gEftDust)
 #include "sys/gfx_ot.h"
 
 /* Water-surface effects, 0x142CA0..0x147050: the particle half of the water module that starts in eft_water.c.
    Purely visual: it reads a blast hit record's position, the fighter height and the water surface height, and
-   writes only its own pools and draw packets. See include/battle/eft_f.h. */
+   writes only its own pools and draw packets. See include/battle/eft_water_part2.h. */
 
 /* Local views of what the module uses from elsewhere. */
 typedef struct EftWaterBattleWork {

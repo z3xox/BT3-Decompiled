@@ -1,6 +1,6 @@
 #include "common.h"
-#include "menu/menu_e.h"
-#include "menu/menu_f.h"
+#include "menu/team_select.h"
+#include "menu/team_select_part2.h"
 #include "sys/pad.h"
 #include "sys/save.h"
 

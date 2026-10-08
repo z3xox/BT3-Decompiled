@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_za.h"
+#include "menu/dc_password_replay.h"
 
 /* The screen's work (overlay .data, 0x3BC9F8). */
 ReplayMenu *gReplayMenu = NULL;

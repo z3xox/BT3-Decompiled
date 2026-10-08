@@ -1,9 +1,9 @@
 #ifndef MENU_MENU_R_H
 #define MENU_MENU_R_H
 
-/* menu_a.h declares Snd_PlaySe as returning nothing; it returns s32 (see include/menu/menu_h.h). */
+/* overlay_common.h declares Snd_PlaySe as returning nothing; it returns s32 (see include/menu/char_reference.h). */
 #define Snd_PlaySe Snd_PlaySe_menuA
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 #undef Snd_PlaySe
 extern s32 Snd_PlaySe(u32 mask, s32 id);
 
@@ -24,10 +24,10 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
  *                                               (0x388618..) is merged into it
  *
  * All names are guesses from what the code does. The structures are this chunk's own views; where the
- * neighbouring chunks' headers (menu_p.h, menu_q.h, menu_s.h) describe the same thing the field names agree.
+ * neighbouring chunks' headers (ub_score.h, sim_day.h, survival.h) describe the same thing the field names agree.
  */
 
-/* ---- Main executable, beyond what menu_a.h declares ---- */
+/* ---- Main executable, beyond what overlay_common.h declares ---- */
 
 extern s32 Rand_Libc(void);           /* libc rand() */
 extern void TextBox_Init(MTextBox *box, void *text, u32 preset);
@@ -58,7 +58,7 @@ extern void Save_AddItem(s32 idx);
 
 /*
  * The state of the ladder, kept between its screens and its fights (gProgress + 0x64C; SimState of
- * include/menu/menu_q.h, same field names). That it is a structure of its own is also what the address arithmetic
+ * include/menu/sim_day.h, same field names). That it is a structure of its own is also what the address arithmetic
  * of SimTop_Init's loop over `item` says (base 0x650, offset 0x14).
  */
 #define SIM_STAT_ATK 0
@@ -83,7 +83,7 @@ typedef struct SimRun {
     /* 0x34 (0x680) */ s32 off;          /* bit n: button n of the board is greyed out (the cursor skips it) */
 } SimRun; /* 0x38 */
 
-/* gProgress as the sim screens use it (QProgress of include/menu/menu_q.h; menu_m.h's UbProgress has the selects' part). */
+/* gProgress as the sim screens use it (QProgress of include/menu/sim_day.h; ub_team_select.h's UbProgress has the selects' part). */
 typedef struct SimProgress {
     /* 0x000 */ s32 unk0;
     /* 0x004 */ s32 baseFile;
@@ -120,7 +120,7 @@ typedef struct SimSave {
 extern void *gSaveData;
 
 /* ---- SimDay: the board screen's work area. Only the name here: the layout and the SIMDAY_ constants are in
-   include/menu/menu_q.h (the object is src/menu/sim_day.c, into which the former menu_r.c was merged). ---- */
+   include/menu/sim_day.h (the object is src/menu/sim_day.c, into which the former menu_r.c was merged). ---- */
 
 typedef struct SimDay SimDay;
 
@@ -149,7 +149,7 @@ typedef struct SimScoreLine {
     /* 0x08 */ s32 points;      /* points the line is worth, in hundreds */
 } SimScoreLine; /* 0xC */
 
-/* The score sheet (UbScore of include/menu/menu_p.h, same field names; a local view). */
+/* The score sheet (UbScore of include/menu/ub_score.h, same field names; a local view). */
 typedef struct SimScore {
     /* 0x000 */ s32 total;       /* here: starts as the run's points (gProgress->run.stat[SIM_STAT_POINT]) */
     /* 0x004 */ s32 count;       /* the total as it is turned into money */

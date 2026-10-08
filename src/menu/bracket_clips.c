@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_k.h"
+#include "menu/bracket.h"
 
 /*
  * Bracket, 0x3673F8..0x368068: the per-frame clip set-up of the bracket screen. Its read-only data (0x3B6BC0..

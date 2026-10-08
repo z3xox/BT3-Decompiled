@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_c.h"
+#include "menu/history.h"
 #include "sys/pad.h"
 
 /*

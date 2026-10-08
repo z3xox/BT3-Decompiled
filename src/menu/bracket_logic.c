@@ -1,12 +1,12 @@
 #include "common.h"
-#include "menu/menu_l.h"
+#include "menu/tournament.h"
 
 /*
  * Bracket, 0x368068..0x36B3E0: the loader and the tournament logic of the bracket screen of Dragon World Tour
  * (progress mode 35). One object: its read-only data starts at 0x3B6FD0, 16-byte aligned after the previous
  * object's jump table (bracket_clips.c), and repeats "fl_guide_in" of bracket_guide.c. Was written as two chunks:
  * bracket_logic.c (Bracket_Load, 0x368068..0x368C18) and menu_l.c (the logic, 0x368C18..0x36B3E0). Every function takes
- * the bracket work area; this file sees it as LBracket of menu_l.h (same offsets as Bracket of menu_k.h, which
+ * the bracket work area; this file sees it as LBracket of tournament.h (same offsets as Bracket of bracket.h, which
  * bracket.c .. bracket_clips.c use). The work pointer gBracket (0x3B5918) is not this object's: it lies
  * before gTourBg (0x3B591C, tour_background.c) in .data, so an object linked before tour_background.c owns it (bracket.c).
  *

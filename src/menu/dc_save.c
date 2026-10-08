@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_za.h"
+#include "menu/dc_password_replay.h"
 
 /* The helper's work (overlay .data, 0x3BC9FC). */
 DcSave *gDcSave = NULL;

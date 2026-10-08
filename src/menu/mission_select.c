@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_o.h"
+#include "menu/ub.h"
 #include "sys/pad.h"
 
 /*
@@ -7,7 +7,7 @@
  * (gMisSelFaceTex, 0x3B7368), .rodata 0x3B8400..0x3B8630. Merged from two chunks: the head (0x379F58..0x37AFF8:
  * SetRank, SetupBattle, Init, Term, Draw; written as mission_select.c) and the last five functions (0x37AFF8..: Update,
  * UpdateVoice, Input, ClipGoto and the frame loop MisSel_Run at 0x37B640; written as menu_p.c with the MisSelP view
- * of include/menu/menu_p.h). The one view used now is MisSel / UoProgress / UoSave of include/menu/menu_o.h.
+ * of include/menu/ub_score.h). The one view used now is MisSel / UoProgress / UoSave of include/menu/ub.h.
  */
 
 MisSel *gMisSel = NULL; /* 0x3B7360 */

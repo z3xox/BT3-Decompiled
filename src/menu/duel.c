@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_g.h"
+#include "menu/duel.h"
 
 /*
  * Duel_Main, 0x352CB8..0x352EC0: the handler of progress modes 38..41 (main-menu item 3, the duel mode).

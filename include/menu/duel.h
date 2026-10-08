@@ -1,7 +1,7 @@
 #ifndef MENU_MENU_G_H
 #define MENU_MENU_G_H
 
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 
 /*
  * Menu overlay DBZP.BIN, 0x351C38..0x356090 (placeholder stem "menu_g"). Three pieces:
@@ -87,7 +87,7 @@ void ItemPanel_Hide(s32 side);
 
 /* ---- Duel (duel.c, duel_menu.c) ---- */
 
-/* gProgress fields of the duel mode (local view; MenuProgress in menu_a.h has only +0x624). */
+/* gProgress fields of the duel mode (local view; MenuProgress in overlay_common.h has only +0x624). */
 typedef struct DuelProgress {
     /* 0x000 */ u8 unk0[0x620];
     /* 0x620 */ s32 versus;         /* DuelMenu top item: 0 1P vs COM, 1 1P vs 2P, 2 COM vs COM (3 = settings) */

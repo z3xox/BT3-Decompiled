@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_p.h"
+#include "menu/ub_score.h"
 
 /*
  * UbScore, 0x37EE18..0x37F850: the score sheet module of the result screens of the mode group 13..30 (one object;

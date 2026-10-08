@@ -1,6 +1,6 @@
 #include "common.h"
 #include "battle/btl_act_change.h"
-#include "battle/btl_act_i.h"
+#include "battle/btl_act_change_part2.h"
 
 /*
  * Fighter action handlers: 0x1FC2B0..0x1FFAC0, in two C files because the one unmatched handler (BtlAct_GrabDash)
@@ -127,7 +127,7 @@ s32 BtlAct_GrabDash(BtlActHChr *chr, s32 phase) {
  * Fighter action handlers, second file: 0x1FC598..0x203168 (see btl_act_change.c for the overview and for how a
  * character change runs). Two parts: to 0x1FFAC0, and from there the member switch tail, the skills and the
  * decision functions (formerly btl_act_i.c, with its own header comment below and its own view of the fighter,
- * include/battle/btl_act_i.h). They are one file because two handlers of the second part match only with
+ * include/battle/btl_act_change_part2.h). They are one file because two handlers of the second part match only with
  * BtlActChange_SetFlags and BtlActChange_Finish of the first part defined above them.
  */
 
@@ -1444,7 +1444,7 @@ s32 BtlAct_SwitchLeave(BtlActHChr *chr, s32 phase) {
  * Handlers are `s32 handler(chr, phase)` that fall off their end; where the original ends a leave phase with a
  * tail call, the source has an explicit `return;` (the only form found that reproduces it).
  *
- * The decision tables are written out in include/battle/btl_act_i.h.
+ * The decision tables are written out in include/battle/btl_act_change_part2.h.
  */
 
 /* Speeds are km/h converted to units per frame (see btl_char_move.c). */

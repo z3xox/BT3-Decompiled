@@ -2,7 +2,7 @@
  * Battle object, fourth part (0x250B28..0x2527B0): secondary motion. The chains of extra bones a model carries
  * (hair, tails, cloth) are bent every frame by the object's movement, by pushes the fighter code adds, by the
  * stage's wind and by a noise source, and the result is written into the nodes' local rotations.
- * Layouts are in include/battle/bobj_b.h.
+ * Layouts are in include/battle/btl_obj_anim_part2.h.
  *
  * This is a separate file because the original was: BObjChainA_StepAll and BObjChainB_StepAll only match when
  * the compiler has not seen the body of BtlObj_GetNode (0x2505A8, in the second part of btl_obj_anim.c). The cut is put at the first
@@ -14,7 +14,7 @@
  * No camera, view or draw list is read.
  */
 #include "common.h"
-#include "battle/bobj_b.h"
+#include "battle/btl_obj_anim_part2.h"
 
 extern void *memset(void *dst, s32 c, u32 n);
 extern f32 atan2f(f32 y, f32 x);

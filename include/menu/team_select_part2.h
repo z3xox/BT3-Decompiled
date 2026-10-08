@@ -1,20 +1,20 @@
 #ifndef MENU_MENU_F_H
 #define MENU_MENU_F_H
 
-#include "menu/menu_a.h"
-#include "menu/menu_e.h"
+#include "menu/overlay_common.h"
+#include "menu/team_select.h"
 
 /*
  * Menu overlay DBZP.BIN, 0x34D368..0x351C38 (placeholder stem "menu_f"): the last three functions of the
  * TeamSel object, the team select screen of the versus modes (up to five characters per side, then the stage
  * and the music, then the battle setup): TeamSel_Update, TeamSel_Input, TeamSel_Run.
  *
- * The head of the object is the previous chunk (include/menu/menu_e.h); the object ends exactly at 0x351C38,
+ * The head of the object is the previous chunk (include/menu/team_select.h); the object ends exactly at 0x351C38,
  * where the ItemPanel code begins. The two chunks are ONE source file, src/menu/team_select.c (merged):
  * TeamSel_Input matches only when TeamSel_ClipGoto, TeamSel_SetChips and TeamSel_RequestFace are defined
  * above it.
  *
- * The layouts (TeamSel, TeamSelSide, TsMember, ...) are those of menu_e.h, included above; this header holds
+ * The layouts (TeamSel, TeamSelSide, TsMember, ...) are those of team_select.h, included above; this header holds
  * only what the second chunk added.
  */
 

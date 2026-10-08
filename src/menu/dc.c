@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_z.h"
+#include "menu/dc.h"
 
 /*
  * Menu overlay DBZP.BIN, 0x3A9850..0x3A9A70: Dc_Main, the handler of progress modes 53..56 (the Data Center,

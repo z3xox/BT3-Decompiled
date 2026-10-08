@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_za.h"
+#include "menu/dc_password_replay.h"
 
 /*
  * Menu overlay DBZP.BIN, 0x3AE648..0x3AEAB0: PassWin, the window that shows the password of a saved custom

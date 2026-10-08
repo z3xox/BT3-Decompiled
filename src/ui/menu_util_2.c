@@ -1,5 +1,5 @@
 #include "common.h"
-#include "battle/view_b.h"
+#include "ui/menu_support.h"
 #include "battle/battle_setup.h"
 #include "battle/battle_work.h"
 #include "sys/adx.h"

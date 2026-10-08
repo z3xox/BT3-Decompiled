@@ -1,7 +1,7 @@
 #ifndef MENU_MENU_L_H
 #define MENU_MENU_L_H
 
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 #include "sys/save.h"
 
 /*
@@ -15,13 +15,13 @@
  *                                            15, 18, 21, 25 and 29); merged with the former menu_m.c (the closing
  *                                            step and SoloSel_Run, 0x36DBE8..0x36E028).
  *
- * menu_j.h and menu_k.h were still changing while this was written, so this header depends on menu_a.h only:
- * LBracket is this chunk's own, complete view of the bracket work area (same offsets as Bracket of menu_k.h; the
+ * tour_entry.h and bracket.h were still changing while this was written, so this header depends on overlay_common.h only:
+ * LBracket is this chunk's own, complete view of the bracket work area (same offsets as Bracket of bracket.h; the
  * entrant and match records are more detailed here), and the cell / entry / item-set records are repeated under
- * L names (LChrCell = ESelCell, LSelEntry = ESelEntry, LItemSet = TourItemSet of menu_j.h).
+ * L names (LChrCell = ESelCell, LSelEntry = ESelEntry, LItemSet = TourItemSet of tour_entry.h).
  */
 
-/* ---- Main executable, beyond what menu_a.h declares ---- */
+/* ---- Main executable, beyond what overlay_common.h declares ---- */
 
 extern void *memcpy(void *, const void *, u32);
 extern void Flash_ClipSetOffset(MFlash *flash, MFlashRef *ref, s32 x, s32 y);
@@ -97,7 +97,7 @@ typedef struct LSaveCustom {
 } LSaveCustom; /* 0x38 */
 
 /*
- * The save as the overlay addresses it (MSave of menu_c.h, repeated here because menu_c.h declares
+ * The save as the overlay addresses it (MSave of history.h, repeated here because history.h declares
  * BattleResult_GetPtr with another view): two checksum words, then the body as a nested structure.
  */
 typedef struct LSaveBody {
@@ -141,7 +141,7 @@ extern void ItemHelp_Close(void);                      /* item help window: clos
 
 /* ---- The tournament (menu_l.c) ---- */
 
-/* The five tournaments (TOUR_ of menu_j.h). */
+/* The five tournaments (TOUR_ of tour_entry.h). */
 #define LTOUR_WORLD 0            /* World Tournament */
 #define LTOUR_BIG 1              /* World Martial Arts Big Tournament */
 #define LTOUR_CELL 2             /* Cell Games */
@@ -149,7 +149,7 @@ extern void ItemHelp_Close(void);                      /* item help window: clos
 #define LTOUR_YAMCHA 4           /* Yamcha Game */
 #define LTOUR_NUM 5
 
-/* One entrant of the running tournament (0x28 bytes; menu_j.h's TourEntrant with the two unknown words named). */
+/* One entrant of the running tournament (0x28 bytes; tour_entry.h's TourEntrant with the two unknown words named). */
 typedef struct LTourEntrant {
     /* 0x00 */ u16 flags;        /* LTOUR_ENT_ */
     /* 0x02 */ u16 unk2;
@@ -233,7 +233,7 @@ typedef struct LBracketReward {
 
 #define LBRACKET_FLASH_NUM 6
 
-/* flash[] (BRK_FL_ of menu_k.h) */
+/* flash[] (BRK_FL_ of bracket.h) */
 #define LBRK_FL_TREE 0           /* the tree with the 17 chips; scrolls sideways */
 #define LBRK_FL_MOVE_A 1         /* the two chips of the current match */
 #define LBRK_FL_MOVE_B 2         /* the winner's chip moving up */
@@ -339,7 +339,7 @@ s32 Bracket_DrawDragonBall(s32 tour, s32 level, s32 second);
 #define SOLOSEL_FLASH_NUM 3
 #define SOLOSEL_COLS 7
 
-/* A chosen character: the 0x30-byte record the select screens keep in gProgress (ESelEntry of menu_j.h). */
+/* A chosen character: the 0x30-byte record the select screens keep in gProgress (ESelEntry of tour_entry.h). */
 typedef struct LSelEntry {
     /* 0x00 */ s32 col;         /* grid column */
     /* 0x04 */ s32 row;         /* grid row */

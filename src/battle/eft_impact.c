@@ -1,8 +1,8 @@
 #include "common.h"
-#include "battle/eft_v_ext.h"
+#include "battle/eft_particle_ext.h"
 
 /*
- * Effect code 0x1871A8..0x187C50: the impact effect (see include/battle/eft_v.h): hit sparks started by the
+ * Effect code 0x1871A8..0x187C50: the impact effect (see include/battle/eft_particle_unused.h): hit sparks started by the
  * fighter effect layer and the explosion a projectile leaves where it hits.
  *
  * Drawing only: a task that runs one emitter set of the common effect pack at a point. It creates no hit record,

@@ -1,9 +1,9 @@
 #ifndef MENU_MENU_Q_H
 #define MENU_MENU_Q_H
 
-/* menu_a.h declares Snd_PlaySe as returning nothing; it returns s32 (as in include/menu/menu_r.h). */
+/* overlay_common.h declares Snd_PlaySe as returning nothing; it returns s32 (as in include/menu/sim_top.h). */
 #define Snd_PlaySe Snd_PlaySe_menuA
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 #undef Snd_PlaySe
 extern s32 Snd_PlaySe(u32 mask, s32 id);
 
@@ -12,21 +12,21 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
  * archive gMenuArc3, main-menu item 1). Two pieces, cut at an object boundary:
  *
  *   (menu_q.c)  0x37F430..0x37F850  UbScore  tail of the score sheet module: merged into src/menu/ub_score.c (the
- *                                            object starts at 0x37EE18); its views are in include/menu/menu_p.h
+ *                                            object starts at 0x37EE18); its views are in include/menu/ub_score.h
  *   sim_day.c  0x37F850..0x3851B0  SimDay   the day screen of mode 22 (work pointer gSimDay 0x3B7384, 0xBBC
  *                                            bytes), a whole object: the former src/menu/menu_r.c (0x3840E0..:
  *                                            the guide's lines, pad handler 0x384260, 0x384D48, portrait loader,
  *                                            frame loop 0x385020) is merged into it. This header has the layout of
- *                                            the structure; include/menu/menu_r.h only declares the type's name.
+ *                                            the structure; include/menu/sim_top.h only declares the type's name.
  *                                            The two headers cannot be included together (gSaveData).
  *
  * The movie labels call the mode "sim" ("mc_sim_botan", "mc_sim_monita", "fl_syugyo_*" = training): a run is a
  * ladder of rounds of ten turns; on nine of them the player picks a button of a board and an event plays, the
  * tenth is the round's fight. All names are guesses from what the code does ("Ub" = the group of modes 13..30,
- * as in menu_m.h / menu_p.h). The structures are this chunk's own views.
+ * as in ub_team_select.h / ub_score.h). The structures are this chunk's own views.
  */
 
-/* ---- Main executable, beyond what menu_a.h declares ---- */
+/* ---- Main executable, beyond what overlay_common.h declares ---- */
 
 extern void Flash_Reset(MFlash *flash, s32 keepClips);
 extern void Flash_Stop(MFlash *flash);
@@ -72,7 +72,7 @@ typedef struct QSaveRank {
 
 #define Q_RANK_NUM 10
 
-/* Best result of one mission (PSaveMission of menu_p.h) and of one course of modes 24..30. */
+/* Best result of one mission (PSaveMission of ub_score.h) and of one course of modes 24..30. */
 typedef struct QSaveBest {
     /* 0x00 */ u8 cleared;
     /* 0x01 */ u8 rank;
@@ -92,7 +92,7 @@ typedef struct QSaveBestB {
     /* 0x0B */ u8 seconds;
 } QSaveBestB; /* 0xC */
 
-/* The 8-byte checksum and the body, nested as in include/menu/menu_c.h (it reproduces the address arithmetic). */
+/* The 8-byte checksum and the body, nested as in include/menu/history.h (it reproduces the address arithmetic). */
 typedef struct QSaveBody {
     /* 0x0008 */ u8 unk8[0x200];
     /* 0x0208 */ s32 ubFlags;
@@ -119,7 +119,7 @@ extern QSave *gSaveData;
 
 /* ---- gProgress as this chunk uses it ---- */
 
-/* What was chosen for the player's fighter (UbMember of menu_m.h). */
+/* What was chosen for the player's fighter (UbMember of ub_team_select.h). */
 typedef struct QMember {
     /* 0x00 */ s32 unk0[6];
     /* 0x18 */ s32 color;       /* costume */

@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_z.h"
+#include "menu/dc.h"
 #include "sys/password_old.h"
 
 /*

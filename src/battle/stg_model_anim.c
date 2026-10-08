@@ -12,7 +12,7 @@
 #include "sys/math3d.h"
 #include "sys/rand_util.h"
 #include "sys/vu1_packet.h"
-#include "battle/stg_d.h"
+#include "battle/stg_rigid_types.h"
 
 /* Offset table of the stage file (StgOfsTable in battle/stg_a.h). */
 typedef struct StgAnimTable {

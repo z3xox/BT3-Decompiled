@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_s.h"
+#include "menu/survival.h"
 #include "sys/pad.h"
 
 /* The screen's work area (.data, 0x3B743C). */

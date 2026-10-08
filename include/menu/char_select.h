@@ -1,7 +1,7 @@
 #ifndef MENU_MENU_D_H
 #define MENU_MENU_D_H
 
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 
 /*
  * Menu overlay DBZP.BIN, 0x342190..0x348D78: ONE object, the character / stage / music select screen of the
@@ -115,7 +115,7 @@ typedef struct CharSelPick {
     s32 unk0[12];
 } CharSelPick; /* 0x30 */
 
-/* gProgress: the fields this screen uses (include/menu/menu_a.h has the head). */
+/* gProgress: the fields this screen uses (include/menu/overlay_common.h has the head). */
 typedef struct CharSelProgress {
     /* 0x000 */ u8 unk0[0x440];
     /* 0x440 */ struct {

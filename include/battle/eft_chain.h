@@ -14,7 +14,7 @@
  * 2. 0x1793A8..0x17CB40: the "chain" effect (named by the former eft_t.c, now the second part of eft_chain.c, which has its remaining class callbacks and its
  *    public API from 0x17CB40 on): up to 16 strands of ribbon nodes radiating from a point, driven by a three-key
  *    parameter block. Drawing only. The types below are called EftArc* (this file's views; EftArcChain is one
- *    strand, eft_t.h's EftChainStrand).
+ *    strand, eft_draw_modules.h's EftChainStrand).
  *
  * All structs are this file's views; a field named unkXX / fXX has no meaning backed by this file.
  */

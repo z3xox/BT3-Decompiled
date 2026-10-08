@@ -1919,7 +1919,7 @@ void EftRushShot_UpdateModels(EftKTask *task) {
  * Second part (formerly eft_l.c), with its own header and view types. Functions already declared above with
  * the first part's types are reached through cast macros.
  * ------------------------------------------------------------------------------------------------------------ */
-#include "battle/eft_l.h"
+#include "battle/eft_tech_modules.h"
 
 /*
  * Technique effect type 9, the "rush shot", 0x15B550..0x15C728: everything of the module except its first three

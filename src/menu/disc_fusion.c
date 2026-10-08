@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_o.h"
+#include "menu/ub.h"
 #include "sys/pad.h"
 
 /*
@@ -488,7 +488,7 @@ void DiscFusion_UpdateTalk(void) {
 }
 
 /*
- * Snd_PlaySe returns a value in the original's prototype (menu_a.h declares it void): with a void call the
+ * Snd_PlaySe returns a value in the original's prototype (overlay_common.h declares it void): with a void call the
  * pointer for the store that follows a call is put in v0, the original has it in v1. Only this function of the
  * file shows the difference.
  */

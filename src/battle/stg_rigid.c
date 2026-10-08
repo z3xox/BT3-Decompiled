@@ -1,7 +1,7 @@
 #include "common.h"
 #include "sys/math3d.h"
 #include "sys/rigid.h"
-#include "battle/stg_d.h"
+#include "battle/stg_rigid_types.h"
 #include "sys/heap.h"
 #include "sys/rand_util.h"
 

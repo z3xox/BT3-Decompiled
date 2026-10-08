@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_u.h"
+#include "menu/sim_event_evo_z.h"
 
 /*
  * EvoZ, 0x393C58..0x395E30: the screen's per-frame set-up of its three movies. A second source file (it has
@@ -516,8 +516,8 @@ void EvoZ_Refresh(UEvoZ *ez) {
 
 /*
  * Merged (integration step 11): EvoZ_Load (0x395E30..0x396838, formerly src/menu/menu_v.c) is appended here, so
- * this file is the whole object 0x393C58..0x396838. It uses this file's view UEvoZ of include/menu/menu_u.h
- * (the EvoZ view of include/menu/menu_v.h stays for evo_z_3.c): chipTex -> bg, VItemEntry -> UItemEntry,
+ * this file is the whole object 0x393C58..0x396838. It uses this file's view UEvoZ of include/menu/sim_event_evo_z.h
+ * (the EvoZ view of include/menu/evo_z_items.h stays for evo_z_3.c): chipTex -> bg, VItemEntry -> UItemEntry,
  * VChrGridList -> UChrGridList. evo_z_1.c (0x392F10..0x393C58) is a separate object: both have their own copy
  * of "mc_ability_limit_up" (0x3BB150 and 0x3BB3D0).
  */

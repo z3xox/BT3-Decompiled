@@ -1,13 +1,13 @@
 #include "common.h"
-#include "menu/menu_o.h"
+#include "menu/ub.h"
 #include "sys/pad.h"
 
 /*
  * UbResult, 0x3760C8..0x3782A8: the result screen of the two disc modes (modes 27 and 30); work pointer 0x3B7358,
  * .rodata 0x3B7E50..0x3B8284 (from "mc_guide_17go"). Merged from two chunks: the head (0x3760C8..0x376920,
- * MarkCourseCleared and Init, written as ub_result.c with the NResult view of include/menu/menu_n.h) and the rest
+ * MarkCourseCleared and Init, written as ub_result.c with the NResult view of include/menu/ub_rank.h) and the rest
  * (0x376920.., written as menu_o.c). The one view used now is UbResult / UoProgress / UoSave of
- * include/menu/menu_o.h. The score sheet (UoScore) is filled and counted by the module at 0x37EE18
+ * include/menu/ub.h. The score sheet (UoScore) is filled and counted by the module at 0x37EE18
  * (menu_p / menu_q).
  */
 

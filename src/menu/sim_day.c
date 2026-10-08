@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_q.h"
+#include "menu/sim_day.h"
 #include "sys/pad.h"
 
 /* The screen's work area (.data, 0x3B7384). */

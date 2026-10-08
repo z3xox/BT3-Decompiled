@@ -1805,7 +1805,7 @@ s32 BtlObjMdl_HasMouth(BobjMdl *mdl) {
 #undef BOBJ_NODE_MAX
 /*
  * Battle object, third part (0x24F1F0..0x2527B0): what sits between the animation event queries (bobj_a) and
- * src/sys/fade.c. Layouts are in include/battle/bobj_b.h.
+ * src/sys/fade.c. Layouts are in include/battle/btl_obj_anim_part2.h.
  *
  *   0x24F1F0..0x24FA20  the face: eye frame, mouth modes ("sub-states"), lip-sync tracks
  *   0x24FA20..0x2500E8  the tables an object reads out of its files, initial flags, colour preset
@@ -1820,7 +1820,7 @@ s32 BtlObjMdl_HasMouth(BobjMdl *mdl) {
  *   BtlObj_UpdateFace(obj)                blink and mouth
  * None of it looks at the camera, a view or a draw list: the same calls run whether or not the object is drawn.
  */
-#include "battle/bobj_b.h"
+#include "battle/btl_obj_anim_part2.h"
 
 extern void *memset(void *dst, s32 c, u32 n);
 extern s32 rand(void);

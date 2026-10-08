@@ -1,7 +1,7 @@
 #ifndef MENU_MENU_K_H
 #define MENU_MENU_K_H
 
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 
 /*
  * Menu overlay DBZP.BIN, 0x364358..0x368C18 (placeholder stem "menu_k"): Dragon World Tour (progress modes 33..35),
@@ -13,7 +13,7 @@
  *   tour_background.c  0x366F58..0x3673F8  TourBg    the cloud backdrop shared with the entrant select
  *   bracket_clips.c  0x3673F8..0x368068  Bracket   per-frame clip set-up
  *   bracket_logic.c  0x368068..0x36B3E0  Bracket   the loader and the bracket logic (merged with the former menu_l.c;
- *                                             that file uses the LBracket view of menu_l.h)
+ *                                             that file uses the LBracket view of tournament.h)
  *
  * Object boundaries the data proves: one between Bracket_Update and Bracket_UpdateSeq ("fl_guide_out" exists at
  * 0x3B6168 and at 0x3B6480; put at 0x3660A0, where the functions start taking the work pointer as an argument), and
@@ -21,11 +21,11 @@
  * at 0x3B6FC4, and repeats "fl_guide_in"). The cuts at 0x364DA8, 0x366F58 and 0x3673F8 are module cuts; the data
  * neither confirms nor excludes them (menu_k_c / _d / _e may be one source file).
  *
- * This header does not include menu_j.h (written in parallel, it changed while this chunk was done): BrkCell
+ * This header does not include tour_entry.h (written in parallel, it changed while this chunk was done): BrkCell
  * and BrkEntrant below are this chunk's own views of the character-grid cell and TourEntrant.
  */
 
-/* ---- Main executable, beyond what menu_a.h declares ---- */
+/* ---- Main executable, beyond what overlay_common.h declares ---- */
 
 extern void Flash_ClipSetOffset(MFlash *flash, MFlashRef *ref, s32 x, s32 y);
 extern void TextBox_AttachLine(MFlash *flash, MFlashRef *ref, s32 x, s32 y, s32 line, MTextBox *box);
@@ -71,12 +71,12 @@ extern void ChrGrid_Build(s32 *outCount, BrkCell *out, s32 *inCount, BrkCell *in
 #define TOUR_OTHERWORLD 3        /* Otherworld Tournament ("mc_guide_anoyo") */
 #define TOUR_YAMCHA 4            /* Yamcha Game (Yamcha and Puar) */
 
-/* TourMenu (the former menu_k.c, 0x364358..0x364DA8) is now part of tour_menu.c; its view is TourMenu of menu_j.h. */
+/* TourMenu (the former menu_k.c, 0x364358..0x364DA8) is now part of tour_menu.c; its view is TourMenu of tour_entry.h. */
 
 /* gSaveData->unkA08 */
 #define TOUR_SAVE_STARTED 0x20  /* the first-visit speech was heard */
 
-/* What the tournament keeps of one entrant: gProgress + 0x98, 0x28 bytes each (TourEntrant of menu_j.h). */
+/* What the tournament keeps of one entrant: gProgress + 0x98, 0x28 bytes each (TourEntrant of tour_entry.h). */
 typedef struct BrkEntrant {
     /* 0x00 */ u16 flags;        /* TOUR_ENT_ */
     /* 0x02 */ u16 unk2;

@@ -1,9 +1,9 @@
 #ifndef MENU_MENU_ZA_H
 #define MENU_MENU_ZA_H
 
-/* menu_a.h declares Snd_PlaySe as returning nothing; it returns s32 (see include/menu/menu_h.h). */
+/* overlay_common.h declares Snd_PlaySe as returning nothing; it returns s32 (see include/menu/char_reference.h). */
 #define Snd_PlaySe Snd_PlaySe_menuA
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 #include "sys/pad.h"
 #undef Snd_PlaySe
 extern s32 Snd_PlaySe(u32 mask, s32 id);
@@ -22,7 +22,7 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
  * Every structure here is this chunk's own view: the neighbours' headers were still changing.
  */
 
-/* ---- Main executable, beyond what menu_a.h declares ---- */
+/* ---- Main executable, beyond what overlay_common.h declares ---- */
 
 extern void Flash_ClipSetOffset(MFlash *flash, MFlashRef *ref, s32 x, s32 y);
 extern void Flash_ClipSetScale(MFlash *flash, MFlashRef *ref, f32 x, f32 y);
@@ -74,7 +74,7 @@ typedef struct ZaChrPass {
 extern s32 ChrPass_Encode(ZaChrPass *in);
 extern char *ChrPass_GetText(void);
 
-/* DcPass (src/menu/dc_password.c, the whole object since menu_za.c was merged into it): see include/menu/menu_z.h. */
+/* DcPass (src/menu/dc_password.c, the whole object since menu_za.c was merged into it): see include/menu/dc.h. */
 
 /* ---- PassWin (password_window.c) ---- */
 

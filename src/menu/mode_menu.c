@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_b.h"
+#include "menu/mode_menu.h"
 #include "sys/pad.h"
 #include "sys/save.h"
 

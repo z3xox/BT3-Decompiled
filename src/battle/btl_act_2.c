@@ -1,7 +1,7 @@
 #include "common.h"
 #include "battle/btl_act_2.h"
-#include "battle/btl_act_d.h"
-#include "battle/btl_act_e.h"
+#include "battle/btl_act_2_part2.h"
+#include "battle/btl_act_2_part3.h"
 
 /*
  * Fighter action handlers, third slice: 0x1EA5F8..0x1EE058 (a slice of the original handler file: its float

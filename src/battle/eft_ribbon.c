@@ -4,7 +4,7 @@
 /*
  * 0x1A0E58..0x1A62C8, two files merged at integration. First part: ribbon helpers, 0x1A0E58..0x1A21A8, the first
  * twelve functions of the "ribbon" module (effect pack part kind 17). Second part (formerly eft_ac.c,
- * 0x1A21A8..0x1A62C8; include/battle/eft_ac.h documents the module): the ribbon's task callbacks, manager and
+ * 0x1A21A8..0x1A62C8; include/battle/eft_ribbon.h documents the module): the ribbon's task callbacks, manager and
  * entry points, then the swirl lines `EftZap_*`. One translation unit in the original (the second part's callers
  * only match with EftRibbon_PlaceStrip / EftRibbon_SetTexPair / the two draw functions defined above them).
  *
@@ -549,10 +549,10 @@ void EftRibbon_DrawStrip(EftRbn *w, EftRbnArg *arg, EftRbnPrm *prm) {
  * Second part (formerly eft_ac.c), with its own header and view types. Names the first part already declared with
  * other types are reached through cast macros (the generated code is the same).
  * ------------------------------------------------------------------------------------------------------------ */
-#include "battle/eft_ac.h"
+#include "battle/eft_ribbon.h"
 
 /*
- * Effect pack part modules, 0x1A21A8..0x1A62C8. See include/battle/eft_ac.h.
+ * Effect pack part modules, 0x1A21A8..0x1A62C8. See include/battle/eft_ribbon.h.
  */
 
 /* The view being drawn (include/battle/btl_cam.h). */

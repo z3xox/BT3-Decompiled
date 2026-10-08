@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_k.h"
+#include "menu/bracket.h"
 #include "sys/pad.h"
 
 /*

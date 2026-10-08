@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_v.h"
+#include "menu/evo_z_items.h"
 
 /* The details page's work pointer (0x3BB144): this object owns it. */
 ItemHelp *gItemHelp = NULL;

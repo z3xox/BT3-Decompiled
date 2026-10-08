@@ -1,9 +1,9 @@
 #ifndef MENU_MENU_V_H
 #define MENU_MENU_V_H
 
-/* menu_a.h declares Snd_PlaySe as returning nothing; it returns s32 (see include/menu/menu_h.h). */
+/* overlay_common.h declares Snd_PlaySe as returning nothing; it returns s32 (see include/menu/char_reference.h). */
 #define Snd_PlaySe Snd_PlaySe_menuA
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 #include "sys/pad.h"
 #include "sys/common.h"
 #include "sys/save.h"
@@ -22,7 +22,7 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
  *   item_help.c  0x399240..0x399790  ItemHelp: the item details page shared by many screens
  *   shop.c  0x399790..0x39A978  Shop: head of the item shop object (the rest is in src/menu/menu_w*.c)
  *
- * The structures below are local views; include/menu/menu_u.h (UEvoZ) and include/menu/menu_w.h (Shop) describe
+ * The structures below are local views; include/menu/sim_event_evo_z.h (UEvoZ) and include/menu/shop.h (Shop) describe
  * the same work areas from the neighbouring chunks.
  */
 
@@ -99,7 +99,7 @@ typedef struct VItemSet {
     u16 id[8];
 } VItemSet;
 
-/* gSaveData as this file's address arithmetic needs it (see MSave in include/menu/menu_c.h). */
+/* gSaveData as this file's address arithmetic needs it (see MSave in include/menu/history.h). */
 typedef struct VSaveCustom {
     /* 0x00 */ VItemSet set[3];
     /* 0x30 */ s32 exp;
@@ -289,7 +289,7 @@ void ItemHelp_Open(void);
 void ItemHelp_Close(void);
 
 /* ---- Shop (shop.c): merged with menu_w.c; the Shop structure, gShop and the prototypes are in
- * include/menu/menu_w.h (this header's partial view was removed). ---- */
+ * include/menu/shop.h (this header's partial view was removed). ---- */
 
 extern void Sprite_SetScissor(s32 x0, s32 x1, s32 y0, s32 y1);
 extern void TextBox_SetRect(MTextBox *box, s32 a, s32 b, s32 c, s32 d);

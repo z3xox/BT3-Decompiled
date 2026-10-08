@@ -1,7 +1,7 @@
 #ifndef MENU_MENU_I_H
 #define MENU_MENU_I_H
 
-#include "menu/menu_a.h"
+#include "menu/overlay_common.h"
 
 /*
  * Menu overlay DBZP.BIN, 0x35A558..0x35F650 (placeholder stem "menu_i"). Four pieces:
@@ -11,11 +11,11 @@
  *   logo.c  0x35D948..0x35E0F8  Logo / FirstRun: the boot logos and the first-run sequence
  *   entry_select.c  0x35E0F8..0x3623A8  EntrySel  the tournament's entrant select (mode 34), with menu_j.c merged in
  *
- * Train below is the view of the whole object (training.c, which includes menu_h.h and then this header; the
- * partial view that menu_h.h had is gone).
+ * Train below is the view of the whole object (training.c, which includes char_reference.h and then this header; the
+ * partial view that char_reference.h had is gone).
  */
 
-/* ---- Main executable, beyond what menu_a.h declares ---- */
+/* ---- Main executable, beyond what overlay_common.h declares ---- */
 
 extern void MsgWin_SetText(void *text);
 extern void MsgWin_SetBoxParam(s32 a, s32 b);
@@ -282,14 +282,14 @@ s32 FirstRun_Main(void);
 s32 FirstRun_WaitPad();
 
 /* ---- EntrySel (entry_select.c): the entrant select of the tournament mode (mode 34): what its first half needs
-   beyond menu_j.h. ---- */
+   beyond tour_entry.h. ---- */
 
 extern s32 ChrTbl_WrapCostume(s32 chara, s32 *costume);
 extern void ItemPanel_Init(u32 *pack, s32 side);     /* menu_g */
 extern void TourBg_Init(void *file, u32 kind, u8 **tex); /* menu_k (0x366F58) */
 extern void ItemHelp_Init(void *pack);
 
-/* Always-loaded resources (include/sys/common.h): common file 4 is data[2]. menu_h.h has the same view. */
+/* Always-loaded resources (include/sys/common.h): common file 4 is data[2]. char_reference.h has the same view. */
 #ifndef MENU_MENU_H_H
 typedef struct MCommonRes {
     /* 0x00 */ void *boot;

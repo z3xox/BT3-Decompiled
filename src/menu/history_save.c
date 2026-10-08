@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_c.h"
+#include "menu/history.h"
 
 HistSave *gHistSave = NULL; /* 0x3B1304 */
 

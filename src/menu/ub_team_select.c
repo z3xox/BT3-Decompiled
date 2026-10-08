@@ -1,5 +1,5 @@
 #include "common.h"
-#include "menu/menu_m.h"
+#include "menu/ub_team_select.h"
 #include "sys/pad.h"
 #include "sys/save.h"
 

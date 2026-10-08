@@ -1,5 +1,5 @@
 #include "common.h"
-#include "battle/eft_l.h"
+#include "battle/eft_tech_modules.h"
 
 /*
  * Absorb / drain glow, 0x15E5D0..0x15EF18: manager class 0x2C39E8 (gEftAbsorbMgrClass, an entry of the layer's
