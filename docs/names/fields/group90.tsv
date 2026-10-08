@@ -1,0 +1,6 @@
+include/battle/btl_act_2.h	BtlActCPose	speed	pitch	HIGH	pose +0x90 is the heading pitch (BtlMove_SetHeading); three agents, six views
+include/battle/btl_act_2.h	BtlActEPose	speed	pitch	HIGH	the same
+include/battle/btl_char_ctl.h	BtlCtlPose	speed	pitch	HIGH	the same
+include/battle/btl_act_2.h	BtlActCPose	unk98	speed	HIGH	pose +0x98 is the speed in every other view
+include/battle/btl_act_2.h	BtlActEPose	unk98	speed	HIGH	the same
+include/battle/btl_char_ctl.h	BtlCtlPose	unk98	speed	HIGH	the same

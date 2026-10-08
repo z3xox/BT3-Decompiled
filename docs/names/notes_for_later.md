@@ -173,3 +173,30 @@ Group 10 (eft_stage_2.h .. eft_water.h):
 - src/battle/eft_stage_2.c:180-201: the local EftGeyserSmokeInit / EftGeyserSteamInit have the same unk30..unk50 fields as the header's
   EftGeyserSmokeArg / EftGeyserSteamArg and would take the same names.
 - Definition +0x04 is `kind` in EftShotParam and `cls` in EftHitDef (which uses `kind` for +0x05): see group 09's note.
+
+Group 04 (btl_char_coll.h .. btl_char_member.h):
+- btl_char_ctl.h:117-118: BtlCtlNode.mtx at +0x50 is the parent's world matrix (the node's own is at +0x10); `pos` at +0x90 is the local translation.
+- btl_char_coll.h:165 and btl_char_member.h:98: fighter +0x00 is `side` in BtlCollChr / BtlMemberChr, `player` (and +0x08 `side`) elsewhere.
+- btl_char_coll.h:150, 153: BtlCollReact.dirYaw / faceYaw are yaw / turnYaw in HitReact and ActGReact, `id` is `reaction`; unk18 is s32 here, f32 scale there;
+  its four two-word arrays (unk4[2], unk10[2], unk28[2], unk3C[2]) each cover two different fields of HitReact.
+- btl_char_fx_1.h:150-162: FxHitArg2 against the callee's view EftRArg (eft_struggle.h:285): objId@0x10 is srcId, objId2 is objId, code is node,
+  level@0x18 is kind, size@0x30 is level. :23: unk98 "reference speed" is the plain speed along dir.
+- BtlFlagPose.unk30 (btl_char_flag.h:119) is `vel` in BtlCapiPose, but this structure uses `vel` for +0x40 (FxPose too; BtlCapiPose: move;
+  BtlActBPose / ActGPose: moved): the views need settling together.
+- Competing names chosen: skill block 0xE00..0xE18 after BtlActIChr (skillTimer, skillSlot, skillKiRate, skillTimerC), HitChr.unkE18 noFlinch
+  (BtlActIChr: skillTimerD; BtlCapiBChr 0xE0C: dodgeKind); 0xE44 techCharge (BtlSuperChr: charge) against the attack charge at 0xD78;
+  pose +0x20 dispOfs (BtlCtlPose: move); object +0xCAD hitNo (BobjHit: hitIndex); the six defence timers 0x1068..0x107C named from
+  BtlMove_UpdateDefenseTimers (dodgeWindow, blastDodgeWindow, counterWindow, deflectWindow, throwBreakWindow, rushBreakWindow), all uncertain.
+
+Group 03 (btl_char_action.h .. btl_char_cam.h):
+- Pose +0x90 is the heading pitch (BtlMove_SetHeading; six views; combat.md line 445), named `speed` in BtlActPose, BtlActCPose, BtlActEPose,
+  BtlCtlPose; the real speed is +0x98. Also +0x80 `vel` is `dir`, +0x94 `facing` is `yaw`.
+- btl_char_action.h:91-92: BtlActVitals gaugeB / gaugeBMax are ki / kiMax. :161: switchUnk20 is the member's model variant.
+- btl_char_action.h:272: BtlAct_IsAirMotion with useSaved returns fighter +0xFBC, which is HitReact.back (hit from behind).
+- btl_char_api_2.h:110: BtlCharApiMgr +0x0C `sounds` is the looping set (the one-shot set is +0x08). :90: attrCount at +0xCAE is eventCount.
+- btl_char_api_2.h:35-45: camUnk420 / 460 / 494 / 4A0 are ChrCam.eye, bodyPos, hit, yaw. btl_char_api_1.h:76: flags0 is charaFlags;
+  :58-63 thrUnk10 / 1C / 48 / 4C are still unknowns under a prefix.
+- Fighter +0x00 / +0x08: player / side (BtlActChr, BtlCapiChr, BtlCapiBChr) against side / index (BtlMgrChr, BtlMemberChr, ChrCamChr,
+  BtlCharApiChr): one must win before a shared fighter header.
+- Choices: +0xE40 techDelay (BtlSuperChr: cooldown, and the accessor is ...GetTechniqueCooldown); attack block +0x09 leadIn (BtlActBAttack: level);
+  +0x974 motion (BtlStatChr: anim.cur); +0x1550..0x1558 scriptMotion / Blend / Loop in BtlActChr (BtlCapiBChr: motion / motionBlend / motionLoop).

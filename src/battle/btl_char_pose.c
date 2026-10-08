@@ -157,12 +157,12 @@ void BtlChar_Place(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, s32 area) {
 
     Vec4_Copy(&pose->pos, pos);
     Vec4_Copy(&pose->rot, rot);
-    Vec4_Copy(&pose->unk30, &gVu0ZeroVec);
-    Vec4_Copy(&pose->unk40, &gVu0ZeroVec);
+    Vec4_Copy(&pose->vel, &gVu0ZeroVec);
+    Vec4_Copy(&pose->moved, &gVu0ZeroVec);
     pose->heading = rot->y;
     pose->speed = 0.0f;
     pose->unk98 = 0.0f;
-    pose->unk9C = 0.0f;
+    pose->fallSpeed = 0.0f;
     Vec4_Copy(&obj->pos, pos);
     Vec4_Copy(&obj->outPos, pos);
     Vec4_Copy(&obj->rot, rot);
@@ -230,7 +230,7 @@ void BtlChar_PlaceOnPath(BtlCtlChr *chr) {
     Vec4 delta;
     Vec4 pos;
     Vec4 rot;
-    s32 *work = gBtlChars->unk7C;
+    s32 *work = gBtlChars->clashC;
 
     if (BtlChar_TestFlag(chr, 0xF8)) {
         BtlCtlPath *path = BtlStage_GetPath(work[2]);
@@ -399,7 +399,7 @@ void BtlChars_UpdateHold(void) {
         if (BtlChar_TestFlag(holder, 0x9B)) {
             Vec4_Sub(&delta, &heldPos, &holderPos);
             if (BtlChar_TestFlag(held, 0x34)) {
-                Vec4_Scale(&delta, &delta, 1.0f - heldObj->unkC84);
+                Vec4_Scale(&delta, &delta, 1.0f - heldObj->blend);
             }
             Vec4_Add(&BtlChar_GetPos(holder)->pos, &BtlChar_GetPos(holder)->pos, &delta);
             BtlChar_PoseToObj(holder, 0);
@@ -408,7 +408,7 @@ void BtlChars_UpdateHold(void) {
         } else {
             Vec4_Sub(&delta, &holderPos, &heldPos);
             if (BtlChar_TestFlag(held, 0x34)) {
-                Vec4_Scale(&delta, &delta, 1.0f - heldObj->unkC84);
+                Vec4_Scale(&delta, &delta, 1.0f - heldObj->blend);
             }
             Vec4_Add(&BtlChar_GetPos(held)->pos, &BtlChar_GetPos(held)->pos, &delta);
             BtlChar_PoseToObj(held, 0);
@@ -425,7 +425,7 @@ void BtlChar_SavePlacement(BtlCtlChr *chr) {
 
     Vec4_Copy(&chr->savedPos, &BtlChar_GetPos(chr)->pos);
     Vec4_Copy(&chr->savedRot, &BtlChar_GetPos(chr)->rot);
-    Vec4_Copy(&chr->unk1310, obj->unkFA0);
+    Vec4_Copy(&chr->bodyWarpPos, obj->bodyPos);
     chr->savedArea = BtlChar_GetObj(chr)->area;
     chr->savedFlagF = BtlChar_TestFlag(chr, 0xF);
     chr->savedFlagE = BtlChar_TestFlag(chr, 0xE);
@@ -435,7 +435,7 @@ void BtlChar_SavePlacement(BtlCtlChr *chr) {
 void BtlChar_SetSavedPlacement(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, Vec4 *unk1310, s32 flagF, s32 flagE) {
     Vec4_Copy(&chr->savedPos, pos);
     Vec4_Copy(&chr->savedRot, rot);
-    Vec4_Copy(&chr->unk1310, unk1310);
+    Vec4_Copy(&chr->bodyWarpPos, unk1310);
     chr->savedArea = BtlStage_FindZoneNear(-1, pos);
     chr->savedFlagF = flagF;
     chr->savedFlagE = flagE;
@@ -443,7 +443,7 @@ void BtlChar_SetSavedPlacement(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, Vec4 *unk13
 
 /* Stores a vector at +0x1310 and raises flag 0x55. */
 void BtlChar_RequestBodyWarp(BtlCtlChr *chr, Vec4 *v) {
-    Vec4_Copy(&chr->unk1310, v);
+    Vec4_Copy(&chr->bodyWarpPos, v);
     BtlChar_SetFlag(chr, 0x55);
 }
 
@@ -451,7 +451,7 @@ void BtlChar_RequestBodyWarp(BtlCtlChr *chr, Vec4 *v) {
 void BtlChar_ResetBodyWarp(BtlCtlChr *chr) {
     BtlCtlObj *obj = BtlChar_GetObj(chr);
 
-    Vec4_Copy(&chr->unk1310, obj->unkFA0);
+    Vec4_Copy(&chr->bodyWarpPos, obj->bodyPos);
 }
 
 /* Computes the relative placement offsets (from this fighter or from BtlOpp_GetPlayer's fighter) and raises flag 0xF6. */

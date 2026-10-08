@@ -79,8 +79,8 @@ void BtlChar_UpdateLookOffset(BtlCtlChr *chr) {
     } else {
         BtlCtlNode *node = BtlObj_GetNode(obj, 0x2F);
 
-        look->height += (obj->outPos.y - node->unk40.y - look->height) * 0.2f;
-        Vec4_Sub(&offset, &obj->outPos, &node->unk40);
+        look->height += (obj->outPos.y - node->worldPos.y - look->height) * 0.2f;
+        Vec4_Sub(&offset, &obj->outPos, &node->worldPos);
         Vec4_Sub(&delta, &offset, &look->offset);
         Vec4_Scale(&delta, &delta, 0.2f);
         Vec4_Add(&look->offset, &look->offset, &delta);

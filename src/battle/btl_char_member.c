@@ -128,7 +128,7 @@ void BtlMember_LoadParams(BtlMemberChr *chr, s32 member, s32 init, f32 healthPct
     BtlMemberGauge *g = &m->gauge;
 
     if (init) {
-        g->unk30 = 0;
+        g->bodyChanged = 0;
         g->fused = 0;
     }
     if (g->fused == 0) {
@@ -501,7 +501,7 @@ s32 BtlMember_Damage(BtlMemberChr *chr, s32 amount, s32 flags) {
         g->ki = 0;
         g->blast = 0;
         g->maxPower = 0;
-        chr->unkFE0 = 0;
+        chr->stunTimer = 0;
         BtlChar_ClearFlag(chr, 0xBE);
         if (Battle_GetMode() == 3) {
             if (BtlMember_CountAlive(chr) <= 0) {
@@ -841,15 +841,15 @@ void BtlMembers_UpdateQueuedDamage(void) {
             if (chr->queue.total > 0) {
                 BtlMember_Damage(other, chr->queue.total, chr->queue.flags);
             }
-            chr->queue.unk0 = 0;
+            chr->queue.totalStart = 0;
             chr->queue.total = 0;
             chr->queue.hits = 0;
             chr->queue.perHit = 0;
             chr->queue.flags = 0;
-            chr->queue.unk14 = 0;
+            chr->queue.drainHealthStart = 0;
             chr->queue.drainHealth = 0;
             chr->queue.drainHealthStep = 0;
-            chr->queue.unk20 = 0;
+            chr->queue.drainKiStart = 0;
             chr->queue.drainKi = 0;
             chr->queue.drainKiStep = 0;
             chr->queue.drainFrom = 0;

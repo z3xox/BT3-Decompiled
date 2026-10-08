@@ -160,7 +160,7 @@ void BtlChar_UpdateLockOn(BtlFlagChr *chr) {
         BtlChar_ClearFlag(chr, 5);
     }
     BtlChar_ClearFlag(chr, 0x13);
-    if (!BtlChar_TestFlag(chr, 0x1B) && !BtlChar_TestFlag(chr, 0x93) && chr->unkFB0 < 3 &&
+    if (!BtlChar_TestFlag(chr, 0x1B) && !BtlChar_TestFlag(chr, 0x93) && chr->reaction < 3 &&
         !BtlChar_TestFlag(chr, 0xB2)) {
         range = BtlChar_GetSpacing(chr, 0);
         if (BtlOpp_GetDistance(chr) < range) {

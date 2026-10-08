@@ -480,7 +480,7 @@ s32 BtlClash_UpdateC(s32 state) {
             BtlClash_SetPathCut(c->path);
         }
         if (BtlChar_TestFlag(chr0, 0xC4) && BtlChar_TestFlag(chr1, 0xC4)) {
-            if (chr0->unkE58 >= 0) {
+            if (chr0->clashAnswer >= 0) {
                 BtlAct_CountAndMarkOpponent(chr0);
             } else {
                 BtlAct_CountAndMarkOpponent(chr1);

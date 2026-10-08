@@ -161,16 +161,16 @@ s32 BtlColl_StartThrow(BtlCollChr *atk, BtlCollChr *def, s32 slot, u32 techFlags
     atk->thr.atkSide = atk->side;
     atk->thr.defSide = def->side;
     atk->thr.slot = slot;
-    atk->thr.unk10 = BtlSuper_GetStepCount(atk, slot);
-    atk->thr.unk20 = BtlSuper_GetThrowChara(atk, slot);
-    atk->thr.unk24 = BtlSuper_GetThrowCostume(atk, slot);
-    atk->thr.unk28 = BtlSuper_GetThrowGauge20(atk, slot);
-    atk->thr.unk2C = BtlSuper_GetThrowObjectSlot(atk, slot);
-    atk->thr.unk18 = BtlSuper_GetThrowPartnerStep(atk, slot);
-    atk->thr.unk1C = BtlSuper_GetLastStep(atk, slot);
+    atk->thr.stepCount = BtlSuper_GetStepCount(atk, slot);
+    atk->thr.partnerChara = BtlSuper_GetThrowChara(atk, slot);
+    atk->thr.partnerCostume = BtlSuper_GetThrowCostume(atk, slot);
+    atk->thr.partnerVariant = BtlSuper_GetThrowGauge20(atk, slot);
+    atk->thr.partnerSlot = BtlSuper_GetThrowObjectSlot(atk, slot);
+    atk->thr.partnerStep = BtlSuper_GetThrowPartnerStep(atk, slot);
+    atk->thr.defFormStep = BtlSuper_GetLastStep(atk, slot);
     BtlChar_SetFlag(atk, 0x94);
     atk->react.faceYaw = BtlChar_GetPos(atk)->yaw;
-    atk->react.unk24 = 0.0f;
+    atk->react.turnPitch = 0.0f;
     back = 0;
     if (techFlags & 0x10000000) {
         back = 1;
@@ -178,37 +178,37 @@ s32 BtlColl_StartThrow(BtlCollChr *atk, BtlCollChr *def, s32 slot, u32 techFlags
     if (techFlags & 0x400) {
         pick = BtlChar_FrameMod(2) != 0;
     }
-    atk->thr.unk34 = pick;
-    atk->thr.unk14 = BtlSuper_GetLandingKind(atk, slot);
+    atk->thr.endNeutral = pick;
+    atk->thr.landingKind = BtlSuper_GetLandingKind(atk, slot);
     if (techFlags & 0x400000) {
-        atk->thr.unk30 = 1;
-        atk->thr.unk60 = BtlSuper_GetThrowAngleA(atk, slot);
-        atk->thr.unk64 = BtlSuper_GetThrowAngleB(atk, slot);
+        atk->thr.useAngles = 1;
+        atk->thr.angleYaw = BtlSuper_GetThrowAngleA(atk, slot);
+        atk->thr.anglePitch = BtlSuper_GetThrowAngleB(atk, slot);
     } else {
-        atk->thr.unk30 = 0;
-        atk->thr.unk60 = 0.0f;
-        atk->thr.unk64 = 0.0f;
+        atk->thr.useAngles = 0;
+        atk->thr.angleYaw = 0.0f;
+        atk->thr.anglePitch = 0.0f;
     }
-    atk->thr.unk40 = 0;
+    atk->thr.koSwitch = 0;
     if (BtlSuper_GetFlagsA(atk, slot) & 0x2000000) {
-        atk->thr.unk40 = 1;
+        atk->thr.koSwitch = 1;
     }
-    atk->thr.unk44 = 0;
-    atk->thr.unk48 = 0;
+    atk->thr.caughtLoop = 0;
+    atk->thr.atkFormChange = 0;
     if (techFlags & 0x2000) {
-        if (BtlMember_GetActiveGauge(atk)->unk20 == 0) {
-            atk->thr.unk48 = 1;
+        if (BtlMember_GetActiveGauge(atk)->variant == 0) {
+            atk->thr.atkFormChange = 1;
         }
     }
-    atk->thr.unk4C = 0;
+    atk->thr.defFormChange = 0;
     if (techFlags & 0x80000) {
-        if (BtlMember_GetActiveGauge(def)->unk20 == 0) {
-            atk->thr.unk4C = 1;
+        if (BtlMember_GetActiveGauge(def)->variant == 0) {
+            atk->thr.defFormChange = 1;
         }
     }
-    atk->thr.unk50 = 0;
+    atk->thr.placeAtStart = 0;
     if (techFlags & 0x800) {
-        atk->thr.unk50 = 1;
+        atk->thr.placeAtStart = 1;
     }
     atk->thr.unk54 = 0;
     if (techFlags & 0x10000) {
@@ -227,30 +227,30 @@ s32 BtlColl_StartThrow(BtlCollChr *atk, BtlCollChr *def, s32 slot, u32 techFlags
     def->thr.atkSide = atk->thr.atkSide;
     def->thr.defSide = atk->thr.defSide;
     def->thr.slot = atk->thr.slot;
-    def->thr.unk10 = atk->thr.unk10;
-    def->thr.unk20 = -1;
-    def->thr.unk24 = 0;
-    def->thr.unk28 = 0;
-    def->thr.unk2C = 1;
-    def->thr.unk18 = atk->thr.unk18;
-    def->thr.unk1C = atk->thr.unk1C;
-    def->thr.unk14 = atk->thr.unk14;
-    def->thr.unk30 = atk->thr.unk30;
-    def->thr.unk60 = atk->thr.unk60;
-    def->thr.unk64 = atk->thr.unk64;
-    def->thr.unk34 = atk->thr.unk34;
-    def->thr.unk40 = atk->thr.unk40;
-    def->thr.unk44 = atk->thr.unk44;
-    def->thr.unk48 = atk->thr.unk48;
-    def->thr.unk4C = atk->thr.unk4C;
-    def->thr.unk50 = atk->thr.unk50;
+    def->thr.stepCount = atk->thr.stepCount;
+    def->thr.partnerChara = -1;
+    def->thr.partnerCostume = 0;
+    def->thr.partnerVariant = 0;
+    def->thr.partnerSlot = 1;
+    def->thr.partnerStep = atk->thr.partnerStep;
+    def->thr.defFormStep = atk->thr.defFormStep;
+    def->thr.landingKind = atk->thr.landingKind;
+    def->thr.useAngles = atk->thr.useAngles;
+    def->thr.angleYaw = atk->thr.angleYaw;
+    def->thr.anglePitch = atk->thr.anglePitch;
+    def->thr.endNeutral = atk->thr.endNeutral;
+    def->thr.koSwitch = atk->thr.koSwitch;
+    def->thr.caughtLoop = atk->thr.caughtLoop;
+    def->thr.atkFormChange = atk->thr.atkFormChange;
+    def->thr.defFormChange = atk->thr.defFormChange;
+    def->thr.placeAtStart = atk->thr.placeAtStart;
     def->thr.unk54 = atk->thr.unk54;
     def->thr.unk58 = atk->thr.unk58;
     def->thr.unk5C = atk->thr.unk5C;
     BtlChar_SetFlag(def, 0x94);
     yaw = atk->react.faceYaw;
     def->react.faceYaw = yaw;
-    def->react.unk24 = atk->react.unk24;
+    def->react.turnPitch = atk->react.turnPitch;
     def->react.dirYaw = yaw;
     def->react.back = back;
     BtlChar_SetFlag(atk, 0x44);
@@ -523,7 +523,7 @@ s32 BtlColl_GuardRush(BtlCollChr *chr, BtlCollHit *hit) {
             return 0;
         }
     }
-    if ((BtlSuper_GetType(atk, slot) & 2) && atk->unkE44 >= 0.9999f && (BtlSuper_GetFlags(atk, slot) & 2)) {
+    if ((BtlSuper_GetType(atk, slot) & 2) && atk->techCharge >= 0.9999f && (BtlSuper_GetFlags(atk, slot) & 2)) {
         if (kind != 6) {
             return 0;
         }
@@ -619,7 +619,7 @@ s32 BtlColl_HitByBlast(BtlCollChr *chr, BtlCollHit *hit) {
         if (BtlAct_TestPoweredSkill(chr, 0x40)) {
             n++;
         }
-        if (chr->unkE14 > 0) {
+        if (chr->skillTimerC > 0) {
             n++;
         }
         if (BtlMember_HasAbility(chr, 0x45)) {
@@ -640,7 +640,7 @@ s32 BtlColl_HitByBlast(BtlCollChr *chr, BtlCollHit *hit) {
         } else if ((stFlags & 0x100) && (BtlKiBlast_GetFlagsOfHit(hit) & 0x10)) {
             if (BtlObjAnim_QueryEvent(obj, 1, 0, 3) == 0) {
                 react = BTL_REACT_NOFLINCH;
-            } else if (obj->unkCAD != ~obj->unkCAC) {
+            } else if (obj->hitNo != ~obj->hitCount) {
                 react = BTL_REACT_NOFLINCH;
             } else {
                 react = BtlKiBlast_GetReactOfHit(hit);
@@ -658,9 +658,9 @@ s32 BtlColl_HitByBlast(BtlCollChr *chr, BtlCollHit *hit) {
         BtlCollReact *r = &chr->react;
 
         r->id = react;
-        r->unk18 = 0;
+        r->scale = 0;
         chr->react.faceYaw = 0.0f;
-        chr->react.unk24 = 0.0f;
+        chr->react.turnPitch = 0.0f;
         r->dirYaw = yaw;
         r->back = front;
         BtlMove_SetImpulseDir(chr, &dir, BtlKiBlast_GetPushOfHit(hit));
@@ -738,16 +738,16 @@ s32 BtlColl_HitByStrike(BtlCollChr *chr, BtlCollHit *hit) {
     r->back = front;
     r->id = react;
     if (react != BTL_REACT_NOFLINCH) {
-        r->unk18 = 0;
+        r->scale = 0;
         chr->react.faceYaw = 0.0f;
-        chr->react.unk24 = 0.0f;
+        chr->react.turnPitch = 0.0f;
         BtlChar_SetFlag(chr, 0x94);
         if (front) {
             chr->react.faceYaw = yaw;
-            chr->react.unk24 = 0.0f;
+            chr->react.turnPitch = 0.0f;
         } else {
             chr->react.faceYaw = BtlUtil_WrapAngle(yaw + 3.1415927f);
-            chr->react.unk24 = 0.0f;
+            chr->react.turnPitch = 0.0f;
         }
         BtlMove_SetImpulseDir(chr, &dir, BtlSkill_GetPush(atk, slot));
         switch (react) {
@@ -798,16 +798,16 @@ void BtlColl_ApplyRushHit(BtlCollChr *chr, BtlCollChr *atk, BtlCollHit *hit, s32
     s32 n;
 
     r->id = react;
-    r->unk18 = 0;
+    r->scale = 0;
     r->slot = slot;
     alt = (hit->flags >> 4) & 1;
     BtlChar_SetFlag(chr, 0x94);
     if (front) {
         chr->react.faceYaw = yaw;
-        chr->react.unk24 = 0.0f;
+        chr->react.turnPitch = 0.0f;
     } else {
         chr->react.faceYaw = BtlUtil_WrapAngle(yaw + 3.1415927f);
-        chr->react.unk24 = 0.0f;
+        chr->react.turnPitch = 0.0f;
     }
     r->dirYaw = yaw;
     r->back = front;
@@ -845,7 +845,7 @@ void BtlColl_ApplyRushHit(BtlCollChr *chr, BtlCollChr *atk, BtlCollHit *hit, s32
             }
         }
     }
-    chr->unk106C = 0;
+    chr->blastDodgeWindow = 0;
     switch (slot) {
     case 2:
     case 3:
@@ -926,41 +926,41 @@ s32 BtlColl_StartRushCatch(BtlCollChr *chr, BtlCollChr *atk, BtlCollHit *hit, s3
     }
     alt = (hit->flags >> 4) & 1;
     r->id = react;
-    r->unk18 = 0;
+    r->scale = 0;
     chr->react.faceYaw = 0.0f;
-    chr->react.unk24 = 0.0f;
+    chr->react.turnPitch = 0.0f;
     atk->thr.tech = BtlSuper_GetId(atk, slot);
     atk->thr.atkSide = atk->side;
     atk->thr.defSide = chr->side;
     atk->thr.slot = slot;
-    atk->thr.unk14 = BtlSuper_GetLandingKind(atk, slot);
+    atk->thr.landingKind = BtlSuper_GetLandingKind(atk, slot);
     tf = BtlSuper_GetFlags(atk, slot);
     back = 0;
     if (tf & 0x10000000) {
         back = 1;
     }
     if (tf & 0x400000) {
-        atk->thr.unk30 = 1;
-        atk->thr.unk60 = BtlSuper_GetThrowAngleA(atk, slot);
-        atk->thr.unk64 = BtlSuper_GetThrowAngleB(atk, slot);
+        atk->thr.useAngles = 1;
+        atk->thr.angleYaw = BtlSuper_GetThrowAngleA(atk, slot);
+        atk->thr.anglePitch = BtlSuper_GetThrowAngleB(atk, slot);
     } else {
-        atk->thr.unk30 = 0;
-        atk->thr.unk60 = 0.0f;
-        atk->thr.unk64 = 0.0f;
+        atk->thr.useAngles = 0;
+        atk->thr.angleYaw = 0.0f;
+        atk->thr.anglePitch = 0.0f;
     }
     if (tf & 0x100000) {
-        atk->thr.unk38 = 1;
+        atk->thr.holdVictim = 1;
     } else {
-        atk->thr.unk38 = 0;
+        atk->thr.holdVictim = 0;
     }
     if (tf & 0x800000) {
-        atk->thr.unk3C = 1;
+        atk->thr.turnBack = 1;
     } else {
-        atk->thr.unk3C = 0;
+        atk->thr.turnBack = 0;
     }
-    atk->thr.unk44 = 0;
+    atk->thr.caughtLoop = 0;
     if (react == 0x1E) {
-        atk->thr.unk44 = 1;
+        atk->thr.caughtLoop = 1;
     }
     atk->thr.unk54 = 0;
     if (tf & 0x10000) {
@@ -970,31 +970,31 @@ s32 BtlColl_StartRushCatch(BtlCollChr *chr, BtlCollChr *atk, BtlCollHit *hit, s3
     if (BtlAnim_GetFlags(BtlAnim_GetId(chr)) & 0x800) {
         atk->thr.unk58 = 1;
     }
-    atk->thr.unk48 = 0;
-    atk->thr.unk18 = -1;
-    atk->thr.unk1C = -1;
-    atk->thr.unk4C = 0;
-    atk->thr.unk50 = 0;
+    atk->thr.atkFormChange = 0;
+    atk->thr.partnerStep = -1;
+    atk->thr.defFormStep = -1;
+    atk->thr.defFormChange = 0;
+    atk->thr.placeAtStart = 0;
     atk->thr.unk5C = 0;
     BtlChar_SetFlag(atk, 0x73);
     chr->thr.tech = atk->thr.tech;
     chr->thr.atkSide = atk->thr.atkSide;
     chr->thr.defSide = atk->thr.defSide;
     chr->thr.slot = atk->thr.slot;
-    chr->thr.unk14 = atk->thr.unk14;
-    chr->thr.unk30 = atk->thr.unk30;
-    chr->thr.unk38 = atk->thr.unk38;
-    chr->thr.unk3C = atk->thr.unk3C;
-    chr->thr.unk60 = atk->thr.unk60;
-    chr->thr.unk64 = atk->thr.unk64;
+    chr->thr.landingKind = atk->thr.landingKind;
+    chr->thr.useAngles = atk->thr.useAngles;
+    chr->thr.holdVictim = atk->thr.holdVictim;
+    chr->thr.turnBack = atk->thr.turnBack;
+    chr->thr.angleYaw = atk->thr.angleYaw;
+    chr->thr.anglePitch = atk->thr.anglePitch;
     chr->react.dirYaw = yaw;
     chr->react.back = back;
-    chr->thr.unk44 = atk->thr.unk44;
-    chr->thr.unk48 = atk->thr.unk48;
-    chr->thr.unk4C = atk->thr.unk4C;
-    chr->thr.unk18 = atk->thr.unk18;
-    chr->thr.unk1C = atk->thr.unk1C;
-    chr->thr.unk50 = atk->thr.unk50;
+    chr->thr.caughtLoop = atk->thr.caughtLoop;
+    chr->thr.atkFormChange = atk->thr.atkFormChange;
+    chr->thr.defFormChange = atk->thr.defFormChange;
+    chr->thr.partnerStep = atk->thr.partnerStep;
+    chr->thr.defFormStep = atk->thr.defFormStep;
+    chr->thr.placeAtStart = atk->thr.placeAtStart;
     chr->thr.unk54 = atk->thr.unk54;
     chr->thr.unk58 = atk->thr.unk58;
     chr->thr.unk5C = atk->thr.unk5C;
@@ -1105,7 +1105,7 @@ s32 BtlColl_TryDodge(s32 objId, BtlCollHit *hit) {
         slot = BtlAct_GetCurrentClass(chr);
         if (slot >= 2 && slot < 5) {
             if (BtlSuper_GetType(chr, slot) == 8) {
-                if (BtlSuper_GetClashPower(chr, slot) >= hit->unk8) {
+                if (BtlSuper_GetClashPower(chr, slot) >= hit->level) {
                     return 1;
                 }
             }
@@ -1150,7 +1150,7 @@ s32 BtlColl_TryDodge(s32 objId, BtlCollHit *hit) {
     ok = 0;
     free = 0;
     used = 0;
-    if (chr->unk106C > 0) {
+    if (chr->blastDodgeWindow > 0) {
         ok = 1;
         free = 1;
     } else {
@@ -1200,7 +1200,7 @@ s32 BtlColl_TryDodge(s32 objId, BtlCollHit *hit) {
         BtlChar_SetHeldFlag(chr, 0x80);
     }
     if (used) {
-        switch (chr->unkE0C) {
+        switch (chr->skillSlot) {
         case 0:
             BtlChar_SetFlag(chr, 0xDE);
             break;
@@ -1256,7 +1256,7 @@ s32 BtlColl_TryDeflect(s32 objId, BtlCollHit *hit) {
         return 0;
     }
     if (BtlChar_TestFlag(chr, 0x41)) {
-        if (chr->unk1074 > 0) {
+        if (chr->deflectWindow > 0) {
             if (!(BtlParam_GetFlags(chr) & 2)) {
                 perfect = 1;
             }
@@ -1294,7 +1294,7 @@ s32 BtlColl_TryDeflect(s32 objId, BtlCollHit *hit) {
     vel = &hit->vel;
     len = Vec3_Length(vel);
     if (len < 0.001f) {
-        Vec4_Copy(&chr->deflectDir, &BtlChar_GetPos(chr)->unk80);
+        Vec4_Copy(&chr->deflectDir, &BtlChar_GetPos(chr)->dir);
     } else {
         Vec4_Scale(&chr->deflectDir, vel, -1.0f / len);
     }
@@ -1346,7 +1346,7 @@ s32 BtlColl_TryReflect(s32 objId, BtlCollHit *hit) {
     vel = &hit->vel;
     len = Vec3_Length(vel);
     if (len < 0.001f) {
-        Vec4_Copy(&chr->deflectDir, &BtlChar_GetPos(chr)->unk80);
+        Vec4_Copy(&chr->deflectDir, &BtlChar_GetPos(chr)->dir);
     } else {
         Vec4_Scale(&chr->deflectDir, vel, -1.0f / len);
     }
@@ -1373,7 +1373,7 @@ s32 BtlColl_TryAbsorb(s32 objId, BtlCollHit *hit) {
     }
     if (!BtlChar_TestFlag(chr, 0x54)) {
         if (BtlChar_TestFlag(chr, 0x41)) {
-            if (chr->unk1074 > 0) {
+            if (chr->deflectWindow > 0) {
                 if (BtlParam_GetFlags(chr) & 2) {
                     alt = hit->type == BTL_HIT_BLAST;
                 }
@@ -1592,7 +1592,7 @@ void BtlColl_UpdateGround(BtlCollChr *chr) {
     if (BtlChar_TestFlag(chr, 0x24)) {
         margin = 0.0f;
     }
-    floorY = pose->groundPos.y - pose->unk20.y;
+    floorY = pose->groundPos.y - pose->dispOfs.y;
     if (floorY - margin < pose->pos.y) {
         pose->pos.y = floorY;
         if (vel.y > 0.0f) {
@@ -1603,7 +1603,7 @@ void BtlColl_UpdateGround(BtlCollChr *chr) {
     if (BtlChar_TestFlag(chr, 0x10)) {
         landed = 1;
         pose->velY = 0.0f;
-        pose->pos.y = pose->groundPos.y - pose->unk20.y;
+        pose->pos.y = pose->groundPos.y - pose->dispOfs.y;
     }
     if (obj->work->hitFlags & 0x40) {
         BtlChar_SetFlag(chr, 0x20);
@@ -1647,7 +1647,7 @@ void BtlColl_UpdateGround(BtlCollChr *chr) {
             BtlChar_ClearFlag(chr, 0x17);
         }
         if (obj->work->hitFlags & 0x20) {
-            if (!(obj->work->unk18060 & 0xC0)) {
+            if (!(obj->work->contactFlags & 0xC0)) {
                 BtlChar_SetHeldFlag(chr, 7);
             }
         }
@@ -1818,7 +1818,7 @@ void BtlColl_AddActionBit(BtlCollChr *chr, s32 action) {
 
 /* Sets chr->unk1294. */
 void BtlColl_SetFramesLeftOverride(BtlCollChr *chr, s32 v) {
-    chr->unk1294 = v;
+    chr->framesLeftOverride = v;
 }
 
 /* Sets unk1294 to the number of frames the animation needs to reach `scale` times its length (rounded up). */

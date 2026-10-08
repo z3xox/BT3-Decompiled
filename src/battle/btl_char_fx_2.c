@@ -749,7 +749,7 @@ void BtlPartner_PlayAnim(FxChr *chr, s32 anim) {
     BtlObjAnim_PlayModel(obj, anim - 0x19E, 0);
     if (obj->anim.head == NULL) {
         obj->flags &= ~2;
-    } else if (obj->anim.head->unk2 == 0) {
+    } else if (obj->anim.head->length == 0) {
         obj->flags &= ~2;
     }
     obj->flags &= ~0x20;
@@ -762,7 +762,7 @@ void BtlPartner_PlayAnim(FxChr *chr, s32 anim) {
         BtlObj_SetSubState(obj, 0, 0);
         break;
     }
-    obj->anim.unk130 = 1;
+    obj->anim.manual = 1;
 }
 
 /* Advances the partner animation by its step; 1 when it has reached its end (or there is no partner). */

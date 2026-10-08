@@ -86,7 +86,7 @@ void BtlChange_RequestChara(s32 player, s32 chara, s32 costume, s32 variant, s32
         req->costume = costume;
         req->variant = variant;
         req->animChara = animChara;
-        req->unk18 = unk18;
+        req->animChara2 = unk18;
         req->voiceChara = voiceChara;
         req->kind = BTL_CHANGE_KIND_CHARA;
         req->slot = 0;
@@ -104,7 +104,7 @@ void BtlChange_RequestObject(s32 player, s32 id, s32 costume, s32 variant, s32 s
         req->costume = costume;
         req->variant = variant;
         req->animChara = -1;
-        req->unk18 = -1;
+        req->animChara2 = -1;
         req->voiceChara = -1;
         req->slot = slot;
     }

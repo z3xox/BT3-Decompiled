@@ -126,7 +126,7 @@ f32 BtlOpp_GetYawFromFacing(BtlFlagChr *chr) {
     f32 yaw = BtlOpp_GetYaw(chr);
     BtlFlagPose *pose = BtlChar_GetPos(chr);
 
-    return BtlUtil_WrapAngle(yaw - BtlUtil_WrapAngle(pose->rot.y + BtlChar_GetPos(chr)->unk64));
+    return BtlUtil_WrapAngle(yaw - BtlUtil_WrapAngle(pose->rot.y + BtlChar_GetPos(chr)->rootYaw));
 }
 
 /* Yaw to the opponent relative to the opponent's rotation. */
@@ -232,9 +232,9 @@ s32 BtlOpp_GetSeenActionFrame(BtlFlagChr *chr) {
     BtlFlagChr *opp = OPPONENT(chr);
 
     if (BtlChar_GetStage(chr) < 6 || BtlChar_GetStage(opp) < 6) {
-        return opp->unk968;
+        return opp->prevActionFrame;
     }
-    return opp->unk964;
+    return opp->actionFrame;
 }
 
 /* The opponent's object +0xFF8. */
@@ -246,7 +246,7 @@ f32 BtlOpp_GetObjUnkFF8(BtlFlagChr *chr) {
 void BtlOpp_GetLookOffset(BtlFlagChr *chr, Vec4 *out) {
     BtlFlagChr *opp = OPPONENT(chr);
 
-    Vec4_Copy(out, &opp->unk15A0);
+    Vec4_Copy(out, &opp->lookOffset);
 }
 
 /* World position of a node of the opponent's model. */
@@ -261,7 +261,7 @@ void BtlOpp_GetObjVecFA0(BtlFlagChr *chr, Vec4 *out) {
 
 /* The opponent's +0xD88. */
 s32 BtlOpp_GetEvasionCount(BtlFlagChr *chr) {
-    return OPPONENT(chr)->unkD88;
+    return OPPONENT(chr)->evasionCount;
 }
 
 /* Seconds until the two fighters meet at their current velocities; 10000000 when they are not closing. */

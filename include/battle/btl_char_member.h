@@ -47,10 +47,10 @@ typedef struct BtlMemberGauge {
     /* 0x18 */ s32 blastMax;   /* table stock count * 100000 */
     /* 0x1C */ s32 maxPower;   /* 0..30000; zeroed whenever ki is spent or drained */
     /* 0x20 */ s32 variant;    /* BattleMember.variant, the model variant */
-    /* 0x24 */ s32 unk24;      /* not touched by this module (low-health flags, see btl_char_mgr.h) */
-    /* 0x28 */ s32 unk28;
+    /* 0x24 */ s32 lowHealth;      /* not touched by this module (low-health flags, see btl_char_mgr.h) */
+    /* 0x28 */ s32 lowHealthIdle;
     /* 0x2C */ s32 unk2C;
-    /* 0x30 */ s32 unk30;      /* cleared by a full parameter load */
+    /* 0x30 */ s32 bodyChanged;      /* cleared by a full parameter load */
     /* 0x34 */ s32 fused;      /* non-zero: healthMax is kept as it is by a parameter load */
 } BtlMemberGauge; /* size 0x38 */
 
@@ -79,15 +79,15 @@ typedef struct BtlMemberCombo {
 
 /* Damage a fighter has queued against its opponent: fighter + 0xD94. */
 typedef struct BtlMemberQueue {
-    /* 0x00 */ s32 unk0;       /* 0xD94 */
+    /* 0x00 */ s32 totalStart;       /* 0xD94 */
     /* 0x04 */ s32 total;      /* 0xD98: health damage still to deal */
     /* 0x08 */ s32 perHit;     /* 0xD9C: amount per trigger while more than one hit is left */
     /* 0x0C */ s32 hits;       /* 0xDA0: triggers left */
     /* 0x10 */ s32 flags;      /* 0xDA4: BTL_DMG_* */
-    /* 0x14 */ s32 unk14;      /* 0xDA8 */
+    /* 0x14 */ s32 drainHealthStart;      /* 0xDA8 */
     /* 0x18 */ s32 drainHealth;     /* 0xDAC: health still to drain */
     /* 0x1C */ s32 drainHealthStep; /* 0xDB0: per frame */
-    /* 0x20 */ s32 unk20;      /* 0xDB4 */
+    /* 0x20 */ s32 drainKiStart;      /* 0xDB4 */
     /* 0x24 */ s32 drainKi;         /* 0xDB8: ki still to drain */
     /* 0x28 */ s32 drainKiStep;     /* 0xDBC: per frame */
     /* 0x2C */ s32 drainFrom;  /* 0xDC0: drain runs while the animation frame is past this */
@@ -102,7 +102,7 @@ typedef struct BtlMemberChr {
     /* 0x0010 */ u8 unk10[0x994 - 0x10];
     /* 0x0994 */ s32 active;       /* index of the fighting member */
     /* 0x0998 */ s32 memberCount;
-    /* 0x099C */ s32 unk99C;
+    /* 0x099C */ s32 switchGauge;
     /* 0x09A0 */ s32 switchTarget; /* member a switch would bring in */
     /* 0x09A4 */ BtlMember members[BTL_MEMBER_SLOTS];
     /* 0x0CD8 */ u8 unkCD8[0xD40 - 0xCD8];
@@ -110,13 +110,13 @@ typedef struct BtlMemberChr {
     /* 0x0D58 */ u8 unkD58[0xD94 - 0xD58];
     /* 0x0D94 */ BtlMemberQueue queue;
     /* 0x0DC4 */ u8 unkDC4[0xFE0 - 0xDC4];
-    /* 0x0FE0 */ s32 unkFE0;       /* cleared on a KO (BtlChar_IsFree tests it) */
+    /* 0x0FE0 */ s32 stunTimer;       /* cleared on a KO (BtlChar_IsFree tests it) */
     /* 0x0FE4 */ s32 unkFE4;       /* 30 after damage from the queue: a timer (inferred) */
     /* 0x0FE8 */ u8 unkFE8[0x1262 - 0xFE8];
     /* 0x1262 */ u8 fxBits[9];     /* one-frame request bits */
     /* 0x126B */ u8 prevFxBits[9]; /* last frame's */
     /* 0x1274 */ u8 unk1274[0x12DC - 0x1274];
-    /* 0x12DC */ s32 unk12DC;      /* 0..11: kind of the effect requested by fx bits 0..2 */
+    /* 0x12DC */ s32 formKind;      /* 0..11: kind of the effect requested by fx bits 0..2 */
     /* 0x12E0 */ u8 unk12E0[0x1600 - 0x12E0];
 } BtlMemberChr; /* size 0x1600 */
 
@@ -150,16 +150,16 @@ typedef struct BtlMemberSetup {
 /* The fighter's battle object, as BtlChar_SpawnFxBits3C / BtlChar_SpawnHitFx read it. */
 typedef struct BtlMemberObj {
     /* 0x000 */ u8 unk0[0xA24];
-    /* 0xA24 */ s32 unkA24;
+    /* 0xA24 */ s32 area;
     /* 0xA28 */ u8 unkA28[0xC9C - 0xA28];
-    /* 0xC9C */ u32 unkC9C;
+    /* 0xC9C */ u32 nodeMask;
 } BtlMemberObj;
 
 /* Pose block at fighter + 0x10 (BtlChar_GetPos). */
 typedef struct BtlMemberPose {
     /* 0x00 */ Vec4 pos;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;      /* an angle */
+    /* 0x10 */ f32 rotX;
+    /* 0x14 */ f32 rotY;      /* an angle */
     /* 0x18 */ u8 unk18[0x94 - 0x18];
     /* 0x94 */ f32 yaw;        /* facing (fighter + 0xA4) */
 } BtlMemberPose;
@@ -168,11 +168,11 @@ typedef struct BtlMemberPose {
 typedef struct BtlMemberAuraReq {
     /* 0x00 */ s32 objId;
     /* 0x04 */ s32 kind;       /* 0..4 */
-    /* 0x08 */ s32 unk8;       /* object + 0xA24 */
+    /* 0x08 */ s32 area;       /* object + 0xA24 */
     /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
+    /* 0x10 */ f32 time;
+    /* 0x14 */ f32 speed;
+    /* 0x18 */ f32 turnRate;
 } BtlMemberAuraReq;
 
 /* Request built by BtlChar_SpawnFxBits0 for EftTransform_Start. */

@@ -1,0 +1,189 @@
+include/battle/btl_char_mgr.h	BtlMgrGauge	unk8	KEEP	KEEP	Not touched by btl_char_mgr.c and unnamed in every other gauge view (BtlMemberGauge says not touched)
+include/battle/btl_char_mgr.h	BtlMgrGauge	unk1C	maxPower	HIGH	BtlMemberGauge / BtlCapiBGauge / BtlActCGauge name +0x1C maxPower (0..30000); set to 30000 together with held flag 6 here
+include/battle/btl_char_mgr.h	BtlMgrGauge	unk20	variant	HIGH	BtlMemberGauge, BtlActJGauge, HitGauge, ActGGauge, BtlTechGauge, BtlSuperGauge all name +0x20 variant (model variant); copied from the form block's variant on a change
+include/battle/btl_char_mgr.h	BtlMgrGauge	unk2C	KEEP	KEEP	Not used here; BtlActCGauge only says a get-up voice was played, still unnamed there
+include/battle/btl_char_mgr.h	BtlMgrGauge	unk30	bodyChanged	HIGH	The accessor BtlChar_IsBodyChanged returns (unk30 != 0); set to 1 with flag 0xA6 on a form change and mirrored into the object work's retarget word
+include/battle/btl_char_mgr.h	BtlMgrGauge	unk34	fused	HIGH	BtlMemberGauge names +0x34 fused; set to 1 after a fusion here
+include/battle/btl_char_mgr.h	BtlMgrPose	unk0	KEEP	KEEP	u64 filler over pos / rot / dispOfs used only for the whole-block copy; no code names an element
+include/battle/btl_char_mgr.h	BtlMgrPose	unk30	vel	HIGH	BtlCapiPose names pose +0x30 vel (movement between snapshots 0 and 1); filled by BtlChar_GetSnapDelta(chr, .., 0, 1) in BtlChar_EndFrame and given to BtlObj_SetMoveVec
+include/battle/btl_char_mgr.h	BtlMgrPose	unk40	move	HIGH	BtlCapiPose names pose +0x40 move (whole movement of the previous frame); filled by BtlChar_GetMoveSince
+include/battle/btl_char_mgr.h	BtlMgrPose	unk50	KEEP	KEEP	u64 filler over rootPos .. fallSpeed; not read by element here
+include/battle/btl_char_mgr.h	BtlMgrPose	unkA0	leanX	HIGH	BtlCtlPose names pose +0xA0 leanX and BtlMove_SetLeanX writes it; cleared each frame here (typed s32 in this view, f32 in the others)
+include/battle/btl_char_mgr.h	BtlMgrPose	unkA4	leanZ	HIGH	BtlCtlPose names pose +0xA4 leanZ and BtlMove_SetLeanZ writes it; cleared each frame here
+include/battle/btl_char_mgr.h	BtlMgrPose	unkA8	KEEP	KEEP	u64 filler over the hover phase, ground point and orbit values; not read by element here
+include/battle/btl_char_mgr.h	BtlMgrObj	unk1660	charaWork	HIGH	BtlObj and BObj name +0x1660 charaWork (BtlObj_GetCharaWork); four other views call it work; the word at +0x18028 is BobjWork.retarget
+include/battle/btl_char_mgr.h	BtlMgrChr	unk94C	request	HIGH	BtlActChr (act.request) and BtlActDChr name +0x94C request: action to switch to, -1 = none; set to -1 by BtlChar_ResetRound
+include/battle/btl_char_mgr.h	BtlMgrChr	unk964	actionFrame	HIGH	Eight action views name +0x964 actionFrame (frames spent in the current action); note prev964 at +0x968 is its previous-frame copy
+include/battle/btl_char_mgr.h	BtlMgrChr	unk974	motion	HIGH	BtlActChr names +0x974 motion (motion id, index of the roster's motion flag table) and BtlStatChr anim.cur; this view's comment says index into tbl[0] used by BtlAnim_GetId / GetFlags
+include/battle/btl_char_mgr.h	BtlMgrChr	unk978	motionNext	HIGH	BtlStatChr BtlAnimIds.next at +0x978: requested animation started by BtlAnim_FlushRequest, -1 once started; name flattened to match motion
+include/battle/btl_char_mgr.h	BtlMgrChr	unk980	motionSub	HIGH	BtlStatChr BtlAnimIds.sub at +0x980: animation on the second layer, -1 when the object is bound, which is what BtlChar_BindObject stores
+include/battle/btl_char_mgr.h	BtlMgrChr	unk99C	switchGauge	HIGH	BtlActJChr and BtlCapiBChr name +0x99C switchGauge (0..100000, full = member switch allowed); set to 100000 with ability 0x1B here
+include/battle/btl_char_mgr.h	BtlMgrChr	unk9A0	switchTarget	HIGH	BtlMemberChr names +0x9A0 switchTarget (member a switch would bring in); not used in btl_char_mgr.c
+include/battle/btl_char_mgr.h	BtlMgrChr	unkCF4	switchEnabled	HIGH	BtlChar_Reset stores BattleSide_GetSwitchEnabled(side) into it
+include/battle/btl_char_mgr.h	BtlMgrChr	unkD40	comboDamage	HIGH	BtlCapiBChr comboDamage / BtlMemberCombo.damage at +0xD40; its maximum is kept in the battle result
+include/battle/btl_char_mgr.h	BtlMgrChr	unkD44	comboHits	HIGH	BtlCapiBChr comboHits / BtlMemberCombo.hits at +0xD44; its maximum is kept in the battle result
+include/battle/btl_char_mgr.h	BtlMgrChr	unkD48	comboTimer	HIGH	BtlCapiBChr comboTimer / BtlMemberCombo.timer at +0xD48 (countdown, > 0 = combo display on); not used in btl_char_mgr.c
+include/battle/btl_char_mgr.h	BtlMgrChr	unkD4C	comboNewHit	HIGH	BtlCapiBChr comboNewHit / BtlMemberCombo.newHit at +0xD4C; cleared each frame here
+include/battle/btl_char_mgr.h	BtlMgrChr	unkD50	comboChanged	HIGH	BtlMemberCombo.changed at +0xD50 (1 when the total changed); cleared each frame here and read by BtlCtrl_IsOppComboDamageNew
+include/battle/btl_char_mgr.h	BtlMgrChr	unkD54	comboDrain	HIGH	BtlMemberCombo.drain at +0xD54 (the last damage had BTL_DMG_DRAIN); not used in btl_char_mgr.c
+include/battle/btl_char_mgr.h	BtlMgrChr	unkD58	searchAngle	HIGH	BtlAct_GrowSearchWindow grows it up to pi and BtlAct_IsOppInSearchWindow compares the opponent's yaw from facing with it; reset to 0.5 here
+include/battle/btl_char_mgr.h	BtlMgrChr	unkD5C	searchRange	HIGH	BtlAct_GrowSearchWindow grows it up to 1000000 and BtlAct_IsOppInSearchWindow compares the opponent's distance with it; reset to 500 here
+include/battle/btl_char_mgr.h	BtlMgrChr	unkD68	dashCount	MEDIUM	Incremented when the homing dash action (0x19) starts out of an attack and must stay below +0xD6C to queue another; cleared without flag 0x89; uncertain: the move's proper name (dash is taken from BtlParam_GetPoweredDashLimit)
+include/battle/btl_char_mgr.h	BtlMgrChr	unkD6C	dashLimit	MEDIUM	Set every frame to 1 or BtlParam_GetPoweredDashLimit plus ability bonuses and compared with +0xD68 in BtlDecide; uncertain: same as dashCount
+include/battle/btl_char_mgr.h	BtlMgrChr	unkD70	vanishCount	MEDIUM	Incremented on entering a vanishing attack (btl_act_1.c) and BtlCharApi_GetVanishStrikesLeft returns limit - count; uncertain: the move's proper name
+include/battle/btl_char_mgr.h	BtlMgrChr	unkD74	vanishLimit	MEDIUM	Set every frame to 1 or BtlParam_GetPoweredVanishLimit plus ability bonuses; BtlCharApi_GetVanishStrikesLeft returns it minus +0xD70; uncertain: same as vanishCount
+include/battle/btl_char_mgr.h	BtlMgrChr	unkE00	KEEP	KEEP	s32[5] used only as the start of a 0x40-byte memset; other views name the words separately and disagree (dodges / skillStackA, dodgesB / skillStackB, skillTimer, skillSlot / dodgeKind, skillKiRate), so it would need splitting, not renaming
+include/battle/btl_char_mgr.h	BtlMgrChr	unkE14	skillTimerC	HIGH	BtlActIChr names +0xE14 skillTimerC (frames left of a kind 1 skill with attribute 0x800); hit code reads > 0 as one armour level more; > 0 forbids lowHealthIdle here
+include/battle/btl_char_mgr.h	BtlMgrChr	unkE18	skillTimerD	HIGH	BtlActIChr names +0xE18 skillTimerD (frames left of a skill with attribute 0x400), chosen to pair with skillTimerC; BtlCollChr names the same word noFlinch after its effect
+include/battle/btl_char_mgr.h	BtlMgrChr	unkF30	carryMove	MEDIUM	BtlChar_PostScene writes the attacker's movement (BtlChar_GetSnapDelta 1..4) into the OPPONENT's field under flag 0x97 and btl_char_action.c adds it to the position under flag 0x8B; uncertain: the name, the mechanism is not named anywhere
+include/battle/btl_char_mgr.h	BtlMgrChr	unkFB0	reaction	HIGH	HitReact.reaction at +0xFB0 (BtlActJChr reaction, BtlCapiBChr reactId): pending hit reaction id, 1 = none; reset to 1 here
+include/battle/btl_char_mgr.h	BtlMgrChr	unk1262	fxBits	HIGH	BtlMemberChr names +0x1262 u8 fxBits[9] (one-frame request bits, BtlChar_SetFxBit); copied to prev1262 and cleared each frame here
+include/battle/btl_char_mgr.h	BtlMgrChr	unk12FC	newObjVariant	HIGH	BtlActHForm.objVariant (form block +0x30 = fighter +0x12FC, fusion only); prefixed like this view's newChara / newCostume which are the same block's chara / costume
+include/battle/btl_char_mgr.h	BtlMgrChr	unk1300	changeAllowed	HIGH	BtlChar_Reset stores BattleSide_GetChangeAllowed(side); BtlActJForm.allowed (0 = transformations, fusions and switches refused)
+include/battle/btl_char_mgr.h	BtlMgrChr	unk1310	bodyWarpPos	HIGH	BtlChar_RequestBodyWarp stores a vector here and raises flag 0x55; BtlChar_UpdateStage8 passes it to BtlObjBody_Warp with that flag; otherwise a copy of the object's body sphere centre
+include/battle/btl_char_mgr.h	BtlMgrChr	unk132C	secTimer	HIGH	BtlActChr names +0x132C secTimer (0..29, one tick every 30 frames); not used in btl_char_mgr.c
+include/battle/btl_char_mgr.h	BtlMgrChr	unk1330	partnerOn	HIGH	BtlCapiChr names +0x1330 partnerOn and FxChr partner.active; non-zero makes BtlChar_ResetRound call BtlPartner_Release
+include/battle/btl_char_mgr.h	BtlMgrChr	unk1590	dirHeld	HIGH	BtlTechChr names +0x1590 dirHeld (-1 or technique class 2..4 by the direction held); btl_char_action.c stores the direction and it is reset to -1 each frame here
+include/battle/btl_char_mgr.h	BtlMgrChr	unk1594	techClass	HIGH	BtlTechChr techClass / BtlSuperChr inputClass: class whose button command is watched this frame, -1 each frame; BtlCapiBChr calls it switchPrompt, the least supported of the three
+include/battle/btl_char_mgr.h	BtlMgrChr	unk15D4	vibState	MEDIUM	The five words after BtlCharVib.enabled (+0x15D0): power, time, smallTime, phase, toggle of BtlCharGetChr.vib, zeroed by BtlChar_OnStageLoaded; uncertain: better replaced by the BtlCharVib structure itself (the first word is an f32)
+include/battle/btl_char_mgr.h	BtlCharMgr	unk8	sounds	HIGH	BtlFlagRoster names +0x8 sounds (one-shot sound sets, one per side); BtlCharSnd_GetSet returns it
+include/battle/btl_char_mgr.h	BtlCharMgr	unkC	loopSounds	HIGH	BtlFlagRoster names +0xC loopSounds (looping sound sets, one per side); BtlCharSnd_GetLoopSet returns it
+include/battle/btl_char_mgr.h	BtlCharMgr	unk18	randState	HIGH	BtlCharGetRoster names +0x18 randState (BtlChar_Rand); zeroed by BtlChar_ResetAll
+include/battle/btl_char_mgr.h	BtlCharMgr	unk1C	stageTimer	HIGH	BtlCharGetRoster names +0x1C stageTimer (BtlChar_AddStageTimer); counts down to 0 on every simulated frame
+include/battle/btl_char_mgr.h	BtlCharMgr	unk40	clash	MEDIUM	The 0x60 bytes cleared by a reset are BtlFlagRoster clashState (+0x40), clashA (+0x50), clashB (+0x70), clashC (+0x7C); uncertain: a block name for several named fields, typed as bytes here
+include/battle/btl_char_mgr.h	BtlCharMgr	unkA0	snd	HIGH	BtlFlagRoster names +0xA0 BtlFlagSndReqList snd: four 0x20-byte positional sound requests and their count at +0x120; cleared by a reset
+include/battle/btl_char_mgr.h	BtlCharMgr	unk130	viewer	HIGH	btl_replay.h names +0x130 BtlReplayViewer viewer (row, side) read by BtlReplay_GetViewSide; cleared by a reset
+include/battle/btl_char_mgr.h	BtlCharMgr	unk138	change	HIGH	btl_char_ctl.h names +0x138 BtlChangeQueue change (0x140 bytes, the character-change queue; BtlCapiBMgr agrees); cleared by a reset
+include/battle/btl_char_move.h	BtlMovePose	unk20	dispOfs	HIGH	BtlCapiPose names pose +0x20 dispOfs; BtlMove_UpdateHoverOffset rebuilds it every frame from the hover bob and the shake
+include/battle/btl_char_move.h	BtlMovePose	unk30	vel	HIGH	BtlCapiPose names pose +0x30 vel: movement of the previous frame between snapshots 0 and 1, used here as my velocity
+include/battle/btl_char_move.h	BtlMovePose	unk40	move	HIGH	BtlCapiPose names pose +0x40 move: whole movement of the previous frame, read through BtlOpp_GetVelocity
+include/battle/btl_char_move.h	BtlMovePose	unk50	rootPos	HIGH	BtlCapiPose and BtlCtlPose name pose +0x50 rootPos (root motion translation of model node 0)
+include/battle/btl_char_move.h	BtlMovePose	unk60	rootRot	HIGH	BtlCapiPose and BtlCtlPose name pose +0x60 rootRot (root motion rotation)
+include/battle/btl_char_move.h	BtlMovePose	unk70	impulse	HIGH	BtlCapiPose names pose +0x70 impulse; BtlMove_SetImpulse / BtlMove_ApplyImpulse write and decay it (knock-back velocity)
+include/battle/btl_char_move.h	BtlMovePose	unkA0	leanX	HIGH	BtlCtlPose names pose +0xA0 leanX; BtlMove_SetLeanX stores it
+include/battle/btl_char_move.h	BtlMovePose	unkA4	leanZ	HIGH	BtlCtlPose names pose +0xA4 leanZ; BtlMove_SetLeanZ stores it
+include/battle/btl_char_move.h	BtlMovePose	unkA8	hoverPhase	HIGH	BtlMove_UpdateHoverOffset advances it by 6 degrees per frame while flying idle and sets dispOfs.y = 2 * sin(it)
+include/battle/btl_char_move.h	BtlMovePose	unkAC	KEEP	KEEP	Not read or written in btl_char_move.c and unnamed in every other pose view
+include/battle/btl_char_move.h	BtlMovePose	unkB0	groundPos	HIGH	BtlCollPose names pose +0xB0 groundPos (BtlCapiPose: ground); chosen to pair with groundNrm
+include/battle/btl_char_move.h	BtlMovePose	unkC0	groundNrm	HIGH	BtlCollPose names pose +0xC0 groundNrm; BtlMove_TestContact copies it as the ground normal under flag 0xF
+include/battle/btl_char_move.h	BtlMovePose	unkD0	groundFlags	MEDIUM	BtlCollPose names pose +0xD0 s32 groundFlags; uncertain: this view types it f32 and never touches it, so the type would have to change with the name
+include/battle/btl_char_move.h	BtlMovePose	unkD4	steerYaw	HIGH	BtlMove_SteerAtOpponent approaches it to a goal by yawAccel and adds it to the yaw towards the opponent; zeroed by the plain turn functions
+include/battle/btl_char_move.h	BtlMovePose	unkD8	steerPitch	HIGH	BtlMove_SteerAtOpponent does the same for the pitch; zeroed by BtlMove_TurnPitch and BtlMove_SetHeading
+include/battle/btl_char_move.h	BtlMoveChr	unkFB0	reaction	HIGH	HitReact.reaction at +0xFB0 (BtlActJChr reaction): pending hit reaction id, 1 = none; != 1 closes the first defence window
+include/battle/btl_char_move.h	BtlMoveChr	unkFE8	shakeTimer	MEDIUM	While > 0 BtlMove_UpdateHoverOffset shifts the model sideways by +-0.25, the side alternating with bit 0; btl_char_action.c counts it down; uncertain: who starts it and for what
+include/battle/btl_char_move.h	BtlMoveChr	unk1068	KEEP	KEEP	Window opened by input 0x27 for 2..4 frames by health; btl_char_hit.c reads > 0 as avoiding the first hit of a flag-1 attack (flag 0x12C), which move that is cannot be told
+include/battle/btl_char_move.h	BtlMoveChr	unk106C	dodgeWindow	MEDIUM	Window opened by input 0x27 (2 or 4 frames); btl_hit_reaction.c reads > 0 as an automatic dodge that costs no dodge counter; uncertain: the in-game name of the dodge
+include/battle/btl_char_move.h	BtlMoveChr	unk1070	counterWindow	MEDIUM	Window opened by input 0x26 for 1 frame; BtlHit applies guard result 8 when > 0 on the first hit; uncertain: that guard result 8 is the counter
+include/battle/btl_char_move.h	BtlMoveChr	unk1074	KEEP	KEEP	Window opened by input 0x2B with parameter flag2 0x20 for 5 frames; btl_hit_reaction.c sets a local named perfect from it, meaning not clear
+include/battle/btl_char_move.h	BtlMoveChr	unk1078	throwBreakWindow	MEDIUM	Window opened by input 0x27 for 5 frames; btl_char_hit.c reads > 0 as breaking a throw from the front (flags 0x7A / 0x79); uncertain: only that one reader
+include/battle/btl_char_move.h	BtlMoveChr	unk107C	rushBreakWindow	MEDIUM	Window opened by input 0x27 (2 or 4 frames); btl_char_hit.c reads > 0 on a free defender as breaking / evading a rush; uncertain: only that one reader
+include/battle/btl_char_move.h	BtlMoveChr	unk1080	KEEP	KEEP	Counter held at 1 with parameter flag2 8 and set to -15 by input 0x27; > 0 is needed for action 0x24, which action that is cannot be told
+include/battle/btl_char_move.h	BtlMoveObj	unkFA0	bodySphere	HIGH	BobjBody.cur at object +0xFA0: pointer to this frame's body sphere (centre, radius), exactly BtlMoveObjBody; EftDetObj calls it bodyPos
+include/battle/btl_char_move.h	BtlMoveContact	unk0	KEEP	KEEP	Not read here; it overlays the head of StgColPoly (flags and three unnamed words), so a Vec4 name would be wrong
+include/battle/btl_char_move.h	BtlMoveBlastSrc	unk4	slot	HIGH	rec->src is EftHitSrc / EftKSrc, which name +0x4 slot (slot index); slots 0 and 1 are skipped by BtlMove_IsBlastIncoming
+include/battle/btl_char_move.h	BtlMoveBlastRec	unk54	KEEP	KEEP	Only compared with 1 to skip the record; EftHitRec leaves the same word unnamed (technique: bit 1 of def->flags)
+include/battle/btl_char_util.h	BtlCharGetVitals	unk30	bodyChanged	HIGH	BtlChar_IsBodyChanged returns whether it is non-zero (gauge +0x30)
+include/battle/btl_char_util.h	BtlCharGetChr	unkFE0	stunTimer	HIGH	BtlCapiBChr names +0xFE0 stunTimer (BtlActJChr stunTime, BtlCollReact.stun): countdown, > 0 = not free, which is the BtlChar_IsFree test
+include/battle/btl_demo_cam.h	DemoCamChannel	unkC	KEEP	KEEP	Never read or written in btl_demo_cam.c
+include/battle/btl_demo_cam.h	DemoCamPose	unk1C	KEEP	KEEP	Eighth output word; only addressed by channel index, no reader
+include/battle/btl_demo_cam.h	DemoCamAnim	unk0	KEEP	KEEP	Never read in btl_demo_cam.c
+include/battle/btl_demo_cam.h	DemoCamAnim	unk10	KEEP	KEEP	Never read in btl_demo_cam.c
+include/battle/btl_demo_cam.h	DemoCamAnim	unk1C	KEEP	KEEP	Optional block that is only relocated (NULL when version < 2); nothing reads its contents
+include/battle/btl_demo_cam.h	DemoCam	unk2F8	KEEP	KEEP	Only zeroed by DemoCam_SetAnim
+include/battle/btl_demo_cam.h	DemoCam	unk2FC	KEEP	KEEP	Only zeroed by DemoCam_SetAnim
+include/battle/btl_facade.h	BtlFacadeItem	unk2	KEEP	KEEP	Only id is read by BtlFacade_SetMemberItems
+include/battle/btl_input.h	BtlInputRecord	unk5	KEEP	KEEP	Always written 0 and never read
+include/battle/btl_input.h	BtlInputChr	unk1594	techClass	HIGH	BtlTechChr techClass / BtlSuperChr inputClass at +0x1594: technique class whose button command is watched, written by btl_act_super.c, -1 each frame; >= 2 enables the command here; BtlCapiBChr's switchPrompt is the odd one out
+include/battle/btl_obj.h	BtlObjBound	unk04	pop	HIGH	BobjBone and BObjBound (the same record) name +0x04 pop: matrices popped from the stack after this node
+include/battle/btl_obj.h	BtlObjBound	unk0C	KEEP	KEEP	Unnamed in all three views of the record and not read
+include/battle/btl_obj.h	BtlObjBound	unk10	origin	HIGH	BobjBone names +0x10 origin (the node's position in model space); here centre - unk10 is what the node matrix transforms
+include/battle/btl_obj.h	BtlObjBound	unk20	KEEP	KEEP	Unnamed in all three views of the record and not read
+include/battle/btl_obj.h	BtlObjBound	unk30	rest	HIGH	BobjBone names +0x30 rest (translation from the parent in the rest pose)
+include/battle/btl_obj.h	BtlObjPart	unk08	id	HIGH	BobjPart and BObjNode name +0x08 id (model node id); it is the node argument of BtlObj_IsNodeShown
+include/battle/btl_obj.h	BtlObjState	unkDC	presetAlpha	HIGH	Fifth float of the colour preset row (BObjState.preset[4]); BtlObj_UploadAlphaTable uses it as the alpha of the whole row under BTL_OBJ_FLAG_COLOR_C
+include/battle/btl_obj.h	BtlObj	unk04	ready	HIGH	ObjMdlObj names +0x04 ready: set to 1 by BtlObjMdl_Init, and BtlObjMdl_Destroy does nothing when 0; every pass here skips the object when 0
+include/battle/btl_obj.h	BtlObj	unk14	res	HIGH	ObjMdlObj names +0x14 res (the BtlResSlot it was created from, stored by BtlObjMdl_Create) and BObj names it slot; it is a pointer, typed s32 here
+include/battle/btl_obj.h	BtlObjNode	unk0C	KEEP	KEEP	Never read; looks like alignment before the 8-byte aligned object
+include/battle/btl_obj.h	BtlObjTable	unk44FC0	KEEP	KEEP	Never read or written in btl_obj.c
+include/battle/btl_obj.h	BtlObjTable	unk44FC4	defaultAnimStep	HIGH	BtlObj_GetDefaultAnimStep / BtlObj_SetDefaultAnimStep return and store it; 2.0 at init
+include/battle/btl_obj.h	BtlObjPoolE0	unk90	pos	HIGH	BobjPart names node +0x90 pos (local translation of this frame); initialised to 0, 0, 0, 1 here
+include/battle/btl_obj.h	BtlObjPoolE0	unkA0	rot	HIGH	BobjPart and BObjNode name node +0xA0 rot (local rotation quaternion); initialised to the identity 0, 0, 0, 1 here
+include/battle/btl_obj_anim.h	BobjAnim	unk00	KEEP	KEEP	Not read by the player
+include/battle/btl_obj_anim.h	BobjAnim	unk04	KEEP	KEEP	Not read by the player
+include/battle/btl_obj_anim.h	BobjAnimShape	unk0C	KEEP	KEEP	Documented as unused in the volume record
+include/battle/btl_obj_anim.h	BobjBone	unk08	enabled	HIGH	BtlObjBound and BObjBound (the same record) name +0x08 enabled (0: record skipped)
+include/battle/btl_obj_anim.h	BobjBone	unk0C	KEEP	KEEP	Unnamed in all three views of the record
+include/battle/btl_obj_anim.h	BobjBone	unk20	KEEP	KEEP	Unnamed in all three views of the record
+include/battle/btl_obj_anim.h	BobjPart	unk00	link	HIGH	The node is a BtlObjPoolE0 element whose first word is the SListNode link (BObjNode: void *link)
+include/battle/btl_obj_anim.h	BobjPart	unk0C	active	MEDIUM	BtlObjPart and BObjNode name +0x0C u8 active (1 when BtlObj_IsNodeShown returned 1 this frame); uncertain: typed s32 here, the other views have a byte and three pad bytes
+include/battle/btl_obj_anim.h	BobjHit	unk1F	KEEP	KEEP	Not read; no other view names object +0xCAF
+include/battle/btl_obj_anim.h	BobjHit	unk2C	KEEP	KEEP	Not read; no other view names object +0xCBC
+include/battle/btl_obj_anim.h	BobjSphere	unk18	KEEP	KEEP	StgColSphere leaves the same two floats unnamed
+include/battle/btl_obj_anim.h	BobjObb	unk10	half	HIGH	ColObb (the structure ColObb_Init / ColObb_Update fill) names +0x10 half: half extents along the three axes
+include/battle/btl_obj_anim.h	BobjBodyData	unk00	KEEP	KEEP	Not read
+include/battle/btl_obj_anim.h	BobjBodyData	unk04	baseRadius	MEDIUM	Copied to the body block (object +0xFF0), which BtlCharApi_GetRadius multiplies by 1.8 as the default body radius; uncertain: what the value measures before the factor
+include/battle/btl_obj_anim.h	BobjBody	unkA0	baseRadius	MEDIUM	Copy of body data +4 at object +0xFF0; BtlCharApi_GetRadius returns it * 1.8 when the parameter radius is not positive; uncertain: what the value measures before the factor
+include/battle/btl_obj_anim.h	BobjBody	unkB8	KEEP	KEEP	Only set to 4.1 (the default radius constant) by BtlObjBody_Init; no reader seen
+include/battle/btl_obj_anim.h	BobjParam	unk00	KEEP	KEEP	This block is BtlParam (object +0x91C): the first word is charaFlags (u16), sizeClass and auraKind, not a float; the field should be retyped, not renamed
+include/battle/btl_obj_anim.h	BobjMdl	unk38	KEEP	KEEP	Model file entry 1 relocated in place (BObjMdl.unk38); contents not identified
+include/battle/btl_obj_anim.h	BobjMdl	unk40	KEEP	KEEP	Animation file 2 entry 6 (BObjMdl.unk40); contents not identified
+include/battle/btl_obj_anim.h	BobjObj	unkB30	alphaAdd	HIGH	BtlObj_SetAlphaAdd stores it; it is BtlObjState.alphaAdd (state +0xF0 = object +0xB30)
+include/battle/btl_obj_anim.h	BobjFace	unk28	lip	HIGH	BObjFace names +0x28 lip (lip track being played); zeroed by BtlObjFace_Reset (a pointer, typed s32 here)
+include/battle/btl_obj_anim.h	BobjFace	unk3C	lipArg	HIGH	BObjFace names +0x3C lipArg (the arg the track was started with)
+include/battle/btl_obj_anim.h	BobjFace	unk40	lipIndex	HIGH	BObjFace names +0x40 lipIndex (current record)
+include/battle/btl_obj_anim.h	BobjFace	unk42	lipCount	HIGH	BObjFace names +0x42 lipCount
+include/battle/btl_obj_anim.h	BobjFace	unk44	lipTime	HIGH	BObjFace names +0x44 lipTime
+include/battle/btl_obj_anim.h	BobjFace	unk48	lipEnd	HIGH	BObjFace names +0x48 lipEnd (frame of the last record)
+include/battle/btl_obj_anim.h	BobjFace	unk4C	KEEP	KEEP	Unnamed in BObjFace too and not written by BtlObjFace_Reset
+include/battle/btl_obj_anim_part2.h	BObjBound	unk0C	KEEP	KEEP	Unnamed in all three views of the record
+include/battle/btl_obj_anim_part2.h	BObjBound	unk10	origin	HIGH	BobjBone (the same record) names +0x10 origin: the node's position in model space
+include/battle/btl_obj_anim_part2.h	BObjBound	unk20	KEEP	KEEP	Unnamed in all three views of the record
+include/battle/btl_obj_anim_part2.h	BObjBound	unk30	rest	HIGH	BobjBone names +0x30 rest: translation from the parent in the rest pose
+include/battle/btl_obj_anim_part2.h	BObjFace	unk4C	KEEP	KEEP	Not identified in either face view
+include/battle/btl_obj_anim_part2.h	BObjNode	unk90	pos	HIGH	BobjPart names node +0x90 pos (local translation of this frame); BtlObj_SaveNodePositions reads node 0's
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk00	file	MEDIUM	ObjMdl (obj_gs_env.h) names model block +0x00 file (the model file as loaded); uncertain: here it is entry 3 of the slot's model pack, so file may be too broad
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk04	texFile	MEDIUM	ObjMdl names model block +0x04 texFile (the texture file as loaded); here entry 0xC of the model pack; uncertain as for file
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk38	KEEP	KEEP	Entry 1 relocated in place; contents not identified
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk3C	body	HIGH	BobjMdl names +0x3C BobjBodyData *body (body collision data, NULL = no body volumes); entry 2 of the model pack
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk40	KEEP	KEEP	Animation file 2 entry 6; contents not identified
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk84	KEEP	KEEP	Animation file 2 entries 1..5; BtlMgrObj names the last three file[3] but what the five tables hold is not identified
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk98	camAnims	HIGH	DemoCam_PlayObjAnim reads (object + 0xB0)[idx] as a DemoCamAnim: the three camera animations of entries 0x29..0x2B (BtlObjMdl calls it anims)
+include/battle/btl_obj_anim_part2.h	BObjMdl	unkA0	KEEP	KEEP	Written only as the third element of the unk98 run (entry 0x2B, a camera animation); no reader by this name
+include/battle/btl_obj_anim_part2.h	BObjMdl	unkA4	KEEP	KEEP	Entry 0x2D + gProgress->unk00; contents not identified
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk720	modelAnims	HIGH	BobjMdl names +0x720 BobjAnim *modelAnims[8]: the uncompressed motions of the model file (entries 0x1D..0x24) played by BtlObjAnim_PlayModel
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk8D0	KEEP	KEEP	The same entries 0x1D..0x24 a second time; no reader identified
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk8F0	charCamAnims	MEDIUM	DemoCam_PlayCharAnim0 / 1 / 2 read object +0x908 / +0x90C / +0x910 (= [0..2]) as camera animations attached to the fighter; uncertain: the fourth entry has no reader
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk904	param	HIGH	Object +0x91C: BtlTechObj / BtlCapiObj name it param (the character's BtlParam block); byte 3 = BtlParam.auraKind is the colour preset row read here
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk908	atk	HIGH	Object +0x920: BtlTechObj names it BtlAtkRecord *atk (the attack records)
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk90C	kiBlast	HIGH	Object +0x924: BtlTechBObj names it BtlKiBlastData *kiBlast (BtlCapiObj: kiBlasts)
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk910	move	HIGH	Object +0x928: BtlTechBObj names it BtlMoveData *move
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk914	super	HIGH	Object +0x92C: BtlTechBObj names it BtlSuperData *super (BtlCapiObj: supers; BtlCapiBObj calls it skills)
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk918	skill	HIGH	Object +0x930: BtlTechBObj names it BtlSkillData *skill (BtlCapiObj: skills; BtlCapiBObj calls it moves)
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk91C	aiParam	HIGH	Object +0x934: AiThObj names it param, the character's AI parameters (pparam_com); prefixed because param is taken by +0x904
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk920	KEEP	KEEP	Entry 0x1C (object +0x938); no view names it
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk924	KEEP	KEEP	Entry 0x16 (object +0x93C); no view names it
+include/battle/btl_obj_anim_part2.h	BObj	unk165C	KEEP	KEEP	Never read or written in the chain / face code
+include/battle/btl_param.h	BtlAtkRecord	unk10	chargeGaugeGain	MEDIUM	Its accessor is BtlAtk_GetChargeGaugeGain (divided by the hit count, added to fighter +0xD80 per hit); uncertain: which gauge fighter +0xD80 is, no view names it
+include/battle/btl_param.h	BtlParam	unk0	charaFlags	HIGH	Its accessor is BtlParam_GetCharaFlags (BtlCapiParam calls the same word flags0)
+include/battle/btl_param.h	BtlParam	unk2	sizeClass	HIGH	Its accessor is BtlParam_GetSizeClass: 4 exempts the character from throws and rushes
+include/battle/btl_param.h	BtlParam	unk1C	KEEP	KEEP	BtlParam_GetUnk1C has no caller
+include/battle/btl_param.h	BtlParam	unk20	KEEP	KEEP	BtlParam_GetUnk20 has no caller
+include/battle/btl_param.h	BtlParam	unk24	KEEP	KEEP	BtlParam_GetUnk24 has no caller
+include/battle/btl_param.h	BtlParam	unk40	KEEP	KEEP	BtlParam_GetUnk40 has no caller
+include/battle/btl_param.h	BtlParam	unk84	rushFinisher	HIGH	Read only by its accessor BtlParam_GetRushFinisher
+include/battle/btl_param.h	BtlParam	unk88	chainKind	HIGH	Read only by its accessor BtlParam_GetChainKind (argument of BtlAct_GetChainAction)
+include/battle/btl_param.h	BtlParam	unk8A	finisherChoice	HIGH	Read only by its accessor BtlParam_GetFinisherChoice
+include/battle/btl_param.h	BtlParam	unkAD	formFlags	HIGH	Its accessor is BtlParam_GetFormFlags; bit 4 + n is BtlParam_TestSlotResetsVariant(n)
+include/battle/btl_param.h	BtlParam	unkC6	KEEP	KEEP	BtlParam_GetUnkC6 has no caller
+include/battle/btl_param.h	BtlTechObj	unkC90	hitVolume	HIGH	Object +0xC90 is BobjHit: these 0x1C bytes are the attack volume of the frame (offset, node mask, radii) right before hitCount / hitNo; BtlAtk_GetId only takes its address
+include/battle/btl_param.h	BtlTechChr	unkD50	comboChanged	HIGH	BtlMemberCombo.changed at +0xD50 (1 when the combo total changed); BtlCtrl_IsOppComboDamageNew returns the opponent's
+include/battle/btl_param.h	BtlTechChr	unkD68	dashCount	MEDIUM	Same word as BtlMgrChr +0xD68: homing dashes started in the current chain, limited by +0xD6C; non-zero makes BtlAtk_GetId pick attack ids 0x3E..0x42; uncertain: the move's proper name
+include/battle/btl_param.h	BtlTechRoster	unk30	paramTbl	HIGH	btl_char_member.h names roster +0x30 BtlMemberParam *paramTbl (character parameters inside common file 2)
+include/battle/btl_param.h	BtlTechWork5A8	unk0	cur	HIGH	Battle work +0x5A8 is BattleMemberPool (battle.h): +0x0 cur
+include/battle/btl_param.h	BtlTechWork5A8	unk4	count	HIGH	BattleMemberPool +0x4 count; BtlCtrl_GetWork5A8Count caps its result with it
+include/battle/btl_param.h	BtlTechProgress	unk7F4	tutorial	MEDIUM	MenuProgressTrain (menu/training.h, a view of gProgress) names +0x7F4 tutorial (tutorial number); here it is the bit of fighter 0's frame bits tested in battle mode 5; uncertain: that mode 5 is the tutorial and the number doubles as the bit index
+include/battle/btl_scene.h	BtlBlastRec	unk4	KEEP	KEEP	Two words not read here; EftHitRec has an unnamed word and level at these offsets, so one array name would be wrong
+include/battle/btl_script.h	BtlScriptCamKey	unk8	KEEP	KEEP	Never read or written by the camera move code
+include/battle/btl_script.h	BtlScriptCam	unkC	KEEP	KEEP	Never read or written
+include/battle/btl_script.h	BtlScriptWindow	unk48	x	HIGH	BtlScriptCmdWindow (the same 0x50 bytes) names +0x48 x (option -d); passed as x to Font_PrintAt
+include/battle/btl_script.h	BtlScriptWindow	unk4C	y	HIGH	BtlScriptCmdWindow names +0x4C y; Font_PrintAt gets y - text height

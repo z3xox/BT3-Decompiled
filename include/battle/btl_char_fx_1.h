@@ -17,14 +17,14 @@ typedef struct FxPose {
     /* 0x20 [0x030] */ u8 unk20[0x40 - 0x20];
     /* 0x40 [0x050] */ Vec4 vel;      /* velocity: its length is compared with speed limits, .y scales the splash */
     /* 0x50 [0x060] */ u8 unk50[0x80 - 0x50];
-    /* 0x80 [0x090] */ Vec4 unk80;    /* a vector every "flash" effect gets as its second vector */
-    /* 0x90 [0x0A0] */ f32 unk90;
+    /* 0x80 [0x090] */ Vec4 dir;    /* a vector every "flash" effect gets as its second vector */
+    /* 0x90 [0x0A0] */ f32 pitch;
     /* 0x94 [0x0A4] */ f32 yaw;       /* facing */
     /* 0x98 [0x0A8] */ f32 unk98;     /* reference speed: |vel| / unk98 > 0.5 starts the fast-move effect */
     /* 0x9C [0x0AC] */ u8 unk9C[0xB0 - 0x9C];
     /* 0xB0 [0x0C0] */ Vec4 unkB0;    /* ground point under the fighter; .y is compared with the water level */
-    /* 0xC0 [0x0D0] */ Vec4 unkC0;    /* passed with unkB0 to the ground dust (the ground normal: inferred) */
-    /* 0xD0 [0x0E0] */ u32 unkD0;     /* state bits; any of 0x30000065 cancels the ground effects */
+    /* 0xC0 [0x0D0] */ Vec4 groundNormal;    /* passed with unkB0 to the ground dust (the ground normal: inferred) */
+    /* 0xD0 [0x0E0] */ u32 groundFlags;     /* state bits; any of 0x30000065 cancels the ground effects */
 } FxPose;
 
 /* What BtlMember_GetActiveGauge returns: the active member's gauge block. */
@@ -45,7 +45,7 @@ typedef struct FxObjAction {
 /* Header of the animation an object is playing. */
 typedef struct FxAnimHead {
     /* 0x0 */ u16 unk0;
-    /* 0x2 */ u16 unk2;    /* 0: the partner is hidden while this animation plays */
+    /* 0x2 */ u16 length;    /* 0: the partner is hidden while this animation plays */
 } FxAnimHead;
 
 /* Animation playback of a battle object: obj + 0xB40. */
@@ -53,8 +53,8 @@ typedef struct FxObjAnim {
     /* 0x000 [0xB40] */ FxAnimHead *head;
     /* 0x004 [0xB44] */ f32 end;       /* last frame */
     /* 0x008 [0xB48] */ u8 unk8[0x130 - 0x8];
-    /* 0x130 [0xC70] */ s32 unk130;    /* set to 1 when the partner starts an animation */
-    /* 0x134 [0xC74] */ s32 unk134;
+    /* 0x130 [0xC70] */ s32 manual;    /* set to 1 when the partner starts an animation */
+    /* 0x134 [0xC74] */ s32 mode;
     /* 0x138 [0xC78] */ f32 frame;
     /* 0x13C [0xC7C] */ f32 prevFrame;
     /* 0x140 [0xC80] */ f32 step;
@@ -83,7 +83,7 @@ typedef struct FxObj {
     /* 0x970 */ u8 unk970[0x9A0 - 0x970];
     /* 0x9A0 */ u8 mtx[0x40];    /* matrix the model part offsets of event 8 are multiplied by */
     /* 0x9E0 */ u8 unk9E0[0xA24 - 0x9E0];
-    /* 0xA24 */ s32 unkA24;      /* copied into the damage spark argument */
+    /* 0xA24 */ s32 area;      /* copied into the damage spark argument */
     /* 0xA28 */ u8 unkA28[0xA40 - 0xA28];
     /* 0xA40 */ u32 flags;       /* FX_OBJ_ bits. The original tests "0x2 and 0x80" with one 64-bit load, which is
                                     what two adjacent bit-field tests compile to. */
@@ -120,9 +120,9 @@ typedef struct FxChr {
     /* 0x1348 */ s32 charaFxOn;  /* BtlFx_UpdateCharaFx: its effect is running */
     /* 0x134C */ s32 trigger1E;  /* frame counter 0..3 of request 0x1E */
     /* 0x1350 */ s32 trigger1F;  /* frame counter 0..3 of request 0x1F */
-    /* 0x1354 */ s32 unk1354;    /* passed to the effect of request 0x28 */
+    /* 0x1354 */ s32 burstNode;    /* passed to the effect of request 0x28 */
     /* 0x1358 */ u8 unk1358[0x1360 - 0x1358];
-    /* 0x1360 */ Vec4 unk1360;   /* second vector of the flash of request 0x2E */
+    /* 0x1360 */ Vec4 deflectDir;   /* second vector of the flash of request 0x2E */
 } FxChr;
 
 /* Argument of EftImpact_SpawnHit / EftImpact_SpawnHitScaled (the "flash" effects). */
@@ -150,18 +150,18 @@ typedef struct FxHitArg2 {
     /* 0x10 */ u16 objId;
     /* 0x12 */ u16 objId2;
     /* 0x14 */ u16 code;     /* model part code of the animation event */
-    /* 0x16 */ u16 unk16;    /* obj->unkA24 */
+    /* 0x16 */ u16 area;    /* obj->unkA24 */
     /* 0x18 */ s16 level;    /* BtlKiBlast_GetCurrentKind: 0..11, its low two bits pick the size */
     /* 0x1A */ u8 type;      /* BtlKiBlast_GetType: picks the spark module (5, 4, 2, 3, other) */
     /* 0x1B */ u8 unk1B;
-    /* 0x1C */ s16 unk1C;
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
+    /* 0x1C */ s16 life;
+    /* 0x20 */ f32 speed;
+    /* 0x24 */ f32 turn;
+    /* 0x28 */ f32 radius;
     /* 0x2C */ f32 unk2C;
     /* 0x30 */ s32 size;     /* 0..3 */
     /* 0x34 */ s32 unk34;
-    /* 0x38 */ s32 unk38;
+    /* 0x38 */ s32 canHit;
     /* 0x3C */ s32 unk3C;
     /* 0x40 */ u8 unk40;
     /* 0x41 */ u8 unk41;
@@ -171,7 +171,7 @@ typedef struct FxHitArg2 {
 /* Argument of EftBodyFx_Start. */
 typedef struct FxArg3 {
     /* 0x0 */ s32 objId;
-    /* 0x4 */ s32 unk4;
+    /* 0x4 */ s32 pack;
     /* 0x8 */ f32 scale;
     /* 0xC */ s32 unkC;
 } FxArg3;
@@ -187,7 +187,7 @@ typedef struct FxArg2 {
 typedef struct FxDirArg {
     /* 0x00 */ Vec4 dir;
     /* 0x10 */ s32 objId;
-    /* 0x14 */ s32 unk14;
+    /* 0x14 */ s32 node;
     /* 0x18 */ f32 scale;
     /* 0x1C */ s32 unk1C;
 } FxDirArg;
@@ -198,19 +198,19 @@ typedef struct FxLineArg {
     /* 0x10 */ s32 r;         /* colour: r, then g, b, alpha. The callee reads s32 color[4]; the split (a scalar and
                                  an array of three) is what the initialiser's store order needs to match */
     /* 0x14 */ s32 gba[3];
-    /* 0x20 */ f32 unk20;     /* 0.3 + 0.5 * |angle to the opponent, relative to the camera yaw| / pi */
-    /* 0x24 */ f32 unk24;
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C;     /* -20 - distance * 0.1, not below -50 */
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ s32 unk34;
-    /* 0x38 */ s32 unk38;
+    /* 0x20 */ f32 life;     /* 0.3 + 0.5 * |angle to the opponent, relative to the camera yaw| / pi */
+    /* 0x24 */ f32 length;
+    /* 0x28 */ f32 width;
+    /* 0x2C */ f32 inner;     /* -20 - distance * 0.1, not below -50 */
+    /* 0x30 */ f32 jitter;
+    /* 0x34 */ s32 mode;
+    /* 0x38 */ s32 count;
     /* 0x3C */ s32 objId;
-    /* 0x40 */ s32 unk40;
-    /* 0x44 */ s32 unk44;
-    /* 0x48 */ s32 unk48;
-    /* 0x4C */ s32 unk4C;
-    /* 0x50 */ s32 unk50;
+    /* 0x40 */ s32 blend;
+    /* 0x44 */ s32 space;
+    /* 0x48 */ s32 delay;
+    /* 0x4C */ s32 fadeFrames;
+    /* 0x50 */ s32 autoKill;
 } __attribute__((aligned(16))) FxLineArg; /* size 0x60 */
 
 /* The part of the save block read here. */

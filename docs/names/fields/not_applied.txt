@@ -1,0 +1,6 @@
+  include/battle/eft_part10.h EftPart10Def: put back (23 fields): uses not resolved by the compiler loop
+  include/battle/eft_part10.h EftPart10Def2: put back (2 fields): uses not resolved by the compiler loop
+  include/battle/eft_part10.h EftPart10Ptcl: put back (15 fields): uses not resolved by the compiler loop
+  include/battle/eft_part10.h EftPart10: put back (20 fields): uses not resolved by the compiler loop
+  include/battle/eft_emit.h EftShotParam: put back (22 fields): uses not resolved by the compiler loop
+  include/battle/eft_ground_dust.h EftGndDustArg: put back (2 fields): uses not resolved by the compiler loop

@@ -41,7 +41,7 @@ typedef struct BtlCollAtk {
 typedef struct BtlCollHit {
     /* 0x00 */ s32 ownerId;    /* roster index / object id of the attacker (BtlChar_Get index) */
     /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;       /* compared with BtlSuper_GetClashPower(chr, class) in BtlColl_TryDodge */
+    /* 0x08 */ s32 level;       /* compared with BtlSuper_GetClashPower(chr, class) in BtlColl_TryDodge */
     /* 0x0C */ s32 type;       /* BTL_HIT_* */
     /* 0x10 */ u8 unk10[0x10];
     /* 0x20 */ Vec4 pos;       /* where it hit: sounds, camera shake and rumble are placed here */
@@ -59,7 +59,7 @@ typedef struct BtlCollHit {
 typedef struct BtlCollGauge {
     /* 0x00 */ s32 health;
     /* 0x04 */ u8 unk4[0x20 - 0x4];
-    /* 0x20 */ s32 unk20;
+    /* 0x20 */ s32 variant;
 } BtlCollGauge;
 
 /* Pose block of the fighter (chr + 0x10, BtlChar_GetPos). */
@@ -70,10 +70,10 @@ typedef struct BtlCollVec {
 typedef struct BtlCollPose {
     /* 0x00 */ Vec4 pos;
     /* 0x10 */ Vec4 rot;        /* rot.y: yaw the hit direction is compared with */
-    /* 0x20 */ Vec4 unk20;      /* unk20.y: distance from the origin to the feet */
+    /* 0x20 */ Vec4 dispOfs;      /* dispOfs.y: distance from the origin to the feet */
     /* 0x30 */ u8 unk30[0x50];
-    /* 0x80 */ Vec4 unk80;      /* forward vector (used as the deflect direction for a motionless blast) */
-    /* 0x90 */ f32 unk90;
+    /* 0x80 */ Vec4 dir;      /* forward vector (used as the deflect direction for a motionless blast) */
+    /* 0x90 */ f32 pitch;
     /* 0x94 */ f32 yaw;         /* facing yaw (fighter + 0xA4) */
     /* 0x98 */ f32 unk98;
     /* 0x9C */ f32 velY;        /* vertical speed: zeroed on landing, halved when flag 0x11 rises */
@@ -97,14 +97,14 @@ typedef struct BtlCollObjWork {
     /* 0x18024 */ u8 unk18024[0xC];
     /* 0x18030 */ BtlCollGround ground;
     /* 0x18058 */ u8 unk18058[0x8];
-    /* 0x18060 */ s32 unk18060;    /* bits 0xC0 */
+    /* 0x18060 */ s32 contactFlags;    /* bits 0xC0 */
 } BtlCollObjWork;
 
 /* Battle object of a fighter. */
 typedef struct BtlCollObj {
     /* 0x0000 */ u8 unk0[0xCAC];
-    /* 0x0CAC */ s8 unkCAC;
-    /* 0x0CAD */ s8 unkCAD;
+    /* 0x0CAC */ s8 hitCount;
+    /* 0x0CAD */ s8 hitNo;
     /* 0x0CAE */ u8 unkCAE[0x1660 - 0xCAE];
     /* 0x1660 */ BtlCollObjWork *work;
 } BtlCollObj;
@@ -116,28 +116,28 @@ typedef struct BtlCollThrow {
     /* 0x04 */ s32 atkSide;
     /* 0x08 */ s32 defSide;
     /* 0x0C */ s32 slot;
-    /* 0x10 */ s32 unk10;     /* BtlSuper_GetStepCount */
-    /* 0x14 */ s32 unk14;     /* BtlSuper_GetLandingKind */
-    /* 0x18 */ s32 unk18;     /* BtlSuper_GetThrowPartnerStep, or -1 */
-    /* 0x1C */ s32 unk1C;     /* BtlSuper_GetLastStep, or -1 */
-    /* 0x20 */ s32 unk20;     /* BtlSuper_GetThrowChara; -1 in the victim */
-    /* 0x24 */ s32 unk24;     /* BtlSuper_GetThrowCostume; 0 in the victim */
-    /* 0x28 */ s32 unk28;     /* BtlSuper_GetThrowGauge20; 0 in the victim */
-    /* 0x2C */ s32 unk2C;     /* BtlSuper_GetThrowObjectSlot; 1 in the victim */
-    /* 0x30 */ s32 unk30;     /* technique bit 0x400000 */
-    /* 0x34 */ s32 unk34;     /* technique bit 0x400: BtlChar_FrameMod(2) != 0 */
-    /* 0x38 */ s32 unk38;     /* technique bit 0x100000 */
-    /* 0x3C */ s32 unk3C;     /* technique bit 0x800000 */
-    /* 0x40 */ s32 unk40;     /* BtlSuper_GetFlagsA bit 0x2000000 */
-    /* 0x44 */ s32 unk44;     /* 1 when the catch reaction is 0x1E */
-    /* 0x48 */ s32 unk48;     /* technique bit 0x2000 and attacker gauge unk20 == 0 */
-    /* 0x4C */ s32 unk4C;     /* technique bit 0x80000 and victim gauge unk20 == 0 */
-    /* 0x50 */ s32 unk50;     /* technique bit 0x800 */
+    /* 0x10 */ s32 stepCount;     /* BtlSuper_GetStepCount */
+    /* 0x14 */ s32 landingKind;     /* BtlSuper_GetLandingKind */
+    /* 0x18 */ s32 partnerStep;     /* BtlSuper_GetThrowPartnerStep, or -1 */
+    /* 0x1C */ s32 defFormStep;     /* BtlSuper_GetLastStep, or -1 */
+    /* 0x20 */ s32 partnerChara;     /* BtlSuper_GetThrowChara; -1 in the victim */
+    /* 0x24 */ s32 partnerCostume;     /* BtlSuper_GetThrowCostume; 0 in the victim */
+    /* 0x28 */ s32 partnerVariant;     /* BtlSuper_GetThrowGauge20; 0 in the victim */
+    /* 0x2C */ s32 partnerSlot;     /* BtlSuper_GetThrowObjectSlot; 1 in the victim */
+    /* 0x30 */ s32 useAngles;     /* technique bit 0x400000 */
+    /* 0x34 */ s32 endNeutral;     /* technique bit 0x400: BtlChar_FrameMod(2) != 0 */
+    /* 0x38 */ s32 holdVictim;     /* technique bit 0x100000 */
+    /* 0x3C */ s32 turnBack;     /* technique bit 0x800000 */
+    /* 0x40 */ s32 koSwitch;     /* BtlSuper_GetFlagsA bit 0x2000000 */
+    /* 0x44 */ s32 caughtLoop;     /* 1 when the catch reaction is 0x1E */
+    /* 0x48 */ s32 atkFormChange;     /* technique bit 0x2000 and attacker gauge partnerChara == 0 */
+    /* 0x4C */ s32 defFormChange;     /* technique bit 0x80000 and victim gauge partnerChara == 0 */
+    /* 0x50 */ s32 placeAtStart;     /* technique bit 0x800 */
     /* 0x54 */ s32 unk54;     /* technique bit 0x10000 */
     /* 0x58 */ s32 unk58;     /* victim's state has table bit 0x800 */
     /* 0x5C */ s32 unk5C;     /* technique bit 0x4000000 */
-    /* 0x60 */ f32 unk60;     /* BtlSuper_GetThrowAngleA */
-    /* 0x64 */ f32 unk64;     /* BtlSuper_GetThrowAngleB */
+    /* 0x60 */ f32 angleYaw;     /* BtlSuper_GetThrowAngleA */
+    /* 0x64 */ f32 anglePitch;     /* BtlSuper_GetThrowAngleB */
 } BtlCollThrow; /* size 0x68 */
 
 /* Pending hit reaction of a fighter (fighter + 0xFB0). */
@@ -148,10 +148,10 @@ typedef struct BtlCollReact {
     /* 0x0C */ s32 back;      /* BtlColl_IsFacing(chr, dirYaw): the hit travels the way the fighter faces, i.e. it
                                  comes from behind; for a throw: technique bit 0x10000000 */
     /* 0x10 */ s32 unk10[2];
-    /* 0x18 */ s32 unk18;
+    /* 0x18 */ s32 scale;
     /* 0x1C */ f32 dirYaw;    /* yaw of the hit direction */
     /* 0x20 */ f32 faceYaw;   /* yaw to turn to (with flag 0x94) */
-    /* 0x24 */ f32 unk24;
+    /* 0x24 */ f32 turnPitch;
     /* 0x28 */ s32 unk28[2];
     /* 0x30 */ s32 stun;      /* > 0: not free (BtlChar_IsFree); set from BtlSkill_GetFrames for reactions 0x17..0x1C */
     /* 0x34 */ s32 unk34;
@@ -164,33 +164,33 @@ typedef struct BtlCollReact {
 typedef struct BtlCollChr {
     /* 0x0000 */ s32 side;
     /* 0x0004 */ s32 pad;
-    /* 0x0008 */ s32 unk8;
+    /* 0x0008 */ s32 index;
     /* 0x000C */ s32 objId;
     /* 0x0010 */ BtlCollPose pose;
     /* 0x00E8 */ u8 unkE8[0xE00 - 0xE8];
     /* 0x0E00 */ s32 dodgeA;       /* counters consumed by an automatic dodge */
     /* 0x0E04 */ s32 dodgeB;
-    /* 0x0E08 */ s32 unkE08;
-    /* 0x0E0C */ s32 unkE0C;       /* 0 / 1: which of flags 0xDE / 0xDF the dodge sets */
-    /* 0x0E10 */ s32 unkE10;
-    /* 0x0E14 */ s32 unkE14;
+    /* 0x0E08 */ s32 skillTimer;
+    /* 0x0E0C */ s32 skillSlot;       /* 0 / 1: which of flags 0xDE / 0xDF the dodge sets */
+    /* 0x0E10 */ s32 skillKiRate;
+    /* 0x0E14 */ s32 skillTimerC;
     /* 0x0E18 */ s32 noFlinch;     /* > 0: every hit gets reaction 2 (no flinch) */
     /* 0x0E1C */ u8 unkE1C[0xE44 - 0xE1C];
-    /* 0x0E44 */ f32 unkE44;
+    /* 0x0E44 */ f32 techCharge;
     /* 0x0E48 */ u8 unkE48[0xE90 - 0xE48];
     /* 0x0E90 */ BtlCollThrow thr;
     /* 0x0EF8 */ u8 unkEF8[0xF40 - 0xEF8];
-    /* 0x0F40 */ s32 unkF40;
+    /* 0x0F40 */ s32 hitTarget;
     /* 0x0F44 */ u8 unkF44[0xFB0 - 0xF44];
     /* 0x0FB0 */ BtlCollReact react;
     /* 0x0FF8 */ u8 unkFF8[0x106C - 0xFF8];
-    /* 0x106C */ s32 unk106C;      /* > 0: dodge allowed without using a counter; zeroed by a rush hit */
-    /* 0x1070 */ s32 unk1070;
-    /* 0x1074 */ s32 unk1074;
+    /* 0x106C */ s32 blastDodgeWindow;      /* > 0: dodge allowed without using a counter; zeroed by a rush hit */
+    /* 0x1070 */ s32 counterWindow;
+    /* 0x1074 */ s32 deflectWindow;
     /* 0x1078 */ u8 unk1078[0x1288 - 0x1078];
     /* 0x1288 */ u64 actBits;      /* classes of the actions started this frame (BtlColl_AddActionBit) */
     /* 0x1290 */ s32 unk1290;
-    /* 0x1294 */ s32 unk1294;
+    /* 0x1294 */ s32 framesLeftOverride;
     /* 0x1298 */ u8 unk1298[0x1360 - 0x1298];
     /* 0x1360 */ Vec4 deflectDir;  /* direction a deflected blast is sent in */
     /* 0x1370 */ u8 unk1370[0x1600 - 0x1370];

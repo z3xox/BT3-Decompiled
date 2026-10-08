@@ -141,7 +141,7 @@ extern s32 BtlUtil_Clamp(s32 v, s32 lo, s32 hi);
  * same way, so an attacker that is facing the defender stands behind it. */
 s32 BtlHit_IsFromBehind(HitChr *atk, HitChr *def) {
     HitPose *pd = BtlChar_GetPos(def);
-    f32 ang = BtlUtil_WrapAngle(pd->rot.y + BtlChar_GetPos(def)->unk64);
+    f32 ang = BtlUtil_WrapAngle(pd->rot.y + BtlChar_GetPos(def)->rootYaw);
 
     ang = BtlUtil_WrapAngle(ang - BtlChar_GetPos(atk)->yaw);
     if (__builtin_fabsf(ang) < 1.5707963f) {
@@ -175,7 +175,7 @@ s32 BtlHit_GetVoiceKind(s32 reaction) {
 s32 BtlHit_GetHitNo(HitChr *chr) {
     HitObj *obj = BtlChar_GetObj(chr);
 
-    if (obj->work->unk18020 & 0xF000000) {
+    if (obj->work->hitFlags & 0xF000000) {
         return obj->hitNo;
     }
     if (BtlChar_TestFlag(chr, 0x65)) {
@@ -217,9 +217,9 @@ void BtlHit_ApplyGuard(HitChr *atk, HitChr *def, u32 result) {
     case 5:
         BtlChar_SetFlag(atk, 0x6C);
         BtlChar_SetHeldFlag(atk, 0x86);
-        atk->unkD80 += 50000;
-        if (atk->unkD80 > 100000) {
-            atk->unkD80 = 100000;
+        atk->chargeGauge += 50000;
+        if (atk->chargeGauge > 100000) {
+            atk->chargeGauge = 100000;
         }
         break;
     case 6:
@@ -518,7 +518,7 @@ s32 BtlHit_CheckDodge(HitChr *atk, HitChr *def) {
     }
     if (st & 0x200000) {
         s32 d = BtlChar_GetObj(def)->hitNo;
-        d ^= ~BtlChar_GetObj(def)->unkCAC;
+        d ^= ~BtlChar_GetObj(def)->hitCount;
         if (d == 0) {
             on = 1;
         }
@@ -533,7 +533,7 @@ s32 BtlHit_CheckDodge(HitChr *atk, HitChr *def) {
         free = 0;
         counted = 0;
         paid = 0;
-        lvl = def->unk1068;
+        lvl = def->dodgeWindow;
         half = 0;
         if (flags & 0x4000000) {
             half = 1;
@@ -613,7 +613,7 @@ s32 BtlHit_CheckDodge(HitChr *atk, HitChr *def) {
                 BtlMember_AddBlast(def, 100000);
             }
             if (counted) {
-                switch (def->unkE0C) {
+                switch (def->skillSlot) {
                 case 0:
                     BtlChar_SetFlag(def, 0xDE);
                     break;
@@ -671,7 +671,7 @@ s32 BtlHit_CheckGuard(HitChr *atk, HitChr *def, s32 *full) {
         return 0;
     }
     guard = BtlColl_GetGuardKind(def);
-    if (BtlChar_GetObj(atk)->hitNo == 0 && (BtlAnim_GetFlags(BtlAnim_GetId(def)) & 0x31) && def->unk1070 > 0) {
+    if (BtlChar_GetObj(atk)->hitNo == 0 && (BtlAnim_GetFlags(BtlAnim_GetId(def)) & 0x31) && def->counterWindow > 0) {
         BtlHit_ApplyGuard(atk, def, 8);
         *full = 0;
         return 1;
@@ -778,7 +778,7 @@ s32 BtlHit_CheckThrowBreak(HitChr *atk, HitChr *def) {
         return 0;
     }
     st = BtlAnim_GetFlags(BtlAnim_GetId(def));
-    if ((st & 0x31) && !(st & 0x800) && !BtlHit_IsFromBehind(atk, def) && def->unk1078 > 0) {
+    if ((st & 0x31) && !(st & 0x800) && !BtlHit_IsFromBehind(atk, def) && def->throwBreakWindow > 0) {
         BtlChar_SetFlag(atk, 0x7A);
         BtlChar_SetFlag(def, 0x79);
         BtlCharSnd_PlayCommon(def, 0x44);
@@ -806,7 +806,7 @@ void BtlHit_BeginFrame(HitChr *chr) {
         }
     } else {
         if (st->lastHitNo >= 0) {
-            if (!BtlChar_TestFlag(chr, 0x60) && !BtlChar_TestFlag(chr, 0x2B) && obj->hitNo == ~obj->unkCAC) {
+            if (!BtlChar_TestFlag(chr, 0x60) && !BtlChar_TestFlag(chr, 0x2B) && obj->hitNo == ~obj->hitCount) {
                 BtlChar_SetHeldFlag(chr, 0x5C);
             }
         }
@@ -910,7 +910,7 @@ s32 BtlHit_CheckRush(void) {
             BtlChar_SetFlag(a, 0x129);
             continue;
         }
-        if (BtlChar_IsFree(b) && b->unk107C > 0) {
+        if (BtlChar_IsFree(b) && b->rushBreakWindow > 0) {
             if (BtlChar_TestFlag(a, 0xA5)) {
                 if ((st & 0x31) && !BtlHit_IsFromBehind(a, b)) {
                     BtlChar_SetFlag(a, 0x7A);
@@ -966,7 +966,7 @@ s32 BtlHit_CheckRush(void) {
                 if (n1) {
                     BtlChar_SetFlag(b, 0x77);
                 }
-                switch (b->unkE0C) {
+                switch (b->skillSlot) {
                 case 0:
                     BtlChar_SetFlag(b, 0xDE);
                     break;
@@ -1037,7 +1037,7 @@ void BtlHit_TestHit(HitChr *chr) {
     if (BtlAtk_GetId(chr) == -1) {
         return;
     }
-    if ((obj->work->unk18020 & 0xF000000) || BtlChar_TestFlag(chr, 0x65)) {
+    if ((obj->work->hitFlags & 0xF000000) || BtlChar_TestFlag(chr, 0x65)) {
         s32 ok = 0;
         s32 oppIdx = BtlOpp_GetPlayer(chr);
         HitChr *opp = BtlChar_Get(oppIdx);
@@ -1167,7 +1167,7 @@ void BtlHit_ApplyHit(HitChr *atk) {
         if (BtlAct_TestPoweredSkill(def, 0x40)) {
             lvl++;
         }
-        if (def->unkE14 > 0) {
+        if (def->skillTimerC > 0) {
             lvl++;
         }
         if (BtlMember_HasAbility(def, 0x46)) {
@@ -1192,7 +1192,7 @@ void BtlHit_ApplyHit(HitChr *atk) {
         } else if (st & 0x800) {
             react = BtlAtk_GetReactionB(atk);
         } else if (st & 0x100) {
-            if (back || (BtlObjAnim_QueryEvent(dobj, 1, 0, 3) && dobj->hitNo == ~dobj->unkCAC)) {
+            if (back || (BtlObjAnim_QueryEvent(dobj, 1, 0, 3) && dobj->hitNo == ~dobj->hitCount)) {
                 react = BtlAtk_GetReaction(atk);
             } else {
                 react = BtlAtk_GetReactionF(atk);
@@ -1219,24 +1219,24 @@ void BtlHit_ApplyHit(HitChr *atk) {
         launch = 1;
         break;
     default:
-        if (def->unkE18 > 0) {
+        if (def->noFlinch > 0) {
             react = 2;
         }
         break;
     }
     def->react.reaction = react;
     if (react != 2) {
-        def->react.unk4 = BtlAtk_GetReactionSub(atk);
+        def->react.reactionSub = BtlAtk_GetReactionSub(atk);
         if (BtlChar_IsBodyChanged(atk)) {
-            def->react.unk4 = 0x13;
+            def->react.reactionSub = 0x13;
         }
         def->react.silent = (af >> 10) & 1;
         if (react == 0x14) {
             def->react.scale = 1.0f;
         } else if (af & 0x2000000) {
-            def->react.scale = atk->unkD78;
+            def->react.scale = atk->charge;
         } else {
-            def->react.scale = atk->unkD78 * BtlParam_GetHitReactScale(def);
+            def->react.scale = atk->charge * BtlParam_GetHitReactScale(def);
         }
         if (af & 0x40) {
             BtlChar_SetHeldFlag(def, 0xE);
@@ -1339,11 +1339,11 @@ void BtlHit_ApplyHit(HitChr *atk) {
     if (kind == 0x55) {
         s32 v = (BtlParam_GetFlags(atk) >> 19) & 1;
 
-        atk->react.unk10 = v;
-        def->react.unk10 = v;
+        atk->react.noBlend = v;
+        def->react.noBlend = v;
     } else {
-        atk->react.unk10 = 0;
-        def->react.unk10 = 0;
+        atk->react.noBlend = 0;
+        def->react.noBlend = 0;
     }
     switch (react) {
     case 0x14:
@@ -1360,7 +1360,7 @@ void BtlHit_ApplyHit(HitChr *atk) {
         case 0x76:
         case 0x77:
         case 0x78:
-            dmg += dmg * BtlUtil_Clamp(atk->unkD88 + def->unkD88 - 1, 0, 5) / 5;
+            dmg += dmg * BtlUtil_Clamp(atk->evasionCount + def->evasionCount - 1, 0, 5) / 5;
             break;
         default:
             if (def->react.back) {
@@ -1378,7 +1378,7 @@ void BtlHit_ApplyHit(HitChr *atk) {
             type = 0x4000000;
             break;
         case 0x61: case 0x62:
-            type = 0x200000 + atk->unkE0C;
+            type = 0x200000 + atk->skillSlot;
             break;
         }
         BtlMember_Damage(def, dmg, type);
@@ -1388,9 +1388,9 @@ void BtlHit_ApplyHit(HitChr *atk) {
     if (!BtlChar_TestFlag(atk, 0x98)) {
         BtlMember_AddKi(atk, BtlAtk_GetKiGain(atk));
     }
-    atk->unkD80 += BtlAtk_GetChargeGaugeGain(atk);
-    if (atk->unkD80 > 100000) {
-        atk->unkD80 = 100000;
+    atk->chargeGauge += BtlAtk_GetChargeGaugeGain(atk);
+    if (atk->chargeGauge > 100000) {
+        atk->chargeGauge = 100000;
     }
     BtlChar_RaiseFirstClash(atk);
     BtlChar_AddStageTimer(BtlAtk_GetShakeTime(atk) * 2.0f);

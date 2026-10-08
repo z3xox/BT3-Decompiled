@@ -173,24 +173,24 @@ void BtlChar_SpawnFxBits3C(BtlMemberChr *chr) {
         s32 unkA24;
 
         req.objId = chr->objId;
-        unkA24 = BtlChar_GetObj(chr)->unkA24;
+        unkA24 = BtlChar_GetObj(chr)->area;
         req.kind = kind;
-        req.unk8 = unkA24;
+        req.area = unkA24;
         switch (kind) {
         case 0:
         case 1:
             req.unkC = BtlSkill_GetShotUnk30(chr, kind);
-            req.unk10 = BtlSkill_GetShotTime(chr, kind);
-            req.unk14 = BtlSkill_GetShotSpeed(chr, kind);
-            req.unk18 = BtlSkill_GetShotTurnRate(chr, kind);
+            req.time = BtlSkill_GetShotTime(chr, kind);
+            req.speed = BtlSkill_GetShotSpeed(chr, kind);
+            req.turnRate = BtlSkill_GetShotTurnRate(chr, kind);
             break;
         case 2:
         case 3:
         case 4:
             req.unkC = BtlSuper_GetShotUnk6C(chr, kind);
-            req.unk10 = BtlSuper_GetShotTime(chr, kind);
-            req.unk14 = BtlSuper_GetShotSpeed(chr, kind);
-            req.unk18 = BtlSuper_GetShotTurnRate(chr, kind);
+            req.time = BtlSuper_GetShotTime(chr, kind);
+            req.speed = BtlSuper_GetShotSpeed(chr, kind);
+            req.turnRate = BtlSuper_GetShotTurnRate(chr, kind);
             break;
         }
         EftShot_Request(&req);
@@ -204,7 +204,7 @@ void BtlChar_SpawnFxBits0(BtlMemberChr *chr) {
     if (BtlChar_TestFxBit(chr, 0)) {
         req.objId = chr->objId;
         req.kind = -1;
-        switch (chr->unk12DC) {
+        switch (chr->formKind) {
         case 0:
             req.kind = -1;
             break;
@@ -246,10 +246,10 @@ void BtlChar_SpawnFxBits0(BtlMemberChr *chr) {
             EftTransform_Start(&req);
         }
     }
-    if (BtlChar_TestFxBit(chr, 1) && chr->unk12DC != 0) {
+    if (BtlChar_TestFxBit(chr, 1) && chr->formKind != 0) {
         EftTransform_Flash();
     }
-    if (BtlChar_TestFxBit(chr, 2) && chr->unk12DC != 0) {
+    if (BtlChar_TestFxBit(chr, 2) && chr->formKind != 0) {
         EftTransform_End();
     }
 }
@@ -426,7 +426,7 @@ void BtlChar_SpawnHitFx(BtlMemberChr *chr) {
             EftImpact_SpawnHit(&req);
         } else {
             s32 masks[9] = { 0x40000, 0x800, 0x100, 0x400, 0x80, 0x20, 8, 0x10, 4 };
-            u32 bits = obj->unkC9C;
+            u32 bits = obj->nodeMask;
             u32 hit;
             s32 i;
             Vec4 fwd;
@@ -454,9 +454,9 @@ void BtlChar_SpawnHitFx(BtlMemberChr *chr) {
                 f32 d;
 
                 BtlCharApi_GetNodePos(chr->objId, BtlObjAnim_MaskToNode(hit), &req.pos);
-                fwd.x = Mathf_Sin(pose->unk14);
+                fwd.x = Mathf_Sin(pose->rotY);
                 fwd.y = 0.0f;
-                fwd.z = Mathf_Cos(pose->unk14);
+                fwd.z = Mathf_Cos(pose->rotY);
                 Vec4_Scale(&tmp, &fwd, 5.0f);
                 Vec4_Add(&point, &pose->pos, &tmp);
                 fwd.w = -Vec3_Dot(&fwd, &point);
@@ -543,7 +543,7 @@ void BtlFx_SpawnFlashReq20(FxChr *chr) {
         arg.objId = chr->objId;
         arg.unk28 = 0;
         BtlCharApi_GetNodePos(chr->objId, 0x2E, &arg.pos);
-        Vec4_Copy(&arg.pos2, &BtlChar_GetPos(chr)->unk80);
+        Vec4_Copy(&arg.pos2, &BtlChar_GetPos(chr)->dir);
         EftImpact_SpawnHit(&arg);
         BtlCharSnd_PlayCommon(chr, 0x46);
     }
@@ -557,7 +557,7 @@ void BtlFx_SpawnFlashReq2B(FxChr *chr) {
         arg.kind = 0xD;
         arg.objId = chr->objId;
         arg.unk28 = 0;
-        Vec4_Copy(&arg.pos2, &BtlChar_GetPos(chr)->unk80);
+        Vec4_Copy(&arg.pos2, &BtlChar_GetPos(chr)->dir);
         BtlCharApi_GetNodePos(chr->objId, 0x10, &arg.pos);
         EftImpact_SpawnHit(&arg);
     }
@@ -731,7 +731,7 @@ void BtlFx_UpdateScreenFilter(FxChr *chr) {
     StgBlur_SetColor1Rgba(chr->side, 0x80, 0x80, 0x80, b);
     StgBlur_SetColor2Rgba(chr->side, 0x80, 0x80, 0x80, c);
     if (BtlChar_TestFxBit(chr, 9)) {
-        StgBlur_SetCenter(chr->side, &BtlChar_GetPos(chr)->unk80, 0);
+        StgBlur_SetCenter(chr->side, &BtlChar_GetPos(chr)->dir, 0);
     }
 }
 
@@ -787,10 +787,10 @@ void BtlFx_SpawnSpeedLines(FxChr *chr) {
         if (__builtin_fabsf(d.x) > eps || __builtin_fabsf(d.z) > eps) {
             angle = BtlUtil_WrapAngle(atan2f(d.x, d.z) - chr->camYaw);
         }
-        arg.unk20 = __builtin_fabsf(angle) / 3.14159265f * 0.5f + 0.3f;
-        arg.unk2C = -20.0f - Vec3_Length(&d) * 0.1f;
-        if (arg.unk2C < -50.0f) {
-            arg.unk2C = -50.0f;
+        arg.life = __builtin_fabsf(angle) / 3.14159265f * 0.5f + 0.3f;
+        arg.inner = -20.0f - Vec3_Length(&d) * 0.1f;
+        if (arg.inner < -50.0f) {
+            arg.inner = -50.0f;
         }
         EftRay_CreateByValue(&arg);
     }
@@ -921,7 +921,7 @@ void BtlFx_UpdateGroundFx(FxChr *chr) {
     f32 water;
     s32 under;
 
-    if (BtlChar_GetPos(chr)->unkD0 & 0x30000065) {
+    if (BtlChar_GetPos(chr)->groundFlags & 0x30000065) {
         BtlChar_ClearFxBit(chr, 0x2F);
         BtlChar_ClearFxBit(chr, 0x30);
         BtlChar_ClearFxBit(chr, 0x31);
@@ -957,7 +957,7 @@ void BtlFx_UpdateGroundFx(FxChr *chr) {
         if (under) {
             EftGndDust_SpawnBurst(chr->objId, 1.0f, 1.0f);
         } else {
-            EftGndDust_SpawnLanding(chr->objId, &BtlChar_GetPos(chr)->unkB0, &BtlChar_GetPos(chr)->unkC0, 1.0f);
+            EftGndDust_SpawnLanding(chr->objId, &BtlChar_GetPos(chr)->unkB0, &BtlChar_GetPos(chr)->groundNormal, 1.0f);
         }
     }
     if (BtlChar_TestFxBit(chr, 0x31)) {
@@ -1022,7 +1022,7 @@ void BtlFx_UpdateAimedFxReq28(FxChr *chr) {
         yaw = BtlUtil_WrapAngle(BtlChar_GetPos(chr)->yaw + BtlAtk_GetLaunchAngleAOf(chr, 0x86));
         memset(&arg, 0, sizeof(arg));
         arg.objId = chr->objId;
-        arg.unk14 = chr->unk1354;
+        arg.node = chr->burstNode;
         arg.scale = 1.0f;
         arg.dir.x = Mathf_Cos(pitch) * Mathf_Sin(yaw);
         arg.dir.y = -Mathf_Sin(pitch);
@@ -1044,7 +1044,7 @@ void BtlFx_UpdateReq1A(FxChr *chr) {
     if (BtlChar_IsFxBitNew(chr, 0x1A)) {
         arg.objId = chr->objId;
         arg.scale = 1.0f;
-        arg.unk4 = 0;
+        arg.pack = 0;
         EftBodyFx_Start(&arg);
     }
     if (BtlChar_IsFxBitEnded(chr, 0x1A)) {
@@ -1085,7 +1085,7 @@ void BtlFx_SpawnFlashReq2E(FxChr *chr) {
         arg.kind = 0xB;
         arg.objId = chr->objId;
         arg.unk28 = 0;
-        Vec4_Copy(&arg.pos2, &chr->unk1360);
+        Vec4_Copy(&arg.pos2, &chr->deflectDir);
         BtlCharApi_GetNodePos(chr->objId, 0x11, &arg.pos);
         EftImpact_SpawnHit(&arg);
     }
@@ -1149,7 +1149,7 @@ void BtlFx_SpawnClashFlash(FxChr *chr) {
         Vec4_Lerp(&arg.pos, &a, &b, 0.5f);
         arg.objId = chr->objId;
         arg.unk28 = 0;
-        Vec4_Copy(&arg.pos2, &BtlChar_GetPos(chr)->unk80);
+        Vec4_Copy(&arg.pos2, &BtlChar_GetPos(chr)->dir);
         arg.kind = 6;
         EftImpact_SpawnHitScaled(&arg, size);
         arg.kind = 0xD;
@@ -1312,17 +1312,17 @@ void BtlFx_FireKiBlast(FxChr *chr) {
         arg.code = code;
         arg.objId2 = chr->objId;
         arg.objId = chr->objId;
-        arg.unk16 = obj->unkA24;
+        arg.area = obj->area;
         arg.type = BtlKiBlast_GetType(chr);
         arg.unk1B = BtlKiBlast_GetUnk3(chr);
         arg.level = BtlKiBlast_GetCurrentKind(chr);
-        arg.unk1C = BtlKiBlast_GetFrames(chr);
-        arg.unk20 = BtlKiBlast_GetSpeed(chr);
-        arg.unk24 = BtlKiBlast_GetTurnRate(chr);
-        arg.unk28 = BtlKiBlast_GetRadius(chr);
+        arg.life = BtlKiBlast_GetFrames(chr);
+        arg.speed = BtlKiBlast_GetSpeed(chr);
+        arg.turn = BtlKiBlast_GetTurnRate(chr);
+        arg.radius = BtlKiBlast_GetRadius(chr);
         arg.unk2C = BtlKiBlast_GetUnk2C(chr);
         arg.unk34 = 1;
-        arg.unk38 = 1;
+        arg.canHit = 1;
         arg.unk3C = (BtlKiBlast_GetFlags(chr) >> 5) & 1;
         arg.unk41 = BtlObjAnim_QueryEvent(obj, 4, 0, 3);
         switch (arg.level) {
@@ -1400,7 +1400,7 @@ void BtlFx_FireKiBlast(FxChr *chr) {
             case 5:
             case 6:
                 if (BtlChar_TestFlag(chr, 5)) {
-                    f32 d = BtlOpp_GetDistance(chr) * 0.8f / arg.unk20 * arg.unk24;
+                    f32 d = BtlOpp_GetDistance(chr) * 0.8f / arg.speed * arg.turn;
 
                     d *= 0.5f;
                     if (d > 0.75f) {
