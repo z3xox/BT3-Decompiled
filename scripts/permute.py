@@ -260,7 +260,7 @@ def run(cmd, **kw):
 
 
 def as_gflag(src):
-    return "-G8" if "src/menu/menu_t_b" in str(src) else fdiff.gflag(src)
+    return "-G8" if "src/menu/sim_event_card" in str(src) else fdiff.gflag(src)
 
 
 def write_compile_sh(path, src):

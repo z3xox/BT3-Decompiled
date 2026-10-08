@@ -13,11 +13,11 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
  * rest of the Data Center (main-menu item 7, progress modes 53..56).
  *
  *   (menu_za.c)  0x3AC440..0x3AE648  DcPass     tail of the password entry screen (mode 54): now merged into
- *                                               src/menu/menu_z_d.c (0x3AAF30..0x3AE648)
- *   menu_za_b.c  0x3AE648..0x3AEAB0  PassWin    the window that shows a character's password (a whole object)
- *   menu_za_c.c  0x3AEAB0..0x3AF290  PassChk    password validity tables and the old-format converter (whole)
- *   menu_za_d.c  0x3AF290..0x3B0C08  ReplayMenu the replay list (mode 56): load a replay / save the last battle
- *   menu_za_e.c  0x3B0C08..0x3B0E04  DcSave     the "save the game" card flow the Data Center runs on leaving
+ *                                               src/menu/dc_password.c (0x3AAF30..0x3AE648)
+ *   password_window.c  0x3AE648..0x3AEAB0  PassWin    the window that shows a character's password (a whole object)
+ *   password_check.c  0x3AEAB0..0x3AF290  PassChk    password validity tables and the old-format converter (whole)
+ *   replay_menu.c  0x3AF290..0x3B0C08  ReplayMenu the replay list (mode 56): load a replay / save the last battle
+ *   dc_save.c  0x3B0C08..0x3B0E04  DcSave     the "save the game" card flow the Data Center runs on leaving
  *
  * Every structure here is this chunk's own view: the neighbours' headers were still changing.
  */
@@ -54,7 +54,7 @@ extern double pow(double, double);
 /* Voice set of the mode's guide (Bulma). */
 #define DC_VOICE_BASE 0x8398
 
-/* The password codec of the main executable (include/sys/misc_a.h; local copy of the two records). */
+/* The password codec of the main executable (include/sys/password_old.h; local copy of the two records). */
 typedef struct ZaOldPass {
     /* 0x00 */ s32 charId;      /* character id of the PREVIOUS game */
     /* 0x04 */ s32 item[7];     /* item ids of the previous game, 1-based */
@@ -74,9 +74,9 @@ typedef struct ZaChrPass {
 extern s32 ChrPass_Encode(ZaChrPass *in);
 extern char *ChrPass_GetText(void);
 
-/* DcPass (src/menu/menu_z_d.c, the whole object since menu_za.c was merged into it): see include/menu/menu_z.h. */
+/* DcPass (src/menu/dc_password.c, the whole object since menu_za.c was merged into it): see include/menu/menu_z.h. */
 
-/* ---- PassWin (menu_za_b.c) ---- */
+/* ---- PassWin (password_window.c) ---- */
 
 typedef struct PassWin {
     /* 0x00 */ MFlash flash[1];
@@ -85,7 +85,7 @@ typedef struct PassWin {
 
 extern PassWin *gPassWin; /* 0x3BC9B8 */
 
-/* ---- PassChk (menu_za_c.c) ---- */
+/* ---- PassChk (password_check.c) ---- */
 
 /* Character entry of common file 4 (ChrTblEntry in battle/view_b.h; local view). */
 typedef struct ZaChrEntry {
@@ -146,7 +146,7 @@ typedef struct PassChk {
 
 extern PassChk *gPassChk; /* 0x2FF290: in the main executable's .sbss */
 
-/* ---- ReplayMenu (menu_za_d.c) ---- */
+/* ---- ReplayMenu (replay_menu.c) ---- */
 
 #define REPLAY_SLOT_NUM 7
 #define REPLAY_TEAM_NUM 2
@@ -221,7 +221,7 @@ typedef struct ReplayMenu {
 
 extern ReplayMenu *gReplayMenu; /* 0x3BC9F8 */
 
-/* ---- DcSave (menu_za_e.c) ---- */
+/* ---- DcSave (dc_save.c) ---- */
 
 typedef struct DcSave {
     /* 0x00 */ s32 flags;       /* DCSAVE_ */

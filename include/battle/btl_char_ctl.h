@@ -9,9 +9,9 @@
  * Fighter control helpers, 0x1D4F30..0x1D8330, in the tail of btl_input.c and three C files:
  *   src/battle/btl_input.c       0x1D4F30..0x1D60A0  action input queries, stick readers (the tail of that file:
  *                                                    BtlInput_TestAction needs its readers defined above it)
- *   src/battle/btl_char_ctl_b.c  0x1D60A0..0x1D6438  character change request queue, the "time stopped" word
- *   src/battle/btl_char_ctl_c.c  0x1D6438..0x1D70E8  head tracking
- *   src/battle/btl_char_ctl_d.c  0x1D70E8..0x1D8330  pose <-> object, placement, hold attachment, snapshots
+ *   src/battle/btl_change.c  0x1D60A0..0x1D6438  character change request queue, the "time stopped" word
+ *   src/battle/btl_head_tracking.c  0x1D6438..0x1D70E8  head tracking
+ *   src/battle/btl_char_pose.c  0x1D70E8..0x1D8330  pose <-> object, placement, hold attachment, snapshots
  * The structures are partial views local to this module (BtlCtl*); the fighter is 0x1600 bytes.
  */
 

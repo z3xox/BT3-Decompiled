@@ -11,11 +11,11 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
  * Menu overlay DBZP.BIN, 0x39EFC0..0x3A3848 (placeholder stem "menu_x"). Three pieces:
  *
  *   (menu_x.c)  0x39EFC0..0x39FAA8  EvoTop      tail of the top menu of Evolution Z, mode 48: now merged into
- *                                               src/menu/menu_w_c.c (0x39EB08..0x39FAA8), which uses the
+ *                                               src/menu/evo_top.c (0x39EB08..0x39FAA8), which uses the
  *                                               EvoTop layout below
  *
- *   menu_x_b.c  0x39FAA8..0x39FBB8  OptMode_Main, the handler of mode 62 (the options)
- *   menu_x_c.c  0x39FBB8..0x3A65E8  Option      the options screen object (menu_y.c, its tail, was merged in;
+ *   option_mode.c  0x39FAA8..0x39FBB8  OptMode_Main, the handler of mode 62 (the options)
+ *   option.c  0x39FBB8..0x3A65E8  Option      the options screen object (menu_y.c, its tail, was merged in;
  *                                               include/menu/menu_y.h has the prototypes that half added)
  */
 
@@ -52,7 +52,7 @@ extern s32 DcSave_GetState(void);            /* McFlow_Update's last result whil
 extern s32 DcSave_IsDone(void);              /* 1 when not started, else whether the flow has ended */
 extern s32 DcSave_IsStarted(void);
 
-/* ---- EvoTop (menu_w_c.c): the top menu of Evolution Z (mode 48), guide Krillin ---- */
+/* ---- EvoTop (evo_top.c): the top menu of Evolution Z (mode 48), guide Krillin ---- */
 
 /* gProgress + 0x7D0: the plate the Evolution Z top menu was left on (-1 when the mode is entered). */
 #ifndef EVO_PROGRESS_CURSOR
@@ -92,7 +92,7 @@ typedef struct EvoTop {
 #define EVOTOP_LINE_EXPLAIN_LAST 0x10
 #define EVOTOP_LINE_IDLE 0x11
 
-/* src/menu/menu_w_c.c */
+/* src/menu/evo_top.c */
 void EvoTop_PlayVoice(EvoTop *m, s32 line);          /* plays a guide line and shows it */
 s32 EvoTop_Wrap(s32 value, s32 min, s32 max);        /* wraps value into min..max */
 void EvoTop_SetPlate(EvoTop *m, s32 on);             /* lights / dims the cursor plate */
@@ -100,7 +100,7 @@ void EvoTop_SetPlateText(EvoTop *m);                 /* sets the plates' text re
 void EvoTop_Advance(EvoTop *m);                      /* advances the movie */
 void EvoTop_Init(EvoTop *m, s32 section);
 
-/* ---- Option (menu_x_c.c): the options screen, mode 62 ---- */
+/* ---- Option (option.c): the options screen, mode 62 ---- */
 
 #define OPTION_FLASH_NUM 1
 #define OPTION_PAD_NUM 2

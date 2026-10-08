@@ -4,18 +4,18 @@
 /*
  * Menu overlay DBZP.BIN, 0x339610..0x33E108 (placeholder stem "menu_b").
  *
- *   (menu_b.c   0x339610..0x33A360  ModeMenu   tail of the object; now merged into menu_a_d.c, 0x338020..0x33A360)
- *   menu_b_b.c  0x33A360..0x33ABA0  ModeBg     the animated background shared by ModeMenu and HistOutro
- *   menu_b_c.c  0x33ABA0..0x33CFC8  HistOutro  the scene after a completed saga (mode 9), and Hist_Main, the
+ *   (menu_b.c   0x339610..0x33A360  ModeMenu   tail of the object; now merged into mode_menu.c, 0x338020..0x33A360)
+ *   mode_background.c  0x33A360..0x33ABA0  ModeBg     the animated background shared by ModeMenu and HistOutro
+ *   history_outro.c  0x33ABA0..0x33CFC8  HistOutro  the scene after a completed saga (mode 9), and Hist_Main, the
  *                                              handler of progress modes 6..10 (the story mode)
- *   menu_b_d.c  0x33CFC8..0x33F700  HistSel    the saga select (mode 6), merged with its tail (the former menu_c.c);
+ *   history_select.c  0x33CFC8..0x33F700  HistSel    the saga select (mode 6), merged with its tail (the former menu_c.c);
  *                                              it includes menu/menu_c.h, not this header
  *
  * ModeMenu is the story mode's episode list (mode 7): gProgress->subMenu is the saga (0..7), an item an episode.
  */
 #include "menu/menu_a.h"
 
-/* ---- ModeMenu (menu_a_d.c) ---- */
+/* ---- ModeMenu (mode_menu.c) ---- */
 
 /* One entry per item in section 6 of the sub menu's own archive (menu_a.h has the head's view, ModeMenuText). */
 typedef struct ModeMenuDescr {
@@ -93,7 +93,7 @@ void ModeMenu_Draw(void);
 s32 ModeMenu_GetLine(s32 menu, s32 item);
 s32 ModeMenu_Run(s32 section);
 
-/* ---- ModeBg (menu_b_b.c) ---- */
+/* ---- ModeBg (mode_background.c) ---- */
 
 typedef struct ModeBg {
     /* 0x00 */ MFlash flash[1];     /* section 9 of the sub menu's pack; not created for sub menu 3 */
@@ -109,7 +109,7 @@ void ModeBg_Init(u32 *pack);
 void ModeBg_Term(void);
 void ModeBg_Draw(void);
 
-/* ---- HistOutro (menu_b_c.c): the scene after a completed saga ---- */
+/* ---- HistOutro (history_outro.c): the scene after a completed saga ---- */
 
 #define HISTOUTRO_FLASH_NUM 1
 
@@ -166,7 +166,7 @@ void HistOutro_GuideGoto(s32 movie, s32 side, s32 out);
 s32 HistOutro_Run(s32 section);
 s32 Hist_Main(void);
 
-/* ---- HistSel (menu_b_d.c): the saga select of the story mode. Its work struct, flags and functions are in
+/* ---- HistSel (history_select.c): the saga select of the story mode. Its work struct, flags and functions are in
    include/menu/menu_c.h (the full layout; the head-only view that was here is gone). ---- */
 
 #endif

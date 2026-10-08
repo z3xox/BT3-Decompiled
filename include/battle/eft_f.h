@@ -4,12 +4,12 @@
 #include "types.h"
 
 /* Water-surface effects, second half: the particle pools of the water module (splashes, technique trails),
-   their update and draw code. As linked this is the second part of src/battle/eft_e.c (0x142CA0..0x147050; formerly eft_f.c).
-   The module starts in eft_e.c (0x140338: EftWater_GetSurfaceY, the EftWater_Add... entry points, the task
+   their update and draw code. As linked this is the second part of src/battle/eft_water.c (0x142CA0..0x147050; formerly eft_f.c).
+   The module starts in eft_water.c (0x140338: EftWater_GetSurfaceY, the EftWater_Add... entry points, the task
    functions EftWater_Init / Update / PostUpdate / Draw and the splash allocator) and both halves were one source
    file: EftWaterRing_Update only compiles to the original bytes when EftWater_GetSurfaceY is defined earlier in
-   the same file. The screen-space helpers it calls continue in eft_g.c (0x147050..).
-   All names are guesses. The types here are this file's own views; eft_e.h describes the same state block as
+   the same file. The screen-space helpers it calls continue in eft_shot.c (0x147050..).
+   All names are guesses. The types here are this file's own views; eft_water.h describes the same state block as
    EftWater and the splash as EftWaterSplash (drop = billboard, spray = streak, mist = swirl, trail = burst). */
 
 /* Four floats, 8-byte aligned: passed by value (the callee copies it with two ld/sd pairs). */
@@ -193,7 +193,7 @@ typedef struct EftWaterTrail {
     /* 0x20 */ struct EftWaterTrail *next;
 } EftWaterTrail; /* size 0x24 */
 
-/* A splash (EftWaterSplash in eft_e.h, allocated there): the particles one impact with the water created. */
+/* A splash (EftWaterSplash in eft_water.h, allocated there): the particles one impact with the water created. */
 typedef struct EftWaterSplashView {
     /* 0x00 */ EftWaterVec pos;     /* origin the drops and sprays are drawn relative to */
     /* 0x10 */ s32 flags;          /* | EFT_WATER_ENDING once told to fade; cleared when unlinked */
@@ -207,7 +207,7 @@ typedef struct EftWaterSplashView {
     /* 0x30 */ struct EftWaterSplashView *next;
 } EftWaterSplashView; /* size >= 0x34 */
 
-/* The module's state (gEftDust, EftWater in eft_e.h; the global's name predates the finding that this is the
+/* The module's state (gEftDust, EftWater in eft_water.h; the global's name predates the finding that this is the
    water module). Only the fields this range touches. */
 typedef struct EftWaterView {
     /* 0x00 */ u8 unk0[8];

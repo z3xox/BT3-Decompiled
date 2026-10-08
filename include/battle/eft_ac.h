@@ -5,13 +5,13 @@
 #include "sys/math3d.h"
 
 /*
- * The second part of src/battle/eft_ab_c.c (formerly eft_ac.c), 0x1A21A8..0x1A62C8. Two effect pack part modules, both visual only:
+ * The second part of src/battle/eft_ribbon.c (formerly eft_ac.c), 0x1A21A8..0x1A62C8. Two effect pack part modules, both visual only:
  *
  * 1. 0x1A21A8..0x1A3B00: the tail of the part kind 17 module, "ribbon": a strip of camera-facing quads through a
  *    list of nodes between two points (kind 0) or trailing behind one point (kinds 1 and 2). Its node helpers and
  *    the kind 0 draw are in the file before this one (0x1A0E58..0x1A21A8); this file has the kind 1 / 2 draws, the
  *    task callbacks, the manager and the entries EftEmit_SpawnType17 calls.
- * 2. 0x1A3B00..0x1A62C8: the head of the part kind 12 module, "zap" (named in include/battle/eft_ad.h, which has
+ * 2. 0x1A3B00..0x1A62C8: the head of the part kind 12 module, "zap" (named in include/battle/eft_zap.h, which has
  *    its tail): an emitter that every few frames starts lines of points turning around its axis, each drawn as a
  *    ribbon or as sprites. This file has the manager, the task callbacks, the line update and the drawing.
  *
@@ -27,7 +27,7 @@ typedef struct EftAcVec {
     f32 x, y, z, w;
 } __attribute__((aligned(16))) EftAcVec;
 
-/* The part of a task (0x40 bytes) the callbacks here use (same view as include/battle/eft_g.h). */
+/* The part of a task (0x40 bytes) the callbacks here use (same view as include/battle/eft_shot.h). */
 typedef struct EftAcTask {
     /* 0x00 */ u8 flags;
     /* 0x01 */ u8 unk1[0x27];
@@ -36,14 +36,14 @@ typedef struct EftAcTask {
     /* 0x38 */ void *work;
 } EftAcTask;
 
-/* A vertex as ClipVtx_Set fills it and the EftGfx_DrawPoly* functions take it (EftGfxVert in eft_a.h). */
+/* A vertex as ClipVtx_Set fills it and the EftGfx_DrawPoly* functions take it (EftGfxVert in eft_core.h). */
 typedef struct EftAcVert {
     /* 0x00 */ EftAcVec pos;
     /* 0x10 */ EftAcVec color;
     /* 0x20 */ EftAcVec uv;
 } EftAcVert; /* 0x30 */
 
-/* One entry of a texture table (EftTexEntry in eft_g.h). */
+/* One entry of a texture table (EftTexEntry in eft_shot.h). */
 typedef struct EftAcTex {
     /* 0x00 */ u64 tex0;
     /* 0x08 */ u64 unk8;
@@ -54,7 +54,7 @@ typedef struct EftAcScr {
     s32 x, y, z, w;
 } __attribute__((aligned(16))) EftAcScr;
 
-/* GS registers as packed into the packet EftZap_DrawQuad queues (same views as include/battle/eft_aa.h). */
+/* GS registers as packed into the packet EftZap_DrawQuad queues (same views as include/battle/eft_char_parts.h). */
 typedef struct EftAcXyzf {
     u64 x : 16;
     u64 y : 16;
@@ -116,7 +116,7 @@ typedef struct EftRibbonPrm {
     /* 0x14 */ f32 unk14;
 } EftRibbonPrm;
 
-/* Argument of EftRibbon_Create (EftEmitArg17 in include/battle/eft_h.h). */
+/* Argument of EftRibbon_Create (EftEmitArg17 in include/battle/eft_emit.h). */
 typedef struct EftRibbonArg {
     /* 0x00 */ EftAcVec pos;
     /* 0x10 */ EftAcVec dir;
@@ -214,7 +214,7 @@ typedef struct EftRibbonMgr {
 } EftRibbonMgr; /* 0x128 */
 
 /* ---- zap (part kind 12) ---------------------------------------------------------------- */
-/* The module's name and its create / control entries are in include/battle/eft_ad.h (the file after this one);
+/* The module's name and its create / control entries are in include/battle/eft_zap.h (the file after this one);
    the type names here are this file's own views of the same structures. */
 
 /* Definition of a zap emitter in the effect pack (EftEmitRes.unk0 of the part); what this file reads.
@@ -276,7 +276,7 @@ typedef struct EftZapKeyTbl {
     /* 0x120 */ f32 j[3];          /* colour change end */
 } EftZapKeyTbl; /* 0x12C */
 
-/* Argument of the create function at 0x1A6598 (EftArg12 in eft_i.c). */
+/* Argument of the create function at 0x1A6598 (EftArg12 in eft_sweep.c). */
 typedef struct EftZapInit {
     /* 0x00 */ EftZapDef *def;
     /* 0x04 */ EftZapKeyTbl *keys;

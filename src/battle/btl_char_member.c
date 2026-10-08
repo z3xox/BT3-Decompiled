@@ -8,7 +8,7 @@
  *   0x1CE630..0x1CF220  health, ki, blast stock and the +0x1C gauge of the active member; abilities
  *   0x1CF220            per-frame queued damage and drain
  *   (0x1CF578..0x1D00D8, the one-frame effect request bits and the effects / sounds they spawn, is the first part
- *   of src/battle/btl_char_fx.c: BtlFx_UpdateGroundFx needs the request-bit helpers in its translation unit)
+ *   of src/battle/btl_char_fx_1.c: BtlFx_UpdateGroundFx needs the request-bit helpers in its translation unit)
  *
  * Units: health 10000 per bar; ki 0..100000; blast stock 100000 per stock; the +0x1C gauge 0..30000.
  * Nothing here regenerates a gauge over time: this module only offers the add / spend calls. The per-frame
@@ -102,7 +102,7 @@ extern BtlMemberPool *Battle_GetWork5A8(void);
 
 /* Mode 3: brings in the next opponent of the pool for side 1. 0x1CDCA8, in front of the member code proper: it is
  * the first function of this file because BtlMember_Damage only compiles to the original bytes with it defined
- * above (the functions before it are src/battle/btl_char_coll_b.c). */
+ * above (the functions before it are src/battle/btl_hit_reaction.c). */
 void BtlColl_NextPoolMember(BtlMemberChr *chr) {
     BtlMemberPool *pool;
     s32 next;

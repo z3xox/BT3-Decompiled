@@ -5,11 +5,11 @@
 
 /*
  * CPU opponent: rule conditions 35..117, the rule evaluator, the thinker and the data / side binding
- * (0x1B80F8..0x1BB128, the second half of src/battle/btl_ai_cond.c: one object in the original).
+ * (0x1B80F8..0x1BB128, the second half of src/battle/btl_ai_think.c: one object in the original).
  *
  * LOCAL VIEW. include/battle/btl_ai.h (BtlAi*) and include/battle/btl_ai_mgr.h (BtlAiMgr*) describe the same
  * heap block; they are being merged, so this file does not include either and repeats what it needs under the
- * AiTh prefix. Offsets marked (m) are used by matching code in btl_ai_cond.c.
+ * AiTh prefix. Offsets marked (m) are used by matching code in btl_ai_think.c.
  */
 
 /* A position as BtlCharApi_GetPos writes it. */

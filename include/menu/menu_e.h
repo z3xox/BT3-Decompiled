@@ -8,10 +8,10 @@
  * 0x3B38D4.., the .rodata runs from 0x3B38F0 through this chunk's 0x3B3D40..0x3B4188 and on):
  *
  *   (menu_e.c)  0x348710..0x348D78  CharSel_Run: the frame loop and the battle hand-off of the one-on-one
- *                                   character select; now the end of src/menu/menu_c_e.c, which uses the
+ *                                   character select; now the end of src/menu/char_select.c, which uses the
  *                                   CharSel view of include/menu/menu_d.h (the partial view that was here
  *                                   is gone)
- *   menu_e_b.c  0x348D78..0x351C38  TeamSel: the team character select (teams of up to five, with or without
+ *   team_select.c  0x348D78..0x351C38  TeamSel: the team character select (teams of up to five, with or without
  *                                   a DP limit; work pointer 0x3B38D8). Written as two chunks (the cut was
  *                                   at 0x34D368, in front of Update / Input / Run), now one file; what the
  *                                   second chunk added to the layouts is in include/menu/menu_f.h, which
@@ -20,7 +20,7 @@
  * All names are guesses from what the code does. The structures below are this chunk's own views.
  */
 
-/* A cell of the character grid (include/battle/view_a.h has the original). */
+/* A cell of the character grid (include/ui/reward_window.h has the original). */
 typedef struct TsCell {
     /* 0x00 */ s32 id;         /* character id 0..0xA0, 0xA1 random, 0xA2 locked, 0xA3 custom, 0xA4 filler */
     /* 0x04 */ s32 formCount;

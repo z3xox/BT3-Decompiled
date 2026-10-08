@@ -1,0 +1,379 @@
+#include "common.h"
+#include "battle/pause_menu.h"
+#include "battle/battle.h"
+#include "sys/pad.h"
+
+/*
+ * Battle pause menu, part 1. Source range 0x2129C8-0x213238.
+ *
+ * The first three functions are the end of the battle-level wrappers of btl_tech.c (BtlGame_*). The rest is
+ * the pause menu proper: it owns no state of its own except gPauseMenuWhich; the menu trees are data
+ * (0x2C4E70-0x2C6070) and the engine that runs them is btl_menu.c (BtlMenu_*).
+ *
+ * PauseMenu_Update(pad, which) is called by the battle sequence: with which = 0 from the fight state while
+ * BATTLE_FLAG_PAUSE_MENU is set (the pause menu), with which = 1 from the end state in battle mode 0 (the
+ * result menu). It returns 0 once the menu has closed itself (only the pause menu can: triangle / start on its
+ * top level); it clears BATTLE_FLAG_PAUSE itself in that case. A picked item of type "result" ends the battle
+ * through BattleResult_Set(BTL_RESULT_ABORT, reason); the reason bit is chosen by the item id:
+ *
+ *   id 0x0C, 0x13  0x8000      id 0x0D  0x10       id 0x0E  0x80      id 0x0F  0x08      id 0x10  0x100
+ *   id 0x11        0x400       id 0x12  0x200      id 0x14  0x40 (pad 0: 0x20)            id 0x15  0x20
+ *   id 0x16        nothing     id 0x17  0x1000     id 0x18, 0x19  0x10000                 id 0x1A  0x20
+ *
+ * (0x8000 / 0x10000 are the two restart bits, BTL_REASON_RESTART.)
+ */
+
+extern s32 gBtlGameReplayActive;
+extern s32 gPauseMenuWhich;
+
+extern BtlMenu gPauseMenuVersus;
+extern BtlMenu gPauseMenuResultVersus;
+extern BtlMenu gPauseMenuReplayRec;
+extern BtlMenu gPauseMenuResultReplayRec;
+extern BtlMenu gPauseMenuReplayPlay;
+extern BtlMenu gPauseMenuResultReplayPlay;
+extern BtlMenu gPauseMenuMode1;
+extern BtlMenu gPauseMenuResultMode1;
+extern BtlMenu gPauseMenuMode2;
+extern BtlMenu gPauseMenuMode3;
+extern BtlMenu gPauseMenuMode4;
+extern BtlMenu gPauseMenuMode5;
+extern BtlMenu gPauseMenuMode6;
+extern BtlMenu gPauseMenuMode7;
+/* The cursor words (BtlMenu + 0x18) of the yes / no box at 0x2C4F00 and of the CPU level menu at 0x2C5158. */
+extern s32 gPauseMenuConfirmCursor[8];
+extern s32 gPauseMenuCpuLevelCursor[8];
+
+/* Local view of the battle object: only the skill-list script pointer is used. */
+typedef struct PauseMenuObj {
+    /* 0x00 */ u8 unk0[0xBC];
+    /* 0xBC */ u16 *skillText;
+} PauseMenuObj;
+
+extern void Hud_Draw(void); /* Hud_Draw (config/symbols/hud_a.txt, not linked yet) */
+extern void BtlScript_UpdateView(void);
+extern s32 BtlSeq_IsFighting(void);
+extern s32 Battle_GetMode(void);
+extern s32 BattleReplay_IsActive(void);
+extern s32 BattleReplay_IsLoaded(void);
+extern s32 BattleSide_GetObjId(s32 side);
+extern PauseMenuObj *BtlObj_Get(s32 id);
+extern void BattleResult_Set(s32 flags, s32 reason);
+extern s32 Snd_PlaySe(u32 mask, s32 id);
+extern void Adx_ResumeSeVoice(void);
+extern void FontIcon_ResetAnim(void);
+extern s32 BtlAiMgr_GetLevel(s32 side);
+extern void BtlAiMgr_SetLevel(s32 side, s32 level);
+extern s32 CpuLevel_ToSetting(s32 level);   /* internal CPU level -> menu difficulty 0..4, -1 when off */
+extern s32 CpuLevel_FromSetting(s32 setting); /* menu difficulty 0..4 -> internal CPU level 0, 6, 13, 21, 29 */
+
+/* Draws the battle's 2D layers: the HUD, the script's view update, then the pause menu. */
+void BtlGame_Draw(void) {
+    Hud_Draw();
+    BtlScript_UpdateView();
+    PauseMenu_Draw();
+}
+
+/* 1 while the battle sequence is in the fight state. */
+s32 BtlGame_IsFighting(void) {
+    return BtlSeq_IsFighting();
+}
+
+/* 1 when the battle is a replay being played (latched by BtlGame_Reset). */
+s32 BtlGame_IsReplay(void) {
+    return gBtlGameReplayActive;
+}
+
+/* Returns the menu tree for the battle: which = 0 the pause menu, 1 the result menu (modes 0 and 1 only). */
+BtlMenu *PauseMenu_GetMenu(s32 which) {
+    BtlMenu *menu = NULL;
+
+    switch (which) {
+    case 0:
+        switch (Battle_GetMode()) {
+        case 0:
+            if (!BattleReplay_IsActive()) {
+                menu = &gPauseMenuVersus;
+            } else if (!BattleReplay_IsLoaded()) {
+                menu = &gPauseMenuReplayRec;
+            } else {
+                menu = &gPauseMenuReplayPlay;
+            }
+            break;
+        case 1:
+            menu = &gPauseMenuMode1;
+            break;
+        case 2:
+            menu = &gPauseMenuMode2;
+            break;
+        case 3:
+            menu = &gPauseMenuMode3;
+            break;
+        case 4:
+            menu = &gPauseMenuMode4;
+            break;
+        case 5:
+            menu = &gPauseMenuMode5;
+            break;
+        case 6:
+            menu = &gPauseMenuMode6;
+            break;
+        case 7:
+            menu = &gPauseMenuMode7;
+            break;
+        }
+        break;
+    case 1:
+        switch (Battle_GetMode()) {
+        case 0:
+            if (!BattleReplay_IsActive()) {
+                menu = &gPauseMenuResultVersus;
+            } else if (!BattleReplay_IsLoaded()) {
+                menu = &gPauseMenuResultReplayRec;
+            } else {
+                menu = &gPauseMenuResultReplayPlay;
+            }
+            break;
+        case 1:
+            menu = &gPauseMenuResultMode1;
+            break;
+        }
+        break;
+    }
+    return menu;
+}
+
+/* Item callback of the yes / no box: when the item is confirmed, clears the values of items 1 and 0 and puts
+   the box's cursor on its third line. */
+s32 PauseMenu_ConfirmFunc(BtlMenuEvent *ev) {
+    if (ev->selected) {
+        BtlMenu *menu = PauseMenu_GetMenu(gPauseMenuWhich);
+
+        BtlMenu_SetValue(menu, 1, 0);
+        BtlMenu_SetValue(menu, 0, 0);
+        gPauseMenuConfirmCursor[0] = 2;
+    }
+    return 0;
+}
+
+/* Item callback of the skill list: left / right change the page (wrapping), up / down move the entry cursor
+   (clamped) and scroll the 7-line window. Reads the owner pad's repeat word. */
+s32 PauseMenu_SkillListFunc(BtlMenuEvent *ev) {
+    BtlMenuWork *work = BtlMenu_GetWork();
+
+    if (ev->menu->state == BTL_MENU_STATE_ACTIVE) {
+        BtlMenuList *list = &work->list[work->pad];
+        u32 pad = gPad[work->pad].gameRepeat;
+        s32 last = list->pages - 1;
+        s32 page = list->page;
+        s32 move;
+        s32 max;
+        s32 scroll;
+        s32 cursor;
+        s32 old;
+        s32 lim;
+
+        if (pad & PADG_RIGHT) {
+            page++;
+            Snd_PlaySe(1, 0);
+        }
+        if (pad & PADG_LEFT) {
+            page--;
+            Snd_PlaySe(1, 0);
+        }
+        if (page > last) {
+            page = 0;
+        }
+        if (page < 0) {
+            page = last;
+        }
+        move = 0;
+        if (pad & PADG_UP) {
+            move = -1;
+        }
+        if (pad & PADG_DOWN) {
+            move++;
+        }
+        scroll = list->scroll[page];
+        cursor = list->cursor[page];
+        max = list->count[page] - 1;
+        lim = scroll + 6;
+        old = cursor;
+        if (move != 0) {
+            if (move < 0) {
+                if (cursor != 0) {
+                    Snd_PlaySe(1, 0);
+                }
+            } else {
+                if (cursor != max) {
+                    Snd_PlaySe(1, 0);
+                }
+            }
+            cursor += move;
+        }
+        if (cursor > max) {
+            cursor = max;
+        }
+        if (cursor < 0) {
+            cursor = 0;
+        }
+        if (cursor < scroll) {
+            scroll = cursor;
+        }
+        if (cursor > lim) {
+            scroll = cursor - 6;
+        }
+        list->scroll[page] = scroll;
+        list->cursor[page] = cursor;
+        list->page = page;
+        if (cursor != old) {
+            FontIcon_ResetAnim();
+        }
+    }
+    return 0;
+}
+
+/* Item callback of the CPU level menu: on confirm, clears its six lines and puts the cursor on the current
+   level of side 1 (line 1 = off); while the menu is active, writes the cursor's level back every frame. */
+s32 PauseMenu_CpuLevelFunc(BtlMenuEvent *ev) {
+    s32 level;
+
+    if (ev->selected) {
+        BtlMenu *menu = PauseMenu_GetMenu(gPauseMenuWhich);
+
+        BtlMenu_SetValue(menu, 2, 0);
+        BtlMenu_SetValue(menu, 3, 0);
+        BtlMenu_SetValue(menu, 4, 0);
+        BtlMenu_SetValue(menu, 5, 0);
+        BtlMenu_SetValue(menu, 6, 0);
+        BtlMenu_SetValue(menu, 7, 0);
+        BtlMenu_SetPicked(menu, 2, 0);
+        BtlMenu_SetPicked(menu, 3, 0);
+        BtlMenu_SetPicked(menu, 4, 0);
+        BtlMenu_SetPicked(menu, 5, 0);
+        BtlMenu_SetPicked(menu, 6, 0);
+        BtlMenu_SetPicked(menu, 7, 0);
+        level = CpuLevel_ToSetting(BtlAiMgr_GetLevel(1));
+        if (level == -1) {
+            gPauseMenuCpuLevelCursor[0] = 1;
+        } else {
+            gPauseMenuCpuLevelCursor[0] = level + 2;
+        }
+    }
+    if (ev->menu->state == BTL_MENU_STATE_ACTIVE) {
+        BtlMenu *menu = PauseMenu_GetMenu(gPauseMenuWhich);
+        s32 cursor;
+
+        BtlMenu_GetPicked(menu, 2);
+        BtlMenu_GetPicked(menu, 3);
+        BtlMenu_GetPicked(menu, 4);
+        BtlMenu_GetPicked(menu, 5);
+        BtlMenu_GetPicked(menu, 6);
+        BtlMenu_GetPicked(menu, 7);
+        cursor = gPauseMenuCpuLevelCursor[0];
+        if (cursor == 1) {
+            level = -1;
+        } else {
+            level = CpuLevel_FromSetting(cursor - 2);
+        }
+        BtlAiMgr_SetLevel(1, level);
+    }
+    return 0;
+}
+
+/* Round reset: closes both trees. */
+void PauseMenu_Reset(void) {
+    BtlMenu_Reset(PauseMenu_GetMenu(0));
+    BtlMenu_Reset(PauseMenu_GetMenu(1));
+    gPauseMenuWhich = 0;
+}
+
+/* Battle start: allocates the menu work. */
+void PauseMenu_Init(void) {
+    BtlMenu_Init();
+}
+
+/* Battle end: frees it. */
+void PauseMenu_Term(void) {
+    BtlMenu_Term();
+}
+
+/* One frame of the pause menu (which = 0) or the result menu (which = 1) for controller port `pad`.
+   Returns 0 when the menu closed (pause flag cleared, voices resumed), else 1. */
+s32 PauseMenu_Update(s32 pad, s32 which) {
+    void (*set)(s32, s32);
+    BtlMenu *menu;
+    BtlMenuItem *item;
+
+    gPauseMenuWhich = which;
+    menu = PauseMenu_GetMenu(which);
+    BtlMenu_SetScript(BtlObj_Get(BattleSide_GetObjId(pad))->skillText);
+    set = BattleResult_Set;
+    if (BtlMenu_Update(which, NULL, menu, pad)) {
+        Battle_GetWork()->flags &= ~BATTLE_FLAG_PAUSE;
+        BtlMenu_ClearActive();
+        Adx_ResumeSeVoice();
+        return 0;
+    }
+    BtlMenu_SetTop(menu);
+    item = BtlMenu_FindResult(NULL, menu);
+    if (item != NULL) {
+        Snd_PlaySe(1, 1);
+        switch (item->id) {
+        case 0xC:
+            set(BTL_RESULT_ABORT, 0x8000);
+            break;
+        case 0x13:
+            set(BTL_RESULT_ABORT, 0x8000);
+            break;
+        case 0xD:
+            set(BTL_RESULT_ABORT, 0x10);
+            break;
+        case 0xE:
+            set(BTL_RESULT_ABORT, 0x80);
+            break;
+        case 0xF:
+            set(BTL_RESULT_ABORT, 8);
+            break;
+        case 0x10:
+            set(BTL_RESULT_ABORT, 0x100);
+            break;
+        case 0x12:
+            set(BTL_RESULT_ABORT, 0x200);
+            break;
+        case 0x11:
+            set(BTL_RESULT_ABORT, 0x400);
+            break;
+        case 0x14:
+            if (pad == 0) {
+                set(BTL_RESULT_ABORT, 0x20);
+            } else {
+                set(BTL_RESULT_ABORT, 0x40);
+            }
+            break;
+        case 0x17:
+            set(BTL_RESULT_ABORT, 0x1000);
+            break;
+        case 0x18:
+            set(BTL_RESULT_ABORT, 0x10000);
+            break;
+        case 0x19:
+            set(BTL_RESULT_ABORT, 0x10000);
+            break;
+        case 0x1A:
+            set(BTL_RESULT_ABORT, 0x20);
+            break;
+        case 0x15:
+            set(BTL_RESULT_ABORT, 0x20);
+            break;
+        case 0x16:
+            break;
+        }
+    }
+    return 1;
+}
+
+/* Draws the menu when it is shown. */
+void PauseMenu_Draw(void) {
+    BtlMenu_DrawAll();
+}

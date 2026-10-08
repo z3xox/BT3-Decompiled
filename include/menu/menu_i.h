@@ -6,12 +6,12 @@
 /*
  * Menu overlay DBZP.BIN, 0x35A558..0x35F650 (placeholder stem "menu_i"). Four pieces:
  *
- *   (menu_i.c  0x35A558..0x35D660  Train     rest of the training menu (mode 44): merged into menu_h_d.c)
- *   menu_i_b.c  0x35D660..0x35D948  BootCard  the memory card check of the first run
- *   menu_i_c.c  0x35D948..0x35E0F8  Logo / FirstRun: the boot logos and the first-run sequence
- *   menu_i_d.c  0x35E0F8..0x3623A8  EntrySel  the tournament's entrant select (mode 34), with menu_j.c merged in
+ *   (menu_i.c  0x35A558..0x35D660  Train     rest of the training menu (mode 44): merged into training.c)
+ *   boot_card.c  0x35D660..0x35D948  BootCard  the memory card check of the first run
+ *   logo.c  0x35D948..0x35E0F8  Logo / FirstRun: the boot logos and the first-run sequence
+ *   entry_select.c  0x35E0F8..0x3623A8  EntrySel  the tournament's entrant select (mode 34), with menu_j.c merged in
  *
- * Train below is the view of the whole object (menu_h_d.c, which includes menu_h.h and then this header; the
+ * Train below is the view of the whole object (training.c, which includes menu_h.h and then this header; the
  * partial view that menu_h.h had is gone).
  */
 
@@ -232,7 +232,7 @@ void Train_UpdateImage(void);
 void Train_Leave(void);
 s32 Train_Run(s32 section);
 
-/* ---- BootCard (menu_i_b.c) ---- */
+/* ---- BootCard (boot_card.c) ---- */
 
 typedef struct BootCard {
     /* 0x00 */ u32 *pack;    /* section of archive 0 (compressed) */
@@ -253,7 +253,7 @@ void BootCard_Init(s32 section);
 void BootCard_Term(void);
 s32 BootCard_Run(s32 section);
 
-/* ---- Logo (menu_i_c.c) ---- */
+/* ---- Logo (logo.c) ---- */
 
 typedef struct Logo {
     /* 0x00 */ void *pic;    /* the picture (relocated texture list) */
@@ -281,7 +281,7 @@ void FirstRun_WaitPartition(s32 pt);
 s32 FirstRun_Main(void);
 s32 FirstRun_WaitPad();
 
-/* ---- EntrySel (menu_i_d.c): the entrant select of the tournament mode (mode 34): what its first half needs
+/* ---- EntrySel (entry_select.c): the entrant select of the tournament mode (mode 34): what its first half needs
    beyond menu_j.h. ---- */
 
 extern s32 ChrTbl_WrapCostume(s32 chara, s32 *costume);

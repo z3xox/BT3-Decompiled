@@ -10,8 +10,8 @@
  *   (menu_l.c)  0x368C18..0x36B3E0  Bracket  the tournament logic of Dragon World Tour (progress mode 35): the tree,
  *                                            the entrants, the CPU matches, the battle hand-off and the prizes. Tail
  *                                            of the object that starts at 0x368068 (Bracket_Load): now merged into
- *                                            menu_k_f.c, which includes this header.
- *   menu_l_b.c  0x36B3E0..0x36E028  SoloSel  the one-character select of the modes 13..30 group (called for modes
+ *                                            bracket_logic.c, which includes this header.
+ *   solo_select.c  0x36B3E0..0x36E028  SoloSel  the one-character select of the modes 13..30 group (called for modes
  *                                            15, 18, 21, 25 and 29); merged with the former menu_m.c (the closing
  *                                            step and SoloSel_Run, 0x36DBE8..0x36E028).
  *
@@ -55,7 +55,7 @@ typedef struct LCommonRes {
 
 extern LCommonRes *gCommonRes;
 
-/* A cell of the character grid (ChrGridCell of include/battle/view_a.h; local view). */
+/* A cell of the character grid (ChrGridCell of include/ui/reward_window.h; local view). */
 typedef struct LChrCell {
     /* 0x00 */ s32 id;          /* character id 0..0xA0; above that a special cell (0xA4 = filler) */
     /* 0x04 */ s32 formCount;
@@ -309,7 +309,7 @@ typedef struct LBracket {
 
 #define LBRK_SEQ_ROUND_END 0x65
 
-extern void TourBg_Init(void *file, u32 kind, u8 **tex);   /* menu_k_d.c */
+extern void TourBg_Init(void *file, u32 kind, u8 **tex);   /* tour_background.c */
 extern void GetWin_Init(void *pack, s32 lang);
 
 void Bracket_Load(LBracket *b);
@@ -334,7 +334,7 @@ void Bracket_SetupBattle(LBracket *b);
 void Bracket_GivePrizes(LBracket *b, s32 second);
 s32 Bracket_DrawDragonBall(s32 tour, s32 level, s32 second);
 
-/* ---- SoloSel (menu_l_b.c): one-character select of the modes 13..30 group ---- */
+/* ---- SoloSel (solo_select.c): one-character select of the modes 13..30 group ---- */
 
 #define SOLOSEL_FLASH_NUM 3
 #define SOLOSEL_COLS 7

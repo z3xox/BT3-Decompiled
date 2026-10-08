@@ -9,11 +9,11 @@
  * "mc_guide_17go" exists three times in this range):
  *
  *   (menu_o.c)  0x376920..0x3782A8  UbResult    tail of the result screen of modes 27 and 30 (work pointer
- *                                               0x3B7358): merged into src/menu/menu_n_d.c, which has the
+ *                                               0x3B7358): merged into src/menu/ub_result.c, which has the
  *                                               object's head (0x3760C8, Init at 0x376150)
- *   menu_o_b.c  0x3782A8..0x379908  DiscFusion  the disc-swap screen of mode 24 (work pointer 0x3B735C)
- *   menu_o_c.c  0x379908..0x379F58  Ub_Main     the handler of modes 13..30 and its three battle hand-offs
- *   menu_o_d.c  0x379F58..0x37B7C0  MisSel      the mission list of mode 14 (work pointer 0x3B7360); merged with
+ *   disc_fusion.c  0x3782A8..0x379908  DiscFusion  the disc-swap screen of mode 24 (work pointer 0x3B735C)
+ *   ub.c  0x379908..0x379F58  Ub_Main     the handler of modes 13..30 and its three battle hand-offs
+ *   mission_select.c  0x379F58..0x37B7C0  MisSel      the mission list of mode 14 (work pointer 0x3B7360); merged with
  *                                               its tail (0x37AFF8.., formerly menu_p.c)
  *
  * All names are guesses from what the code does unless the symbol file says otherwise. The structures are this
@@ -248,7 +248,7 @@ void UbResult_UpdateTalk(void);
 void UbResult_Input(s32 *result);
 s32 UbResult_Run(s32 section);
 
-/* ---- DiscFusion (menu_o_b.c) ---- */
+/* ---- DiscFusion (disc_fusion.c) ---- */
 
 #define DISCFUSION_FLASH_NUM 2
 #define DISCFUSION_DISC_NUM 2
@@ -325,14 +325,14 @@ void DiscFusion_Input(s32 *result);
 void DiscFusion_PlateGoto(s32 movie, s32 level, char *label);
 s32 DiscFusion_Run(s32 section);
 
-/* ---- Ub_Main (menu_o_c.c) ---- */
+/* ---- Ub_Main (ub.c) ---- */
 
 void Ub_SetupTeam(void);
 void Ub_SetupSolo(void);
 void Ub_SetupSolo2(void);
 s32 Ub_Main(void);
 
-/* ---- MisSel (menu_o_d.c) ---- */
+/* ---- MisSel (mission_select.c) ---- */
 
 #define MISSEL_NONE 0x3E7    /* list terminator / empty slot in the mission tables */
 #define MISSEL_RANDOM 0x3E6

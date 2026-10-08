@@ -12,14 +12,14 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
  * (handler Ub_Main 0x379A58, archive gMenuArc3, main-menu item 1). Four pieces, cut at object boundaries:
  *
  *   (menu_s.c)  0x388618..0x388EE0  SimTop      tail of the entry screen of the "sim" sub family (mode 20): merged
- *                                               into src/menu/menu_r_d.c, where the object starts (0x387880;
+ *                                               into src/menu/sim_top.c, where the object starts (0x387880;
  *                                               work pointer 0x3B7420); its view is in include/menu/menu_r.h
- *   menu_s_b.c  0x388EE0..0x38A308  SurvSel     the course select of the survival sub family (mode 17; movie
+ *   survival_select.c  0x388EE0..0x38A308  SurvSel     the course select of the survival sub family (mode 17; movie
  *                                               labels "fl_survival_%02d_in"), a whole object (work pointer
  *                                               0x3B743C). Its first function writes the battle setup.
- *   menu_s_c.c  0x38A308..0x38C360  SurvResult  the survival result screen (mode 19), a whole object (work
+ *   survival_result.c  0x38A308..0x38C360  SurvResult  the survival result screen (mode 19), a whole object (work
  *                                               pointer 0x3B7440)
- *   menu_s_d.c  0x38C360..0x38CB38  SimEvent    the first three of the 37 day-event handlers of the sim day
+ *   sim_event_1.c  0x38C360..0x38CB38  SimEvent    the first three of the 37 day-event handlers of the sim day
  *                                               screen (gSimEvent[0..2]: the three trainings), each with its
  *                                               outcome roll. The object goes on in the next chunk (menu_t).
  *
@@ -99,7 +99,7 @@ extern SSave *gSaveData;
 #define S_SAVE gSaveData
 #define S_UBFLAG_SURV_ITEM 8    /* the reward item for ten opponents beaten in a survival run was given */
 
-/* ---- UbScore (src/menu/menu_p_d.c, menu_q.c): the score sheet behind the result screens ---- */
+/* ---- UbScore (src/menu/ub_score.c, menu_q.c): the score sheet behind the result screens ---- */
 
 typedef struct SScoreLine {
     /* 0x00 */ s32 value;       /* what was measured (a bonus line: the bonus id) */
@@ -136,9 +136,9 @@ extern void UbScore_PlateGoto(MFlash *flash, s32 kind, s32 on);
 extern s32 UbScore_SaveBestB(s32 course, s32 total, SScore *score); /* 1 = a new record was written */
 extern s32 UbScore_GetRewardItem(s32 idx);  /* gUbRewardItems[idx]; idx 3 = item 0x6A */
 
-/* ---- SimTop: the former menu_s.c is merged into src/menu/menu_r_d.c; its view is in include/menu/menu_r.h ---- */
+/* ---- SimTop: the former menu_s.c is merged into src/menu/sim_top.c; its view is in include/menu/menu_r.h ---- */
 
-/* ---- SurvSel (menu_s_b.c) ---- */
+/* ---- SurvSel (survival_select.c) ---- */
 
 #define SURV_NONE 0x3E7         /* empty slot in the tables */
 #define SURV_RANDOM 0x3E6
@@ -211,7 +211,7 @@ void SurvSel_Input(s32 *result);
 void SurvSel_ClipGoto(s32 movie, s32 level, char *label);
 s32 SurvSel_Run(s32 section);
 
-/* ---- SurvResult (menu_s_c.c) ---- */
+/* ---- SurvResult (survival_result.c) ---- */
 
 #define SURVRESULT_FLASH_NUM 1
 
@@ -275,7 +275,7 @@ void SurvResult_UpdateVoice(void);
 void SurvResult_Input(s32 *result);
 s32 SurvResult_Run(s32 section);
 
-/* ---- SimEvent handlers (menu_s_d.c): merged with menu_t.c; SimTrainTbl, the outcome globals and the
+/* ---- SimEvent handlers (sim_event_1.c): merged with menu_t.c; SimTrainTbl, the outcome globals and the
  * prototypes of SimEv00..02 are in include/menu/menu_t.h now (the SimDayS view is replaced by TSimDay). ---- */
 
 #endif

@@ -11,9 +11,9 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
  * Menu overlay DBZP.BIN, 0x37F430..0x3851B0 (placeholder stem "menu_q"): mode group 13..30 (handler 0x379A58,
  * archive gMenuArc3, main-menu item 1). Two pieces, cut at an object boundary:
  *
- *   (menu_q.c)  0x37F430..0x37F850  UbScore  tail of the score sheet module: merged into src/menu/menu_p_d.c (the
+ *   (menu_q.c)  0x37F430..0x37F850  UbScore  tail of the score sheet module: merged into src/menu/ub_score.c (the
  *                                            object starts at 0x37EE18); its views are in include/menu/menu_p.h
- *   menu_q_b.c  0x37F850..0x3851B0  SimDay   the day screen of mode 22 (work pointer gSimDay 0x3B7384, 0xBBC
+ *   sim_day.c  0x37F850..0x3851B0  SimDay   the day screen of mode 22 (work pointer gSimDay 0x3B7384, 0xBBC
  *                                            bytes), a whole object: the former src/menu/menu_r.c (0x3840E0..:
  *                                            the guide's lines, pad handler 0x384260, 0x384D48, portrait loader,
  *                                            frame loop 0x385020) is merged into it. This header has the layout of
@@ -163,7 +163,7 @@ typedef struct QProgress {
 
 #define QPROG ((QProgress *)gProgress)
 
-/* ---- SimDay (menu_q_b.c) ---- */
+/* ---- SimDay (sim_day.c) ---- */
 
 /* One rank of a training (gSimTrain0 the card game, gSimTrain1 and gSimTrain2 the two others). */
 typedef struct SimTrain {
@@ -342,7 +342,7 @@ typedef struct SimDay {
 
 extern SimDay *gSimDay;   /* 0x3B7384 */
 
-extern s32 SimEvent_Run(SimDay *day, u32 event);   /* menu_r_b.c: one step of event script `event` */
+extern s32 SimEvent_Run(SimDay *day, u32 event);   /* sim_event.c: one step of event script `event` */
 
 s32 SimDay_GetTrainRank(s32 kind);
 void SimDay_SetFaceA(s32 n);

@@ -17,10 +17,10 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
  *
  *   menu_v.c    0x395E30..0x396838  EvoZ_Load: the LAST function of the customising screen's first source file
  *                                   (0x392F10..0x396838, the rest is in src/menu/menu_u*.c)
- *                                   -- now appended to src/menu/menu_u_h.c (object 0x393C58..0x396838)
- *   menu_v_b.c  0x396838..0x399240  EvoZ, second source file: input, dialog, status, edits of the saved sets
- *   menu_v_c.c  0x399240..0x399790  ItemHelp: the item details page shared by many screens
- *   menu_v_d.c  0x399790..0x39A978  Shop: head of the item shop object (the rest is in src/menu/menu_w*.c)
+ *                                   -- now appended to src/menu/evo_z_2.c (object 0x393C58..0x396838)
+ *   evo_z_3.c  0x396838..0x399240  EvoZ, second source file: input, dialog, status, edits of the saved sets
+ *   item_help.c  0x399240..0x399790  ItemHelp: the item details page shared by many screens
+ *   shop.c  0x399790..0x39A978  Shop: head of the item shop object (the rest is in src/menu/menu_w*.c)
  *
  * The structures below are local views; include/menu/menu_u.h (UEvoZ) and include/menu/menu_w.h (Shop) describe
  * the same work areas from the neighbouring chunks.
@@ -67,7 +67,7 @@ typedef struct VItemList {
 } VItemList; /* 0x1630 */
 
 
-/* ---- EvoZ (menu_v.c, menu_v_b.c): the character customising screen. Its first file is in the previous chunk ---- */
+/* ---- EvoZ (menu_v.c, evo_z_3.c): the character customising screen. Its first file is in the previous chunk ---- */
 
 /* Character entry of common file 4, section 1 (ChrTblEntry in battle/view_b.h; local view). */
 typedef struct VChrEntry {
@@ -80,7 +80,7 @@ typedef struct VChrEntry {
     /* 0x2C */ u8 unk2C[0x10];
 } VChrEntry; /* 0x3C */
 
-/* A cell of the character grid (include/battle/view_a.h has the original). */
+/* A cell of the character grid (include/ui/reward_window.h has the original). */
 typedef struct VChrCell {
     /* 0x00 */ s32 id;
     /* 0x04 */ s32 formCount;
@@ -266,7 +266,7 @@ s32 EvoZ_CanEquip(EvoZ *ez, s32 item);
 void EvoZ_RemoveItem(EvoZ *ez);
 void EvoZ_RemoveAllItems(EvoZ *ez);
 
-/* ---- ItemHelp (menu_v_c.c): the item details page shared by every character select and the wish screen ---- */
+/* ---- ItemHelp (item_help.c): the item details page shared by every character select and the wish screen ---- */
 
 #define ITEMHELP_FLASH_NUM 1    /* the code loops over the movies although there is one */
 
@@ -288,7 +288,7 @@ void ItemHelp_Draw(s32 item);
 void ItemHelp_Open(void);
 void ItemHelp_Close(void);
 
-/* ---- Shop (menu_v_d.c): merged with menu_w.c; the Shop structure, gShop and the prototypes are in
+/* ---- Shop (shop.c): merged with menu_w.c; the Shop structure, gShop and the prototypes are in
  * include/menu/menu_w.h (this header's partial view was removed). ---- */
 
 extern void Sprite_SetScissor(s32 x0, s32 x1, s32 y0, s32 y1);

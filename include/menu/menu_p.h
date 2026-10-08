@@ -8,11 +8,11 @@
  * (handler 0x379A58, archive gMenuArc3, main-menu item 1). Four pieces, cut at object boundaries:
  *
  *   (menu_p.c)  0x37AFF8..0x37B7C0  MisSel     tail of the mission select of mode 14: merged into
- *                                              src/menu/menu_o_d.c (the object starts at 0x379F58)
- *   menu_p_b.c  0x37B7C0..0x37DC38  MisResult  the mission result screen of mode 16 (work pointer 0x3B737C)
- *   menu_p_c.c  0x37DC38..0x37EE18  UbMenu     the menu of mode 13 (work pointer 0x3B7380)
- *   menu_p_d.c  0x37EE18..0x37F850  UbScore    the score sheet module (its tail was written as menu_q.c and
- *                                              merged into menu_p_d.c)
+ *                                              src/menu/mission_select.c (the object starts at 0x379F58)
+ *   mission_result.c  0x37B7C0..0x37DC38  MisResult  the mission result screen of mode 16 (work pointer 0x3B737C)
+ *   ub_menu.c  0x37DC38..0x37EE18  UbMenu     the menu of mode 13 (work pointer 0x3B7380)
+ *   ub_score.c  0x37EE18..0x37F850  UbScore    the score sheet module (its tail was written as menu_q.c and
+ *                                              merged into ub_score.c)
  *
  * All names are guesses from what the code does ("Ub" = the group of modes 13..30, as in menu_m.h). The
  * structures are this chunk's own views.
@@ -124,7 +124,7 @@ typedef struct PProgress {
 
 #define P_PROG ((PProgress *)gProgress)
 
-/* ---- UbScore (menu_p_d.c) ---- */
+/* ---- UbScore (ub_score.c) ---- */
 
 /* One line of the score sheet. */
 typedef struct UbScoreLine {
@@ -226,11 +226,11 @@ typedef struct UbSave {
 
 #define UB_SAVE (&((UbSave *)gSaveData)->body)
 
-/* ---- MisSel: merged into src/menu/menu_o_d.c, built with include/menu/menu_o.h (which has its layout) ---- */
+/* ---- MisSel: merged into src/menu/mission_select.c, built with include/menu/menu_o.h (which has its layout) ---- */
 
 #define MISSEL_ROWS 5           /* missions on a page of the mission select */
 
-/* ---- MisResult (menu_p_b.c) ---- */
+/* ---- MisResult (mission_result.c) ---- */
 
 #define MISRESULT_FLASH_NUM 1
 
@@ -293,7 +293,7 @@ extern MisResult *gMisResult;
 
 s32 MisResult_Run(s32 section);
 
-/* ---- UbMenu (menu_p_c.c) ---- */
+/* ---- UbMenu (ub_menu.c) ---- */
 
 #define UBMENU_FLASH_NUM 1
 #define UBMENU_ITEM_NUM 4

@@ -8,10 +8,10 @@
  * progress modes 33..35, main-menu item 2, archive gMenuArc4). Two pieces:
  *
  *   (menu_j.c  0x35F650..0x3623A8  EntrySel  rest of the entrant select (mode 34) and Tour_Main, the handler of
- *                                             modes 33..35: merged into menu_i_d.c, where the object starts)
- *   menu_j_b.c  0x3623A8..0x364DA8  TourMenu  the tournament menu (mode 33); merged with the former menu_k.c
+ *                                             modes 33..35: merged into entry_select.c, where the object starts)
+ *   tour_menu.c  0x3623A8..0x364DA8  TourMenu  the tournament menu (mode 33); merged with the former menu_k.c
  *
- * ESel below is the one view of the EntrySel work area (menu_i_d.c includes menu_i.h and then this header; the
+ * ESel below is the one view of the EntrySel work area (entry_select.c includes menu_i.h and then this header; the
  * partial view that menu_i.h had is gone).
  */
 
@@ -30,7 +30,7 @@ extern void *memcpy(void *, const void *, u32);
 /* Voice bank base of the menu guides (Voice_PlayWithSubtitle). */
 #define TOUR_VOICE_BASE 0x85D3
 
-/* A cell of the character grid (ChrGridCell of include/battle/view_a.h; local view). */
+/* A cell of the character grid (ChrGridCell of include/ui/reward_window.h; local view). */
 typedef struct ESelCell {
     /* 0x00 */ s32 id;          /* character id 0..0xA0, or ESEL_ID_ (0xA2 locked, 0xA4 filler) */
     /* 0x04 */ s32 formCount;
@@ -75,7 +75,7 @@ extern void TourBg_Term(void);                        /* menu_k: the cloud backd
 extern void TourBg_Draw(void);
 extern s32 Bracket_Run(s32 section);                  /* menu_k: the bracket screen, which sets up the battles */
 
-/* ---- EntrySel (menu_i_d.c) ---- */
+/* ---- EntrySel (entry_select.c) ---- */
 
 #define ESEL_COLS 7
 #define ESEL_CELL_MAX 165
@@ -265,7 +265,7 @@ void EntrySel_UpdateEnd(void);
 s32 EntrySel_Run(s32 section);
 s32 Tour_Main(void);
 
-/* ---- TourMenu (menu_j_b.c) ---- */
+/* ---- TourMenu (tour_menu.c) ---- */
 
 #define TOURMENU_FLASH_NUM 2
 

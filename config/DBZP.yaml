@@ -205,177 +205,177 @@ segments:
     subalign: null
     align: 4
     subsegments:
-      - [0x000000, c, menu/menu_a]
-      - [0x001E90, c, menu/menu_a_b]
-      - [0x0023C0, c, menu/menu_a_c]
-      - [0x003420, c, menu/menu_a_d]
-      - [0x005760, c, menu/menu_b_b]
-      - [0x005FA0, c, menu/menu_b_c]
-      - [0x0083C8, c, menu/menu_b_d]
-      - [0x00AB00, c, menu/menu_c_b]
-      - [0x00B9A0, c, menu/menu_c_c]
-      - [0x00D208, c, menu/menu_c_d]
-      - [0x00D590, c, menu/menu_c_e]
-      - [0x014178, c, menu/menu_e_b]
-      - [0x01D038, c, menu/menu_g]
-      - [0x01E0B8, c, menu/menu_g_b]
-      - [0x01E2C0, c, menu/menu_g_c]
-      - [0x0216B8, c, menu/menu_h_b]
-      - [0x0244A8, c, menu/menu_h_c]
-      - [0x024758, c, menu/menu_h_d]
-      - [0x028A60, c, menu/menu_i_b]
-      - [0x028D48, c, menu/menu_i_c]
-      - [0x0294F8, c, menu/menu_i_d]
-      - [0x02D7A8, c, menu/menu_j_b]
-      - [0x0301A8, c, menu/menu_k_b]
-      - [0x0314A0, c, menu/menu_k_c]
-      - [0x032358, c, menu/menu_k_d]
-      - [0x0327F8, c, menu/menu_k_e]
-      - [0x033468, c, menu/menu_k_f]
-      - [0x0367E0, c, menu/menu_l_b]
-      - [0x039428, c, menu/menu_m_b]
-      - [0x03D960, c, menu/menu_n_b]
-      - [0x03EE68, c, menu/menu_n_c]
-      - [0x0414C8, c, menu/menu_n_d]
-      - [0x0436A8, c, menu/menu_o_b]
-      - [0x044D08, c, menu/menu_o_c]
-      - [0x045358, c, menu/menu_o_d]
-      - [0x046BC0, c, menu/menu_p_b]
-      - [0x049038, c, menu/menu_p_c]
-      - [0x04A218, c, menu/menu_p_d]
-      - [0x04AC50, c, menu/menu_q_b]
-      - [0x0505B0, c, menu/menu_r_b]
-      - [0x0505E8, c, menu/menu_r_c]
-      - [0x052C80, c, menu/menu_r_d]
-      - [0x0542E0, c, menu/menu_s_b]
-      - [0x055708, c, menu/menu_s_c]
-      - [0x057760, c, menu/menu_s_d]
-      - [0x05B4D0, c, menu/menu_t_b]
-      - [0x05C5A8, c, menu/menu_u]
-      - [0x05C830, c, menu/menu_u_b]
-      - [0x05CF70, c, menu/menu_u_c]
-      - [0x05D228, c, menu/menu_u_d]
-      - [0x05DE30, c, menu/menu_u_e]
-      - [0x05E120, c, menu/menu_u_f]
-      - [0x05E310, c, menu/menu_u_g]
-      - [0x05F058, c, menu/menu_u_h]
-      - [0x061C38, c, menu/menu_v_b]
-      - [0x064640, c, menu/menu_v_c]
-      - [0x064B90, c, menu/menu_v_d]
-      - [0x069D40, c, menu/menu_w_b]
-      - [0x069F08, c, menu/menu_w_c]
-      - [0x06AEA8, c, menu/menu_x_b]
-      - [0x06AFB8, c, menu/menu_x_c]
-      - [0x0719E8, c, menu/menu_y_b]
-      - [0x074C50, c, menu/menu_z_b]
-      - [0x074E70, c, menu/menu_z_c]
-      - [0x076330, c, menu/menu_z_d]
-      - [0x079A48, c, menu/menu_za_b]
-      - [0x079EB0, c, menu/menu_za_c]
-      - [0x07A690, c, menu/menu_za_d]
-      - [0x07C008, c, menu/menu_za_e]
+      - [0x000000, c, menu/main_menu]
+      - [0x001E90, c, menu/progress]
+      - [0x0023C0, c, menu/title]
+      - [0x003420, c, menu/mode_menu]
+      - [0x005760, c, menu/mode_background]
+      - [0x005FA0, c, menu/history_outro]
+      - [0x0083C8, c, menu/history_select]
+      - [0x00AB00, c, menu/history_guide]
+      - [0x00B9A0, c, menu/history_result]
+      - [0x00D208, c, menu/history_save]
+      - [0x00D590, c, menu/char_select]
+      - [0x014178, c, menu/team_select]
+      - [0x01D038, c, menu/item_panel]
+      - [0x01E0B8, c, menu/duel]
+      - [0x01E2C0, c, menu/duel_menu]
+      - [0x0216B8, c, menu/char_reference]
+      - [0x0244A8, c, menu/reference_training_mode]
+      - [0x024758, c, menu/training]
+      - [0x028A60, c, menu/boot_card]
+      - [0x028D48, c, menu/logo]
+      - [0x0294F8, c, menu/entry_select]
+      - [0x02D7A8, c, menu/tour_menu]
+      - [0x0301A8, c, menu/bracket]
+      - [0x0314A0, c, menu/bracket_guide]
+      - [0x032358, c, menu/tour_background]
+      - [0x0327F8, c, menu/bracket_clips]
+      - [0x033468, c, menu/bracket_logic]
+      - [0x0367E0, c, menu/solo_select]
+      - [0x039428, c, menu/ub_team_select]
+      - [0x03D960, c, menu/ubz_select]
+      - [0x03EE68, c, menu/ub_rank]
+      - [0x0414C8, c, menu/ub_result]
+      - [0x0436A8, c, menu/disc_fusion]
+      - [0x044D08, c, menu/ub]
+      - [0x045358, c, menu/mission_select]
+      - [0x046BC0, c, menu/mission_result]
+      - [0x049038, c, menu/ub_menu]
+      - [0x04A218, c, menu/ub_score]
+      - [0x04AC50, c, menu/sim_day]
+      - [0x0505B0, c, menu/sim_event]
+      - [0x0505E8, c, menu/sim_result]
+      - [0x052C80, c, menu/sim_top]
+      - [0x0542E0, c, menu/survival_select]
+      - [0x055708, c, menu/survival_result]
+      - [0x057760, c, menu/sim_event_1]
+      - [0x05B4D0, c, menu/sim_event_card]
+      - [0x05C5A8, c, menu/sim_event_2]
+      - [0x05C830, c, menu/sim_event_rock]
+      - [0x05CF70, c, menu/sim_event_33]
+      - [0x05D228, c, menu/sim_event_shell]
+      - [0x05DE30, c, menu/sim_event_35]
+      - [0x05E120, c, menu/sim_event_36]
+      - [0x05E310, c, menu/evo_z_1]
+      - [0x05F058, c, menu/evo_z_2]
+      - [0x061C38, c, menu/evo_z_3]
+      - [0x064640, c, menu/item_help]
+      - [0x064B90, c, menu/shop]
+      - [0x069D40, c, menu/evo_mode]
+      - [0x069F08, c, menu/evo_top]
+      - [0x06AEA8, c, menu/option_mode]
+      - [0x06AFB8, c, menu/option]
+      - [0x0719E8, c, menu/dc_list]
+      - [0x074C50, c, menu/dc]
+      - [0x074E70, c, menu/dc_menu]
+      - [0x076330, c, menu/dc_password]
+      - [0x079A48, c, menu/password_window]
+      - [0x079EB0, c, menu/password_check]
+      - [0x07A690, c, menu/replay_menu]
+      - [0x07C008, c, menu/dc_save]
       - [0x07C204, data, "07C204"]
-      - [0x07C280, .data, menu/menu_a]
-      - [0x07C284, .data, menu/menu_a_b]
-      - [0x07C2B8, .data, menu/menu_a_c]
-      - {start: 0x07C2C0, type: .rodata, name: menu/menu_a, linker_section_order: .data}
-      - {start: 0x07C530, type: .rodata, name: menu/menu_a_b, linker_section_order: .data}
-      - {start: 0x07C648, type: .rodata, name: menu/menu_a_c, linker_section_order: .data}
-      - [0x07C6F0, .data, menu/menu_a_d]
-      - [0x07C6F4, .data, menu/menu_b_b]
-      - [0x07C6F8, .data, menu/menu_b_c]
-      - [0x07C6FC, .data, menu/menu_b_d]
-      - [0x07C700, .data, menu/menu_c_c]
-      - [0x07C704, .data, menu/menu_c_d]
-      - {start: 0x07C710, type: .rodata, name: menu/menu_a_d, linker_section_order: .data}
-      - {start: 0x07CB10, type: .rodata, name: menu/menu_b_b, linker_section_order: .data}
-      - {start: 0x07CB90, type: .rodata, name: menu/menu_b_c, linker_section_order: .data}
-      - {start: 0x07D580, type: .rodata, name: menu/menu_b_d, linker_section_order: .data}
-      - {start: 0x07D8C0, type: .rodata, name: menu/menu_c_b, linker_section_order: .data}
-      - {start: 0x07EB20, type: .rodata, name: menu/menu_c_c, linker_section_order: .data}
-      - [0x07ECD4, .data, menu/menu_c_e]
-      - [0x07ECD8, .data, menu/menu_e_b]
-      - [0x07ECE0, .data, menu/menu_g]
-      - [0x07ECE8, .data, menu/menu_g_c]
-      - {start: 0x07ECF0, type: .rodata, name: menu/menu_c_e, linker_section_order: .data}
-      - {start: 0x07F170, type: .rodata, name: menu/menu_e_b, linker_section_order: .data}
-      - {start: 0x07F6D8, type: .rodata, name: menu/menu_g, linker_section_order: .data}
-      - {start: 0x07F880, type: .rodata, name: menu/menu_g_c, linker_section_order: .data}
-      - [0x07FC54, .data, menu/menu_h_b]
-      - {start: 0x07FC60, type: .rodata, name: menu/menu_h_b, linker_section_order: .data}
-      - [0x07FFA8, .data, menu/menu_h_d]
-      - {start: 0x07FFB0, type: .rodata, name: menu/menu_h_d, linker_section_order: .data}
-      - [0x080D08, .data, menu/menu_i_b]
-      - [0x080D0C, .data, menu/menu_i_c]
-      - [0x080D10, .data, menu/menu_i_d]
-      - [0x080D14, .data, menu/menu_j_b]
-      - [0x080D18, .data, menu/menu_k_b]
-      - [0x080D1C, .data, menu/menu_k_d]
-      - {start: 0x080D20, type: .rodata, name: menu/menu_i_d, linker_section_order: .data}
-      - {start: 0x0811B0, type: .rodata, name: menu/menu_j_b, linker_section_order: .data}
-      - {start: 0x081550, type: .rodata, name: menu/menu_k_b, linker_section_order: .data}
-      - {start: 0x0815A0, type: .rodata, name: menu/menu_k_c, linker_section_order: .data}
-      - {start: 0x081F70, type: .rodata, name: menu/menu_k_d, linker_section_order: .data}
-      - {start: 0x081FC0, type: .rodata, name: menu/menu_k_e, linker_section_order: .data}
-      - {start: 0x0823D0, type: .rodata, name: menu/menu_k_f, linker_section_order: .data}
-      - [0x082748, .data, menu/menu_l_b]
-      - [0x08274C, .data, menu/menu_m_b]
-      - [0x082750, .data, menu/menu_n_b]
-      - [0x082754, .data, menu/menu_n_c]
-      - [0x082758, .data, menu/menu_n_d]
-      - [0x08275C, .data, menu/menu_o_b]
-      - [0x082760, .data, menu/menu_o_d]
-      - [0x08277C, .data, menu/menu_p_b]
-      - [0x082780, .data, menu/menu_p_c]
-      - [0x082784, .data, menu/menu_q_b]
-      - [0x082788, .data, menu/menu_r_b]
-      - [0x08281C, .data, menu/menu_r_c]
-      - [0x082820, .data, menu/menu_r_d]
-      - [0x08283C, .data, menu/menu_s_b]
-      - [0x082840, .data, menu/menu_s_c]
-      - {start: 0x082850, type: .rodata, name: menu/menu_l_b, linker_section_order: .data}
-      - {start: 0x082B40, type: .rodata, name: menu/menu_m_b, linker_section_order: .data}
-      - {start: 0x082EE0, type: .rodata, name: menu/menu_n_b, linker_section_order: .data}
-      - {start: 0x083070, type: .rodata, name: menu/menu_n_c, linker_section_order: .data}
-      - {start: 0x083250, type: .rodata, name: menu/menu_n_d, linker_section_order: .data}
-      - {start: 0x083690, type: .rodata, name: menu/menu_o_b, linker_section_order: .data}
-      - {start: 0x0837B0, type: .rodata, name: menu/menu_o_c, linker_section_order: .data}
-      - {start: 0x083800, type: .rodata, name: menu/menu_o_d, linker_section_order: .data}
-      - {start: 0x083A30, type: .rodata, name: menu/menu_p_b, linker_section_order: .data}
-      - {start: 0x083ED0, type: .rodata, name: menu/menu_p_c, linker_section_order: .data}
-      - {start: 0x0841D8, type: .rodata, name: menu/menu_p_d, linker_section_order: .data}
-      - {start: 0x084410, type: .rodata, name: menu/menu_q_b, linker_section_order: .data}
-      - {start: 0x084CF0, type: .rodata, name: menu/menu_r_c, linker_section_order: .data}
-      - {start: 0x0852D0, type: .rodata, name: menu/menu_r_d, linker_section_order: .data}
-      - {start: 0x085538, type: .rodata, name: menu/menu_s_b, linker_section_order: .data}
-      - {start: 0x085700, type: .rodata, name: menu/menu_s_c, linker_section_order: .data}
-      - {start: 0x085B40, type: .rodata, name: menu/menu_s_d, linker_section_order: .data}
-      - {start: 0x0860F0, type: .rodata, name: menu/menu_t_b, linker_section_order: .data}
-      - {start: 0x086270, type: .rodata, name: menu/menu_u, linker_section_order: .data}
-      - {start: 0x0862C0, type: .rodata, name: menu/menu_u_b, linker_section_order: .data}
-      - {start: 0x086360, type: .rodata, name: menu/menu_u_c, linker_section_order: .data}
-      - {start: 0x0863B0, type: .rodata, name: menu/menu_u_d, linker_section_order: .data}
-      - {start: 0x0864C0, type: .rodata, name: menu/menu_u_e, linker_section_order: .data}
-      - {start: 0x086510, type: .rodata, name: menu/menu_u_f, linker_section_order: .data}
-      - [0x086540, .data, menu/menu_u_g]
-      - [0x086544, .data, menu/menu_v_c]
-      - [0x086548, .data, menu/menu_v_d]
-      - {start: 0x086550, type: .rodata, name: menu/menu_u_g, linker_section_order: .data}
-      - {start: 0x086580, type: .rodata, name: menu/menu_u_h, linker_section_order: .data}
-      - {start: 0x086AB0, type: .rodata, name: menu/menu_v_b, linker_section_order: .data}
-      - {start: 0x086D78, type: .rodata, name: menu/menu_v_c, linker_section_order: .data}
-      - {start: 0x086E10, type: .rodata, name: menu/menu_v_d, linker_section_order: .data}
-      - {start: 0x087408, type: .rodata, name: menu/menu_w_c, linker_section_order: .data}
-      - [0x087764, .data, menu/menu_x_c]
-      - {start: 0x087770, type: .rodata, name: menu/menu_x_c, linker_section_order: .data}
-      - [0x087D28, .data, menu/menu_z_d]
-      - [0x087DB8, .data, menu/menu_za_b]
-      - [0x087DF8, .data, menu/menu_za_d]
-      - [0x087DFC, .data, menu/menu_za_e]
-      - {start: 0x087E00, type: .rodata, name: menu/menu_y_b, linker_section_order: .data}
-      - {start: 0x088750, type: .rodata, name: menu/menu_z_c, linker_section_order: .data}
-      - {start: 0x088B00, type: .rodata, name: menu/menu_z_d, linker_section_order: .data}
-      - {start: 0x089570, type: .rodata, name: menu/menu_za_b, linker_section_order: .data}
-      - {start: 0x089640, type: .rodata, name: menu/menu_za_c, linker_section_order: .data}
-      - {start: 0x0897A8, type: .rodata, name: menu/menu_za_d, linker_section_order: .data}
+      - [0x07C280, .data, menu/main_menu]
+      - [0x07C284, .data, menu/progress]
+      - [0x07C2B8, .data, menu/title]
+      - {start: 0x07C2C0, type: .rodata, name: menu/main_menu, linker_section_order: .data}
+      - {start: 0x07C530, type: .rodata, name: menu/progress, linker_section_order: .data}
+      - {start: 0x07C648, type: .rodata, name: menu/title, linker_section_order: .data}
+      - [0x07C6F0, .data, menu/mode_menu]
+      - [0x07C6F4, .data, menu/mode_background]
+      - [0x07C6F8, .data, menu/history_outro]
+      - [0x07C6FC, .data, menu/history_select]
+      - [0x07C700, .data, menu/history_result]
+      - [0x07C704, .data, menu/history_save]
+      - {start: 0x07C710, type: .rodata, name: menu/mode_menu, linker_section_order: .data}
+      - {start: 0x07CB10, type: .rodata, name: menu/mode_background, linker_section_order: .data}
+      - {start: 0x07CB90, type: .rodata, name: menu/history_outro, linker_section_order: .data}
+      - {start: 0x07D580, type: .rodata, name: menu/history_select, linker_section_order: .data}
+      - {start: 0x07D8C0, type: .rodata, name: menu/history_guide, linker_section_order: .data}
+      - {start: 0x07EB20, type: .rodata, name: menu/history_result, linker_section_order: .data}
+      - [0x07ECD4, .data, menu/char_select]
+      - [0x07ECD8, .data, menu/team_select]
+      - [0x07ECE0, .data, menu/item_panel]
+      - [0x07ECE8, .data, menu/duel_menu]
+      - {start: 0x07ECF0, type: .rodata, name: menu/char_select, linker_section_order: .data}
+      - {start: 0x07F170, type: .rodata, name: menu/team_select, linker_section_order: .data}
+      - {start: 0x07F6D8, type: .rodata, name: menu/item_panel, linker_section_order: .data}
+      - {start: 0x07F880, type: .rodata, name: menu/duel_menu, linker_section_order: .data}
+      - [0x07FC54, .data, menu/char_reference]
+      - {start: 0x07FC60, type: .rodata, name: menu/char_reference, linker_section_order: .data}
+      - [0x07FFA8, .data, menu/training]
+      - {start: 0x07FFB0, type: .rodata, name: menu/training, linker_section_order: .data}
+      - [0x080D08, .data, menu/boot_card]
+      - [0x080D0C, .data, menu/logo]
+      - [0x080D10, .data, menu/entry_select]
+      - [0x080D14, .data, menu/tour_menu]
+      - [0x080D18, .data, menu/bracket]
+      - [0x080D1C, .data, menu/tour_background]
+      - {start: 0x080D20, type: .rodata, name: menu/entry_select, linker_section_order: .data}
+      - {start: 0x0811B0, type: .rodata, name: menu/tour_menu, linker_section_order: .data}
+      - {start: 0x081550, type: .rodata, name: menu/bracket, linker_section_order: .data}
+      - {start: 0x0815A0, type: .rodata, name: menu/bracket_guide, linker_section_order: .data}
+      - {start: 0x081F70, type: .rodata, name: menu/tour_background, linker_section_order: .data}
+      - {start: 0x081FC0, type: .rodata, name: menu/bracket_clips, linker_section_order: .data}
+      - {start: 0x0823D0, type: .rodata, name: menu/bracket_logic, linker_section_order: .data}
+      - [0x082748, .data, menu/solo_select]
+      - [0x08274C, .data, menu/ub_team_select]
+      - [0x082750, .data, menu/ubz_select]
+      - [0x082754, .data, menu/ub_rank]
+      - [0x082758, .data, menu/ub_result]
+      - [0x08275C, .data, menu/disc_fusion]
+      - [0x082760, .data, menu/mission_select]
+      - [0x08277C, .data, menu/mission_result]
+      - [0x082780, .data, menu/ub_menu]
+      - [0x082784, .data, menu/sim_day]
+      - [0x082788, .data, menu/sim_event]
+      - [0x08281C, .data, menu/sim_result]
+      - [0x082820, .data, menu/sim_top]
+      - [0x08283C, .data, menu/survival_select]
+      - [0x082840, .data, menu/survival_result]
+      - {start: 0x082850, type: .rodata, name: menu/solo_select, linker_section_order: .data}
+      - {start: 0x082B40, type: .rodata, name: menu/ub_team_select, linker_section_order: .data}
+      - {start: 0x082EE0, type: .rodata, name: menu/ubz_select, linker_section_order: .data}
+      - {start: 0x083070, type: .rodata, name: menu/ub_rank, linker_section_order: .data}
+      - {start: 0x083250, type: .rodata, name: menu/ub_result, linker_section_order: .data}
+      - {start: 0x083690, type: .rodata, name: menu/disc_fusion, linker_section_order: .data}
+      - {start: 0x0837B0, type: .rodata, name: menu/ub, linker_section_order: .data}
+      - {start: 0x083800, type: .rodata, name: menu/mission_select, linker_section_order: .data}
+      - {start: 0x083A30, type: .rodata, name: menu/mission_result, linker_section_order: .data}
+      - {start: 0x083ED0, type: .rodata, name: menu/ub_menu, linker_section_order: .data}
+      - {start: 0x0841D8, type: .rodata, name: menu/ub_score, linker_section_order: .data}
+      - {start: 0x084410, type: .rodata, name: menu/sim_day, linker_section_order: .data}
+      - {start: 0x084CF0, type: .rodata, name: menu/sim_result, linker_section_order: .data}
+      - {start: 0x0852D0, type: .rodata, name: menu/sim_top, linker_section_order: .data}
+      - {start: 0x085538, type: .rodata, name: menu/survival_select, linker_section_order: .data}
+      - {start: 0x085700, type: .rodata, name: menu/survival_result, linker_section_order: .data}
+      - {start: 0x085B40, type: .rodata, name: menu/sim_event_1, linker_section_order: .data}
+      - {start: 0x0860F0, type: .rodata, name: menu/sim_event_card, linker_section_order: .data}
+      - {start: 0x086270, type: .rodata, name: menu/sim_event_2, linker_section_order: .data}
+      - {start: 0x0862C0, type: .rodata, name: menu/sim_event_rock, linker_section_order: .data}
+      - {start: 0x086360, type: .rodata, name: menu/sim_event_33, linker_section_order: .data}
+      - {start: 0x0863B0, type: .rodata, name: menu/sim_event_shell, linker_section_order: .data}
+      - {start: 0x0864C0, type: .rodata, name: menu/sim_event_35, linker_section_order: .data}
+      - {start: 0x086510, type: .rodata, name: menu/sim_event_36, linker_section_order: .data}
+      - [0x086540, .data, menu/evo_z_1]
+      - [0x086544, .data, menu/item_help]
+      - [0x086548, .data, menu/shop]
+      - {start: 0x086550, type: .rodata, name: menu/evo_z_1, linker_section_order: .data}
+      - {start: 0x086580, type: .rodata, name: menu/evo_z_2, linker_section_order: .data}
+      - {start: 0x086AB0, type: .rodata, name: menu/evo_z_3, linker_section_order: .data}
+      - {start: 0x086D78, type: .rodata, name: menu/item_help, linker_section_order: .data}
+      - {start: 0x086E10, type: .rodata, name: menu/shop, linker_section_order: .data}
+      - {start: 0x087408, type: .rodata, name: menu/evo_top, linker_section_order: .data}
+      - [0x087764, .data, menu/option]
+      - {start: 0x087770, type: .rodata, name: menu/option, linker_section_order: .data}
+      - [0x087D28, .data, menu/dc_password]
+      - [0x087DB8, .data, menu/password_window]
+      - [0x087DF8, .data, menu/replay_menu]
+      - [0x087DFC, .data, menu/dc_save]
+      - {start: 0x087E00, type: .rodata, name: menu/dc_list, linker_section_order: .data}
+      - {start: 0x088750, type: .rodata, name: menu/dc_menu, linker_section_order: .data}
+      - {start: 0x088B00, type: .rodata, name: menu/dc_password, linker_section_order: .data}
+      - {start: 0x089570, type: .rodata, name: menu/password_window, linker_section_order: .data}
+      - {start: 0x089640, type: .rodata, name: menu/password_check, linker_section_order: .data}
+      - {start: 0x0897A8, type: .rodata, name: menu/replay_menu, linker_section_order: .data}
   - [0x89B1C]

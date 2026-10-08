@@ -91,7 +91,7 @@ s32 StgRigid_GetMatrix(Mtx44 *out, s32 id);
 RigidSphere *StgRigid_GetSphere(s32 id);
 void StgAabb_SetEmpty(StgAabb *box);
 
-/* Stage object animations (src/battle/stg_d_b.c, 0x115170..0x115478). */
+/* Stage object animations (src/battle/stg_model_anim.c, 0x115170..0x115478). */
 void StgModel_InitStage(void);
 void StgModel_ResetAnims(void);
 void StgModel_BindAnims(void);

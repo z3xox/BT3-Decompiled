@@ -10,7 +10,7 @@
  * and the music, then the battle setup): TeamSel_Update, TeamSel_Input, TeamSel_Run.
  *
  * The head of the object is the previous chunk (include/menu/menu_e.h); the object ends exactly at 0x351C38,
- * where the ItemPanel code begins. The two chunks are ONE source file, src/menu/menu_e_b.c (merged):
+ * where the ItemPanel code begins. The two chunks are ONE source file, src/menu/team_select.c (merged):
  * TeamSel_Input matches only when TeamSel_ClipGoto, TeamSel_SetChips and TeamSel_RequestFace are defined
  * above it.
  *
@@ -22,7 +22,7 @@
 /* ======== additions of this chunk ======== */
 
 /*
- * TS_RANDOM (0xA1) and TS_CUSTOM (0xA3): include/battle/view_a.h calls 0xA1 "custom" and 0xA3 "random". This
+ * TS_RANDOM (0xA1) and TS_CUSTOM (0xA3): include/ui/reward_window.h calls 0xA1 "custom" and 0xA3 "random". This
  * chunk shows it is the other way round: on 0xA1 the screen draws a character with Rand_Range when the member
  * is confirmed, on 0xA3 it opens the list of the fourteen saved custom characters.
  */

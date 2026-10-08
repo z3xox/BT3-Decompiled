@@ -1,4 +1,11 @@
-# Draft: readable names for the C files
+# Readable names for the C files
+
+> **Applied on the branch `rename`, 2026-10-08** (local; the port repository has not followed yet). First 13 merges
+> of neighbouring files, each kept only with the build byte-identical, then 198 renames in one step; both outputs
+> still equal the disc's. The list that was applied is `docs/file_rename_map.txt` (`old new` per line, the names
+> after the merges); `scripts/rename_files.py` applies such a list and `scripts/try_merge.py` tries a merge.
+> What follows is the draft as it was written, and at the end the merge trials and what is left.
+
 
 A proposal only (2026-10-08, second draft: plain words written out, the game's and the code's own short forms kept). Nothing here is applied. Written at the user's request to read and change.
 
@@ -305,3 +312,47 @@ parts describe a shared structure or variable differently and a person has to ch
 variable's declaration it should have kept (`eft_x_c` + `eft_y`, `eft_m` + `eft_n`, `hud_b` + `hud_c` and others);
 the overlay's build list is not rewritten correctly (the three menu pairs); and `stg_a` + `stg_a_b` have a
 hand-written assembly chunk between them, which is a real reason to stay two files.
+
+## What was applied, and what is left (2026-10-08)
+
+**Merged** (the first file's name, then renamed): the movie player (`gfxm_b_c` + `gfxm_c` + `gfxm_d` -> `sys/flash`);
+the fighter camera (three files -> `btl_char_cam`); the ground dust (`eft_z` + `_b` + `_c` -> `eft_ground_dust`); the
+HUD's sprites and nodes (-> `hud_sprite`); the menu helpers with the text box (-> `ui/menu_util_1`); the skill-list
+text with the battle sequence (-> `btl_seq`); the rigid bodies (-> `stg_rigid`); the grab handler with the handlers
+after it (-> `btl_act_change`); the AI sequence with its two head functions (-> `btl_ai_seq`); the text printer with
+its icon tags (-> `sys/font`); the aura (`eft_m` + `eft_n` -> `eft_aura`); three slices of action handlers (`btl_act_c`
++ `_d` + `_e` -> `btl_act_2`); the fighter interface's last two files (-> `btl_char_api_2`).
+
+**Tried and must stay two files** (the merged file builds, the code comes out different):
+
+| files | what changes |
+|---|---|
+| `eft_quad_1` + `eft_quad_2` | code 8 bytes longer |
+| `hud_gauge_2` + `hud_gauge_3` | code 8 bytes longer |
+| `obj_gs_env` + `obj_shadow` | code 4 bytes longer |
+| `btl_obj_anim` + `btl_obj_chain` | 2 bytes differ in place |
+| `btl_char_api_1` + `btl_char_api_2` | 1 byte differs in place |
+| `eft_mesh` + `eft_sprite` | code 4 bytes longer |
+| `stg_model_anim` + `stg_model_draw` | code 24 bytes longer |
+| `bracket` + `bracket_guide` | code 4 bytes longer, read-only data 4 shorter |
+| `shen_wish` + `shen_confirm`, `password_old` + `password_chara`, `evo_z_1` + `evo_z_2`, `col_box` + `col_primitives` | data sizes change (strings or constants the two files both hold are stored once) |
+
+**Merged cleanly in the trial but left apart, because they are different things:** the fighter control files
+(`btl_change`, `btl_head_tracking`, `btl_char_pose`), `stg_collision` + `stg_nav`, `pause_menu` + `btl_menu`, the
+vector library's first half (`int_vec`, `matrix_screen`, `matrix_build`), `btl_param` + `btl_tech`.
+
+**Not answered** (the two parts describe a structure or a variable differently and the script cannot choose):
+`btl_act_1` + `btl_act_2`, `btl_char_fx_1` + `_2`, `eft_ribbon` + `eft_zap`, `eft_stage_2` + `eft_surface_out`,
+`eft_speed_line_spawn` + `eft_aura`, `eft_body_fx` + `eft_disc`, `eft_glow` + `eft_trail`, `eft_link_1` + `_2`, `eft_link_2`
++ `eft_part10`, `hud_gauge_1` + `_2`, `hud_notice_1` + `_2`, `bracket_clips` + `bracket_logic`. `stg` + `stg_parts` have
+a hand-written assembly chunk between them.
+
+**Left under old names:**
+- Headers. A header was renamed with its C file only where the two had the same name (68 of 179). The menu
+  overlay's headers (`menu_b.h` .. `menu_za.h`) serve several screens each and keep their letters; some battle
+  headers of merged-away or never-existing files keep theirs too (`eft_v_ext.h`, `hud_d.h`, `btl_capi_b.h`, ...).
+  A renamed header that other files share now carries one file's name. A pass over the headers is its own job.
+- `config/symbols/*.txt` (the name lists by address range) and the folders under `asm/` that are not generated
+  from a C file's name.
+- The other documents: they speak of the files by their old names. `docs/file_rename_map.txt` translates.
+- The port repository's copy of the sources.

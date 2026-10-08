@@ -6,10 +6,10 @@
 /*
  * Menu overlay DBZP.BIN ("PROGRESS"), 0x334C00..0x339610 (placeholder stem "menu_a"). Four modules:
  *
- *   menu_a.c    0x334C00..0x336A90  MainMenu   the main menu (mode 4)
- *   menu_a_b.c  0x336A90..0x336FC0  Progress_Main, the overlay entry and mode dispatcher
- *   menu_a_c.c  0x336FC0..0x338020  Title      the title screen (mode 1)
- *   menu_a_d.c  0x338020..0x33A360  ModeMenu   the per-mode sub menu (layout in menu_b.h)
+ *   main_menu.c    0x334C00..0x336A90  MainMenu   the main menu (mode 4)
+ *   progress.c  0x336A90..0x336FC0  Progress_Main, the overlay entry and mode dispatcher
+ *   title.c  0x336FC0..0x338020  Title      the title screen (mode 1)
+ *   mode_menu.c  0x338020..0x33A360  ModeMenu   the per-mode sub menu (layout in menu_b.h)
  *
  * The overlay is compiled with -G0: nothing is reached through $gp, not even the main executable's small data.
  */
@@ -168,10 +168,10 @@ extern void Shen_Main(void);           /* main 0x2BD230: the dragon-summoning mo
 
 extern MenuProgress *gProgress;
 
-/* ---- MainMenu (menu_a.c) ---- */
+/* ---- MainMenu (main_menu.c) ---- */
 
 #define MAINMENU_ITEM_MAX 11
-#define MAINMENU_FLASH_NUM 1    /* the code loops over the movies although there is one: see menu_a.c */
+#define MAINMENU_FLASH_NUM 1    /* the code loops over the movies although there is one: see main_menu.c */
 #define MAINMENU_ROWS 4        /* plates the cursor can be on */
 
 typedef struct MainMenu {
@@ -204,7 +204,7 @@ typedef struct MainMenu {
 #define MAINMENU_STARTED 4     /* the cursor plate was lit once */
 #define MAINMENU_GREETED 8     /* the greeting voice was started */
 
-/* ---- Title (menu_a_c.c) ---- */
+/* ---- Title (title.c) ---- */
 
 #define TITLE_FLASH_NUM 1
 
@@ -252,12 +252,12 @@ extern void *gMenuArc8;     /* 0x3B0EA4: modes 53-56 (Dc_Main) */
 extern void *gMenuArc9;     /* 0x3B0EA8: mode 60 (CharRefMode_Main) */
 extern void *gMenuArc10;    /* 0x3B0EAC: mode 62 (OptMode_Main) */
 extern void *gMenuArc11;    /* 0x3B0EB0: only freed here; no loader found in this range */
-extern void *gMenuArc12;    /* 0x3B0EB4: file baseFile + 0x18, the wish screen (src/sys/late_a.c, main executable) */
+extern void *gMenuArc12;    /* 0x3B0EB4: file baseFile + 0x18, the wish screen (src/ui/shen_wish.c, main executable) */
 extern Title *gTitle;       /* 0x3B0EB8 */
 
-/* ---- ModeMenu (menu_a_d.c): the sub menu of one game mode, with a guide character and a large picture ---- */
+/* ---- ModeMenu (mode_menu.c): the sub menu of one game mode, with a guide character and a large picture ---- */
 
-/* A text box of the main executable (include/battle/view_a.h has the layout). */
+/* A text box of the main executable (include/ui/reward_window.h has the layout). */
 typedef struct MTextBox {
     u8 unk0[0x8C];
 } MTextBox;

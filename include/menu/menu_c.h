@@ -11,11 +11,11 @@
  * boundaries (see each file's head comment for the evidence):
  *
  *   (menu_c.c   0x33E108..0x33F700  HistSel     tail of the saga select (mode 6); now merged into
- *                                               src/menu/menu_b_d.c, 0x33CFC8..0x33F700, which includes this header)
- *   menu_c_b.c  0x33F700..0x3405A0  HistGuide   the scripted dialogues of the saga select
- *   menu_c_c.c  0x3405A0..0x341E08  HistResult  the result screen after a story battle (mode 8)
- *   menu_c_d.c  0x341E08..0x342190  HistSave    the save screen (mode 10)
- *   menu_c_e.c  0x342190..0x342588  CharSel     head of the character select object (body: src/menu/menu_d.c)
+ *                                               src/menu/history_select.c, 0x33CFC8..0x33F700, which includes this header)
+ *   history_guide.c  0x33F700..0x3405A0  HistGuide   the scripted dialogues of the saga select
+ *   history_result.c  0x3405A0..0x341E08  HistResult  the result screen after a story battle (mode 8)
+ *   history_save.c  0x341E08..0x342190  HistSave    the save screen (mode 10)
+ *   char_select.c  0x342190..0x342588  CharSel     head of the character select object (body: src/menu/menu_d.c)
  *
  * HistSel below is the layout of the whole structure (include/menu/menu_b.h had a view from the object's head
  * only; it was removed when the two halves were merged).
@@ -53,7 +53,7 @@ typedef struct HistProgress {
  * that is added to the base before the index); include/sys/save.h has the same offsets as one flat structure.
  */
 typedef struct MSaveBody {
-    /* 0x0008 */ s32 unlockFlags;  /* bits 0-6 dragon balls, 0x80 / 0x100 / 0x200 guide events (see menu_c_b.c) */
+    /* 0x0008 */ s32 unlockFlags;  /* bits 0-6 dragon balls, 0x80 / 0x100 / 0x200 guide events (see history_guide.c) */
     /* 0x000C */ s32 level;        /* difficulty chosen in the history menu, 0..2 */
     /* 0x0010 */ SaveSlot slot[SAVE_SLOT_COUNT]; /* per sub menu: flags (MSLOT_), val[0] listed, val[1] cleared, val[2] new */
     /* 0x00A0 */ u8 unkA0[0xC10 - 0xA0];
@@ -208,7 +208,7 @@ extern void StreamSe_FadeOutStep(s32 se);
 extern void Flash_StepFrames(MFlash *flash, s32 step);
 extern void MsgWin_SetText(void *text);
 
-/* HistSel (src/menu/menu_b_d.c). */
+/* HistSel (src/menu/history_select.c). */
 extern void HistSel_PlayVoice(void);    /* plays voiceLine of the current guide's set, with its subtitle */
 extern void HistSel_Idle(void);         /* idle frame: after 3600 of them Goku says one of four lines */
 extern void HistSel_SayItem(void);      /* Goku comments the sub menu under the cursor */

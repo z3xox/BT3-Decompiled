@@ -12,18 +12,18 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
  * the "sim" day screen (mode 22 of the mode group 13..30, handler 0x379A58, archive gMenuArc3, main-menu item
  * 1), table gSimEvent at 0x3B7388. Two pieces, cut at an object boundary:
  *
- *   menu_t.c    0x38CB38..0x3900D0  gSimEvent[3..27]; the object starts in the previous chunk (menu_s_d.c,
+ *   menu_t.c    0x38CB38..0x3900D0  gSimEvent[3..27]; the object starts in the previous chunk (sim_event_1.c,
  *                                   0x38C360: gSimEvent[0..2])
- *                                   -- now merged into src/menu/menu_s_d.c (0x38C360..0x3900D0), which
+ *                                   -- now merged into src/menu/sim_event_1.c (0x38C360..0x3900D0), which
  *                                   includes this header
- *   menu_t_b.c  0x3900D0..0x3911A8  the card game: four helpers and gSimEvent[28]; then gSimEvent[29..30]
+ *   sim_event_card.c  0x3900D0..0x3911A8  the card game: four helpers and gSimEvent[28]; then gSimEvent[29..30]
  *                                   (the events go on in the next chunk, menu_u, at 0x3911A8)
  *
  * Event numbers: gSimEvent[0..2] are the three trainings (board row 0), [3] is board row 2, [4] board row 3,
  * [5..36] are the 32 random events of board row 1, drawn by SimDay_PickEvent from the weights of pack section
  * 28 (so "random event n" below is gSimEvent[n + 5]).
  *
- * SimEvent_Run (menu_r_b.c) calls gSimEvent[day->event](day) once a frame while the day screen is in its
+ * SimEvent_Run (sim_event.c) calls gSimEvent[day->event](day) once a frame while the day screen is in its
  * script state; a handler runs step day->seq and returns 1 when the event is over. All names are guesses from
  * what the code does. The structures are this chunk's own views (include/menu/menu_q.h has the full SimDay).
  */
@@ -57,7 +57,7 @@ extern TSave *gSaveData;
 
 #define SIMTRAIN_OUTCOMES 6
 
-/* Section 29 of the day screen's pack: one block per training (0xC0 bytes). (From menu_s.h, with menu_s_d.c.) */
+/* Section 29 of the day screen's pack: one block per training (0xC0 bytes). (From menu_s.h, with sim_event_1.c.) */
 typedef struct SimTrainTbl {
     /* 0x00 */ s32 weight[3][SIMTRAIN_OUTCOMES]; /* by times the training was repeated: chance of each outcome, of 100 */
     /* 0x48 */ s32 hp[SIMTRAIN_OUTCOMES];        /* change of stat 2 */
@@ -96,10 +96,10 @@ typedef struct TSimDay {
 #define SIMEV_WAIT_KEY 0x80         /* the handler waits for the confirm button */
 #define SIMEV_FLAG200 0x200
 #define SIMEV_LEVEL_UP 0x400        /* SIMDAY_LEVEL_UP of menu_q.h */
-#define SIMEV_FLAG800 0x800         /* the next training comes out as outcome 0 (menu_s_d.c) */
+#define SIMEV_FLAG800 0x800         /* the next training comes out as outcome 0 (sim_event_1.c) */
 #define SIMEV_FLAG1000 0x1000       /* the next training comes out as outcome 5 */
 
-/* SimDay_Cmd numbers the handlers use (the switch is in menu_q_b.c). */
+/* SimDay_Cmd numbers the handlers use (the switch is in sim_day.c). */
 #define SIMEV_CMD_MONITOR_OFF 5     /* the monitor's picture goes out (then shows faceA) */
 #define SIMEV_CMD_CHARA_IN 6        /* character faceB comes onto the monitor */
 #define SIMEV_CMD_CHARA_OUT 7
@@ -125,9 +125,9 @@ typedef struct TSimTrain {
     /* 0x14 */ s32 turn;
 } TSimTrain; /* 0x18 */
 
-extern TSimTrain gSimTrain0[5];     /* 0x3B9010, defined with the day screen (menu_q_b.c) */
+extern TSimTrain gSimTrain0[5];     /* 0x3B9010, defined with the day screen (sim_day.c) */
 
-/* previous chunks (menu_q_b.c) */
+/* previous chunks (sim_day.c) */
 extern void SimDay_AddChange(s32 stat, s32 amount);
 extern s32 SimDay_GetStat(s32 stat, s32 preview);
 extern void SimDay_GiveItem(void);

@@ -36,7 +36,7 @@ def sh(*cmd):
 
 
 def gflag(src):
-    return "-G0" if any(d in str(src) for d in ("src/cri/", "src/menu/", "src/sys/late_a")) else "-G8"
+    return "-G0" if any(d in str(src) for d in ("src/cri/", "src/menu/", "src/ui/shen_wish", "src/ui/shen_confirm", "src/ui/shen_save")) else "-G8"
 
 
 def scratch(src):
@@ -56,7 +56,7 @@ def compile_c(src):
     if r.stderr:
         print(r.stderr, file=sys.stderr)
     # Assembler-only exception, as AS_G_FLAGS in configure.py.
-    if "src/menu/menu_t_b" in str(src):
+    if "src/menu/sim_event_card" in str(src):
         g = "-G8"
     sh(BINUTILS + "as", "-EL", "-march=r5900", "-mabi=o64", "-Iinclude", g, "-mno-pdr",
        "include/gcc_prelude.inc", str(asm), "-o", str(out))

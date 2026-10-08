@@ -6,19 +6,19 @@
 
 /*
  * Effect modules 0x15B550..0x15F728 (53 functions):
- *   src/battle/eft_k.c (second part; formerly eft_l.c)    0x15B550..0x15C728  technique effect type 9 "rush shot": the rest of the module whose first
- *                                             three helpers are the end of eft_k.c (same translation unit, see the
+ *   src/battle/eft_obj_tech.c (second part; formerly eft_l.c)    0x15B550..0x15C728  technique effect type 9 "rush shot": the rest of the module whose first
+ *                                             three helpers are the end of eft_obj_tech.c (same translation unit, see the
  *                                             note at EftRushShot_UpdateAttached)
- *   src/battle/eft_l_b.c  0x15C728..0x15E5D0  technique effect type 4 "ring shot": up to 20 blast objects per task
- *   src/battle/eft_l_c.c  0x15E5D0..0x15EF18  absorb / drain glow (fighter effect requests 0x37 and 0x38)
- *   src/battle/eft_l_d.c  0x15EF18..0x15F728  the two spawners at the head of the speed-line module (eft_m.c)
+ *   src/battle/eft_ring_shot.c  0x15C728..0x15E5D0  technique effect type 4 "ring shot": up to 20 blast objects per task
+ *   src/battle/eft_absorb.c  0x15E5D0..0x15EF18  absorb / drain glow (fighter effect requests 0x37 and 0x38)
+ *   src/battle/eft_speed_line_spawn.c  0x15EF18..0x15F728  the two spawners at the head of the speed-line module (eft_aura.c)
  *
  * "Technique effect type" = definition type; gEftShotClass (0x2C3700) row type + 1 holds {manager class, task class}:
  * 0x2C373C {0x2C39B8, 0x2C39D0} is the ring shot, 0x2C3778 {0x2C3988, 0x2C39A0} the rush shot. A class is six
  * callbacks in the order update, init, term, postUpdate, reset, draw (BtlTaskClass).
  *
  * Every structure here is a partial view local to these files. The same things have other local names in the
- * neighbouring headers: EftTechArg / EftTechDef are eft_i.h's EftOwner / EftOwnerParam, EftModel / EftModelInst its
+ * neighbouring headers: EftTechArg / EftTechDef are eft_sweep.h's EftOwner / EftOwnerParam, EftModel / EftModelInst its
  * EftEmitSet / EftEmitState (an "emitter set": 19 groups of particle emitters loaded from the technique's pack).
  */
 
@@ -125,7 +125,7 @@ typedef struct EftRushShotMgrWork {
                                   the camera animations of technique slots 2..4 */
 } EftRushShotMgrWork; /* size 0x330 */
 
-/* One model of the swarm (eft_k.h EftRushShotObj). */
+/* One model of the swarm (eft_obj_tech.h EftRushShotObj). */
 typedef struct EftRushShotModel {
     /* 0x00 */ u8 unk0[0x35];
     /* 0x35 */ s8 handle;     /* model object, freed with EftObj_Destroy */
@@ -187,7 +187,7 @@ typedef struct EftRushShotWork {
     /* 0xAB4 */ u8 unkAB4[0xAC0 - 0xAB4];
 } EftRushShotWork; /* size 0xAC0 */
 
-/* ---- eft_l_b.c: technique effect type 4, the ring shot ---- */
+/* ---- eft_ring_shot.c: technique effect type 4, the ring shot ---- */
 
 /* Work of the manager task (class gEftRingShotMgrClass), 0x324 bytes. */
 typedef struct EftRingShotMgr {
@@ -208,7 +208,7 @@ typedef struct EftRingShotOne {
     /* 0x58 */ f32 phase;      /* bobbing phase */
     /* 0x5C */ f32 time;       /* frames since it was created */
     /* 0x60 */ f32 slideTime;  /* frames the slide takes: |from| / def->speed, at least 10 (variant 0) or 1 */
-    /* 0x64 */ void *shot;     /* the blast object EftBlastObj_Create created (task of class 0x2C3AD8, eft_j.c) */
+    /* 0x64 */ void *shot;     /* the blast object EftBlastObj_Create created (task of class 0x2C3AD8, eft_shot_tech.c) */
     /* 0x68 */ u8 unk68[8];
 } EftRingShotOne; /* size 0x70 */
 
@@ -235,7 +235,7 @@ typedef struct EftRingShot {
     /* 0x5A0 */ Vec4 path2;      /* end: opponent node 0x11, raised by scale * 25 + 145 */
     /* 0x5B0 */ Vec4 path3;      /* copy of path2 */
     /* 0x5C0 */ u32 flags;
-    /* 0x5C4 */ s32 type;        /* variant 0..3, from the effect id (see eft_l_b.c) */
+    /* 0x5C4 */ s32 type;        /* variant 0..3, from the effect id (see eft_ring_shot.c) */
     /* 0x5C8 */ f32 speed;       /* def->speed: speed of the blast objects, and of the slide to the ring */
     /* 0x5CC */ f32 unk5CC;      /* def->unk38, not read here */
     /* 0x5D0 */ f32 size;
@@ -266,7 +266,7 @@ typedef struct EftRingShot {
 #define EFT_RINGSHOT_DONE      0x400     /* the fighter's held flag 0xA8 was set (ring complete / path flown / fixed) */
 #define EFT_RINGSHOT_PATH      0x800     /* variant 2: the spline was laid */
 
-/* Argument block of EftBlastObj_Create, which creates one blast object (eft_j.h EftJShotArg). */
+/* Argument block of EftBlastObj_Create, which creates one blast object (eft_shot_tech.h EftJShotArg). */
 typedef struct EftShotArg {
     /* 0x00 */ EftTechArg *arg;
     /* 0x04 */ EftModel *model;
@@ -282,7 +282,7 @@ typedef struct EftShotArg {
     /* 0x2C */ f32 speed;
 } EftShotArg; /* size 0x30 */
 
-/* ---- eft_l_c.c: absorb / drain glow ---- */
+/* ---- eft_absorb.c: absorb / drain glow ---- */
 
 /* Argument of EftAbsorb_Start / EftAbsorb_StartHands: the first 8 bytes of the fighter layer's FxArg2. */
 typedef struct EftAbsorbOwner {
@@ -354,7 +354,7 @@ void EftRushShotMgr_Term(EftTask *task);
 void EftRushShotMgr_Update(EftTask *task);
 void EftRushShotMgr_Reset(void);
 
-/* eft_l_b.c */
+/* eft_ring_shot.c */
 EftRingShotOne *EftRingShot_AllocShot(EftRingShot *w);
 void EftRingShot_Fire(s32 objId, EftTask *task, s32 node, s32 arg3, s32 volley);
 void EftRingShot_BobShot(EftRingShotOne *shot);
@@ -376,7 +376,7 @@ void EftRingShotMgr_Term(EftTask *task);
 void EftRingShotMgr_Update(EftTask *task);
 void EftRingShotMgr_Reset(void);
 
-/* eft_l_c.c */
+/* eft_absorb.c */
 void EftAbsorb_DrawOne(s32 objId, EftTask *task, EftModel *model, EftModelInst *inst, Vec4 *pos, Vec4 *dir);
 void EftAbsorb_Init(EftTask *task, EftAbsorbArg *arg);
 void EftAbsorb_Term(EftTask *task);
@@ -391,7 +391,7 @@ s32 EftAbsorb_Start(EftAbsorbOwner *arg);
 s32 EftAbsorb_Stop(s32 objId);
 void EftAbsorb_StartHands(EftAbsorbOwner *arg);
 
-/* eft_l_d.c */
+/* eft_speed_line_spawn.c */
 s32 EftSpdLine_SpawnBodyTrails(s32 objId);
 s32 EftSpdLine_SpawnPartStreaks(s32 objId, Vec4 *dir, s32 part);
 

@@ -5,9 +5,9 @@
 #include "sys/ramp.h"
 
 /*
- * Battle HUD, 0x226488-0x22A750 (src/battle/hud_d.c: the tail of the sprite / node library; src/battle/hud_d_b.c:
+ * Battle HUD, 0x226488-0x22A750 (src/battle/hud_d.c: the tail of the sprite / node library; src/battle/hud_notice_1.c:
  * the animations of the notice part, i.e. the full-screen announcements at the start and end of a round).
- * The sprite and node layouts are local views that agree with HudSprite / HudNode of include/battle/hud_a.h.
+ * The sprite and node layouts are local views that agree with HudSprite / HudNode of include/battle/hud.h.
  */
 
 /* A HUD sprite (0x1C bytes). */
@@ -42,7 +42,7 @@ typedef struct HudDNode {
 typedef struct HudNotice {
     /* 0x00 */ void *res;          /* sprite sheet 1 of the HUD file */
     /* 0x04 */ HudDSprite *spr;    /* 16: [0] the word, [1..12] its fragments / copies, [13] the streak, [14] the band,
-                                      [15] the replay mark (hud_e.c) */
+                                      [15] the replay mark (hud_notice_2.c) */
     /* 0x08 */ HudDNode *node;     /* 4: [1] the announcement (its update / draw are set by HudNotice_Show, 0x22AB50),
                                       [2] the band (only its rotation is used, by HudNotice_DrawReady) */
     /* 0x0C */ s32 state;          /* step of the running announcement; 0 when one is started */
@@ -50,7 +50,7 @@ typedef struct HudNotice {
     /* 0x14 */ Ramp rampA;         /* value at 0x24 */
     /* 0x2C */ Ramp rampB;         /* value at 0x3C */
     /* 0x44 */ f32 trail[12];      /* history of an animation value, [0] newest: the after-images (8 used here) */
-} HudNotice; /* size 0x74 (allocated by HudNotice_Init, hud_e.c) */
+} HudNotice; /* size 0x74 (allocated by HudNotice_Init, hud_notice_2.c) */
 
 #define HUD_NOTICE_SPR_WORD 0
 #define HUD_NOTICE_SPR_PART 1

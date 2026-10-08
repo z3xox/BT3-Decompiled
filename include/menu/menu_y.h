@@ -10,8 +10,8 @@
  * Menu overlay DBZP.BIN, 0x3A3848..0x3A7D98 (placeholder stem "menu_y"). Two pieces, cut at the object boundary:
  *
  *   (menu_y.c)  0x3A3848..0x3A65E8  Option   tail of the option screen object (mode 62, handler 0x39FAA8; work
- *                                            pointer 0x3BC364): now merged into src/menu/menu_x_c.c
- *   menu_y_b.c  0x3A65E8..0x3A9850  DcList   the Data Center's custom character list (mode 55, handler 0x3A9850;
+ *                                            pointer 0x3BC364): now merged into src/menu/option.c
+ *   dc_list.c  0x3A65E8..0x3A9850  DcList   the Data Center's custom character list (mode 55, handler 0x3A9850;
  *                                            menu_z.c, its tail, was merged in): declared in menu_z.h
  *
  * All names are guesses from what the code does. The structures are this chunk's own views.
@@ -44,9 +44,9 @@ extern void Dialog_Term(void);
 /* Voice_GetStat result when nothing is playing. */
 #define Y_VOICE_IDLE 5
 
-/* ---- Option (menu_x_c.c): the option screen of mode 62 ---- */
+/* ---- Option (option.c): the option screen of mode 62 ---- */
 
-/* The work area (Option, gOption) is declared in include/menu/menu_x.h; src/menu/menu_x_c.c, the whole object
+/* The work area (Option, gOption) is declared in include/menu/menu_x.h; src/menu/option.c, the whole object
    since menu_y.c was merged into it, includes that header first. */
 
 /* Option.state values this chunk tests (menu_x.h: OPT_ITEM_ / OPT_ST_). */
@@ -92,6 +92,6 @@ void Option_OnSaved(void);
 void Option_Term(void);
 
 
-/* DcList (menu_y_b.c, the whole object since menu_z.c was merged into it): see include/menu/menu_z.h. */
+/* DcList (dc_list.c, the whole object since menu_z.c was merged into it): see include/menu/menu_z.h. */
 
 #endif

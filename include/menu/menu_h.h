@@ -11,11 +11,11 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
 /*
  * Menu overlay DBZP.BIN, 0x356090..0x35A558 (placeholder stem "menu_h"). Four pieces:
  *
- *   (menu_h.c  0x356090..0x3562B8  DuelMenu_Run: merged into menu_g_c.c, the object it ends; view in menu_g.h)
- *   menu_h_b.c  0x3562B8..0x3590A8  CharRef     the character reference screen (mode 60)
- *   menu_h_c.c  0x3590A8..0x359358  the handlers of mode 60 and of modes 44..45 (not part of the CharRef object;
+ *   (menu_h.c  0x356090..0x3562B8  DuelMenu_Run: merged into duel_menu.c, the object it ends; view in menu_g.h)
+ *   char_reference.c  0x3562B8..0x3590A8  CharRef     the character reference screen (mode 60)
+ *   reference_training_mode.c  0x3590A8..0x359358  the handlers of mode 60 and of modes 44..45 (not part of the CharRef object;
  *                                               possibly the head of the Train object)
- *   menu_h_d.c  0x359358..0x35D660  Train       the training menu (mode 44), with menu_i.c (0x35A558..) merged in
+ *   training.c  0x359358..0x35D660  Train       the training menu (mode 44), with menu_i.c (0x35A558..) merged in
  */
 
 /* ---- Main executable, beyond what menu_a.h declares ---- */
@@ -63,7 +63,7 @@ typedef struct MChrTblEntry {
 
 extern MCommonRes *gCommonRes;
 
-/* ---- CharRef (menu_h_b.c): the character reference with Chi-Chi's comments (mode 60) ---- */
+/* ---- CharRef (char_reference.c): the character reference with Chi-Chi's comments (mode 60) ---- */
 
 #define CHARREF_FLASH_NUM 1
 #define CHARREF_CHARA_MAX 161
@@ -162,7 +162,7 @@ typedef struct CharRef {
 extern CharRef *gCharRef;                              /* 0x3B4854 */
 extern void (*gCharRefState[CHARREF_STATE_NUM])(void); /* 0x31EA80: in the main executable's .bss (a common symbol) */
 
-/* ---- Train (menu_h_d.c): the training menu (mode 44) ---- */
+/* ---- Train (training.c): the training menu (mode 44) ---- */
 
 #define TRAIN_FLASH_NUM 1
 #define TRAIN_CLASS_NUM 3
@@ -176,7 +176,7 @@ typedef struct TrainCursor {
 } TrainCursor;
 
 /* The work area `Train` (0x1BE0 bytes), the save view and `gTrain` (0x3B4BA8) are in menu/menu_i.h: the object
-   is menu_h_d.c with the next chunk's menu_i.c merged in, and it includes both headers. */
+   is training.c with the next chunk's menu_i.c merged in, and it includes both headers. */
 
 #define TRAIN_VOICE_BASE_A 0x87BD
 #define TRAIN_VOICE_BASE_B 0x8278

@@ -10,8 +10,8 @@
  *
  * ---- Member switch chains (verified by the matching C; "why" is inferred) ------------------------------------
  *
- *   by input (107):  0xF3 leaving member (btl_act_h.c) -> 0xF4 -> 0xF5 -> 0xB
- *   after a KO:      0xD2 ... 0xEB (btl_act_c.c)       -> 0xF6 -> 0xF7 -> 0xF8 -> fighter flag 0xF9 (round reset)
+ *   by input (107):  0xF3 leaving member (btl_act_change.c) -> 0xF4 -> 0xF5 -> 0xB
+ *   after a KO:      0xD2 ... 0xEB (btl_act_2.c)       -> 0xF6 -> 0xF7 -> 0xF8 -> fighter flag 0xF9 (round reset)
  *
  *   0xF4  first action on the new model: one hidden frame (flags 0xB, 0xCC), BtlChange_SetDone.
  *   0xF5  the new member lands: animation 0x2D (held 8 frames, effect 0xD, sound 0x20, voice 0xF), then 0x26 / 0;
@@ -90,7 +90,7 @@
  *                flag 0xB3, chr+0x1080 > 0; mark 0x24               33 guard press             -> 0x24 vanish behind the opponent
  *   0x20000000   BtlAct_TestPoweredSkill(chr, 8)                    49 dir + guard press,
  *                                                                   charge not held            -> 0x35 vanished dash
- *   0x100000     BtlAct_CheckTechniqueInput (inputs 108..110: techniques, btl_act_j.c)
+ *   0x100000     BtlAct_CheckTechniqueInput (inputs 108..110: techniques, btl_act_decide.c)
  *   0x800000     BtlAct_CheckSkillInput (inputs 113, 114: skills -> actions 0xFD..0x102)
  *   0x80         flags 6 and 0x98 clear; if parameter word 0 & 0x80:
  *                ki full and one blast stock (100000)               19 charge held             -> 0x37 ki charge

@@ -5,12 +5,12 @@
 
 /*
  * Menu overlay DBZP.BIN, 0x342190..0x348D78: ONE object, the character / stage / music select screen of the
- * versus modes ("CharSel"; names are guesses), src/menu/menu_c_e.c. (The header keeps the placeholder stem
+ * versus modes ("CharSel"; names are guesses), src/menu/char_select.c. (The header keeps the placeholder stem
  * "menu_d" of the chunk that held the middle of the object, 0x342588..0x348710; the three functions in front
  * came from chunk "menu_c" and CharSel_Run at 0x348710 from chunk "menu_e".)
  */
 
-/* A cell of the character grid (include/battle/view_a.h has the original). */
+/* A cell of the character grid (include/ui/reward_window.h has the original). */
 typedef struct MChrCell {
     /* 0x00 */ s32 id;         /* character id 0..0xA0, or MCHR_ */
     /* 0x04 */ s32 formCount;
@@ -20,7 +20,7 @@ typedef struct MChrCell {
 #define MCHR_COLS 7
 /* What this screen does with the marker cells: 0xA1 is the RANDOM cell (a character is drawn with Rand_Range
    when it is confirmed) and 0xA3 opens the list of saved custom characters (gSaveData->rec). 
-   include/battle/view_a.h has the same values (CHRGRID_ID_RANDOM 0xA1, CHRGRID_ID_CUSTOM 0xA3). */
+   include/ui/reward_window.h has the same values (CHRGRID_ID_RANDOM 0xA1, CHRGRID_ID_CUSTOM 0xA3). */
 #define MCHR_RANDOM 0xA1
 #define MCHR_LOCKED 0xA2
 #define MCHR_CUSTOM 0xA3

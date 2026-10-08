@@ -7,12 +7,12 @@
  * Menu overlay DBZP.BIN, 0x364358..0x368C18 (placeholder stem "menu_k"): Dragon World Tour (progress modes 33..35),
  * the end of the tournament menu and the bracket screen. Six pieces:
  *
- *   (menu_k.c)  0x364358..0x364DA8  TourMenu  tail of the tournament menu of mode 33: merged into menu_j_b.c
- *   menu_k_b.c  0x364DA8..0x3660A0  Bracket   the bracket screen of mode 35: init, frame loop, input
- *   menu_k_c.c  0x3660A0..0x366F58  Bracket   the guide's speech and the result sequence (another source file)
- *   menu_k_d.c  0x366F58..0x3673F8  TourBg    the cloud backdrop shared with the entrant select
- *   menu_k_e.c  0x3673F8..0x368068  Bracket   per-frame clip set-up
- *   menu_k_f.c  0x368068..0x36B3E0  Bracket   the loader and the bracket logic (merged with the former menu_l.c;
+ *   (menu_k.c)  0x364358..0x364DA8  TourMenu  tail of the tournament menu of mode 33: merged into tour_menu.c
+ *   bracket.c  0x364DA8..0x3660A0  Bracket   the bracket screen of mode 35: init, frame loop, input
+ *   bracket_guide.c  0x3660A0..0x366F58  Bracket   the guide's speech and the result sequence (another source file)
+ *   tour_background.c  0x366F58..0x3673F8  TourBg    the cloud backdrop shared with the entrant select
+ *   bracket_clips.c  0x3673F8..0x368068  Bracket   per-frame clip set-up
+ *   bracket_logic.c  0x368068..0x36B3E0  Bracket   the loader and the bracket logic (merged with the former menu_l.c;
  *                                             that file uses the LBracket view of menu_l.h)
  *
  * Object boundaries the data proves: one between Bracket_Update and Bracket_UpdateSeq ("fl_guide_out" exists at
@@ -53,7 +53,7 @@ extern void Flash_SetFlag(MFlash *flash, u32 mask, u8 on);
 /* Voice bank base of the tournament guides (Voice_PlayWithSubtitle). */
 #define TOUR_VOICE_BASE 0x85D3
 
-/* A cell of the character grid (ChrGridCell of include/battle/view_a.h; local view). */
+/* A cell of the character grid (ChrGridCell of include/ui/reward_window.h; local view). */
 typedef struct BrkCell {
     /* 0x00 */ s32 id;
     /* 0x04 */ s32 formCount;
@@ -71,7 +71,7 @@ extern void ChrGrid_Build(s32 *outCount, BrkCell *out, s32 *inCount, BrkCell *in
 #define TOUR_OTHERWORLD 3        /* Otherworld Tournament ("mc_guide_anoyo") */
 #define TOUR_YAMCHA 4            /* Yamcha Game (Yamcha and Puar) */
 
-/* TourMenu (the former menu_k.c, 0x364358..0x364DA8) is now part of menu_j_b.c; its view is TourMenu of menu_j.h. */
+/* TourMenu (the former menu_k.c, 0x364358..0x364DA8) is now part of tour_menu.c; its view is TourMenu of menu_j.h. */
 
 /* gSaveData->unkA08 */
 #define TOUR_SAVE_STARTED 0x20  /* the first-visit speech was heard */
@@ -157,7 +157,7 @@ typedef struct TourProgress2 {
 /* gSaveData->unkA08, continued */
 #define TOUR_SAVE_EXPLAINED 0x40 /* the guide's long explanation was heard */
 
-/* ---- Bracket (menu_k_b.c, menu_k_d.c, menu_l) ---- */
+/* ---- Bracket (bracket.c, tour_background.c, menu_l) ---- */
 
 #define BRACKET_FLASH_NUM 6
 
@@ -279,7 +279,7 @@ void Bracket_UpdateSeq(Bracket *b);
 void Bracket_SetupDraw(Bracket *b);
 void Bracket_Load(Bracket *b);
 
-/* ---- TourBg (menu_k_c.c) ---- */
+/* ---- TourBg (bracket_guide.c) ---- */
 
 typedef struct TourBg {
     /* 0x00 */ u32 *res;         /* the backdrop file unpacked */

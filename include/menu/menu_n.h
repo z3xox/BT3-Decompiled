@@ -8,12 +8,12 @@
  * (handler 0x379A58, main-menu item 1). Four pieces, cut at object boundaries:
  *
  *   (menu_n.c)  0x372148..0x372560  UbTeamSel  tail of the team select of mode 15: merged into
- *                                              src/menu/menu_m_b.c (the object starts at 0x36E028)
- *   menu_n_b.c  0x372560..0x373A68  UbzSel     mode 28: the course select (five courses of up to eight opponents
+ *                                              src/menu/ub_team_select.c (the object starts at 0x36E028)
+ *   ubz_select.c  0x372560..0x373A68  UbzSel     mode 28: the course select (five courses of up to eight opponents
  *                                              fought in a row) and the first half of its battle set-up
- *   menu_n_c.c  0x373A68..0x3760C8  UbRank     mode 26: the ranking ladder of 100 places (challenge a place above,
+ *   ub_rank.c  0x373A68..0x3760C8  UbRank     mode 26: the ranking ladder of 100 places (challenge a place above,
  *                                              intruders) and its battle set-up
- *   menu_n_d.c  0x3760C8..0x3782A8  UbResult   the result screen of modes 27 / 30 (Run is 0x378138); merged with
+ *   ub_result.c  0x3760C8..0x3782A8  UbResult   the result screen of modes 27 / 30 (Run is 0x378138); merged with
  *                                              its tail (menu_o.c) and built with include/menu/menu_o.h, not with
  *                                              this header
  *
@@ -138,7 +138,7 @@ typedef struct NRankRule {
     /* 0x18 */ s32 foe;         /* index into the NFoe table */
 } NRankRule; /* 0x1C */
 
-/* ---- UbzSel (menu_n_b.c) ---- */
+/* ---- UbzSel (ubz_select.c) ---- */
 
 #define UBZSEL_FLASH_NUM 1
 #define UBZSEL_BOX_NUM 6
@@ -177,7 +177,7 @@ typedef struct UbzSel {
 
 extern UbzSel *gUbzSel;         /* 0x3B7350 */
 
-/* ---- UbRank (menu_n_c.c) ---- */
+/* ---- UbRank (ub_rank.c) ---- */
 
 #define UBRANK_FLASH_NUM 3
 #define UBRANK_BOX_NUM 6

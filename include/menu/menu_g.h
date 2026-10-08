@@ -6,10 +6,10 @@
 /*
  * Menu overlay DBZP.BIN, 0x351C38..0x356090 (placeholder stem "menu_g"). Three pieces:
  *
- *   menu_g.c    0x351C38..0x352CB8  ItemPanel  the equipped-item ("custom") panel of one side of a character
+ *   item_panel.c    0x351C38..0x352CB8  ItemPanel  the equipped-item ("custom") panel of one side of a character
  *                                              select; tail of the object that starts before this chunk
- *   menu_g_b.c  0x352CB8..0x352EC0  Duel_Main  handler of progress modes 38..41 (main-menu item 3)
- *   menu_g_c.c  0x352EC0..0x3562B8  DuelMenu   the screen of mode 38 (with DuelMenu_Run, 0x356090, merged in from menu_h.c)
+ *   duel.c  0x352CB8..0x352EC0  Duel_Main  handler of progress modes 38..41 (main-menu item 3)
+ *   duel_menu.c  0x352EC0..0x3562B8  DuelMenu   the screen of mode 38 (with DuelMenu_Run, 0x356090, merged in from menu_h.c)
  */
 
 /* ---- main executable ---- */
@@ -46,7 +46,7 @@ typedef struct MItemSet {
     u16 id[8];
 } MItemSet;
 
-/* ---- ItemPanel (menu_g.c) ---- */
+/* ---- ItemPanel (item_panel.c) ---- */
 
 #define ITEMPANEL_ROWS 8       /* list plates: seven item slots and the "back" row */
 #define ITEMPANEL_BACK 7       /* the cursor row that is always reachable */
@@ -85,7 +85,7 @@ void ItemPanel_SetChara(s32 side, s32 chara, s32 slot, s32 set, s32 fromRec);
 void ItemPanel_Show(s32 side);
 void ItemPanel_Hide(s32 side);
 
-/* ---- Duel (menu_g_b.c, menu_g_c.c) ---- */
+/* ---- Duel (duel.c, duel_menu.c) ---- */
 
 /* gProgress fields of the duel mode (local view; MenuProgress in menu_a.h has only +0x624). */
 typedef struct DuelProgress {

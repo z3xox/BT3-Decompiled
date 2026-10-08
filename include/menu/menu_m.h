@@ -8,8 +8,8 @@
  * group 13..30 (handler 0x379A58, archive gMenuArc3, main-menu item 1). Two pieces, cut at an object boundary:
  *
  *   (menu_m.c)  0x36DBE8..0x36E028  SoloSel     tail of the one-character select (work pointer 0x3B7348): the
- *                                               guide's closing line and the frame loop; merged into menu_l_b.c
- *   menu_m_b.c  0x36E028..0x372148  UbTeamSel   the team select (one side, up to five fighters, optional DP
+ *                                               guide's closing line and the frame loop; merged into solo_select.c
+ *   ub_team_select.c  0x36E028..0x372148  UbTeamSel   the team select (one side, up to five fighters, optional DP
  *                                               limit; work pointer 0x3B734C), up to 0x372560: its last
  *                                               two functions (0x372148 the guide's closing line, 0x372260 the
  *                                               frame loop) come from the next chunk, menu_n
@@ -34,7 +34,7 @@ extern s32 ChrTbl_WrapCostume(s32 chara, s32 *costume);
 /* Voice bank base of this mode group's guides (Voice_PlayWithSubtitle). */
 #define UB_VOICE_BASE 0x8765
 
-/* A cell of the character grid (ChrGridCell of include/battle/view_a.h; local view). */
+/* A cell of the character grid (ChrGridCell of include/ui/reward_window.h; local view). */
 typedef struct UbCell {
     /* 0x00 */ s32 id;          /* character id 0..0xA0, or UB_ID_ */
     /* 0x04 */ s32 formCount;
@@ -126,7 +126,7 @@ extern void ItemHelp_Draw(s32 item);                  /* item help window: draw 
 extern void ItemHelp_Open(void);                      /* item help window: open */
 extern void ItemHelp_Close(void);                      /* item help window: close */
 
-/* SoloSel (the former menu_m.c, 0x36DBE8..0x36E028) is now part of menu_l_b.c; its work area is SoloSel of
+/* SoloSel (the former menu_m.c, 0x36DBE8..0x36E028) is now part of solo_select.c; its work area is SoloSel of
    include/menu/menu_l.h. */
 
 /* flags of both screens */

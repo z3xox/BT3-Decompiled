@@ -3,11 +3,11 @@
 
 #include "types.h"
 #include "sys/math3d.h"
-#include "battle/eft_m.h"
+#include "battle/eft_aura.h"
 
 /*
  * Effect tasks, 0x1637A0..0x167E68 (src/battle/eft_n.c):
- *   0x1637A0..0x165758  the aura, second half of the module that starts in eft_m.c at 0x1609C8: flame drawing,
+ *   0x1637A0..0x165758  the aura, second half of the module that starts in eft_aura.c at 0x1609C8: flame drawing,
  *                       the per-fighter aura task, the aura manager task and the entry points the fighter effect
  *                       layer calls
  *   0x165758..0x167E68  body lightning, first half of the module that continues at 0x167E68: bolts made of
@@ -16,7 +16,7 @@
  * 41 of the 47 functions are C; see the top of the C file for the six left in assembly.
  *
  * The structs below are this file's views. EftAuraWork, EftAuraMgr and EftAuraData are the full layouts of what
- * eft_m.h calls EftAura, EftAuraPool and EftAuraCfg / EftAuraPrm (same field names where both name a field).
+ * eft_aura.h calls EftAura, EftAuraPool and EftAuraCfg / EftAuraPrm (same field names where both name a field).
  */
 
 /* ---- aura ----------------------------------------------------------------------------------------------- */
@@ -27,7 +27,7 @@ typedef struct EftAuraArg {
     /* 0x4 */ s32 variant;   /* 0 = normal (aura flag 0x10), not 0 = flag 0x20, which is never drawn */
 } EftAuraArg;
 
-/* Work of one fighter's aura task (0x510 bytes; `EftAura` in eft_m.h). */
+/* Work of one fighter's aura task (0x510 bytes; `EftAura` in eft_aura.h). */
 typedef struct EftAuraWork {
     /* 0x000 */ s32 flags;       /* 1 active, 2 finished (the task kills itself), 4 hidden, 8 first frame (no previous
                                     positions yet), 0x10 / 0x20 variant, 0x40 model changed, 0x80 types 8..10 */
@@ -76,7 +76,7 @@ typedef struct EftAuraWork {
     /* 0x50C */ s32 unk50C;
 } EftAuraWork; /* size 0x510 */
 
-/* One GS TEX0 value of a texture set (include/battle/eft_g.h has the same layout). */
+/* One GS TEX0 value of a texture set (include/battle/eft_shot.h has the same layout). */
 typedef struct EftNTexEntry {
     /* 0x00 */ u64 tex0;
     /* 0x08 */ u64 unk8;
@@ -97,7 +97,7 @@ typedef struct EftAuraTexGroup {
     /* 0x028 */ EftNTexSet set;
 } EftAuraTexGroup; /* size 0x230 */
 
-/* gEftAuraPool (0x4A0 bytes; `EftAuraPool` in eft_m.h). */
+/* gEftAuraPool (0x4A0 bytes; `EftAuraPool` in eft_aura.h). */
 typedef struct EftAuraMgr {
     /* 0x000 */ s32 count;       /* characters */
     /* 0x004 */ s32 flameMax;    /* 50 per character */
@@ -132,7 +132,7 @@ typedef struct EftAuraDataPart {
     /* 0x8 */ s32 nodeRef;   /* node the flame leans away from, or negative */
 } EftAuraDataPart;
 
-/* A spark emitter. (eft_m.h places these 4 bytes later with the fields {kind, node}: its `kind` is this `node`
+/* A spark emitter. (eft_aura.h places these 4 bytes later with the fields {kind, node}: its `kind` is this `node`
    and its `node` is the next entry's `unk0`.) */
 typedef struct EftAuraDataSpark {
     /* 0x0 */ s32 unk0;

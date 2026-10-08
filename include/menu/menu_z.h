@@ -15,11 +15,11 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
  * progress modes 53..56; the development paths in the objects' data are "host:data/ps2/test/main/DC/").
  *
  *   (menu_z.c)  0x3A7D98..0x3A9850  DcList   tail of the saved-custom-character list (mode 55): now merged
- *                                            into src/menu/menu_y_b.c (0x3A65E8..0x3A9850), which uses the
+ *                                            into src/menu/dc_list.c (0x3A65E8..0x3A9850), which uses the
  *                                            DcList layout below
- *   menu_z_b.c  0x3A9850..0x3A9A70  Dc_Main, the handler of modes 53..56
- *   menu_z_c.c  0x3A9A70..0x3AAF30  DcMenu   the mode's top menu (mode 53), a whole object
- *   menu_z_d.c  0x3AAF30..0x3AE648  DcPass   the password screen object (mode 54); menu_za.c, its tail
+ *   dc.c  0x3A9850..0x3A9A70  Dc_Main, the handler of modes 53..56
+ *   dc_menu.c  0x3A9A70..0x3AAF30  DcMenu   the mode's top menu (mode 53), a whole object
+ *   dc_password.c  0x3AAF30..0x3AE648  DcPass   the password screen object (mode 54); menu_za.c, its tail
  *                                            (from 0x3AC440), was merged in
  *
  * Every structure here is this chunk's own view: the neighbours' headers were not written yet.
@@ -122,7 +122,7 @@ typedef struct ZSave {
 
 #define ZSAVE ((ZSave *)gSaveData)
 
-/* ---- DcList (src/menu/menu_y_b.c): the list of saved custom characters (mode 55). ---- */
+/* ---- DcList (src/menu/dc_list.c): the list of saved custom characters (mode 55). ---- */
 
 #define DCLIST_FLASH_NUM 2
 #define DCLIST_ITEM_ROWS 8
@@ -258,7 +258,7 @@ typedef struct DcMenu {
 #define DCLINE_REPLAY 15           /* plate 2, then one of 16..18 */
 #define DCLINE_LIST 22             /* plate 1, then one of 23..25 */
 
-/* ---- DcPass (src/menu/menu_z_d.c): the password screen (mode 54). ---- */
+/* ---- DcPass (src/menu/dc_password.c): the password screen (mode 54). ---- */
 
 #define DCPASS_FLASH_NUM 2
 #define DCPASS_PAGES 2          /* capitals / small letters */
@@ -391,7 +391,7 @@ typedef struct DcPass {
 #define DCPASS_FACE_LOADING 0x10
 #define DCPASS_FACE_READY 0x20
 
-/* DcList (src/menu/menu_y_b.c) */
+/* DcList (src/menu/dc_list.c) */
 extern void PassWin_OpenEx(ZSaveRec *rec, s32 chara, s32 level);
 void DcView_InitBlink(DcView *v);
 void DcChars_Load(DcChars *c);
@@ -426,7 +426,7 @@ s32 DcRec_IsSlotEmpty(u16 *items, s32 slot);
 void DcView_LightItem(DcView *v, s32 row, s32 on);
 void DcList_InputMenu(DcList *d);
 
-/* Item details page (src/menu/menu_v_c.c). */
+/* Item details page (src/menu/item_help.c). */
 extern void ItemHelp_Init(void *pack);
 extern void ItemHelp_Term(void);
 extern void ItemHelp_Draw(s32 item);

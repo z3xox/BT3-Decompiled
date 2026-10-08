@@ -5,7 +5,7 @@
 #include "sys/math3d.h"
 
 /*
- * Battle object, third part: second part of src/battle/bobj_a.c (0x24F1F0..0x250B28) and src/battle/bobj_b_b.c (..0x2527B0).
+ * Battle object, third part: second part of src/battle/btl_obj_anim.c (0x24F1F0..0x250B28) and src/battle/btl_obj_chain.c (..0x2527B0).
  * The face (eyes and mouth), the tables an object reads out of its files, the colour mode and part
  * visibility bits, the model node accessors, and the secondary motion chains (hair, tails, capes).
  *

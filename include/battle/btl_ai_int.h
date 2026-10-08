@@ -1,7 +1,7 @@
 #ifndef BATTLE_BTL_AI_INT_H
 #define BATTLE_BTL_AI_INT_H
 
-/* Shared by the two CPU-player files btl_ai_seq.c and btl_ai_cond.c: views of other modules' data, the functions
+/* Shared by the two CPU-player files btl_ai_seq.c and btl_ai_think.c: views of other modules' data, the functions
  * they call, and the macros for the sequence stack and the level tables. */
 
 #include "battle/btl_ai.h"

@@ -14,12 +14,12 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
  * of ten turns, nine turns of training and events and a fight on the tenth. Four pieces, cut at object boundaries:
  *
  *   (menu_r.c)  0x3840E0..0x3851B0  SimDay      tail of the board screen (mode 22; work pointer 0x3B7384): merged
- *                                               into src/menu/menu_q_b.c, where the object starts
- *   menu_r_b.c  0x3851B0..0x3851E8  SimEvent    the event dispatcher (table 0x3B7388: 37 scripts that live in
+ *                                               into src/menu/sim_day.c, where the object starts
+ *   sim_event.c  0x3851B0..0x3851E8  SimEvent    the event dispatcher (table 0x3B7388: 37 scripts that live in
  *                                               the chunks menu_s / menu_t / menu_u)
- *   menu_r_c.c  0x3851E8..0x387880  SimResult   the result screen after a round's fight (mode 23), a whole
+ *   sim_result.c  0x3851E8..0x387880  SimResult   the result screen after a round's fight (mode 23), a whole
  *                                               object (work pointer 0x3B741C)
- *   menu_r_d.c  0x387880..0x388EE0  SimTop      the ladder's entry screen with the ranking list (mode 20; work
+ *   sim_top.c  0x387880..0x388EE0  SimTop      the ladder's entry screen with the ranking list (mode 20; work
  *                                               pointer 0x3B7420), a whole object: the former src/menu/menu_s.c
  *                                               (0x388618..) is merged into it
  *
@@ -120,14 +120,14 @@ typedef struct SimSave {
 extern void *gSaveData;
 
 /* ---- SimDay: the board screen's work area. Only the name here: the layout and the SIMDAY_ constants are in
-   include/menu/menu_q.h (the object is src/menu/menu_q_b.c, into which the former menu_r.c was merged). ---- */
+   include/menu/menu_q.h (the object is src/menu/sim_day.c, into which the former menu_r.c was merged). ---- */
 
 typedef struct SimDay SimDay;
 
 extern SimDay *gSimDay;                      /* 0x3B7384 */
 extern s32 (*gSimEvent[37])(SimDay *day);    /* 0x3B7388 */
 
-/* the score sheet (src/menu/menu_p_d.c) */
+/* the score sheet (src/menu/ub_score.c) */
 extern s32 UbScore_Fill(s32 kind, void *score, s32 *pages);
 extern void UbScore_CalcPoints(void *price, void *score);
 extern s32 UbScore_CalcRank(s32 kind, void *score);
@@ -141,7 +141,7 @@ extern s32 UbScore_GetRewardItem(s32 idx);
 
 s32 SimEvent_Run(SimDay *day, u32 event);
 
-/* ---- SimResult (menu_r_c.c) ---- */
+/* ---- SimResult (sim_result.c) ---- */
 
 typedef struct SimScoreLine {
     /* 0x00 */ s32 value;       /* what was measured (a bonus line: the bonus id) */
@@ -235,7 +235,7 @@ void SimResult_UpdateTalk(void);
 void SimResult_Input(s32 *result);
 s32 SimResult_Run(s32 section);
 
-/* ---- SimTop (menu_r_d.c; the former menu_s.c is merged into it) ---- */
+/* ---- SimTop (sim_top.c; the former menu_s.c is merged into it) ---- */
 
 #define SIMTOP_FLASH_NUM 1
 #define SIMTOP_ROWS 3

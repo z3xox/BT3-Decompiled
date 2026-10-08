@@ -1400,7 +1400,7 @@ void BtlHit_ApplyHit(HitChr *atk) {
  * Tail of the object, 0x1CA520..0x1CA6D0: the per-frame collision step and the guard kind of the current
  * animation. These four functions are part of this translation unit in the original: BtlColl_Update only compiles
  * to the original bytes with BtlHit_CheckProximityAll defined above it, and the functions from 0x1CAEF0 on
- * (src/battle/btl_char_coll_b.c) only match when BtlColl_GetGuardKind is NOT defined in theirs.
+ * (src/battle/btl_hit_reaction.c) only match when BtlColl_GetGuardKind is NOT defined in theirs.
  */
 
 /* The per-frame fighter-against-fighter step, run by BtlChars_UpdateCollision when nobody is frozen (after the

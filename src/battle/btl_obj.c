@@ -45,7 +45,7 @@ extern void Res_RelocateOffsets(void *out, void *base, void *hdr);
 extern s32 BtlStage_IsReady(void);
 
 /* Uploads texture `index` of a texture file to texture block tbp, its CLUT to cbp (-1: none). Returns nothing
-   (src/sys/gfxm_b_b.c); the older reading of this as a table lookup was wrong. */
+   (src/sys/tex_file.c); the older reading of this as a table lookup was wrong. */
 extern void TexFile_UploadOne(void *file, s32 index, s32 tbp, s32 cbp);
 /* Model object setup / teardown (0x113598 binds the resource, 0x1135F0 clears the object). */
 extern void BtlObjMdl_Destroy(BtlObj *obj);

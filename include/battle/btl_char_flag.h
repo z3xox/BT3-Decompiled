@@ -6,10 +6,10 @@
 
 /*
  * Fighter clash sequences, fighter sound, fighter flags and opponent helpers, 0x1D8750..0x1DBF20:
- *   src/battle/btl_char_flag_clash.c  0x1D8750..0x1D9A20  clash sequences
- *   src/battle/btl_char_flag_snd.c    0x1D9A20..0x1DA8B8
+ *   src/battle/btl_clash.c  0x1D8750..0x1D9A20  clash sequences
+ *   src/battle/btl_char_sound.c    0x1D9A20..0x1DA8B8
  *   src/battle/btl_char_flag.c        0x1DA8B8..0x1DB048
- *   src/battle/btl_char_flag_opp.c    0x1DB048..0x1DBF20
+ *   src/battle/btl_opponent.c    0x1DB048..0x1DBF20
  * The structures are partial views local to these files: only the fields they touch.
  *
  * ---- Fighter flags ----
@@ -176,7 +176,7 @@ typedef struct BtlFlagRoster {
     /* 0xA0 */ BtlFlagSndReqList snd;
 } BtlFlagRoster;
 
-/* btl_char_flag_clash.c */
+/* btl_clash.c */
 s32 BtlClash_BothInClashA(void);
 void BtlClash_HoldClashA(s32 player);
 s32 BtlClash_BothInActionFA(void);
@@ -193,7 +193,7 @@ s32 BtlClash_UpdateB(s32 state);
 s32 BtlClash_UpdateC(s32 state);
 void BtlClash_Update(void);
 
-/* btl_char_flag_snd.c */
+/* btl_char_sound.c */
 BtlFlagSoundSet *BtlCharSnd_GetSet(BtlFlagChr *chr);
 BtlFlagSoundSet *BtlCharSnd_GetLoopSet(BtlFlagChr *chr);
 s32 BtlCharSnd_IsLoopPlaying(s32 player, s32 kind, s32 id);
@@ -238,7 +238,7 @@ s32 BtlChar_TestOnceBit(BtlFlagChr *chr, s32 n);
 void BtlChar_SetFrameBits(BtlFlagChr *chr, u64 bits);
 void BtlChar_RaiseFirstClash(BtlFlagChr *chr);
 
-/* btl_char_flag_opp.c */
+/* btl_opponent.c */
 void BtlOpp_GetTargetPos(BtlFlagChr *chr, Vec4 *out);
 void BtlOpp_GetSnapPos(BtlFlagChr *chr, Vec4 *out, s32 slot);
 void BtlOpp_GetTargetRot(BtlFlagChr *chr, Vec4 *out);

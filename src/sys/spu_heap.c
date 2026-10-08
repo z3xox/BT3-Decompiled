@@ -1,5 +1,5 @@
 #include "common.h"
-#include "sys/align.h"
+#include "sys/mem_align.h"
 #include "sys/spu_heap.h"
 
 /*

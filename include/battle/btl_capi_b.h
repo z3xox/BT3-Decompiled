@@ -5,7 +5,7 @@
 #include "sys/math3d.h"
 
 /*
- * Fighter interface, second part, 0x208430..0x20BA80 (src/battle/btl_capi_b.c). It continues btl_char_api.c:
+ * Fighter interface, second part, 0x208430..0x20BA80 (src/battle/btl_capi_b.c). It continues btl_char_api_2.c:
  *   0x208430..0x209EE8  accessors keyed by battle object id (BtlChar_FindByObjId), nearly all for the AI
  *   0x209EE8..0x20B200  control of a fighter keyed by player index (BtlChar_Get): the sequence's poses and the
  *                       battle event script's commands (through btl_facade.c)

@@ -6,7 +6,7 @@
 
 /*
  * Fighter side of hit resolution (0x1CA520..0x1CA6D0, the tail of src/battle/btl_char_hit.c, and
- * src/battle/btl_char_coll_b.c 0x1CA6D0..0x1CDCA8): what a fighter does when the hit detection of the effect scene (0x1AF740..0x1B10F0)
+ * src/battle/btl_hit_reaction.c 0x1CA6D0..0x1CDCA8): what a fighter does when the hit detection of the effect scene (0x1AF740..0x1B10F0)
  * reports that a hit record overlaps it. The structures are partial views local to this module: only the fields
  * these files touch. Names are guesses unless the comment says how they are known.
  */

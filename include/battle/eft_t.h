@@ -6,14 +6,14 @@
 
 /*
  * Effect modules 0x17CB40..0x180BF8 (71 functions), all of them drawing only:
- *   src/battle/eft_s.c (second part, formerly eft_t.c)  0x17CB40..0x17D290  tail of the "chain" module (effect pack part kind 18): the last three
+ *   src/battle/eft_chain.c (second part, formerly eft_t.c)  0x17CB40..0x17D290  tail of the "chain" module (effect pack part kind 18): the last three
  *                                             callbacks of its task class 0x2C3E48, its manager class 0x2C3E30 and
  *                                             the by-handle interface the effect pack library calls
  *                         0x17D290..0x17EE68  ray burst (effect pack part kind 0, fighter requests 0x15 and 0x18):
  *                                             manager class 0x2C3E60, task class 0x2C3E78
- *   src/battle/eft_t_b.c  0x17EE68..0x1809C0  streak field (the "numbered stage effect" technique modules start):
+ *   src/battle/eft_streak.c  0x17EE68..0x1809C0  streak field (the "numbered stage effect" technique modules start):
  *                                             manager class 0x2C3E90, task class 0x2C3EA8
- *   src/battle/eft_t_c.c  0x1809C0..0x180BF8  head of the vanish-line module EftShotFx (class 0x2C3EC0, the rest is the second part of that file, formerly eft_u.c): the
+ *   src/battle/eft_shot_fx.c  0x1809C0..0x180BF8  head of the vanish-line module EftShotFx (class 0x2C3EC0, the rest is the second part of that file, formerly eft_u.c): the
  *                                             request entry of fighter requests 0xC..0xF, and the init callback
  *
  * A class is six callbacks {update, init, term, post-update, reset, draw}; the manager classes are entries of the
@@ -76,7 +76,7 @@ typedef struct EftTTex {
 
 /* ---- chain module (part kind 18) -------------------------------------------------------------------------- */
 
-/* Argument of EftChain_Create (EftEmitArgA in eft_h.h). */
+/* Argument of EftChain_Create (EftEmitArgA in eft_emit.h). */
 typedef struct EftChainArg {
     /* 0x00 */ EftTVec pos;
     /* 0x10 */ EftTVec dir;
@@ -141,7 +141,7 @@ typedef struct EftChainMgr {
 
 /* ---- ray burst (part kind 0) ------------------------------------------------------------------------------ */
 
-/* Argument of EftRay_Create (EftEmitLightArg in eft_h.h, FxLineArg in btl_char_fx.h). */
+/* Argument of EftRay_Create (EftEmitLightArg in eft_emit.h, FxLineArg in btl_char_fx_1.h). */
 typedef struct EftRayArg {
     /* 0x00 */ EftTVec pos;
     /* 0x10 */ s32 color[4];      /* r, g, b, alpha; each ray's alpha is alpha - rand() % 16 */
@@ -376,7 +376,7 @@ typedef struct EftTShotFxReq {
     /* 0xC */ s32 flags;          /* 0 = free */
 } EftTShotFxReq; /* size 0x10 */
 
-/* gEftShotFx (0x2FF1B0), 0x60 bytes; only what the three functions of eft_t_c.c touch. */
+/* gEftShotFx (0x2FF1B0), 0x60 bytes; only what the three functions of eft_shot_fx.c touch. */
 typedef struct EftTShotFxMgr {
     /* 0x00 */ EftTShotFxReq *req; /* 2 */
     /* 0x04 */ u8 *lines;         /* 0x4B00 bytes: 200 lines of 0x60 */

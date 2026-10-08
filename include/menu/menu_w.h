@@ -14,10 +14,10 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
  * Menu overlay DBZP.BIN, 0x39A978..0x39EFC0 (placeholder stem "menu_w"): "Evolution Z" (main-menu item 5,
  * progress modes 48..50; the development path in the next object's data is "host:data/ps2/test/main/evoZ/").
  *
- *   menu_w.c    0x39A978..0x39E940  Shop     tail of the item shop object (mode 50); head: src/menu/menu_v_d.c
- *                                            -- now merged into src/menu/menu_v_d.c, which includes this header
- *   menu_w_b.c  0x39E940..0x39EB08  EvoMode_Main, the handler of modes 48..50
- *   menu_w_c.c  0x39EB08..0x39FAA8  EvoTop   the mode's top menu (mode 48); declared in include/menu/menu_x.h
+ *   menu_w.c    0x39A978..0x39E940  Shop     tail of the item shop object (mode 50); head: src/menu/shop.c
+ *                                            -- now merged into src/menu/shop.c, which includes this header
+ *   evo_mode.c  0x39E940..0x39EB08  EvoMode_Main, the handler of modes 48..50
+ *   evo_top.c  0x39EB08..0x39FAA8  EvoTop   the mode's top menu (mode 48); declared in include/menu/menu_x.h
  *
  * The Shop layout below is this chunk's own view (the previous chunk's include/menu/menu_v.h declares the same
  * structure from the head of the object only and was still changing; unify them when the two files are merged:
@@ -167,14 +167,14 @@ typedef struct Shop {
 
 extern Shop *gShop; /* 0x3BB148 */
 
-/* ItemHelp (src/menu/menu_v_c.c). */
+/* ItemHelp (src/menu/item_help.c). */
 extern void ItemHelp_Init(u32 *pack);
 extern void ItemHelp_Term(void);
 extern void ItemHelp_Draw(s32 item);
 extern void ItemHelp_Open(void);
 extern void ItemHelp_Close(void);
 
-/* The Shop object is one file since the merge: src/menu/menu_v_d.c (0x399790..0x39E940). */
+/* The Shop object is one file since the merge: src/menu/shop.c (0x399790..0x39E940). */
 void Shop_CheckStockLevel(void);
 s32 Shop_IsSoldOut(void);
 s32 Shop_CanBuy(s32 item, WItemEntry *table);
@@ -194,6 +194,6 @@ s32 Shop_Run(s32 section);
 
 s32 EvoMode_Main(void);
 
-/* EvoTop (menu_w_c.c, the whole object since the merge with menu_x.c): see include/menu/menu_x.h. */
+/* EvoTop (evo_top.c, the whole object since the merge with menu_x.c): see include/menu/menu_x.h. */
 
 #endif

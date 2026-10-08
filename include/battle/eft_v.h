@@ -4,7 +4,7 @@
 #include "types.h"
 
 /*
- * src/battle/eft_u_b.c, second part (0x1853C8..0x1871A8; formerly eft_v.c), eft_v_b.c (0x1871A8..0x187C50), eft_v_c.c (0x187C50..0x1895E8).
+ * src/battle/eft_particle.c, second part (0x1853C8..0x1871A8; formerly eft_v.c), eft_impact.c (0x1871A8..0x187C50), eft_link_1.c (0x187C50..0x1895E8).
  * Three effect modules, one per file, all of them drawing only:
  *
  * 1. 0x1853C8..0x1871A8  EftPtcl*: the tail of the particle emitter module that is effect pack part kind 5
@@ -20,7 +20,7 @@
  *    between two points (lightning between two nodes, guess). Manager class 0x2C3F38, task class 0x2C3F50; the
  *    creation entry and the node pool are in the next file (0x1895E8..).
  *
- * Every struct here is a local view; the same objects have other names in eft_h.h / eft_i.h.
+ * Every struct here is a local view; the same objects have other names in eft_emit.h / eft_sweep.h.
  */
 
 /* The effect code's vector: 16-byte aligned. */
@@ -132,7 +132,7 @@ typedef struct EftVVert {
 
 /* ---- 1. particle emitter (effect pack part kind 5) -------------------------------------------------------- */
 
-/* The emitter's definition in the effect pack (EftEmitArgA.texA in eft_h.h). Three keys of every animated value
+/* The emitter's definition in the effect pack (EftEmitArgA.texA in eft_emit.h). Three keys of every animated value
    live in the part not mapped here. */
 typedef struct EftPtclDef {
     /* 0x000 */ s32 flags;     /* 1: the values are key-framed, 2: clipped polygon drawing (kind 0), 4: the texture
@@ -158,7 +158,7 @@ typedef struct EftPtclDef {
     /* 0x2A8 */ f32 spinZ, spinZRange;
 } EftPtclDef;
 
-/* Argument block of EftPtcl_Create (EftEmitArgA in eft_h.h). Copied with 64-bit moves. */
+/* Argument block of EftPtcl_Create (EftEmitArgA in eft_emit.h). Copied with 64-bit moves. */
 typedef struct EftPtclArg {
     /* 0x00 */ EftVVec pos;
     /* 0x10 */ EftVVec dir;
@@ -270,7 +270,7 @@ typedef struct EftPtclMgr {
 
 /* ---- 2. impact effect ------------------------------------------------------------------------------------- */
 
-/* Views of the effect pack library's objects (EftEmitSet / EftEmitState / EftEmitNodes in eft_i.h). */
+/* Views of the effect pack library's objects (EftEmitSet / EftEmitState / EftEmitNodes in eft_sweep.h). */
 typedef struct EftVGroupDef {
     /* 0x00 */ u8 unk0;
     /* 0x01 */ u8 count;
@@ -412,7 +412,7 @@ typedef struct EftLinkDef2 {
     /* 0x120 */ f32 fade1[3];
 } EftLinkDef2;
 
-/* Argument block of the creation entry 0x18BB08 (EftArg15 in eft_i.c). */
+/* Argument block of the creation entry 0x18BB08 (EftArg15 in eft_sweep.c). */
 typedef struct EftLinkArg {
     /* 0x00 */ EftLinkDef *def;
     /* 0x04 */ EftLinkDef2 *def2;

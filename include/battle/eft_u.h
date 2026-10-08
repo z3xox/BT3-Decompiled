@@ -7,14 +7,14 @@
 /*
  * Effect code, 0x180BF8..0x1853C8. Two modules, both drawing only:
  *
- *   0x180BF8..0x182CE8  src/battle/eft_t_c.c, second part (formerly eft_u.c): vanish lines, the rest of the module that starts at 0x1809C0 in
+ *   0x180BF8..0x182CE8  src/battle/eft_shot_fx.c, second part (formerly eft_u.c): vanish lines, the rest of the module that starts at 0x1809C0 in
  *                       its first part (EftShotFx_FindFree, EftShotFx_Start, EftShotFxMgr_Init). Task class D_002C3EC0 =
  *                       {update, init, term, post-update, 0, draw}. The functions keep eft_t's `EftShotFx` prefix so
  *                       the module has one name; what it draws is the teleport ("vanish") effect: fighter effect
  *                       requests 0xC (vanish), 0xD (reappear), 0xE / 0xF (the short forms of both) and object
  *                       animation event bit 42 start it through EftShotFx_Start(objId, kind 0..3).
- *   0x182CE8..0x1853C8  src/battle/eft_u_b.c: the head of the particle emitter module `EftPtcl` (effect pack part
- *                       kind 5) whose task code is in the second part of eft_u_b.c (formerly eft_v.c): texture choice, key values, the particle pool,
+ *   0x182CE8..0x1853C8  src/battle/eft_particle.c: the head of the particle emitter module `EftPtcl` (effect pack part
+ *                       kind 5) whose task code is in the second part of eft_particle.c (formerly eft_v.c): texture choice, key values, the particle pool,
  *                       creation and the per-frame step of the particles.
  *
  * All structs are this file's views (eft_t.h and eft_v.h have shorter views of the same objects).
@@ -154,7 +154,7 @@ void EftShotFx_SpawnVanishColumn(s32 objId, f32 life);
 void EftShotFx_SpawnAppearColumn(s32 objId, f32 life);
 s32 EftShotFx_IsOnScreen(EftUIVec *v, s32 margin);
 
-/* ---- particle emitter (effect pack part kind 5; module EftPtcl, continued in the second part of eft_u_b.c) ------------------- */
+/* ---- particle emitter (effect pack part kind 5; module EftPtcl, continued in the second part of eft_particle.c) ------------------- */
 
 /* Second definition block (arg.def2): three keys of the vector values. */
 typedef struct EftUPtclDef2 {
@@ -225,7 +225,7 @@ typedef struct EftUPtclDef {
     /* 0x25C */ f32 spinRange[3];
     /* 0x268 */ f32 spin2[3];           /* second stage */
     /* 0x274 */ f32 spin2Range[3];
-    /* 0x280 */ f32 unk280[12];         /* emitter angles, read in the second part of eft_u_b.c */
+    /* 0x280 */ f32 unk280[12];         /* emitter angles, read in the second part of eft_particle.c */
 } EftUPtclDef;
 
 /* A texture set entry and the set (arg.res): TEX0 values cached per frame, one bit per entry. */

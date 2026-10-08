@@ -2,8 +2,8 @@
 #define SYS_GFXM_C_H
 
 #include "types.h"
-#include "sys/gfxm_b_c.h"
-#include "sys/gfxm_b_b.h"
+#include "sys/flash.h"
+#include "sys/tex_file.h"
 
 /*
  * The movie player (0x10AD58..0x10EC18, src/sys/gfxm_c.c). Movie files are converted SWF files.

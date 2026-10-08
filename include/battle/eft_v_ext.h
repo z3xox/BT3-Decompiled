@@ -2,7 +2,7 @@
 #define BATTLE_EFT_V_EXT_H
 
 /*
- * What the second part of src/battle/eft_u_b.c (formerly eft_v.c), eft_v_b.c and eft_v_c.c use from other modules: local declarations only (every
+ * What the second part of src/battle/eft_particle.c (formerly eft_v.c), eft_impact.c and eft_link_1.c use from other modules: local declarations only (every
  * prototype here is this module's view; the callee's own file is the reference), plus the macros the three
  * files share. Not meant to be included by anything else.
  */
@@ -79,7 +79,7 @@ extern void EftPtcl_FreePtcls(EftPtclWork *w);                             /* fr
 extern void EftPtcl_Spawn(EftPtclWork *w, EftPtclWork *w2, s32 count); /* creates `count` particles */
 extern void EftPtcl_StepPtcls(EftPtclWork *w, EftPtclWork *w2);            /* steps the particles */
 
-/* The effect pack library (eft_h.c / eft_i.c). */
+/* The effect pack library (eft_emit.c / eft_sweep.c). */
 extern void EftEmit_LoadSet(void *owner, EftVSet *set, void *head, s32 *base, s32 common, s32 idx);
 extern void EftEmit_FreeSet(EftVSet *set);
 extern void EftEmit_BeginFrame(EftVSet *set);

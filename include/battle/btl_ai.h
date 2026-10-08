@@ -5,7 +5,7 @@
 
 /*
  * CPU player: the one definition of the AI manager block (0xA60 bytes) and of everything inside it. Used by
- * btl_ai_seq.c / btl_ai_cond.c (0x1B4140..0x1B80F8: step handlers, sequence runner, rule conditions) and by
+ * btl_ai_seq.c / btl_ai_think.c (0x1B4140..0x1B80F8: step handlers, sequence runner, rule conditions) and by
  * btl_ai_mgr.c (0x1BB128..: manager, reset, per-frame driver, the move action; its helper types and prototypes
  * are in battle/btl_ai_mgr.h). Offsets used by matching code are marked (m); the rest is read from the
  * disassembly of neighbouring functions.

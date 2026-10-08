@@ -6,14 +6,14 @@
 /*
  * Menu support code of the main executable, 0x2600B0..0x263098 (placeholder stem "view_b"). Five parts:
  *
- *   view_b.c    0x2600B0..0x260D20  TextBox    the rest of the text box module (it starts in view_a_e.c and is
+ *   view_b.c    0x2600B0..0x260D20  TextBox    the rest of the text box module (it starts in menu_util_1.c and is
  *                                              the same object); TextBox_DrawClip is INCLUDE_ASM
- *   view_b_b.c  0x260D20..0x2614B0  ChrTbl / ItemSet / ItemTbl  readers of the character and item tables
- *   view_b_c.c  0x2614B0..0x261ED8  MenuUtil   voice line with mouth movement (LipSync), sound options, CPU level
+ *   char_table.c  0x260D20..0x2614B0  ChrTbl / ItemSet / ItemTbl  readers of the character and item tables
+ *   menu_util_2.c  0x2614B0..0x261ED8  MenuUtil   voice line with mouth movement (LipSync), sound options, CPU level
  *                                              mapping, the CPU against CPU demo battle, small text helpers
- *   view_b_d.c  0x261ED8..0x262FF0  ShenScene  the 3D backdrop of the dragon (wish) screen; ShenScene_StepSeq is
+ *   shen_scene.c  0x261ED8..0x262FF0  ShenScene  the 3D backdrop of the dragon (wish) screen; ShenScene_StepSeq is
  *                                              INCLUDE_ASM
- *   view_b_e.c  0x262FF0..0x263098  Dbg        empty debug functions (the head of sys/debug.c)
+ *   debug_stubs.c  0x262FF0..0x263098  Dbg        empty debug functions (the head of sys/debug.c)
  */
 
 /* ---- TextBox (view_b.c): the full layout of the 0x8C-byte TextBox of battle/view_a.h ---- */
@@ -51,8 +51,8 @@ typedef struct TextBoxFull {
     /* 0x28 */ s32 maxW;
     /* 0x2C */ s32 maxH;
     /* 0x30 */ u8 color[4];
-    /* 0x34 */ u8 shadow[4];   /* "color2" in view_a.h */
-    /* 0x38 */ s32 clip[4];    /* "rect" in view_a.h */
+    /* 0x34 */ u8 shadow[4];   /* "color2" in reward_window.h */
+    /* 0x38 */ s32 clip[4];    /* "rect" in reward_window.h */
     /* 0x48 */ s32 spacingX;
     /* 0x4C */ s32 spacingY;
     /* 0x50 */ TextBoxDraw draw; /* +0x50 align (TextBox_SetUnk50), +0x80 noFlush (TextBox_SetUnk80) */
@@ -82,7 +82,7 @@ s32 TextBox_DrawClip(TextBoxDraw *draw, TextBoxClipProp *prop);
 void TextBox_AttachLine(struct Flash *flash, struct FlashRef *ref, s32 x, s32 y, s32 line, struct TextBox *box);
 void TextBox_AttachString(struct Flash *flash, struct FlashRef *ref, s32 x, s32 y, u16 *str, struct TextBox *box);
 
-/* ---- ChrTbl / ItemSet (view_b_b.c): the tables of common file 4 (gCommonRes->data[2]) ---- */
+/* ---- ChrTbl / ItemSet (char_table.c): the tables of common file 4 (gCommonRes->data[2]) ---- */
 
 #define CHRTBL_EXP_COUNT 7
 #define CHRTBL_LINK_COUNT 4
@@ -153,7 +153,7 @@ void ItemSet_GetStatsList(s32 *ids, s32 count, s32 *stats, s32 *ability);
 s32 ItemTbl_CanEquip(s32 item, s32 chara, ItemTblEntry *table);
 s32 ItemTbl_GetClass(s32 item, ItemTblEntry *table);
 
-/* ---- MenuUtil (view_b_c.c) ---- */
+/* ---- MenuUtil (menu_util_2.c) ---- */
 
 /* Mouth movement that goes with a voice line: key frames of 4 bytes {u16 frame, u16 open}, read with
  * Mem_ReadU16 (unaligned). The data block starts with 8 unknown bytes, the key count (s32) at +8 and the
@@ -228,7 +228,7 @@ void LipSync_Update(void);
 s32 LipSync_IsOpen(void);
 void LipSync_Clear(void);
 
-/* ---- ShenScene (view_b_d.c): the 3D backdrop of the dragon (wish) screen ---- */
+/* ---- ShenScene (shen_scene.c): the 3D backdrop of the dragon (wish) screen ---- */
 
 #define SHENSCENE_ACTOR_COUNT 2
 #define SHENSCENE_ACTOR_DRAGON 0  /* BtlObj type 1 */

@@ -10,7 +10,7 @@
 #include "sys/pad.h"
 #include "sys/common.h"
 extern s32 Snd_PlaySe(u32 mask, s32 id);
-/* menu_a.h has u32 Rand_Range(u32); the shell game (menu_u_d.c) only matches with a signed result. */
+/* menu_a.h has u32 Rand_Range(u32); the shell game (sim_event_shell.c) only matches with a signed result. */
 extern s32 Rand_Range(s32 n);
 
 /* The day screen's work area (mode 22): a local view of SimDay (include/menu/menu_q.h has the full layout). */
@@ -93,7 +93,7 @@ extern s32 SimDay_GetStat(s32 stat, s32 preview);
 extern void SimDay_GiveItem(void);
 extern void SimDay_Cmd(s32 cmd);
 
-/* ---- EvoZ (menu_u_g.c): the character customising screen of mode 49. The object goes on in the next chunk
+/* ---- EvoZ (evo_z_1.c): the character customising screen of mode 49. The object goes on in the next chunk
  * (EvoZ_Load, 0x395E30, is the last function of this source file); include/menu/menu_v.h has that chunk's view
  * of the same work area. Everything below is a local view. ---- */
 
@@ -277,10 +277,10 @@ extern USave *gSaveData;
 
 extern UEvoZ *gEvoZ;   /* 0x3BB140 */
 
-/* menu_u_h.c (its last function; was src/menu/menu_v.c) */
+/* evo_z_2.c (its last function; was src/menu/menu_v.c) */
 void EvoZ_Load(UEvoZ *ez, s32 section);
 
-/* next chunk (menu_v_b.c) */
+/* next chunk (evo_z_3.c) */
 extern void EvoZ_Input(UEvoZ *ez, s32 *result);
 extern void EvoZ_UpdateDialog(UEvoZ *ez);
 extern void EvoZ_ToggleList(UEvoZ *ez);

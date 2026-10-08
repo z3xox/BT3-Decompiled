@@ -31,15 +31,15 @@ CC_AS_FLAGS = "-EL -march=r5900 -mabi=o64 -no-pad-sections -mno-pdr -Iinclude"
 CC = "tools/ee-gcc2.96/bin/ee-gcc"
 CC_FLAGS = "-O2 -fno-strict-aliasing -Iinclude"
 # Keys are path prefixes: a directory (with its slash) or the stem of a group of files. The wish screen
-# (src/sys/late_a*.c, linked behind the libraries) was built with -G0 like the middleware around it.
-G_FLAGS = {"src/cri/": "-G0", "src/menu/": "-G0", "src/sys/late_a": "-G0"}
+# (src/ui/shen_wish.c, shen_confirm.c, shen_save.c, linked behind the libraries) was built with -G0 like the middleware around it.
+G_FLAGS = {"src/cri/": "-G0", "src/menu/": "-G0", "src/ui/shen_wish": "-G0", "src/ui/shen_confirm": "-G0", "src/ui/shen_save": "-G0"}
 G_DEFAULT = "-G8"
 # Assembler-only exceptions (the compiler keeps the flag above). Under -G0 Sony's assembler still deferred the
 # small-data decision for a `symbol(reg)` load of a symbol not defined yet, so the load's last instruction did
 # not move into the delay slot of a following `jal` (which got a nop); the modern gas does that only when it is
 # given a non-zero -G. `SimEv28` (the card game) has the overlay's only such site. Assembling with -G8 is safe
 # only for a file without float constants (`li.s` would become a gp-relative .lit4 load).
-AS_G_FLAGS = {"src/menu/menu_t_b": "-G8"}
+AS_G_FLAGS = {"src/menu/sim_event_card": "-G8"}
 
 # Each target is one binary that is split, rebuilt and compared on its own.
 # `subdir` is the target's folder under asm/ and `src_subdir` the one under src/; the main executable owns
