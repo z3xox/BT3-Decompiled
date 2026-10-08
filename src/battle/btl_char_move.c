@@ -174,7 +174,7 @@ s32 BtlMove_TestContact(BtlMoveChr *chr, s32 floor, f32 angle) {
         case 0:
             if (BtlChar_TestFlag(chr, 0xF)) {
                 found = 1;
-                Vec4_Copy(&n, &BtlChar_GetPos(chr)->unkC0);
+                Vec4_Copy(&n, &BtlChar_GetPos(chr)->groundNrm);
             }
             break;
         case 1:
@@ -311,7 +311,7 @@ s32 BtlMove_IsBlastIncoming(BtlMoveChr *chr, s32 a, s32 b, s32 c, f32 limit) {
             if (rec->src == NULL) {
                 continue;
             }
-            switch (rec->src->unk4) {
+            switch (rec->src->slot) {
             case 0:
             case 1:
                 continue;
@@ -443,7 +443,7 @@ void BtlMove_TurnYaw(BtlMoveChr *chr, s32 mode, f32 maxStep) {
         d = maxStep;
     }
     pose->yaw = BtlUtil_WrapAngle(pose->yaw + d);
-    pose->unkD4 = 0.0f;
+    pose->steerYaw = 0.0f;
 }
 
 /* Turns the heading pitch towards a target by at most maxStep. Modes: 0 stick y as a rate (clamped to +-(pi/2 - 0.01)),
@@ -489,7 +489,7 @@ void BtlMove_TurnPitch(BtlMoveChr *chr, s32 mode, f32 maxStep) {
                 to.y += to.y;
             }
             eps = 0.01f;
-            Vec4_Copy(&vel, &BtlChar_GetPos(chr)->unk30);
+            Vec4_Copy(&vel, &BtlChar_GetPos(chr)->vel);
             BtlOpp_GetPoseVec30(chr, &oppVel);
             speed = Vec3_Length(&vel);
             oppSpeed = Vec3_Length(&oppVel);
@@ -544,7 +544,7 @@ void BtlMove_TurnPitch(BtlMoveChr *chr, s32 mode, f32 maxStep) {
         d = maxStep;
     }
     pose->pitch = BtlUtil_WrapAngle(pose->pitch + d);
-    pose->unkD8 = 0.0f;
+    pose->steerPitch = 0.0f;
 }
 
 /* Homing dash: heads for the opponent with a stick-controlled offset. The offset goal is (pi/2 * stick), scaled down
@@ -582,7 +582,7 @@ void BtlMove_SteerAtOpponent(BtlMoveChr *chr, f32 closeSpeed, f32 yawAccel, f32 
     if (dist < 0.0f) {
         dist = 0.0f;
     }
-    Vec4_Copy(&vel, &pose->unk30);
+    Vec4_Copy(&vel, &pose->vel);
     BtlOpp_GetPoseVec30(chr, &oppVel);
     speed = Vec3_Length(&vel);
     oppSpeed = Vec3_Length(&oppVel);
@@ -599,9 +599,9 @@ void BtlMove_SteerAtOpponent(BtlMoveChr *chr, f32 closeSpeed, f32 yawAccel, f32 
         k = t * 0.5f;
     }
     goal = BtlUtil_ClampF(k * 1.5707963f * BtlInput_GetStickX(chr), -yawMax, yawMax);
-    diff = goal - pose->unkD4;
-    pose->unkD4 = BtlUtil_ApproachF(pose->unkD4, goal, BtlUtil_MinF(__builtin_fabsf(diff), yawAccel));
-    goal = BtlUtil_WrapAngle(atan2f(to.x, to.z) + pose->unkD4);
+    diff = goal - pose->steerYaw;
+    pose->steerYaw = BtlUtil_ApproachF(pose->steerYaw, goal, BtlUtil_MinF(__builtin_fabsf(diff), yawAccel));
+    goal = BtlUtil_WrapAngle(atan2f(to.x, to.z) + pose->steerYaw);
     pose->yaw = BtlUtil_WrapAngle(pose->yaw + BtlUtil_ClampF(BtlUtil_WrapAngle(goal - pose->yaw), -maxStep, maxStep));
     if (2.0f < t) {
         k2 = 1.0f;
@@ -613,14 +613,14 @@ void BtlMove_SteerAtOpponent(BtlMoveChr *chr, f32 closeSpeed, f32 yawAccel, f32 
     n.y = BtlUtil_ClampF(n.y, -1.0f, 1.0f);
     base = -Mathf_Asin(n.y);
     goal2 = BtlUtil_ClampF(-k2 * 1.5707963f * BtlInput_GetStickY(chr), -pitchMax, pitchMax);
-    cur = pose->unkD8;
+    cur = pose->steerPitch;
     diff = goal2 - cur;
     step = __builtin_fabsf(diff);
     if (pitchAccel < step) {
         step = pitchAccel;
     }
-    pose->unkD8 = BtlUtil_ApproachF(cur, goal2, step);
-    goal2 = BtlUtil_WrapAngle(base + pose->unkD8);
+    pose->steerPitch = BtlUtil_ApproachF(cur, goal2, step);
+    goal2 = BtlUtil_WrapAngle(base + pose->steerPitch);
     pose->pitch = BtlUtil_WrapAngle(pose->pitch + BtlUtil_ClampF(BtlUtil_WrapAngle(goal2 - pose->pitch), -maxStep, maxStep));
     if (t < 1.0f) {
         pose->pitch = pose->pitch * t;
@@ -683,8 +683,8 @@ void BtlMove_TurnToPoint(BtlMoveChr *chr, Vec4 *target, f32 yawStep, f32 pitchSt
     }
     pitch = -Mathf_Asin(d.y);
     pose->pitch = BtlUtil_WrapAngle(pose->pitch + BtlUtil_ClampF(BtlUtil_WrapAngle(pitch - pose->pitch), -pitchStep, pitchStep));
-    pose->unkD4 = 0.0f;
-    pose->unkD8 = 0.0f;
+    pose->steerYaw = 0.0f;
+    pose->steerPitch = 0.0f;
 }
 
 /* Builds the unit direction of travel. Modes: 0 stick rotated by the camera yaw (horizontal), 1 the same tilted by
@@ -834,7 +834,7 @@ void BtlMove_WarpAheadOfOpponent(BtlMoveChr *chr, f32 lead) {
             ofs.z *= len;
         }
         Vec4_Add(&pose->pos, &opp, &ofs);
-        rad = BtlChar_GetObj(chr)->unkFA0->radius;
+        rad = BtlChar_GetObj(chr)->bodySphere->radius;
         rad = BtlStage_GetInnerRadius() - rad;
         lim = BtlUtil_LengthXZ(&pose->pos);
         if (rad < lim) {
@@ -1136,12 +1136,12 @@ void BtlMove_SetLeanX(BtlMoveChr *chr, f32 v) {
     if (BTL_PITCH_MAX < v) {
         v = BTL_PITCH_MAX;
     }
-    pose->unkA0 = v;
+    pose->leanX = v;
 }
 
 /* Sets the model's sideways lean. */
 void BtlMove_SetLeanZ(BtlMoveChr *chr, f32 v) {
-    BtlChar_GetPos(chr)->unkA4 = v;
+    BtlChar_GetPos(chr)->leanZ = v;
 }
 
 /* 1 when the push-out moved the fighter this frame (flag 0x5E) and the two overlap in height (or flag 0x5F). */
@@ -1171,7 +1171,7 @@ s32 BtlMove_IsBlockedByOpponent(BtlMoveChr *chr) {
 void BtlMove_ClampToStage(BtlMoveChr *chr) {
     BtlMovePose *pose = BtlChar_GetPos(chr);
     f32 r = BtlUtil_LengthXZ(&pose->pos);
-    f32 rad = BtlChar_GetObj(chr)->unkFA0->radius;
+    f32 rad = BtlChar_GetObj(chr)->bodySphere->radius;
     f32 lim = BtlStage_GetInnerRadius() - rad;
 
     if (lim < r) {
@@ -1519,7 +1519,7 @@ void BtlMove_DeflectAtStageLimit(BtlMoveChr *chr, s32 back) {
     if (BtlChar_TestFlag(chr, 0x14) && 0.0f < BtlUtil_LengthXZ(&pose->pos)) {
         f32 a;
 
-        if (0.0f < pose->pos.x * pose->unk30.z - pose->pos.z * pose->unk30.x) {
+        if (0.0f < pose->pos.x * pose->vel.z - pose->pos.z * pose->vel.x) {
             a = atan2f(pose->pos.z, -pose->pos.x);
         } else {
             a = atan2f(-pose->pos.z, pose->pos.x);
@@ -1578,41 +1578,41 @@ void BtlMove_UpdateHoverOffset(BtlMoveChr *chr) {
     BtlMovePose *pose = BtlChar_GetPos(chr);
     f32 a;
 
-    Vec4_SetZero(&pose->unk20);
+    Vec4_SetZero(&pose->dispOfs);
     if (BtlChar_TestFlag(chr, 0x29)) {
-        pose->unkA8 = 0.0f;
+        pose->hoverPhase = 0.0f;
     }
     if (BtlChars_IsTimeStopped()) {
         return;
     }
     if (BtlChar_TestFlag(chr, 0xE) && BtlChar_TestFlag(chr, 0x1C)) {
-        pose->unkA8 = BtlUtil_WrapAngle(pose->unkA8 + BTL_DEG(6.0f));
+        pose->hoverPhase = BtlUtil_WrapAngle(pose->hoverPhase + BTL_DEG(6.0f));
     } else {
-        if (1.5707963f < pose->unkA8) {
-            pose->unkA8 = 3.14159265f - pose->unkA8;
+        if (1.5707963f < pose->hoverPhase) {
+            pose->hoverPhase = 3.14159265f - pose->hoverPhase;
         }
-        if (pose->unkA8 < -1.5707963f) {
-            pose->unkA8 = -3.14159265f - pose->unkA8;
+        if (pose->hoverPhase < -1.5707963f) {
+            pose->hoverPhase = -3.14159265f - pose->hoverPhase;
         }
-        if (0.0f < pose->unkA8) {
-            pose->unkA8 -= BTL_DEG(6.0f);
-            if (pose->unkA8 < 0.0f) {
-                pose->unkA8 = 0.0f;
+        if (0.0f < pose->hoverPhase) {
+            pose->hoverPhase -= BTL_DEG(6.0f);
+            if (pose->hoverPhase < 0.0f) {
+                pose->hoverPhase = 0.0f;
             }
         }
-        if (pose->unkA8 < 0.0f) {
-            pose->unkA8 += BTL_DEG(6.0f);
-            if (0.0f < pose->unkA8) {
-                pose->unkA8 = 0.0f;
+        if (pose->hoverPhase < 0.0f) {
+            pose->hoverPhase += BTL_DEG(6.0f);
+            if (0.0f < pose->hoverPhase) {
+                pose->hoverPhase = 0.0f;
             }
         }
     }
-    pose->unk20.y = Mathf_Sin(pose->unkA8) * 2.0f;
-    if (chr->unkFE8 > 0) {
-        f32 k = ((f32)(chr->unkFE8 & 1) - 0.5f) * 0.5f;
+    pose->dispOfs.y = Mathf_Sin(pose->hoverPhase) * 2.0f;
+    if (chr->shakeTimer > 0) {
+        f32 k = ((f32)(chr->shakeTimer & 1) - 0.5f) * 0.5f;
 
-        pose->unk20.x = -Mathf_Cos(pose->yaw) * k;
-        pose->unk20.z = Mathf_Sin(pose->yaw) * k;
+        pose->dispOfs.x = -Mathf_Cos(pose->yaw) * k;
+        pose->dispOfs.z = Mathf_Sin(pose->yaw) * k;
     }
 }
 
@@ -1626,8 +1626,8 @@ void BtlMove_UpdateDefenseTimers(BtlMoveChr *chr) {
     }
     if (BtlChar_TestFlag(chr, 0x12C)) {
         chr->unk1068 = -30;
-        chr->unk106C = -30;
-        chr->unk107C = -30;
+        chr->dodgeWindow = -30;
+        chr->rushBreakWindow = -30;
     }
     chr->unk1068--;
     if (chr->unk1068 < -30) {
@@ -1649,30 +1649,30 @@ void BtlMove_UpdateDefenseTimers(BtlMoveChr *chr) {
             chr->unk1068 = -30;
         }
     }
-    chr->unk106C--;
-    if (chr->unk106C < -30) {
-        chr->unk106C = -30;
+    chr->dodgeWindow--;
+    if (chr->dodgeWindow < -30) {
+        chr->dodgeWindow = -30;
         if (on) {
             if (BtlChar_TestFlag(chr, 0x138)) {
-                chr->unk106C = 4;
+                chr->dodgeWindow = 4;
             } else {
-                chr->unk106C = 2;
+                chr->dodgeWindow = 2;
             }
         }
     } else {
         if (on) {
-            chr->unk106C = -1;
+            chr->dodgeWindow = -1;
         }
     }
-    chr->unk1070--;
-    if (chr->unk1070 < -30) {
-        chr->unk1070 = -30;
+    chr->counterWindow--;
+    if (chr->counterWindow < -30) {
+        chr->counterWindow = -30;
         if (BtlInput_TestAction(chr, 0x26, 1)) {
-            chr->unk1070 = 1;
+            chr->counterWindow = 1;
         }
     } else {
         if (BtlInput_TestAction(chr, 0x26, 1)) {
-            chr->unk1070 = -1;
+            chr->counterWindow = -1;
         }
     }
     chr->unk1074--;
@@ -1682,26 +1682,26 @@ void BtlMove_UpdateDefenseTimers(BtlMoveChr *chr) {
             chr->unk1074 = 5;
         }
     }
-    chr->unk1078--;
-    if (chr->unk1078 < -30) {
-        chr->unk1078 = -30;
+    chr->throwBreakWindow--;
+    if (chr->throwBreakWindow < -30) {
+        chr->throwBreakWindow = -30;
         if (on) {
-            chr->unk1078 = 5;
+            chr->throwBreakWindow = 5;
         }
     }
-    chr->unk107C--;
-    if (chr->unk107C < -30) {
-        chr->unk107C = -30;
+    chr->rushBreakWindow--;
+    if (chr->rushBreakWindow < -30) {
+        chr->rushBreakWindow = -30;
         if (on) {
             if (BtlChar_TestFlag(chr, 0x138)) {
-                chr->unk107C = 4;
+                chr->rushBreakWindow = 4;
             } else {
-                chr->unk107C = 2;
+                chr->rushBreakWindow = 2;
             }
         }
     } else {
         if (on) {
-            chr->unk107C = -1;
+            chr->rushBreakWindow = -1;
         }
     }
     if (BtlParam_GetFlags2(chr) & 8) {
@@ -1716,6 +1716,6 @@ void BtlMove_UpdateDefenseTimers(BtlMoveChr *chr) {
         chr->unk1080 = -1;
     }
     if (BtlChar_TestFlag(chr, 0x80) && BtlMember_HasAbility(chr, 0x38)) {
-        chr->unk106C = 1;
+        chr->dodgeWindow = 1;
     }
 }

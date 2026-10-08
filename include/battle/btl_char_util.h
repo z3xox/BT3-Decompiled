@@ -39,7 +39,7 @@ typedef struct BtlVoiceEntry {
 typedef struct BtlCharGetVitals {
     /* 0x00 */ s32 hp;
     /* 0x04 */ u8 unk4[0x30 - 0x4];
-    /* 0x30 */ s32 unk30;
+    /* 0x30 */ s32 bodyChanged;
 } BtlCharGetVitals;
 
 /* Fighter (0x1600 bytes). */
@@ -50,7 +50,7 @@ typedef struct BtlCharGetChr {
     /* 0x000C */ s32 objId;   /* BtlObj_Get index */
     /* 0x0010 */ Vec4 pos;
     /* 0x0020 */ u8 unk20[0xFE0 - 0x20];
-    /* 0x0FE0 */ s32 unkFE0;  /* > 0: not free */
+    /* 0x0FE0 */ s32 stunTimer;  /* > 0: not free */
     /* 0x0FE4 */ u8 unkFE4[0x1278 - 0xFE4];
     /* 0x1278 */ s32 injectOn; /* CPU-controlled: no vibration */
     /* 0x127C */ u8 unk127C[0x1320 - 0x127C];

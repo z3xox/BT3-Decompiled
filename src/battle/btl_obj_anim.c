@@ -1156,7 +1156,7 @@ void BtlObjBody_Init(BobjObj *obj) {
         body->radius = 4.1f;
     }
     if (BtlObjBody_Exists(obj)) {
-        body->unkA0 = mdl->body->unk04;
+        body->baseRadius = mdl->body->baseRadius;
         body->unkB8 = 4.1f;
         body->parts = mdl->body->part;
         body = (BobjBody *)body->parts;
@@ -1516,7 +1516,7 @@ s32 BtlObjFade_Get(BobjObj *obj, f32 *out) {
 
 /* Stores the byte at object + 0xB30. */
 void BtlObj_SetAlphaAdd(BobjObj *obj, s32 value) {
-    obj->unkB30 = value;
+    obj->alphaAdd = value;
 }
 
 /* Stops the mouth animation; keep == 0 also resets the mouth state and the eye direction. */
@@ -1529,12 +1529,12 @@ void BtlObjFace_Reset(BobjFace *face, s32 keep) {
     face->talkLoops = 0;
     if (keep == 0) {
         face->mode = 0;
-        face->unk28 = 0;
-        face->unk44 = 0.0f;
-        face->unk48 = 0.0f;
-        face->unk42 = 0;
-        face->unk40 = 0;
-        face->unk3C = 0;
+        face->lip = 0;
+        face->lipTime = 0.0f;
+        face->lipEnd = 0.0f;
+        face->lipCount = 0;
+        face->lipIndex = 0;
+        face->lipArg = 0;
         Vec4_Set(&face->jaw, 0.0f, 0.0f, 0.0f, 1.0f);
     }
     face->step = 2.0f;
@@ -2293,15 +2293,15 @@ void BtlObj_BindTables(BObj *obj) {
     mdl = &obj->mdl;
     slot = obj->slot;
     mdl->unk00 = BObjFile_GetEntry(&slot->file[0], 3);
-    mdl->unk04 = BObjFile_GetEntry(&slot->file[0], 0xC);
-    mdl->unk3C = BObjFile_GetEntry(&slot->file[0], 2);
+    mdl->texFile = BObjFile_GetEntry(&slot->file[0], 0xC);
+    mdl->body = BObjFile_GetEntry(&slot->file[0], 2);
     if (slot->file[1].buf != NULL) {
         for (i = 0; i < 0x19E; i++) {
             ((BObjBindView *)obj)->res.mdl.anims[i] = BObjFile_GetEntry(&slot->file[1], i + 1);
         }
     }
     for (i = 0; i < 8; i++) {
-        mdl->unk720[i] = BObjFile_GetEntry(&slot->file[0], i + 0x1D);
+        mdl->modelAnims[i] = BObjFile_GetEntry(&slot->file[0], i + 0x1D);
     }
     for (i = 0; i < 8; i++) {
         mdl->mouthA[i] = BObjFile_GetEntry(&slot->file[0], i + 4);
@@ -2316,13 +2316,13 @@ void BtlObj_BindTables(BObj *obj) {
     }
     mdl->eyes = BObjFile_GetEntry(&slot->file[0], 0xD);
     for (i = 0; i < 3; i++) {
-        ((BObjBindView *)obj)->res.mdl.unk98[i] = BObjFile_GetEntry(&slot->file[0], i + 0x29);
+        ((BObjBindView *)obj)->res.mdl.camAnims[i] = BObjFile_GetEntry(&slot->file[0], i + 0x29);
     }
     for (i = 0; i < 8; i++) {
         mdl->unk8D0[i] = BObjFile_GetEntry(&slot->file[0], i + 0x1D);
     }
     for (i = 0; i < 4; i++) {
-        mdl->unk8F0[i] = BObjFile_GetEntry(&slot->file[0], i + 0x25);
+        mdl->charCamAnims[i] = BObjFile_GetEntry(&slot->file[0], i + 0x25);
     }
     mdl->unkA4 = BObjFile_GetEntry(&slot->file[0], gProgress->unk00 + 0x2D);
     base = 0x64;
@@ -2343,13 +2343,13 @@ void BtlObj_BindTables(BObj *obj) {
         Res_RelocateOffsets(&mdl->unk38, mdl->unk38, mdl->unk38);
     }
     mdl->unk924 = BObjFile_GetEntry(&slot->file[0], 0x16);
-    mdl->unk904 = BObjFile_GetEntry(&slot->file[0], 0x12);
-    mdl->unk908 = BObjFile_GetEntry(&slot->file[0], 0x13);
-    mdl->unk90C = BObjFile_GetEntry(&slot->file[0], 0x14);
-    mdl->unk910 = BObjFile_GetEntry(&slot->file[0], 0x15);
-    mdl->unk914 = BObjFile_GetEntry(&slot->file[0], 0x18);
-    mdl->unk918 = BObjFile_GetEntry(&slot->file[0], 0x19);
-    mdl->unk91C = BObjFile_GetEntry(&slot->file[0], 0x1B);
+    mdl->param = BObjFile_GetEntry(&slot->file[0], 0x12);
+    mdl->atk = BObjFile_GetEntry(&slot->file[0], 0x13);
+    mdl->kiBlast = BObjFile_GetEntry(&slot->file[0], 0x14);
+    mdl->move = BObjFile_GetEntry(&slot->file[0], 0x15);
+    mdl->super = BObjFile_GetEntry(&slot->file[0], 0x18);
+    mdl->skill = BObjFile_GetEntry(&slot->file[0], 0x19);
+    mdl->aiParam = BObjFile_GetEntry(&slot->file[0], 0x1B);
     mdl->unk920 = BObjFile_GetEntry(&slot->file[0], 0x1C);
     mdl->chain = BObjFile_GetEntry(&slot->file[0], 0x17);
 }
@@ -2374,11 +2374,11 @@ void BtlObj_InitFlags(BObj *obj) {
     } else {
         state->flags |= 0x10000;
     }
-    if (mdl->unk904 == NULL) {
+    if (mdl->param == NULL) {
         BtlObj_SetColorPreset(obj, 0, 0);
     } else {
         top = ((BObjModelBytes *)mdl->model)->flagsTop;
-        BtlObj_SetColorPreset(obj, mdl->unk904[3], top & 1);
+        BtlObj_SetColorPreset(obj, mdl->param[3], top & 1);
     }
 }
 
@@ -2805,7 +2805,7 @@ void BtlObj_SaveNodePositions(BObj *obj, s32 relative) {
     bound = obj->mdl.bounds;
     pose = &obj->pose;
     if (relative) {
-        Vec4_Copy(&ref, &BtlObj_GetNode(obj, 0)->unk90);
+        Vec4_Copy(&ref, &BtlObj_GetNode(obj, 0)->pos);
     } else {
         Vec4_SetZero(&ref);
     }

@@ -64,7 +64,7 @@ typedef struct BtlAtkRecord {
     /* 0x0A */ u16 kiGain;      /* BtlAtk_GetKiGain: +50% (ability 0x6E) or +25% (0x20), / hits when hits >= 1 */
     /* 0x0C */ u16 throwC;      /* BtlAtk_GetThrowParamC: raw; read by the throw setup at 0x1FC008 */
     /* 0x0E */ u16 throwE;      /* BtlAtk_GetThrowParamE: raw; the same */
-    /* 0x10 */ u16 unk10;       /* BtlAtk_GetChargeGaugeGain: / hits when hits >= 1; added to fighter + 0xD80 per hit */
+    /* 0x10 */ u16 chargeGaugeGain;       /* BtlAtk_GetChargeGaugeGain: / hits when hits >= 1; added to fighter + 0xD80 per hit */
     /* 0x12 */ u8 pushHit;      /* BtlAtk_GetPushOnHit: units of 10 km/h, returned per frame */
     /* 0x13 */ u8 pushGuard;    /* BtlAtk_GetPushOnGuard: the same */
     /* 0x14 */ u8 launchSpeed;  /* BtlAtk_GetLaunchSpeed: the same, * curve row 8; the attacker's own speed */
@@ -105,8 +105,8 @@ typedef struct BtlAtkRecord {
  * meanings come from the callers (see the report). +0x5C..+0x7F and +0x8F.. are documented in btl_tech.h.
  */
 typedef struct BtlParam {
-    /* 0x00 */ u16 unk0;          /* BtlParam_GetCharaFlags: bit 0x80 is tested by seven callers */
-    /* 0x02 */ s8 unk2;           /* BtlParam_GetSizeClass: 4 exempts the character from throws, rushes and some dodges */
+    /* 0x00 */ u16 charaFlags;          /* BtlParam_GetCharaFlags: bit 0x80 is tested by seven callers */
+    /* 0x02 */ s8 sizeClass;           /* BtlParam_GetSizeClass: 4 exempts the character from throws, rushes and some dodges */
     /* 0x03 */ s8 auraKind;       /* BtlParam_GetAuraKind: replaced by 0..10 by abilities 0x4D..0x56, 0x74 */
     /* 0x04 */ u8 unk4[0x10 - 0x4];
     /* 0x10 */ u32 flags;         /* BtlParam_GetFlags */
@@ -131,9 +131,9 @@ typedef struct BtlParam {
     /* 0x5C */ u8 unk5C[0x80 - 0x5C]; /* btl_tech.h */
     /* 0x80 */ s16 blastLimitA;   /* BtlParam_GetBlastLimitA: live ki blasts of class 0 allowed at once */
     /* 0x82 */ s16 blastLimitB;   /* BtlParam_GetBlastLimitB: the same for class 1 */
-    /* 0x84 */ u8 unk84[4];       /* BtlParam_GetRushFinisher */
-    /* 0x88 */ u8 unk88[2];       /* BtlParam_GetChainKind: argument of BtlAct_GetChainAction when actions 0x67..0x69 end by flag 0x70 */
-    /* 0x8A */ u8 unk8A[5];       /* BtlParam_GetFinisherChoice */
+    /* 0x84 */ u8 rushFinisher[4];       /* BtlParam_GetRushFinisher */
+    /* 0x88 */ u8 chainKind[2];       /* BtlParam_GetChainKind: argument of BtlAct_GetChainAction when actions 0x67..0x69 end by flag 0x70 */
+    /* 0x8A */ u8 finisherChoice[5];       /* BtlParam_GetFinisherChoice */
     /* 0x8F */ u8 unk8F[0x98 - 0x8F];
     /* 0x98 */ u8 transTarget[4]; /* BtlParam_GetSlotId: transformation targets; 0xFF = none (BtlParam_CountSlots) */
     /* 0x9C */ u8 transCost[4];   /* BtlParam_GetSlotCost: blast stocks, returned * 100000 */
@@ -141,7 +141,7 @@ typedef struct BtlParam {
     /* 0xA4 */ u8 transKind[4];   /* BtlParam_GetSlotA4 */
     /* 0xA8 */ u8 transA8[4];     /* BtlParam_GetSlotA8 */
     /* 0xAC */ s8 transDefault;   /* BtlParam_GetDefaultSlot: the target a neutral input picks */
-    /* 0xAD */ u8 unkAD;          /* BtlParam_GetFormFlags; bit 4 + n: BtlParam_TestSlotResetsVariant(n) (caller: BtlAct_QueueTransform) */
+    /* 0xAD */ u8 formFlags;          /* BtlParam_GetFormFlags; bit 4 + n: BtlParam_TestSlotResetsVariant(n) (caller: BtlAct_QueueTransform) */
     /* 0xAE */ u8 fusionCost[3];  /* BtlParam_GetCostAE: blast stocks, returned * 100000 */
     /* 0xB1 */ u8 fusionSeq[3];   /* BtlParam_GetFusionSequence */
     /* 0xB4 */ u8 fusionResult[3]; /* BtlParam_GetFusionResult */
@@ -158,7 +158,7 @@ typedef struct BtlTechObj {
     /* 0x91C */ BtlParam *param;
     /* 0x920 */ BtlAtkRecord *atk;  /* BTL_ATK_COUNT records (a pointer, not an inline array) */
     /* 0x924 */ u8 unk924[0xC90 - 0x924];
-    /* 0xC90 */ u8 unkC90[0x1C];    /* BtlAtk_GetId reads the two bytes below through a pointer to here */
+    /* 0xC90 */ u8 hitVolume[0x1C];    /* BtlAtk_GetId reads the two bytes below through a pointer to here */
     /* 0xCAC */ s8 hitCount;        /* hits of the current animation (inferred from the first / middle / last test) */
     /* 0xCAD */ s8 hitNo;           /* number of the current hit: 0 = first, 0 or -1 = "first" for animation 0x37 */
 } BtlTechObj;
@@ -188,9 +188,9 @@ typedef struct BtlTechChr {
     /* 0x0000 */ u8 unk0[0x998];
     /* 0x0998 */ s32 memberCount;
     /* 0x099C */ u8 unk99C[0xD50 - 0x99C];
-    /* 0x0D50 */ s32 unkD50;        /* BtlCtrl_IsOppComboDamageNew reads the opponent's */
+    /* 0x0D50 */ s32 comboChanged;        /* BtlCtrl_IsOppComboDamageNew reads the opponent's */
     /* 0x0D54 */ u8 unkD54[0xD68 - 0xD54];
-    /* 0x0D68 */ s32 unkD68;        /* non-zero selects attack ids 0x3E..0x42 instead of 0x34..0x3D */
+    /* 0x0D68 */ s32 dashCount;        /* non-zero selects attack ids 0x3E..0x42 instead of 0x34..0x3D */
     /* 0x0D6C */ u8 unkD6C[0xD78 - 0xD6C];
     /* 0x0D78 */ f32 charge;        /* 0..1: how far the current attack was charged */
     /* 0x0D7C */ u8 unkD7C[0xE28 - 0xD7C];
@@ -227,7 +227,7 @@ typedef struct BtlTechPromptRow {
 typedef struct BtlTechRoster {
     /* 0x00 */ u8 unk0[0x2C];
     /* 0x2C */ BtlTechAtkAction *atkActions;
-    /* 0x30 */ void *unk30;
+    /* 0x30 */ void *paramTbl;
     /* 0x34 */ BtlTechPromptRow *promptRows;
 } BtlTechRoster;
 
@@ -239,14 +239,14 @@ typedef struct BtlTechWork {
 
 /* Battle work + 0x5A8 (Battle_GetWork5A8). */
 typedef struct BtlTechWork5A8 {
-    /* 0x0 */ s32 unk0;
-    /* 0x4 */ s32 unk4;
+    /* 0x0 */ s32 cur;
+    /* 0x4 */ s32 count;
 } BtlTechWork5A8;
 
 /* gProgress: only the field read here. */
 typedef struct BtlTechProgress {
     /* 0x000 */ u8 unk0[0x7F4];
-    /* 0x7F4 */ s32 unk7F4;
+    /* 0x7F4 */ s32 tutorial;
 } BtlTechProgress;
 
 /* by side */

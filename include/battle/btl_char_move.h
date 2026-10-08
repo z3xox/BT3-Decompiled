@@ -35,27 +35,27 @@
 typedef struct BtlMovePose {
     /* 0x00 [0x010] */ Vec4 pos;       /* world position, w forced to 1 after a move */
     /* 0x10 [0x020] */ Vec4 rot;       /* y = model yaw */
-    /* 0x20 [0x030] */ Vec4 unk20;     /* display offset rebuilt every frame: hover bob (y) and shake (x, z) */
-    /* 0x30 [0x040] */ Vec4 unk30;     /* movement of the previous frame between snapshots 0 and 1 (written by
+    /* 0x20 [0x030] */ Vec4 dispOfs;     /* display offset rebuilt every frame: hover bob (y) and shake (x, z) */
+    /* 0x30 [0x040] */ Vec4 vel;     /* movement of the previous frame between snapshots 0 and 1 (written by
                                           BtlChar_EndFrame); used here as "my velocity" */
     /* 0x40 [0x050] */ Vec4 unk40;     /* whole movement of the previous frame (other); read here through BtlOpp_GetVelocity */
-    /* 0x50 [0x060] */ Vec4 unk50;     /* root motion position (other) */
-    /* 0x60 [0x070] */ Vec4 unk60;     /* root motion rotation (other) */
+    /* 0x50 [0x060] */ Vec4 rootPos;     /* root motion position (other) */
+    /* 0x60 [0x070] */ Vec4 rootRot;     /* root motion rotation (other) */
     /* 0x70 [0x080] */ Vec4 unk70;     /* impulse velocity (knock-back), metres per frame */
     /* 0x80 [0x090] */ Vec4 dir;       /* unit direction of travel, w = 0 */
     /* 0x90 [0x0A0] */ f32 pitch;      /* heading pitch, positive = up */
     /* 0x94 [0x0A4] */ f32 yaw;        /* heading yaw */
     /* 0x98 [0x0A8] */ f32 speed;      /* metres per frame along dir */
     /* 0x9C [0x0AC] */ f32 fallSpeed;  /* vertical speed, positive = down */
-    /* 0xA0 [0x0B0] */ f32 unkA0;      /* model lean about x (BtlMove_SetLeanX) */
-    /* 0xA4 [0x0B4] */ f32 unkA4;      /* model lean about z (BtlMove_SetLeanZ) */
-    /* 0xA8 [0x0B8] */ f32 unkA8;      /* hover bob phase */
+    /* 0xA0 [0x0B0] */ f32 leanX;      /* model lean about x (BtlMove_SetLeanX) */
+    /* 0xA4 [0x0B4] */ f32 leanZ;      /* model lean about z (BtlMove_SetLeanZ) */
+    /* 0xA8 [0x0B8] */ f32 hoverPhase;      /* hover bob phase */
     /* 0xAC [0x0BC] */ f32 unkAC;
-    /* 0xB0 [0x0C0] */ Vec4 unkB0;     /* ground point below the fighter (other) */
-    /* 0xC0 [0x0D0] */ Vec4 unkC0;     /* ground normal, valid with flag 0xF */
-    /* 0xD0 [0x0E0] */ f32 unkD0;
-    /* 0xD4 [0x0E4] */ f32 unkD4;      /* yaw steering offset of the homing dash */
-    /* 0xD8 [0x0E8] */ f32 unkD8;      /* pitch steering offset of the homing dash */
+    /* 0xB0 [0x0C0] */ Vec4 groundPos;     /* ground point below the fighter (other) */
+    /* 0xC0 [0x0D0] */ Vec4 groundNrm;     /* ground normal, valid with flag 0xF */
+    /* 0xD0 [0x0E0] */ f32 groundFlags;
+    /* 0xD4 [0x0E4] */ f32 steerYaw;      /* yaw steering offset of the homing dash */
+    /* 0xD8 [0x0E8] */ f32 steerPitch;      /* pitch steering offset of the homing dash */
     /* 0xDC [0x0EC] */ f32 orbitNear;  /* BtlMove_RequestOrbit */
     /* 0xE0 [0x0F0] */ f32 orbitFar;
     /* 0xE4 [0x0F4] */ u8 unkE4[0xF0 - 0xE4];
@@ -74,14 +74,14 @@ typedef struct BtlMoveChr {
     /* 0x04A4 */ u8 unk4A4[0xFB0 - 0x4A4];
     /* 0x0FB0 */ s32 unkFB0;     /* pending hit reaction id; != 1 closes the first defence window */
     /* 0x0FB4 */ u8 unkFB4[0xFE8 - 0xFB4];
-    /* 0x0FE8 */ s32 unkFE8;     /* > 0: the model shakes sideways, the side alternating with bit 0 */
+    /* 0x0FE8 */ s32 shakeTimer;     /* > 0: the model shakes sideways, the side alternating with bit 0 */
     /* 0x0FEC */ u8 unkFEC[0x1068 - 0xFEC];
     /* 0x1068 */ s32 unk1068;    /* defence windows (see BtlMove_UpdateDefenseTimers): > 0 = open */
-    /* 0x106C */ s32 unk106C;
-    /* 0x1070 */ s32 unk1070;
+    /* 0x106C */ s32 dodgeWindow;
+    /* 0x1070 */ s32 counterWindow;
     /* 0x1074 */ s32 unk1074;
-    /* 0x1078 */ s32 unk1078;
-    /* 0x107C */ s32 unk107C;
+    /* 0x1078 */ s32 throwBreakWindow;
+    /* 0x107C */ s32 rushBreakWindow;
     /* 0x1080 */ s32 unk1080;
     /* 0x1084 */ u8 unk1084[0x1600 - 0x1084];
 } BtlMoveChr; /* size 0x1600 */
@@ -95,7 +95,7 @@ typedef struct BtlMoveObjBody {
 /* Battle object of a fighter (BtlChar_GetObj). */
 typedef struct BtlMoveObj {
     /* 0x0000 */ u8 unk0[0xFA0];
-    /* 0x0FA0 */ BtlMoveObjBody *unkFA0;
+    /* 0x0FA0 */ BtlMoveObjBody *bodySphere;
     /* 0x0FA4 */ u8 unkFA4[0x1660 - 0xFA4];
     /* 0x1660 */ u8 *work;   /* stage contact work buffer */
 } BtlMoveObj;
@@ -122,7 +122,7 @@ typedef struct BtlMoveBlastDef {
 
 typedef struct BtlMoveBlastSrc {
     /* 0x0 */ s32 ownerId;
-    /* 0x4 */ s32 unk4;      /* 0 / 1: not counted as incoming */
+    /* 0x4 */ s32 slot;      /* 0 / 1: not counted as incoming */
 } BtlMoveBlastSrc;
 
 typedef struct BtlMoveBlastRec {

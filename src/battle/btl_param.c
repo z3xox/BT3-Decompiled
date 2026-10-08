@@ -91,7 +91,7 @@ s32 BtlCtrl_IsOppComboDamageNew(s32 side) {
         if (Battle_GetWork()->flags & 0x2000) {
             return 0;
         }
-        return opp->unkD50;
+        return opp->comboChanged;
     }
     return 0;
 }
@@ -304,7 +304,7 @@ s32 BtlCtrl_TestProgressFrameBit(void) {
     }
     chr = BtlChar_Get(0);
     if (chr != NULL) {
-        return (chr->frameBits >> gProgress->unk7F4) & 1;
+        return (chr->frameBits >> gProgress->tutorial) & 1;
     }
     return 0;
 }
@@ -649,12 +649,12 @@ s32 BtlCtrl_GetWork5A8Count(void) {
     if (work == NULL) {
         return 0;
     }
-    n = work->unk0;
+    n = work->cur;
     if (BtlMember_CountAlive(BtlChar_Get(1)) < 1) {
         n++;
     }
-    if (work->unk4 < n) {
-        return work->unk4;
+    if (work->count < n) {
+        return work->count;
     }
     return n;
 }
@@ -702,8 +702,8 @@ static inline BtlTechAtkAction *BtlAtk_GetActionRow(s32 n) {
 s32 BtlAtk_GetId(BtlTechChr *chr) {
     BtlTechObj *obj = BtlChar_GetObj(chr);
     f32 charge = chr->charge;
-    s8 *hit = (s8 *)obj->unkC90;
-    s32 alt = chr->unkD68;
+    s8 *hit = (s8 *)obj->hitVolume;
+    s32 alt = chr->dashCount;
     s32 action = BtlAct_GetCurrent(chr);
     s32 anim = BtlAnim_GetId(chr);
     f32 mid = BTL_ATK_CHARGE_MID;
@@ -1054,7 +1054,7 @@ s32 BtlAtk_GetGuardKiCost(BtlTechChr *chr) {
 /* Record +0x10 divided by the hit count: what a hit adds to the fighter's +0xD80 gauge (decays 400 per frame). */
 s32 BtlAtk_GetChargeGaugeGain(BtlTechChr *chr) {
     BtlTechObj *obj = BtlChar_GetObj(chr);
-    s32 val = BtlAtk_GetRecord(chr, NULL)->unk10;
+    s32 val = BtlAtk_GetRecord(chr, NULL)->chargeGaugeGain;
     s32 hits = BtlObjAnim_QueryEvent(obj, 1, 0, 3);
 
     if (hits > 0) {
@@ -1337,12 +1337,12 @@ u32 BtlParam_GetFlags3(BtlTechChr *chr) {
 
 /* Parameter +0x00 (u16). */
 s32 BtlParam_GetCharaFlags(BtlTechChr *chr) {
-    return BtlChar_GetObj(chr)->param->unk0;
+    return BtlChar_GetObj(chr)->param->charaFlags;
 }
 
 /* Parameter +0x02: 4 is tested by the hit code (not thrown, not rushed). */
 s32 BtlParam_GetSizeClass(BtlTechChr *chr) {
-    return BtlChar_GetObj(chr)->param->unk2;
+    return BtlChar_GetObj(chr)->param->sizeClass;
 }
 
 /* Parameter +0xAC: the transformation slot a neutral input picks. */
@@ -1377,7 +1377,7 @@ s32 BtlParam_GetSlotA8(BtlTechChr *chr, s32 slot) {
 
 /* Parameter +0xAD. */
 s32 BtlParam_GetFormFlags(BtlTechChr *chr) {
-    return BtlChar_GetObj(chr)->param->unkAD;
+    return BtlChar_GetObj(chr)->param->formFlags;
 }
 
 /* How many of the four transformation targets at +0x98 are not 0xFF. */
@@ -1396,7 +1396,7 @@ s32 BtlParam_CountSlots(BtlTechChr *chr) {
 
 /* Bit 4 + n of parameter +0xAD. */
 s32 BtlParam_TestSlotResetsVariant(BtlTechChr *chr, s32 n) {
-    return (BtlChar_GetObj(chr)->param->unkAD & (0x10 << n)) != 0;
+    return (BtlChar_GetObj(chr)->param->formFlags & (0x10 << n)) != 0;
 }
 
 /* Parameter +0xB4 + n: fusion n. */
@@ -1598,7 +1598,7 @@ s32 BtlParam_GetRushFinisher(BtlTechChr *chr, u32 n) {
     if (n >= 4) {
         n = 0;
     }
-    return param->unk84[n];
+    return param->rushFinisher[n];
 }
 
 /* Parameter +0x88 + n (n above 1 reads entry 0). */
@@ -1608,7 +1608,7 @@ s32 BtlParam_GetChainKind(BtlTechChr *chr, u32 n) {
     if (n >= 2) {
         n = 0;
     }
-    return param->unk88[n];
+    return param->chainKind[n];
 }
 
 /* Parameter +0x8A + n (n above 4 reads entry 0). */
@@ -1618,7 +1618,7 @@ s32 BtlParam_GetFinisherChoice(BtlTechChr *chr, u32 n) {
     if (n >= 5) {
         n = 0;
     }
-    return param->unk8A[n];
+    return param->finisherChoice[n];
 }
 
 /* Parameter +0x1C. */

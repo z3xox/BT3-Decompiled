@@ -198,7 +198,7 @@ typedef struct BtlInputChr {
     /* 0x1280 */ f32 injectStickX;  /* -1..1 */
     /* 0x1284 */ f32 injectStickY;
     /* 0x1288 */ u8 unk1288[0x1594 - 0x1288];
-    /* 0x1594 */ s32 unk1594;       /* >= 2 enables BTLC_SWITCH; passed to BtlSuper_GetPromptRow */
+    /* 0x1594 */ s32 techClass;       /* >= 2 enables BTLC_SWITCH; passed to BtlSuper_GetPromptRow */
     /* 0x1598 */ u8 unk1598[0x1600 - 0x1598];
 } BtlInputChr; /* 0x1600 */
 

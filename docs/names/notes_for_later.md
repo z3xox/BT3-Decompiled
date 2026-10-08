@@ -200,3 +200,20 @@ Group 03 (btl_char_action.h .. btl_char_cam.h):
   BtlCharApiChr): one must win before a shared fighter header.
 - Choices: +0xE40 techDelay (BtlSuperChr: cooldown, and the accessor is ...GetTechniqueCooldown); attack block +0x09 leadIn (BtlActBAttack: level);
   +0x974 motion (BtlStatChr: anim.cur); +0x1550..0x1558 scriptMotion / Blend / Loop in BtlActChr (BtlCapiBChr: motion / motionBlend / motionLoop).
+
+Group 05 (btl_char_mgr.h .. btl_script.h):
+- btl_char_mgr.h:173: padFlagA (+0x15D0) is BtlCharVib.enabled; the following unk15D4[5] is the rest of that structure (power, time,
+  smallTime, phase, toggle; the first an f32): the pair is better replaced by BtlCharVib.
+- btl_char_mgr.h:187: the comment on unkA0 says "four 0x20-byte records at +0xB0": the records start at +0xA0 (BtlFlagSndReqList.req).
+- btl_char_mgr.h placeholders that are not `unk`: prev964 (+0x968) prevActionFrame, prev974 (+0x97C) prevMotion, prev1262 (+0x126B) prevFxBits,
+  new20 (+0x12E0) newVariant. :130 unkE00[5] covers five words other views name separately (and disagree on: dodges / skillStackA, ...).
+- btl_char_api_2.h:282: switchPrompt (+0x1594) is the technique class being watched (techClass in btl_param.h, inputClass in btl_act_super.h).
+- btl_obj_anim.h BobjParam is BtlParam (object +0x91C): unk00 is typed f32 but overlays charaFlags (u16), sizeClass, auraKind; height (+4)
+  and radius (+8) fall inside BtlParam.unk4[], which could take those names.
+- btl_obj.h:146: BtlObjMdl.anims (+0x98) holds the camera animations DemoCam_PlayObjAnim plays; the motion table is BObjMdl.anims at +0xA8.
+- BobjFace (btl_obj_anim.h) against BObjFace (btl_obj_anim_part2.h): blinkTime / blinkFrames, jawKeys / jawTable, talkKeys / talkTable.
+- btl_char_move.h:110: BtlMoveBlastRec.def (+0x68) is `atk` in EftHitRec / EftDetRec, with `src` at +0x64. :53: BtlMovePose.unkD0 is f32
+  here, `s32 groundFlags` in BtlCollPose. btl_obj_anim.h:117: BobjPart.unk0C is s32 here, `u8 active` + padding elsewhere.
+- Choices: fighter +0x1594 techClass; +0xE14 / +0xE18 skillTimerC / skillTimerD (btl_char_coll.h: noFlinch for +0xE18: group 04 chose that);
+  object +0x1660 charaWork (four views: work); object +0xFA0 bodySphere (EftDetObj: bodyPos); object +0x14 res (BObj: slot).
+- DemoCamPose.unk1C sits in the anonymous struct `f` inside the union.

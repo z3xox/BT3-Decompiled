@@ -355,8 +355,8 @@ u32 BtlInput_BuildCommands(BtlInputChr *chr, u32 held, u32 prev) {
     if (pressed & BTLB_DIR_MASK) {
         cmd |= BTLC_DIR_P;
     }
-    if (chr->unk1594 >= 2) {
-        if (BtlInput_TestSwitch(chr, chr->unk1594, held, pressed)) {
+    if (chr->techClass >= 2) {
+        if (BtlInput_TestSwitch(chr, chr->techClass, held, pressed)) {
             cmd |= BTLC_SWITCH;
         }
     }

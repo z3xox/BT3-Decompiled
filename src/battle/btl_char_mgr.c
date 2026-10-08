@@ -246,7 +246,7 @@ void BtlChar_BindObject(BtlMgrChr *chr) {
 
     chr->objId = BattleSide_GetObjId(chr->side);
     obj = BtlChar_GetObj(chr);
-    chr->unk980 = -1;
+    chr->motionSub = -1;
     for (i = 0; i < 3; i++) {
         if (obj->file[i] != NULL) {
             chr->objTbl[i] = FILE_TABLE(obj->file[i], 3);
@@ -316,8 +316,8 @@ void BtlChar_Reset(BtlMgrChr *chr) {
     chr->optA = BattleSide_GetOptionA(side);
     chr->optBOff = BattleSide_GetOptionB(side) == 0;
     chr->padFlagA = (gSaveData->flags & (2 << chr->pad)) != 0;
-    chr->unk1590 = -1;
-    chr->unk1594 = -1;
+    chr->dirHeld = -1;
+    chr->techClass = -1;
     BtlInput_Init(chr);
     BtlAct_ClearQueue(chr);
     chr->injectOn = BattleSide_IsCpu(side);
@@ -331,8 +331,8 @@ void BtlChar_Reset(BtlMgrChr *chr) {
     BtlObjAnim_SamplePose(obj);
     BtlObjPose_CalcMatrices(obj);
     chr->memberCount = BattleSide_GetMemberCount(side);
-    chr->unk1300 = BattleSide_GetChangeAllowed(side);
-    chr->unkCF4 = BattleSide_GetSwitchEnabled(side);
+    chr->changeAllowed = BattleSide_GetChangeAllowed(side);
+    chr->switchEnabled = BattleSide_GetSwitchEnabled(side);
     BtlChar_CopyAllBonus(chr);
     BtlChar_CopyAllAbility(chr);
     for (i = 0; i < chr->memberCount; i++) {
@@ -345,14 +345,14 @@ void BtlChar_Reset(BtlMgrChr *chr) {
         m = BattleSide_GetMember(side, i);
         BtlMember_LoadParams(chr, i, 1, m->health, BattleSide_GetMemberVariant(side, i));
     }
-    chr->unk99C = 0;
+    chr->switchGauge = 0;
     if (BtlMember_HasAbility(chr, 0x1B)) {
-        chr->unk99C = 100000;
+        chr->switchGauge = 100000;
     }
     res = BattleResult_GetPtr();
     res->maxComboDamage[chr->side] = 0;
     res->maxComboHits[chr->side] = 0;
-    if (BtlMember_GetActiveGauge(chr)->unk20 != 0) {
+    if (BtlMember_GetActiveGauge(chr)->variant != 0) {
         BtlChar_GetObj(chr)->flags |= 0x40000000;
     }
 }
@@ -385,7 +385,7 @@ void BtlChar_OnModelLoaded(BtlMgrChr *chr) {
         m->chara = chr->newChara;
         g = &m->gauge;
         m->costume = chr->newCostume;
-        g->unk20 = chr->new20;
+        g->variant = chr->new20;
         ratio = BtlMember_GetHealthRatio(chr);
         BtlMember_LoadParams(chr, BtlMember_GetActiveIndex(chr), 0, 0.0f, 0);
         g->health = (f32)g->healthMax * ratio + 0.5f;
@@ -410,15 +410,15 @@ void BtlChar_OnModelLoaded(BtlMgrChr *chr) {
         /* switch to another team member */
         BtlMember_SetActiveIndex(chr, chr->nextMember);
         BtlMember_GetSwitchTarget(chr);
-        chr->unk99C = 0;
+        chr->switchGauge = 0;
         g = &BtlMember_GetActive(chr)->gauge;
         if (BtlMember_HasAbility(chr, 0x43)) {
             BtlChar_SetHeldFlag(chr, 6);
-            g->unk1C = 30000;
+            g->maxPower = 30000;
             g->ki = g->kiMax;
         } else {
             BtlChar_ClearFlag(chr, 6);
-            g->unk1C = 0;
+            g->maxPower = 0;
         }
         if (BtlMember_HasAbility(chr, 0x61)) {
             g->blast = g->blastMax;
@@ -459,7 +459,7 @@ void BtlChar_OnModelLoaded(BtlMgrChr *chr) {
             }
             if (BtlParam_GetFormFlags(chr) & 8) {
                 BtlChar_SetHeldFlag(chr, 6);
-                g->unk1C = 30000;
+                g->maxPower = 30000;
                 g->ki = g->kiMax;
             }
             g->health = BtlUtil_Clamp(g->health, 1, g->healthMax);
@@ -467,10 +467,10 @@ void BtlChar_OnModelLoaded(BtlMgrChr *chr) {
             other->present = 0;
             og->health = 0;
         }
-        g->unk34 = 1;
+        g->fused = 1;
         m->chara = chr->newChara;
         m->costume = chr->newCostume;
-        g->unk20 = chr->new20;
+        g->variant = chr->new20;
         break;
     case 0x104:
     case 0x106:
@@ -486,9 +486,9 @@ void BtlChar_OnModelLoaded(BtlMgrChr *chr) {
         m->chara = chr->newChara;
         g = &m->gauge;
         m->costume = chr->newCostume;
-        g->unk20 = chr->new20;
+        g->variant = chr->new20;
         if (BtlChar_TestFlag(chr, 0xA6)) {
-            g->unk30 = 1;
+            g->bodyChanged = 1;
             BtlObj_BindCommonTables(obj);
             BtlMember_LoadParams(chr, BtlMember_GetActiveIndex(chr), 0, 0.0f, 0);
             g->health = g->healthMax;
@@ -496,7 +496,7 @@ void BtlChar_OnModelLoaded(BtlMgrChr *chr) {
         break;
     }
     BtlObj_SetColorPreset(obj, BtlParam_GetAuraKind(chr), -1);
-    if (BtlMember_GetActiveGauge(chr)->unk20 != 0) {
+    if (BtlMember_GetActiveGauge(chr)->variant != 0) {
         obj->flags |= 0x40000000;
     } else {
         obj->flags &= ~0x40000000;
@@ -511,19 +511,19 @@ void BtlChar_OnStageLoaded(BtlMgrChr *chr) {
     BtlChar_PlaceAtStart(chr);
     BtlChar_ClearFlag(chr, 0xE);
     BtlChar_SetHeldFlag(chr, 0xF);
-    chr->unk15D4[0] = 0;
-    chr->unk15D4[1] = 0;
-    chr->unk15D4[2] = 0;
-    chr->unk15D4[3] = 0;
-    chr->unk15D4[4] = 0;
+    chr->vibState[0] = 0;
+    chr->vibState[1] = 0;
+    chr->vibState[2] = 0;
+    chr->vibState[3] = 0;
+    chr->vibState[4] = 0;
     BtlChar_ResetLook(chr);
     BtlChar_PoseToObj(chr, 1);
-    if ((BtlAnim_GetFlags(BtlAnim_GetId(chr)) & 0x10) || chr->unkFB0 >= 3) {
+    if ((BtlAnim_GetFlags(BtlAnim_GetId(chr)) & 0x10) || chr->reaction >= 3) {
         BtlChar_SetHeldFlag(chr, 0x13A);
     } else {
         BtlChar_SetHeldFlag(chr, 0x139);
     }
-    chr->unkFB0 = 1;
+    chr->reaction = 1;
     BtlAnim_Play(chr, 0, 0.0f);
     BtlObjAnim_SamplePose(obj);
     BtlObjPose_CalcMatrices(obj);
@@ -533,7 +533,7 @@ void BtlChar_OnStageLoaded(BtlMgrChr *chr) {
 void BtlChar_ResetRound(BtlMgrChr *chr) {
     s32 prev;
 
-    if (chr->unk1330 != 0) {
+    if (chr->partnerOn != 0) {
         BtlPartner_Release(chr);
     }
     BtlChar_ClearFlag(chr, 0xE);
@@ -543,11 +543,11 @@ void BtlChar_ResetRound(BtlMgrChr *chr) {
     BtlChar_PlaceAtStart(chr);
     chr->prevAction = chr->action;
     chr->action = 0xF9;
-    chr->unk94C = -1;
+    chr->request = -1;
     BtlAct_ClearQueue(chr);
-    chr->unkFB0 = 1;
-    chr->unkD58 = 0.5f;
-    chr->unkD5C = 500.0f;
+    chr->reaction = 1;
+    chr->searchAngle = 0.5f;
+    chr->searchRange = 500.0f;
     chr->freezeNext = 0;
     chr->freezeDelay = 0;
     chr->freeze = 0;
@@ -768,7 +768,7 @@ void BtlChar_RaiseEvents(BtlMgrChr *chr) {
             BtlEvent_Raise(chr->side, 0x45);
             break;
         case 0x19:
-            if (chr->unkD68 > 0) {
+            if (chr->dashCount > 0) {
                 BtlEvent_Raise(chr->side, 0x31);
             }
             break;
@@ -811,7 +811,7 @@ void BtlChar_RaiseEvents(BtlMgrChr *chr) {
         case 0x42:
             BtlEvent_Raise(chr->side, 0x3E);
             BtlChar_SetFrameBits(chr, 0x20);
-            if (chr->unkD70 > 0) {
+            if (chr->vanishCount > 0) {
                 BtlChar_SetFrameBits(chr, 0x100000);
             }
             break;
@@ -821,7 +821,7 @@ void BtlChar_RaiseEvents(BtlMgrChr *chr) {
         case 0x46:
             BtlEvent_Raise(chr->side, 0x32);
             BtlChar_SetFrameBits(chr, 0x20);
-            if (chr->unkD68 > 0) {
+            if (chr->dashCount > 0) {
                 BtlChar_SetFrameBits(chr, 0x100000);
             }
             break;
@@ -914,11 +914,11 @@ void BtlChar_RaiseEvents(BtlMgrChr *chr) {
         BattleResult *res = BattleResult_GetPtr();
         s32 opp = BtlOpp_GetPlayer(chr);
 
-        if (res->maxComboDamage[opp] < chr->unkD40) {
-            res->maxComboDamage[opp] = chr->unkD40;
+        if (res->maxComboDamage[opp] < chr->comboDamage) {
+            res->maxComboDamage[opp] = chr->comboDamage;
         }
-        if (res->maxComboHits[opp] < chr->unkD44) {
-            res->maxComboHits[opp] = chr->unkD44;
+        if (res->maxComboHits[opp] < chr->comboHits) {
+            res->maxComboHits[opp] = chr->comboHits;
         }
         res->health[chr->side] = BtlMember_GetTeamHealthRatio(chr) * 100.0f;
         if (BtlMember_GetActiveGauge(chr)->health == 1) {
@@ -1001,41 +1001,41 @@ void BtlChar_BeginFrame(BtlMgrChr *chr) {
     BtlChar_SetStage(chr, BTL_CHR_STAGE_INPUT);
     chr->prevPose = chr->pose;
     BtlChar_ObjToPose(chr);
-    BtlChar_GetPos(chr)->unkA0 = 0;
-    BtlChar_GetPos(chr)->unkA4 = 0;
+    BtlChar_GetPos(chr)->leanX = 0;
+    BtlChar_GetPos(chr)->leanZ = 0;
     BtlChar_ClearSnapshots(chr);
     chr->prevAction = chr->action;
-    chr->prev964 = chr->unk964;
-    chr->prev974 = chr->unk974;
+    chr->prev964 = chr->actionFrame;
+    chr->prev974 = chr->motion;
     BtlAnim_SetObjRate(chr, 1.0f);
     BtlAnim_SetRate(chr, 1.0f);
-    chr->unkD4C = 0;
-    chr->unkD50 = 0;
+    chr->comboNewHit = 0;
+    chr->comboChanged = 0;
     BtlChar_SetLookEnabled(chr, 0);
     BtlChar_TickVoiceTimers(chr);
     BtlColl_ClearActionBits(chr);
-    chr->prev1262 = chr->unk1262;
-    memset(&chr->unk1262, 0, sizeof(chr->unk1262));
+    chr->prev1262 = chr->fxBits;
+    memset(&chr->fxBits, 0, sizeof(chr->fxBits));
     if (BtlChar_TestFlag(chr, 6)) {
-        chr->unkD6C = BtlParam_GetPoweredDashLimit(chr);
-        chr->unkD74 = BtlParam_GetPoweredVanishLimit(chr);
+        chr->dashLimit = BtlParam_GetPoweredDashLimit(chr);
+        chr->vanishLimit = BtlParam_GetPoweredVanishLimit(chr);
     } else {
-        chr->unkD6C = 1;
-        chr->unkD74 = 1;
+        chr->dashLimit = 1;
+        chr->vanishLimit = 1;
     }
     if (BtlMember_HasAbility(chr, 1)) {
-        chr->unkD6C += 2;
+        chr->dashLimit += 2;
     } else if (BtlMember_HasAbility(chr, 0)) {
-        chr->unkD6C += 1;
+        chr->dashLimit += 1;
     }
     if (BtlMember_HasAbility(chr, 3)) {
-        chr->unkD74 += 2;
+        chr->vanishLimit += 2;
     } else if (BtlMember_HasAbility(chr, 2)) {
-        chr->unkD74 += 1;
+        chr->vanishLimit += 1;
     }
     chr->frameBits = 0;
-    chr->unk1590 = -1;
-    chr->unk1594 = -1;
+    chr->dirHeld = -1;
+    chr->techClass = -1;
     BtlInput_Update(chr);
     BtlChar_ApplyBonusRequests(chr);
     BtlChar_ApplyAbilityRequests(chr);
@@ -1149,7 +1149,7 @@ void BtlChar_UpdateStage8(BtlMgrChr *chr) {
     BtlChar_PoseToObj(chr, 0);
     BtlObjPose_CalcMatrices(obj);
     if (BtlChar_TestFlag(chr, 0x55)) {
-        BtlObjBody_Warp(obj, chr->unk1310);
+        BtlObjBody_Warp(obj, chr->bodyWarpPos);
         flag = 0;
     }
     started = 0;
@@ -1184,7 +1184,7 @@ void BtlChar_UpdateCamera(BtlMgrChr *chr) {
         ChrCam_StartCut(chr);
         ChrCam_UpdateDemo(chr);
         ChrCam_UpdateInput(chr);
-        BtlObj_SetMoveVec(obj, BtlChar_GetPos(chr)->unk30);
+        BtlObj_SetMoveVec(obj, BtlChar_GetPos(chr)->vel);
         BtlObj_UpdateChains(obj);
         BtlChar_UpdateHead(chr);
         BtlObjPose_CalcMatrices(obj);
@@ -1214,7 +1214,7 @@ void BtlChar_PostScene(BtlMgrChr *chr) {
     BtlFx_UpdatePostScene(chr);
     if (BtlMember_GetActiveGauge(chr)->health < 10000) {
         BtlMember_GetActiveGauge(chr)->lowHealth = 1;
-        if (!(BtlParam_GetCharaFlags(chr) & 0x80) && chr->unkE14 <= 0 && chr->unkE18 <= 0 && !BtlChar_TestFlag(chr, 6)) {
+        if (!(BtlParam_GetCharaFlags(chr) & 0x80) && chr->skillTimerC <= 0 && chr->skillTimerD <= 0 && !BtlChar_TestFlag(chr, 6)) {
             BtlMember_GetActiveGauge(chr)->lowHealthIdle = 1;
         } else {
             BtlMember_GetActiveGauge(chr)->lowHealthIdle = 0;
@@ -1226,12 +1226,12 @@ void BtlChar_PostScene(BtlMgrChr *chr) {
     opp = BtlChar_Get(BtlOpp_GetPlayer(chr));
     if (BtlChar_TestFlag(chr, 0x97)) {
         if (!BtlChar_TestFlag(chr, 0x30)) {
-            BtlChar_GetSnapDelta(chr, opp->unkF30, 1, 4);
+            BtlChar_GetSnapDelta(chr, opp->carryMove, 1, 4);
         } else {
-            Vec4_SetZero(opp->unkF30);
+            Vec4_SetZero(opp->carryMove);
         }
     } else {
-        Vec4_SetZero(opp->unkF30);
+        Vec4_SetZero(opp->carryMove);
     }
 }
 
@@ -1267,11 +1267,11 @@ void BtlChar_EndFrame(BtlMgrChr *chr) {
     }
     BtlChar_SetStage(chr, BTL_CHR_STAGE_EVENTS);
     if (!BtlChar_TestFlag(chr, 0x24)) {
-        BtlChar_GetSnapDelta(chr, pose->unk30, 0, 1);
-        BtlChar_GetMoveSince(chr, pose->unk40, 0);
+        BtlChar_GetSnapDelta(chr, pose->vel, 0, 1);
+        BtlChar_GetMoveSince(chr, pose->move, 0);
     } else {
-        Vec4_SetZero(pose->unk30);
-        Vec4_SetZero(pose->unk40);
+        Vec4_SetZero(pose->vel);
+        Vec4_SetZero(pose->move);
     }
     BtlChar_RaiseEvents(chr);
     BtlChar_UpdateVibration(chr);
@@ -1284,10 +1284,10 @@ void BtlChar_AllocAll(s32 count) {
     memset(gBtlChars, 0, sizeof(BtlCharMgr));
     gBtlChars->chars = Heap_Alloc(count * 0x1600, 0x20, 0, HEAP_ANY);
     memset(gBtlChars->chars, 0, count * 0x1600);
-    gBtlChars->unk8 = Heap_Alloc(count * 0x34, 0x20, 0, HEAP_ANY);
-    memset(gBtlChars->unk8, 0, count * 0x34);
-    gBtlChars->unkC = Heap_Alloc(count * 0x34, 0x20, 0, HEAP_ANY);
-    memset(gBtlChars->unkC, 0, count * 0x34);
+    gBtlChars->sounds = Heap_Alloc(count * 0x34, 0x20, 0, HEAP_ANY);
+    memset(gBtlChars->sounds, 0, count * 0x34);
+    gBtlChars->loopSounds = Heap_Alloc(count * 0x34, 0x20, 0, HEAP_ANY);
+    memset(gBtlChars->loopSounds, 0, count * 0x34);
     gBtlChars->count = count;
     gBtlChars->tbl[0] = FILE_TABLE(gCommonRes->data[0], 3);
     gBtlChars->tbl[1] = FILE_TABLE(gCommonRes->data[0], 5);
@@ -1301,8 +1301,8 @@ void BtlChar_AllocAll(s32 count) {
 
 /* Frees the roster. */
 void BtlChar_FreeAll(void) {
-    Heap_Free(gBtlChars->unkC);
-    Heap_Free(gBtlChars->unk8);
+    Heap_Free(gBtlChars->loopSounds);
+    Heap_Free(gBtlChars->sounds);
     Heap_Free(gBtlChars->chars);
     Heap_Free(gBtlChars);
     gBtlChars = NULL;
@@ -1318,13 +1318,13 @@ void BtlChar_ResetAll(void) {
         BtlPartner_Release(BtlChar_Get(i));
     }
     gBtlChars->frame = 0;
-    gBtlChars->unk18 = 0;
+    gBtlChars->randState = 0;
     gBtlChars->flags = 0;
-    gBtlChars->unk1C = 0;
-    memset(gBtlChars->unkA0, 0, 0x90);
-    memset(gBtlChars->unk138, 0, 0x140);
-    memset(gBtlChars->unk40, 0, 0x60);
-    gBtlChars->unk130 = 0;
+    gBtlChars->stageTimer = 0;
+    memset(gBtlChars->snd, 0, 0x90);
+    memset(gBtlChars->change, 0, 0x140);
+    memset(gBtlChars->clash, 0, 0x60);
+    gBtlChars->viewer = 0;
     memset(gBtlChars->chars, 0, BtlChar_GetCount() * 0x1600);
     BtlChange_Reset();
     BtlReplay_ResetViewer();
@@ -1402,7 +1402,7 @@ void BtlChars_UpdateInput(void) {
     if ((gBtlChars->flags & BTL_CHARS_STARTED) && !BtlChars_IsTimeStopped()) {
         gBtlChars->frame++;
         gBtlChars->frame &= 0x3FFFFFFF;
-        gBtlChars->unk1C = BtlUtil_Max(gBtlChars->unk1C - 1, 0);
+        gBtlChars->stageTimer = BtlUtil_Max(gBtlChars->stageTimer - 1, 0);
     }
     BtlChars_CheckRoundReset();
     BtlChars_UpdateFreeze();

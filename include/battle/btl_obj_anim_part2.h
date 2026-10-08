@@ -58,9 +58,9 @@ typedef struct BObjBound {
     /* 0x08 */ u16 enabled;
     /* 0x0A */ u16 node;     /* (v) node id */
     /* 0x0C */ s32 unk0C;
-    /* 0x10 */ Vec4 unk10;
+    /* 0x10 */ Vec4 origin;
     /* 0x20 */ Vec4 unk20;
-    /* 0x30 */ Vec4 unk30;
+    /* 0x30 */ Vec4 rest;
     /* 0x40 */ Vec4 center;
     /* 0x50 */ Vec4 extent;  /* w (+0x5C) is the "size factor" BtlCapi reads */
 } BObjBound;
@@ -158,7 +158,7 @@ typedef struct BObjNode {
     /* 0x10 */ Mtx44 world;    /* (v) node to world; row 3 (+0x40) is the world position */
     /* 0x50 */ Mtx44 parent;   /* (v) world matrix of the node's parent as the pose pass left it (the object's own
                                   matrix for the first node); a chain's first link hangs in this frame */
-    /* 0x90 */ Vec4 unk90;     /* (v) read from node 0 by BtlObj_SaveNodePositions(obj, 1) */
+    /* 0x90 */ Vec4 pos;     /* (v) read from node 0 by BtlObj_SaveNodePositions(obj, 1) */
     /* 0xA0 */ Quat rot;       /* (v) local rotation; the chains write it */
     /* 0xB0 */ u8 unkB0[0x20];
     /* 0xD0 */ Vec4 prevPos;   /* (v) position in the object's frame at the last BtlObj_SaveNodePositions */
@@ -235,35 +235,35 @@ typedef struct BObjChainB {
 /* The tables an object reads out of its files (object + 0x18). */
 typedef struct BObjMdl {
     /* 0x000 */ void *unk00;            /* (v) model file entry 3 */
-    /* 0x004 */ void *unk04;            /* (v) entry 0xC */
+    /* 0x004 */ void *texFile;            /* (v) entry 0xC */
     /* 0x008 */ u8 unk08[0x20];
     /* 0x028 */ BObjModel *model;       /* object + 0x40 */
     /* 0x02C */ BObjBound *bounds;      /* object + 0x44 */
     /* 0x030 */ BObjTexTable *tex;      /* object + 0x48: the model's texture table */
     /* 0x034 */ BObjTexTable *eyes;     /* (v) entry 0xD: eye textures; NULL = no eyes */
     /* 0x038 */ void *unk38;            /* (v) entry 1, relocated in place */
-    /* 0x03C */ void *unk3C;            /* (v) entry 2 */
+    /* 0x03C */ void *body;            /* (v) entry 2 */
     /* 0x040 */ void *unk40;            /* (v) animation file 2, entry 6 */
     /* 0x044 */ void *mouthA[8];        /* (v) entries 4..11 */
     /* 0x064 */ void *mouthB[8];        /* (v) [4..7] = entries 0xE..0x11; [0..3] = NULL */
     /* 0x084 */ void *unk84[5];         /* (v) animation file 2, entries 1..5 */
-    /* 0x098 */ void *unk98[1];         /* (v) entries 0x29..0x2B run from here ... */
+    /* 0x098 */ void *camAnims[1];         /* (v) entries 0x29..0x2B run from here ... */
     /* 0x09C */ void *common9C;         /* (v) ... but BtlObj_BindCommonTables then stores common entry 12 here */
     /* 0x0A0 */ void *unkA0;
     /* 0x0A4 */ void *unkA4;            /* (v) entry 0x2D + gProgress->unk00 */
     /* 0x0A8 */ void *anims[0x19E];     /* (v) animation file 1, entries 1..0x19E (object + 0xC0) */
-    /* 0x720 */ void *unk720[8];        /* (v) entries 0x1D..0x24 */
+    /* 0x720 */ void *modelAnims[8];        /* (v) entries 0x1D..0x24 */
     /* 0x740 */ BObjLipData *lip[100];  /* (v) entries 0x35.. (0x99.. for the second voice language) */
     /* 0x8D0 */ void *unk8D0[8];        /* (v) entries 0x1D..0x24 again */
-    /* 0x8F0 */ void *unk8F0[4];        /* (v) entries 0x25..0x28 */
+    /* 0x8F0 */ void *charCamAnims[4];        /* (v) entries 0x25..0x28 */
     /* 0x900 */ void *common900;        /* (v) common entry 13 */
-    /* 0x904 */ s8 *unk904;             /* (v) entry 0x12; byte 3 = colour preset row */
-    /* 0x908 */ void *unk908;           /* (v) entry 0x13 */
-    /* 0x90C */ void *unk90C;           /* (v) entry 0x14 */
-    /* 0x910 */ void *unk910;           /* (v) entry 0x15 */
-    /* 0x914 */ void *unk914;           /* (v) entry 0x18 */
-    /* 0x918 */ void *unk918;           /* (v) entry 0x19 */
-    /* 0x91C */ void *unk91C;           /* (v) entry 0x1B */
+    /* 0x904 */ s8 *param;             /* (v) entry 0x12; byte 3 = colour preset row */
+    /* 0x908 */ void *atk;           /* (v) entry 0x13 */
+    /* 0x90C */ void *kiBlast;           /* (v) entry 0x14 */
+    /* 0x910 */ void *move;           /* (v) entry 0x15 */
+    /* 0x914 */ void *super;           /* (v) entry 0x18 */
+    /* 0x918 */ void *skill;           /* (v) entry 0x19 */
+    /* 0x91C */ void *aiParam;           /* (v) entry 0x1B */
     /* 0x920 */ void *unk920;           /* (v) entry 0x1C */
     /* 0x924 */ void *unk924;           /* (v) entry 0x16 */
     /* 0x928 */ BObjChainParam *chain;  /* (v) entry 0x17 (object + 0x940) */

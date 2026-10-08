@@ -112,7 +112,7 @@ typedef struct BobjBone {
     /* 0x00 */ s32 next;   /* byte offset to the next record */
     /* 0x04 */ u16 pop;    /* matrices to pop from the stack after this node (it closes that many branches) */
     /* 0x06 */ u16 last;   /* non-zero on the last record */
-    /* 0x08 */ u16 unk08;
+    /* 0x08 */ u16 enabled;
     /* 0x0A */ u16 id;     /* model node id */
     /* 0x0C */ s32 unk0C;
     /* 0x10 */ Vec4 origin; /* the node's position in model space (body part offsets are relative to it) */
@@ -122,10 +122,10 @@ typedef struct BobjBone {
 
 /* Pose of one node (what BtlObj_GetNode returns). */
 typedef struct BobjPart {
-    /* 0x00 */ s32 unk00;
+    /* 0x00 */ s32 link;
     /* 0x04 */ u32 flags;     /* bit 0 cleared by BtlObjAnim_SamplePose */
     /* 0x08 */ u32 id;        /* model node id */
-    /* 0x0C */ s32 unk0C;
+    /* 0x0C */ s32 active;
     /* 0x10 */ Mtx44 mtx;     /* world matrix; row 3 (+0x40) is the node's world position */
     /* 0x50 */ Mtx44 parent;  /* the parent's world matrix */
     /* 0x90 */ Vec4 pos;      /* local translation of this frame */
@@ -196,7 +196,7 @@ typedef struct BobjSphere {
 /* Oriented box (ColObb_Init / ColObb_Update / BtlObjObb_SetMtx). */
 typedef struct BobjObb {
     /* 0x000 */ Vec4 center;     /* row 3 of mtx */
-    /* 0x010 */ Vec4 unk10;
+    /* 0x010 */ Vec4 half;
     /* 0x020 */ Vec4 axis[3];    /* rows 0..2 of mtx */
     /* 0x050 */ Mtx44 mtx;
     /* 0x090 */ Vec4 local[8];   /* corners in the box's space */
@@ -224,7 +224,7 @@ typedef struct BobjBodyPart {
 /* Body collision data of a fighter model (BobjMdl.body). */
 typedef struct BobjBodyData {
     /* 0x00 */ s32 unk00;
-    /* 0x04 */ f32 unk04;
+    /* 0x04 */ f32 baseRadius;
     /* 0x08 */ u8 unk08[8];
     /* 0x10 */ BobjBodyPart part[1];
 } BobjBodyData;
@@ -240,7 +240,7 @@ typedef struct BobjBody {
     /* 0x5C */ u8 unk5C[0x14];
     /* 0x70 */ BobjAabb box;         /* BtlObj + 0xFC0: bounds of every part box */
     /* 0x88 */ BobjAabb centerBox;   /* bounds of the part centres */
-    /* 0xA0 */ f32 unkA0;            /* body data + 4 */
+    /* 0xA0 */ f32 baseRadius;            /* body data + 4 */
     /* 0xA4 */ f32 size[4];          /* BtlObj + 0xFF4: model header + 0x18..0x24 */
     /* 0xB4 */ f32 radius;           /* BtlObj + 0x1004: parameter block + 8, or 2 * size[3] */
     /* 0xB8 */ f32 unkB8;            /* 4.1 */
@@ -350,7 +350,7 @@ typedef struct BobjObj {
     /* 0x0950 */ BobjXf xf;
     /* 0x0A40 */ u32 flags;      /* BTL_OBJ_FLAG_* (0x40000: the fade value rises) */
     /* 0x0A44 */ u8 unkA44[0xEC];
-    /* 0x0B30 */ u8 unkB30;
+    /* 0x0B30 */ u8 alphaAdd;
     /* 0x0B31 */ u8 unkB31[0xF];
     /* 0x0B40 */ BobjAnimPlayer anim;
     /* 0x0C90 */ BobjHit hit;
@@ -386,16 +386,16 @@ typedef struct BobjFace {
     /* 0x1C */ s32 shape;       /* mouth texture set, 0 = closed */
     /* 0x20 */ BobjJawKey *jawKeys;
     /* 0x24 */ BobjTalkStep *talkKeys;
-    /* 0x28 */ s32 unk28;
+    /* 0x28 */ s32 lip;
     /* 0x2C */ f32 step;        /* 2.0 */
     /* 0x30 */ f32 talkEnd;
     /* 0x34 */ f32 talkTime;
     /* 0x38 */ s32 talkCount;
-    /* 0x3C */ s32 unk3C;
-    /* 0x40 */ s16 unk40;
-    /* 0x42 */ s16 unk42;
-    /* 0x44 */ f32 unk44;
-    /* 0x48 */ f32 unk48;
+    /* 0x3C */ s32 lipArg;
+    /* 0x40 */ s16 lipIndex;
+    /* 0x42 */ s16 lipCount;
+    /* 0x44 */ f32 lipTime;
+    /* 0x48 */ f32 lipEnd;
     /* 0x4C */ s32 unk4C;
     /* 0x50 */ Vec4 jaw;        /* jaw rotation, Euler angles */
     /* 0x60 */ s32 talkLoops;

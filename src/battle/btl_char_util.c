@@ -222,7 +222,7 @@ s32 BtlChar_IsFree(BtlCharGetChr *chr) {
     if (BtlChar_IsDead(chr) || BtlChar_TestFlag(chr, 0xBE)) {
         return 0;
     }
-    return chr->unkFE0 <= 0;
+    return chr->stunTimer <= 0;
 }
 
 /* 1 when the active member has no health left. */
@@ -232,7 +232,7 @@ s32 BtlChar_IsDead(BtlCharGetChr *chr) {
 
 /* 1 when the active member's word 0x70 is set. */
 s32 BtlChar_IsBodyChanged(BtlCharGetChr *chr) {
-    return BtlMember_GetActiveGauge(chr)->unk30 != 0;
+    return BtlMember_GetActiveGauge(chr)->bodyChanged != 0;
 }
 
 /* Frames simulated since the fighters were reset. No caller. */

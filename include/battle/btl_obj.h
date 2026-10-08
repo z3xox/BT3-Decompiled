@@ -72,15 +72,15 @@ typedef struct BtlObjFlagBits {
 /* One record of the model's bounds list (BtlObj.bounds): variable length, linked by byte offset. */
 typedef struct BtlObjBound {
     /* 0x00 */ s32 next;     /* byte offset to the next record */
-    /* 0x04 */ u16 unk04;
+    /* 0x04 */ u16 pop;
     /* 0x06 */ u16 last;     /* non-zero on the last record */
     /* 0x08 */ u16 enabled;  /* 0: record skipped */
     /* 0x0A */ u16 node;     /* argument of BtlObj_GetNode: the model node the box hangs on */
     /* 0x0C */ s32 unk0C;
-    /* 0x10 */ Vec4 unk10;
+    /* 0x10 */ Vec4 origin;
     /* 0x20 */ Vec4 unk20;
-    /* 0x30 */ Vec4 unk30;
-    /* 0x40 */ Vec4 center;  /* centre - unk10 is transformed by the node matrix */
+    /* 0x30 */ Vec4 rest;
+    /* 0x40 */ Vec4 center;  /* centre - origin is transformed by the node matrix */
     /* 0x50 */ Vec4 extent;  /* half size on each axis */
 } BtlObjBound;
 
@@ -130,7 +130,7 @@ typedef struct BtlObjView {
 /* Node of a model as returned by BtlObj_GetNode. */
 typedef struct BtlObjPart {
     /* 0x00 */ u8 unk00[8];
-    /* 0x08 */ s32 unk08;    /* argument of BtlObj_IsNodeShown */
+    /* 0x08 */ s32 id;    /* argument of BtlObj_IsNodeShown */
     /* 0x0C */ u8 active;    /* 1 when BtlObj_IsNodeShown returned 1 this frame */
     /* 0x0D */ u8 unk0D[3];
     /* 0x10 */ Mtx44 mtx;
@@ -154,7 +154,7 @@ typedef struct BtlObjState {
     /* 0xB0 */ BtlObjView *view; /* the record of the view being built */
     /* 0xB4 */ BtlObjBox box;  /* world bounds, rebuilt by BtlObj_UpdateBounds */
     /* 0xCC */ u8 unkCC[0x10];
-    /* 0xDC */ f32 unkDC;      /* alpha used with BTL_OBJ_FLAG_COLOR_C */
+    /* 0xDC */ f32 presetAlpha;      /* alpha used with BTL_OBJ_FLAG_COLOR_C */
     /* 0xE0 */ u8 alpha[16];   /* model->alpha[i] + alphaAdd, clamped to 0x7F */
     /* 0xF0 */ u8 alphaAdd;
     /* 0xF1 */ u8 unkF1[3];
@@ -171,11 +171,11 @@ typedef struct BtlObjBody {
 /* A battle object. Partial: only the fields this file touches or other modules were seen to use. */
 typedef struct BtlObj {
     /* 0x0000 */ s32 type;       /* BTL_OBJ_TYPE_*: first argument of BtlObj_Create */
-    /* 0x0004 */ s32 unk04;      /* 0 = skipped by every pass (written outside this file, by BtlObjMdl_Create) */
+    /* 0x0004 */ s32 ready;      /* 0 = skipped by every pass (written outside this file, by BtlObjMdl_Create) */
     /* 0x0008 */ s32 active;     /* third argument of BtlObj_Create; 0 = skipped by every pass */
     /* 0x000C */ s32 chara;      /* (model file id - 0x590) / 10 */
     /* 0x0010 */ s32 id;         /* index in gBtlObjTbl */
-    /* 0x0014 */ s32 unk14;
+    /* 0x0014 */ s32 res;
     /* 0x0018 */ BtlObjMdl mdl;
     /* 0x00B4 */ u8 unkB4[0x98C];
     /* 0x0A40 */ BtlObjState state;
@@ -241,7 +241,7 @@ typedef struct BtlObjTable {
     /* 0x10E18 */ u8 unk10E18[0x28];
     /* 0x10E40 */ u8 charaWork[2][0x1A0C0];
     /* 0x44FC0 */ s32 unk44FC0;
-    /* 0x44FC4 */ f32 unk44FC4;
+    /* 0x44FC4 */ f32 defaultAnimStep;
     /* 0x44FC8 */ u8 unk44FC8[0x38];
 } BtlObjTable; /* size 0x45000 */
 
@@ -249,8 +249,8 @@ typedef struct BtlObjTable {
 typedef struct BtlObjPoolE0 {
     /* 0x00 */ SListNode link;
     /* 0x04 */ u8 unk04[0x8C];
-    /* 0x90 */ Vec4 unk90; /* 0, 0, 0, 1 */
-    /* 0xA0 */ Vec4 unkA0; /* 0, 0, 0, 1 */
+    /* 0x90 */ Vec4 pos; /* 0, 0, 0, 1 */
+    /* 0xA0 */ Vec4 rot; /* 0, 0, 0, 1 */
     /* 0xB0 */ u8 unkB0[0x30];
 } BtlObjPoolE0; /* size 0xE0 */
 
