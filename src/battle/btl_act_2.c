@@ -382,7 +382,7 @@ s32 BtlAct_ActionE7(Chr *chr, s32 phase) {
         zero = 0.0f;
         BtlAnim_Play(chr, BtlAct_IsAirMotion(chr, 0) ? 0xC9 : 0xC8, zero);
         BtlChar_ClearFlag(chr, 0xE);
-        BtlChar_GetPos(chr)->unk98 = zero;
+        BtlChar_GetPos(chr)->speed = zero;
         BtlChar_PlayVoice(chr, 0);
         BtlCharSnd_PlayCommon(chr, 0x32);
     }
@@ -415,10 +415,10 @@ s32 BtlAct_ActionE8E9(Chr *chr, s32 phase) {
             case 0xE8:
                 BtlMove_TurnYaw(chr, air ? 8 : 7, 3.14159265f);
                 BtlMove_SetDirection(chr, 2);
-                BtlChar_GetPos(chr)->unk98 = BTL_KMH(700.0f);
+                BtlChar_GetPos(chr)->speed = BTL_KMH(700.0f);
                 break;
             case 0xE9:
-                BtlChar_GetPos(chr)->unk98 = zero;
+                BtlChar_GetPos(chr)->speed = zero;
                 break;
         }
         BtlChar_SetHeldFlag(chr, 0xE);
@@ -1246,7 +1246,7 @@ s32 BtlAct_Action42(Chr *chr, s32 phase) {
     if (phase == 0) {
         BtlAnim_Play(chr, 0x192, 0.15f);
         BtlChar_SetHeldFlag(chr, 0xE);
-        BtlChar_GetPos(chr)->unk98 = 0.0f;
+        BtlChar_GetPos(chr)->speed = 0.0f;
         BtlChar_GetPos(chr)->fallSpeed = 0.0f;
         BtlMember_Damage(chr, 5000, 0x42B);
         BtlChar_SetHeldFlag(chr, 0x4B);
@@ -3469,7 +3469,7 @@ s32 BtlAct_DragonDashHandler(BtlActEChr *chr, s32 phase) {
             case 0x1A:
                 if (BtlAnim_Advance(chr, 0)) {
                     BtlAct_Request(chr, 0xB);
-                    BtlChar_GetPos(chr)->unk98 = 0.0f;
+                    BtlChar_GetPos(chr)->speed = 0.0f;
                 }
                 flag = 0;
                 break;
@@ -3532,12 +3532,12 @@ s32 BtlAct_DragonDashHandler(BtlActEChr *chr, s32 phase) {
                 }
                 if (flag) {
                     BtlAnim_Request(chr, 0x1A, 0.0f);
-                    BtlChar_GetPos(chr)->unk98 *= 0.5f;
+                    BtlChar_GetPos(chr)->speed *= 0.5f;
                 }
                 break;
             case 0x1A:
                 if (BtlMove_IsBlockedByOpponent(chr)) {
-                    BtlChar_GetPos(chr)->unk98 = 0.0f;
+                    BtlChar_GetPos(chr)->speed = 0.0f;
                 }
                 break;
             case 0x15:
@@ -3772,7 +3772,7 @@ s32 BtlAct_VanishStepHandler(BtlActEChr *chr, s32 phase) {
         BtlChar_SetFxBit(chr, 0xC);
         BtlChar_SetHeldFlag(chr, 0xE);
         BtlCharSnd_PlayCommon(chr, 0x20);
-        BtlChar_GetPos(chr)->unk98 = 0.0f;
+        BtlChar_GetPos(chr)->speed = 0.0f;
         BtlChar_GetPos(chr)->fallSpeed = 0.0f;
         switch (BtlAct_GetCurrent(chr)) {
             case 0x21:
@@ -3877,7 +3877,7 @@ s32 BtlAct_VanishBehindHandler(BtlActEChr *chr, s32 phase) {
         BtlChar_SetHeldFlag(chr, 0xE);
         BtlCharSnd_PlayCommon(chr, 0x20);
         BtlChar_PlayVoice(chr, 0x1D);
-        BtlChar_GetPos(chr)->unk98 = 0.0f;
+        BtlChar_GetPos(chr)->speed = 0.0f;
         BtlChar_GetPos(chr)->fallSpeed = 0.0f;
         *counter = 7;
         BtlChar_SetSmallVibration(chr, 0.2f);
@@ -3889,7 +3889,7 @@ s32 BtlAct_VanishBehindHandler(BtlActEChr *chr, s32 phase) {
         } else {
             --*counter;
             if (*counter >= 2) {
-                BtlChar_GetPos(chr)->unk98 = 0.0f;
+                BtlChar_GetPos(chr)->speed = 0.0f;
                 BtlChar_GetPos(chr)->fallSpeed = 0.0f;
             } else if (*counter == 1) {
                 BtlChar_SetFxBit(chr, 0xD);
@@ -3946,7 +3946,7 @@ void BtlAct_RecoverHandler(BtlActEChr *chr, s32 phase) {
                 break;
             case 0x29:
                 anim = 0x100;
-                pose->unk98 = 0.0f;
+                pose->speed = 0.0f;
                 pose->rot.y = pose->facing = BtlUtil_WrapAngle(pose->facing + 3.14159265f);
                 break;
             case 0x28:
@@ -3954,7 +3954,7 @@ void BtlAct_RecoverHandler(BtlActEChr *chr, s32 phase) {
                 break;
             case 0x2A:
                 anim = 0x102;
-                pose->unk98 = 0.0f;
+                pose->speed = 0.0f;
                 pose->rot.y = pose->facing = BtlUtil_WrapAngle(pose->facing + 3.14159265f);
                 break;
         }
@@ -4098,7 +4098,7 @@ void BtlAct_VanishAttackQuickHandler(BtlActEChr *chr, s32 phase) {
 /* Action 0x2D: appear behind the opponent on the first frame and start the queued attack. */
 void BtlAct_WarpBehindAttackHandler(BtlActEChr *chr, s32 phase) {
     if (phase == 1) {
-        BtlChar_GetPos(chr)->unk98 = 0.0f;
+        BtlChar_GetPos(chr)->speed = 0.0f;
         BtlChar_GetPos(chr)->fallSpeed = 0.0f;
         if (!BtlChar_TestFlag(chr, 0xBA)) {
             BtlMove_WarpBehindOpponent(chr, 0.0f);
@@ -4125,7 +4125,7 @@ void BtlAct_WarpBehindAttackHandler(BtlActEChr *chr, s32 phase) {
 /* Action 0x2E: appear ahead of the (moving) opponent, led by the attack's lead time, and start the queued attack. */
 void BtlAct_WarpAheadAttackHandler(BtlActEChr *chr, s32 phase) {
     if (phase == 1) {
-        BtlChar_GetPos(chr)->unk98 = 0.0f;
+        BtlChar_GetPos(chr)->speed = 0.0f;
         BtlChar_GetPos(chr)->fallSpeed = 0.0f;
         if (!BtlChar_TestFlag(chr, 0xBA)) {
             BtlMove_WarpAheadOfOpponent(chr, chr->nextAttack.leadTime);
@@ -4185,7 +4185,7 @@ s32 BtlAct_SlideToAttackHandler(BtlActEChr *chr, s32 phase) {
         Vec4_Copy(face, &target);
     }
     if (phase == 1) {
-        pose->unk98 = 0.0f;
+        pose->speed = 0.0f;
         pose->fallSpeed = 0.0f;
         Vec4_Add(&pose->pos, &pose->pos, step);
         if (++*counter == 4) {
@@ -4273,7 +4273,7 @@ void BtlAct_RushToAttackHandler(BtlActEChr *chr, s32 phase) {
                 reach = 1;
             }
             if (reach || stuck) {
-                BtlChar_GetPos(chr)->unk98 = 0.0f;
+                BtlChar_GetPos(chr)->speed = 0.0f;
                 if (BtlAct_HasQueued(chr) && !stuck) {
                     BtlAct_Request(chr, BtlAct_GetQueued(chr));
                 } else {
@@ -4331,7 +4331,7 @@ s32 BtlAct_CircleDashHandler(BtlActEChr *chr, s32 phase) {
         BtlChar_SetHeldFlag(chr, 0xE);
         BtlChar_PlayVoice(chr, 5);
         BtlChar_SetFxBit(chr, 6);
-        pose->unk98 = 0.0f;
+        pose->speed = 0.0f;
         pose->fallSpeed = 0.0f;
         if (0.0f < BtlOpp_GetYawFromItsFacing(chr)) {
             chr->work[0] |= 1;
@@ -4387,21 +4387,21 @@ s32 BtlAct_CircleDashHandler(BtlActEChr *chr, s32 phase) {
             case 0x2D:
                 if (BtlMove_IsBlockedByOpponent(chr)) {
                     flag = 1;
-                    BtlChar_GetPos(chr)->unk98 = 0.0f;
+                    BtlChar_GetPos(chr)->speed = 0.0f;
                 }
                 break;
             case 0x19:
                 if (BtlMove_IsBlockedByOpponent(chr)) {
                     flag = 1;
-                    BtlChar_GetPos(chr)->unk98 = 0.0f;
+                    BtlChar_GetPos(chr)->speed = 0.0f;
                 }
                 if (chr->work[0] & 2) {
                     flag = 1;
-                    BtlChar_GetPos(chr)->unk98 = 0.0f;
+                    BtlChar_GetPos(chr)->speed = 0.0f;
                 }
                 if (BtlMember_SpendKi(chr, BtlMoveParam_GetKiCost(chr, 3), 0)) {
                     flag = 1;
-                    BtlChar_GetPos(chr)->unk98 *= 0.2f;
+                    BtlChar_GetPos(chr)->speed *= 0.2f;
                 }
                 if (!BtlChar_TestFlag(chr, 5)) {
                     flag = 1;
@@ -4409,7 +4409,7 @@ s32 BtlAct_CircleDashHandler(BtlActEChr *chr, s32 phase) {
                 if (Vec3_Length(&BtlChar_GetPos(chr)->moved) < BTL_KMH(1000.0f)) {
                     if (++*counter >= 6) {
                         flag = 1;
-                        BtlChar_GetPos(chr)->unk98 = 0.0f;
+                        BtlChar_GetPos(chr)->speed = 0.0f;
                     }
                 } else {
                     *counter = 0;
@@ -4487,7 +4487,7 @@ void BtlAct_RushDashHandler(BtlActEChr *chr, s32 phase) {
                 BtlAnim_SetDuration(chr, 0.1f);
                 if (BtlAnim_Advance(chr, 0)) {
                     BtlAct_Request(chr, 0xB);
-                    BtlChar_GetPos(chr)->unk98 = 0.0f;
+                    BtlChar_GetPos(chr)->speed = 0.0f;
                     BtlChar_GetPos(chr)->fallSpeed = 0.0f;
                 }
                 speed = 0.0f;
@@ -4560,10 +4560,10 @@ s32 BtlAct_VanishDashHandler(BtlActEChr *chr, s32 phase) {
                 }
                 if (BtlAnim_IsNew(chr)) {
                     BtlChar_SetFxBit(chr, 0xD);
-                    BtlChar_GetPos(chr)->unk98 = BTL_KMH(1000.0f);
+                    BtlChar_GetPos(chr)->speed = BTL_KMH(1000.0f);
                 }
                 if (BtlMove_IsBlockedByOpponent(chr)) {
-                    BtlChar_GetPos(chr)->unk98 = 0.0f;
+                    BtlChar_GetPos(chr)->speed = 0.0f;
                 }
                 flag = 0;
                 break;
@@ -4748,7 +4748,7 @@ s32 BtlAct_ClashVanishHandler(BtlActEChr *chr, s32 phase) {
         chr->clashCountB = 0;
         BtlChar_SetFxBit(chr, 0xC);
         BtlCharSnd_PlayCommon(chr, 0x20);
-        BtlChar_GetPos(chr)->unk98 = 0.0f;
+        BtlChar_GetPos(chr)->speed = 0.0f;
         BtlChar_GetPos(chr)->fallSpeed = 0.0f;
     }
     if (phase == 1) {
@@ -4807,7 +4807,7 @@ s32 BtlAct_ClashExchangeHandler(BtlActEChr *chr, s32 phase) {
         }
         BtlAnim_Play(chr, anim, 0.15f);
         BtlAnim_EnableHandle(chr);
-        BtlChar_GetPos(chr)->unk98 = 0.0f;
+        BtlChar_GetPos(chr)->speed = 0.0f;
         BtlChar_GetPos(chr)->fallSpeed = 0.0f;
         BtlChar_SetHeldFlag(chr, 0xE);
         BtlChar_RequestPlaceOnPath(chr);

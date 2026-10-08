@@ -161,7 +161,7 @@ void BtlChar_Place(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, s32 area) {
     Vec4_Copy(&pose->moved, &gVu0ZeroVec);
     pose->heading = rot->y;
     pose->pitch = 0.0f;
-    pose->unk98 = 0.0f;
+    pose->speed = 0.0f;
     pose->fallSpeed = 0.0f;
     Vec4_Copy(&obj->pos, pos);
     Vec4_Copy(&obj->outPos, pos);

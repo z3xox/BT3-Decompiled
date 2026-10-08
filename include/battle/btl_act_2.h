@@ -21,7 +21,7 @@ typedef struct BtlActCPose {
     /* 0x80 */ Vec4 vel;
     /* 0x90 */ f32 pitch;
     /* 0x94 */ f32 facing;
-    /* 0x98 */ f32 unk98;
+    /* 0x98 */ f32 speed;
     /* 0x9C */ f32 fallSpeed;
     /* 0xA0 */ f32 leanX;
     /* 0xA4 */ f32 leanZ;
@@ -262,7 +262,7 @@ typedef struct BtlActEPose {
     /* 0x80 */ Vec4 vel;       /* direction of travel */
     /* 0x90 */ f32 pitch;
     /* 0x94 */ f32 facing;
-    /* 0x98 */ f32 unk98;      /* forward pitch */
+    /* 0x98 */ f32 speed;      /* forward pitch */
     /* 0x9C */ f32 fallSpeed;      /* vertical pitch */
 } BtlActEPose;
 
