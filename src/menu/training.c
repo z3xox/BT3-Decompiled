@@ -428,7 +428,7 @@ void Train_MoveCursor(s32 dir) {
  *
  * Three menu levels (top menu, class, lesson), then the guide's introduction, the explanation pages (a text
  * line and a picture per page) and, by the lesson's flags, a tutorial or a practice battle. The guides are
- * Great Saiyaman (top menu) and Videl (the rest). Train_BuildLists is INCLUDE_ASM; everything else matches.
+ * Great Saiyaman (top menu) and Videl (the rest). Everything matches.
  */
 
 /* Says a line with its subtitle and remembers it (the top menu and the rest have different voice banks). */
@@ -464,40 +464,6 @@ void Train_SaveCursor(void) {
     gTrain->saved[gTrain->sel[1]] = gTrain->row + gTrain->top;
 }
 
-/*
- * Train_BuildLists (0x35A610) is the one function of this object that does not match: 11 of 118 instructions,
- * all in the inlined skip-list test. The original starts that loop with
- *     move t0,zero / sltu v0,t0,t2 / beqz v0 / move t1,t0      (found = 0; if (found < num); i = found)
- * and the attempt with
- *     move t1,zero / beqz t0 / move t2,zero                    (i = 0; if (num != 0); found = 0)
- * i.e. here the compiler folds the entry test `0 < skipNum` into `skipNum != 0` (in combine) and loads both
- * zeros as constants; the rest differs only by the three registers that follow from it. Behaviour is the same.
- * Tried without success: every loop shape (for / while / while (1) / goto), found and i at function or block
- * scope and in either order, i initialised from found, u8 / 64-bit flags, a result passed by pointer, a walking
- * pointer, a hand-inlined test.
- *
- * Cleanup notes (RTL dumps, build/scratch_cleanup2_I/rtl/hd.*): up to the second CSE pass the attempt has what
- * the original must have had, `found = 0; i = 0; n = tbl->skipNum; t = found <u n` (CSE itself writes the
- * compare with `found`, the older register that holds 0). The fold happens in combine, which merges
- * `found = 0` into the compare because the compare is the FIRST use of `found` behind it in the same basic
- * block. The original therefore had either another use of `found` in front of the compare or a block boundary
- * between the two, and its `move t1,t0` is a real copy `i = found` that the first CSE pass could not turn into
- * `i = 0`, i.e. `found = 0` was not visible on the path that CSE followed to it. Also tried here: the count
- * read into a local in front of the two initialisations, `found` as a parameter of a nested inline, `do { }
- * while (0)` around the initialisation or the loop, `if (found < n)` written out with a do / while: all give
- * the same 11 (10 for the written-out test).
- *
- * Third pass (2026-10-08, build/scratch_lists/): still 11. What the original needs at the combine pass is
- * `found = 0; i = found; t = found <u n` with the copy `i = found` alive: a two-instruction combination whose
- * first destination stays live fails, so the copy shields the compare (the fold is the three-instruction chain
- * `found = 0` / compare / branch). Nothing written in C keeps that copy: the inliner and both CSE passes turn
- * `i = found` into `i = 0` whenever `found = 0` is visible in the block (`for (i = found; ...)` inlined or written
- * out, `found` set from a zero variable of an outer block, `found` reset at the end of the page loop instead of
- * its top: 11 to 92 differ; `found` hidden behind an empty asm keeps the copy but the loop pass then no longer
- * knows that i starts at 0 and builds the skip pointer with `sll` / `addu`: 65 differ). The original copy
- * therefore survived CSE while the loop pass still saw a constant start value; no source form for that is known.
- */
-#if 0
 /* The lesson records of a class. */
 static inline TrainLesson *Train_ClassLessons(TrainTbl *tbl, s32 class) {
     TrainLesson *p = NULL;
@@ -516,10 +482,16 @@ static inline TrainLesson *Train_ClassLessons(TrainTbl *tbl, s32 class) {
     return p;
 }
 
-/* Whether a page id is in the skip list. */
+/*
+ * Whether a page id is in the skip list. The counter is initialised twice (declaration and loop): that is what
+ * the original needs. With one initialisation the loop starts `move t1,zero / beqz n / move t2,zero`; with two
+ * it starts as the original, `move t0,zero / sltu v0,t0,t2 / beqz v0 / move t1,t0` (found = 0; found < n;
+ * i = found): the redundant second `i = 0` ends up as a copy from `found`, which also keeps the entry compare
+ * from being folded into `n != 0`. Found by the permuter.
+ */
 static inline s32 Train_IsSkipped(TrainTbl *tbl, u32 page) {
     s32 found = 0;
-    u32 i;
+    u32 i = 0;
 
     for (i = 0; i < tbl->skipNum; i++) {
         if (tbl->skip[i] == page) {
@@ -561,8 +533,6 @@ void Train_BuildLists(TrainTbl *tbl, TrainLists *out) {
         out->count[class] = count;
     }
 }
-#endif
-INCLUDE_ASM("asm/nonmatchings/menu/training", Train_BuildLists);
 
 /* Picks the title of the current class. */
 void Train_DrawTitle(void) {
