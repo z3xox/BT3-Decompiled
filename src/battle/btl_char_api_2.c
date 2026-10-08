@@ -1,6 +1,5 @@
 #include "common.h"
 #include "battle/btl_char_api_2.h"
-#include "battle/btl_char_api_2_part2.h"
 
 /*
  * Fighter interface, 0x207020..0x208430: 58 accessors keyed by battle object id (or by nothing), used by the camera,
