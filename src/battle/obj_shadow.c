@@ -15,10 +15,8 @@
  *
  * Everything here is drawing or set-up. Nothing reads a pad, the clock or a random generator.
  *
- * ObjShadow_BuildPacket is INCLUDE_ASM with a behaviourally exact attempt in `#if 0` above it; the 26 other
- * functions match. To check them with fdiff, run it on a copy of this file without the INCLUDE_ASM line (they
- * print OK with or without the attempt compiled). The constant 0.02 of ObjShadow_BuildPacket (0x2FC2CC) is the
- * word in front of this file's .lit4 (0x2FC2D0..0x2FC2FC) and stays in the assembly chunk.
+ * All 27 functions match (ObjShadow_BuildPacket as a marked FAKE MATCH, see its note). Its constant 0.02
+ * (0x2FC2CC) is now emitted by this file: the file's .lit4 is 0x2FC2CC..0x2FC2FC.
  */
 
 extern void *memset(void *dst, s32 c, u32 n);
@@ -291,28 +289,18 @@ s32 ObjShadow_CalcPacketWords(s32 count) {
    triangle at TOPS + 3 (per vertex: x, y, z, a no-draw flag that is 1 on the first two vertices of every
    triangle but the batch's first; the normal with w = 1; the colour; 0, 0, 1, 0) and MSCNT; padding to a
    quadword and a DMA end tag. */
-/* NOT MATCHING (registers only, see the note in the attempt): the hoisting of the three header constants, which
-   used to be the obstacle, is reproduced by duplicating the statements behind the flag store in its three arms. */
-#if 0
-/* NOT MATCHING, but the code is now the original's in shape: 182 instructions against 182, and with register
-   names masked only 4 of them differ (60 by name). Third cleanup:
-   - The missing loop size is found without any filler. The three arms of the no-draw flag each hold the flag
-     store AND the first three statements behind it (`f = (f32 *)p; f[0] = normal.x; f[1] = normal.y;`). The arms
-     are merged again after register allocation, so nothing of it shows, but the batch loop is then long enough
-     at the second loop pass that the three header constants (0x6C038000, 0x8001, 0x10000000) stay in the loop,
-     as in the original, while 1, 1.0f and 0.02f are still hoisted. Two statements in the arms are too few
-     (186 instructions), four give the same count with other differences, five are too many. (The dead `pad`
-     arithmetic of the second cleanup is not needed and is gone.)
-   - Header stores in this order (pkt[3] first of the last five), `pad = 4 - pad` directly, tag[0] written
-     before tag[4]: unchanged from the second cleanup.
-   Still different (all register choice except the last two):
-   - the triangle loop: the original has the triangle base in v1, the vertex pointer in a0, k in t2, the k test
-     in t3, i * 64 in t4, j in t5; here t1 / t3 / v1 / t5 / a0 / t4. A `tri` pointer with or without a walking
-     vertex pointer changes the instruction count (186 / 184) and is worse.
-   - the normal's three loads alternate f1 / f0 / f1 in the original, f0 / f1 / f0 here, and `f + 12` is computed
-     one store earlier there.
-   - `bnez` for the j < 18 test and `blez` in front of the padding loop where this has `bnezl` / `blezl`.
-   Behaviour is the same. */
+/* FAKE MATCH (marked): the code below is the plain form and compiles to the original bytes only with ten
+   empty `__asm__("")` statements in it (OBJSHADOW_FILL8 in front of the triangle loop, OBJSHADOW_FILL2 at its
+   tail). They emit nothing and change no behaviour; each is one RTL instruction, which makes the batch loop long
+   enough at the second loop pass that the three header constants (0x6C038000, 0x8001, 0x10000000) stay in the
+   loop instead of being hoisted into saved registers, and lengthens the live ranges of `tag`, `j` and the
+   compiler's i * 64 so that the allocator takes them in the original order. The real source must have had about
+   nine more RTL instructions there that vanish later (what they were is not known); many splits work
+   (8+1, 8+2, 7+2, 6+3 ..., also with two in front of the batch close). Two things that ARE natural and were
+   needed: the padding loop has its own counter (sharing `k` with the vertex loop gives `k` a preference for
+   v1 / a0 and moves every pointer of the triangle loop), and its bound is written `4 - pad` in the test. */
+#define OBJSHADOW_FILL2() __asm__(""); __asm__("")
+#define OBJSHADOW_FILL8() OBJSHADOW_FILL2(); OBJSHADOW_FILL2(); OBJSHADOW_FILL2(); OBJSHADOW_FILL2()
 s32 ObjShadow_BuildPacket(u32 *pkt, s32 count, ObjShadowTri *tris, f32 *color) {
     u32 *p;
     f32 *f;
@@ -323,6 +311,7 @@ s32 ObjShadow_BuildPacket(u32 *pkt, s32 count, ObjShadowTri *tris, f32 *color) {
     s32 pad;
     s32 n;
     s32 ret;
+    s32 m;
 
     pkt[0] = 0x60000000;
     pkt[2] = 0x6C018000;
@@ -352,6 +341,7 @@ s32 ObjShadow_BuildPacket(u32 *pkt, s32 count, ObjShadowTri *tris, f32 *color) {
         *p++ = 0;
         f = (f32 *)p;
         j = 0;
+        OBJSHADOW_FILL8();
         do {
             for (k = 0; k < 3; k++) {
                 *f++ = tris[i].v[k].x + tris[i].normal.x * 0.02f;
@@ -361,21 +351,15 @@ s32 ObjShadow_BuildPacket(u32 *pkt, s32 count, ObjShadowTri *tris, f32 *color) {
                 if (k < 2) {
                     if (j == 0) {
                         *p++ = 0;
-                        f = (f32 *)p;
-                        f[0] = tris[i].normal.x;
-                        f[1] = tris[i].normal.y;
                     } else {
                         *p++ = 1;
-                        f = (f32 *)p;
-                        f[0] = tris[i].normal.x;
-                        f[1] = tris[i].normal.y;
                     }
                 } else {
                     *p++ = 0;
-                    f = (f32 *)p;
-                    f[0] = tris[i].normal.x;
-                    f[1] = tris[i].normal.y;
                 }
+                f = (f32 *)p;
+                f[0] = tris[i].normal.x;
+                f[1] = tris[i].normal.y;
                 f[2] = tris[i].normal.z;
                 f[3] = 1.0f;
                 f[4] = color[0];
@@ -388,6 +372,7 @@ s32 ObjShadow_BuildPacket(u32 *pkt, s32 count, ObjShadowTri *tris, f32 *color) {
                 f[11] = 0.0f;
                 f += 12;
             }
+            OBJSHADOW_FILL2();
             i++;
             j++;
         } while (i < count && j < 18);
@@ -400,8 +385,7 @@ s32 ObjShadow_BuildPacket(u32 *pkt, s32 count, ObjShadowTri *tris, f32 *color) {
     n = p - pkt;
     pad = n % 4;
     if (pad != 0) {
-        pad = 4 - pad;
-        for (k = 0; k < pad; k++) {
+        for (m = 0; m < 4 - pad; m++) {
             *p++ = 0;
         }
     }
@@ -413,9 +397,6 @@ s32 ObjShadow_BuildPacket(u32 *pkt, s32 count, ObjShadowTri *tris, f32 *color) {
     pkt[0] = (p - pkt) / 4 + 0x5FFFFFFE;
     return ret;
 }
-
-#endif
-INCLUDE_ASM("asm/nonmatchings/battle/obj_shadow", ObjShadow_BuildPacket);
 
 /* Matrix that flattens geometry on the plane (x, y, z, w + bias) along the direction `light`
    (sceVu0DropShadowMatrix for a parallel light, with the light reversed). */
