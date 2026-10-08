@@ -58,63 +58,43 @@ void PadWatch_SetEnabled(s32 enable) {
  * is missing (also when both are), 1 when only controller 2 is. Returns 0 while no port has a settled
  * reading or there is no warning. Polled by the battle's pause check (BtlPause_CheckOpen).
  *
- * NON-MATCHING: 2 of 69 instructions. In the "controller 2 missing" arm the original has
- * `beqz s0,<exit>; nop` and this compiles to `beqzl s0,<exit + 4>; ld s0,0(sp)`: the delay-slot pass
- * here pulls the first instruction of the epilogue into the slot and the original left it empty.
- * Same instructions, registers and branch targets otherwise. Tried without effect: early returns in
- * every combination of the four arms, goto forms, `port == NULL` tests, a variable for the 1.
+ * The form matters for the delay slots: the whole body sits inside the "there is a warning" test with
+ * `return 1` at its end and `return 0` behind it. With an early `return 0` in front, the `*port = 1` arm
+ * compiles to `beqzl s0 / ld s0` where the original has `beqz s0 / nop`.
  */
-/* Cleanup pass 2: read from the delay-slot pass (reorg.c). The `li v0,1` in the slot of the preceding
-   `bnez v0,<exit>` makes the copy of `li v0,1` at the target redundant for `beqz s0`, so this compiler skips it
-   and takes the next instruction of the target (`ld s0`, annulled: beqzl). The original has `beqz` + nop, which
-   is what is left when `beqz s0` took `li v0,1` first and lost it again as redundant in the relax step: the
-   preceding branch got its `li v0,1` only later (second round), i.e. it did not point at the `return 1` block
-   directly when the slots were filled first. Eight more arrangements of the `*port = 1` arm (returns, inverted
-   tests, a local for the 1) give the same two instructions or more differences. */
-/* Cleanup pass 3: still 2 of 69 with 22 more arrangements (the `*port = 1` arm with returns, gotos, an empty
-   else, `do { } while (0)`; the `*port = 0` arms inverted or with returns; the mode test as nested ifs or a flag:
-   those two change the layout). Before the delay-slot pass this C already has what the original must have had:
-   `bnez v0,ret1 / beqz s0,ret1 / li v0,1 / sw v0,0(s0) / j ret1`. From reorg.c: the original's `beqz s0` took the
-   `li v0,1` behind it in the first round and lost it as redundant only in the LAST relax step (an emptied slot
-   is refilled in round two, which is the `beqzl / ld s0` here). So in round one that `li v0,1` was not
-   redundant: either a label stood in front of `beqz s0` (redundant_insn stops at a label) whose jump went away
-   afterwards, or the `bnez v0` in front had no `li v0,1` yet. No source form found for either. */
-#if 0
 s32 PadWatch_GetMissing(s32 *port) {
-    if ((gPadWatch->valid[0] == 0 && gPadWatch->valid[1] == 0) || gPadWatch->message < 0) {
-        return 0;
-    }
-    if (gPadWatch->valid[0] != 0 || gPadWatch->valid[1] != 0) {
-        if (Battle_GetWork()->running != 0
-                ? (BtlGame_IsReplay() == 0 && Battle_IsSplitScreen() != 0)
-                : ((u32)(gProgress->mode - 0x27) < 2 && gProgress->unk620 == 1)) {
-            if (!(gPadWatch->state[0] & 1)) {
-                if (!(gPadWatch->state[1] & 1)) {
+    if ((gPadWatch->valid[0] != 0 || gPadWatch->valid[1] != 0) && gPadWatch->message >= 0) {
+        if (gPadWatch->valid[0] != 0 || gPadWatch->valid[1] != 0) {
+            if (Battle_GetWork()->running != 0
+                    ? (BtlGame_IsReplay() == 0 && Battle_IsSplitScreen() != 0)
+                    : ((u32)(gProgress->mode - 0x27) < 2 && gProgress->unk620 == 1)) {
+                if (!(gPadWatch->state[0] & 1)) {
+                    if (!(gPadWatch->state[1] & 1)) {
+                        if (port != NULL) {
+                            *port = 0;
+                        }
+                    } else {
+                        if (port != NULL) {
+                            *port = 0;
+                        }
+                    }
+                } else if (!(gPadWatch->state[1] & 1)) {
+                    if (port != NULL) {
+                        *port = 1;
+                    }
+                }
+            } else {
+                if (!(gPadWatch->state[0] & 1)) {
                     if (port != NULL) {
                         *port = 0;
                     }
-                } else {
-                    if (port != NULL) {
-                        *port = 0;
-                    }
-                }
-            } else if (!(gPadWatch->state[1] & 1)) {
-                if (port != NULL) {
-                    *port = 1;
-                }
-            }
-        } else {
-            if (!(gPadWatch->state[0] & 1)) {
-                if (port != NULL) {
-                    *port = 0;
                 }
             }
         }
+        return 1;
     }
-    return 1;
+    return 0;
 }
-#endif
-INCLUDE_ASM("asm/nonmatchings/sys/pad_watch", PadWatch_GetMissing);
 
 /* 1 when the given port's controller is missing and a warning is up. */
 s32 PadWatch_IsPortMissing(s32 port) {
