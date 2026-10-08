@@ -351,11 +351,11 @@ s32 EftQuad_InitQuad(EftPart9Ptcl *p, EftPart9 *em) {
     }
     p->texFrame = Rand_FloatRange(0.0f, em->texFrames - 1);
     if (def->flags & 8) {
-        p->unk11C = em->unk348 * 30.0f;
-        p->unk118 = 0.0f;
-        if (0.0f < em->unk348) {
-            p->unkF4 = em->unk344 - em->unk340;
-            p->unk114 = em->unk340;
+        p->sizeOscPeriod = em->sizeOscTime * 30.0f;
+        p->sizeOscTime = 0.0f;
+        if (0.0f < em->sizeOscTime) {
+            p->sizeOscAmp = em->sizeOsc1 - em->sizeOsc0;
+            p->sizeOscBase = em->sizeOsc0;
             p->flags |= 0x800;
         }
     }
@@ -390,16 +390,16 @@ s32 EftQuad_InitQuad(EftPart9Ptcl *p, EftPart9 *em) {
     p->size = sz[0];
     p->sizeStep0 = (sz[1] - sz[0]) / (p->life * def->sizeMid);
     p->sizeStep1 = (sz[2] - sz[1]) / (p->life * (1.0f - def->sizeMid));
-    p->unk138 = p->unk134 = Rand_FloatRange(def->unk224, def->unk224 + def->unk228);
+    p->baseSize = p->halfSize = Rand_FloatRange(def->baseSize, def->baseSize + def->baseSizeRange);
     sz[0] = Rand_FloatRange(em->size1[0], em->size1[0] + em->size1Range[0]);
     sz[1] = Rand_FloatRange(em->size1[1], em->size1[1] + em->size1Range[1]);
     sz[2] = Rand_FloatRange(em->size1[2], em->size1[2] + em->size1Range[2]);
-    p->unk108 = sz[0];
-    p->unk10C = (sz[1] - sz[0]) / (p->life * def->sizeMid);
-    p->unk110 = (sz[2] - sz[1]) / (p->life * (1.0f - def->sizeMid));
-    p->unk104 = Rand_FloatRange(def->unk22C, def->unk22C + def->unk230);
+    p->speedMul = sz[0];
+    p->speedStep0 = (sz[1] - sz[0]) / (p->life * def->sizeMid);
+    p->speedStep1 = (sz[2] - sz[1]) / (p->life * (1.0f - def->sizeMid));
+    p->speed = Rand_FloatRange(def->speed, def->speed + def->speedRange);
     memset(&end, 0, sizeof(end));
-    switch (def->unk242) {
+    switch (def->colorMode) {
     case 2:
         if (rand() & 1) {
             break;
@@ -408,11 +408,11 @@ s32 EftQuad_InitQuad(EftPart9Ptcl *p, EftPart9 *em) {
         p->flags |= 0x40;
         break;
     }
-    p->unk15C = em->unk390;
-    p->unk160 = em->unk394;
-    p->unk14C = 0.0f;
-    p->unk148 = p->life * (p->unk160 - p->unk15C);
-    if (p->unk148 != p->life && p->unk14C < p->unk148) {
+    p->rampStart = em->rampStart;
+    p->rampEnd = em->rampEnd;
+    p->rampTime = 0.0f;
+    p->rampLen = p->life * (p->rampEnd - p->rampStart);
+    if (p->rampLen != p->life && p->rampTime < p->rampLen) {
         p->flags |= 0x8000;
     }
     p->color0.x = Rand_FloatRange(em->colorMin[0], em->colorMin[0] + em->colorRange[0]);
@@ -429,7 +429,7 @@ s32 EftQuad_InitQuad(EftPart9Ptcl *p, EftPart9 *em) {
     Vec3_Sub(&p->colorStep, &end, &p->color0);
     p->color.w = Rand_FloatRange(em->colorMin[3], em->colorMin[3] + em->colorRange[3]);
     p->color.w = EftQuad_Clamp(p->color.w, 0.0f, 255.0f);
-    p->unkEC = p->life * def->unk218;
-    p->unkF0 = p->life * (1.0f - def->unk21C);
+    p->fadeIn = p->life * def->fadeInEnd;
+    p->fadeOut = p->life * (1.0f - def->fadeOutStart);
     return 1;
 }

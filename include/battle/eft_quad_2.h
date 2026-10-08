@@ -61,27 +61,27 @@ typedef union EftYUv {
 /* One texture of a pack texture table: the GS TEX0 value once loaded. */
 typedef struct EftYTex {
     /* 0x00 */ u64 tex0;
-    /* 0x08 */ u64 unk8;
+    /* 0x08 */ u64 image;
 } EftYTex; /* size 0x10 */
 
 /* Texture table of 8 entries (EftEmitSet.tex17 entries, 0x88 bytes): used by the quad emitter. */
 typedef struct EftYTex8 {
     /* 0x00 */ EftYTex e[8];
-    /* 0x80 */ s32 unk80;
+    /* 0x80 */ s32 count;
     /* 0x84 */ u32 loaded; /* bit n: e[n].tex0 has been built */
 } EftYTex8; /* size 0x88 */
 
 /* Texture table of 16 entries (EftEmitSet.tex33 entries, 0x108 bytes): used by the line. */
 typedef struct EftYTex16 {
     /* 0x000 */ EftYTex e[16];
-    /* 0x100 */ s32 unk100;
+    /* 0x100 */ s32 count;
     /* 0x104 */ u32 loaded;
 } EftYTex16; /* size 0x108 */
 
 /* The task fields used here (0x40 bytes, see eft_shot.h). */
 typedef struct EftYTask {
     /* 0x00 */ u8 unk0[0x34];
-    /* 0x34 */ void *unk34;
+    /* 0x34 */ void *nextFree;
     /* 0x38 */ void *work;
 } EftYTask;
 
@@ -431,8 +431,8 @@ typedef struct EftLineDef {
     /* 0x00 */ s32 flags;        /* 1: key-framed (else the last key is used) */
     /* 0x04 */ u8 layer;         /* order table layer; 2 and 3 are layers 0 and 1 of GS context 2 */
     /* 0x05 */ u8 unk5[7];
-    /* 0x0C */ f32 unkC;         /* seconds */
-    /* 0x10 */ f32 unk10;        /* seconds */
+    /* 0x0C */ f32 fadeIn;         /* seconds */
+    /* 0x10 */ f32 fadeOut;        /* seconds */
     /* 0x14 */ f32 time;         /* seconds of the whole key animation */
     /* 0x18 */ f32 split;        /* fraction of it spent on the first leg */
     /* 0x1C */ f32 spin[3];      /* half turns per second (inferred from the factors: * pi) */
@@ -444,8 +444,8 @@ typedef struct EftLineDef {
     /* 0x64 */ f32 c0[3];
     /* 0x70 */ f32 c1[3];
     /* 0x7C */ f32 cTime[3];     /* seconds */
-    /* 0x88 */ f32 unk88;        /* random ranges used by the init */
-    /* 0x8C */ f32 unk8C;
+    /* 0x88 */ f32 spinRange;        /* random ranges used by the init */
+    /* 0x8C */ f32 angleRange;
 } EftLineDef;
 
 /* Second parameter block (pack resource word 1), three keys each. */
@@ -485,7 +485,7 @@ typedef struct EftLineArg {
     /* 0x20 */ s32 objId;
     /* 0x24 */ s32 texIdx;       /* entry of `tex` that receives the built TEX0 */
     /* 0x28 */ f32 life;         /* seconds */
-    /* 0x2C */ s32 unk2C;
+    /* 0x2C */ s32 size;
     /* 0x30 */ EftYTex16 *tex;
     /* 0x34 */ EftLineDef *def;
     /* 0x38 */ EftLineDef2 *def2;
@@ -498,9 +498,9 @@ typedef struct EftLineWork {
     /* 0x040 */ EftLineCur cur;   /* EftLine_SetKey / EftLine_Animate */
     /* 0x090 */ EftYVec color;    /* drawn colour */
     /* 0x0A0 */ f32 u0;
-    /* 0x0A4 */ f32 unkA4;
+    /* 0x0A4 */ f32 u1;
     /* 0x0A8 */ f32 v0;
-    /* 0x0AC */ f32 unkAC;
+    /* 0x0AC */ f32 v1;
     /* 0x0B0 */ s32 flags;        /* 1 alive, 0x20 drawn in front of everything (z forced to the nearest) */
     /* 0x0B4 */ u8 unkB4[8];
     /* 0x0BC */ f32 du;

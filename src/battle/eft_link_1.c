@@ -44,7 +44,7 @@ void EftLink_Init(EftVTask *task, EftLinkArg *arg) {
     w->arg.tex = arg->tex;
     w->arg.def = arg->def;
     w->arg.def2 = arg->def2;
-    EftLink_SelectTex(w, arg->tex, arg->frame, arg->unk3C);
+    EftLink_SelectTex(w, arg->tex, arg->frame, arg->palette);
     if (def->flags & 0x200) {
         EftLink_InitGrow(w);
         w->flags |= EFT_LINK_GROWING;
@@ -190,13 +190,13 @@ void EftLink_Draw(EftVTask *task) {
                 }
                 Mtx_MulVec4(EFTV_VEC(&pos), EFTV_MTX(&m), EFTV_VEC(&pos));
                 Vec3_Add(EFTV_VEC(&out), EFTV_VEC(&pos), &n->pos);
-                size = n->size * w->arg.size * w->scale * n->unkFC * 0.5f;
+                size = n->size * w->arg.size * w->scale * n->scale * 0.5f;
                 rot = EftMath_WrapAngle(n->rot + n->twist);
                 if (def->flags & 4) {
-                    EftLink_DrawBillboardClipped(EFTV_VEC(&out), &n->color, &n->unk40, size, size, n->uv0.x, n->uv0.y, n->uv1.z, n->uv1.w, rot,
+                    EftLink_DrawBillboardClipped(EFTV_VEC(&out), &n->color, &n->ofs, size, size, n->uv0.x, n->uv0.y, n->uv1.z, n->uv1.w, rot,
                                   def->layer, (w->flags >> 9) & 1, EFT_LINK_TEX0(w), 2.0f);
                 } else {
-                    EftLink_DrawBillboard(EFTV_VEC(&out), &n->color, (s32)n->unk40.x << 4, (s32)n->unk40.y << 4, size * 16.0f,
+                    EftLink_DrawBillboard(EFTV_VEC(&out), &n->color, (s32)n->ofs.x << 4, (s32)n->ofs.y << 4, size * 16.0f,
                                   size * 16.0f, n->uv0.x, n->uv0.y, n->uv1.z, n->uv1.w, rot, def->layer,
                                   (w->flags >> 9) & 1, EFT_LINK_TEX0(w));
                 }

@@ -121,3 +121,38 @@ Group 06 (btl_script_cmd.h .. eft_disc.h):
 - btl_tech.h, BtlTechBParam.unk8F[0xC7 - 0x8F] runs over fields BtlParam names from 0x98 on (transTarget and others).
 - The word after `count` in the texture sets: `stepped` (eft_disc.h, eft_rays.h), `ready` (eft_orb_tail.h, eft_part10.h), `built` (eft_chain.h).
 - Ten MEDIUM names in btl_tech.h follow the existing getter's name only (poweredDashLimit, landingKind, throwObjectSlot, ...).
+
+Group 08 (eft_obj_tech.h .. eft_quad_2.h):
+- eft_part10.h:195: EftPart10Ptcl.speed (0xC0) is the particle's distance from the emitter (eft_link_2.h: dist); the speed / speedRange /
+  speedBase tracks (lines 119-121, 263-265) are dist / distRange / distBase.
+- eft_part10.h:212-215, 288-294, 166-169: the stretch* members are a colour multiplier pulse (eft_link_2.h: mulD / mul0 / mulT / mulTime);
+  the flags EFT_PART10_P_SCALEX/Y/Z are per-channel pulse flags. The same for the part-9 quad at :410, 418-420, 486-488
+  (colorOscAmp / colorMul / colorOscTime / colorOscPeriod in eft_quad_2.h).
+- eft_part10.h:423: EftPart9Ptcl.size (0x13C) is the multiplier sizeMul; the base size is 0x138; dir (0x20) / vel (0x30) are vel / accel.
+- eft_part10.h:242, 349: `rate` ("seconds between bursts") is a life in seconds (eft_link_2.h: life).
+- eft_part10.h:151, 156: layer (0x1FB) / drawMode (0x20C) are blend / mode in eft_link_2.h: which is right was not determined.
+- eft_part10.h:86: EFT_PART10_P_UNK80 is "the colour ramps", selected by def->unk20D.
+- eft_obj_tech.h:247: EftObjTech.nodes[2] is the 0x10-byte header of the EftEmitNodes block plus slot 0's id and padding, not two positions;
+  the Vec4 arrays unk390[3] (line 249) and EftRushShot.unk360[3] (line 306) are id / padding / position mixes.
+- eft_obj_tech.h:78 against src/battle/eft_obj_tech.c:1212: the comment calls EftKPart.unk18 a life; eft_sweep.h names it `rate`.
+- eft_tech_modules.h:166: EftRushShotWork.unk390 "position of the start node" is slot 1 (FIRE); slot 0 (START) is at 0x350.
+- eft_particle_unused.h:373: "unk84 / unk90: jitter along the chain" has no backing in code. :443, 435-436: EftLinkNode.rot is rotZ,
+  offset / pos are dir / origin in eft_link_2.h.
+- Unused byte-array gaps with exact names in sibling views: EftPart10.unk29C = uv[16][4], EftPart9.unk298 = animSplit, EftPtcl.unk50 = accel,
+  EftLinkNode.unk0 = corner[4].
+
+Group 07 (eft_draw_modules.h .. eft_link_2.h):
+- src/battle/eft_emit.c:1458 has a local twin of EftEmitLightArg, EftEmitRayArg, with the same unk20..unk50 fields: same renames wanted.
+- Type problems, not names: EftSetHead.unkC[2] / unk30[2] are width1 / width2 and b1 / b2 in eft_sweep.h; EftHTask.unk28[4] is cls / prev /
+  next / nextFree; EftVolleyShot.unk20 (Vec4) is {s32 script; f32 speed; f32 maxTurn} in eft_detect.h.
+- EftSkillSrc.unk8 and EftSuperSrc.unkC are `flags` in btl_tech.h, but `flags` is taken by offset 0 (btl_tech.h: flagsA).
+- eft_draw_modules.h:50: EftTTaskList.count ("live children") is BtlTaskList.head, a pointer; the test at eft_chain.c:2078 is "list not empty".
+- eft_draw_modules.h:38-39: EftTTask.unk8 / unk18 comments ("texture animation state A/B") are wrong (BtlTask: pos at 0x10, list at 0x20).
+- eft_draw_modules.h:103: EftChainStrand.mtx (Mtx44 at 0x00) is four vectors in EftArcChain (pos, drift, unk20, color).
+- eft_emit.h:69: the comment on EftShotParam.unk5 says "super +0x141[i]": the code reads d->unk13B[n] (hitDirKind in btl_tech.h).
+- eft_shot.h:57-58 against eft_emit.h / EftKDef: the two "kind"s are different fields: 0x04 is skill / technique / ultimate, 0x05 the sub-kind.
+- eft_ground_dust.h:262: EftGndDustStage.unk54 sits at offset 0x10 (named after the field it is copied to).
+- eft_link_2.h:352: EftPart10.stopDelay at 0x25C is spinB in eft_part10.h. :356: timer at 0x3A8 is `hold` there.
+- eft_link_2.h:246: EftWLinkMgr.ptcl at 0x10 disagrees with EftLinkMgr.node at 0x20: both views of gEftLink cannot be right.
+- eft_link_2.h:117-119: EftWLinkNode 0x40 / 0x50 / 0x60 are ofs / dir / origin; EftLinkNode has unk40 / offset / pos.
+- eft_emit.h:409-410, 423-424: EftEmitArgA.texA / texB and EftEmitArg17.texA are definition blocks in the receiving modules; `res` is the texture set.

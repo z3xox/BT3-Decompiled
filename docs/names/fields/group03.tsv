@@ -1,0 +1,158 @@
+include/battle/btl_char_action.h	BtlActPose	unk44	moveY	HIGH	pose +0x40 is the Vec4 of the previous frame's whole movement (BtlCapiPose.move, BtlActCPose.move "y = fall speed"); BtlAct_GetFramesToGround divides the height by it
+include/battle/btl_char_action.h	BtlActPose	unk70	impulse	HIGH	knock-back velocity: BtlCapiPose.impulse, BtlActBPose.impulse, ActGPose.impulse at +0x70; zeroed every frame of the scripted action 4
+include/battle/btl_char_action.h	BtlActPose	speed	pitch	HIGH	NOT an unk field but it blocks the next row: +0x90 is the heading pitch (BtlMove_SetHeading stores its pitch argument there; BtlMovePose, BtlCapiPose, BtlActA/B/DPose, ActGPose all call it pitch; combat.md line 445); action 5 passes it times a rate to BtlMove_SetLeanX
+include/battle/btl_char_action.h	BtlActPose	unk98	speed	HIGH	speed along dir per frame (BtlMovePose, BtlCapiPose, BtlActA/B/DPose, ActGPose name +0x98 speed); zeroed with fallSpeed when actions 2, 3, 4 start; apply AFTER the speed->pitch row above, the tool rejects it while +0x90 still holds the name
+include/battle/btl_char_action.h	BtlActPose	unk9C	fallSpeed	HIGH	vertical speed, positive = down: BtlMovePose, BtlCapiPose, BtlActBPose, BtlActDPose, ActGPose name +0x9C fallSpeed (BtlActAPose vspeed, BtlCollPose velY)
+include/battle/btl_char_action.h	BtlActPose	unkAC	dashBoost	MEDIUM	multiplier forced to 1.0 every frame except in actions 0xF, 0x3E, 0x58, 0xB0, 0xB1, raised by 0.1 up to 1.5 when action 0xF is re-requested (btl_act_2.c), and multiplied into movement speeds 4 / 5 and turn rate 0 (btl_tech.c); that these are the dash speeds is inferred
+include/battle/btl_char_action.h	BtlActPose	unkB0	groundX	HIGH	+0xB0 is the Vec4 ground point below the fighter (BtlCapiPose.ground, BtlActBPose.ground, BtlCollPose.groundPos); this view splits it and already calls +0xB4 groundY; not read in this file
+include/battle/btl_char_action.h	BtlActAttack	unk9	leadIn	HIGH	copy of attack record +0x01, which BtlActIAttackRec names leadIn (0..9, the actions queued in front of the attack, btl_act_change.c switch); BtlActBAttack calls the copy level (1..3 raise effect bit 0xD), the weaker of the two names
+include/battle/btl_char_action.h	BtlActAttack	unk10	rate	HIGH	BtlActBAttack.rate at +0x10: the animation step is rate * 2 while a further part follows; record +0x0C * 0.1, or 1.0
+include/battle/btl_char_action.h	BtlActAttack	unk14	cancelAt	HIGH	BtlActAAttack.cancelAt at +0x14: animation progress after which the queued follow-up starts; record +0x08
+include/battle/btl_char_action.h	BtlActAttack	unk18	leadFrames	MEDIUM	BtlActEAttack comment: lead time in frames built up by BtlAct_PlayAttackPart; here only 0 from PrepareAttack and 15.0 from ResetAttack, so the unit and use are taken from that comment
+include/battle/btl_char_action.h	BtlActAttack	unk1C	speed	HIGH	BtlActBAttack.speed at +0x1C: advance speed per frame; built as record +0x00 * 10 km/h converted to metres per frame
+include/battle/btl_char_action.h	BtlActAttack	unk20	chained	HIGH	BtlActAAttack.chained at +0x20: a follow-up attack (not a generic cancel) is queued; zeroed by PrepareAttack and ResetAttack
+include/battle/btl_char_action.h	BtlActAttackRec	unk0	speed	HIGH	PrepareAttack turns it into the attack's advance speed (BtlActBAttack.speed): value * 10 km/h per frame
+include/battle/btl_char_action.h	BtlActAttackRec	unk1	leadIn	HIGH	BtlActIAttackRec.leadIn at +0x01: 0..9 selects the actions queued in front of the attack (btl_act_change.c)
+include/battle/btl_char_action.h	BtlActAttackRec	unk8	cancelAt	HIGH	copied as it is to the attack block +0x14, which BtlActAAttack names cancelAt
+include/battle/btl_char_action.h	BtlActAttackRec	unkC	rate	HIGH	tenths of the animation rate: > 0 gives rate = value * 0.1 in the attack block (BtlActBAttack.rate), else 1.0
+include/battle/btl_char_action.h	BtlActVitals	unk8	KEEP	KEEP	not read in this file; BtlMemberGauge, BtlMgrGauge and HitGauge leave +0x08 unknown too
+include/battle/btl_char_action.h	BtlActVitals	unk20	variant	HIGH	BtlMemberGauge.variant and HitGauge.variant at +0x20 (the model variant, BattleMember.variant); copied to the switch block by BtlAct_PrepareSwitch
+include/battle/btl_char_action.h	BtlActVitals	unk24	lowHealth	HIGH	BtlMgrGauge.lowHealth at +0x24: 1 while health < 10000 (BtlChar_PostScene); not read in this file
+include/battle/btl_char_action.h	BtlActVitals	unk28	lowHealthIdle	HIGH	BtlMgrGauge.lowHealthIdle at +0x28, written by BtlChar_PostScene; here non-zero makes a downed fighter owe 4 button presses
+include/battle/btl_char_action.h	BtlActVitals	unk2C	KEEP	KEEP	not read in this file and unknown in the other gauge views
+include/battle/btl_char_action.h	BtlActVitals	unk30	bodyChanged	MEDIUM	BtlChar_IsBodyChanged() is (this != 0) (btl_char_mgr.h); non-zero makes the switch use character 0x56 for animation and voice; the name comes from the accessor, what sets it (flag 0xA6) was not checked
+include/battle/btl_char_action.h	BtlActForm	unk0	index	HIGH	BtlActJForm.index and BtlActHForm.index at +0x00: transformation / fusion index, -1 here
+include/battle/btl_char_action.h	BtlActForm	unkC	cost	HIGH	BtlActJForm.cost and BtlActHForm.cost at +0x0C: blast gauge cost
+include/battle/btl_char_action.h	BtlActForm	unk10	kind	HIGH	BtlActJForm.kind and BtlActHForm.kind at +0x10
+include/battle/btl_char_action.h	BtlActForm	unk14	variant	HIGH	BtlActJForm.variant and BtlActHForm.variant at +0x14 (ActGForm comment: model variant requested); 1 from SetFormCurrent, 0 from SetFormRandom
+include/battle/btl_char_action.h	BtlActForm	unk18	animChara	HIGH	BtlActJForm.animChara and BtlActHForm.animChara at +0x18 (BtlChangeReq.animChara)
+include/battle/btl_char_action.h	BtlActForm	unk1C	KEEP	KEEP	unknown in BtlActJForm, BtlActHForm, ActGForm and BtlChangeReq (unk18) too; always set like animChara
+include/battle/btl_char_action.h	BtlActForm	unk20	voiceChara	HIGH	BtlActJForm.voiceChara and BtlActHForm.voiceChara at +0x20 (BtlChangeReq.voiceChara)
+include/battle/btl_char_action.h	BtlActForm	unk24	objId	MEDIUM	BtlActHForm.objId at +0x24 (the extra object asked from BtlChange_RequestObject: partner / prop); BtlActJForm leaves it unknown and says it comes from a parameter byte, so it may be a model id and not a battle object id
+include/battle/btl_char_action.h	BtlActForm	unk28	objCostume	MEDIUM	BtlActHForm.objCostume at +0x28 (fusion: the partner's costume); BtlActJForm leaves it unknown
+include/battle/btl_char_action.h	BtlActForm	unk2C	partner	HIGH	BtlActJForm.partner and BtlActHForm.partner at +0x2C: member index of the fusion partner, -1 here
+include/battle/btl_char_action.h	BtlActChr	unk4A4	camYawStep	HIGH	ChrCam.yawStep is at fighter +0x4A4 (btl_char_cam.h), between camYaw and camSide which this view names the same way; not read in this file
+include/battle/btl_char_action.h	BtlActChr	unk968	prevActionFrame	HIGH	last frame's actionFrame (+0x964): BtlMgrChr.prev964, and BtlOpp_GetSeenActionFrame returns +0x968 or +0x964 like prevAction / action
+include/battle/btl_char_action.h	BtlActChr	unk99C	switchGauge	HIGH	BtlActJChr.switchGauge and BtlCapiBChr.switchGauge at +0x99C; fills to 100000 while BattleSide_GetSwitchEnabled
+include/battle/btl_char_action.h	BtlActChr	unk9A0	switchTarget	HIGH	BtlMemberChr.switchTarget at +0x9A0: the member a switch would bring in; not read in this file
+include/battle/btl_char_action.h	BtlActChr	unkCE8	switchAnimChara	HIGH	BtlActHChr.switchAnimChara and BtlActIChr.switchAnimChara at +0xCE8; set to the chara or 0x56 by BtlAct_PrepareSwitch
+include/battle/btl_char_action.h	BtlActChr	unkCEC	KEEP	KEEP	BtlActHChr / BtlActIChr call it switchUnk18 (the unknown word of BtlChangeReq); always set like switchAnimChara
+include/battle/btl_char_action.h	BtlActChr	unkCF0	switchVoiceChara	HIGH	BtlActHChr.switchVoiceChara and BtlActIChr.switchVoiceChara at +0xCF0
+include/battle/btl_char_action.h	BtlActChr	unkCF4	switchEnabled	MEDIUM	btl_char_mgr.c stores BattleSide_GetSwitchEnabled(side) here at reset; not read in this file, and the name rests on that accessor's name
+include/battle/btl_char_action.h	BtlActChr	unkD40	comboDamage	HIGH	BtlCapiBChr.comboDamage (BtlMemberCombo.damage) at +0xD40; zeroed without flag 0x95
+include/battle/btl_char_action.h	BtlActChr	unkD44	comboHits	HIGH	BtlCapiBChr.comboHits (BtlMemberCombo.hits) at +0xD44
+include/battle/btl_char_action.h	BtlActChr	unkD48	comboTimer	HIGH	BtlCapiBChr.comboTimer (BtlMemberCombo.timer) at +0xD48; the countdown is here
+include/battle/btl_char_action.h	BtlActChr	unkD4C	comboNewHit	HIGH	BtlCapiBChr.comboNewHit (BtlMemberCombo.newHit) at +0xD4C; BtlAct_CountAndMarkOpponent sets the opponent's to 1
+include/battle/btl_char_action.h	BtlActChr	unkD60	rushStep	HIGH	rush chain step 0..9, animation 0x37 + step (BtlActAChr and BtlActIChr comments, combat.md action 0x44); zeroed without flag 0x88
+include/battle/btl_char_action.h	BtlActChr	unkD64	rapidRushStep	MEDIUM	BtlActAChr comment: rapid rush step 0..4, animation 0x3C + step; not read in this file, taken from that comment only
+include/battle/btl_char_action.h	BtlActChr	unkD68	dashCount	MEDIUM	counter with limit +0xD6C: homing dashes started out of an attack (BtlActDChr, BtlActIChr comments); zeroed without flag 0x89; the views describe it by different uses
+include/battle/btl_char_action.h	BtlActChr	unkD6C	dashLimit	MEDIUM	limit of the +0xD68 counter, set every frame to 1 or BtlParam_GetPoweredDashLimit plus ability bonus (btl_char_mgr.h); name rests on that accessor
+include/battle/btl_char_action.h	BtlActChr	unkD70	vanishCount	MEDIUM	counts vanishing attacks (BtlActAChr) against the limit +0xD74; BtlCharApi_GetVanishStrikesLeft returns limit - count; zeroed without flag 0x89
+include/battle/btl_char_action.h	BtlActChr	unkD74	vanishLimit	MEDIUM	limit of the +0xD70 counter, set every frame to 1 or BtlParam_GetPoweredVanishLimit plus ability bonus (btl_char_mgr.h); name rests on that accessor
+include/battle/btl_char_action.h	BtlActChr	unkD78	charge	HIGH	BtlCapiChr.charge and BtlTechChr.charge at +0xD78 (a float 0..1: how far the attack was charged); cleared here with an integer store when an action starts
+include/battle/btl_char_action.h	BtlActChr	unkD7C	chargeTimer	MEDIUM	BtlActAChr comment: attack charge timer 0..1 (a float there); cleared with charge when an action starts; unit of the timer not checked
+include/battle/btl_char_action.h	BtlActChr	unkD80	chargeGauge	HIGH	gauge 0..100000 that blends the two attack charge rates (btl_act_1.c), gains BtlAtk_GetChargeGaugeGain per hit (btl_char_hit.c) and drains 400 per frame here
+include/battle/btl_char_action.h	BtlActChr	unkD84	chargeFullFrames	MEDIUM	BtlActAChr comment and combat.md: frames the attack charge has been full; here only cleared with charge when an action starts
+include/battle/btl_char_action.h	BtlActChr	unkD88	evasionCount	MEDIUM	counts the action starts (flag 8) among the evasion attacks 0x89..0x8C; BtlOpp_GetEvasionCount reads it, BtlAct_GetEvasionAttack adds both fighters' to pick the attack and btl_char_hit.c scales damage by it; reset by any other action but 0x2B / 0x2D / 0x2E
+include/battle/btl_char_action.h	BtlActChr	unkD8C	KEEP	KEEP	BtlActCChr: which of the three animations of action 0x41 is next; what that action is is not known
+include/battle/btl_char_action.h	BtlActChr	unkDE0	blastShots	HIGH	BtlCapiBChr.blastShots at +0xDE0: ki blasts fired in a row, compared with the character's limit; zeroed when the +0xDE4 countdown has run out
+include/battle/btl_char_action.h	BtlActChr	unkDE4	blastShotsTimer	MEDIUM	set to 30 by every ki blast (BtlActCChr / BtlActDChr); counts down here (not in motions with flag 4) and at 0 blastShots is cleared
+include/battle/btl_char_action.h	BtlActChr	unkDE8	blastHand	MEDIUM	BtlActCChr comment: 1 = the next ki blast uses the other hand (animations 0x71 / 0x72 alternate); not read in this file
+include/battle/btl_char_action.h	BtlActChr	unkDEC	blastCharge	HIGH	BtlCapiChr.blastCharge at +0xDEC (BtlTechBChr calls it kiBlastCharge): 0..1 progress of the charged ki blast; cleared when an action starts
+include/battle/btl_char_action.h	BtlActChr	unkE10	skillKiRate	HIGH	BtlActIChr.skillKiRate at +0xE10; here it is the ki spent per frame while flag 0x98 is held
+include/battle/btl_char_action.h	BtlActChr	unkE20	skillValE	MEDIUM	BtlActIChr.skillValE at +0xE20 (BtlSkill_GetValE when positive); here it is a floor of chargeGauge; the name only says which table column it came from
+include/battle/btl_char_action.h	BtlActChr	unkE40	techDelay	HIGH	BtlActJChr.techDelay and BtlTechChr.techDelay at +0xE40 (BtlSuperChr calls it cooldown, the api BtlCharApi_GetTechniqueCooldown); counts down here outside techniques
+include/battle/btl_char_action.h	BtlActChr	unkE50	clashCountB	HIGH	BtlCapiBChr, BtlActEChr and BtlFlagChr name +0xE50 clashCountB; BtlAct_CountAndMarkOpponent counts it up
+include/battle/btl_char_action.h	BtlActChr	unkF30	holdDelta	MEDIUM	BtlChar_PostScene writes on the opponent the BtlChar_GetSnapDelta of a held fighter (flag 0x97), and the holder (flag 0x8B) adds it to its position here; HitStatus leaves +0xF30 unknown
+include/battle/btl_char_action.h	BtlActChr	unkF48	hitContact	HIGH	HitStatus.contact is at fighter +0xF48 (frames flag 0x65 was seen by BtlHit_TestHit); zeroed when an action starts
+include/battle/btl_char_action.h	BtlActChr	unkFB0	reaction	HIGH	HitReact.reaction, BtlActJChr.reaction at +0xFB0 (BtlCapiBChr reactId); passed to BtlAct_QueueReaction
+include/battle/btl_char_action.h	BtlActChr	unkFBC	hitBack	HIGH	BtlActJChr.hitBack (HitReact.back) at +0xFBC: hit from behind
+include/battle/btl_char_action.h	BtlActChr	unkFD0	turnYaw	HIGH	BtlActJChr.turnYaw (HitReact.turnYaw) at +0xFD0; first argument of BtlMove_SetHeading under flag 0x94
+include/battle/btl_char_action.h	BtlActChr	unkFD4	turnPitch	HIGH	BtlActJChr.turnPitch (HitReact.turnPitch) at +0xFD4; the pitch argument of BtlMove_SetHeading
+include/battle/btl_char_action.h	BtlActChr	unkFE0	stunTimer	HIGH	BtlCapiBChr.stunTimer and BtlActIChr.stunTimer at +0xFE0 (BtlActJChr stunTime); the stun countdown shortened by mashing is here
+include/battle/btl_char_action.h	BtlActChr	unkFE4	KEEP	KEEP	countdown that holds flag 0x96; set to 30 on the victim of queued damage (btl_char_member.c); what flag 0x96 does is not known
+include/battle/btl_char_action.h	BtlActChr	unkFE8	shakeTimer	HIGH	while > 0 BtlMove_UpdateHoverOffset shifts the model sideways, the side alternating with bit 0 (btl_char_move.c); counts down here, cleared on death; HitReact +0x38
+include/battle/btl_char_action.h	BtlActChr	unkFEC	hitDamage	HIGH	HitReact.damage is at fighter +0xFEC: damage of reactions 0x14, 0x16, 0x25 applied later (fighter.md: deferred damage at +0xFEC); not read in this file
+include/battle/btl_char_action.h	BtlActChr	unkFF0	KEEP	KEEP	countdown set to 15 when a stagger action is left, cleared without flag 0x13, > 0 selects the quick start of actions 0x14..0x18; no single meaning seen
+include/battle/btl_char_action.h	BtlActChr	unkFF4	KEEP	KEEP	BtlActJChr: 0..2 variant added to the action of reaction 41 (0x134 + n); who sets it not seen
+include/battle/btl_char_action.h	BtlActChr	unkFF8	blindTimer	MEDIUM	countdown (HitReact +0x48, set from BtlSkill_GetFrames on a grab-type hit) whose doubled value the blinding overlay level +0xFFC follows; it also holds flags 0x93, 0x137, 0x96, whose meaning is not known
+include/battle/btl_char_action.h	BtlActChr	unkFFC	blindLevel	HIGH	BtlCharApi_GetBlindRatio returns it / 90, and eft_aa uses that as the alpha of the full-screen blinding overlay (effects_stage.md, verified); follows unkFF8 * 2 by 15 per frame
+include/battle/btl_char_action.h	BtlActChr	unk1000	recoverPresses	MEDIUM	button presses a downed fighter still owes before it may act (BtlActBChr / BtlActCChr comments, combat.md 0xDA..0xDE); set to 4 here on entering a motion with flag 0x800 while lowHealthIdle is set
+include/battle/btl_char_action.h	BtlActChr	unk1004	reactCount	HIGH	BtlActJChr.reactCount at +0x1004: per reaction id, times it was taken; zeroed here when flag 0x95 ends
+include/battle/btl_char_action.h	BtlActChr	unk1036	reactTimer	HIGH	BtlActJChr.reactTimer at +0x1036: per reaction id, zeroed when taken; counted up to 100 here
+include/battle/btl_char_action.h	BtlActChr	unk1550	scriptMotion	HIGH	animation of action 4, the scripted motion (BtlCapiBChr calls it motion, a name this view already uses for +0x974); played on enter by BtlAct_Action04
+include/battle/btl_char_action.h	BtlActChr	unk1554	scriptMotionBlend	HIGH	its blend time (BtlCapiBChr.motionBlend); prefixed like the row above
+include/battle/btl_char_action.h	BtlActChr	unk1558	scriptMotionLoop	HIGH	0 play once, 1 loop (BtlCapiBChr.motionLoop): the switch of BtlAct_Action04's run phase
+include/battle/btl_char_action.h	BtlActChr	unk1580	inputOffTimer	MEDIUM	set to 3 on every frame of action 4; in story mode it counts down and holds flag 0x11E; that 0x11E means input off is the header comment's reading
+include/battle/btl_char_action.h	BtlActChr	unk1590	dirHeld	HIGH	BtlTechChr.dirHeld at +0x1590: -1 or 2..4 by the stick direction held, written by BtlAct_UpdateTimers outside techniques
+include/battle/btl_char_api_1.h	BtlCapiChr	unkFFC	blindLevel	HIGH	BtlCharApi_GetBlindRatio returns it / 90; eft_aa uses that as the alpha of the blinding overlay (effects_stage.md, verified); same name proposed for BtlActChr
+include/battle/btl_char_api_1.h	BtlCapiParam	unk2	sizeClass	HIGH	BtlParam_GetSizeClass returns parameter byte +0x02 (btl_param.h: 4 exempts the character from throws and rushes); not read in this file
+include/battle/btl_char_api_1.h	BtlCapiParam	unkC8	KEEP	KEEP	returned by BtlCharApi_GetParamUnkC8, which has no caller; BtlTechBParam leaves it unknown
+include/battle/btl_char_api_1.h	BtlCapiNode	unk50	parent	HIGH	BobjPart.parent and BObjNode.parent at +0x50: the parent's world matrix
+include/battle/btl_char_api_1.h	BtlCapiNode	unk90	pos	HIGH	BobjPart.pos and BtlCtlNode.pos at +0x90: local translation of this frame
+include/battle/btl_char_api_1.h	BtlCapiPart	unk5C	sizeFactor	MEDIUM	w of BObjBound.extent (+0x50), which btl_obj_anim_part2.h calls the size factor; the aura and speed-line effects scale by it * 0.4; what the model stores there is not known
+include/battle/btl_char_api_1.h	BtlCapiObj	unk58	charPack	MEDIUM	returned by BtlCharApi_GetPlayerCharPack; btl_scene.c uses it as the base of the fighter's pack; BObjMdl says it is entry 6 of animation file 2, so the name is only the accessor's
+include/battle/btl_char_api_1.h	BtlCapiObj	unk9C	effectPacks	MEDIUM	the five pointers BtlCharApi_GetPlayerEffectPack(player, n) returns to eft_emit.c; BObjMdl says entries 1..5 of animation file 2; the name is only the accessor's
+include/battle/btl_char_api_1.h	BtlCapiObj	unkFF0	KEEP	KEEP	body data +4 (BobjBody.unkA0); * 1.8 is the default radius of BtlCharApi_GetRadius; not enough to name it
+include/battle/btl_char_api_1.h	BtlCapiObj	unkFF8	KEEP	KEEP	second of the four model size floats (BobjBody.size[1], model header +0x1C); only forwarded by BtlOpp_GetObjUnkFF8
+include/battle/btl_char_api_1.h	BtlCapiObj	unk1000	camSideSlope	MEDIUM	fourth model size float (BobjBody.size[3]); BtlCharApi_GetCamSideSlope returns it and ChrCam_GetSideLimit takes its arc tangent as the largest side angle; BtlObjBody_Init also doubles it for the default sphere radius, so it may be a body half width
+include/battle/btl_char_api_2.h	BtlCharApiVitals	unk20	variant	HIGH	BtlMemberGauge.variant and HitGauge.variant at +0x20: the model variant
+include/battle/btl_char_api_2.h	BtlCharApiVitals	unk30	bodyChanged	MEDIUM	BtlChar_IsBodyChanged() is (this != 0); makes the win / lose talk and the switch use character 0x56; name from the accessor, the writer was not checked
+include/battle/btl_char_api_2.h	BtlCharApiChr	unk974	motion	HIGH	BtlActChr.motion at +0x974 (motion id, index of the roster's motion flag table); BtlStatChr has it as anim.cur, BtlAnim_GetId returns it
+include/battle/btl_char_api_2.h	BtlCharApiChr	unk990	prevStall	HIGH	BtlStatChr.prevStall at +0x990: stall count before the last advance, > 0 turns the attribute test off
+include/battle/btl_char_api_2.h	BtlCharApiChr	unkE44	techCharge	HIGH	BtlTechBChr.techCharge at +0xE44 (BtlSuperChr calls it charge); returned by BtlCharApi_GetTechCharge
+include/battle/btl_char_api_2.h	BtlCharApiChr	unkE5C	skillCount3	HIGH	BtlActIChr.skillCount3 at +0xE5C (skill 0x41 raises it, 0..3); BtlCharApi_GetSkillCount3Ratio returns it / 3
+include/battle/btl_char_api_2.h	BtlCharApiChr	unkE60	KEEP	KEEP	counter 0..10 that scales technique 0x2CD (BtlTechBChr, BtlSuperChr, BtlActHChr comments); no view names it
+include/battle/btl_char_api_2.h	BtlCharApiChr	unkEFC	stepFrame	HIGH	ActGChr.stepFrame[5] at +0xEFC: animation frame reached in each step of the rush sequence; summed by BtlCharApi_GetRushSequenceFrame
+include/battle/btl_char_api_2.h	BtlCharApiChr	unk1288	actBits	HIGH	BtlCollChr.actBits at +0x1288: classes of the actions started this frame; returned by BtlCharApi_GetActionBits
+include/battle/btl_char_api_2.h	BtlCharApiChr	unk1320	freeze	HIGH	BtlMgrChr.freeze and BtlCharGetChr.freeze at +0x1320: > 0 = BtlChar_IsFrozen
+include/battle/btl_char_api_2.h	BtlCharApiObj	unkC78	animFrame	HIGH	BtlAnimObj.frame is object +0xC78: current animation frame; BtlCharApi_ObjGetAnimFrame returns it
+include/battle/btl_char_api_2.h	BtlCharApiObj	unkC80	animStep	HIGH	BtlAnimObj.step is object +0xC80: frames added per advance; BtlCharApi_ObjGetAnimStep returns it
+include/battle/btl_char_api_2.h	BtlCharApiObj	unkCAC	hitCount	HIGH	btl_obj_anim.h hitCount is object +0xCAC: hit windows in the motion
+include/battle/btl_char_api_2.h	BtlCharApiObj	unkCAD	hitIndex	HIGH	btl_obj_anim.h hitIndex is object +0xCAD: window open this frame, else -1 - windows begun (HitObj calls it hitNo)
+include/battle/btl_char_api_2.h	BtlCharApiSound	unk4	id	HIGH	BtlFlagSound.id at +0x4: sound id inside the bank (BtlCharSnd_StoreHandle)
+include/battle/btl_char_api_2.h	BtlCharApiSound	unk8	kind	HIGH	BtlFlagSound.kind at +0x8: request kind, index into gBtlSndBankMask
+include/battle/btl_char_api_2.h	BtlCharApiMgr	sounds	loopSounds	HIGH	NOT an unk field but it blocks the next row: roster +0x0C is the looping set (BtlFlagRoster.loopSounds, BtlCharSnd_GetLoopSet; BtlCharSnd_StopUnrequestedLoops works on it); +0x08 is the one-shot set
+include/battle/btl_char_api_2.h	BtlCharApiMgr	unk8	sounds	HIGH	roster +0x08 is BtlFlagRoster.sounds, the one-shot set per side (BtlCharSnd_GetSet); apply AFTER the sounds->loopSounds row above
+include/battle/btl_char_api_2.h	BtlCharApiMgr	unk1C	KEEP	KEEP	counts down to 0 on every simulated frame (btl_char_mgr.c); BtlCharApi_GetMgrTimerRatio gives it / 90; no writer of a start value found
+include/battle/btl_char_api_2.h	BtlCharApiMgr	unk20	motionFlags	HIGH	BtlActRoster.motionFlags at +0x20: 0x19E entries by motion id (BtlAnim_GetFlags)
+include/battle/btl_char_api_2.h	BtlCapiBGauge	unk8	KEEP	KEEP	not read here; unknown in every gauge view
+include/battle/btl_char_api_2.h	BtlCapiBPose	unkD0_0	KEEP	KEEP	low 7 bits of the first byte of the pose's ground flag word (BtlActBPose.groundFlags at +0xD0); not read
+include/battle/btl_char_api_2.h	BtlCapiBPose	unkD0_7	KEEP	KEEP	bit 0x80 of the ground flag word, read by BtlCharApi_TestPoseBit80; meaning of the bit not known
+include/battle/btl_char_api_2.h	BtlCapiBChr	unkD70	vanishCount	MEDIUM	counts vanishing attacks (BtlActAChr comment); BtlCharApi_GetVanishStrikesLeft returns unkD74 - unkD70; the accessor has no caller
+include/battle/btl_char_api_2.h	BtlCapiBChr	unkD74	vanishLimit	MEDIUM	limit of that counter, set every frame to 1 or BtlParam_GetPoweredVanishLimit plus ability bonus (btl_char_mgr.h); name rests on the accessors
+include/battle/btl_char_api_2.h	BtlCapiBChr	unkE08	skillTimer	HIGH	BtlActIChr.skillTimer at +0xE08 (skill id 0x33: frames left); not read in this file
+include/battle/btl_char_api_2.h	BtlCapiBChr	unkE10	skillKiRate	HIGH	BtlActIChr.skillKiRate at +0xE10; not read in this file
+include/battle/btl_char_api_2.h	BtlCapiBChr	unkE14	skillTimerC	HIGH	BtlActIChr.skillTimerC at +0xE14 (frames left of a kind 1 skill with attribute 0x800); > 0 adds one armour level in BtlCharApi_GetArmorBreakLevel
+include/battle/btl_char_api_2.h	BtlCapiBChr	unkE40	techDelay	HIGH	BtlActJChr.techDelay and BtlTechChr.techDelay at +0xE40 (BtlSuperChr calls it cooldown); returned by BtlCharApi_GetTechniqueCooldown, cleared by BtlCtrl_UseTechnique
+include/battle/btl_char_api_2.h	BtlCapiBChr	unkE44	techCharge	HIGH	BtlTechBChr.techCharge at +0xE44; returned by BtlCharApi_GetTechChargeB
+include/battle/btl_char_api_2.h	BtlCapiBChr	unkE48	chargeFull	HIGH	BtlSuperChr.chargeFull at +0xE48: frames the technique charge has been full; not read in this file
+include/battle/btl_char_api_2.h	BtlCapiBChr	unk106C	dodgeWindow	MEDIUM	second of the defence window timers of BtlMove_UpdateDefenseTimers (opened by input 0x27, floor -30); > 0 allows a dodge (btl_hit_reaction.c), BtlCharApi_IsDodgeWindowReady tests the floor; which defence each of the seven windows is was not all checked
+include/battle/btl_char_api_2.h	BtlCapiBChr	unk1070	counterWindow	MEDIUM	third defence window timer (input 0x26, floor -30); > 0 counters a hit in btl_char_hit.c, BtlCharApi_IsCounterWindowBusy tests != -30; same uncertainty as the row above
+include/battle/btl_char_api_2.h	BtlCapiBChr	unk1290	storyAiForce	MEDIUM	returned in story mode by BtlCharApi_GetStoryAiForce to the AI (btl_ai_sense.c, btl_ai_think.c); the writer was not found, the name is the accessor's
+include/battle/btl_char_api_2.h	BtlCapiBChr	unk1294	framesLeftOverride	HIGH	written by BtlColl_SetFramesLeftOverride / BtlColl_SetFramesToReach (btl_hit_reaction.c); >= 0 replaces the result of BtlCharApi_GetTechniqueProgress
+include/battle/btl_char_api_2.h	BtlCapiBChr	unk155C	KEEP	KEEP	not read; most likely the padding in front of the 16-byte aligned warpPos
+include/battle/btl_char_api_2.h	BtlCapiBParam	unk0	charaFlags	MEDIUM	BtlParam_GetCharaFlags returns it (bit 0x80 tested by BtlCharApi_HasParamBit80); BtlParam leaves it unknown and BtlCapiParam calls it flags0, so the name is the accessor's
+include/battle/btl_char_api_2.h	BtlCapiBParam	unk2	sizeClass	HIGH	BtlParam_GetSizeClass returns it (btl_param.h); BtlCharApi_GetParamByte2 forwards it
+include/battle/btl_char_api_2.h	BtlCapiBParam	unk14	flags2	HIGH	BtlParam.flags2 at +0x14 (BtlParam_GetFlags2: skill bits)
+include/battle/btl_char_api_2.h	BtlCapiBParam	unk18	flags3	HIGH	BtlParam.flags3 at +0x18 (BtlParam_GetFlags3: skill bits of the powered-up mode)
+include/battle/btl_char_api_2.h	BtlCapiBParam	unk8F	comboFinish	MEDIUM	indexed by BtlParam_GetComboFinish(chr, n) (BtlCharApi_GetParamByte8F); BtlParam and BtlTechBParam leave it unknown, the name is the accessor's
+include/battle/btl_char_api_2.h	BtlCapiBParam	unkAD	formFlags	MEDIUM	BtlParam_GetFormFlags returns it (btl_param.h: bit 4 + n = slot n resets the variant); not read in this file, the name is the accessor's
+include/battle/btl_char_api_2.h	BtlCapiBSkills	unk13C	type	HIGH	BtlSuperData.type (+0x13E by skill slot, so +0x13C by class), returned by BtlSuper_GetType
+include/battle/btl_char_api_2.h	BtlCapiBSkills	unk227	promptRow	HIGH	BtlSuperData.promptRow (+0x229 by skill slot, so +0x227 by class): row of the roster's prompt table
+include/battle/btl_char_api_2.h	BtlCapiBObj	unkCAC	hitCount	HIGH	btl_obj_anim.h hitCount is object +0xCAC: hit windows in the motion
+include/battle/btl_char_api_2.h	BtlCapiBObj	unkCAD	hitIndex	HIGH	btl_obj_anim.h hitIndex is object +0xCAD (HitObj calls it hitNo); BtlCharApi_IsAttackHitsDone compares it with ~hitCount
+include/battle/btl_char_api_2.h	BtlCapiBBlastRec	unk54	KEEP	KEEP	1 makes BtlCharApi_SkipBlastRec ignore the record; eft_core.h only says it is bit 1 of the technique's def->flags
+include/battle/btl_char_cam.h	ChrCam	unk40	bodyPos	HIGH	copy of the vector object +0xFA0 points at, which BtlCapiObj names bodyPos; refreshed by ChrCam_UpdateInput, returned by BtlCharApi_GetCamBodyPos
+include/battle/btl_char_cam.h	ChrCam	unk98	shakeOn	HIGH	non-zero lets ChrCam_AddShake add a shake and ChrCam_GetBob swing; BtlCharApiChr names fighter +0x4B8 camShakeOn (BtlMgrChr optBOff: option B == 0)
+include/battle/btl_char_cam.h	ChrCam	unk9C	KEEP	KEEP	not read or written in btl_char_cam.c
+include/battle/btl_char_cam.h	ChrCamCut	unk0	reqTable	HIGH	first argument of ChrCam_RequestCut: 0 = the character's cut table, 1 = the common one (the switch of ChrCam_StartCut)
+include/battle/btl_char_cam.h	ChrCamCut	unk4	reqIndex	HIGH	second argument of ChrCam_RequestCut: index of the cut in that table
+include/battle/btl_char_cam.h	ChrCamCut	unk88	nodeA	HIGH	ChrCam_StartCut passes def->nodeA (with the OPP / MID bits) or -1; ChrCam_CalcCut samples vecA from it
+include/battle/btl_char_cam.h	ChrCamCut	unk8C	nodeA2	HIGH	def->nodeA2 or -1: the node vecADelta moves towards
+include/battle/btl_char_cam.h	ChrCamCut	unk90	nodeC	HIGH	def->nodeC or -1: the node looked at
+include/battle/btl_char_cam.h	ChrCamCut	unk94	nodeC2	HIGH	def->nodeC2 or -1: the node the look-at moves towards
+include/battle/btl_char_cam.h	ChrCamMgr	unk274	timeStopped	HIGH	BtlChars_IsTimeStopped() returns roster +0x274 (btl_char_mgr.h); forces rate 1 and no swing here
+include/battle/btl_char_cam.h	ChrCamChr	unk4	pad	HIGH	fighter +0x04 is the pad index in every view (BtlMgrChr.pad, BtlCharApiChr.pad); not read in this file
+include/battle/btl_char_cam.h	ChrCamChr	unk8	index	HIGH	fighter +0x08: BtlMgrChr.index and BtlMemberChr.index (roster index again) in the views that call +0x00 side as this one does; the views that call +0x00 player call this one side
+include/battle/btl_char_cam.h	ChrCamChr	unk974	motion	HIGH	BtlActChr.motion at +0x974 (BtlAnim_GetId returns it; BtlStatChr has anim.cur)

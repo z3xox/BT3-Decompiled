@@ -44,13 +44,13 @@ typedef struct EftXTask {
 /* One texture of an effect pack: the GS TEX0 value and a second word. */
 typedef struct EftXTexEntry {
     /* 0x00 */ u64 tex0;
-    /* 0x08 */ u64 unk8;
+    /* 0x08 */ u64 image;
 } EftXTexEntry; /* 0x10 */
 
 /* A pack's texture block (0x108 bytes, EftEmitSet.tex33 in eft_sweep.h). */
 typedef struct EftXTexSet {
     /* 0x000 */ EftXTexEntry entry[16];
-    /* 0x100 */ s32 unk100;
+    /* 0x100 */ s32 count;
     /* 0x104 */ u32 ready;     /* bit n: entry n holds a blended TEX0 built by EftPart10_BuildTex */
 } EftXTexSet; /* 0x108 */
 
@@ -373,13 +373,13 @@ struct EftPart9Ptcl;
 /* Emitter definition (first resource of the pack entry). Only what this file reads. */
 typedef struct EftPart9Def {
     /* 0x000 */ u8 unk0[0x218];
-    /* 0x218 */ f32 unk218;
-    /* 0x21C */ f32 unk21C;
+    /* 0x218 */ f32 fadeInEnd;
+    /* 0x21C */ f32 fadeOutStart;
     /* 0x220 */ f32 sizeMid;
-    /* 0x224 */ f32 unk224;
-    /* 0x228 */ f32 unk228;
-    /* 0x22C */ f32 unk22C;
-    /* 0x230 */ f32 unk230;
+    /* 0x224 */ f32 baseSize;
+    /* 0x228 */ f32 baseSizeRange;
+    /* 0x22C */ f32 speed;
+    /* 0x230 */ f32 speedRange;
     /* 0x234 */ s32 flags;
     /* 0x238 */ u8 unk238[2];
     /* 0x23A */ u8 interval;                    /* frames between bursts */
@@ -388,8 +388,8 @@ typedef struct EftPart9Def {
     /* 0x23E */ u8 layer;
     /* 0x23F */ u8 texCols;
     /* 0x240 */ u8 texRows;
-    /* 0x241 */ u8 unk241;
-    /* 0x242 */ u8 unk242;
+    /* 0x241 */ u8 frameStep;
+    /* 0x242 */ u8 colorMode;
 } EftPart9Def;
 
 typedef struct EftPart9Ptcl {
@@ -404,32 +404,32 @@ typedef struct EftPart9Ptcl {
     /* 0x080 */ u8 unk80[0x40];
     /* 0x0C0 */ f32 uv[8];
     /* 0x0E0 */ f32 rotVel[3];
-    /* 0x0EC */ f32 unkEC;
-    /* 0x0F0 */ f32 unkF0;
-    /* 0x0F4 */ f32 unkF4;
+    /* 0x0EC */ f32 fadeIn;
+    /* 0x0F0 */ f32 fadeOut;
+    /* 0x0F4 */ f32 sizeOscAmp;
     /* 0x0F8 */ f32 stretchStep[3];
-    /* 0x104 */ f32 unk104;
-    /* 0x108 */ f32 unk108;
-    /* 0x10C */ f32 unk10C;
-    /* 0x110 */ f32 unk110;
-    /* 0x114 */ f32 unk114;
-    /* 0x118 */ f32 unk118;
-    /* 0x11C */ f32 unk11C;
+    /* 0x104 */ f32 speed;
+    /* 0x108 */ f32 speedMul;
+    /* 0x10C */ f32 speedStep0;
+    /* 0x110 */ f32 speedStep1;
+    /* 0x114 */ f32 sizeOscBase;
+    /* 0x118 */ f32 sizeOscTime;
+    /* 0x11C */ f32 sizeOscPeriod;
     /* 0x120 */ f32 stretch[3];
     /* 0x12C */ f32 stretchAge;
     /* 0x130 */ f32 stretchTime;
-    /* 0x134 */ f32 unk134;
-    /* 0x138 */ f32 unk138;
+    /* 0x134 */ f32 halfSize;
+    /* 0x138 */ f32 baseSize;
     /* 0x13C */ f32 size;
     /* 0x140 */ f32 sizeStep0;
     /* 0x144 */ f32 sizeStep1;
-    /* 0x148 */ f32 unk148;
-    /* 0x14C */ f32 unk14C;
+    /* 0x148 */ f32 rampLen;
+    /* 0x14C */ f32 rampTime;
     /* 0x150 */ f32 life;                       /* frames */
     /* 0x154 */ f32 age;
     /* 0x158 */ f32 texFrame;
-    /* 0x15C */ f32 unk15C;
-    /* 0x160 */ f32 unk160;
+    /* 0x15C */ f32 rampStart;
+    /* 0x160 */ f32 rampEnd;
     /* 0x164 */ s32 flags;
     /* 0x168 */ u8 texSlot;
     /* 0x169 */ u8 unk169[3];
@@ -473,16 +473,16 @@ typedef struct EftPart9 {
     /* 0x31C */ u8 unk31C[0xC];
     /* 0x328 */ f32 rotVelMin[3];
     /* 0x334 */ f32 rotVelRange[3];
-    /* 0x340 */ f32 unk340;
-    /* 0x344 */ f32 unk344;
-    /* 0x348 */ f32 unk348;
+    /* 0x340 */ f32 sizeOsc0;
+    /* 0x344 */ f32 sizeOsc1;
+    /* 0x348 */ f32 sizeOscTime;
     /* 0x34C */ u8 unk34C[4];
     /* 0x350 */ f32 colorMin[4];
     /* 0x360 */ f32 colorRange[4];
     /* 0x370 */ f32 endColorMin[4];
     /* 0x380 */ f32 endColorRange[4];
-    /* 0x390 */ f32 unk390;
-    /* 0x394 */ f32 unk394;
+    /* 0x390 */ f32 rampStart;
+    /* 0x394 */ f32 rampEnd;
     /* 0x398 */ f32 stretch0[3];
     /* 0x3A4 */ f32 stretch1[3];
     /* 0x3B0 */ f32 stretchTime;

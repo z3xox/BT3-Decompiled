@@ -432,7 +432,7 @@ void EftShotTech_Init(EftKTask *task, EftKSrc *src) {
         w->flags |= 0x20000;
     }
     if (src->slot >= 2) {
-        s32 *pack = mgr->unk318[src->slot];
+        s32 *pack = mgr->slotPacks[src->slot];
         if (pack != NULL) {
             w->camPack = pack;
         }
@@ -1072,8 +1072,8 @@ void EftObjTech_AddHitRecord(EftKTask *task) {
         void *a = EftHitArena_AllocBox();
         void *b = EftHitArena_AllocBox();
 
-        ColCapsule_Set(a, &w->unk3C0, (Vec4 *)&shape->pos, size);
-        ColCapsule_Set(b, &w->unk3C0, (Vec4 *)&shape->prev, size);
+        ColCapsule_Set(a, &w->fireNodePos, (Vec4 *)&shape->pos, size);
+        ColCapsule_Set(b, &w->fireNodePos, (Vec4 *)&shape->prev, size);
         EftHit_SetShapeBoxes(rec, a, b);
         break;
     }
@@ -1100,7 +1100,7 @@ void EftObjTech_CreateModel(EftKTask *task) {
 
     model->pack = ((EftObjTechMgr *)owner->work)->modelPack;
     model->objId = EftObj_Create(model->arg, model->pack);
-    model->unk36 = -1;
+    model->step = -1;
     EftObj_SetVisible(model->objId, 0);
     EftObj_Nop(model->objId, 0);
 }
@@ -1245,7 +1245,7 @@ void EftObjTech_UpdateEmitters(s32 objId, EftKTask *task, EftKSet *set) {
 
                 if (onTarget) {
                     end = endOnTarget;
-                    if (set->parts[idx].unk9 == 0 && set->parts[idx].unk18 > 0.0f) {
+                    if (set->parts[idx].unk9 == 0 && set->parts[idx].rate > 0.0f) {
                         end = 0;
                         fast = 0;
                     }
@@ -1272,7 +1272,7 @@ void EftObjTech_UpdateMotion(EftKTask *task) {
         s32 taskFlags;
 
         if (EftShot_TestBits(src->objId, 0x10)) {
-            Vec4 *start = (Vec4 *)&w->held.unk0;
+            Vec4 *start = (Vec4 *)&w->held.start;
 
             BtlCharApi_GetNodePos(src->objId, w->node, start);
             pos = (Vec4 *)&w->held.pos;
@@ -1420,7 +1420,7 @@ void EftObjTech_UpdateMotion(EftKTask *task) {
                 ang.z = 0.0f;
                 if (!(w->flags & 0x10000)) {
                     ang.x = 0.0f;
-                    Vec4_Copy(&pos, &w->unk380);
+                    Vec4_Copy(&pos, &w->startNodePos);
                 } else {
                     width += width;
                     length += length;
@@ -1481,9 +1481,9 @@ void EftObjTech_Init(EftKTask *task, EftKSrc *src) {
     w->src = src;
     def = src->def;
     w->speed = def->speed;
-    w->unk5C0 = def->scale;
+    w->baseScale = def->scale;
     w->scale = def->scale;
-    w->hitScale = w->unk5C0;
+    w->hitScale = w->baseScale;
     w->mgr = mgr;
     EftEmit_InitState(mgr, emit);
     if (EftEmit_HasWidth2(w->mgr)) {
@@ -1556,7 +1556,7 @@ void EftObjTech_Update(EftKTask *task) {
     EftEmit_UpdateNodesReq(src, w->nodes);
     if (!(w->flags & 0x80)) {
         if (EftShot_TestBits(src->objId, 2)) {
-            EftAim_GetDir(&w->dir, &w->unk380, src->objId);
+            EftAim_GetDir(&w->dir, &w->startNodePos, src->objId);
             task->state = 0;
             w->flags |= 0x80;
         } else if (EftShot_TestBits(src->objId, 4)) {
@@ -1571,8 +1571,8 @@ void EftObjTech_Update(EftKTask *task) {
     case 0:
         if (EftShot_TestBits(src->objId, 4)) {
             w->flags |= 0x20;
-            Vec4_Copy((Vec4 *)&w->body.unk0, &w->unk3C0);
-            Vec4_Copy((Vec4 *)&w->body.pos, (Vec4 *)&w->body.unk0);
+            Vec4_Copy((Vec4 *)&w->body.start, &w->fireNodePos);
+            Vec4_Copy((Vec4 *)&w->body.pos, (Vec4 *)&w->body.start);
             BtlCharApi_GetNodePos(src->objId, 0x11, (Vec4 *)&w->body.prev);
             EftAim_GetDirKeep(src, &w->dir, (Vec4 *)&w->body.pos, src->objId);
             Vec3_Scale((Vec4 *)&w->body.vel, &w->dir, w->speed);
@@ -1738,7 +1738,7 @@ void EftObjTechMgr_Update(EftKTask *task) {
     EftObjTechMgr *mgr = task->work;
 
     EftEmit_BeginFrame(mgr);
-    if (task->unk24[1] != 0 && mgr->ringTex != NULL) {
+    if (task->child[1] != 0 && mgr->ringTex != NULL) {
         EftTexSet_Keep32(mgr->ringTexSet, 1, 0);
     }
 }
@@ -1764,8 +1764,8 @@ void EftRushShot_AddHitRecord(EftKTask *task) {
         void *a = EftHitArena_AllocBox();
         void *b = EftHitArena_AllocBox();
 
-        ColCapsule_Set(a, &w->unk390, (Vec4 *)&w->body.pos, size);
-        ColCapsule_Set(b, &w->unk390, (Vec4 *)&w->body.prev, size);
+        ColCapsule_Set(a, &w->fireNodePos, (Vec4 *)&w->body.pos, size);
+        ColCapsule_Set(b, &w->fireNodePos, (Vec4 *)&w->body.prev, size);
         EftHit_SetShapeBoxes(rec, a, b);
         break;
     }
@@ -1796,7 +1796,7 @@ void EftRushShot_CreateModels(EftKTask *task) {
 
         model->pack = mgr->modelPack;
         model->objId = EftObj_Create(model->arg, model->pack);
-        model->unk36 = -1;
+        model->step = -1;
         EftObj_SetVisible(model->objId, 0);
         EftObj_Nop(model->objId, 0);
     }
@@ -1829,7 +1829,7 @@ void EftRushShot_UpdateModels(EftKTask *task) {
                     }
                     Mtx_StoreIdentity(&rot);
                     Mtx_RotateY(&rot, &rot, ang);
-                    Vec4_Copy(&o->center, &w->unk350);
+                    Vec4_Copy(&o->center, &w->startNodePos);
                     Vec4_Set(&o->offset, 0.0f, (rand() / 2147483647.0f * 8.0f + 3.0f) * w->scale,
                              (rand() / 2147483647.0f * 4.0f + 6.0f) * w->scale, 1.0f);
                     Mtx_MulVec4(&o->offset, &rot, &o->offset);

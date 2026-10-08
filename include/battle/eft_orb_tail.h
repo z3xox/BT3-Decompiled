@@ -36,7 +36,7 @@ typedef struct EftAbTask {
 /* One entry of a texture table: the GS TEX0 value and the image / palette it was built from. */
 typedef struct EftAbTexEntry {
     /* 0x00 */ u64 tex0;
-    /* 0x08 */ u64 unk8;
+    /* 0x08 */ u64 image;
 } EftAbTexEntry; /* 0x10 */
 
 /* A texture table as EftTexSet_Load16 loads it: 16 entries. */
@@ -361,7 +361,7 @@ typedef struct EftRbnPrm {
     /* 0x08 */ f32 fadeIn;         /* seconds */
     /* 0x0C */ f32 fadeOut;        /* seconds */
     /* 0x10 */ f32 animTime;
-    /* 0x14 */ f32 unk14;
+    /* 0x14 */ f32 animSplit;
     /* 0x18 */ f32 width[3];
     /* 0x24 */ f32 widthLo[3];     /* width pulse: low and high value */
     /* 0x30 */ f32 widthHi[3];
@@ -437,7 +437,7 @@ typedef struct EftRbn {
     /* 0x0D0 */ s32 flags;         /* 0x20 scroll layer, 0x40 mirrored, 0x80 faded in, 0x100 no fade out */
     /* 0x0D4 */ s32 unkD4[2];
     /* 0x0DC */ s32 maxNodes;
-    /* 0x0E0 */ s32 unkE0;
+    /* 0x0E0 */ s32 wantNodes;
     /* 0x0E4 */ s32 numNodes;
     /* 0x0E8 */ f32 unkE8[4];
     /* 0x0F8 */ f32 animFrame;

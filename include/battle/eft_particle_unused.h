@@ -77,7 +77,7 @@ typedef struct EftVView {
 /* One entry of a texture set: the GS TEX0 value. */
 typedef struct EftVTex {
     /* 0x00 */ u64 tex0;
-    /* 0x08 */ u64 unk8;
+    /* 0x08 */ u64 image;
 } EftVTex; /* size 0x10 */
 
 /* ---- GS packets ------------------------------------------------------------------------------------------- */
@@ -137,7 +137,7 @@ typedef struct EftVVert {
 typedef struct EftPtclDef {
     /* 0x000 */ s32 flags;     /* 1: the values are key-framed, 2: clipped polygon drawing (kind 0), 4: the texture
                                   is a cols x rows sheet, 0x80: the quad starts at the particle (kind 0) */
-    /* 0x004 */ u8 unk4;
+    /* 0x004 */ u8 reverse;
     /* 0x005 */ u8 shape;      /* 0 quad along the particle's axis facing the camera, 1 square sprite, 2 sprite */
     /* 0x006 */ u8 flip;       /* 0: flag 0x200, 1: flag 0x200 at random, 2: never */
     /* 0x007 */ u8 centred;    /* kind 0: the quad extends both ways along the axis */
@@ -163,12 +163,12 @@ typedef struct EftPtclArg {
     /* 0x00 */ EftVVec pos;
     /* 0x10 */ EftVVec dir;
     /* 0x20 */ s32 objId;
-    /* 0x24 */ s32 unk24;
+    /* 0x24 */ s32 texIdx;
     /* 0x28 */ f32 life;       /* seconds; <= 0: runs until stopped */
     /* 0x2C */ f32 size;
     /* 0x30 */ void *res;
     /* 0x34 */ EftPtclDef *def;
-    /* 0x38 */ void *unk38;
+    /* 0x38 */ void *def2;
     /* 0x3C */ s32 pad3C;
 } EftPtclArg; /* size 0x40 */
 
@@ -186,9 +186,9 @@ typedef struct EftPtclCur {
 
 /* One particle (0x130 bytes, 500 in the pool). */
 typedef struct EftPtcl {
-    /* 0x000 */ EftVVec unk0;
-    /* 0x010 */ EftVVec unk10;
-    /* 0x020 */ EftVVec unk20;
+    /* 0x000 */ EftVVec travel;
+    /* 0x010 */ EftVVec origin;
+    /* 0x020 */ EftVVec rel;
     /* 0x030 */ EftVVec pos;
     /* 0x040 */ EftVVec axis;
     /* 0x050 */ u8 unk50[0x10];
@@ -263,7 +263,7 @@ typedef struct EftPtclWork {
 typedef struct EftPtclMgr {
     /* 0x00 */ EftVMtx identity;
     /* 0x40 */ EftPtcl *pool;      /* EFT_PTCL_MAX particles */
-    /* 0x44 */ s32 unk44;
+    /* 0x44 */ s32 next;
     /* 0x48 */ s32 used;
     /* 0x4C */ s32 unk4C;
 } EftPtclMgr;
@@ -393,7 +393,7 @@ typedef struct EftLinkDef {
     /* 0x190 */ f32 scaleRange[3];
     /* 0x19C */ u8 cols;
     /* 0x19D */ u8 rows;
-    /* 0x19E */ u8 unk19E;
+    /* 0x19E */ u8 texStep;
     /* 0x19F */ u8 layer;
     /* 0x1A0 */ s32 flags;         /* 2, 4, 0x10, 0x200 grows, 0x400 key-framed, 0x2000 */
 } EftLinkDef;
@@ -423,7 +423,7 @@ typedef struct EftLinkArg {
     /* 0x30 */ f32 size;
     /* 0x34 */ f32 life;           /* seconds; <= 0 runs until stopped */
     /* 0x38 */ s32 frame;          /* texture of the set */
-    /* 0x3C */ s32 unk3C;
+    /* 0x3C */ s32 palette;
     /* 0x40 */ s32 objId;
     /* 0x44 */ s32 pad44[3];
 } EftLinkArg; /* size 0x50 */
@@ -431,7 +431,7 @@ typedef struct EftLinkArg {
 /* One sprite of a chain (0x150 bytes, 200 in the pool). */
 typedef struct EftLinkNode {
     /* 0x000 */ u8 unk0[0x40];
-    /* 0x040 */ EftVVec unk40;
+    /* 0x040 */ EftVVec ofs;
     /* 0x050 */ EftVVec offset;
     /* 0x060 */ EftVVec pos;
     /* 0x070 */ u8 unk70[0x10];
@@ -439,13 +439,13 @@ typedef struct EftLinkNode {
     /* 0x090 */ u8 unk90[0x20];
     /* 0x0B0 */ EftVVec uv0;
     /* 0x0C0 */ EftVVec uv1;
-    /* 0x0D0 */ f32 unkD0;
+    /* 0x0D0 */ f32 rotX;
     /* 0x0D4 */ f32 rot;
     /* 0x0D8 */ f32 twist;
-    /* 0x0DC */ f32 unkDC;
+    /* 0x0DC */ f32 spin;
     /* 0x0E0 */ f32 size;
     /* 0x0E4 */ u8 unkE4[0x18];
-    /* 0x0FC */ f32 unkFC;
+    /* 0x0FC */ f32 scale;
     /* 0x100 */ u8 unk100[0x40];
     /* 0x140 */ s32 flags;         /* 1 placed, 0x40 drawn, 0x400 still on the chain this frame */
     /* 0x144 */ struct EftLinkNode *next;
@@ -503,7 +503,7 @@ typedef struct EftLinkWork {
     /* 0x388 */ f32 pitch;
     /* 0x38C */ f32 yaw;
     /* 0x390 */ s32 type;
-    /* 0x394 */ s32 unk394;
+    /* 0x394 */ s32 texIdx;
     /* 0x398 */ s32 flags;
     /* 0x39C */ EftLinkNode *head;
     /* 0x3A0 */ EftLinkNode *tail;

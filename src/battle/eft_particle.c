@@ -1219,7 +1219,7 @@ void EftPtcl_Init(EftVTask *task, EftPtclArg *arg) {
         w->du = 1.0f;
         w->dv = 1.0f;
     }
-    EftPtcl_PickTexture(w, arg->res, arg->unk24, arg->unk24);
+    EftPtcl_PickTexture(w, arg->res, arg->texIdx, arg->texIdx);
 }
 
 /* Task term: returns the particles to the pool. */
@@ -1456,11 +1456,11 @@ s32 EftPtcl_Warp(EftVTask *task, EftVVec *pos) {
     while (*link != NULL) {
         p = *link;
         if (!(p->flags & 0x100)) {
-            Vec3_Add(&p->unk20, &p->unk0, &p->unk10);
-            Vec3_Add(&p->pos, &p->unk20, &w->arg.pos);
+            Vec3_Add(&p->rel, &p->travel, &p->origin);
+            Vec3_Add(&p->pos, &p->rel, &w->arg.pos);
         } else {
-            Vec3_Add(&p->pos, &p->unk0, &p->unk10);
-            Vec3_Add(&p->pos, &p->pos, &p->unk20);
+            Vec3_Add(&p->pos, &p->travel, &p->origin);
+            Vec3_Add(&p->pos, &p->pos, &p->rel);
         }
         link = &p->next;
     }

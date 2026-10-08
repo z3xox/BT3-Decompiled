@@ -31,7 +31,7 @@ typedef struct EftKTask {
     /* 0x0A */ u8 unkA[6];
     /* 0x10 */ Vec4 pos;     /* corrected head position, written by the scene's hit pass */
     /* 0x20 */ struct EftKTask **list; /* the list the task is in; its first word is the owner task */
-    /* 0x24 */ s32 *unk24;   /* [1] tested by EftObjTechMgr_Update */
+    /* 0x24 */ s32 *child;   /* [1] tested by EftObjTechMgr_Update */
     /* 0x28 */ u8 unk28[0x10];
     /* 0x38 */ void *work;   /* the task's work block, allocated with the list */
     /* 0x3C */ s32 unk3C;
@@ -40,7 +40,7 @@ typedef struct EftKTask {
 /* Definition record of one technique effect. */
 typedef struct EftKDef {
     /* 0x00 */ s16 id;        /* effect id: selects the special cases (0x162, 0x167, 0x168, 0x1F3, 0x282, 0x2A8, 0x2B4) */
-    /* 0x02 */ s16 unk2;
+    /* 0x02 */ s16 recType;
     /* 0x04 */ s8 kind;       /* 0: skill-like (events from the frame table, ends with BtlCharApi_IsInSkill);
                                  other: technique (events from animation attributes) */
     /* 0x05 */ s8 sub;        /* 5: rush technique (events are read from every fighter's animation) */
@@ -50,7 +50,7 @@ typedef struct EftKDef {
     /* 0x16 */ s16 frames[6]; /* frame numbers of events 0x200, 0x400, 0x800, 0x1000, 0x2000, 0x4000; -1 = none */
     /* 0x22 */ u8 unk22[6];
     /* 0x28 */ s32 life;
-    /* 0x2C */ s32 unk2C;
+    /* 0x2C */ s32 shotLife;
     /* 0x30 */ f32 scale;
     /* 0x34 */ f32 speed;
     /* 0x38 */ f32 homing;
@@ -75,7 +75,7 @@ typedef struct EftKPart {
     /* 0x00 */ u8 unk0[9];
     /* 0x09 */ u8 unk9;
     /* 0x0A */ u8 unkA[0xE];
-    /* 0x18 */ f32 unk18;
+    /* 0x18 */ f32 rate;
     /* 0x1C */ u8 unk1C[0x24];
 } EftKPart; /* size 0x40 */
 
@@ -99,13 +99,13 @@ typedef struct EftKModel {
     /* 0x04 */ u8 arg[0x30];
     /* 0x34 */ u8 flags;
     /* 0x35 */ s8 objId;  /* battle object id, -1 when none could be created */
-    /* 0x36 */ s8 unk36;  /* -1 */
+    /* 0x36 */ s8 step;  /* -1 */
     /* 0x37 */ u8 unk37;
 } EftKModel; /* size 0x38 */
 
 /* The 0x40 bytes a hit record copies from its owner (record +0x10). */
 typedef struct EftKShape {
-    /* 0x00 */ EftKVec unk0;
+    /* 0x00 */ EftKVec start;
     /* 0x10 */ EftKVec pos;   /* head */
     /* 0x20 */ EftKVec prev;  /* tail / previous head */
     /* 0x30 */ EftKVec vel;
@@ -126,7 +126,7 @@ typedef struct EftKHitRec {
 typedef struct EftShotTechMgr {
     /* 0x000 */ EftKSet set;
     /* 0x13C */ u8 unk13C[0x1DC];
-    /* 0x318 */ s32 *unk318[2];
+    /* 0x318 */ s32 *slotPacks[2];
     /* 0x320 */ s32 *packs[3]; /* entries 1..3 of the character's pack 8; indexed by slot from 0x318 */
     /* 0x32C */ s32 *modelPack; /* entry 1 of the effect's pack when the definition has flag 0x20000 */
 } EftShotTechMgr; /* size 0x330 */
@@ -156,7 +156,7 @@ typedef struct EftShotTech {
     /* 0x890 */ s32 shotCount;
     /* 0x894 */ s32 *camPack;
     /* 0x898 */ void *subs[8];
-    /* 0x8B8 */ s32 unk8B8;
+    /* 0x8B8 */ s32 subCount;
     /* 0x8BC */ void *auraFx;
     /* 0x8C0 */ EftKModel model;
     /* 0x8F8 */ u8 unk8F8[8];
@@ -245,9 +245,9 @@ typedef struct EftObjTech {
     /* 0x090 */ EftKSrc *src;
     /* 0x094 */ u8 emit[0x2CC];   /* emitter state; +0x2A8 width */
     /* 0x360 */ Vec4 nodes[2];
-    /* 0x380 */ Vec4 unk380;
+    /* 0x380 */ Vec4 startNodePos;
     /* 0x390 */ Vec4 unk390[3];
-    /* 0x3C0 */ Vec4 unk3C0;
+    /* 0x3C0 */ Vec4 fireNodePos;
     /* 0x3D0 */ u8 unk3D0[0x60];
     /* 0x430 */ s32 node;
     /* 0x434 */ u8 unk434[0x17C];
@@ -255,7 +255,7 @@ typedef struct EftObjTech {
     /* 0x5B4 */ s32 flags;
     /* 0x5B8 */ s32 mode;
     /* 0x5BC */ f32 speed;
-    /* 0x5C0 */ f32 unk5C0;
+    /* 0x5C0 */ f32 baseScale;
     /* 0x5C4 */ f32 scale;
     /* 0x5C8 */ f32 hitScale;
     /* 0x5CC */ f32 unk5CC;
@@ -297,14 +297,14 @@ typedef struct EftRushShotObj {
 
 typedef struct EftRushShot {
     /* 0x000 */ Vec4 dir;
-    /* 0x010 */ Vec4 unk10;
+    /* 0x010 */ Vec4 fadePos;
     /* 0x020 */ EftKShape body;  /* head 0x30, tail 0x40, velocity 0x50 */
     /* 0x060 */ EftKSrc *src;
     /* 0x064 */ u8 emit[0x2CC];
-    /* 0x330 */ Vec4 unk330[2];
-    /* 0x350 */ Vec4 unk350;
+    /* 0x330 */ Vec4 nodes[2];
+    /* 0x350 */ Vec4 startNodePos;
     /* 0x360 */ Vec4 unk360[3];
-    /* 0x390 */ Vec4 unk390;
+    /* 0x390 */ Vec4 fireNodePos;
     /* 0x3A0 */ u8 unk3A0[0x1E4];
     /* 0x584 */ s32 flags;
     /* 0x588 */ s32 mode;
