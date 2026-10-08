@@ -6,8 +6,7 @@
 /*
  * Effect code, 0x147050..0x14B108. See include/battle/eft_shot.h for the five pieces and their layouts.
  *
- * One function (EftStorm_DrawBolts) is INCLUDE_ASM with the C attempt in `#if 0` above it and a note on what differs;
- * turning the `#if 0` into `#if 1` and dropping the INCLUDE_ASM line gives a file that fdiff can compile.
+ * Every function is matching C (EftStorm_DrawBolts since 2026-10-08).
  * EftSmoke_Draw and EftBound_BuildWall match since cleanup W1 (EftSmoke_Draw emits a 4-byte .sdata constant, 0x2FE9EC).
  *
  * Callees that have no name yet, from a first read of how they are used here:
@@ -219,12 +218,20 @@ typedef struct EftLinePkt {
 
 /* 1 when a GS screen position can be drawn. */
 static inline s32 EftScr_IsValid(EftScrXyz *p) {
-    s32 ok = 0;
+    s32 ok;
 
-    if (p->z > 0 && p->x <= 0xFFFF && p->x > 0) {
-        if (p->y <= 0xFFFF) {
-            if (p->y > 0) ok = 1; else ok = 0;
-        }
+    if (p->z <= 0) {
+        ok = 0;
+    } else if (p->x > 0xFFFF) {
+        ok = 0;
+    } else if (p->x <= 0) {
+        ok = 0;
+    } else if (p->y > 0xFFFF) {
+        ok = 0;
+    } else if (p->y > 0) {
+        ok = 1;
+    } else {
+        ok = 0;
     }
     return ok;
 }
@@ -489,35 +496,25 @@ void EftStorm_Update(void) {
    (8, -0) times 150) are turned by the camera's world matrix and added to the bolt position; a bolt is skipped
    when any of the four projects off screen. Kind 0 draws two sprites (textures texA and texB), kind 1 only the
    second, larger one. */
-#if 0 /* not matched: 636 instructions against 636, 116 differ when aligned. Found in the second retry: the body of
-the second sprite exists twice (`if (kind != 0) { B } else { A; B }`); the two tag words are scalars that end up in
-spill slots together with work and i (sp+256 work, 260 i, 264 / 268 the tag words: declaration order work, i, tag,
-vif); the texture word is read where it is stored, after the texture coordinates, so the sprite code is a macro
-(or was written out), not a function taking the value; the packet pointer is one function-level variable filled
-through an inline allocator (that gives the `move v1,a0` copy of the first two expansions and none in the third).
-What still differs is register choice that follows from reload: the original reloads spilled pseudos into a2 where
-this C uses a1 (first Vec4_Scale: `addiu a2,sp,64 / move a0,a2 / move a1,a2`; the loop counter `lw a2,260(sp)`; the
-header constants alternate a2 / v0), the on-screen test keeps 0xFFFF in a0 and the result in a1 (here a1 / a0), and
-the original loads 0x80000000 (t0) before Vu0Cur_LoadMtx and saves it with sq / lq around that call, while
-`tag |= 7`, `vif |= 7` and `i = 3` stay in source order (here the scheduler moves them up across the calls).
-Putting the four locals in a struct (memory) keeps them in place but then they are no longer reloaded into a2.
-Cleanup W1: Vu0Cur_ProjectPoint is now declared with its return value (that alone fixed the same "x / limit /
-reload register" permutation in EftAura_DrawFlames, eft_n.c); here it changes nothing (121 instructions out of
-place with registers, 87 register-masked). Not tried yet with what EftTrail_Draw (eft_trail.c) and EftBound_BuildWall
-taught: constants as variables assigned in front of each use (not loop invariants), int constants that are
-converted to float through a spilled variable, and pointer variables assigned twice (unknown alias base). */
+/* Matching notes: the sprite body is a plain block macro expanded three times (`if (kind != 0) { B } else { A; B }`);
+   wrapped in `do { } while (0)` its loop notes are scheduling barriers and the third expansion comes out different.
+   The two tag words are constants written in the macro (0x20000007, 0x50000007): the loop pass hoists them and
+   the constant splitter turns each into lui + ori on a pseudo that then lives in a stack slot (sp+264 / 268),
+   which is what looked like two variables with `|= 7`. Header stores in field order prim, tag, next, vif0, vif1,
+   gif0, gif1. The loop is a count-up `for (i = 0; i < 4; ...)` that the compiler reverses (the `li 3` then
+   comes behind the hoisted constants). The on-screen test is an else-if chain with `ok` assigned in every arm. */
 /* Fills and queues one lightning sprite: a triangle strip between two projected corners, white scaled by the
    layer brightness, alpha 128 * life / lifeMax, in the second chain of the depth slot of its z. */
 #define EFT_STORM_SPRITE(bolt, a, b, texv, col, tagv, vifv) \
-    do { \
+    { \
         p = EftOt_Alloc(sizeof(EftStripPkt)); \
-        p->gif1 = 0xF42424242160; \
-        p->vif0 = 0x10000000; \
+        p->prim = 0x54; \
         p->tag = (tagv); \
         p->next = 0; \
-        p->gif0 = 0xC400000000008001; \
+        p->vif0 = 0x10000000; \
         p->vif1 = (vifv); \
-        p->prim = 0x54; \
+        p->gif0 = 0xC400000000008001; \
+        p->gif1 = 0xF42424242160; \
         p->rgba[0] = (u32)(col); \
         p->rgba[1] = (u32)(col); \
         p->rgba[2] = (u32)(col); \
@@ -549,7 +546,7 @@ converted to float through a spilled variable, and pointer variables assigned tw
         p->v[3].t = 1.0f; \
         p->tex0 = (texv); \
         EftOt_Add((OtPrim *)p,  (a)->z >> 8, 1); \
-    } while (0)
+    }
 
 void EftStorm_DrawBolts(EftStormBolt *bolt) {
     Mtx44 cam;
@@ -558,8 +555,6 @@ void EftStorm_DrawBolts(EftStormBolt *bolt) {
     EftScrXyz xyz[4];
     EftStorm *work = gEftStorm;
     s32 i;
-    u32 tag;
-    u32 vif;
     EftStripPkt *p;
     f32 col;
     s32 j;
@@ -577,17 +572,13 @@ void EftStorm_DrawBolts(EftStormBolt *bolt) {
     if (gBtlCamView != NULL) {
         Mtx_InverseRT(&cam, &gBtlCamView->view);
     }
-    tag = 0x20000000;
     Mtx_MulVec4(&corner[0], &cam, &corner[0]);
-    vif = 0x50000000;
     Mtx_MulVec4(&corner[1], &cam, &corner[1]);
     Mtx_MulVec4(&corner[2], &cam, &corner[2]);
     Mtx_MulVec4(&corner[3], &cam, &corner[3]);
     Vu0Cur_Push();
-    tag |= 7;
-    vif |= 7;
     Vu0Cur_LoadMtx(&gBtlCamView->screen);
-    for (i = 3; i >= 0; i--, bolt++) {
+    for (i = 0; i < 4; i++, bolt++) {
         if (bolt->life == 0 || bolt->wait != 0) {
             continue;
         }
@@ -603,17 +594,14 @@ void EftStorm_DrawBolts(EftStormBolt *bolt) {
             continue;
         }
         if (bolt->kind != 0) {
-            EFT_STORM_SPRITE(bolt, &xyz[2], &xyz[3], work->tex.entry[bolt->texB].tex0, col, tag, vif);
+            EFT_STORM_SPRITE(bolt, &xyz[2], &xyz[3], work->tex.entry[bolt->texB].tex0, col, 0x20000007, 0x50000007);
         } else {
-            EFT_STORM_SPRITE(bolt, &xyz[0], &xyz[1], work->tex.entry[bolt->texA].tex0, col, tag, vif);
-            EFT_STORM_SPRITE(bolt, &xyz[2], &xyz[3], work->tex.entry[bolt->texB].tex0, col, tag, vif);
+            EFT_STORM_SPRITE(bolt, &xyz[0], &xyz[1], work->tex.entry[bolt->texA].tex0, col, 0x20000007, 0x50000007);
+            EFT_STORM_SPRITE(bolt, &xyz[2], &xyz[3], work->tex.entry[bolt->texB].tex0, col, 0x20000007, 0x50000007);
         }
     }
     Vu0Cur_Pop();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle/eft_shot", EftStorm_DrawBolts);
-#endif
 
 /* Storm draw callback. */
 void EftStorm_Draw(void) {
