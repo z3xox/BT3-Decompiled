@@ -1,5 +1,11 @@
 #include "common.h"
+/* The header still declares these two with the integer parameters first; the definitions below have the order that
+   matches (see the notes at the functions). Hide the header's declarations until it is updated. */
+#define EftGndDust_DrawQuad EftGndDust_DrawQuad_hdrDecl
+#define EftGndDust_DrawPiece EftGndDust_DrawPiece_hdrDecl
 #include "battle/eft_char_parts.h"
+#undef EftGndDust_DrawQuad
+#undef EftGndDust_DrawPiece
 
 /*
  * Effect modules, 0x199F28..0x19E0C0. See include/battle/eft_char_parts.h for the list.
@@ -255,9 +261,9 @@ EftGroundPiece *EftGndDust_SpawnPieceEx(EftGroundWork *w, Vec4 *pos, Vec4 *dir, 
 
 
 /* Dust rising from a fighter's body: pieces along ten node-to-node segments, one per quarter body height
-   (6 units at least), each flying away from node 3. Five libc rand() per piece, two of them unused. */
-#if 0 /* NON-MATCHING: 12 of 347 instructions (was 21), register choices only, in the position sum of the piece loop: the original keeps (f32)j in f0 and start.z in f1 (this C the other way round) and has step.y in f6 and the 0.7f constant in f7 (here f7 / f6). Same instructions, same calls, same stack layout.
-   Permuter round 2: the definition's scalars are stored in the order fade, grow, drag, gravity (that fixed the order of the 0.1f / 0.01f / 0.8f loads and of the stores: 9 instructions). Without effect on the rest: every order and operand order of the three position lines, a local for (f32)j, the 0.7f added in a second statement or at the use, the life statement moved behind the position lines (67). */
+   (6 units at least), each flying away from node 3. Six libc rand() per piece, two of them unused.
+   The size is scaled in a statement of its own: written as one expression the float registers of the position sum
+   come out permuted. */
 void EftGndDust_SpawnBodyDust(EftGroundWork *w, EftGroundDef *def, f32 scale) {
     EftGroundSeg seg[10] = {
         { 3, -1, 0 },       { 0xB, 8, 0 },      { 0xF, 0xC, 0 },    { 0x15, -1, 0 },    { 0x23, -1, 0 },
@@ -309,7 +315,8 @@ void EftGndDust_SpawnBodyDust(EftGroundWork *w, EftGroundDef *def, f32 scale) {
             f32 life;
 
             rand();
-            extra = ((f32)rand() / 2147483647.0f * 1.5f + h) * scale;
+            extra = (f32)rand() / 2147483647.0f * 1.5f + h;
+            extra *= scale;
             rand();
             life = (f32)rand() / 2147483647.0f * 0.5f + 0.7f;
             pos.x = start.x + (f32)j * step.x;
@@ -336,17 +343,6 @@ void EftGndDust_SpawnBodyDust(EftGroundWork *w, EftGroundDef *def, f32 scale) {
         }
     }
 }
-#else
-INCLUDE_RODATA("asm/nonmatchings/battle/eft_char_parts", D_002ED360);
-INCLUDE_RODATA("asm/nonmatchings/battle/eft_char_parts", D_002ED3E0);
-LIT4_WORD(D_002FCE58, 0x4EFFFFFF); /* 2147483647.0f */
-LIT4_WORD(D_002FCE5C, 0x3F333333); /* 0.7f */
-LIT4_WORD(D_002FCE60, 0x3DCCCCCC); /* 0.1f */
-LIT4_WORD(D_002FCE64, 0x3C23D70A); /* 0.01f */
-LIT4_WORD(D_002FCE68, 0x3F4CCCCC); /* 0.8f */
-LIT4_WORD(D_002FCE6C, 0x40C90FDA); /* 6.2831853f */
-INCLUDE_ASM("asm/nonmatchings/battle/eft_char_parts", EftGndDust_SpawnBodyDust);
-#endif
 
 /* One piece next to an impact point: 4..9 units along the (flattened) direction and 7 below. One libc rand(). */
 void EftGndDust_SpawnChip(EftGroundWork *w, Vec4 *pos, Vec4 *dir, EftGroundRgba *colA, EftGroundRgba *colB, s32 life,
@@ -446,9 +442,10 @@ s32 EftGndDust_IsOnScreen(EftAaScr *p) {
 }
 
 /* Queues one textured quad in the plane of mtx's X and Z axes: X from -width / 2 to width / 2, Z from z0 to z1,
-   all scaled. Nothing is drawn during the stage-change transition, with zero alpha, or when a corner is off screen. */
-void EftGndDust_DrawQuad(Vec4 *pos, Vec4 *color, Mtx44 *mtx, u64 tex0, f32 scale, f32 z0, f32 z1, f32 width, f32 u0,
-                        f32 v0, f32 u1, f32 v1, u8 layer) {
+   all scaled. Nothing is drawn during the stage-change transition, with zero alpha, or when a corner is off screen.
+   tex0 stands behind the float parameters: EftGndDust_DrawPiece loads its argument registers in that order. */
+void EftGndDust_DrawQuad(Vec4 *pos, Vec4 *color, Mtx44 *mtx, f32 scale, f32 z0, f32 z1, f32 width, f32 u0, f32 v0,
+                        f32 u1, f32 v1, u64 tex0, u8 layer) {
     EftAaVec c[4];
     EftAaVec stq[4];
     EftAaVec uv[4];
@@ -563,25 +560,18 @@ void EftGndDust_DrawQuad(Vec4 *pos, Vec4 *color, Mtx44 *mtx, u64 tex0, f32 scale
     e->tail = (EftAaOtPrim *)p;
 }
 
-/* Draws one piece: a quad lying along dir, or a camera-facing sprite. */
-#if 0 /* NON-MATCHING: 2 of 57 instructions: the original sets up f15 (width) before a3 (tex0) for the EftGndDust_DrawQuad call, this C after. No parameter order of either function changes it.
-   Cleanup E: all 1287 interleavings of EftGndDust_DrawQuad's five integer and eight float parameters were compiled; none gives the
-   original order (175 give these 2, the rest more). It is the first scheduling pass: with `$a3 = tex0`, `$f13 = h`
-   and `$f15 = w` all ready, it takes the one that comes first in the instruction stream; the original took the two
-   float moves first, i.e. the tex0 move ranked lower there (as if tex0 did not die in it). */
-void EftGndDust_DrawPiece(Vec4 *pos, Vec4 *color, Vec4 *dir, s32 layer, u64 tex0, s32 along, f32 w, f32 h, f32 rot) {
+/* Draws one piece: a quad lying along dir, or a camera-facing sprite. The parameter order is the one the callers in
+   eft_ground_dust.c already use (include/battle/eft_ground_dust.h). */
+void EftGndDust_DrawPiece(Vec4 *pos, Vec4 *color, Vec4 *dir, s32 layer, f32 w, f32 h, f32 rot, u64 tex0, s32 along) {
     Mtx44 m;
 
     if (along != 0) {
         EftGndDust_MakeFacingMtx(&m, dir, &D_002EC2C0);
-        EftGndDust_DrawQuad(pos, color, &m, tex0, 1.0f, h, 0.0f, w, 0.0f, 0.0f, 1.0f, 1.0f, layer);
+        EftGndDust_DrawQuad(pos, color, &m, 1.0f, h, 0.0f, w, 0.0f, 0.0f, 1.0f, 1.0f, tex0, layer);
     } else {
         EftGfx_DrawSprite(pos, color, w, h, 0.0f, 0.0f, 1.0f, 1.0f, rot, layer, 0, tex0);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle/eft_char_parts", EftGndDust_DrawPiece);
-#endif
 
 /* ---- delayed sound effects ------------------------------------------------------------------------------ */
 
@@ -912,13 +902,22 @@ void EftBlade_Reset(void) {
 /* Appends this frame's blade ends (a = base, b = tip) to the ring while the weapon is out. Once five entries
    exist and the base moved more than 1 unit, the previous entry is replaced by eleven: Catmull-Rom points at
    0.1 .. 0.9 through the last four frames, then the previous entry again. */
-#if 0 /* NON-MATCHING: same length (385 instructions) and same calls, but the register allocation differs throughout: the original keeps the addresses of both vector copies in s7 / fp and spills p1, p3, p4 to the stack; this C keeps p1 in a register and spills the address of b. The allocator priorities of p1 and of the two addresses are within 2% of each other (8 / 89 against 27 / 304 and 27 / 313), so the original source differs in some detail that lengthens p1 by a few instructions or adds one use of a and b. */
+/* FAKE MATCH (the three empty __asm__ statements in the body; behaviour is not affected). What is established:
+   - p4, p3, p2, p1 are declared in that order (stack slots and the order of the four sums);
+   - the last two stores are head, then tail: with tail stored first cse replaces tail by head in every
+     `tail = (tail + 1) & 0x7F` (they are equal there) and the function grows by 20 instructions;
+   - with only that, the global allocator still gives p1 a saved register and spills the address of b
+     (priority 80000 / 87 = 919 against 270000 / 301 = 897, integer part compared, ties to the lower pseudo). The
+     original has them the other way round, which needs three or more extra instructions inside p1's live range
+     (90 against 304 gives 888 = 888). The natural source of those instructions was not found: declaration and
+     statement orders, loop forms, call-result variables, an inline wrapper around the weapon test and
+     do { } while (0) macros leave both lengths unchanged. */
 void EftBlade_AddPoint(EftBladeTrail *t, EftAaVec a, EftAaVec b, s32 objId) {
     s32 head = t->head;
     s32 p4 = (head + 0x7C) & 0x7F;
     s32 p3 = (head + 0x7D) & 0x7F;
-    s32 p1 = (head + 0x7F) & 0x7F;
     s32 p2 = (head + 0x7E) & 0x7F;
+    s32 p1 = (head + 0x7F) & 0x7F;
     s32 tail = t->tail;
     s32 i;
 
@@ -937,6 +936,12 @@ void EftBlade_AddPoint(EftBladeTrail *t, EftAaVec a, EftAaVec b, s32 objId) {
         Vec4_Copy((Vec4 *)&t->lastA[3], (Vec4 *)&a);
         Vec4_Copy((Vec4 *)&t->lastB[3], (Vec4 *)&b);
     }
+    /* FAKE MATCH: three empty statements. The original has at least three more instructions than this C between
+       the declarations and the first use of p1 below while registers are allocated (they leave no code), which
+       is what puts the address of b in a saved register and p1 on the stack. See the note above the function. */
+    __asm__("");
+    __asm__("");
+    __asm__("");
     if (head == tail || p1 == tail || p2 == tail || p3 == tail || p4 == tail) {
         if (BtlCharApi_HasWeaponOut(objId)) {
             Vec4_Copy((Vec4 *)&t->edgeA[head], (Vec4 *)&a);
@@ -976,20 +981,9 @@ void EftBlade_AddPoint(EftBladeTrail *t, EftAaVec a, EftAaVec b, s32 objId) {
             EFT_BLADE_NEXT()
         }
     }
-    t->tail = tail;
     t->head = head;
+    t->tail = tail;
 }
-#else
-LIT4_WORD(D_002FCE84, 0x3DCCCCCC); /* 0.1f */
-LIT4_WORD(D_002FCE88, 0x3E4CCCCC); /* 0.2f */
-LIT4_WORD(D_002FCE8C, 0x3E999999); /* 0.3f */
-LIT4_WORD(D_002FCE90, 0x3ECCCCCC); /* 0.4f */
-LIT4_WORD(D_002FCE94, 0x3F199999); /* 0.6f */
-LIT4_WORD(D_002FCE98, 0x3F333333); /* 0.7f */
-LIT4_WORD(D_002FCE9C, 0x3F4CCCCC); /* 0.8f */
-LIT4_WORD(D_002FCEA0, 0x3F666666); /* 0.9f */
-INCLUDE_ASM("asm/nonmatchings/battle/eft_char_parts", EftBlade_AddPoint);
-#endif
 
 /* Task update: fades the ring (not while paused) and adds this frame's blade position. */
 void EftBlade_Update(EftAaTask *task) {
