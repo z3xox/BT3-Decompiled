@@ -490,6 +490,19 @@ s32 BtlScene_IsEffectStopped(s32 objId, s32 kind) {
  * - Cases 3 / 6 last (behind `default`): the default's second `if` is no longer converted to a conditional
  *   move by the first jump pass (it must fall into the switch end for that) and merges with X: 51 to 114.
  * - An inline helper for the first switch (five shapes): 39 to 50. */
+/* Cleanup 5 (no better form; 30 more tried: goto / break-first forms in every case order, cases 3 / 6 last with
+ * six default forms):
+ * - Two pre-reorg shapes give the original's cases 0 / 1: the three separate copies described above, or ONE
+ *   out-of-line X with case 0 `bnez v0,X / j END` and case 1 `beqz v0,X / j END` (X's `li s2,1` is then copied
+ *   into both slots annulled). `if (!AnyFrozen()) break; goto hide;` gives the second shape whenever X does not
+ *   directly follow the case (case 0 exact with the order 0, 1, X, default); the case X follows is inverted
+ *   by the jump pass and comes out wrong, and X follows something in every order.
+ * - Three separate copies survive the final jump pass only if X falls into END with no jump of its own (cross
+ *   jumping starts from a jump); that needs X last, and then the default loses its conditional move (the first
+ *   jump pass converts `if (!ready) result = 1;` only when it falls into the switch end; a `?:` does not help).
+ * - The dispatch also differs in every form here: the original's `beq kind,3` takes X's `li s2,1` (from the
+ *   target) and leaves `li v0,6` behind it, this compiler takes `li v0,6` (own fall-through, tried first for an
+ *   `==` branch). In reorg.c that happens only when v0 counts as live at X, or a label follows the branch. */
 s32 BtlScene_IsEffectHidden(s32 objId, s32 kind) {
     s32 result = 0;
 

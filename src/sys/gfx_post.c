@@ -1656,6 +1656,20 @@ void StgDepthTint_Term(void) {
    after the first cse) is still folded (cse does not treat such memory as clobbered by the call). The zero has
    to reach register allocation as a register copy, so whatever hides it must survive cse, gcse, cse2 AND
    combine: not found. */
+/* Cleanup pass 4 (still 51 of 59 with the attempt below). What the original needs, from the scheduler dumps:
+   - the copy `medium = zero` stands in the FIRST block, behind the call and in front of the split-screen test
+     (`split = Battle_IsSplitScreen(); medium = zero; if (!split) ...`): only then the function has 10 basic
+     blocks, which the first scheduling pass needs to move `addiu a0,sp,64` and the `move a0,zero / li a1` of the
+     tail over their branches (an `else { medium = zero; }` arm is an 11th block: registers right, all
+     inter-block moves lost);
+   - the zero must be unknown to cse, gcse and cse2 (a `for (i = 0; i < 1; i++)` loop is removed by the loop
+     pass and cse2 then folds `medium = i`; an address-taken zero read through an inline helper survives cse and
+     gcse and is folded by cse2);
+   - the zero must stay in front of the call (the scheduler sinks a zero whose only use is behind the call) and
+     must not be tied to `medium` by the allocator (it is when the zero dies in the copy).
+   An empty `__asm__("" : "=r"(zero) : "0"(zero));` behind the call plus a bare `__asm__("");` in front of the
+   load of gBtlCamView gets to 4 instructions (the copy cannot go into the delay slot because the asm follows it,
+   and `move a0,sp` / `addiu a1,s1,64` swap); no form found that is exact, natural or fake. */
 #if 0
 void StgDepthTint_Draw(void) {
     Mtx44 m;

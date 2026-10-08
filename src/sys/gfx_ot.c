@@ -89,30 +89,29 @@ void Ot_ResetCursor(void) {
 }
 
 /* Empties the table for the next frame: reselects the three slot pointers, marks every chain empty, rewinds the cursor. Returns 1. */
-/* Cleanup pass 2: the two extra copies are made by cse, not written in the source: each of the three loads
-   recomputes `cur * 4 + gOt` as its own temporary and cse turns the later ones into copies of the one before
-   (`ot = gOt; i = ot->cur; ... ot->slots[i + 1]; ot->slots[i + 2]` reproduces the copy for the third load: 10 of
-   24). What is missing is the first load in the same operand order (`ot->slots[i]` expands to `ot + i * 4`, the
-   other two to `i * 4 + ot`, so the first is a second addu instead of the source of the chain). Not found:
-   `*(i + ot->slots)`, `(&ot->slots[i])[k]`, byte arithmetic, an inline accessor with the index as a parameter,
-   pointer copies (a = b = c), post-increments and a 12-byte struct copy all give other code. */
-#if 0
-/* Differs: the original computes `gOt + gOt->cur * 4` once but then copies it to a new register for each
-   of the next two loads (addu v1,a2,v0 / move a3,v1 / move a2,a3), so it is two instructions longer. */
+/* The three slot pointers are indexed by `cur` as three one-element arrays, not as one array of three: only
+   `ot->z[i]` / `ot->last[i]` (member offset first, then the index) make the compiler copy the address
+   `ot + i * 4` into a new register for each of the later loads. The shared header keeps the `slots[3]` view. */
+typedef struct OtSets {
+    /* 0x00 */ OtSlot *first[1];
+    /* 0x04 */ OtSlot *z[1];
+    /* 0x08 */ OtSlot *last[1];
+} OtSets;
+
 s32 Ot_Reset(void) {
-    OtSlot **slots;
+    OtSets *ot;
+    s32 i;
 
     gOt->cur = 0;
-    slots = &gOt->slots[gOt->cur];
-    gOtFirst = slots[0];
-    gOtZ = slots[1];
-    gOtLast = slots[2];
+    ot = (OtSets *)gOt;
+    i = gOt->cur;
+    gOtFirst = ot->first[i];
+    gOtZ = ot->z[i];
+    gOtLast = ot->last[i];
     Ot_ResetEntries(gOtFirst->layer, OT_ENTRY_COUNT);
     Ot_ResetCursor();
     return 1;
 }
-#endif
-INCLUDE_ASM("asm/nonmatchings/sys/gfx_ot", Ot_Reset);
 
 /* Marks `count` chains empty (tail = head). */
 s32 Ot_ResetEntries(OtEntry *entry, s32 count) {

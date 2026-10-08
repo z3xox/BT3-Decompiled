@@ -71,6 +71,14 @@ void PadWatch_SetEnabled(s32 enable) {
    preceding branch got its `li v0,1` only later (second round), i.e. it did not point at the `return 1` block
    directly when the slots were filled first. Eight more arrangements of the `*port = 1` arm (returns, inverted
    tests, a local for the 1) give the same two instructions or more differences. */
+/* Cleanup pass 3: still 2 of 69 with 22 more arrangements (the `*port = 1` arm with returns, gotos, an empty
+   else, `do { } while (0)`; the `*port = 0` arms inverted or with returns; the mode test as nested ifs or a flag:
+   those two change the layout). Before the delay-slot pass this C already has what the original must have had:
+   `bnez v0,ret1 / beqz s0,ret1 / li v0,1 / sw v0,0(s0) / j ret1`. From reorg.c: the original's `beqz s0` took the
+   `li v0,1` behind it in the first round and lost it as redundant only in the LAST relax step (an emptied slot
+   is refilled in round two, which is the `beqzl / ld s0` here). So in round one that `li v0,1` was not
+   redundant: either a label stood in front of `beqz s0` (redundant_insn stops at a label) whose jump went away
+   afterwards, or the `bnez v0` in front had no `li v0,1` yet. No source form found for either. */
 #if 0
 s32 PadWatch_GetMissing(s32 *port) {
     if ((gPadWatch->valid[0] == 0 && gPadWatch->valid[1] == 0) || gPadWatch->message < 0) {
