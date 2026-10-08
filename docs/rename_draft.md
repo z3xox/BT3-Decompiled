@@ -267,3 +267,41 @@ Plain words are written out where the name stays short (`char_select`, `mission_
 ## Kept as they are
 
 `sys/adx`, `sys/bpe`, `sys/color_fade`, `sys/common`, `sys/debug`, `sys/dialog`, `sys/dma`, `sys/fade`, `sys/file`, `sys/game_pad`, `sys/gfx`, `sys/gfx_ot`, `sys/gsc`, `sys/heap`, `sys/heap_info`, `sys/iop_heap`, `sys/job`, `sys/list`, `sys/loading`, `sys/math3d`, `sys/mathf`, `sys/mem_read`, `sys/movie`, `sys/pad`, `sys/pad_watch`, `sys/queue`, `sys/ramp`, `sys/rand`, `sys/rigid`, `sys/save`, `sys/snd`, `sys/sprite`, `sys/spu_heap`, `sys/timer`, `sys/vu1_packet`, `battle/battle`, `battle/battle_load`, `battle/battle_work`, `battle/btl_ai_mgr`, `battle/btl_ai_seq`, `battle/btl_cam`, `battle/btl_char_action`, `battle/btl_char_cam`, `battle/btl_char_cam_cut`, `battle/btl_char_cam_modes`, `battle/btl_char_flag`, `battle/btl_char_fx`, `battle/btl_char_hit`, `battle/btl_char_member`, `battle/btl_char_mgr`, `battle/btl_char_move`, `battle/btl_demo_cam`, `battle/btl_facade`, `battle/btl_input`, `battle/btl_obj`, `battle/btl_pool`, `battle/btl_replay`, `battle/btl_scene`, `battle/btl_script`, `battle/btl_script_cmd`, `battle/btl_seq`, `battle/orbit_cam`, `cri/adxt`
+
+## Which neighbouring files can be one file (trial of 2026-10-08)
+
+`scripts/try_merge.py A B` appends B to A, gives A B's data in the build lists, drops declarations the two
+parts make twice, builds, compares both outputs with the disc's, and restores the tree. Run over 49 pairs of
+neighbouring files of one module. Nothing was kept.
+
+**Merged and still byte-identical (18 pairs, verified):**
+
+| files | would be |
+|---|---|
+| `sys/gfxm_b_c` + `gfxm_c` + `gfxm_d` (two pairs) | one `flash` file |
+| `sys/vu0_a_c` + `vu0_a_c_b` + `vu0_a_c_c` (two pairs) | one file of the vector library's first half |
+| `battle/btl_char_cam` + `btl_char_cam_cut` + `btl_char_cam_modes` (two pairs) | one fighter camera file |
+| `battle/btl_char_ctl_b` + `_c` + `_d` (two pairs) | adjacent, but three different things (change requests, head tracking, pose) |
+| `battle/eft_z` + `eft_z_b` + `eft_z_c` (two pairs) | one file with all of the ground dust |
+| `battle/eft_det_b` + `eft_det_b_b` | stage collision and navigation |
+| `battle/eft_det_b_c` + `btl_ai_seq` | the AI sequence file with its two head functions (the note that this merge changes the code did not hold in this trial) |
+| `battle/btl_act_h` + `btl_act_h_b` | the grab handler with the handlers after it |
+| `battle/hud_0` + `hud_0_b` | the pause menu |
+| `battle/hud_0_c` + `btl_seq` | the skill-list text with its head |
+| `battle/hud_c_c` + `hud_d` | the HUD's sprite and node library |
+| `battle/hud_e_e` + `stg_d` | the rigid bodies with their two list helpers |
+| `battle/view_a_e` + `view_b` | the text box in one piece |
+
+Each pair was tried alone; a chain of three is two verified pairs, not a verified triple.
+
+**Built, but bytes changed (5 pairs; the cause was not looked for):** `sys/gfxm_e` + `gfxm_e_b` (1 byte),
+`battle/bobj_a` + `bobj_b_b` (2 bytes), `sys/late_a` + `late_a_b` (409), `sys/misc_a` + `misc_a_b`, `battle/col_a` +
+`col_b`. The large differences look like data that moved (the script puts the second file's data straight after
+the first's), not like different code; the small ones may be real. Not settled.
+
+**Not answered (26 pairs):** the merged file did not build. Most are the script's limits, not findings: the two
+parts describe a shared structure or variable differently and a person has to choose (`eft_c` + `eft_d`, `eft_w` +
+`eft_x`, `hud_a_d` + `hud_b`, the action handler slices, the fighter interface files); the script dropped a
+variable's declaration it should have kept (`eft_x_c` + `eft_y`, `eft_m` + `eft_n`, `hud_b` + `hud_c` and others);
+the overlay's build list is not rewritten correctly (the three menu pairs); and `stg_a` + `stg_a_b` have a
+hand-written assembly chunk between them, which is a real reason to stay two files.
