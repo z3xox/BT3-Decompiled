@@ -29,9 +29,9 @@ typedef struct EftVec {
 
 /* A task of the effect scene's task tree (0x40 bytes); only what these modules touch. */
 typedef struct EftTask {
-    /* 0x00 */ u8 unk0;
+    /* 0x00 */ u8 bits;
     /* 0x01 */ u8 step;      /* state of the module's update switch */
-    /* 0x02 */ u16 unk2;
+    /* 0x02 */ u16 index;
     /* 0x04 */ u32 flags;    /* 0x800 / 0x1000: belongs to character 0 / 1 (BtlTask_SetOwnerTag). Written by the hit record
                                 code: 1 = the record hit something, 2 = it is over, 4 = (also ends the effect) */
     /* 0x08 */ u16 hit;      /* written by the hit record code: 1 = the volume was moved (hitPos is its new head),
@@ -47,7 +47,7 @@ typedef struct EftTask {
 /* Definition of a technique effect (the record a technique's effect request points at); fields used here. */
 typedef struct EftTechDef {
     /* 0x00 */ s16 id;        /* effect id; selects the variant */
-    /* 0x02 */ s16 unk2;
+    /* 0x02 */ s16 level;
     /* 0x04 */ s8 unk4;       /* not 0: the term callback sets the fighter's held flag 0xA8 (rush shot) / 0xA9
                                  (ring shot) */
     /* 0x05 */ u8 unk5[3];
@@ -55,19 +55,19 @@ typedef struct EftTechDef {
                                  (ColCapsule_Set, EftHit_SetShapeBoxes) */
     /* 0x09 */ s8 unk9;       /* multiplied by count: total number of shots */
     /* 0x0A */ u8 unkA[0x28 - 0xA];
-    /* 0x28 */ s32 unk28;     /* frames; / 30 is the blast objects' delay in variant 2 */
-    /* 0x2C */ s32 unk2C;
+    /* 0x28 */ s32 life;     /* frames; / 30 is the blast objects' delay in variant 2 */
+    /* 0x2C */ s32 shotLife;
     /* 0x30 */ f32 size;      /* effect scale; times the set's trail width = hit radius */
     /* 0x34 */ f32 speed;
-    /* 0x38 */ f32 unk38;     /* > 0: the rush shot homes (EftAim_Home turn rate) */
+    /* 0x38 */ f32 homing;     /* > 0: the rush shot homes (EftAim_Home turn rate) */
     /* 0x3C */ u32 flags;     /* 1 makes hit records, 2 the shot does not move by itself, 0x200 lights the stage
                                  (blur), 0x20000 has swarm models, 0x400000 no screen flash */
     /* 0x40 */ s32 unk40;
     /* 0x44 */ s16 count;     /* shots per volley */
     /* 0x46 */ u8 unk46[0x58 - 0x46];
-    /* 0x58 */ s8 unk58[8];   /* kind of the effect EftStreak_Start starts at the n-th event 0x80; < 0 none */
-    /* 0x60 */ f32 unk60[8];  /* its angle in degrees */
-    /* 0x80 */ s16 unk80;
+    /* 0x58 */ s8 subKind[8];   /* kind of the effect EftStreak_Start starts at the n-th event 0x80; < 0 none */
+    /* 0x60 */ f32 subAngle[8];  /* its angle in degrees */
+    /* 0x80 */ s16 subArg;
 } EftTechDef;
 
 /* Argument of the init callback of a technique effect task. */
@@ -87,28 +87,28 @@ typedef struct EftModelInst {
 
 /* An emitter set (EftEmit_LoadSet): 0x13 groups. */
 typedef struct EftModelPartDef {
-    /* 0x0 */ u8 unk0;
+    /* 0x0 */ u8 kind;
     /* 0x1 */ u8 count;       /* emitters in the group */
 } EftModelPartDef;
 
 typedef struct EftModelNode {
     /* 0x00 */ u8 unk0[9];
-    /* 0x09 */ u8 unk9;
+    /* 0x09 */ u8 endPhase;
     /* 0x0A */ u8 unkA[0x18 - 0xA];
-    /* 0x18 */ f32 unk18;
+    /* 0x18 */ f32 rate;
     /* 0x1C */ u8 unk1C[0x40 - 0x1C];
 } EftModelNode; /* size 0x40 */
 
 typedef struct EftModelPart {
     /* 0x0 */ EftModelPartDef *def;
-    /* 0x4 */ s32 unk4;
+    /* 0x4 */ s32 parts;
     /* 0x8 */ u8 first;       /* index of the group's first emitter in nodes[] */
     /* 0x9 */ u8 unk9[7];
 } EftModelPart; /* size 0x10 */
 
 typedef struct EftModel {
     /* 0x000 */ u32 *mask;    /* bit n: group n exists */
-    /* 0x004 */ s32 unk4;
+    /* 0x004 */ s32 entries;
     /* 0x008 */ EftModelNode *nodes;
     /* 0x00C */ EftModelPart part[0x13];
     /* 0x13C */ u8 unk13C[0x31C - 0x13C];
@@ -119,7 +119,7 @@ typedef struct EftModel {
 /* Work of the manager task (class gEftRushShotMgrClass), 0x330 bytes. */
 typedef struct EftRushShotMgrWork {
     /* 0x000 */ EftModel model;
-    /* 0x31C */ s32 unk31C;
+    /* 0x31C */ s32 owner;
     /* 0x320 */ s32 *sub[4];   /* [0]: entry 1 of the technique's pack (the swarm's model pack) when the definition
                                   has flag 0x20000; [1..3]: entries 1..3 of the character's pack 8 when not empty:
                                   the camera animations of technique slots 2..4 */
@@ -163,9 +163,9 @@ typedef struct EftRushShotWork {
     /* 0x050 */ Vec4 vel;
     /* 0x060 */ EftTechArg *arg;
     /* 0x064 */ EftModelInst inst;
-    /* 0x330 */ u8 unk330[0x20]; /* node slots of the set (EftEmit_UpdateNodesReq), 0x250 bytes from here */
-    /* 0x350 */ u8 unk350[0x40];
-    /* 0x390 */ Vec4 unk390;    /* node slots + 0x60: position of the start node */
+    /* 0x330 */ u8 nodes[0x20]; /* node slots of the set (EftEmit_UpdateNodesReq), 0x250 bytes from here */
+    /* 0x350 */ u8 slot0Pos[0x40];
+    /* 0x390 */ Vec4 slot1Pos;    /* node slots + 0x60: position of the start node */
     /* 0x3A0 */ u8 unk3A0[0x580 - 0x3A0];
     /* 0x580 */ EftModel *model;
     /* 0x584 */ u32 flags;
@@ -183,7 +183,7 @@ typedef struct EftRushShotWork {
     /* 0x5D0 */ s32 subCount;   /* 7 when the manager has a model pack */
     /* 0x5D4 */ u8 unk5D4[0x5E0 - 0x5D4];
     /* 0x5E0 */ EftRushShotModel sub[7];
-    /* 0xAB0 */ s32 *unkAB0;    /* camera animation: mgr->sub[slot - 1] for slots 2..4 */
+    /* 0xAB0 */ s32 *camAnim;    /* camera animation: mgr->sub[slot - 1] for slots 2..4 */
     /* 0xAB4 */ u8 unkAB4[0xAC0 - 0xAB4];
 } EftRushShotWork; /* size 0xAC0 */
 
@@ -193,7 +193,7 @@ typedef struct EftRushShotWork {
 typedef struct EftRingShotMgr {
     /* 0x000 */ s32 unk0;
     /* 0x004 */ EftModel model;
-    /* 0x320 */ s32 unk320;
+    /* 0x320 */ s32 owner;
 } EftRingShotMgr; /* size 0x324 */
 
 /* One shot. */
@@ -216,11 +216,11 @@ typedef struct EftRingShotOne {
 typedef struct EftRingShot {
     /* 0x000 */ EftModelInst inst;
     /* 0x2CC */ s32 unk2CC;
-    /* 0x2D0 */ u8 unk2D0[0x20]; /* node set (EftEmit_UpdateNodesReq): 0x250 bytes from here */
-    /* 0x2F0 */ u8 unk2F0[0x30];
+    /* 0x2D0 */ u8 nodes[0x20]; /* node set (EftEmit_UpdateNodesReq): 0x250 bytes from here */
+    /* 0x2F0 */ u8 slot0Pos[0x30];
     /* 0x320 */ s32 node;        /* node set +0x50: the fighter node the shots start from */
     /* 0x324 */ u8 unk324[0xC];
-    /* 0x330 */ Vec4 unk330;     /* node set +0x60: that node's position */
+    /* 0x330 */ Vec4 slot1Pos;     /* node set +0x60: that node's position */
     /* 0x340 */ u8 unk340[0x520 - 0x340];
     /* 0x520 */ EftModel *model;
     /* 0x524 */ EftTechArg *arg;
@@ -237,7 +237,7 @@ typedef struct EftRingShot {
     /* 0x5C0 */ u32 flags;
     /* 0x5C4 */ s32 type;        /* variant 0..3, from the effect id (see eft_ring_shot.c) */
     /* 0x5C8 */ f32 speed;       /* def->speed: speed of the blast objects, and of the slide to the ring */
-    /* 0x5CC */ f32 unk5CC;      /* def->unk38, not read here */
+    /* 0x5CC */ f32 homing;      /* def->unk38, not read here */
     /* 0x5D0 */ f32 size;
     /* 0x5D4 */ f32 drawSize;    /* scale handed to the emitters and to the blast objects */
     /* 0x5D8 */ f32 hitSize;     /* times the set's trail width = hit radius */
@@ -270,13 +270,13 @@ typedef struct EftRingShot {
 typedef struct EftShotArg {
     /* 0x00 */ EftTechArg *arg;
     /* 0x04 */ EftModel *model;
-    /* 0x08 */ void *unk8;
+    /* 0x08 */ void *nodes;
     /* 0x0C */ Vec4 *pos;
     /* 0x10 */ Vec4 *dir;
     /* 0x14 */ s32 index;
     /* 0x18 */ s32 total;
-    /* 0x1C */ s32 unk1C;      /* 1 for the ring variants, 3 for the volley */
-    /* 0x20 */ s32 unk20;      /* the same value */
+    /* 0x1C */ s32 kind;      /* 1 for the ring variants, 3 for the volley */
+    /* 0x20 */ s32 nodeSlot;      /* the same value */
     /* 0x24 */ f32 delay;      /* seconds; def->unk28 / 30 for the volley */
     /* 0x28 */ f32 size;
     /* 0x2C */ f32 speed;
@@ -303,7 +303,7 @@ typedef struct EftAbsorbMgr {
 
 typedef struct EftAbsorbModel {
     /* 0x000 */ EftModel model;
-    /* 0x31C */ s32 unk31C;
+    /* 0x31C */ s32 owner;
     /* 0x320 */ s32 *pack;
 } EftAbsorbModel; /* size 0x324 */
 
@@ -326,7 +326,7 @@ typedef struct EftAbsorb {
     /* 0x5F0 */ u8 unk5F0[0x840 - 0x5F0]; /* node slots of the set */
     /* 0x840 */ s32 hands;       /* EftAbsorbArg.hands */
     /* 0x844 */ u32 flags;       /* EFT_ABSORB_* */
-    /* 0x848 */ u32 unk848;      /* phase mask handed to EftEmit_GetFlagsFromMask: 1 (node 0x36) or 2 (hands), set
+    /* 0x848 */ u32 phaseMask;      /* phase mask handed to EftEmit_GetFlagsFromMask: 1 (node 0x36) or 2 (hands), set
                                     every update, cleared by the post-update */
     /* 0x84C */ f32 scale;       /* owner.scale */
     /* 0x850 */ f32 timer;       /* frames since the end began */

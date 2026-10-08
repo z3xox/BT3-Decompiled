@@ -2042,7 +2042,7 @@ void EftRushShot_StartCam(EftTask *task) {
     EftRushShotMsg msg;
 
     if (w->flags & EFT_RUSHSHOT_CONNECTED) {
-        msg = (EftRushShotMsg){ (s32)w->unkAB0, arg->objId, arg->def->id };
+        msg = (EftRushShotMsg){ (s32)w->camAnim, arg->objId, arg->def->id };
         EftCam_Start(&msg);
         w->flags |= EFT_RUSHSHOT_SENT;
     }
@@ -2098,9 +2098,9 @@ void EftRushShot_UpdateStageFx(EftTask *task) {
 
     if (EftShot_TestBits(opp, 0x80)) {
         s32 i = w->stage;
-        f32 angle = arg->def->unk60[i] * 3.14159265f / 180.0f;
-        s32 kind = arg->def->unk58[i];
-        s32 unk80 = arg->def->unk80;
+        f32 angle = arg->def->subAngle[i] * 3.14159265f / 180.0f;
+        s32 kind = arg->def->subKind[i];
+        s32 unk80 = arg->def->subArg;
 
         angle = EftMath_WrapAngle(angle);
         if (kind >= 0) {
@@ -2186,14 +2186,14 @@ void EftRushShot_Draw(s32 objId, EftTask *task, EftModel *model) {
 
                 if (alt) {
                     end = endAlt;
-                    if (model->nodes[idx].unk9 == 0 && model->nodes[idx].unk18 > 0.0f) {
+                    if (model->nodes[idx].endPhase == 0 && model->nodes[idx].rate > 0.0f) {
                         end = 0;
                         fast = 0;
                     }
                 }
                 spawn = EftEmit_GetFlagsFromReq(model, &w->inst, objId, part, sub, end, fast);
                 if (spawn != 0) {
-                    EftEmit_SpawnOwn(model, &w->inst, w->unk330, &pos, w, part, sub, spawn, w->drawSize);
+                    EftEmit_SpawnOwn(model, &w->inst, w->nodes, &pos, w, part, sub, spawn, w->drawSize);
                 }
             }
         }
@@ -2215,12 +2215,12 @@ void EftRushShot_UpdateAttached(EftTask *task) {
         }
         if (w->flags & EFT_RUSHSHOT_ATTACHED) {
             BtlCharApi_GetNodePos(BtlCharApi_GetOpponentObjId(arg->objId), 3, &w->pos);
-            EftAim_GetDir(w, &w->unk390, arg->objId);
+            EftAim_GetDir(w, &w->slot1Pos, arg->objId);
         }
     } else {
         if (w->flags & EFT_RUSHSHOT_ATTACHED) {
             BtlCharApi_GetNodePos(arg->objId, 0x36, &w->pos);
-            EftAim_GetDir(w, &w->unk390, arg->objId);
+            EftAim_GetDir(w, &w->slot1Pos, arg->objId);
         }
     }
     if (w->flags & EFT_RUSHSHOT_CONNECTED) {
@@ -2266,7 +2266,7 @@ void EftRushShot_Init(EftTask *task, EftTechArg *arg) {
         s32 *v = mgr->sub[arg->slot - 1];
 
         if (v != NULL) {
-            w->unkAB0 = v;
+            w->camAnim = v;
         }
     }
     BtlTask_SetOwnerTag(task, arg->objId == 0 ? 0x800 : 0x1000);
@@ -2310,10 +2310,10 @@ void EftRushShot_Update(EftTask *task) {
     if (!(w->flags & EFT_RUSHSHOT_SENT)) {
         EftRushShot_StartCam(task);
     }
-    EftEmit_UpdateNodesReq(arg, w->unk330);
+    EftEmit_UpdateNodesReq(arg, w->nodes);
     if (!(w->flags & EFT_RUSHSHOT_STARTED)) {
         if (EftShot_TestBits(arg->objId, 2)) {
-            EftAim_GetDir(w, w->unk350, arg->objId);
+            EftAim_GetDir(w, w->slot0Pos, arg->objId);
             task->step = 0;
             w->flags |= EFT_RUSHSHOT_STARTED;
             if (mgr->sub[0] != NULL) {
@@ -2329,7 +2329,7 @@ void EftRushShot_Update(EftTask *task) {
             case 0:
                 if (EftShot_TestBits(arg->objId, 4)) {
                     w->flags |= EFT_RUSHSHOT_FIRED;
-                    Vec4_Copy(&w->start, &w->unk390);
+                    Vec4_Copy(&w->start, &w->slot1Pos);
                     Vec4_Copy(&w->pos, &w->start);
                     BtlCharApi_GetNodePos(arg->objId, 0x11, &w->prev);
                     EftAim_GetDirKeep(arg, &w->dir, &w->pos, arg->objId);
@@ -2344,8 +2344,8 @@ void EftRushShot_Update(EftTask *task) {
                 }
                 if (!(w->arg->def->flags & 2)) {
                     if (!(w->flags & EFT_RUSHSHOT_HIT_MOVED)) {
-                        if (arg->def->unk38 > 0.0f) {
-                            EftAim_Home(&w->dir, &w->pos, &w->dir, arg->objId, w->speed, arg->def->unk38);
+                        if (arg->def->homing > 0.0f) {
+                            EftAim_Home(&w->dir, &w->pos, &w->dir, arg->objId, w->speed, arg->def->homing);
                             Vec3_Scale(&w->vel, &w->dir, w->speed);
                         }
                         Vec3_Add(&w->pos, &w->pos, &w->vel);

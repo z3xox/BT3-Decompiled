@@ -57,11 +57,11 @@ typedef struct EftEmitDef {
     /* 0x02 */ u8 unk2;       /* module parameter */
     /* 0x03 */ u8 unk3;
     /* 0x04 */ u8 unk4;
-    /* 0x05 */ u8 unk5;       /* module parameters */
-    /* 0x06 */ u8 unk6;
-    /* 0x07 */ u8 unk7;
+    /* 0x05 */ u8 delay;       /* module parameters */
+    /* 0x06 */ u8 stopDelay;
+    /* 0x07 */ u8 fade;
     /* 0x08 */ u8 kind;       /* 2 and 6 are one-shots */
-    /* 0x09 */ u8 unk9;
+    /* 0x09 */ u8 endPhase;
     /* 0x0A */ u8 node;       /* index into gEftEmitNodeSlot; 6 = opponent node 3 */
     /* 0x0B */ u8 dirMode;    /* 0 dir, 1 -dir, 2 / 3 perpendicular, 4 up, 5 down */
     /* 0x0C */ f32 spread;    /* radius of the random offset */
@@ -83,13 +83,13 @@ typedef struct EftEmitDef {
 } EftEmitDef; /* size 0x40 */
 
 typedef struct EftEmitGroupDef {
-    /* 0x00 */ u8 unk0;
+    /* 0x00 */ u8 kind;
     /* 0x01 */ u8 count; /* emitters in the group */
 } EftEmitGroupDef;
 
 typedef struct EftEmitGroup {
     /* 0x00 */ EftEmitGroupDef *def;
-    /* 0x04 */ s32 unk4;
+    /* 0x04 */ s32 parts;
     /* 0x08 */ u8 first;    /* index of the group's first emitter in defs / handles */
     /* 0x09 */ u8 resFirst; /* index of its first entry in res[] */
     /* 0x0A */ u8 unkA[2];
@@ -100,7 +100,7 @@ typedef struct EftEmitGroup {
 /* What the effect knows about the technique (EftShotParam in eft_emit.h); only what this file reads. */
 typedef struct EftOwnerParam {
     /* 0x00 */ u8 unk0[4];
-    /* 0x04 */ s8 unk4;       /* non-zero: EftSweep_Term sets the fighter's held flag 0xA8 (0x14AB60) */
+    /* 0x04 */ s8 kind;       /* non-zero: EftSweep_Term sets the fighter's held flag 0xA8 (0x14AB60) */
     /* 0x05 */ u8 unk5;
     /* 0x06 */ s8 node;       /* passed on to the particle modules 3 and 4 */
     /* 0x07 */ u8 unk7;
@@ -127,7 +127,7 @@ typedef struct EftOwner {
     /* 0x00 */ s32 objId;  /* fighter object id; 0 = character 0 */
     /* 0x04 */ u8 unk4[0x18];
     /* 0x1C */ s32 *pack;  /* the technique's effect pack */
-    /* 0x20 */ s32 unk20;
+    /* 0x20 */ s32 chr;
     /* 0x24 */ EftOwnerParam *param;
 } EftOwner;
 
@@ -141,7 +141,7 @@ typedef struct EftEmitHdr {
     /* 0x14 */ f32 widthTime; /* seconds; 0 = add widthStep every frame up to width2 */
     /* 0x18 */ f32 widthSplit;
     /* 0x1C */ f32 widthStep;
-    /* 0x20 */ u8 unk20;
+    /* 0x20 */ u8 endFrames;
     /* 0x21 */ u8 flags;      /* 4: the second animation is used (EftEmit_HasWidth2) */
     /* 0x22 */ u8 unk22[10];
     /* 0x2C */ f32 b0;        /* second animation, same shape without the step form */
@@ -152,8 +152,8 @@ typedef struct EftEmitHdr {
 } EftEmitHdr;
 
 typedef struct EftEmitRes {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4;
+    /* 0x00 */ s32 a;
+    /* 0x04 */ s32 b;
 } EftEmitRes;
 
 typedef struct EftEmitSet {
@@ -166,7 +166,7 @@ typedef struct EftEmitSet {
                                             words. The code indexes from 0xC with the 54 in the index, which is
                                             what this union reproduces. */
     };
-    /* 0x2FC */ s32 unk2FC;
+    /* 0x2FC */ s32 tex32;
     /* 0x300 */ u8 *tex33;   /* entries of 0x108 bytes */
     /* 0x304 */ u8 *tex17;   /* entries of 0x88 bytes */
     /* 0x308 */ u8 unk308[0x14];
@@ -213,7 +213,7 @@ typedef struct EftEmitNodes {
 
 /* Effect task as this file sees it (0x40 bytes, see btl_scene.h). */
 typedef struct EftTask {
-    /* 0x00 */ u8 unk0;
+    /* 0x00 */ u8 bits;
     /* 0x01 */ u8 step;
     /* 0x02 */ u8 unk2[2];
     /* 0x04 */ s32 flags; /* 1 and 2 are tested by the post-update callbacks */
@@ -286,7 +286,7 @@ typedef struct EftSweepWork {
     /* 0x778 */ f32 angleStep;
     /* 0x77C */ s32 flags;     /* EFT_SWEEP_* */
     /* 0x780 */ f32 speed;
-    /* 0x784 */ f32 unk784;
+    /* 0x784 */ f32 paramScale;
     /* 0x788 */ f32 scale;
     /* 0x78C */ f32 width;     /* hit radius before the pack's width animation */
     /* 0x790 */ f32 unk790;
@@ -309,8 +309,8 @@ typedef struct EftSweepWork {
 /* Work of the instance class 0x2C3850 (technique effect type 7). */
 typedef struct EftFollowWork {
     /* 0x000 */ s32 flags;
-    /* 0x004 */ f32 unk4;
-    /* 0x008 */ f32 unk8;
+    /* 0x004 */ f32 speed;
+    /* 0x008 */ f32 paramScale;
     /* 0x00C */ f32 scale;
     /* 0x010 */ f32 width;
     /* 0x014 */ f32 unk14;

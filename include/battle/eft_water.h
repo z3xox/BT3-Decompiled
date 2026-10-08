@@ -55,7 +55,7 @@ typedef struct EftTransPart {
     /* 0x50 */ s32 flags;                                 /* 0x10 (scale applies to x) set here on the two rings */
     /* 0x54 */ s32 (*update)(struct EftTransPart *part);  /* NULL = free slot; non-zero result = draw it */
     /* 0x58 */ void (*draw)(struct EftTransPart *part);
-    /* 0x5C */ s32 unk5C;
+    /* 0x5C */ s32 color;
     /* 0x60 */ s32 alpha;                                 /* 0x20 / 0x40 / 0x45 written here after the init */
     /* 0x64 */ s32 visible;                               /* result of update this frame */
     /* 0x68 */ f32 size;                                  /* peak scale: 70 / 50 for the two rings */

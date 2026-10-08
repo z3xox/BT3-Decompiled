@@ -155,9 +155,9 @@ void EftRingShot_Fire(s32 objId, EftTask *task, s32 node, s32 arg3, s32 volley) 
         EftRingShotOne *shot = EftRingShot_AllocShot(w);
 
         if (shot != NULL) {
-            t = (f32)arg->def->unk28 / 30.0f;
+            t = (f32)arg->def->life / 30.0f;
             sarg = (EftShotArg){
-                arg, w->model, w->unk2D0, &shot->pos, &shot->dir, w->fired, w->total, node, arg3, 0, w->drawSize, w->speed
+                arg, w->model, w->nodes, &shot->pos, &shot->dir, w->fired, w->total, node, arg3, 0, w->drawSize, w->speed
             };
             shot->index = w->fired;
             Vec4_Copy(&shot->dir, &w->dir);
@@ -632,8 +632,8 @@ void EftRingShot_AddHit(EftTask *task, s32 last) {
             void *a = EftHitArena_AllocBox();
             void *b = EftHitArena_AllocBox();
 
-            ColCapsule_Set(a, &w->unk330, &w->pos, radius);
-            ColCapsule_Set(b, &w->unk330, &w->prev, radius);
+            ColCapsule_Set(a, &w->slot1Pos, &w->pos, radius);
+            ColCapsule_Set(b, &w->slot1Pos, &w->prev, radius);
             EftHit_SetShapeBoxes(rec, a, b);
             break;
         }
@@ -665,7 +665,7 @@ void EftRingShot_Draw(s32 objId, EftTask *task, EftModel *model, s32 mode) {
             for (sub = 0; sub < def->count; sub++) {
                 s32 spawn;
 
-                if (EftEmit_IsPartDeferred(model, def->unk0, sub)) {
+                if (EftEmit_IsPartDeferred(model, def->kind, sub)) {
                     continue;
                 }
                 if (mode == 0) {
@@ -678,7 +678,7 @@ void EftRingShot_Draw(s32 objId, EftTask *task, EftModel *model, s32 mode) {
                     spawn = 2;
                 }
                 if (spawn != 0) {
-                    EftEmit_SpawnOwn(model, &w->inst, w->unk2D0, &w->pos, &w->dir, part, sub, spawn, w->drawSize);
+                    EftEmit_SpawnOwn(model, &w->inst, w->nodes, &w->pos, &w->dir, part, sub, spawn, w->drawSize);
                 }
             }
         }
@@ -698,7 +698,7 @@ void EftRingShot_Init(EftTask *task, EftTechArg *arg) {
     model = &mgr->model;
     def = arg->def;
     w->speed = def->speed;
-    w->unk5CC = def->unk38;
+    w->homing = def->homing;
     w->size = def->size;
     w->drawSize = def->size;
     w->total = def->unk9 * def->count;
@@ -753,10 +753,10 @@ void EftRingShot_Update(EftTask *task) {
     if (BtlScene_IsCharStopped(arg->objId)) {
         return;
     }
-    EftEmit_UpdateNodesReq(arg, w->unk2D0);
+    EftEmit_UpdateNodesReq(arg, w->nodes);
     if (!(w->flags & EFT_RINGSHOT_STARTED)) {
         if (EftShot_TestBits(arg->objId, 2)) {
-            EftAim_GetDir(&w->dir, w->unk2F0, arg->objId);
+            EftAim_GetDir(&w->dir, w->slot0Pos, arg->objId);
             task->step = 0;
             w->flags |= EFT_RINGSHOT_STARTED;
         } else if (EftShot_TestBits(arg->objId, 4)) {
@@ -779,7 +779,7 @@ void EftRingShot_Update(EftTask *task) {
                             Vec3_Scale(&w->vel, &w->dir, w->speed);
                             break;
                         case 2:
-                            Vec4_Copy(&w->start, &w->unk330);
+                            Vec4_Copy(&w->start, &w->slot1Pos);
                             Vec4_Copy(&w->pos, &w->start);
                             BtlCharApi_GetNodePos(arg->objId, 0x11, &w->prev);
                             EftAim_GetDirKeep(arg, &w->dir, &w->pos, arg->objId);

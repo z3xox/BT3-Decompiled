@@ -1042,7 +1042,7 @@ void EftKiBlast_AddHitRecord(EftRTask *task) {
     rec->task = task;
     rec->pose = w->pose;
     rec->unk54 = 0;
-    rec->unk5C = (w->flags >> 9) & 1;
+    rec->turned = (w->flags >> 9) & 1;
     rec->atk = &w->arg;
     radius = w->radius * EftEmit_GetTrailWidth(&w->state);
     a = EftHitArena_AllocSphere();
@@ -1545,7 +1545,7 @@ void EftKiBomb_AddHitRecord(EftRTask *task) {
     rec->task = task;
     rec->pose = w->pose;
     rec->unk54 = 0;
-    rec->unk5C = (w->flags >> 5) & 1;
+    rec->turned = (w->flags >> 5) & 1;
     rec->flags |= 0x202;
     rec->unk54 = (w->flags >> 9) & 1;
     rec->atk = w;
@@ -1903,7 +1903,7 @@ void EftKiObj_AddHitRecord(EftRTask *task) {
     rec->task = task;
     rec->pose = w->b.pose;
     rec->unk54 = 0;
-    rec->unk5C = (w->b.flags >> 5) & 1;
+    rec->turned = (w->b.flags >> 5) & 1;
     rec->flags |= 0x400;
     rec->atk = w;
     radius = w->b.radius;
@@ -1958,7 +1958,7 @@ void EftKiObj_Launch(EftRTask *task) {
     w->b.spin = ((f32)rand() / 2147483647.0f < 0.5f) ? spin : -spin;
     Vec3_Scale(&w->b.pose.dir, &w->b.pose.dir, w->b.speed);
     w->b.unkD8 = 0;
-    w->unk1D4 = 15;
+    w->fragTimer = 15;
     res = ((EftKiBombMgr *)BtlTask_GetParent(task)->work)->res;
     Mtx_StoreIdentity(&m);
     w->b.handle = EftObj_Create(w->b.handleBuf, res->model);

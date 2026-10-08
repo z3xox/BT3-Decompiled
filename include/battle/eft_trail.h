@@ -60,7 +60,7 @@ typedef struct EftQTex {
 typedef struct EftQTexSet {
     /* 0x000 */ EftQTex entry[32];
     /* 0x200 */ s32 count;
-    /* 0x204 */ s32 unk204;
+    /* 0x204 */ s32 kept;
 } EftQTexSet; /* size 0x208 */
 
 /* ---- 1. power-up glow ------------------------------------------------------------------------------------ */
@@ -68,18 +68,18 @@ typedef struct EftQTexSet {
 /* Work of a glow task (class 0x2C3B68), 0x2E0 bytes; one per character. Only what this file touches is named. */
 typedef struct EftGlow {
     /* 0x000 */ s32 flags;       /* EFT_GLOW_* */
-    /* 0x004 */ s32 unk4;
+    /* 0x004 */ s32 nodeMask;
     /* 0x008 */ s32 paramFlags;  /* BtlCharApi_ObjGetParamFlags0 */
-    /* 0x00C */ s32 unkC;
+    /* 0x00C */ s32 kind;
     /* 0x010 */ s32 step;        /* 0, 1, then 2 for good: counts the first two unpaused updates */
-    /* 0x014 */ s32 unk14;       /* set to 9 when the fade-out starts */
-    /* 0x018 */ s32 unk18;
+    /* 0x014 */ s32 node;       /* set to 9 when the fade-out starts */
+    /* 0x018 */ s32 count;
     /* 0x01C */ s32 type;        /* aura type: row of the colour table and texture of the set */
     /* 0x020 */ s32 type2;       /* the same value */
     /* 0x024 */ s32 layers;      /* 1, or 2 for the textured variant */
     /* 0x028 */ s32 texFirst;    /* textured variant: first texture */
     /* 0x02C */ s32 texCount;    /* and how many */
-    /* 0x030 */ s32 unk30;
+    /* 0x030 */ s32 live;
     /* 0x034 */ s32 fade;        /* 2 = fading out */
     /* 0x038 */ f32 fadeTime;    /* cfg->fadeOutTime */
     /* 0x03C */ f32 fadeFrom;    /* 1 */
@@ -120,9 +120,9 @@ typedef struct EftGlowMgr {
     /* 0x000 */ s32 charCount;
     /* 0x004 */ s32 partMax;     /* 70 per character */
     /* 0x008 */ void *parts;     /* partMax particles of 0xC0 bytes */
-    /* 0x00C */ s32 unkC;
-    /* 0x010 */ s32 unk10;
-    /* 0x014 */ s32 unk14;
+    /* 0x00C */ s32 free;
+    /* 0x010 */ s32 active;
+    /* 0x014 */ s32 used;
     /* 0x018 */ s32 live;        /* glow tasks alive */
     /* 0x01C */ u8 unk1C[0x284];
     /* 0x2A0 */ EftGlowRes res[2];
@@ -152,7 +152,7 @@ typedef struct EftQEmitState {
 } EftQEmitState;
 
 typedef struct EftQEmitGroupDef {
-    /* 0x0 */ u8 unk0;
+    /* 0x0 */ u8 kind;
     /* 0x1 */ u8 count;       /* emitters in the group */
 } EftQEmitGroupDef;
 
@@ -167,7 +167,7 @@ typedef struct EftQEmitSet {
     /* 0x004 */ u8 unk4[8];
     /* 0x00C */ EftQEmitGroup group[0x13];
     /* 0x13C */ u8 unk13C[0x1E0];
-    /* 0x31C */ s32 unk31C;
+    /* 0x31C */ s32 owner;
     /* 0x320 */ s32 *pack;    /* the pack entry it was loaded from, or NULL */
 } EftQEmitSet; /* size 0x324 */
 

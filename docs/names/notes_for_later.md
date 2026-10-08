@@ -156,3 +156,20 @@ Group 07 (eft_draw_modules.h .. eft_link_2.h):
 - eft_link_2.h:246: EftWLinkMgr.ptcl at 0x10 disagrees with EftLinkMgr.node at 0x20: both views of gEftLink cannot be right.
 - eft_link_2.h:117-119: EftWLinkNode 0x40 / 0x50 / 0x60 are ofs / dir / origin; EftLinkNode has unk40 / offset / pos.
 - eft_emit.h:409-410, 423-424: EftEmitArgA.texA / texB and EftEmitArg17.texA are definition blocks in the receiving modules; `res` is the texture set.
+
+Group 10 (eft_stage_2.h .. eft_water.h):
+- eft_shot_tech.h:42: EftJDef.recType is `level` (EftHit_Add copies definition +0x02 to rec->level; rec->type is the constant EFT_HIT_TECH).
+- eft_shot_tech.h:347: EftJShotArg.evtIdx is a node slot index (EftBlastObj_Init stores it in sel[0].node).
+- eft_sweep.h:170-171: EftEmitSet.tex33 / tex17 are the 16-texture and 8-texture sets (entries of 0x108 and 0x88 bytes): 33 and 17 look
+  like size / 8; eft_emit.h has them as array[1] / array[2].
+- eft_sweep.h:63 against eft_emit.h:292: definition +0x08 is `kind` in one and `phase` in the other; `phase` fits beside endPhase at +0x09.
+- eft_stage_2.h:198-203 and eft_surface_out.h:63-73: ofs0 / ofs4 / ptr0 / ptr4 of EftSurfTex and EftBurstTex: the record has the layout of
+  EftVramImage (eft_detect.h), +0x38 / +0x3C are image / clut; EftSurfTex.tex0 at +0x28 is the per-frame result, the record's own TEX0 is at +0x30.
+- eft_surface_out.h:50: EftSurfD.param30 is `specular` (the last argument of EftGfx_LightClutSpecular).
+- eft_stage_2.h:105: EftGeyserSteamArg.gravity is `accel` in EftSteamArg. eft_struggle.h:82: EftRList.first is BtlTaskList.head.
+- eft_tech_modules.h:81: EftTechArg.side at +0x20 is EftHSlot.chr.
+- eft_trail.h:72, 77-78, 83 against eft_disc.h: the views of the glow work disagree (paramFlags / type / type2 / fadeFrom against unk8 /
+  unk1C[2] / alpha); eft_trail.h:126 EftGlowMgr.live at +0x18 is unk18[2] in EftPGlowMgr. Not determined which is right.
+- src/battle/eft_stage_2.c:180-201: the local EftGeyserSmokeInit / EftGeyserSteamInit have the same unk30..unk50 fields as the header's
+  EftGeyserSmokeArg / EftGeyserSteamArg and would take the same names.
+- Definition +0x04 is `kind` in EftShotParam and `cls` in EftHitDef (which uses `kind` for +0x05): see group 09's note.

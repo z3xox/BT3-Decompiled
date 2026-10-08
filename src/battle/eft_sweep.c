@@ -264,8 +264,8 @@ void EftEmit_SpawnType9(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32
     if (flags & EFT_SPAWN_START) {
         if (H(n) == NULL) {
             void *tex = set->tex17 + (grp->texBase + def->tex) * 0x88;
-            s32 res0 = EFT_EMIT_RES(set, grp->resFirst + idx).unk0;
-            s32 res1 = EFT_EMIT_RES(set, grp->resFirst + idx).unk4;
+            s32 res0 = EFT_EMIT_RES(set, grp->resFirst + idx).a;
+            s32 res1 = EFT_EMIT_RES(set, grp->resFirst + idx).b;
             EftArg9 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, rate, objId };
 
             Vec4_Copy(&arg.dir, dir);
@@ -275,9 +275,9 @@ void EftEmit_SpawnType9(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32
                 Vec4_Copy(&arg.pos, &p);
             }
             H(n) = EftQuad_Create(&arg);
-            EftQuad_SetDelay(H(n), def->unk5);
-            EftQuad_SetStopDelay(H(n), def->unk6);
-            EftQuad_SetFade(H(n), def->unk7);
+            EftQuad_SetDelay(H(n), def->delay);
+            EftQuad_SetStopDelay(H(n), def->stopDelay);
+            EftQuad_SetFade(H(n), def->fade);
             EftQuad_SetTexPair(H(n), tex, def->unk2, def->unk2);
             if (def->flags & 0x20) {
                 EftQuad_SetViewOnly(H(n));
@@ -328,8 +328,8 @@ void EftEmit_SpawnType10(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s3
     if (flags & EFT_SPAWN_START) {
         if (H(n) == NULL) {
             void *tex = set->tex33 + (grp->texBase + def->tex) * 0x108;
-            s32 res0 = EFT_EMIT_RES(set, grp->resFirst + idx).unk0;
-            s32 res1 = EFT_EMIT_RES(set, grp->resFirst + idx).unk4;
+            s32 res0 = EFT_EMIT_RES(set, grp->resFirst + idx).a;
+            s32 res1 = EFT_EMIT_RES(set, grp->resFirst + idx).b;
             EftArg10 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, rate, def->unk2, def->unk2, objId };
 
             Vec4_Copy(&arg.dir, dir);
@@ -339,9 +339,9 @@ void EftEmit_SpawnType10(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s3
                 Vec4_Copy(&arg.pos, &p);
             }
             H(n) = EftPart10_Create(&arg);
-            EftPart10_SetDelay(H(n), def->unk5);
-            EftPart10_SetHold(H(n), def->unk6);
-            EftPart10_SetFade(H(n), def->unk7);
+            EftPart10_SetDelay(H(n), def->delay);
+            EftPart10_SetHold(H(n), def->stopDelay);
+            EftPart10_SetFade(H(n), def->fade);
             if (def->flags & 0x20) {
                 EftPart10_SetNoDepth(H(n));
             }
@@ -392,8 +392,8 @@ void EftEmit_SpawnType15(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s3
     if (flags & EFT_SPAWN_START) {
         if (H(n) == NULL) {
             void *tex = set->tex33 + (grp->texBase + def->tex) * 0x108;
-            s32 res0 = EFT_EMIT_RES(set, grp->resFirst + idx).unk0;
-            s32 res1 = EFT_EMIT_RES(set, grp->resFirst + idx).unk4;
+            s32 res0 = EFT_EMIT_RES(set, grp->resFirst + idx).a;
+            s32 res1 = EFT_EMIT_RES(set, grp->resFirst + idx).b;
             EftArg15 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, rate, def->unk2, 0, objId };
 
             if (def->flags & 0x40) {
@@ -404,9 +404,9 @@ void EftEmit_SpawnType15(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s3
                 Vec4_Copy(&arg.pos2, &p2);
             }
             H(n) = EftLink_Create(&arg);
-            EftLink_SetDelay(H(n), def->unk5);
-            EftLink_SetStopDelay(H(n), def->unk6);
-            EftLink_SetFade(H(n), def->unk7);
+            EftLink_SetDelay(H(n), def->delay);
+            EftLink_SetStopDelay(H(n), def->stopDelay);
+            EftLink_SetFade(H(n), def->fade);
             EftLink_SetType(H(n), arg3);
             EftEmit_TagTask(H(n), objId, arg3);
         }
@@ -453,8 +453,8 @@ void EftEmit_SpawnType12(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s3
     if (flags & EFT_SPAWN_START) {
         if (H(n) == NULL) {
             void *tex = set->tex33 + (grp->texBase + def->tex) * 0x108;
-            s32 res0 = EFT_EMIT_RES(set, grp->resFirst + idx).unk0;
-            s32 res1 = EFT_EMIT_RES(set, grp->resFirst + idx).unk4;
+            s32 res0 = EFT_EMIT_RES(set, grp->resFirst + idx).a;
+            s32 res1 = EFT_EMIT_RES(set, grp->resFirst + idx).b;
             EftArg12 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, rate, def->unk2, objId, { arg3 } };
 
             if (def->flags & 0x40) {
@@ -464,9 +464,9 @@ void EftEmit_SpawnType12(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s3
             }
             Vec4_Copy(&arg.dir, dir);
             H(n) = EftZap_Create(&arg);
-            EftZap_SetDelay(H(n), def->unk5);
-            EftZap_SetFadeDelay(H(n), def->unk6);
-            EftZap_SetFadeTime(H(n), def->unk7);
+            EftZap_SetDelay(H(n), def->delay);
+            EftZap_SetFadeDelay(H(n), def->stopDelay);
+            EftZap_SetFadeTime(H(n), def->fade);
             if (def->flags & 0x20) {
                 EftZap_SetFlag20000(H(n));
             }
@@ -548,7 +548,7 @@ void EftEmit_Spawn(EftEmitSet *set, EftEmitState *state, EftEmitNodes *nodes, Ve
     if (flags & EFT_SPAWN_START) {
         if (!(state->flags[n] & EFT_EMIT_STARTED)) {
             if (def->kind == 2) {
-                if (def->unk9 != 0) {
+                if (def->endPhase != 0) {
                     return;
                 }
                 if (def->rate <= 0.0f) {
@@ -556,7 +556,7 @@ void EftEmit_Spawn(EftEmitSet *set, EftEmitState *state, EftEmitNodes *nodes, Ve
                 }
                 state->flags[n] |= EFT_EMIT_ONESHOT;
             } else if (def->kind == 6) {
-                if (def->unk9 != 0) {
+                if (def->endPhase != 0) {
                     return;
                 }
                 if (def->rate <= 0.0f) {
@@ -564,7 +564,7 @@ void EftEmit_Spawn(EftEmitSet *set, EftEmitState *state, EftEmitNodes *nodes, Ve
                 }
                 state->flags[n] |= EFT_EMIT_ONESHOT;
             }
-            if (def->unk9 == 0 && def->rate <= 0.0f) {
+            if (def->endPhase == 0 && def->rate <= 0.0f) {
                 return;
             }
         }
@@ -1480,9 +1480,9 @@ void EftSweep_Init(EftTask *task, EftOwner *owner) {
     w->owner = owner;
     p = owner->param;
     w->speed = p->speed;
-    w->unk784 = p->scale;
+    w->paramScale = p->scale;
     w->scale = p->scale;
-    w->width = w->unk784;
+    w->width = w->paramScale;
     w->set = set;
     EftEmit_InitState(set, &w->state);
     if (EftEmit_HasWidth2(w->set)) {
@@ -1500,7 +1500,7 @@ void EftSweep_Term(EftTask *task) {
     EftOwner *owner = w->owner;
 
     EftEmit_TermState(w->set, &w->state);
-    if (owner->param->unk4 != 0) {
+    if (owner->param->kind != 0) {
         EftShot_SetHeldFlagA8(owner->objId);
     }
 }
@@ -1746,14 +1746,14 @@ void EftFollow_Init(EftTask *task, EftOwner *owner) {
     memset(w, 0, sizeof(EftFollowWork));
     w->owner = owner;
     p = owner->param;
-    w->unk4 = 0.0f;
-    w->unk8 = p->scale;
+    w->speed = 0.0f;
+    w->paramScale = p->scale;
     w->scale = p->scale;
-    w->width = w->unk8;
+    w->width = w->paramScale;
     w->set = set;
     EftEmit_InitState(set, &w->state);
     if (EftEmit_HasWidth2(w->set)) {
-        w->unk4 = EftEmit_GetWidth2(&w->state);
+        w->speed = EftEmit_GetWidth2(&w->state);
         w->flags |= EFT_FOLLOW_OWN_WIDTH;
     }
     w->life = EftEmit_GetEndFrames(w->set);

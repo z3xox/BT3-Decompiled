@@ -311,9 +311,9 @@ void EftGlowMgr_Init(EftQTask *task) {
     memset(gEftGlow, 0, sizeof(EftGlowMgr));
     gEftGlow->charCount = BtlScene_GetCharCount();
     gEftGlow->partMax = gEftGlow->charCount * 70;
-    gEftGlow->unkC = 0;
-    gEftGlow->unk10 = 0;
-    gEftGlow->unk14 = 0;
+    gEftGlow->free = 0;
+    gEftGlow->active = 0;
+    gEftGlow->used = 0;
     gEftGlow->parts = BtlPool_Alloc(BtlPool_GetCurrent(), gEftGlow->partMax * 0xC0);
     memset(gEftGlow->parts, 0, gEftGlow->partMax * 0xC0);
     gEftGlow->tasks = BtlPool_Alloc(BtlPool_GetCurrent(), gEftGlow->charCount * 4);
@@ -386,7 +386,7 @@ s32 EftGlow_FadeOut(s32 objId) {
         w->fade = 2;
         w->fadeTime = gEftGlowCfg->fadeOutTime;
         w->fadeFrom = 1.0f;
-        w->unk14 = 9;
+        w->node = 9;
     }
     return 1;
 }

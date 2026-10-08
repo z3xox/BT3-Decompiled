@@ -74,8 +74,8 @@ typedef struct EftGeyserView {
     /* 0x00 */ u8 unk0[0x70];
     /* 0x70 */ Vec4 pos;
     /* 0x80 */ u8 unk80[0x30];
-    /* 0xB0 */ f32 unkB0; /* size or strength; scales both emitters */
-    /* 0xB4 */ f32 unkB4;
+    /* 0xB0 */ f32 width; /* size or strength; scales both emitters */
+    /* 0xB4 */ f32 height;
     /* 0xB8 */ u8 unkB8[0x34];
     /* 0xEC */ s32 smoke; /* emitter task from EftSmoke_Create */
     /* 0xF0 */ s32 steam; /* emitter task from EftSteam_Create */
@@ -86,30 +86,30 @@ typedef struct EftGeyserSmokeArg {
     /* 0x00 */ EftVec pos;
     /* 0x10 */ EftVec colorA;
     /* 0x20 */ EftVec colorB;
-    /* 0x30 */ f32 unk30;
-    /* 0x34 */ f32 unk34;
-    /* 0x38 */ f32 unk38;
-    /* 0x3C */ f32 unk3C;
-    /* 0x40 */ s32 unk40;
-    /* 0x44 */ s32 unk44;
-    /* 0x48 */ s32 unk48;
+    /* 0x30 */ f32 size;
+    /* 0x34 */ f32 alpha;
+    /* 0x38 */ f32 speed;
+    /* 0x3C */ f32 damp;
+    /* 0x40 */ s32 lifeBase;
+    /* 0x44 */ s32 lifeRange;
+    /* 0x48 */ s32 rate;
     /* 0x4C */ s32 unk4C;
 } EftGeyserSmokeArg; /* size 0x50 */
 
 /* Argument of EftSteam_Create. */
 typedef struct EftGeyserSteamArg {
     /* 0x00 */ EftVec pos;
-    /* 0x10 */ EftVec unk10;
+    /* 0x10 */ EftVec dir;
     /* 0x20 */ EftVec color;
-    /* 0x30 */ f32 unk30;
+    /* 0x30 */ f32 speed;
     /* 0x34 */ f32 gravity; /* 9.8 / 30 */
-    /* 0x38 */ f32 unk38;
-    /* 0x3C */ s32 unk3C;
-    /* 0x40 */ f32 unk40;
-    /* 0x44 */ f32 unk44;
-    /* 0x48 */ f32 unk48;
-    /* 0x4C */ f32 unk4C;
-    /* 0x50 */ s32 unk50;
+    /* 0x38 */ f32 size;
+    /* 0x3C */ s32 life;
+    /* 0x40 */ f32 posRange;
+    /* 0x44 */ f32 dirRange;
+    /* 0x48 */ f32 speedRange;
+    /* 0x4C */ f32 sizeRange;
+    /* 0x50 */ s32 lifeRange;
     /* 0x54 */ s32 unk54[3];
 } EftGeyserSteamArg; /* size 0x60 */
 
@@ -137,7 +137,7 @@ typedef struct EftTexEntry {
 typedef struct EftTexTbl {
     /* 0x000 */ EftTexEntry tex[32];
     /* 0x200 */ s32 count;
-    /* 0x204 */ s32 unk204;
+    /* 0x204 */ s32 kept;
 } EftTexTbl; /* size 0x208 */
 
 /* Per-view camera tracking of the weather. */
@@ -199,7 +199,7 @@ typedef struct EftSurfTex {
     /* 0x04 */ s32 ofs4;
     /* 0x08 */ u8 unk8[0x20];
     /* 0x28 */ u64 tex0;  /* written every frame by EftSurf_UpdateTextures */
-    /* 0x30 */ u64 unk30;
+    /* 0x30 */ u64 tex0Base;
     /* 0x38 */ s32 ptr0;  /* ofs0 / ofs4 as pointers */
     /* 0x3C */ s32 ptr4;
 } EftSurfTex; /* size 0x40 */
@@ -265,7 +265,7 @@ typedef struct EftSurfParam {
     /* 0x00 */ f32 colorA[4];
     /* 0x10 */ f32 colorB[4];
     /* 0x20 */ Vec4 lightDir;
-    /* 0x30 */ f32 unk30;
+    /* 0x30 */ f32 specular;
     /* 0x34 */ s32 animSpeed;  /* animSpeed / animCount is added to the frame accumulator each update */
     /* 0x38 */ f32 fadeDist;   /* 1000 when the data says 0 */
     /* 0x3C */ f32 unk3C;
@@ -274,7 +274,7 @@ typedef struct EftSurfParam {
 /* The stage's record for the reflecting surface (BtlStage_GetList58). */
 typedef struct StgSurfRec {
     /* 0x00 */ f32 lightDir[3];
-    /* 0x0C */ f32 unkC;
+    /* 0x0C */ f32 specular;
     /* 0x10 */ f32 fadeDist;
     /* 0x14 */ u16 animSpeed;
     /* 0x16 */ u8 unk16;
@@ -336,7 +336,7 @@ typedef struct EftSurfRt {
 } EftSurfRt;
 
 typedef struct EftSurfSlot {
-    /* 0x00 */ u64 unk0;
+    /* 0x00 */ u64 tex0;
     /* 0x08 */ EftSurfTex *def;
     /* 0x0C */ s32 unkC;
 } EftSurfSlot; /* size 0x10 */

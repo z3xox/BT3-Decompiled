@@ -78,28 +78,28 @@ typedef struct EftRTask {
 } EftRTask; /* size 0x40 */
 
 typedef struct EftRList {
-    /* 0x0 */ s32 unk0;
+    /* 0x0 */ s32 parent;
     /* 0x4 */ EftRTask *first;
 } EftRList;
 
 /* ---- emitter set (eft_emit.c / eft_sweep.c EftEmit_*) ---- */
 
 typedef struct EftRPartDef {
-    /* 0x0 */ u8 unk0;
+    /* 0x0 */ u8 kind;
     /* 0x1 */ u8 count;      /* emitters in the group */
 } EftRPartDef;
 
 typedef struct EftRPart {
     /* 0x0 */ EftRPartDef *def;
-    /* 0x4 */ s32 unk4;
+    /* 0x4 */ s32 parts;
     /* 0x8 */ u8 first;      /* index of the group's first emitter in the state arrays */
     /* 0x9 */ u8 unk9[7];
 } EftRPart; /* size 0x10 */
 
 typedef struct EftRSet {
     /* 0x000 */ u32 *mask;   /* bit n: group n exists */
-    /* 0x004 */ s32 unk4;
-    /* 0x008 */ s32 unk8;
+    /* 0x004 */ s32 entries;
+    /* 0x008 */ s32 parts;
     /* 0x00C */ EftRPart part[0x13];
     /* 0x13C */ u8 unk13C[0x320 - 0x13C];
 } EftRSet; /* size 0x320 */
@@ -165,7 +165,7 @@ typedef struct EftRRec {
     /* 0x050 */ s32 flags;
     /* 0x054 */ s32 unk54;    /* EftHit_Add overwrites it: 0 for a ki blast */
     /* 0x058 */ s32 unk58;
-    /* 0x05C */ u8 unk5C;
+    /* 0x05C */ u8 turned;
     /* 0x05D */ u8 unk5D[3];
     /* 0x060 */ EftRTask *task;
     /* 0x064 */ EftRSrc *src;
@@ -417,7 +417,7 @@ typedef struct EftKiObj {
     /* 0x000 */ EftKiBomb b;
     /* 0x130 */ u8 unk130[0xA0];
     /* 0x1D0 */ void *tex;            /* manager resource + 8 */
-    /* 0x1D4 */ s16 unk1D4;           /* 15 */
+    /* 0x1D4 */ s16 fragTimer;           /* 15 */
     /* 0x1D6 */ s16 unk1D6;
     /* 0x1D8 */ s32 unk1D8[2];
 } EftKiObj; /* size 0x1E0 */

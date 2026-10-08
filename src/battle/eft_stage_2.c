@@ -231,9 +231,9 @@ void EftGeyser_StartSmoke(EftTask *task) {
         arg.colorB.v.w = rec[0x23];
         r = (f32)rand() / 2147483647.0f * 5.0f - 2.5f;
         arg.unk48 = rand() % 2 + 2;
-        arg.unk38 = w->unkB4 / 150.0f + r;
-        arg.unk30 = w->unkB0 / 10.0f * 2.0f;
-        arg.unk40 = w->unkB4 / 150.0f + 90.0f;
+        arg.unk38 = w->height / 150.0f + r;
+        arg.unk30 = w->width / 10.0f * 2.0f;
+        arg.unk40 = w->height / 150.0f + 90.0f;
         if (arg.unk38 < 0.0f) {
             arg.unk38 = -arg.unk38;
         }
@@ -267,9 +267,9 @@ void EftGeyser_StartSteam(EftTask *task) {
         arg.color.v.y = rec[0x1B];
         arg.color.v.z = rec[0x1C];
         arg.color.v.w = rec[0x1D];
-        arg.unk30 = w->unkB4 / 150.0f + 8.0f;
-        arg.unk38 = w->unkB0 / 10.0f * 4.8f;
-        arg.unk3C = w->unkB4 / 150.0f + 25.0f;
+        arg.unk30 = w->height / 150.0f + 8.0f;
+        arg.unk38 = w->width / 10.0f * 4.8f;
+        arg.unk3C = w->height / 150.0f + 25.0f;
         if (w->steam == 0) {
             w->steam = EftSteam_Create((EftGeyserSteamArg *)&arg);
             EftSteam_SetPaused(w->steam, 1);
@@ -1005,7 +1005,7 @@ void EftSurf_Init(void) {
                     rt->param.lightDir.y = rec->lightDir[1];
                     rt->param.lightDir.z = rec->lightDir[2];
                     rt->param.lightDir.w = 1.0f;
-                    rt->param.unk30 = rec->unkC;
+                    rt->param.specular = rec->specular;
                     rt->param.animSpeed = rec->animSpeed;
                     rt->param.fadeDist = rec->fadeDist;
                 }
@@ -1113,7 +1113,7 @@ void EftSurf_UpdateTextures(EftSurfFile *file) {
     tex = file->texs;
     for (i = 0; i < file->texCount; i++) {
         gEftSurf->u.slot[i + 1].def = tex;
-        gEftSurf->u.slot[i + 1].unk0 = tex->unk30;
+        gEftSurf->u.slot[i + 1].tex0 = tex->tex0Base;
         tex->tex0 = EftVram_AddTex(&gEftSurf->u.slot[i + 1], 1, 0);
         tex++;
     }
@@ -1878,7 +1878,7 @@ void EftSurf_RenderPalettes(void) {
     } else {
         view.m[1][2] = 0.5f;
     }
-    EftGfx_LightClutSpecular(rt->buf[2].clut, rt->buf[0].clut, &view, &rt->frame, &rt->light, rt->param.unk30);
+    EftGfx_LightClutSpecular(rt->buf[2].clut, rt->buf[0].clut, &view, &rt->frame, &rt->light, rt->param.specular);
     src->tex0 = EftVram_AddImage(src, 1, 0);
     dst = EftSurfRt_GetTex(rt, rt->texA + rt->flip);
     dst->def->data->clut = *rt->buf[1].clut;
