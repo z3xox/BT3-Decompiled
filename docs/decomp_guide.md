@@ -958,3 +958,14 @@ More of the same night (the geyser functions):
   changes each live length by 2. (EftWater_DrawClippedFan is open on exactly this: about 20 instructions.)
 - Fake matches of this batch: EftStreak_DrawScreen (`slot++; slot--;`), EftStreak_Draw (`register s32 zero
   __asm__("$0"); memset(&d, zero, ...)` for `Vec4 d = { 0 };`: PS2 compiler only; a port writes the initialiser).
+- **A pure helper that only this file calls was `static`**, and this compiler treats a static pure function as
+  `const`: calls to it do not invalidate memory, so values read from the stack stay in saved registers across
+  the call. `__attribute__((const))` on the prototype gives the same code with the linkage unchanged.
+  (Col_NearEq in ColObb_Contact; the sign: reloads after every call that the original does not have)
+- **Indexed vector access through a component array** (`obb->axis[code].v[0]`) leaves the member offset in the
+  load; `.x` on a struct adds it first.
+- **Two differently typed locals at one stack slot** are one function-level union; block-scope locals of sibling
+  blocks do not share slots. **A value in a caller-saved register in one switch case and a saved one in its
+  siblings** is a block-local variable declared in every case.
+- For a very large function fdiff's positional diff is useless after the first shift: use an aligned diff
+  (difflib over the two instruction columns). (ColObb_Contact, 4,257 instructions)
