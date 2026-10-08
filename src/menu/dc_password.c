@@ -10,14 +10,10 @@
  * menu_za.c 0x3AC440..0x3AE648 = the slot list, init / draw / input / run; merged here.) The work structure is a
  * local variable of DcPass_Run, so there is no work pointer; the object's `.data` is the key table at 0x3BC928
  * (0x8C bytes). Its read-only data is 0x3BD700 ("mc_input_code_%d_%02d") .. 0x3BE16C (the two jump tables of
- * DcPass_Input); with the `#if 0` attempts compiled in, the strings come out exactly as in the original.
- *
- * Two functions are INCLUDE_ASM. What they refer to in the object's data:
- *   DcPass_WrapPos     nothing
- *   DcPass_DrawStatus  its own seven strings, 0x3BD850..0x3BD914 ("mc_status_ability_plus_%d" 0x3BD850,
- *                      "mc_status_ability_base2_1" 0x3BD870, "mc_text_ability_&d" 0x3BD890,
- *                      "mc_status_ability_base1_%d" 0x3BD8A8, "mc_status_ability_minus_%d" 0x3BD8C8,
- *                      "mc_text_ability_1" 0x3BD8E8, "mc_status_attribute" 0x3BD900); no C function shares them
+ * DcPass_Input). Every function is C. DcPass_DrawStatus has seven strings of its own, 0x3BD850..0x3BD914
+ * ("mc_status_ability_plus_%d" 0x3BD850, "mc_status_ability_base2_1" 0x3BD870, "mc_text_ability_&d" 0x3BD890,
+ * "mc_status_ability_base1_%d" 0x3BD8A8, "mc_status_ability_minus_%d" 0x3BD8C8, "mc_text_ability_1" 0x3BD8E8,
+ * "mc_status_attribute" 0x3BD900).
  */
 
 /*
@@ -43,13 +39,13 @@ char gDcPassKeys[DCPASS_PAGES][DCPASS_ROWS][DCPASS_COLS] = {
     },
 };
 
-/* Keeps a value in lo..hi as a ring. */
-static inline s32 DcPass_Wrap(s32 value, s32 lo, s32 hi) {
-    if (value < lo) {
-        return hi;
+/* Keeps a value in 0..count-1 as a ring. */
+static inline s32 DcPass_Wrap(s32 value, s32 count) {
+    if (value < 0) {
+        return count - 1;
     }
-    if (value > hi) {
-        return lo;
+    if (value > count - 1) {
+        return 0;
     }
     return value;
 }
@@ -72,7 +68,7 @@ static inline void DcPass_SetCell(MFlashUv *uv, s32 col, s32 row, s32 w, s32 h) 
 
 /* Keeps a three-way cursor in 0..2. */
 s32 DcPass_Wrap3(s32 value) {
-    return DcPass_Wrap(value, 0, 2);
+    return DcPass_Wrap(value, 3);
 }
 
 /* The character (or DCKEY_ code) of a keyboard cell; the wide "0" key gives '0'. */
@@ -85,34 +81,18 @@ char DcPass_GetKey(DcKeyPos *pos) {
     return key;
 }
 
-/* Keeps a keyboard position inside the keyboard (every axis is a ring). */
 /*
- * NOT MATCHING: the three wraps compile to the same conditional-move sequence here; the original has that
- * sequence for the row only and another (the one DcPass_Wrap3 has as a function of its own) for page and
- * column. Same results for every input.
- *
- * What the difference is (cleanup, build/scratch_cleanup2_I/t/): one source form gives BOTH original sequences;
- * which one comes out depends on whether the first scheduling pass moved `slt` above the `bltz` (speculative
- * motion between blocks). Here it does (`li v0,hi / li a1,hi / bltz / slt` for all three); in the original it did
- * not, so the constant's register is free for the result, the result shares v0 with the compare, and reload
- * then picks the other conditional-move alternative (`movn v1,zero,v0 / move v0,v1`) wherever the result is in
- * v0 (page, column) and keeps `move a1,zero / movz a1,v1,v0` where v0 is still busy with the previous result
- * (row). The scheduler only moves instructions between blocks while the function is one "region" of at most 10
- * basic blocks: five wraps in one function (11 blocks) reproduce the original's page sequence exactly, three
- * (7 blocks) do not. So the original function had more than 10 basic blocks when it was scheduled, i.e. source
- * that is not visible in the code any more; what it was is not found (nested inlines, scopes, `do { } while
- * (0)`, a third and fourth dead wrap were tried). The order `lw / li / sw` of the row (the store of the page
- * after the row's constant) is not reproduced either.
+ * Keeps a keyboard position inside the keyboard (every axis is a ring). The ring helper takes the COUNT, not the
+ * bounds, and writes `count - 1` at both uses: only that form gives the original's code (the row's result in a1
+ * with `move / movz`, page and column in v0 with `movn / move`). With the bounds as parameters the first
+ * scheduling pass moves each second test's `slt` in front of the first test's branch and all three axes come
+ * out alike (the same code as with -fno-sched-spec is what the original has).
  */
-#if 0
 void DcPass_WrapPos(DcKeyPos *pos) {
-    pos->page = DcPass_Wrap(pos->page, 0, DCPASS_PAGES - 1);
-    pos->row = DcPass_Wrap(pos->row, 0, DCPASS_ROWS - 1);
-    pos->col = DcPass_Wrap(pos->col, 0, DCPASS_COLS - 1);
+    pos->page = DcPass_Wrap(pos->page, DCPASS_PAGES);
+    pos->row = DcPass_Wrap(pos->row, DCPASS_ROWS);
+    pos->col = DcPass_Wrap(pos->col, DCPASS_COLS);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu/dc_password", DcPass_WrapPos);
-#endif
 
 /* Puts a keyboard position on the middle (1) or right (2) button of the bottom row. */
 void DcPass_GotoButton(s32 button, DcKeyPos *pos) {
@@ -576,34 +556,36 @@ static inline void DcPass_SetTex(MFlash *flash, char *parent, char *name, s32 te
  * Fills the status page of a character: hides the item-slot marks beyond the slots it has, lights the marks of
  * the four bars (minus marks for a negative value, plus marks for a positive one) and sets the attribute icon.
  */
-/* Texture rectangle of row i of the 0x80 x 0x14 caption sheet. */
-#define DCPASS_ROW(uv, i) DcPass_SetCell(uv, 0, i, 0x80, 0x14)
+/*
+ * Texture rectangle of row i of the 0x80 x 0x14 caption sheet. The width goes through a variable of its own:
+ * with a literal width the second CSE pass shares one saved register for the 0x80 between the rectangle in the
+ * bar loop and the one behind the loop; the original loads it at each of the three places. A stand-in: whether
+ * the original had such a variable (or a helper with one) is not known.
+ */
+#define DCPASS_ROW(uv, i)                                                                                              \
+    {                                                                                                                  \
+        s32 w = 0x80;                                                                                                  \
+        DcPass_SetCell(uv, 0, i, w, 0x14);                                                                             \
+    }
 
 /*
- * NOT MATCHING: 27 of 233 instructions: the attempt keeps the constant 0x80 of the row rectangle in a saved
- * register from the end of the loop to the rectangle after it, the original loads it again each time (and so
- * has one saved register free: registers shift in that part). Calls, arguments and stores are the same.
- *
- * Cleanup notes: the sharing is done by the second CSE pass, which (unlike the first) follows the fall-through
- * out of the loop, so the rectangle after the loop reuses the loop's register for 0x80; the original's two
- * loads mean that pass did not see the two as one path. The same shows in the movie pointer: the original
- * uses the function-level `view + 0x2C` (s6) in the loop's last two calls, the attempt the loop's hoisted copy
- * (s2). An inline helper for the caption (own `uv`) is worse (50..87 differences).
+ * The movie is in a local for the rectangles and the attribute icon, and written out as `&view->flash[1]` for
+ * the marks: the original computes it once at the top (s6) and has a copy per loop for the marks only.
  */
-#if 0
 void DcPass_DrawStatus(DcPassView *view, ZStatus *status) {
     char name[0x100];
     char sub[0x100];
     MFlashUv uv;
     s32 i;
     s32 j;
+    MFlash *flash = &view->flash[1];
 
     for (i = status->val[0]; i < 7; i++) {
         sprintf(name, "mc_status_ability_plus_%d", i + 4);
         DcPass_SetVisible(&view->flash[1], "mc_status_ability_base2_1", name, 0);
     }
     DCPASS_ROW(&uv, i);
-    DcPass_SetUv(&view->flash[1], "mc_status_ability_base2_1", "mc_text_ability_&d", &uv);
+    DcPass_SetUv(flash, "mc_status_ability_base2_1", "mc_text_ability_&d", &uv);
     for (i = 0; i < 4; i++) {
         s32 value = status->val[i + 1];
 
@@ -623,21 +605,18 @@ void DcPass_DrawStatus(DcPassView *view, ZStatus *status) {
         }
         DCPASS_ROW(&uv, i);
         sprintf(name, "mc_status_ability_base1_%d", i);
-        DcPass_SetUv(&view->flash[1], name, "mc_text_ability_1", &uv);
+        DcPass_SetUv(flash, name, "mc_text_ability_1", &uv);
     }
     {
         MFlashRef ref;
 
-        Flash_FindLabel(&view->flash[1], NULL, "mc_status_attribute", &ref);
-        Flash_ClipSetTex(&view->flash[1], &ref, status->attr);
+        Flash_FindLabel(flash, NULL, "mc_status_attribute", &ref);
+        Flash_ClipSetTex(flash, &ref, status->attr);
     }
     DCPASS_ROW(&uv, i);
     sprintf(name, "mc_status_ability_base1_%d", i);
-    DcPass_SetUv(&view->flash[1], name, "mc_text_ability_1", &uv);
+    DcPass_SetUv(flash, name, "mc_text_ability_1", &uv);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu/dc_password", DcPass_DrawStatus);
-#endif
 
 /*
  * Sets the transparency of the character's large picture. Inline in the original and defined here, behind
