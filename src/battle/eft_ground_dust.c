@@ -188,15 +188,11 @@ void EftLine_Animate(EftLineWork *w) {
 
 /* Draws the line as one order table strip: a quad from pos -/+ side * width to the same two points + dir *
    length, where side is perpendicular to dir and to the direction to the camera. */
-/* NON-MATCHING: 26 of 340 instructions differ, one cause: the original fills the delay slot of the branch after
-   Vu0Cur_ProjectPoints with the first instruction of the epilogue (ld s0) and this C with the following load of gOtCur, which
-   shifts the 25 instructions up to the next alignment nop by one. Same instructions otherwise.
-   Cleanup E: the delay-slot pass tries the fall-through first for a forward `beqz` and takes `lw s0,gOtCur`; the
-   original took the target's first instruction and retargeted the branch (the second branch still goes to the
-   unshifted label), so there the fall-through was not usable: a label directly behind the branch, or s0 live at the
-   target. Early return, goto, an inverted test, do-while around the body, the tail stores duplicated in the
-   three depth arms and an empty do-while in front of the end label all compile to the same 26. */
-#if 0
+/* The projection result goes through a flag (`visible = ... != 0; if (visible)`): with the call tested directly
+   (`if (Vu0Cur_ProjectPoints(...))`) the branch is an `== 0` test at the time branch probabilities are guessed
+   (40 %: delay slot filled from the fall-through, the load of gOtCur) and 26 of 340 instructions differ; through
+   the flag it is a set-on-compare result (50 %: the slot is filled from the target, the first `ld` of the
+   epilogue, as in the original). */
 void EftLine_DrawSprite(EftYTask *task) {
     EftYVec p[4];
     EftYVecU st[4];
@@ -214,6 +210,7 @@ void EftLine_DrawSprite(EftYTask *task) {
     s32 i;
     s32 z;
     s32 layer;
+    s32 visible;
 
     def = w->arg.def;
     Vec4_Copy(&cam, &gBtlCamView->pos);
@@ -226,7 +223,8 @@ void EftLine_DrawSprite(EftYTask *task) {
     Vec3_Scale(&len, &w->arg.dir, w->length);
     Vec3_Add(&p[2], &p[0], &len);
     Vec3_Add(&p[3], &p[1], &len);
-    if (Vu0Cur_ProjectPoints(scr, p, 4)) {
+    visible = Vu0Cur_ProjectPoints(scr, p, 4) != 0;
+    if (visible) {
         pk = (EftYStripPkt *)gOtCur;
         gOtCur = (u32 *)(pk + 1);
         if (pk != NULL) {
@@ -324,9 +322,6 @@ void EftLine_DrawSprite(EftYTask *task) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle/eft_ground_dust", EftLine_DrawSprite);
-#endif
 
 /* Draws the same quad as two triangles through the clipping polygon drawer, at the depth slot of the unclipped
    projection. */

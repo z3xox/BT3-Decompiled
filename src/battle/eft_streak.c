@@ -12,9 +12,9 @@
  * Drawing only: it reads a fighter's node position, height and "in a technique" state and writes nothing but its
  * own work. Random numbers: the VU0 register (Rand_FloatRange), six per streak each time one is rolled.
  *
- * Two functions are INCLUDE_ASM with the attempt in `#if 0` above them: EftStreak_Draw (2 instructions) and
- * EftStreak_DrawScreen (20 instructions, registers). The file's .rodata is 0x2ECE60..0x2ECEC0 (the id table of EftStreakMgr_Init, then the
- * two constants of the INCLUDE_ASM functions); its only .lit4 word is 0x2FCCAC (EftStreak_Step).
+ * Every function is C. Two are FAKE MATCHES (marked at the function): EftStreak_Draw and EftStreak_DrawScreen.
+ * The file's .rodata is 0x2ECE60..0x2ECEC0 (the id table of EftStreakMgr_Init, then the initialisers of `dir` in
+ * EftStreak_Draw and `uv` in EftStreak_DrawScreen); its only .lit4 word is 0x2FCCAC (EftStreak_Step).
  */
 
 extern EftTCamView *gBtlCamView;
@@ -235,20 +235,21 @@ void EftStreak_PostUpdate(EftTTask *task) {
    distance plus half its height, or the position given by EftStreak_SetPos), or that point's screen position for
    a screen field. Every drawn streak is a quad of width x length at (pos, offset), the whole field turned by
    `angle` about the view axis. */
-#if 0
-/* NON-MATCHING: 2 of 387 instructions: in the argument set-up of the last memset at the top (the `d` initialiser) the
-   original has `addiu s1,sp,0xC0` in front of `move a1,zero`, this C the other way round (scheduling only).
-   Round 4 (the permuter did not move it in 171,000 iterations either): the first block runs from the entry to
-   the POS_SET test (calls do not end blocks), and both scheduling passes issue the sixth memset's arguments as
-   `$5 = 0` in the cycle of the fifth call, then `r = sp + 0xC0` / `$6 = 16`, then `$4 = r`. `$5 = 0` wins the
-   tie against `$6 = 16` by source position alone (equal priority, weight and dependents), and the argument
-   moves are always emitted $4, $5, $6. The original's order (size, address, zero) therefore needs the 16 in a
-   pseudo of its own that survives to register allocation (`r16 = 16` has the longer path and is issued with the
-   call, `$6 = r16` then beats `$5 = 0` because a register dies in it, and local-alloc ties r16 to $6): the same
-   family as the "surviving copy" functions in the guide, here a constant. No source form keeps one: tried
-   `= { 0 }`, `= { 0, 0, 0, 0 }`, `= { 0.0f }`, an EftTVec, a one-element array, explicit memset before / after
-   `dist = 0.0f`, through a non-builtin alias, with the size or the zero in an address-taken variable, a (u64)
-   size, `dist` declared first (all 2 left), a `static inline` clear (49).
+/* FAKE MATCH: `d` is cleared by an explicit memset whose value argument is read from the hard register $0
+   (`zero` below) instead of `Vec4 d = { 0 };`. The behaviour is the same (the register is always 0) and the
+   instruction is the same `move a1,zero`; only its place changes. With the plain initialiser 2 of 387 instructions
+   differ: the original sets up this one memset as `li a2,16 / addiu s1,sp,0xC0 / move a1,zero`, the plain form as
+   `move a1,zero / addiu s1,sp,0xC0 / li a2,16`.
+   Why it works (first scheduling pass, -fsched-verbose=4): when the fifth memset call is issued, its dependants
+   that cost nothing are taken last-in first-out in the same cycle, so the EARLIEST argument load that does not
+   read a call-clobbered register goes first: `$5 = 0` in the plain form. A read of a hard register the call
+   clobbers ($0 here; `sp + 0xC0` is one too, through the frame pointer) is a true dependence on the call and
+   costs a cycle, which leaves the slot to `$6 = 16`. So in the original the zero of this one call was not a
+   plain constant at that point; the natural source form is unknown. Tried without effect (2 left): `= { 0 }`,
+   `= { 0, 0, 0, 0 }`, `= { 0.0f }`, an EftTVec, a one-element array, explicit memset before / after
+   `dist = 0.0f`, a non-builtin alias, the size or the zero in a variable (plain, address-taken, or kept alive
+   with an empty asm), a (u64) size, `dist` declared first, dead probes between the declarations; a
+   `static inline` clear (49), the size kept in a pseudo with an empty asm (101: it is hoisted to s0).
    Found earlier: the "no depth" argument of EftStreak_DrawWorld is a variable built in two steps
    (`f = flags & AT_CHAR; f = f == 0; if (flags & POS_SET) f = 0;`), which gives `andi / sltiu / movn` and, with it,
    the original's allocation (w, def, mgr and &w->axis on the stack, fp for &corner[0].y). */
@@ -262,9 +263,12 @@ void EftStreak_Draw(EftTTask *task) {
     EftTVec dir = { 0.0f, 0.0f, 1.0f, 1.0f };
     Vec4 center = { 0 };
     EftTIVec scr = { 0 };
-    Vec4 d = { 0 };
-    f32 dist = 0.0f;
+    Vec4 d;
+    f32 dist;
+    register s32 zero __asm__("$0"); /* FAKE MATCH, see above */
 
+    memset(&d, zero, sizeof(Vec4));
+    dist = 0.0f;
     Mtx_StoreIdentity(&frame);
     Mtx_InverseRT(&camInv, &gBtlCamView->view);
     Vec4_Set((Vec4 *)camInv.m[3], 0.0f, 0.0f, 0.0f, 1.0f);
@@ -350,11 +354,6 @@ void EftStreak_Draw(EftTTask *task) {
     }
     Vu0Cur_Pop();
 }
-#else
-RODATA_ALIGN16();
-INCLUDE_RODATA("asm/nonmatchings/battle/eft_streak", D_002ECE90); /* (0, 0, 1, 1): dir below */
-INCLUDE_ASM("asm/nonmatchings/battle/eft_streak", EftStreak_Draw);
-#endif
 
 /* Reset callback: the field does not survive a scene reset. */
 void EftStreak_Reset(EftTTask *task) {
@@ -560,28 +559,21 @@ static inline void EftTOt_Add(OtPrim *p, s32 z, s32 layer) {
 
 /* A quad on the screen (corners in pixels), cut into `segs` strips; z is its GS depth (0xFFFFFF = the far limit,
    queued in depth slot 0; otherwise the slot is z >> 8). */
-#if 0
-/* NON-MATCHING: 20 of 376 instructions, registers only (s4..s7); same length.
-   Round 4: the header stores in the order prim, tag, vif0, vif1, gif0, gif1, next give the original's header
-   (it was 41; the a1 / t2 exchange is gone). What is left is ONE allocation race: slot is in s7 where the
-   original has s4, which shifts z and the three hoisted addresses &p[3] / &p[1] / &p[0] (original s5 / s6 / s7).
-   Numbers from the -dl / -dg dumps (build/scratch_cleanup2_D/lr.py): slot has 9 references (2 sets + 1 use
-   outside the loop, 3 uses at loop depth 1 counted twice) over a live length of 538, priority 3 * 9 / 538 = 501;
-   the three addresses have 5 references over 190 / 192 / 193, priority 526 / 520 / 518. The 538 is DOUBLE the
-   real range (269 instructions from `slot = 0` to the loop end): the first cse pass puts a REG_EQUAL note on
-   every `reg = constant`, and local-alloc doubles the live length of a register whose first set has such a
-   note even when the register is set again. So the original had either a 10th reference to slot (3 * 10 / 538
-   = 557), or `slot = 0` at least 13 instructions later in the first block at allocation time (the first
-   scheduling pass puts it in the first free second slot, here cycle 15, behind the third memset), or loop
-   bodies 7 to 10 instructions longer at allocation time. The addresses are NOT doubled in the original (the
-   fourth one, &p[2] in fp, is: it would then have come before two of them).
-   Tried without effect (20 left each time): `slot = 0` as a statement in six places, first / last declaration,
-   the chain insertion written out in the loop with and without a copy of slot, `zz = z` in the far arm.
-   Worse: `slot = 0` only in the far arm (154), the far arm first (358), z reused instead of zz (358),
-   `do { } while (0)` around the chain insertion (219: it becomes the innermost loop).
-   Found earlier: the far z goes to a second variable (zz) set in both arms; corner itself is advanced by 3 after
-   &corner[2] is taken; the w stores are written 3, 2, 1, 0; the loop is `if (segs > 0) do { } while (--segs !=
-   0)`; the screen x / y are read as u16. */
+/* FAKE MATCH (permuter): `slot++; slot--;` in front of the chain insertion. It emits nothing; it gives `slot` one
+   more reference at register allocation. Without it 20 of 376 instructions differ, registers only (s4..s7): slot
+   is in s7 where the original has s4, which shifts z and the three hoisted addresses &p[3] / &p[1] / &p[0]
+   (original s5 / s6 / s7). Numbers from the -dl / -dg dumps (build/scratch_cleanup2_D/lr.py): slot has 9
+   references over a live length of 538 (doubled, because its first set is a constant), priority 3 * 9 / 538 =
+   501; the three addresses have 5 references over 190 / 192 / 193, priority 526 / 520 / 518; a 10th reference
+   gives 557. The natural source of that reference is unknown. Tried without effect (20 left each time):
+   `slot = 0` as a statement in six places or also in the far arm, first / last declaration, the chain insertion
+   written out in the loop with and without a copy of slot, `zz = z` in the far arm, the shift in two steps
+   (`slot = z; slot >>= 8;`, `z >>= 8; slot = z;`). Worse: `zz = z & ~0xFF` (30), `slot = 0` only in the far arm
+   (154), the far arm first (358), z reused instead of zz (358), `do { } while (0)` around the chain insertion (219).
+   Found earlier: the header stores in the order prim, tag, vif0, vif1, gif0, gif1, next; the far z goes to a
+   second variable (zz) set in both arms; corner itself is advanced by 3 after &corner[2] is taken; the w stores
+   are written 3, 2, 1, 0; the loop is `if (segs > 0) do { } while (--segs != 0)`; the screen x / y are read as
+   u16. */
 void EftStreak_DrawScreen(Vec4 *corner, EftTVec color, s32 blend, s32 segs, s32 z, u64 tex0) {
     Vec4 d[2] = { 0 };
     Vec4 p[4] = { 0 };
@@ -683,6 +675,8 @@ void EftStreak_DrawScreen(Vec4 *corner, EftTVec color, s32 blend, s32 segs, s32 
         q->tex0 = tex0;
         q->v[3].xyz.z = zz;
         q->v[3].xyz.f = 0xFF;
+        slot++; /* FAKE MATCH, see above */
+        slot--;
         EftTOt_Add((OtPrim *)q, slot, blend);
         Vec4_Copy(&p[1], &p[0]);
         Vec4_Copy(&p[3], &p[2]);
@@ -690,10 +684,6 @@ void EftStreak_DrawScreen(Vec4 *corner, EftTVec color, s32 blend, s32 segs, s32 
         t.w = t.z;
     } while (--segs != 0);
 }
-#else
-INCLUDE_RODATA("asm/nonmatchings/battle/eft_streak", D_002ECEA0); /* (0, 0, 0, 1), (1, 0, 1, 1): uv below */
-INCLUDE_ASM("asm/nonmatchings/battle/eft_streak", EftStreak_DrawScreen);
-#endif
 
 /* Steps the animation of the field's two textures and rebuilds the TEX0 the streaks are drawn with; once per
    frame however many fields exist. */

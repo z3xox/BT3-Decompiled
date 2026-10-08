@@ -2870,9 +2870,35 @@ void EftWater_UpdateTextures(s32 a0, s32 a1) {
 
 /* Clips a triangle (three EftWaterClipVtx) against the five planes of the view, projects what is left and queues
    it as a fan of textured triangles. A triangle whose three corners are all unusable is dropped. */
-#if 0 /* NON-MATCHING: 429 instructions against 426 */
-/* A register-masked structural diff (build/scratch_cleanup3_V/sdiff.py) leaves 23 lines (142 before round 4). */
-/* Round 4 (scratch build/scratch_cleanup4_W2/cf*.c). The function is the water twin of EftMesh_DrawTriClip +
+#if 0 /* NON-MATCHING: same length (426); 20 instructions differ, the registers of three hoisted constants */
+/* Round 5 (scratch build/scratch_streak/): 350 of 426 by position, but an aligned diff leaves ONE cause. The loop
+   pass hoists three constants of the XYZF2 stores: 0xFFFFFF (the mask of the z value), 0xFF000000FFFFFFFF (the
+   mask that clears the z field) and -1 (the fog byte). Only two registers are left for them (t7, t9; saved with
+   sq / lq around EftUtil_IsCamUnderWater), and the loser is loaded again inside the loop. The original keeps the
+   field mask (t7) and -1 (t9) and reloads 0xFFFFFF (`lui a3,0xff / ori`); this C keeps 0xFFFFFF (t9) and -1 (t7)
+   and reloads the field mask (5 instructions in the loop, 2 in front of it: the same total).
+   Numbers (-da, .lreg / .greg): the three have 7 references each and live 614 / 612 / 610 instruction slots, in
+   that order (the order they are hoisted in). Global-alloc priority is floor(2 * 7 * 10000 / length): 228 / 228 /
+   229, so the order is -1, 0xFFFFFF, field mask (ties go to the lower pseudo). The original's order (field mask,
+   -1, then 0xFFFFFF) needs 616 / 614 / 612 (227 / 228 / 228): exactly ONE more RTL instruction inside the loop at
+   allocation time that leaves no trace in the final code, or 0xFFFFFF not hoisted at all by the loop pass (it
+   is then an instruction in the loop itself, which is also that one instruction). A tied empty asm anywhere in
+   the loop (`__asm__("" : "=r"(x) : "0"(x))`) confirms it: the constants then come out as in the original, but
+   the asm disturbs its own neighbourhood (9 to 36 instructions) wherever it was put (v, w, z, n, the packet
+   pointer, layer). No natural source of that instruction was found: tried the body under `if (!(...))` instead of
+   `continue`, the depth bias as a conditional expression or with the arms exchanged, the sum and the division in
+   two statements, `i = 2` in front of the `for`, an explicit `& 0xFFFFFF` or a (u32) / (u64) cast on the z value.
+   What round 5 fixed (it was 417 of 429 with a third walking pointer):
+   - the address of scr[i - 1] is built from a pointer VARIABLE holding &scr[i] (`v = &scr[i]` then `&v[-1]`):
+     an argument of an inline function is expanded as a sum (index first: `addu a0,s2,sp`, the third clip test),
+     an assignment to a variable in the normal way (base first: `addu v1,sp,s2 / addiu v1,v1,-16`, the second
+     clip test and the writer). Written `&scr[i - 1]` the address is `sp + (i * 16 - 16)` with a temporary of its
+     own, which the loop pass strength-reduces (benefit 2 adds against 1); from the variable it is one add away
+     from a shared value and is left alone. That frees s8 for n, as in the original.
+   - the second clip test and the writer need a variable EACH (v, w): with one variable the two computations
+     are merged across the blocks and the pointer is strength-reduced again. In the writer the form is `w - 1`
+     (`&w[-1]` exchanges two header stores with two moves).
+   Round 4 (scratch build/scratch_cleanup4_W2/cf*.c). The function is the water twin of EftMesh_DrawTriClip +
    EftMesh_QueueTri (eft_mesh.c, matched): rewritten after them it has the original's blocks, frame (0x1B0), stack
    slots (poly / layer / tex0 at sp+288 / 292 / 296, the three sq / lq saves around EftUtil_IsCamUnderWater) and
    every instruction of the depth, cap, clip-test and packet code. What made the difference:
@@ -2883,18 +2909,7 @@ void EftWater_UpdateTextures(s32 a0, s32 a1) {
      EftWaterIVec and the `zp` pointer form of the mesh twin both give walking pointers here);
    - the screen test is `clipped = 1; if (z > 0 && x <= 0xFFEF && x > 0) { if (y <= 0xFFEF) clipped = y <= 0; }`
      through a POINTER parameter (movz on the two y tests; the by-value form of EftMesh_IsOffScreen copies the
-     16 bytes here and costs 26 instructions).
-   What still differs (all one cause, the loop pass's choice of induction pointers):
-   - the original does not strength-reduce &scr[i - 1]: it recomputes it where it is used
-     (`addu v1,sp,s2 / addiu v1,v1,-16` for the clip test, `addiu t4,t2,-16` for the writer) and keeps only
-     &stq[i - 1] (t6, +16) and &poly[i] (s6, +48) as walking pointers; here &scr[i - 1] becomes a third walking
-     pointer (s8). With one saved register gone, n lands in t6 (saved / restored with sq / lq around
-     ClipPoly_ProjectCur) instead of s8, and the XYZF2 mask 0xFF000000FFFFFFFF is rebuilt in the loop instead of
-     being hoisted into t7. `&scr[i] - 1` and `scr + i - 1` compile to the same thing.
-   - to try next: the giv is "not worth while" for the loop pass when lifetime * threshold * benefit < the loop's
-     insn count (-dL, `giv at N combined with ...`): look for a form in which the clip test's and the writer's
-     uses of &scr[i - 1] do not combine into one giv (in the original the two addresses are computed in
-     different blocks from sp + (i << 4)). */
+     16 bytes here and costs 26 instructions). */
 typedef struct EftWaterScr4 {
     s32 x, y, z, w;
 } EftWaterScr4;
@@ -2969,6 +2984,8 @@ void EftWater_DrawClippedFan(EftWaterClipVtx *poly, s32 layer, u64 tex0) {
     s32 n;
     s32 i;
     s32 z;
+    EftWaterScr4 *v; /* &scr[i] for the second clip test */
+    EftWaterScr4 *w; /* &scr[i] for the writer */
 
     plane = EftGfx_GetClipPlanes();
     n = 3;
@@ -2996,10 +3013,11 @@ void EftWater_DrawClippedFan(EftWaterClipVtx *poly, s32 layer, u64 tex0) {
         if (scr[i].z > 0xFFFFFF) {
             scr[i].z = 0xFFFFFF;
         }
-        if (EftWater_IsClipped(&scr[0]) && EftWater_IsClipped(&scr[i - 1]) && EftWater_IsClipped(&scr[i])) {
+        if (EftWater_IsClipped(&scr[0]) && (v = &scr[i], EftWater_IsClipped(&v[-1])) && EftWater_IsClipped(&scr[i])) {
             continue;
         }
-        EftWater_QueueTri(&scr[0], &scr[i - 1], &scr[i], &poly[0].color, &poly[i - 1].color, &poly[i].color,
+        w = &scr[i];
+        EftWater_QueueTri(&scr[0], w - 1, w, &poly[0].color, &poly[i - 1].color, &poly[i].color,
                           &stq[0], &stq[i - 1], &stq[i], layer, z, tex0);
     }
 }
