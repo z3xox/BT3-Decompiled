@@ -103,7 +103,6 @@ void SimPopo_CursorOff(USimDay *day) {
  */
 /* The const view of the table: menu_u.h declares it without `const`, which this file cannot redeclare. The same
    symbol; to be replaced by a `const` in the header. */
-extern const USimTrain sSimPopoTrain[5] __asm__("gSimTrain2");
 
 s32 SimEv34(USimDay *day) {
     MFlashRef ref;
@@ -165,7 +164,7 @@ s32 SimEv34(USimDay *day) {
             gSimPopoRank = day->rank[2];
             gSimPopoTarget = Rand_Range(5);
             gSimPopoCount = 0;
-            gSimPopoSpeed = sSimPopoTrain[gSimPopoRank].speed;
+            gSimPopoSpeed = gSimTrain2[gSimPopoRank].speed;
             gSimPopoWon = 0;
             day->seq++;
             day->seqTimer = 0;
@@ -219,7 +218,7 @@ s32 SimEv34(USimDay *day) {
         }
         break;
     case 14:
-        if (gSimPopoCount >= sSimPopoTrain[gSimPopoRank].param) {
+        if (gSimPopoCount >= gSimTrain2[gSimPopoRank].param) {
             day->seq = 16;
             day->seqTimer = 0;
             SimPopo_CursorOn(day);
@@ -316,8 +315,8 @@ s32 SimEv34(USimDay *day) {
         break;
     case 21:
         day->msgLine = 0xCB;
-        SimDay_AddChange(1, sSimPopoTrain[gSimPopoRank].gain);
-        SimDay_AddChange(3, sSimPopoTrain[gSimPopoRank].points);
+        SimDay_AddChange(1, gSimTrain2[gSimPopoRank].gain);
+        SimDay_AddChange(3, gSimTrain2[gSimPopoRank].points);
         SimDay_Cmd(0x1A);
         day->flags |= 0x80;
         day->seqTimer = 0;
@@ -331,7 +330,7 @@ s32 SimEv34(USimDay *day) {
         break;
     case 23:
         day->msgLine = 0xCD;
-        SimDay_AddChange(1, sSimPopoTrain[gSimPopoRank].loss);
+        SimDay_AddChange(1, gSimTrain2[gSimPopoRank].loss);
         SimDay_Cmd(0x1A);
         day->flags |= 0x80;
         day->seqTimer = 0;

@@ -53,8 +53,8 @@ typedef struct USimTrain {
     /* 0x14 */ s32 turn;
 } USimTrain; /* 0x18 */
 
-extern USimTrain gSimTrain1[5];   /* 0x3B9088 */
-extern USimTrain gSimTrain2[5];   /* 0x3B9100 */
+extern const USimTrain gSimTrain1[5];   /* 0x3B9088 */
+extern const USimTrain gSimTrain2[5];   /* 0x3B9100 */
 
 extern void Flash_ClipSetOffset(MFlash *flash, MFlashRef *ref, s32 x, s32 y);
 extern void StreamSe_Stop(s32 se);
