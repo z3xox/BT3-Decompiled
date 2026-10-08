@@ -1594,7 +1594,6 @@ void BtlAct_SuperQuickLongBeamHandler(BtlSuperChr *chr, s32 phase) {
  * Second part (formerly btl_act_g.c), written against its own view of the fighter. Functions already declared above with
  * the first part's types are reached through cast macros.
  * ------------------------------------------------------------------------------------------------------------ */
-#include "battle/btl_act_super_part2.h"
 
 /*
  * Blast 2 / Ultimate Blast actions, second part: 0x1F8C00..0x1FC2B0 (same helpers as the first part, the float
