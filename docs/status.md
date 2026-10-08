@@ -1,5 +1,30 @@
 # Current status (handoff note)
 
+## State on 2026-10-08 (branch `asm-left`, on top of `rename`): no game function is left as INCLUDE_ASM
+
+- Both outputs are byte-identical to the disc's from a fresh tree (`rm -rf build asm`, configure, ninja).
+- `scripts/progress.py`: main executable 99.92% of the game code in C, menu overlay 99.97%; 0 INCLUDE_ASM lines
+  in either. The 45 functions that were still assembly on 2026-10-07 all match in C now, `ColObb_Contact`
+  (4,257 instructions) among them. What each needed is in docs/decomp_guide.md, "Lessons from the night of
+  2026-10-08".
+- Still assembly, and meant to be: the four hand-written VU0 routines (`ObjSeam_TransformVtx` in `cod/00FFD0`;
+  `StgVu_RotateZ` / `X` / `Y` in `cod/140C68`, which is also why `stg.c` and `stg_parts.c` are two files), and the
+  libraries (Sony, CRI, libc) behind 0x273CF0.
+- Fake matches made that night (byte-identical, a statement that emits nothing stands where the real source form
+  is not known; each is marked `FAKE MATCH` in the source): `ObjShadow_BuildPacket`, `DemoCam_Update`,
+  `EftStreak_DrawScreen`, `EftStreak_Draw` (uses `register ... __asm__("$0")`: PS2 compiler only),
+  `EftBlade_AddPoint`, `Shen_DrawList`, `StgDepthTint_Draw`, `EftWater_DrawClippedFan`; possible stand-ins:
+  the width variable in `DcPass_DrawStatus`, `base = &p0;` in `EftBolt_Shape`.
+- The files were renamed and some merged on the branch `rename` (docs/rename_draft.md,
+  docs/file_rename_map.txt). Everything below this section, and the other documents, use the OLD file names and
+  speak of functions as INCLUDE_ASM that no longer are: read them as history.
+- Corrections that came out of the matches: `sceGsSetDefStoreImage` and `Mtx_ProjectPointStq` return s32;
+  `ScrXfade_Start(f32 seconds, s32 request)`; `Vec3_ScaleAdd(dst, dir, f32 s, base)` in eft_stage_1.c;
+  `EftGndDust_DrawQuad` / `DrawPiece` parameter orders; `gSimTrain1` / `gSimTrain2` are const; `Col_NearEq` is
+  const (inferred: static in the original); the spawners of eft_emit.c take their floats first.
+- Not done: the port repository has none of this (renames, merges, the 45 functions).
+
+
 Written 2026-10-04 so the work can be picked up without the conversation that produced it.
 Update or delete when it goes stale.
 

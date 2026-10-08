@@ -1,3 +1,7 @@
+> **2026-10-08:** every function listed below as INCLUDE_ASM or unmatched now matches in C (docs/status.md, top).
+> The open questions about them that remain are the fake matches listed there. File names below are the old ones
+> (docs/file_rename_map.txt).
+
 # Open questions
 
 ## Build and layout
