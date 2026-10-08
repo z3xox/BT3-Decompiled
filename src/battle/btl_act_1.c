@@ -1841,7 +1841,6 @@ s32 BtlAct_RushFinishHandler(BtlActAChr *chr, s32 phase) {
  * Second part (formerly btl_act_b.c), written against its own view of the fighter. Functions already declared above with
  * the first part's types are reached through cast macros.
  * ------------------------------------------------------------------------------------------------------------ */
-#include "battle/btl_act_1_part2.h"
 
 /*
  * Fighter action handlers, second slice: 0x1E6CC0..0x1EA5F8.
