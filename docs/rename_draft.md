@@ -335,7 +335,8 @@ its icon tags (-> `sys/font`); the aura (`eft_m` + `eft_n` -> `eft_aura`); three
 | `eft_mesh` + `eft_sprite` | code 4 bytes longer |
 | `stg_model_anim` + `stg_model_draw` | code 24 bytes longer |
 | `bracket` + `bracket_guide` | code 4 bytes longer, read-only data 4 shorter |
-| `shen_wish` + `shen_confirm`, `password_old` + `password_chara`, `evo_z_1` + `evo_z_2`, `col_box` + `col_primitives` | data sizes change (strings or constants the two files both hold are stored once) |
+| `shen_wish` + `shen_confirm`, `password_old` + `password_chara`, `evo_z_1` + `evo_z_2` | read-only or small data comes out shorter (inferred: what both files hold is stored once); in the first two the code is also 4 bytes longer |
+| `col_box` + `col_primitives` | 186 bytes differ in place |
 
 **Merged cleanly in the trial but left apart, because they are different things:** the fighter control files
 (`btl_change`, `btl_head_tracking`, `btl_char_pose`), `stg_collision` + `stg_nav`, `pause_menu` + `btl_menu`, the
