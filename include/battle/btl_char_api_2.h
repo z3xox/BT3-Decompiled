@@ -106,7 +106,7 @@ typedef struct BtlCharApiSoundSet {
 typedef struct BtlCharApiMgr {
     /* 0x00 */ s32 count;
     /* 0x04 */ BtlCharApiChr *chars;
-    /* 0x08 */ void *unk8;
+    /* 0x08 */ void *sounds;
     /* 0x0C */ BtlCharApiSoundSet *loopSounds; /* one per side */
     /* 0x10 */ u8 unk10[0x1C - 0x10];
     /* 0x1C */ s32 unk1C;               /* counter, full at 90 */

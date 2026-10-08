@@ -1262,7 +1262,7 @@ s32 BtlAct_Action02(BtlActChr *chr, s32 phase) {
         BtlAnim_Play(chr, 0x182, 0.15f);
         BtlChar_SetFlag(chr, 0xF3);
         BtlChar_SetFlag(chr, 0x24);
-        BtlChar_GetPos(chr)->unk98 = 0.0f;
+        BtlChar_GetPos(chr)->speed = 0.0f;
         BtlChar_GetPos(chr)->fallSpeed = 0.0f;
         chr->stunTimer = 0;
         if (obj->flags & 0x40000) {
@@ -1299,7 +1299,7 @@ s32 BtlAct_Action03(BtlActChr *chr, s32 phase) {
         BtlAnim_Play(chr, 0x184, 0.15f);
         BtlChar_SetFlag(chr, 0xF3);
         BtlChar_SetFlag(chr, 0x24);
-        BtlChar_GetPos(chr)->unk98 = 0.0f;
+        BtlChar_GetPos(chr)->speed = 0.0f;
         BtlChar_GetPos(chr)->fallSpeed = 0.0f;
         chr->blindTimer = 0;
         chr->blindLevel = 0;
@@ -1338,7 +1338,7 @@ s32 BtlAct_Action04(BtlActChr *chr, s32 phase) {
             blend = 0.0f;
         }
         BtlAnim_Play(chr, motion, blend);
-        BtlChar_GetPos(chr)->unk98 = 0.0f;
+        BtlChar_GetPos(chr)->speed = 0.0f;
         BtlChar_GetPos(chr)->fallSpeed = 0.0f;
         BtlChar_SetFlag(chr, 0x29);
         BtlAct_EndFlag98(chr);
@@ -1462,7 +1462,7 @@ s32 BtlAct_Action05(BtlActChr *chr, s32 phase) {
             case 0x1A:
                 if (BtlAnim_Advance(chr, 0)) {
                     BtlAct_Request(chr, 0xB);
-                    BtlChar_GetPos(chr)->unk98 = rate;
+                    BtlChar_GetPos(chr)->speed = rate;
                 }
                 moving = 0;
                 rate = 1.0f - BtlAnim_GetProgress(chr);

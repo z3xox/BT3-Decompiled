@@ -39,7 +39,7 @@ typedef struct BtlActPose {
     /* 0x80 */ Vec4 vel;       /* direction of travel (x, z used with atan2f) */
     /* 0x90 */ f32 pitch;
     /* 0x94 */ f32 facing;     /* yaw the fighter faces */
-    /* 0x98 */ f32 unk98;
+    /* 0x98 */ f32 speed;
     /* 0x9C */ f32 fallSpeed;
     /* 0xA0 */ u8 unkA0[0xAC - 0xA0];
     /* 0xAC */ f32 dashBoost;      /* forced to 1.0 except in actions 0xF, 0x3E, 0x58, 0xB0, 0xB1 (kept >= 1.0) */
