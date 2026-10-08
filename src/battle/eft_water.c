@@ -2870,7 +2870,12 @@ void EftWater_UpdateTextures(s32 a0, s32 a1) {
 
 /* Clips a triangle (three EftWaterClipVtx) against the five planes of the view, projects what is left and queues
    it as a fan of textured triangles. A triangle whose three corners are all unusable is dropped. */
-#if 0 /* NON-MATCHING: same length (426); 20 instructions differ, the registers of three hoisted constants */
+/* FAKE MATCH: `n++; n--;` at the top of the fan loop. It emits nothing (combine folds the pair to a move of n to
+   itself) but is one more instruction in the loop when the live lengths are taken, and that alone decides which
+   of three hoisted constants loses its register (see round 5 below; 614 / 612 / 610 slots become 616 / 614 /
+   612). The same statement behind the clip tests, or the same on i or z, does not match. The natural source of
+   that one instruction was not found: any source change that alters the loop's instruction count before combine
+   by one to three in either direction, and nothing in the final code, would do. */
 /* Round 5 (scratch build/scratch_streak/): 350 of 426 by position, but an aligned diff leaves ONE cause. The loop
    pass hoists three constants of the XYZF2 stores: 0xFFFFFF (the mask of the z value), 0xFF000000FFFFFFFF (the
    mask that clears the z field) and -1 (the fog byte). Only two registers are left for them (t7, t9; saved with
@@ -2998,6 +3003,8 @@ void EftWater_DrawClippedFan(EftWaterClipVtx *poly, s32 layer, u64 tex0) {
     }
     ClipPoly_ProjectCur((EftWaterIVec *)scr, stq, poly, n);
     for (i = 2; i < n; i++) {
+        n++; /* FAKE MATCH, see above: no code */
+        n--;
         z = ((scr[0].z + scr[i - 1].z + scr[i].z) / 3) >> 8;
         if (EftUtil_IsCamUnderWater()) {
             z -= 500;
@@ -3021,5 +3028,3 @@ void EftWater_DrawClippedFan(EftWaterClipVtx *poly, s32 layer, u64 tex0) {
                           &stq[0], &stq[i - 1], &stq[i], layer, z, tex0);
     }
 }
-#endif
-INCLUDE_ASM("asm/nonmatchings/battle/eft_water", EftWater_DrawClippedFan);

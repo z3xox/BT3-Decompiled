@@ -11,9 +11,8 @@
  * Full-screen post effects, 0x102F28..0x106D60. See include/sys/gfx_post.h for the overview.
  * Everything here is drawing: nothing reads a pad, the clock or a random generator.
  *
- * One function is INCLUDE_ASM with a behaviourally exact attempt in `#if 0` above it: StgDepthTint_Draw.
- * StgPanBlur_UpdateView matches since cleanup 4 (with two stand-in constructs, see its note) and emits the
- * file's .lit4 (0x2FC280..0x2FC290).
+ * StgDepthTint_Draw matches with a fake (an empty tied asm, see its note). StgPanBlur_UpdateView matches since
+ * cleanup 4 (with two stand-in constructs, see its note) and emits the file's .lit4 (0x2FC280..0x2FC290).
  */
 
 extern void *memset(void *dst, s32 c, u32 n);
@@ -1640,46 +1639,25 @@ void StgDepthTint_Term(void) {
 }
 
 /* Draws the tint of the medium the camera is in. */
-/* NOT MATCHING (51 of 59 instructions): the original keeps a zero in a callee-saved register across
-   Battle_IsSplitScreen() and copies it to the medium index on the split-screen path; here the constant is
-   propagated, which shifts the register allocation. Same behaviour. */
-/* Cleanup pass 2: with a second variable (`s32 zero = 0;` at the top, `medium` assigned in every arm and
-   `else { medium = zero; }` for the split-screen case) the code is the original's except for one thing: cse
-   folds `medium = zero` to `move v1,zero`, so the zero is not kept in s0 across Battle_IsSplitScreen
-   (28 of 65 aligned by count, but only the `move s0,zero` / `move v1,s0` pair and the registers that follow from
-   it). Needed: a zero that cse cannot see at that point. Tried: a loop that runs once (`for (i = 0; i < 1; i++)`
-   with `medium = i`), an inline helper returning the variable, a dead conditional in front (the trick that
-   matched IopHeap_PrintFree), none keeps the copy. */
-/* Cleanup pass 3: read the copy as `medium = zero` done BEFORE the split-screen test (`move v1,s0` sits in the
-   delay slot of that branch, so it is in the first block, behind the call), with `medium` set again in the two
-   water arms. A zero whose address goes to an inline reader (`medium = Get(&zero)`, an ADDRESSOF that is purged
-   after the first cse) is still folded (cse does not treat such memory as clobbered by the call). The zero has
-   to reach register allocation as a register copy, so whatever hides it must survive cse, gcse, cse2 AND
-   combine: not found. */
-/* Cleanup pass 4 (still 51 of 59 with the attempt below). What the original needs, from the scheduler dumps:
-   - the copy `medium = zero` stands in the FIRST block, behind the call and in front of the split-screen test
-     (`split = Battle_IsSplitScreen(); medium = zero; if (!split) ...`): only then the function has 10 basic
-     blocks, which the first scheduling pass needs to move `addiu a0,sp,64` and the `move a0,zero / li a1` of the
-     tail over their branches (an `else { medium = zero; }` arm is an 11th block: registers right, all
-     inter-block moves lost);
-   - the zero must be unknown to cse, gcse and cse2 (a `for (i = 0; i < 1; i++)` loop is removed by the loop
-     pass and cse2 then folds `medium = i`; an address-taken zero read through an inline helper survives cse and
-     gcse and is folded by cse2);
-   - the zero must stay in front of the call (the scheduler sinks a zero whose only use is behind the call) and
-     must not be tied to `medium` by the allocator (it is when the zero dies in the copy).
-   An empty `__asm__("" : "=r"(zero) : "0"(zero));` behind the call plus a bare `__asm__("");` in front of the
-   load of gBtlCamView gets to 4 instructions (the copy cannot go into the delay slot because the asm follows it,
-   and `move a0,sp` / `addiu a1,s1,64` swap); no form found that is exact, natural or fake. */
-#if 0
+/* FAKE MATCH: the original keeps a zero in s0 across Battle_IsSplitScreen() and copies it to the medium index
+   in the first block; s0 is `tint` afterwards. The zero is `tint = NULL` (one variable, so the zero is not tied
+   to `medium` and the allocator puts both in s0), and the empty tied asm hides it from cse, which otherwise
+   folds the first copy and turns the `medium = 0` behind Mtx_InverseRT into the copy instead (2 instructions:
+   `move v1,zero` and `move v1,s0` swapped). Without the asm line the behaviour is the same. Not found: the
+   source form that keeps the copy in the first block without it. */
 void StgDepthTint_Draw(void) {
     Mtx44 m;
     f32 level;
     View *view = gBtlCamView;
     StgDepthTint *tint;
-    s32 medium = 0;
-    s32 idx;
+    s32 medium;
+    s32 split;
 
-    if (!Battle_IsSplitScreen()) {
+    tint = NULL;
+    __asm__("" : "=r"(tint) : "0"(tint));
+    split = Battle_IsSplitScreen();
+    medium = (s32)tint;
+    if (!split) {
         if (BtlStage_GetWaterLevel(&level)) {
             Mtx_InverseRT(&m, &view->world2view2);
             medium = 0;
@@ -1703,8 +1681,6 @@ void StgDepthTint_Draw(void) {
         }
     }
 }
-#endif
-INCLUDE_ASM("asm/nonmatchings/sys/gfx_post", StgDepthTint_Draw);
 
 /* Takes both tints' parameters from the stage file (defaults: off) and rebuilds the CLUTs. */
 void StgDepthTint_LoadParams(void) {
