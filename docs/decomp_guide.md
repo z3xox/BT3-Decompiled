@@ -981,3 +981,13 @@ More of the same night (the geyser functions):
   argument of a `const` call whose result is unused; a dead store to a hard-register variable).
 - Fake match: Shen_DrawList (`register FlashRef *probe __asm__("$5") = &ref;`). Open: Train_BuildLists, 11
   instructions (the entry test `found = 0; i = found; cmp found < n` with the copy alive; no C form found).
+- **Parameter orders travel in pairs**: when an argument register is loaded for a call depends on when the entry
+  block copied the matching incoming parameter, so a swapped pair of argument moves can need the caller's own
+  parameter order and the callee's changed together. (EftGndDust_DrawPiece with EftGndDust_DrawQuad)
+- **`x = e; x *= k;`** against `x = e * k;`: the same instructions, another local-allocation tie.
+  (EftGndDust_SpawnBodyDust; found by the permuter)
+- **cse substitutes the longer-lived variable**: `tail = (tail + 1) & M` compiled as `(head + 1)` with an extra
+  hoisted `head + 1` means the final stores of the two variables are in the other order. Declaration order
+  (`p4, p3, p2, p1`) is spill-slot order; the text order of the computations is statement order.
+- Fake match: EftBlade_AddPoint (three empty asm statements; a duplicated `t->wasOut = ...` in both arms of the
+  first `if` gets to 2 instructions, which suggests a merged duplicate there).
