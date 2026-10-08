@@ -252,42 +252,42 @@ void EftMulti_FirePiece(s32 objId, EftJTask *task) {
     };
     Vec4_Copy(&arg.dir, &w->dir);
     if (w->flags & 0x200) {
-        arg.unk57 = 2;
+        arg.kind = 2;
         switch (src->def->id) {
         case 0x157:
-            arg.unk55 = 1;
+            arg.texB = 1;
             if (w->count == 0) {
-                arg.unk3C = 0.25f;
+                arg.grow = 0.25f;
             } else {
-                arg.unk3C = 0.04f;
+                arg.grow = 0.04f;
             }
             if (w->count < 2) {
-                arg.unk5C = 1;
+                arg.hand = 1;
             } else {
-                arg.unk5C = w->count & 1;
+                arg.hand = w->count & 1;
             }
-            w->unk18 = 4.0f;
+            w->releaseScale = 4.0f;
             break;
         case 0x193:
-            arg.unk55 = 2;
-            arg.unk5C = w->count % 2 == 0;
-            w->unk18 = 1.0f;
+            arg.texB = 2;
+            arg.hand = w->count % 2 == 0;
+            w->releaseScale = 1.0f;
             break;
         case 0x194:
             if (w->count == 0) {
-                arg.unk3C = 0.2f;
+                arg.grow = 0.2f;
             } else {
-                arg.unk3C = 0.04f;
+                arg.grow = 0.04f;
             }
-            arg.unk55 = 3;
-            arg.unk5C = w->count % 2 == 0;
-            w->unk18 = 5.0f;
+            arg.texB = 3;
+            arg.hand = w->count % 2 == 0;
+            w->releaseScale = 5.0f;
             break;
         case 0x188:
-            arg.unk55 = 0;
-            arg.unk3C = 0.35f;
-            arg.unk5C = w->count & 1;
-            w->unk18 = 5.0f;
+            arg.texB = 0;
+            arg.grow = 0.35f;
+            arg.hand = w->count & 1;
+            w->releaseScale = 5.0f;
             break;
         }
     } else {
@@ -295,24 +295,24 @@ void EftMulti_FirePiece(s32 objId, EftJTask *task) {
         Vec4 rot;
         Vec4 d;
 
-        arg.unk57 = 4;
-        arg.unk3C = 0.0f;
-        Vec4_Copy(&arg.pos, &w->unk3D0);
+        arg.kind = 4;
+        arg.grow = 0.0f;
+        Vec4_Copy(&arg.pos, &w->muzzle);
         Mtx_StoreIdentity(&m);
         BtlCharApi_GetRot(objId, &rot);
         Mtx_RotateY(&m, &m, -rot.y);
-        Vec3_Sub(&d, &w->unk40, &w->unk50);
+        Vec3_Sub(&d, &w->fireHandPos, &w->releaseHandPos);
         Mtx_MulVec4(&d, &m, &d);
         Vec3_Normalize(&d, &d);
-        arg.unk4C = atan2f(d.x, -d.y) / 6.2831853f;
+        arg.roll = atan2f(d.x, -d.y) / 6.2831853f;
         switch (src->def->id) {
         case 0:
             break;
         case 0x1A3:
-            arg.unk58 = 1;
+            arg.lastHit = 1;
             break;
         case 0x202:
-            arg.unk4C = 0.0f;
+            arg.roll = 0.0f;
             break;
         }
     }
@@ -367,7 +367,7 @@ s32 EftMulti_UpdatePieces(s32 objId, EftJTask *task) {
                     if (EftDisc_IsAlive(p->h) && !(p->flags & 2)) {
                         EftDisc_Release(p->h, &w->dir);
                         done = 1;
-                        EftDisc_SetScale(p->h, w->unk18);
+                        EftDisc_SetScale(p->h, w->releaseScale);
                         p->flags |= 2;
                     }
                 }
@@ -375,10 +375,10 @@ s32 EftMulti_UpdatePieces(s32 objId, EftJTask *task) {
         }
     } else {
         if (fire) {
-            BtlCharApi_GetNodePos(objId, 0x15, &w->unk40);
+            BtlCharApi_GetNodePos(objId, 0x15, &w->fireHandPos);
         }
         if (release) {
-            BtlCharApi_GetNodePos(objId, 0x15, &w->unk50);
+            BtlCharApi_GetNodePos(objId, 0x15, &w->releaseHandPos);
             EftMulti_FirePiece(objId, task);
         }
     }
@@ -452,9 +452,9 @@ void EftMulti_Init(EftJTask *task, EftJSrc *src) {
     def = src->def;
     w->speed = def->speed;
     w->homing = def->homing;
-    w->unkC = def->scale;
+    w->baseScale = def->scale;
     w->scale = def->scale;
-    w->unk14 = w->unkC;
+    w->radius = w->baseScale;
     w->set = &mgr->set;
     EftEmit_InitState(&mgr->set, w->emit);
     w->life = EftEmit_GetEndFrames(w->set);
@@ -472,7 +472,7 @@ void EftMulti_Term(EftJTask *task) {
     EftJSrc *src = w->src;
 
     EftEmit_TermState(w->set, w->emit);
-    if (src->def->unk4 != 0) {
+    if (src->def->cls != 0) {
         EftShot_SetHeldFlagA8(src->objId);
     }
 }
@@ -507,9 +507,9 @@ void EftMulti_Update(EftJTask *task) {
             break;
         case 2:
             if (EftShot_TestBits(src->objId, 4)) {
-                Vec4_Copy(&w->unk60, &w->unk3D0);
-                Vec4_Copy(&w->head, &w->unk60);
-                BtlCharApi_GetNodePos(src->objId, 0x11, &w->unk80);
+                Vec4_Copy(&w->origin, &w->muzzle);
+                Vec4_Copy(&w->head, &w->origin);
+                BtlCharApi_GetNodePos(src->objId, 0x11, &w->tail);
                 EftAim_GetDirKeep(src, &w->dir, &w->head, src->objId);
                 Vec3_Scale(&w->vel, &w->dir, w->speed);
                 task->state = 3;
@@ -572,7 +572,7 @@ void EftMulti_PostUpdate(EftJTask *task) {
     if ((u16)(task->hit & 1)) {
         Vec3_Sub(&d, &task->pos, &w->head);
         Vec3_Copy(&w->head, &task->pos);
-        Vec3_Add(&w->unk80, &w->unk80, &d);
+        Vec3_Add(&w->tail, &w->tail, &d);
         if (!(w->flags & 0x20)) {
             w->flags |= 0x20;
         }
@@ -622,7 +622,7 @@ void EftMultiMgr_Update(EftJTask *task) {
     EftMultiMgr *m = task->work;
 
     EftEmit_BeginFrame(&m->set);
-    m->unk20C = 0;
+    m->texStepped = 0;
 }
 
 /* Reset callback of the manager: nothing. */
@@ -880,9 +880,9 @@ void EftPropShot_Init(EftJTask *task, EftJSrc *src) {
     w->src = src;
     def = src->def;
     w->speed = def->speed;
-    w->unk8 = def->scale;
+    w->baseScale = def->scale;
     w->scale = def->scale;
-    w->radius = w->unk8;
+    w->radius = w->baseScale;
     w->set = &mgr->set;
     EftEmit_InitState(&mgr->set, w->emit);
     if (EftEmit_HasWidth2(w->set)) {
@@ -904,7 +904,7 @@ void EftPropShot_Term(EftJTask *task) {
 
     EftEmit_TermState(w->set, w->emit);
     EftPropShot_FreeProp(task);
-    if (!(w->flags & 0x800) && src->def->unk4 != 0) {
+    if (!(w->flags & 0x800) && src->def->cls != 0) {
         EftShot_SetHeldFlagA8(src->objId);
     }
 }
@@ -920,7 +920,7 @@ void EftPropShot_Update(EftJTask *task) {
     if (BtlScene_IsCharStopped(src->objId)) {
         return;
     }
-    if (src->def->unk4 == 0) {
+    if (src->def->cls == 0) {
         EftShot_PlayFireSound(src->objId, src);
     }
     EftEmit_UpdateNodesReq(src, w->node);
@@ -1006,7 +1006,7 @@ void EftPropShot_Update(EftJTask *task) {
     if ((w->flags & 1) && !(w->flags & 2)) {
         if ((w->flags & 0x800) && (w->timer >= w->life || (w->flags & 4))) {
             if (!(w->flags & 0x1000)) {
-                if (src->def->unk4 != 0) {
+                if (src->def->cls != 0) {
                     EftShot_SetHeldFlagA8(src->objId);
                 }
                 w->flags |= 0x1000;
@@ -1047,7 +1047,7 @@ void EftPropShot_PostUpdate(EftJTask *task) {
         return;
     }
     EftEmit_UpdateAlive(w->set, w->emit);
-    if (task->unk4 & 1) {
+    if (task->flags & 1) {
         EftEmit_MarkKind6(w->set, w->emit);
     }
     if ((u16)(task->hit & 1)) {
@@ -1287,7 +1287,7 @@ void EftBlast_Term(EftJTask *task) {
     EftJSrc *src = w->src;
 
     EftEmit_TermState(w->set, w->emit);
-    if (src->def->unk4 != 0) {
+    if (src->def->cls != 0) {
         EftShot_SetHeldFlagA8(src->objId);
     }
 }
@@ -1302,7 +1302,7 @@ void EftBlast_Update(EftJTask *task) {
     if (BtlScene_IsCharStopped(src->objId)) {
         return;
     }
-    if (src->def->unk4 == 0) {
+    if (src->def->cls == 0) {
         EftShot_PlayFireSound(src->objId, src);
     }
     EftEmit_UpdateNodesReq(src, w->node);
@@ -1436,13 +1436,13 @@ void EftBlast_PostUpdate(EftJTask *task) {
         return;
     }
     EftEmit_UpdateAlive(w->set, w->emit);
-    if (task->unk4 & 1) {
+    if (task->flags & 1) {
         EftEmit_MarkKind6(w->set, w->emit);
         if (src->def->flags & 0x10000) {
             w->flags &= ~0x10;
         }
         w->flags |= 0x2000;
-    } else if (task->unk4 & 4) {
+    } else if (task->flags & 4) {
         w->flags |= 0x4000;
     }
     if ((u16)(task->hit & 1)) {
@@ -1788,8 +1788,8 @@ void EftShotTech_Start(EftJTask *task, s32 evt) {
         w->node = EftShot_GetAttrKind(src->objId, evt);
     }
     BtlCharApi_GetNodePos(src->objId, w->node, &w->start);
-    Vec4_Copy(&w->unk5A0, &w->start);
-    Vec4_Copy(&w->pos, &w->unk5A0);
+    Vec4_Copy(&w->origin, &w->start);
+    Vec4_Copy(&w->pos, &w->origin);
     Vec4_Copy(&w->prev, &w->pos);
     EftShotTech_CalcDir(task, &w->dir);
 }
@@ -1803,7 +1803,7 @@ void EftShotTech_UpdateFlash(EftJTask *task) {
     if (!(src->def->flags & 0x400000) && EftShot_TestBits(opp, 0x40)) {
         arg = (EftJFlashArg){ { 255.0f, 255.0f, 255.0f, 255.0f }, 0.5f, 0, 1.0f, src->objId, 0 };
         if (src->def->id == 0x27C) {
-            arg.unk20 = 1;
+            arg.wait = 1;
         }
         EftFlash_Start(&arg);
     }

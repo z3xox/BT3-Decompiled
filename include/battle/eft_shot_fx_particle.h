@@ -98,7 +98,7 @@ typedef struct EftShotFxReq {
 
 typedef struct EftShotFxTex {
     /* 0x0 */ u64 tex0;
-    /* 0x8 */ u64 unk8;
+    /* 0x8 */ u64 image;
 } EftShotFxTex;
 
 /* gEftShotFx: 0x60 bytes from the effect pool. */
@@ -225,18 +225,18 @@ typedef struct EftUPtclDef {
     /* 0x25C */ f32 spinRange[3];
     /* 0x268 */ f32 spin2[3];           /* second stage */
     /* 0x274 */ f32 spin2Range[3];
-    /* 0x280 */ f32 unk280[12];         /* emitter angles, read in the second part of eft_particle.c */
+    /* 0x280 */ f32 angSpin[12];         /* emitter angles, read in the second part of eft_particle.c */
 } EftUPtclDef;
 
 /* A texture set entry and the set (arg.res): TEX0 values cached per frame, one bit per entry. */
 typedef struct EftUPtclTex {
     /* 0x0 */ u64 tex0;
-    /* 0x8 */ u64 unk8;
+    /* 0x8 */ u64 image;
 } EftUPtclTex;
 
 typedef struct EftUPtclRes {
     /* 0x000 */ EftUPtclTex tex[16];
-    /* 0x100 */ s32 unk100;
+    /* 0x100 */ s32 count;
     /* 0x104 */ u32 uploaded;   /* bit n: tex[n].tex0 is valid (cleared elsewhere) */
 } EftUPtclRes;
 

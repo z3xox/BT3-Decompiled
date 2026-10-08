@@ -63,7 +63,7 @@ typedef struct EftBTexImg {
 typedef struct EftBTexSet {
     /* 0x000 */ EftBTex tex[32];
     /* 0x200 */ s32 count;
-    /* 0x204 */ s32 unk204;
+    /* 0x204 */ s32 stepped;
 } EftBTexSet; /* size 0x208 */
 
 /* Vectors and matrices passed BY VALUE in this module (a pointer to the caller's object is passed and the callee

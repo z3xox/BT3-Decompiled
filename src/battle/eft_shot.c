@@ -1631,7 +1631,7 @@ s32 EftShot_GetCurSlot(s32 chr) {
 void EftShot_PlayFireSound(s32 objId, EftShotSlot *slot) {
     s32 snd = -1;
 
-    if (slot->def->unk4 == 0) {
+    if (slot->def->cls == 0) {
         if (EftShot_TestBits(objId, 2)) {
             if (slot->def->id != 0x27) {
                 snd = 0;

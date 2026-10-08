@@ -1427,9 +1427,9 @@ void BtlTask_Init(BtlTask *task, BtlTaskCls *cls, void *arg) {
     task->child = NULL;
     task->cls = cls;
     task->tag = 0;
-    task->unk8 = 0;
-    task->unkA = 0;
-    task->unkB = 0;
+    task->result = 0;
+    task->countA = 0;
+    task->hitCount = 0;
     task->pos.x = task->pos.y = task->pos.z = 0.0f;
     if (cls->init != NULL) {
         cls->init(task, arg);

@@ -74,3 +74,19 @@ Group 02 (btl_act_super.h .. btl_cam.h):
 - btl_char_ctl.h:78: the sixth parameter of BtlChange_RequestChara is named unk18 but receives form +0x1C.
 - btl_char_hit.h HitReact: the comments for unk38 and unk48 describe fighter +0xFE8 / +0xFF8, which other headers describe as countdowns:
   the react block and those timers overlap, one of the two layouts needs a look.
+
+Group 09 (eft_rays.h .. eft_stage_1.h):
+- Technique definition +0x04 / +0x05: eft_core.h and eft_shot.h have cls@4, kind@5; eft_emit.h and eft_obj_tech.h have kind@4, unk5 / sub@5.
+  EftShot_BuildParam shows +0x04 is 0 skill / 1 technique / 2 ultimate. One scheme should be picked for all views.
+- Texture set word +0x204: `stepped` (eft_disc.h), `kept` (eft_sprite_anim.h:116), `uploaded` / `loaded` / `ready` in the 16-entry sets.
+- Texture entry `u64 unk8`: other headers declare `void *image` plus `s32 unkC`: retype, not only rename.
+- EftUPtclDef.unk280[12] would be better split into the twelve fields eft_particle_unused.h names (angX, angXRange, spinX, ...).
+- EftMulti.unk390[4]: element [0] is the `hand` vector of EftBlast / EftPropShot: needs a split.
+- EftJFlashArg.unk14 -> hold is s32 in this view, `f32 hold` in eft_trail.h.
+- eft_shot_tech.h:40 `s16 recType; /* copied to the hit record's type */`: eft_core.c:122 does rec->level = rec->src->def->level: it is `level`.
+- eft_core.h:97: the comment on `cls` says 0 is the "rush" class; 0 is the skill class.
+- eft_shot_tech.h:80, 82: EftJPart has type@8 and kind@0xA; the same record in eft_sweep.h / eft_rays.h has kind@8, node@0xA: EftMulti_IsPartKind5
+  most likely tests the node slot.
+- eft_shot_tech.h:73: EftJSrc.objId20 is the field every other view names `chr`.
+- eft_disc.h:104: the `hand` comment reads as inverted (eft_body_fx.c:344: non-zero means nodes 0x14 / 0x15).
+- eft_zap.h:124 against eft_ribbon.h:291: the zap argument's +0x40 byte is unk40 in one and `type` in the other.

@@ -875,7 +875,7 @@ void EftRibbon_Init(EftAcTask *task, EftRibbonArg *arg) {
     w->arg = *arg;
     w->flags |= EFT_RIBBON_ALIVE;
     w->kind = prm->kind;
-    w->unkD8 = arg->unk28;
+    w->unkD8 = arg->texBase;
     if (arg->life <= 0.0f) {
         w->flags |= EFT_RIBBON_NO_LIFE;
     } else {
@@ -883,7 +883,7 @@ void EftRibbon_Init(EftAcTask *task, EftRibbonArg *arg) {
     }
     if (prm->flags & 1) {
         w->animTime = prm->animTime * 30.0f;
-        w->unk100 = w->animTime * prm->unk14;
+        w->animSplit = w->animTime * prm->animSplit;
         EftRibbon_LoadKey(cur, &w->arg, 0);
     } else {
         EftRibbon_LoadKey(cur, &w->arg, 2);
@@ -1447,7 +1447,7 @@ void EftZap_Init(EftAcTask *task, EftZapInit *arg) {
         w->flags |= EFT_ZAPF_NO_LIFE;
     }
     w->flags |= EFT_ZAPF_ALIVE;
-    EftZap_SetTexPair(w, w->arg.tex, w->arg.unk38, w->arg.unk38);
+    EftZap_SetTexPair(w, w->arg.tex, w->arg.texIdx, w->arg.texIdx);
 }
 
 /* Task update: steps the emitter's timers, spawns a burst of lines every `interval` frames and moves the lines. */
@@ -1459,8 +1459,8 @@ void EftZap_Update(EftAcTask *task) {
     s32 i;
 
     if (!BtlScene_IsEffectStopped(arg->objId, w->arg.type)) {
-        if (w->unk160 > 0.0f) {
-            w->unk160 -= one;
+        if (w->delay > 0.0f) {
+            w->delay -= one;
         }
         if ((w->flags & EFT_ZAPF_FADE) && !(w->flags & EFT_ZAPF_HOLD)) {
             f32 t = w->fadeFrame / w->fadeTime;

@@ -156,7 +156,7 @@ void EftBodyFx_Init(EftOTask *task, EftBodyFxArg *arg) {
     Vec3_Sub(dir, &tip, dir);
     w->dir.w = 1.0f;
     Vec3_Normalize(dir, dir);
-    w->set = &gEftBodyFx->set[arg->unk4];
+    w->set = &gEftBodyFx->set[arg->setIdx];
     EftEmit_InitState(w->set, w->state);
     w->phase |= 1;
     EftEmit_SetNode(&w->nodes, 0, 3, NULL);
@@ -317,8 +317,8 @@ void EftDiscMgr_Init(EftOTask *task) {
 
 /* Update callback of the manager: the texture sets have not been advanced this frame. */
 void EftDiscMgr_Update(void) {
-    gEftDisc->res->texA.unk204 = 0;
-    gEftDisc->res->texB.unk204 = 0;
+    gEftDisc->res->texA.stepped = 0;
+    gEftDisc->res->texB.stepped = 0;
 }
 
 /* Reset callback of the manager: nothing. */

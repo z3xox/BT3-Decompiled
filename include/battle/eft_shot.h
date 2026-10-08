@@ -33,19 +33,19 @@ typedef struct EftScrXyz {
     /* 0x00 */ s32 x;
     /* 0x04 */ s32 y;
     /* 0x08 */ s32 z;
-    /* 0x0C */ s32 unkC;
+    /* 0x0C */ s32 w;
 } EftScrXyz; /* 0x10 */
 
 /* One entry of a texture set loaded by EftTexSet_Load32: the GS TEX0 value, advanced by EftVram_AddTex. */
 typedef struct EftTexEntry {
     /* 0x00 */ u64 tex0;
-    /* 0x08 */ u64 unk8;
+    /* 0x08 */ u64 image;
 } EftTexEntry; /* 0x10 */
 
 typedef struct EftTexSet {
     /* 0x000 */ EftTexEntry entry[32];
     /* 0x200 */ s32 count;
-    /* 0x204 */ s32 unk204;
+    /* 0x204 */ s32 stepped;
 } EftTexSet; /* 0x208 */
 
 /* ---- blast record helpers -------------------------------------------------------------- */
@@ -53,8 +53,8 @@ typedef struct EftTexSet {
 /* Definition of a shot (0x8C bytes, EftShotChar.def[]); only what this file reads. */
 typedef struct EftShotDef {
     /* 0x00 */ s16 id;
-    /* 0x02 */ s16 unk2;
-    /* 0x04 */ s8 unk4;
+    /* 0x02 */ s16 level;
+    /* 0x04 */ s8 cls;
     /* 0x05 */ s8 kind;
     /* 0x06 */ u8 unk6[0x36];
     /* 0x3C */ s32 flags;      /* bit 0x2000 tested by EftShot_IsSlotFlag2000 */
@@ -65,7 +65,7 @@ typedef struct EftShotDef {
 typedef struct EftShotSlot {
     /* 0x00 */ u8 unk0[0x1C];
     /* 0x1C */ void *pack;     /* the slot's data in the character pack (EftShot_GetCharPack) */
-    /* 0x20 */ s32 unk20;
+    /* 0x20 */ s32 chr;
     /* 0x24 */ EftShotDef *def;
     /* 0x28 */ u8 unk28[0x28];
 } EftShotSlot; /* 0x50 */

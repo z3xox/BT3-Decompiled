@@ -46,7 +46,7 @@ typedef struct EftAcVert {
 /* One entry of a texture table (EftTexEntry in eft_shot.h). */
 typedef struct EftAcTex {
     /* 0x00 */ u64 tex0;
-    /* 0x08 */ u64 unk8;
+    /* 0x08 */ u64 image;
 } EftAcTex; /* 0x10 */
 
 /* A GS screen position as Vu0Cur_ProjectPoints writes it. */
@@ -113,7 +113,7 @@ typedef struct EftRibbonPrm {
     /* 0x08 */ f32 fadeIn;     /* seconds */
     /* 0x0C */ f32 fadeOut;    /* seconds */
     /* 0x10 */ f32 animTime;   /* seconds per texture cycle */
-    /* 0x14 */ f32 unk14;
+    /* 0x14 */ f32 animSplit;
 } EftRibbonPrm;
 
 /* Argument of EftRibbon_Create (EftEmitArg17 in include/battle/eft_emit.h). */
@@ -122,7 +122,7 @@ typedef struct EftRibbonArg {
     /* 0x10 */ EftAcVec dir;
     /* 0x20 */ s32 type;
     /* 0x24 */ s32 chr;
-    /* 0x28 */ s32 unk28;
+    /* 0x28 */ s32 texBase;
     /* 0x2C */ f32 life;       /* seconds; <= 0 = until stopped */
     /* 0x30 */ f32 size;
     /* 0x34 */ u8 *res;
@@ -178,7 +178,7 @@ typedef struct EftRibbon {
     /* 0x0F4 */ f32 fadeTime;
     /* 0x0F8 */ f32 animFrame;
     /* 0x0FC */ f32 animTime;
-    /* 0x100 */ f32 unk100;
+    /* 0x100 */ f32 animSplit;
     /* 0x104 */ f32 width;
     /* 0x108 */ f32 widthFrame;
     /* 0x10C */ f32 pulseFrame;
@@ -286,7 +286,7 @@ typedef struct EftZapInit {
     /* 0x20 */ EftAcVec pos;
     /* 0x30 */ f32 size;
     /* 0x34 */ f32 life;           /* seconds; <= 0 = until stopped */
-    /* 0x38 */ s32 unk38;
+    /* 0x38 */ s32 texIdx;
     /* 0x3C */ s32 objId;
     /* 0x40 */ u8 type;
     /* 0x41 */ u8 pad41[15];
@@ -377,7 +377,7 @@ typedef struct EftZapWork {
     /* 0x150 */ EftZapAnim1 colorEnd;
     /* 0x158 */ f32 keyTime;     /* frames */
     /* 0x15C */ f32 keySplit;
-    /* 0x160 */ f32 unk160;      /* counts down to 0; nothing in this file waits on it */
+    /* 0x160 */ f32 delay;      /* counts down to 0; nothing in this file waits on it */
     /* 0x164 */ f32 holdTime;    /* frames */
     /* 0x168 */ f32 fadeFrame;   /* frames left of the fade */
     /* 0x16C */ f32 fadeTime;

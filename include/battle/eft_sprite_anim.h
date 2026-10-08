@@ -52,9 +52,9 @@ typedef struct BtlTask {
     /* 0x01 */ u8 chr;          /* free for the class (the shot layer stores the character index) */
     /* 0x02 */ u16 index;       /* index in the list's task array */
     /* 0x04 */ u32 tag;         /* BTL_TASK_TAG_* and the hit feedback bits of battle/eft_a.h */
-    /* 0x08 */ s16 unk8;
-    /* 0x0A */ u8 unkA;
-    /* 0x0B */ u8 unkB;
+    /* 0x08 */ s16 result;
+    /* 0x0A */ u8 countA;
+    /* 0x0B */ u8 hitCount;
     /* 0x0C */ s32 unkC;
     /* 0x10 */ Vec4 pos;        /* (0, 0, 0, 1) at creation; written by BtlTask_SetPos (hit feedback position) */
     /* 0x20 */ struct BtlTaskList *list;

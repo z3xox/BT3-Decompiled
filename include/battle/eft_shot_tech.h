@@ -22,10 +22,10 @@ typedef struct EftJVec {
 
 /* A task of the effect scene's task tree (0x40 bytes); only what this file touches. */
 typedef struct EftJTask {
-    /* 0x00 */ u8 unk0;
+    /* 0x00 */ u8 dead;
     /* 0x01 */ u8 state;   /* phase of the item's state machine */
     /* 0x02 */ u8 unk2[2];
-    /* 0x04 */ s32 unk4;   /* written by the hit pass: bit 0 the record hit a fighter, bit 2 it ended */
+    /* 0x04 */ s32 flags;   /* written by the hit pass: bit 0 the record hit a fighter, bit 2 it ended */
     /* 0x08 */ u16 hit;    /* written by the hit pass: bit 0 the head was moved (pos is valid), bit 2 stop */
     /* 0x0A */ u8 unkA[6];
     /* 0x10 */ Vec4 pos;   /* corrected head position, written by the scene's hit pass */
@@ -38,7 +38,7 @@ typedef struct EftJTask {
 typedef struct EftJDef {
     /* 0x00 */ s16 id;      /* effect id: selects the look and the special cases below */
     /* 0x02 */ s16 recType; /* copied to the hit record's type */
-    /* 0x04 */ s8 unk4;     /* non-zero: EftShot_SetHeldFlagA8(objId) when the item ends; zero: fire sound */
+    /* 0x04 */ s8 cls;     /* non-zero: EftShot_SetHeldFlagA8(objId) when the item ends; zero: fire sound */
     /* 0x05 */ s8 unk5;
     /* 0x06 */ s8 unk6;
     /* 0x07 */ s8 unk7;
@@ -66,7 +66,7 @@ typedef struct EftJDef {
 /* What a module's init callback receives: one technique effect of one fighter. */
 typedef struct EftJSrc {
     /* 0x00 */ s32 objId; /* object id of the fighter (0 or 1) */
-    /* 0x04 */ s32 unk4;
+    /* 0x04 */ s32 slot;
     /* 0x08 */ s32 unk8;
     /* 0x0C */ u8 unkC[0x10];
     /* 0x1C */ s32 *pack; /* the effect's resource pack */
@@ -112,25 +112,25 @@ typedef struct EftJPieceArg {
     /* 0x30 */ f32 scale;
     /* 0x34 */ f32 speed;
     /* 0x38 */ f32 life; /* seconds */
-    /* 0x3C */ f32 unk3C;
-    /* 0x40 */ f32 unk40;
+    /* 0x3C */ f32 grow;
+    /* 0x40 */ f32 fade;
     /* 0x44 */ f32 homing;
-    /* 0x48 */ f32 unk48;
-    /* 0x4C */ f32 unk4C;
-    /* 0x50 */ f32 unk50;
-    /* 0x54 */ u8 unk54;
-    /* 0x55 */ u8 unk55;
+    /* 0x48 */ f32 bank;
+    /* 0x4C */ f32 roll;
+    /* 0x50 */ f32 rollTime;
+    /* 0x54 */ u8 texA;
+    /* 0x55 */ u8 texB;
     /* 0x56 */ u8 objId;
-    /* 0x57 */ u8 unk57;
-    /* 0x58 */ s32 unk58;
-    /* 0x5C */ s32 unk5C;
+    /* 0x57 */ u8 kind;
+    /* 0x58 */ s32 lastHit;
+    /* 0x5C */ s32 hand;
 } EftJPieceArg; /* size 0x60 */
 
 /* Work of the manager task of effect type 5, "multi" (class 0x2C3868). */
 typedef struct EftMultiMgr {
     /* 0x000 */ u8 unk0[8];
     /* 0x008 */ u8 tex[0x204]; /* filled by EftTexSet_Load32 for ids 0x158 / 0x202 */
-    /* 0x20C */ s32 unk20C;
+    /* 0x20C */ s32 texStepped;
     /* 0x210 */ EftJSet set;
     /* 0x34C */ u8 unk34C[0x1E4];
 } EftMultiMgr; /* size 0x530 */
@@ -140,26 +140,26 @@ typedef struct EftMulti {
     /* 0x000 */ s32 flags;
     /* 0x004 */ f32 speed;
     /* 0x008 */ f32 homing;
-    /* 0x00C */ f32 unkC;
+    /* 0x00C */ f32 baseScale;
     /* 0x010 */ f32 scale;
-    /* 0x014 */ f32 unk14;
-    /* 0x018 */ f32 unk18;
+    /* 0x014 */ f32 radius;
+    /* 0x018 */ f32 releaseScale;
     /* 0x01C */ f32 unk1C;
     /* 0x020 */ f32 timer;
     /* 0x024 */ f32 life;
     /* 0x028 */ u8 unk28[8];
     /* 0x030 */ Vec4 dir;
-    /* 0x040 */ Vec4 unk40;
-    /* 0x050 */ Vec4 unk50;
-    /* 0x060 */ Vec4 unk60;
+    /* 0x040 */ Vec4 fireHandPos;
+    /* 0x050 */ Vec4 releaseHandPos;
+    /* 0x060 */ Vec4 origin;
     /* 0x070 */ Vec4 head;
-    /* 0x080 */ Vec4 unk80;
+    /* 0x080 */ Vec4 tail;
     /* 0x090 */ Vec4 vel;
     /* 0x0A0 */ EftJSrc *src;
     /* 0x0A4 */ u8 emit[0x2CC];  /* emitter state (EftEmit_InitState) */
     /* 0x370 */ Vec4 node[2];
     /* 0x390 */ Vec4 unk390[4];
-    /* 0x3D0 */ Vec4 unk3D0;
+    /* 0x3D0 */ Vec4 muzzle;
     /* 0x3E0 */ u8 unk3E0[0x1E0];
     /* 0x5C0 */ EftJSet *set;
     /* 0x5C4 */ EftJPiece piece[10];
@@ -194,7 +194,7 @@ typedef struct EftPropShotMgr {
 typedef struct EftPropShot {
     /* 0x000 */ s32 flags;
     /* 0x004 */ f32 speed;
-    /* 0x008 */ f32 unk8;
+    /* 0x008 */ f32 baseScale;
     /* 0x00C */ f32 scale;
     /* 0x010 */ f32 radius;
     /* 0x014 */ f32 unk14;
@@ -318,7 +318,7 @@ typedef struct EftJShotTech {
     /* 0x594 */ f32 speed;
     /* 0x598 */ f32 scale;
     /* 0x59C */ f32 blur;
-    /* 0x5A0 */ EftJVec unk5A0;
+    /* 0x5A0 */ EftJVec origin;
     /* 0x5B0 */ EftJVec pos;
     /* 0x5C0 */ EftJVec prev;
     /* 0x5D0 */ EftJVec vel;
@@ -345,7 +345,7 @@ typedef struct EftJShotArg {
     /* 0x18 */ s32 count;
     /* 0x1C */ s32 kind;
     /* 0x20 */ s32 evtIdx;
-    /* 0x24 */ s32 unk24;
+    /* 0x24 */ s32 life;
     /* 0x28 */ f32 scale;
     /* 0x2C */ f32 speed;
 } EftJShotArg; /* size 0x30 */
@@ -353,11 +353,11 @@ typedef struct EftJShotArg {
 /* Parameter block of EftFlash_Start (screen flash). */
 typedef struct EftJFlashArg {
     /* 0x00 */ EftJVec color;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ f32 unk18;
+    /* 0x10 */ f32 in;
+    /* 0x14 */ s32 hold;
+    /* 0x18 */ f32 out;
     /* 0x1C */ s32 objId;
-    /* 0x20 */ s32 unk20;
+    /* 0x20 */ s32 wait;
 } EftJFlashArg; /* size 0x30 */
 
 #endif

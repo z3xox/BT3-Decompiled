@@ -51,13 +51,13 @@ typedef struct EftOTask {
 /* Texture set entry: GS TEX0 value plus the image. */
 typedef struct EftOTexEntry {
     /* 0x00 */ u64 tex0;
-    /* 0x08 */ u64 unk8;
+    /* 0x08 */ u64 image;
 } EftOTexEntry; /* size 0x10 */
 
 typedef struct EftOTexSet {
     /* 0x000 */ EftOTexEntry entry[32];
     /* 0x200 */ s32 count;
-    /* 0x204 */ s32 unk204;
+    /* 0x204 */ s32 stepped;
 } EftOTexSet; /* size 0x208 */
 
 /* ---- EftBolt (body lightning; EftBoltWork / EftBoltPool in eft_aura_part2.h) -------------------------------------- */
@@ -241,7 +241,7 @@ typedef struct EftRaysMgr {
 /* Definition of a technique's effect (EftHitDef / EftJDef / EftOwnerParam elsewhere). */
 typedef struct EftODef {
     /* 0x00 */ s16 id;
-    /* 0x02 */ s16 unk2;
+    /* 0x02 */ s16 level;
     /* 0x04 */ u8 unk4[4];
     /* 0x08 */ s8 shape;    /* 0 two spheres, 1 two boxes */
     /* 0x09 */ u8 unk9[0x2F];
@@ -403,7 +403,7 @@ typedef struct EftBlastObj {
 /* Argument of EftBodyFx_Start (FxArg3 in btl_char_fx_1.h). */
 typedef struct EftBodyFxArg {
     /* 0x0 */ s32 objId;
-    /* 0x4 */ s32 unk4;   /* effect pack number in gEftBodyFx (always 0) */
+    /* 0x4 */ s32 setIdx;   /* effect pack number in gEftBodyFx (always 0) */
     /* 0x8 */ f32 scale;
 } EftBodyFxArg; /* size 0xC */
 
