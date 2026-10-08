@@ -1,4 +1,4 @@
-old	new	rating (the agent's: solid = the code shows the meaning; uncertain = a reasonable reading, marked "guess" in config)	evidence (kept only for names that had no line in config before; the rest of the agents' sentences were lost with the build folder)
+old	new	rating (rebuilt from the change, not the agents' own column: "uncertain" is certain, "solid" also covers names whose line in config was already marked guess; the agents rated 46 of the 172 as uncertain)	evidence (kept only for names that had no line in config before; the other sentences were lost with the build folder)
 Battle_GetRuleUnk10	Battle_IsStageChangeEnabled	solid	
 BattleSide_GetUnk200	BattleSide_GetSwitchEnabled	solid	
 BattleSide_GetUnk1FC	BattleSide_GetChangeAllowed	solid	
