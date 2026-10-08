@@ -946,3 +946,15 @@ More of the same night (the geyser functions):
   / ld` means the redundancy only appeared in round two. Cross-jumping starts only from an unconditional jump;
   a block that falls into the common label without a jump of its own is never merged away. (PadWatch_GetMissing
   and BtlScene_IsEffectHidden are open on exactly these points: 2 and about 12 instructions.)
+- **A flag for a call's result** (`ok = f() != 0; if (ok) {`) fills the branch's delay slot from the target (the
+  epilogue's first `ld`) where `if (f()) {` fills it from the fall-through. A natural replacement for the
+  volatile `gOtCurRead` alias; not yet tried on EftChain_DrawStrand, EftPtcl_DrawAxisQuads, EftSurf_DrawTriOt,
+  EftWater_DrawBillboard. (EftLine_DrawSprite)
+- **`v = &arr[i]; ... &v[-1]`** is one add from a shared value and is left alone; `&arr[i - 1]` gets its own
+  temporary and becomes a walking pointer (one more saved register). Two such uses in different blocks need a
+  variable each. An inline function's argument is expanded index first (`addu a0,s2,sp`).
+- **Which hoisted constant is reloaded inside a loop** is the global allocator's priority
+  (`floor(log2(refs) * refs * 10000 / live_length)`, ties to the lower pseudo); one RTL instruction in the loop
+  changes each live length by 2. (EftWater_DrawClippedFan is open on exactly this: about 20 instructions.)
+- Fake matches of this batch: EftStreak_DrawScreen (`slot++; slot--;`), EftStreak_Draw (`register s32 zero
+  __asm__("$0"); memset(&d, zero, ...)` for `Vec4 d = { 0 };`: PS2 compiler only; a port writes the initialiser).
