@@ -11,8 +11,8 @@ of that release; the build checks its result against it.
 
 | Binary | Game code in matching C | Still in assembly |
 |---|---|---|
-| `SLUS_216.78` (main program) | 94.96% | 45 functions |
-| `BIN/DBZP.BIN` (menu program) | 99.24% | 4 functions |
+| `SLUS_216.78` (main program) | 99.92% | 4 routines the game's authors wrote in assembly (VU0 code) |
+| `BIN/DBZP.BIN` (menu program) | 99.97% | none |
 
 Both rebuilt binaries are byte-identical to the originals. The percentages count the game's own code; Sony's
 SDK libraries and the CRI sound libraries linked into the executable are out of scope. The nine vertex
