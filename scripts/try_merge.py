@@ -73,8 +73,7 @@ def main(files, keep=False):
                 j += 1
             if '{' in ' '.join(L[i:j + 1]):
                 continue  # a definition, not a declaration: left alone
-            for k in range(i, j + 1):
-                L[k] = '/* (merge: declared in a header) ' + L[k].replace('/*', '(').replace('*/', ')') + ' */'
+            del L[i:j + 1]
             dropped += 1
         open(f'{R}/src/{a}.c', 'w').write('\n'.join(L))
     b = subprocess.run('ninja -k 0', cwd=R, shell=True, capture_output=True, text=True)
