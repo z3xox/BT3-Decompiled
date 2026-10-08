@@ -969,3 +969,15 @@ More of the same night (the geyser functions):
   siblings** is a block-local variable declared in every case.
 - For a very large function fdiff's positional diff is useless after the first shift: use an aligned diff
   (difflib over the two instruction columns). (ColObb_Contact, 4,257 instructions)
+- **A callee's return type** (`void` for a function that returns `s32`) changes the scheduler's order in front
+  of the call when it ties on dependent count. (ScrXfade_StoreHalf: sceGsSetDefStoreImage returns s32)
+- **A store in a common tail, not in each arm**: `b L+4` with the first tail instruction in its delay slot does
+  not show the store is inside the arm. `&p->member` written out at every use, no variable. (Shen_BuildList)
+- **A load in a call's delay slot** means the statement stands before the call in the source. (Shen_DrawList)
+- **`xor reg,reg` against `xori` in front of a `movz`**: the register form means the `if` was converted after the
+  loop pass hoisted the constant, i.e. the skipped block was two instructions at first (a re-read of a field).
+- **Loop pass, single use**: in a loop with calls an invariant temporary used once in its block is substituted
+  back; used twice it becomes a movable and merges with an earlier one. A use deleted later still counts (the
+  argument of a `const` call whose result is unused; a dead store to a hard-register variable).
+- Fake match: Shen_DrawList (`register FlashRef *probe __asm__("$5") = &ref;`). Open: Train_BuildLists, 11
+  instructions (the entry test `found = 0; i = found; cmp found < n` with the copy alive; no C form found).
