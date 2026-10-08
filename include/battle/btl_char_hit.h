@@ -48,7 +48,7 @@ typedef struct HitPose {
     /* 0x20 */ u8 unk20[0x64 - 0x20];
     /* 0x64 */ f32 rootYaw;      /* added to rot.y by BtlHit_IsFromBehind */
     /* 0x68 */ u8 unk68[0x90 - 0x68];
-    /* 0x90 */ f32 unk90;      /* used as the launch pitch with attack flag 0x200000 */
+    /* 0x90 */ f32 pitch;      /* used as the launch pitch with attack flag 0x200000 */
     /* 0x94 */ f32 yaw;        /* facing yaw (fighter + 0xA4) */
 } HitPose;
 

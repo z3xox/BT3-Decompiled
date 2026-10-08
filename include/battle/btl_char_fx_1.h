@@ -20,10 +20,10 @@ typedef struct FxPose {
     /* 0x80 [0x090] */ Vec4 dir;    /* a vector every "flash" effect gets as its second vector */
     /* 0x90 [0x0A0] */ f32 pitch;
     /* 0x94 [0x0A4] */ f32 yaw;       /* facing */
-    /* 0x98 [0x0A8] */ f32 unk98;     /* reference speed: |vel| / unk98 > 0.5 starts the fast-move effect */
+    /* 0x98 [0x0A8] */ f32 speed;     /* reference speed: |vel| / speed > 0.5 starts the fast-move effect */
     /* 0x9C [0x0AC] */ u8 unk9C[0xB0 - 0x9C];
-    /* 0xB0 [0x0C0] */ Vec4 unkB0;    /* ground point under the fighter; .y is compared with the water level */
-    /* 0xC0 [0x0D0] */ Vec4 groundNormal;    /* passed with unkB0 to the ground dust (the ground normal: inferred) */
+    /* 0xB0 [0x0C0] */ Vec4 ground;    /* ground point under the fighter; .y is compared with the water level */
+    /* 0xC0 [0x0D0] */ Vec4 groundNormal;    /* passed with ground to the ground dust (the ground normal: inferred) */
     /* 0xD0 [0x0E0] */ u32 groundFlags;     /* state bits; any of 0x30000065 cancels the ground effects */
 } FxPose;
 

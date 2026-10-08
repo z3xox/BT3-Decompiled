@@ -905,7 +905,7 @@ void BtlMove_SnapToOpponent(BtlMoveChr *chr) {
     Vec4_Add(&pose->pos, &pose->pos, &d);
     pose->speed = 0.0f;
     pose->fallSpeed = 0.0f;
-    Vec4_SetZero(&pose->unk70);
+    Vec4_SetZero(&pose->impulse);
     BtlChar_RequestBodyWarp(chr, &opp);
     BtlChar_SetFlag(chr, 0x3F);
     BtlChar_SetFlag(chr, 0x24);
@@ -1486,7 +1486,7 @@ f32 BtlMove_CalcJumpSpeed(f32 height) {
 
 /* Sets the impulse velocity (knock-back) unless the current one is larger. */
 void BtlMove_SetImpulse(BtlMoveChr *chr, Vec4 *vel) {
-    Vec4 *cur = &BtlChar_GetPos(chr)->unk70;
+    Vec4 *cur = &BtlChar_GetPos(chr)->impulse;
 
     if (Vec3_Length(cur) < Vec3_Length(vel)) {
         Vec4_Copy(cur, vel);
@@ -1559,7 +1559,7 @@ s32 BtlMove_ApplyImpulse(BtlMoveChr *chr) {
     BtlMovePose *pose = BtlChar_GetPos(chr);
 
     if (!BtlChars_IsTimeStopped()) {
-        Vec4 *vel = &pose->unk70;
+        Vec4 *vel = &pose->impulse;
         f32 len;
 
         Vec4_Add(&pose->pos, &pose->pos, vel);
@@ -1645,7 +1645,7 @@ void BtlMove_UpdateDefenseTimers(BtlMoveChr *chr) {
         if (on) {
             chr->unk1068 = -1;
         }
-        if (chr->unkFB0 != 1) {
+        if (chr->reaction != 1) {
             chr->unk1068 = -30;
         }
     }

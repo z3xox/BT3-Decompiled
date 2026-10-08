@@ -2285,7 +2285,7 @@ void EftRushShot_Term(EftTask *task) {
         EftRushShot_FreeModels(task);
     }
     EftEmit_TermState(w->model, &w->inst);
-    if (arg->def->unk4 != 0) {
+    if (arg->def->kind != 0) {
         EftShot_SetHeldFlagA8(arg->objId);
     }
 }

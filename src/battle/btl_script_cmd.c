@@ -455,7 +455,7 @@ s32 BtlScriptCmd_LoadText(u32 phase, void *taskWork) {
         s32 base;
 
         base = -1;
-        switch (gProgress->unk0) {
+        switch (gProgress->language) {
         case 0:
             base = 0x231;
             break;

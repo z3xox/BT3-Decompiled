@@ -45,8 +45,8 @@ typedef struct BtlScriptCam {
 /* A text window. Only the anchor is read here; the whole block is handed to the text drawing code. */
 typedef struct BtlScriptWindow {
     /* 0x00 */ u8 unk0[0x48];
-    /* 0x48 */ s32 unk48; /* x handed to the text draw */
-    /* 0x4C */ s32 unk4C; /* y of the bottom line: the draw starts at unk4C - text height */
+    /* 0x48 */ s32 x; /* x handed to the text draw */
+    /* 0x4C */ s32 y; /* y of the bottom line: the draw starts at y - text height */
 } BtlScriptWindow; /* size 0x50 */
 
 #define BTL_SCRIPT_NO_MEMBER 0x7FFF

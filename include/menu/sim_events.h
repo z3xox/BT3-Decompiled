@@ -40,7 +40,7 @@ typedef struct USimDay {
     /* 0xB78 */ s32 faceA;
     /* 0xB7C */ s32 faceB;
     /* 0xB80 */ s32 rank[3];
-    /* 0xB8C */ s32 unkB8C;         /* answer of the yes / no window (SimDay_Cmd(0x11)) */
+    /* 0xB8C */ s32 answer;         /* answer of the yes / no window (SimDay_Cmd(0x11)) */
 } USimDay;
 
 /* One rank of a training (SimTrain of include/menu/sim_day.h). */

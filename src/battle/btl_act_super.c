@@ -395,7 +395,7 @@ void BtlSuper_Begin(BtlSuperChr *chr, s32 cls, s32 force) {
     if (force == 0 && cls == 4) {
         return;
     }
-    BtlChar_GetPos(chr)->unk98 = 0.0f;
+    BtlChar_GetPos(chr)->speed = 0.0f;
     BtlChar_GetPos(chr)->velY = 0.0f;
     BtlChar_ClearFlagRange(chr, 0x9B, 0xA0);
     BtlChar_ClearFlagRange(chr, 0xA7, 0xAA);
@@ -2200,7 +2200,7 @@ void BtlAct_SuperRushSequenceHandler(ActGChr *chr, s32 phase) {
                     case 0:
                         if ((chr->work[0] & 1) && BtlAnim_IsNew(chr)) {
                             BtlAct_SetFormRandom(chr);
-                            BtlChange_RequestChara(chr->player, chr->form.chara, chr->form.costume, chr->form.unk14,
+                            BtlChange_RequestChara(chr->player, chr->form.chara, chr->form.costume, chr->form.variant,
                                                    chr->form.animChara, chr->form.unk1C, chr->form.voiceChara);
                         }
                         if (BtlAnim_Advance(chr, 0)) {
@@ -2253,7 +2253,7 @@ void BtlAct_SuperRushSequenceHandler(ActGChr *chr, s32 phase) {
                     case 0:
                         if (!(chr->work[0] & 1) && BtlAnim_IsNew(chr)) {
                             BtlAct_SetFormCurrent(chr);
-                            BtlChange_RequestChara(chr->player, chr->form.chara, chr->form.costume, chr->form.unk14,
+                            BtlChange_RequestChara(chr->player, chr->form.chara, chr->form.costume, chr->form.variant,
                                                    chr->form.animChara, chr->form.unk1C, chr->form.voiceChara);
                         }
                         if (BtlChar_TestFlag(chr, 0x31)) {
@@ -2291,7 +2291,7 @@ void BtlAct_SuperRushSequenceHandler(ActGChr *chr, s32 phase) {
                     case 0:
                         if ((chr->work[0] & 1) && BtlAnim_IsNew(chr)) {
                             BtlAct_SetFormCurrent(chr);
-                            BtlChange_RequestChara(chr->player, chr->form.chara, chr->form.costume, chr->form.unk14,
+                            BtlChange_RequestChara(chr->player, chr->form.chara, chr->form.costume, chr->form.variant,
                                                    chr->form.animChara, chr->form.unk1C, chr->form.voiceChara);
                         }
                         if (BtlChar_TestFlag(chr, 0x31)) {
@@ -3080,7 +3080,7 @@ void BtlAct_ClashLostHandler(ActGChr *chr, s32 phase) {
     if (phase == 1) {
         if ((chr->work[0] & 1) && chr->actionFrame == 1) {
             BtlChar_SavePlacement(chr);
-            BtlChange_RequestChara(chr->player, chr->form.chara, chr->form.costume, chr->form.unk14, chr->form.animChara,
+            BtlChange_RequestChara(chr->player, chr->form.chara, chr->form.costume, chr->form.variant, chr->form.animChara,
                                    chr->form.unk1C, chr->form.voiceChara);
         }
         if (BtlAnim_Advance(chr, 0)) {
@@ -3174,7 +3174,7 @@ s32 BtlAct_ChangeRandomCharaHandler(ActGChr *chr, s32 phase) {
             case 0:
                 BtlChar_SavePlacement(chr);
                 BtlAct_SetFormRandom(chr);
-                BtlChange_RequestChara(chr->player, chr->form.chara, chr->form.costume, chr->form.unk14,
+                BtlChange_RequestChara(chr->player, chr->form.chara, chr->form.costume, chr->form.variant,
                                        chr->form.animChara, chr->form.unk1C, chr->form.voiceChara);
                 ++*step;
                 break;

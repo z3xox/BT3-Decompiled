@@ -301,7 +301,7 @@ typedef struct SimDay {
     /* 0xB78 */ s32 faceA;          /* pictures the monitor goes back to */
     /* 0xB7C */ s32 faceB;
     /* 0xB80 */ s32 rank[SIMDAY_TRAIN_KINDS]; /* rank of each training at the current turn */
-    /* 0xB8C */ s32 unkB8C;         /* answer of the two-row menu: 1 = first row */
+    /* 0xB8C */ s32 answer;         /* answer of the two-row menu: 1 = first row */
     /* 0xB90 */ SimChange chg;
     /* 0xBB4 */ s32 potara;         /* bit n: item plate n is lit */
     /* 0xBB8 */ s32 levelUp;        /* a level-up is due when the board comes back */

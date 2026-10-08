@@ -38,10 +38,10 @@ typedef struct BtlMovePose {
     /* 0x20 [0x030] */ Vec4 dispOfs;     /* display offset rebuilt every frame: hover bob (y) and shake (x, z) */
     /* 0x30 [0x040] */ Vec4 vel;     /* movement of the previous frame between snapshots 0 and 1 (written by
                                           BtlChar_EndFrame); used here as "my velocity" */
-    /* 0x40 [0x050] */ Vec4 unk40;     /* whole movement of the previous frame (other); read here through BtlOpp_GetVelocity */
+    /* 0x40 [0x050] */ Vec4 move;     /* whole movement of the previous frame (other); read here through BtlOpp_GetVelocity */
     /* 0x50 [0x060] */ Vec4 rootPos;     /* root motion position (other) */
     /* 0x60 [0x070] */ Vec4 rootRot;     /* root motion rotation (other) */
-    /* 0x70 [0x080] */ Vec4 unk70;     /* impulse velocity (knock-back), metres per frame */
+    /* 0x70 [0x080] */ Vec4 impulse;     /* impulse velocity (knock-back), metres per frame */
     /* 0x80 [0x090] */ Vec4 dir;       /* unit direction of travel, w = 0 */
     /* 0x90 [0x0A0] */ f32 pitch;      /* heading pitch, positive = up */
     /* 0x94 [0x0A4] */ f32 yaw;        /* heading yaw */
@@ -72,7 +72,7 @@ typedef struct BtlMoveChr {
     /* 0x01F0 */ u8 unk1F0[0x4A0 - 0x1F0];
     /* 0x04A0 */ f32 camYaw;     /* yaw of the fighter camera: the only camera value this file reads */
     /* 0x04A4 */ u8 unk4A4[0xFB0 - 0x4A4];
-    /* 0x0FB0 */ s32 unkFB0;     /* pending hit reaction id; != 1 closes the first defence window */
+    /* 0x0FB0 */ s32 reaction;     /* pending hit reaction id; != 1 closes the first defence window */
     /* 0x0FB4 */ u8 unkFB4[0xFE8 - 0xFB4];
     /* 0x0FE8 */ s32 shakeTimer;     /* > 0: the model shakes sideways, the side alternating with bit 0 */
     /* 0x0FEC */ u8 unkFEC[0x1068 - 0xFEC];

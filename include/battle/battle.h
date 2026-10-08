@@ -221,7 +221,7 @@ typedef struct BattleMemberPool {
 typedef struct BattleResult {
     /* 0x00 */ s32 winner;     /* BTL_RESULT_* */
     /* 0x04 */ s32 reason;     /* BTL_REASON_* */
-    /* 0x08 */ s32 unk8;       /* 1 when the battle was aborted */
+    /* 0x08 */ s32 aborted;       /* 1 when the battle was aborted */
     /* 0x0C */ s32 unkC;
     /* 0x10 */ u64 eventSummary; /* built by BattleResult_CollectEvents from side 0's held events */
     /* 0x18 */ s32 frames;     /* BattleResult_CountFrame */

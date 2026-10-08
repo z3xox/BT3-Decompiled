@@ -2292,7 +2292,7 @@ void BtlObj_BindTables(BObj *obj) {
 
     mdl = &obj->mdl;
     slot = obj->slot;
-    mdl->unk00 = BObjFile_GetEntry(&slot->file[0], 3);
+    mdl->file = BObjFile_GetEntry(&slot->file[0], 3);
     mdl->texFile = BObjFile_GetEntry(&slot->file[0], 0xC);
     mdl->body = BObjFile_GetEntry(&slot->file[0], 2);
     if (slot->file[1].buf != NULL) {

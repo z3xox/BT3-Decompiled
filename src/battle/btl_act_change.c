@@ -562,7 +562,7 @@ s32 BtlAct_DraggedDown(BtlActHChr *chr, s32 phase) {
             }
         }
         BtlAnim_Play(chr, startAir ? 0xC4 : 0xC3, 0.0f);
-        pose->unk98 = 0.0f;
+        pose->speed = 0.0f;
         pose->fallSpeed = 0.0f;
     }
     if (phase == 1) {
@@ -773,7 +773,7 @@ s32 BtlAct_TransformA(BtlActHChr *chr, s32 phase) {
         pose = BtlChar_GetPos(chr);
         BtlAnim_Play(chr, 0x177, 0.0f);
         BtlAnim_PlaySub(chr, 0x178);
-        pose->unk98 = 0.0f;
+        pose->speed = 0.0f;
         pose->fallSpeed = 0.0f;
         BtlMove_SetHeading(chr, pose->rot.y, 0.0f);
         BtlChar_SetHeldFlag(chr, 0xE);
@@ -866,7 +866,7 @@ s32 BtlAct_TransformB(BtlActHChr *chr, s32 phase) {
         pose = BtlChar_GetPos(chr);
         BtlAnim_Play(chr, 0x18F, 0.0f);
         BtlAnim_PlaySub(chr, 0x190);
-        pose->unk98 = 0.0f;
+        pose->speed = 0.0f;
         pose->fallSpeed = 0.0f;
         BtlMove_SetHeading(chr, pose->rot.y, 0.0f);
         BtlChar_SetHeldFlag(chr, 0xE);
@@ -934,7 +934,7 @@ s32 BtlAct_TransformB(BtlActHChr *chr, s32 phase) {
 s32 BtlAct_TransformC(BtlActHChr *chr, s32 phase) {
     if (phase == 0) {
         BtlAnim_Play(chr, 0x177, 0.0f);
-        BtlChar_GetPos(chr)->unk98 = 0.0f;
+        BtlChar_GetPos(chr)->speed = 0.0f;
         BtlChar_GetPos(chr)->fallSpeed = 0.0f;
         BtlMove_SetHeading(chr, BtlChar_GetPos(chr)->rot.y, 0.0f);
         BtlChar_SavePlacement(chr);
@@ -1019,7 +1019,7 @@ s32 BtlAct_TransformD(BtlActHChr *chr, s32 phase) {
         pose = BtlChar_GetPos(chr);
         BtlAnim_Play(chr, 0x2B, 0.0f);
         BtlAnim_PlaySub(chr, 0x17E);
-        pose->unk98 = 0.0f;
+        pose->speed = 0.0f;
         pose->fallSpeed = 0.0f;
         BtlMove_SetHeading(chr, pose->rot.y, 0.0f);
         ChrCam_RequestCut(chr, 0, 4);
@@ -1128,7 +1128,7 @@ s32 BtlAct_TransformE(BtlActHChr *chr, s32 phase) {
         pose = BtlChar_GetPos(chr);
         BtlAnim_Play(chr, 0x177, 0.0f);
         BtlAnim_PlaySub(chr, 0x178);
-        pose->unk98 = 0.0f;
+        pose->speed = 0.0f;
         pose->fallSpeed = 0.0f;
         BtlMove_SetHeading(chr, pose->rot.y, 0.0f);
         BtlChar_SetHeldFlag(chr, 0xE);
@@ -1237,7 +1237,7 @@ s32 BtlAct_TransformE(BtlActHChr *chr, s32 phase) {
 s32 BtlAct_Fusion(BtlActHChr *chr, s32 phase) {
     if (phase == 0) {
         BtlAnim_Play(chr, 0x1F, 0.0f);
-        BtlChar_GetPos(chr)->unk98 = 0.0f;
+        BtlChar_GetPos(chr)->speed = 0.0f;
         BtlChar_GetPos(chr)->fallSpeed = 0.0f;
         BtlMove_SetHeading(chr, BtlChar_GetPos(chr)->rot.y, 0.0f);
         BtlChar_SavePlacement(chr);
@@ -1366,7 +1366,7 @@ s32 BtlAct_SwitchLeave(BtlActHChr *chr, s32 phase) {
     if (phase == 0) {
         BtlAnim_Play(chr, 0xEE, 0.0f);
         BtlAnim_PlaySub(chr, 0x2F);
-        BtlChar_GetPos(chr)->unk98 = 0.0f;
+        BtlChar_GetPos(chr)->speed = 0.0f;
         BtlChar_GetPos(chr)->fallSpeed = 0.0f;
         BtlMove_SetHeading(chr, BtlChar_GetPos(chr)->rot.y, 0.0f);
         BtlChar_SavePlacement(chr);

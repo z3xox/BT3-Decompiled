@@ -1092,7 +1092,7 @@ void GfxWater_Draw(void) {
     if (gBtlCam == NULL) {
         return;
     }
-    if (Battle_IsSplitScreen() && !DemoCam_IsActive() && gBtlCam->view->unk280 != 0) {
+    if (Battle_IsSplitScreen() && !DemoCam_IsActive() && gBtlCam->view->split != 0) {
         split = 1;
         views = 2;
     }

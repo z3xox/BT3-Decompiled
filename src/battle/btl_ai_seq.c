@@ -591,10 +591,10 @@ s32 BtlAiPick_SkillCharge(BtlAiWork *ai, s32 n, s32 arg) {
 
     seq = SEQA(ai);
     roll = Rand_Range(100);
-    if (plan->unk8 == -1) {
+    if (plan->slot == -1) {
         return -1;
     }
-    if (plan->unk8 == 2) {
+    if (plan->slot == 2) {
         return -1;
     }
     if (roll < 30) {
@@ -604,7 +604,7 @@ s32 BtlAiPick_SkillCharge(BtlAiWork *ai, s32 n, s32 arg) {
     } else {
         seq->timer = Rand_Range(100);
     }
-    return plan->unk8;
+    return plan->slot;
 }
 
 /* Pick 6: a reaction delay in frames as the step parameter. arg 1: b + b * r with b = half of { 45, 33.75, 22.5,
@@ -1349,7 +1349,7 @@ s32 BtlAiStep_FireSkill(BtlAiWork *ai) {
     s8 kind;
     u8 uc;
 
-    if (plan->unk8 == -1) {
+    if (plan->slot == -1) {
         return 1;
     }
     action[0] = BtlCharApi_GetAnimId(ai->objId);
@@ -1359,7 +1359,7 @@ s32 BtlAiStep_FireSkill(BtlAiWork *ai) {
     cls[1] = tbl->actClass[action[1]];
     if (busy == 0 && !(seq->flags & 0x1000)) {
         if (seq->flags & 0x40) {
-            if (p->cost[plan->unk8] > BtlSide_GetKi(ai->objId)) {
+            if (p->cost[plan->slot] > BtlSide_GetKi(ai->objId)) {
                 return 1;
             }
             seq->flags = (seq->flags ^ 0x800) & ~0x40;
@@ -1370,7 +1370,7 @@ s32 BtlAiStep_FireSkill(BtlAiWork *ai) {
             return 1;
         }
         seq->waitTimer = 0;
-        if (!(p->kind[plan->unk8] == 5 && BtlChar_IsStage4Or27() != 0)) {
+        if (!(p->kind[plan->slot] == 5 && BtlChar_IsStage4Or27() != 0)) {
             goto tail;
         }
         if (cls[0] != 0x16) {
@@ -1384,7 +1384,7 @@ s32 BtlAiStep_FireSkill(BtlAiWork *ai) {
     }
     return 0;
 tail:
-    kind = p->type[plan->unk8];
+    kind = p->type[plan->slot];
     if (kind == 2) {
         if (cls[0] != 0x16) {
             return 1;

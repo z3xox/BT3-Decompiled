@@ -172,7 +172,7 @@ typedef struct BtlScriptCmdReward {
 
 /* The part of the progress struct (gProgress) the handlers touch; local view. */
 typedef struct BtlScriptCmdProgress {
-    /* 0x00 */ s32 unk0;       /* 0 / 1: picks the text file set (language) */
+    /* 0x00 */ s32 language;       /* 0 / 1: picks the text file set (language) */
     /* 0x04 */ u8 unk4[0x38];
     /* 0x3C */ s32 difficulty; /* 1: CPU level + 6, 2: + 9 */
     /* 0x40 */ BtlScriptCmdReward reward;

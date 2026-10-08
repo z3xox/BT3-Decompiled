@@ -122,7 +122,7 @@ typedef struct EftAura {
     /* 0x024 */ s32 partsStarted; /* body parts that have had their first flame, 0..10 */
     /* 0x028 */ s32 fade;        /* 0 steady, 1 fading in, 2 / 3 fading out (3 sets flag 2 at the end) */
     /* 0x02C */ s32 burst;       /* 0 none, 1 rising, 2 holding, 3 falling */
-    /* 0x030 */ s32 unk30;
+    /* 0x030 */ s32 frame;
     /* 0x034 */ s32 flameCount;  /* live flames */
     /* 0x038 */ f32 alpha;       /* 0..1, driven by `fade` */
     /* 0x03C */ f32 burstSpeed;  /* cfg->burstSpeed * burstLevel, added to every flame's speed */

@@ -134,7 +134,7 @@ s32 BtlAiCond_OppSkillFlags(BtlAiWork *ai, u8 arg) {
 
 /* Condition 13: plan word 8 is 2. */
 s32 BtlAiCond_Plan8Is2(BtlAiWork *ai, u8 arg) {
-    return (ai->plan.unk8 == 2) == arg;
+    return (ai->plan.slot == 2) == arg;
 }
 
 /* Conditions 14, 15, 16: bits 0, 1, 2 of work + 0xC. */

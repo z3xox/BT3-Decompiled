@@ -701,7 +701,7 @@ void EftRingShot_Init(EftTask *task, EftTechArg *arg) {
     w->homing = def->homing;
     w->size = def->size;
     w->drawSize = def->size;
-    w->total = def->unk9 * def->count;
+    w->total = def->shots * def->count;
     w->hitSize = w->size;
     w->model = model;
     EftEmit_InitState(model, &w->inst);
@@ -738,7 +738,7 @@ void EftRingShot_Term(EftTask *task) {
     if (!(w->flags & EFT_RINGSHOT_DONE)) {
         EftShot_SetHeldFlagA8(arg->objId);
     }
-    if (arg->def->unk4 != 0) {
+    if (arg->def->kind != 0) {
         EftShot_SetHeldFlagA9(arg->objId);
     }
 }

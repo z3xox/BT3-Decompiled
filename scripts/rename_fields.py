@@ -96,7 +96,8 @@ def main(lists):
             report.append(f'{f} {s}: structure not found'); failed += 1; continue
         body = text[span[0]:span[1]]
         missing = [a for a in M if not re.search(r'\b' + re.escape(a) + r'\b', body)]
-        clash = [b for b in M.values() if re.search(r'\b' + re.escape(b) + r'\b', body)]
+        code = re.sub(r'/\*.*?\*/', '', body, flags=re.S)   # a field's declarator, not a word of a comment
+        clash = [b for b in M.values() if re.search(r'\b' + re.escape(b) + r'\s*(\[[^\]]*\]\s*)*(:\s*\d+\s*)?[;,]', code)]
         M = {a: b for a, b in M.items() if a not in missing and b not in clash}
         if missing or clash:
             report.append(f'{f} {s}: not in the structure {missing}; name already there {clash}')

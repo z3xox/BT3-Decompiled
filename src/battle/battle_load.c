@@ -1031,7 +1031,7 @@ void BattleResult_Finish(void) {
     BattleResult_CollectEvents(res);
     res->clock = *BtlSeq_GetClock();
     if (res->winner & 8) {
-        res->unk8 = 1;
+        res->aborted = 1;
     }
     if (res->reason & 0x20) {
         res->winner |= 2;

@@ -75,7 +75,7 @@ typedef struct BtlCollPose {
     /* 0x80 */ Vec4 dir;      /* forward vector (used as the deflect direction for a motionless blast) */
     /* 0x90 */ f32 pitch;
     /* 0x94 */ f32 yaw;         /* facing yaw (fighter + 0xA4) */
-    /* 0x98 */ f32 unk98;
+    /* 0x98 */ f32 speed;
     /* 0x9C */ f32 velY;        /* vertical speed: zeroed on landing, halved when flag 0x11 rises */
     /* 0xA0 */ u8 unkA0[0x10];
     /* 0xB0 */ BtlCollVec groundPos;  /* copy of the ground query below the fighter */

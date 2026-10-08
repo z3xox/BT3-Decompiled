@@ -161,7 +161,7 @@ typedef struct ChrCamBody {
 typedef struct ChrCamChr {
     /* 0x000 */ s32 side;      /* 0 / 1 (btl_input.h: player); the opponent is BtlChar_Get(side == 0); passed to DemoCam_PlayCharAnim0..2 */
     /* 0x004 */ s32 pad;
-    /* 0x008 */ s32 unk8;
+    /* 0x008 */ s32 index;
     /* 0x00C */ s32 objId;     /* BtlObj_Get index of the model object */
     /* 0x010 */ ChrCamBody body;
     /* 0x0A8 */ u8 unkA8[0x420 - 0xA8];

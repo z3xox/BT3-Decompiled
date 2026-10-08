@@ -71,7 +71,7 @@ s32 SimEv32(USimDay *day) {
         break;
     case 7:
         day->msgLine = -1;
-        if (day->unkB8C == 0) {
+        if (day->answer == 0) {
             day->seq = 19;
             day->seqTimer = 0;
         } else {

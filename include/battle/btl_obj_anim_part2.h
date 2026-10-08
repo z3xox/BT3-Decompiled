@@ -234,7 +234,7 @@ typedef struct BObjChainB {
 
 /* The tables an object reads out of its files (object + 0x18). */
 typedef struct BObjMdl {
-    /* 0x000 */ void *unk00;            /* (v) model file entry 3 */
+    /* 0x000 */ void *file;            /* (v) model file entry 3 */
     /* 0x004 */ void *texFile;            /* (v) entry 0xC */
     /* 0x008 */ u8 unk08[0x20];
     /* 0x028 */ BObjModel *model;       /* object + 0x40 */
@@ -250,7 +250,7 @@ typedef struct BObjMdl {
     /* 0x098 */ void *camAnims[1];         /* (v) entries 0x29..0x2B run from here ... */
     /* 0x09C */ void *common9C;         /* (v) ... but BtlObj_BindCommonTables then stores common entry 12 here */
     /* 0x0A0 */ void *unkA0;
-    /* 0x0A4 */ void *unkA4;            /* (v) entry 0x2D + gProgress->unk00 */
+    /* 0x0A4 */ void *unkA4;            /* (v) entry 0x2D + gProgress->file */
     /* 0x0A8 */ void *anims[0x19E];     /* (v) animation file 1, entries 1..0x19E (object + 0xC0) */
     /* 0x720 */ void *modelAnims[8];        /* (v) entries 0x1D..0x24 */
     /* 0x740 */ BObjLipData *lip[100];  /* (v) entries 0x35.. (0x99.. for the second voice language) */

@@ -33,7 +33,7 @@ typedef struct GfxLensView {
     /* 0x00 */ u8 unk00[0x40];
     /* 0x40 */ Mtx44 world2view2; /* world-to-view matrix */
     /* 0x80 */ u8 unk80[0x200];
-    /* 0x280 */ s32 unk280; /* non-zero: the view is shown (split screen) */
+    /* 0x280 */ s32 split; /* non-zero: the view is shown (split screen) */
     /* 0x284 */ u8 unk284[0xC];
 } GfxLensView; /* 0x290 */
 

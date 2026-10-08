@@ -221,7 +221,7 @@ void BtlScript_UpdateView(void) {
         Font_PushStyle();
         Font_SetStyle(window);
         text = BtlScript_GetText(work->textId);
-        Font_PrintAt(window->unk48, window->unk4C - Font_GetHeight(text), text);
+        Font_PrintAt(window->x, window->y - Font_GetHeight(text), text);
         Font_PopStyle();
         Font_Flush(state);
     }

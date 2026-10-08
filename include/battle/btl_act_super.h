@@ -22,7 +22,7 @@ typedef struct BtlSuperPose {
     /* 0x00 */ Vec4 pos;
     /* 0x10 */ Vec4 rot;       /* rot.y = model yaw */
     /* 0x20 */ u8 unk20[0x98 - 0x20];
-    /* 0x98 */ f32 unk98;      /* zeroed with velY when a technique starts */
+    /* 0x98 */ f32 speed;      /* zeroed with velY when a technique starts */
     /* 0x9C */ f32 velY;       /* vertical speed (btl_char_coll.h) */
 } BtlSuperPose;
 
@@ -224,7 +224,7 @@ typedef struct ActGForm {
     /* 0x08 */ s32 costume;
     /* 0x0C */ s32 cost;
     /* 0x10 */ s32 kind;
-    /* 0x14 */ s32 unk14;       /* model variant requested (1 from BtlAct_SetFormCurrent) */
+    /* 0x14 */ s32 variant;       /* model variant requested (1 from BtlAct_SetFormCurrent) */
     /* 0x18 */ s32 animChara;
     /* 0x1C */ s32 unk1C;
     /* 0x20 */ s32 voiceChara;

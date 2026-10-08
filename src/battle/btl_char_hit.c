@@ -1322,7 +1322,7 @@ void BtlHit_ApplyHit(HitChr *atk) {
                 b = BtlAtk_GetLaunchAngleB(atk);
                 if (af & 0x200000) {
                     a = 0.0f;
-                    b = BtlChar_GetPos(atk)->unk90;
+                    b = BtlChar_GetPos(atk)->pitch;
                 }
                 if (def->react.back) {
                     def->react.turnYaw = BtlUtil_WrapAngle(def->react.yaw + a);

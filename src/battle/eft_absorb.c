@@ -67,7 +67,7 @@ void EftAbsorb_DrawOne(s32 objId, EftTask *task, EftModel *model, EftModelInst *
                 s32 spawn = EftEmit_GetFlagsFromMask(model, inst, objId, part, sub, w->flags & EFT_ABSORB_END, 0, w->phaseMask);
 
                 if (spawn != 0) {
-                    EftEmit_Spawn(model, inst, w->unk5F0, pos, dir, objId, 0, 3, part, sub, spawn, w->scale);
+                    EftEmit_Spawn(model, inst, w->nodes, pos, dir, objId, 0, 3, part, sub, spawn, w->scale);
                 }
             }
         }
@@ -98,12 +98,12 @@ void EftAbsorb_Init(EftTask *task, EftAbsorbArg *arg) {
         BtlCharApi_GetNodePos(owner->objId, 0x36, &w->pos[0]);
         Vec4_Set(&w->dir[0], 0.0f, -1.0f, 0.0f, 1.0f);
         w->phaseMask |= 1;
-        EftEmit_SetNode(w->unk5F0, 0, 0x36, NULL);
+        EftEmit_SetNode(w->nodes, 0, 0x36, NULL);
     } else {
         BtlCharApi_GetNodePos(owner->objId, 0x15, &w->pos[0]);
         BtlCharApi_GetNodePos(owner->objId, 0x23, &w->pos[1]);
         w->phaseMask |= 2;
-        EftEmit_SetNode(w->unk5F0, 1, 0x36, NULL);
+        EftEmit_SetNode(w->nodes, 1, 0x36, NULL);
         BtlCharApi_GetNodePos(owner->objId, 0x14, &a);
         BtlCharApi_GetNodePos(owner->objId, 0x22, &b);
         Vec3_Sub(&w->dir[0], &w->pos[0], &a);
@@ -143,17 +143,17 @@ void EftAbsorb_Update(EftTask *task) {
             BtlCharApi_GetNodePos(owner->objId, 0x36, &w->pos[0]);
             if (BtlCharApi_ObjTestAttr(owner->objId, 0x400)) {
                 w->phaseMask |= 1;
-                nodes = w->unk5F0;
+                nodes = w->nodes;
                 EftEmit_SetNode(nodes, 0, 0x36, NULL);
             } else {
-                nodes = w->unk5F0;
+                nodes = w->nodes;
                 BtlCharApi_ObjTestAttr(owner->objId, 0x1000);
             }
         } else {
             BtlCharApi_GetNodePos(owner->objId, 0x15, &w->pos[0]);
             BtlCharApi_GetNodePos(owner->objId, 0x23, &w->pos[1]);
             w->phaseMask |= 2;
-            nodes = w->unk5F0;
+            nodes = w->nodes;
             EftEmit_SetNode(nodes, 1, 0x36, NULL);
             BtlCharApi_GetNodePos(owner->objId, 0x14, &a);
             BtlCharApi_GetNodePos(owner->objId, 0x22, &b);

@@ -39,7 +39,7 @@ typedef struct EftJDef {
     /* 0x00 */ s16 id;      /* effect id: selects the look and the special cases below */
     /* 0x02 */ s16 recType; /* copied to the hit record's type */
     /* 0x04 */ s8 cls;     /* non-zero: EftShot_SetHeldFlagA8(objId) when the item ends; zero: fire sound */
-    /* 0x05 */ s8 unk5;
+    /* 0x05 */ s8 kind;
     /* 0x06 */ s8 unk6;
     /* 0x07 */ s8 unk7;
     /* 0x08 */ s8 shape;    /* 0 two spheres, 1 two capsules along the beam */

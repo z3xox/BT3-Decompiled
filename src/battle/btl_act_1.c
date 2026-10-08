@@ -179,16 +179,16 @@ s32 BtlAct_StepCharge(BtlActAChr *chr) {
 
     chr->chargeTimer = BtlUtil_MinF(chr->chargeTimer + rate * (1.0f / 22.5f), 1.0f);
     if (chr->chargeTimer < 1.0f) {
-        chr->unkD78 = chr->chargeTimer / rate;
+        chr->charge = chr->chargeTimer / rate;
     } else {
-        chr->unkD78 = 1.0f;
+        chr->charge = 1.0f;
     }
-    return 1.0f <= chr->unkD78;
+    return 1.0f <= chr->charge;
 }
 
 /* Takes the charge level from the animation progress. */
 void BtlAct_SetChargeFromAnim(BtlActAChr *chr) {
-    chr->unkD78 = BtlAnim_GetProgress(chr);
+    chr->charge = BtlAnim_GetProgress(chr);
 }
 
 /* Sets the charge animation's duration from the charge rate (1.5 s at rate 1, at least 0.75 s). */
@@ -676,7 +676,7 @@ s32 BtlAct_SmashChargeHandler(BtlActAChr *chr, s32 phase) {
             case 0x58:
             case 0x5B:
                 if (BtlAnim_IsNew(chr)) {
-                    if (0.99f < chr->unkD78) {
+                    if (0.99f < chr->charge) {
                         BtlCharSnd_PlayCommon(chr, 0x2F);
                         BtlChar_SetVibration(chr, 1.0f, 0.3f);
                     }
@@ -684,7 +684,7 @@ s32 BtlAct_SmashChargeHandler(BtlActAChr *chr, s32 phase) {
                     pose = BtlChar_GetPos(chr);
                     pose->speed = BtlAtk_GetLaunchSpeed(chr);
                 }
-                BtlAnim_SetObjRate(chr, chr->unkD78 + 1.0f);
+                BtlAnim_SetObjRate(chr, chr->charge + 1.0f);
                 if (BtlAnim_Advance(chr, 0)) {
                     BtlAct_Request(chr, 0xB);
                 }
@@ -896,7 +896,7 @@ s32 BtlAct_SmashFullHandler(BtlActAChr *chr, s32 phase) {
                 BtlAnim_AdvanceThen(chr, BtlAnim_GetId(chr) + 1, 0.0f, 0);
                 BtlChar_SetFlag(chr, 0x125);
                 BtlChar_SetFlag(chr, 0x12A);
-                chr->unkD78 = 1.0f;
+                chr->charge = 1.0f;
                 break;
             case 0x4A:
             case 0x4D:
@@ -907,7 +907,7 @@ s32 BtlAct_SmashFullHandler(BtlActAChr *chr, s32 phase) {
                 BtlAnim_AdvanceThen(chr, BtlAnim_GetId(chr) + 1, 0.0f, 0);
                 BtlChar_SetFlag(chr, 0x125);
                 BtlChar_SetFlag(chr, 0x12A);
-                chr->unkD78 = 1.0f;
+                chr->charge = 1.0f;
                 break;
             case 0x4C:
             case 0x4F:
@@ -1493,7 +1493,7 @@ s32 BtlAct_SmashVanishHandler(BtlActAChr *chr, s32 phase) {
                     case 0x65:
                     case 0x68:
                         BtlAnim_AdvanceThen(chr, BtlAnim_GetId(chr) + 2, 0.0f, 0);
-                        chr->unkD78 = 1.0f;
+                        chr->charge = 1.0f;
                         if (BtlAnim_GetProgress(chr) < 0.7f) {
                             BtlChar_SetFlag(chr, 0xB);
                         }
@@ -1667,7 +1667,7 @@ s32 BtlAct_RushFinishHandler(BtlActAChr *chr, s32 phase) {
                         BtlAct_PlayPickedVoice(chr);
                         pose = BtlChar_GetPos(chr);
                         pose->speed = BtlAtk_GetLaunchSpeed(chr);
-                        if (0.99f < chr->unkD78) {
+                        if (0.99f < chr->charge) {
                             BtlChar_SetVibration(chr, 1.0f, 0.3f);
                         }
                     }
@@ -1770,7 +1770,7 @@ s32 BtlAct_RushFinishHandler(BtlActAChr *chr, s32 phase) {
                             count = 2;
                             break;
                         case 0x61:
-                            if (0.99f < chr->unkD78) {
+                            if (0.99f < chr->charge) {
                                 follow[0] = 0x73;
                                 follow[1] = 0x96;
                                 count = 2;
@@ -3311,7 +3311,7 @@ s32 BtlAct_BlowAwayHandler(BtlActBChr *chr, s32 phase) {
             }
         } else if (BtlChar_TestFlag(chr, 0x14)) {
             Vec3_Normalize(&a, &BtlChar_GetPos(chr)->pos);
-            Vec3_Normalize(&b, &BtlChar_GetPos(chr)->unk30);
+            Vec3_Normalize(&b, &BtlChar_GetPos(chr)->velocity);
             if (Vec3_Dot(&a, &b) > 0.7f) {
                 if (BtlChar_IsFree(chr)) {
                     BtlAct_Request(chr, 0xE8);

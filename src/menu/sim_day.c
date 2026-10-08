@@ -831,7 +831,7 @@ void SimDay_PickEvent(s32 unused) {
         gSimDay->event = 4;
         break;
     }
-    gSimDay->unkB8C = 0;
+    gSimDay->answer = 0;
     if (gSimDay->event == gSimDay->lastEvent) {
         gSimDay->repeat++;
         if (gSimDay->repeat >= 3) {
@@ -1853,9 +1853,9 @@ void SimDay_Input(s32 *result) {
             Snd_PlaySe(1, 0);
         } else if (ok) {
             if (gSimDay->cur[gSimDay->state] == 0) {
-                gSimDay->unkB8C = 1;
+                gSimDay->answer = 1;
             } else {
-                gSimDay->unkB8C = 0;
+                gSimDay->answer = 0;
             }
             SimDay_Cmd(0x12);
             Snd_PlaySe(1, 1);

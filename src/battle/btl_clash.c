@@ -53,7 +53,7 @@ extern Vec4 gVu0ZeroVec; /* zero vector */
 
 typedef struct BtlClashProgress {
     /* 0x00 */ u8 unk0[0x3C];
-    /* 0x3C */ s32 unk3C; /* difficulty */
+    /* 0x3C */ s32 difficulty; /* difficulty */
 } BtlClashProgress;
 extern BtlClashProgress *gProgress;
 
@@ -469,7 +469,7 @@ s32 BtlClash_UpdateC(s32 state) {
         c->prevPick = -1;
         c->pick = (BtlChar_Rand() >> 2) & 3;
         if (Battle_GetMode() == 1) {
-            c->level = gProgress->unk3C;
+            c->level = gProgress->difficulty;
         } else {
             c->level = 1;
         }

@@ -555,13 +555,13 @@ void EftStruggle_Step(EftRTask *task) {
     }
     Vec3_Lerp(&w->pos, &r1->pose.start, &r0->pose.start, w->bias);
     w->pos.w = one;
-    t = r0->src->def->unk30;
+    t = r0->src->def->scale;
     t = p0 * t * k;
     Vec4_Sub(&v, &r0->pose.start, &w->pos);
     Vec3_Normalize(&v, &v);
     Vec3_Scale(&v, &v, t);
     Vec3_Add(&r0->task->pos, &w->pos, &v);
-    t = r1->src->def->unk30;
+    t = r1->src->def->scale;
     t = p1 * t * k;
     Vec4_Sub(&v, &r1->pose.start, &w->pos);
     Vec3_Normalize(&v, &v);

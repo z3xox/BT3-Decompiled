@@ -69,7 +69,7 @@ typedef struct BtlActAChr {
     /* 0x0D6C */ s32 dashLimit;
     /* 0x0D70 */ s32 vanishCount;        /* counts vanishing attacks */
     /* 0x0D74 */ s32 vanishLimit;
-    /* 0x0D78 */ f32 unkD78;        /* attack charge level 0..1 */
+    /* 0x0D78 */ f32 charge;        /* attack charge level 0..1 */
     /* 0x0D7C */ f32 chargeTimer;        /* attack charge timer 0..1 */
     /* 0x0D80 */ s32 chargeGauge;        /* gauge 0..100000 that blends the two charge rates */
     /* 0x0D84 */ s32 chargeFullFrames;        /* frames the charge has been full */
@@ -121,7 +121,7 @@ typedef struct BtlActBPose {
     /* 0x00 */ Vec4 pos;
     /* 0x10 */ Vec4 rot;       /* y = model yaw */
     /* 0x20 */ Vec4 dispOffset;
-    /* 0x30 */ Vec4 unk30;     /* movement of the previous frame ("my velocity" in btl_char_move.h) */
+    /* 0x30 */ Vec4 velocity;     /* movement of the previous frame ("my velocity" in btl_char_move.h) */
     /* 0x40 */ Vec4 moved;     /* whole movement of the previous frame: its length is the real speed */
     /* 0x50 */ u8 unk50[0x70 - 0x50];
     /* 0x70 */ Vec4 impulse;   /* knock-back velocity, metres per frame */

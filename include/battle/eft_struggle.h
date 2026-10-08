@@ -129,7 +129,7 @@ typedef struct EftRMgr {
 
 typedef struct EftRDef {
     /* 0x00 */ u8 unk0[0x30];
-    /* 0x30 */ f32 unk30;    /* length scale of a beam in a struggle */
+    /* 0x30 */ f32 scale;    /* length scale of a beam in a struggle */
     /* 0x34 */ u8 unk34[0x54];
     /* 0x88 */ f32 power;    /* struggle power */
 } EftRDef;

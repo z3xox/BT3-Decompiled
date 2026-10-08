@@ -78,14 +78,14 @@ typedef struct EftShotParam {
     /* 0x0E */ s8 nodes[6];    /*                                  skill +0x48..    super +0xA8.. (stride 3) */
     /* 0x14 */ s8 unk14;      /*                                  -1               super +0x162[i] */
     /* 0x15 */ s8 unk15;
-    /* 0x16 */ s16 unk16[6];  /*                                  skill +0x54..    -1 */
+    /* 0x16 */ s16 frames[6];  /*                                  skill +0x54..    -1 */
     /* 0x22 */ s16 unk22;
     /* 0x24 */ s16 unk24;
     /* 0x26 */ s16 unk26;
     /* 0x28 */ s32 life;      /* frames: seconds * 30             skill +0x18[i]   super +0x24[i] */
     /* 0x2C */ f32 shotLife;     /*                                  0                super +0x30[i] */
     /* 0x30 */ f32 scale;     /*                                  skill +0x30[i]   super +0x6C[i] */
-    /* 0x34 */ f32 unk34;     /* shot speed, 10 km/h              skill +0x20[i]   super +0x54[i] */
+    /* 0x34 */ f32 speed;     /* shot speed, 10 km/h              skill +0x20[i]   super +0x54[i] */
     /* 0x38 */ f32 homing;     /* shot turn rate, degrees / s      skill +0x28[i]   super +0x60[i] */
     /* 0x3C */ s32 flags;     /*                                  skill +0x00[i]   super +0x00[i] */
     /* 0x40 */ s16 impactFx;     /*                                  skill +0x46[i]   super +0xA5[i] */

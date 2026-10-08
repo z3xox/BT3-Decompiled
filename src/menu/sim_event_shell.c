@@ -157,7 +157,7 @@ s32 SimEv34(USimDay *day) {
         day->seqTimer = 0;
         break;
     case 6:
-        if (day->unkB8C == 0) {
+        if (day->answer == 0) {
             day->seq = 24;
             day->seqTimer = 0;
         } else {

@@ -177,23 +177,23 @@ typedef struct EftGeyserSmokeInit {
     /* 0x00 */ EftGeyserQVec pos;
     /* 0x10 */ EftGeyserQVec colorA; /* ambient r, g, b, a */
     /* 0x20 */ EftGeyserQVec colorB; /* diffuse r, g, b, a */
-    /* 0x30 */ f32 unk30;            /* size */
-    /* 0x34 */ f32 unk34;            /* alpha */
-    /* 0x38 */ f32 unk38;            /* speed */
-    /* 0x3C */ f32 unk3C;            /* damp */
-    /* 0x40 */ s32 unk40;            /* lifeBase */
-    /* 0x44 */ s32 unk44;            /* lifeRange */
-    /* 0x48 */ s32 unk48;            /* rate */
+    /* 0x30 */ f32 size;            /* size */
+    /* 0x34 */ f32 alpha;            /* alpha */
+    /* 0x38 */ f32 speed;            /* speed */
+    /* 0x3C */ f32 damp;            /* damp */
+    /* 0x40 */ s32 lifeBase;            /* lifeBase */
+    /* 0x44 */ s32 lifeRange;            /* lifeRange */
+    /* 0x48 */ s32 rate;            /* rate */
 } EftGeyserSmokeInit; /* size 0x50 */
 
 typedef struct EftGeyserSteamInit {
     /* 0x00 */ EftGeyserQVec pos;
     /* 0x10 */ EftGeyserQVec dir; /* direction (0, 0, 0, 1) */
     /* 0x20 */ EftGeyserQVec color;
-    /* 0x30 */ f32 unk30;           /* speed */
+    /* 0x30 */ f32 speed;           /* speed */
     /* 0x34 */ f32 gravity;         /* 9.8 / 30 */
-    /* 0x38 */ f32 unk38;           /* size */
-    /* 0x3C */ s32 unk3C;           /* life */
+    /* 0x38 */ f32 size;           /* size */
+    /* 0x3C */ s32 life;           /* life */
     /* 0x40 */ f32 posRange;
     /* 0x44 */ f32 dirRange;
     /* 0x48 */ f32 speedRange;
@@ -230,12 +230,12 @@ void EftGeyser_StartSmoke(EftTask *task) {
         arg.colorB.v.z = rec[0x22];
         arg.colorB.v.w = rec[0x23];
         r = (f32)rand() / 2147483647.0f * 5.0f - 2.5f;
-        arg.unk48 = rand() % 2 + 2;
-        arg.unk38 = w->height / 150.0f + r;
-        arg.unk30 = w->width / 10.0f * 2.0f;
-        arg.unk40 = w->height / 150.0f + 90.0f;
-        if (arg.unk38 < 0.0f) {
-            arg.unk38 = -arg.unk38;
+        arg.rate = rand() % 2 + 2;
+        arg.speed = w->height / 150.0f + r;
+        arg.size = w->width / 10.0f * 2.0f;
+        arg.lifeBase = w->height / 150.0f + 90.0f;
+        if (arg.speed < 0.0f) {
+            arg.speed = -arg.speed;
         }
         if (w->smoke == 0) {
             w->smoke = EftSmoke_Create((EftGeyserSmokeArg *)&arg);
@@ -267,9 +267,9 @@ void EftGeyser_StartSteam(EftTask *task) {
         arg.color.v.y = rec[0x1B];
         arg.color.v.z = rec[0x1C];
         arg.color.v.w = rec[0x1D];
-        arg.unk30 = w->height / 150.0f + 8.0f;
-        arg.unk38 = w->width / 10.0f * 4.8f;
-        arg.unk3C = w->height / 150.0f + 25.0f;
+        arg.speed = w->height / 150.0f + 8.0f;
+        arg.size = w->width / 10.0f * 4.8f;
+        arg.life = w->height / 150.0f + 25.0f;
         if (w->steam == 0) {
             w->steam = EftSteam_Create((EftGeyserSteamArg *)&arg);
             EftSteam_SetPaused(w->steam, 1);

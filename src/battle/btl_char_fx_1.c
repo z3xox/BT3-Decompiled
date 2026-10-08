@@ -757,8 +757,8 @@ void BtlFx_SpawnFastMoveFx(FxChr *chr) {
 
     if (BtlChar_TestFxBit(chr, 0xB)) {
         pose = BtlChar_GetPos(chr);
-        if (pose->unk98 > 0.01f) {
-            if (Vec3_Length(&pose->vel) / pose->unk98 > 0.5f) {
+        if (pose->speed > 0.01f) {
+            if (Vec3_Length(&pose->vel) / pose->speed > 0.5f) {
                 EftSpdLine_SpawnBodyTrails(chr->objId);
             }
         }
@@ -950,14 +950,14 @@ void BtlFx_UpdateGroundFx(FxChr *chr) {
         water = 0.0f;
         under = 0;
         if (BtlStage_GetWaterLevel(&water)) {
-            if (BtlChar_GetPos(chr)->unkB0.y > water) {
+            if (BtlChar_GetPos(chr)->ground.y > water) {
                 under = 1;
             }
         }
         if (under) {
             EftGndDust_SpawnBurst(chr->objId, 1.0f, 1.0f);
         } else {
-            EftGndDust_SpawnLanding(chr->objId, &BtlChar_GetPos(chr)->unkB0, &BtlChar_GetPos(chr)->groundNormal, 1.0f);
+            EftGndDust_SpawnLanding(chr->objId, &BtlChar_GetPos(chr)->ground, &BtlChar_GetPos(chr)->groundNormal, 1.0f);
         }
     }
     if (BtlChar_TestFxBit(chr, 0x31)) {
@@ -965,9 +965,9 @@ void BtlFx_UpdateGroundFx(FxChr *chr) {
     }
     if (BtlChar_TestFxBit(chr, 0x32)) {
         BtlCharApi_GetNodePos(chr->objId, 0xF, &a);
-        a.y = BtlChar_GetPos(chr)->unkB0.y;
+        a.y = BtlChar_GetPos(chr)->ground.y;
         BtlCharApi_GetNodePos(chr->objId, 0xB, &b);
-        b.y = BtlChar_GetPos(chr)->unkB0.y;
+        b.y = BtlChar_GetPos(chr)->ground.y;
         Fx_FootDust(chr->objId, &a, 1.0f);
         Fx_FootDust(chr->objId, &b, 1.0f);
     }

@@ -1633,7 +1633,7 @@ void BtlColl_UpdateGround(BtlCollChr *chr) {
                 BtlChar_SetHeldFlag(chr, 0x11);
             }
             lo = pose->pos.y - size;
-            hi = pose->pos.y + pose->unk98 * 30.0f * 0.02f;
+            hi = pose->pos.y + pose->speed * 30.0f * 0.02f;
             if (lo < water && water < hi) {
                 BtlChar_SetHeldFlag(chr, 0x12);
             }

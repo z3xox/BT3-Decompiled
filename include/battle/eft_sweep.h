@@ -158,7 +158,7 @@ typedef struct EftEmitRes {
 
 typedef struct EftEmitSet {
     /* 0x000 */ EftEmitHdr *hdr;
-    /* 0x004 */ s32 unk4;
+    /* 0x004 */ s32 entries;
     /* 0x008 */ EftEmitDef *defs;
     union {
         /* 0x00C */ EftEmitGroup grp[EFT_EMIT_TYPES];

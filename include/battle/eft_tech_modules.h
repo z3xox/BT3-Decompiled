@@ -48,12 +48,12 @@ typedef struct EftTask {
 typedef struct EftTechDef {
     /* 0x00 */ s16 id;        /* effect id; selects the variant */
     /* 0x02 */ s16 level;
-    /* 0x04 */ s8 unk4;       /* not 0: the term callback sets the fighter's held flag 0xA8 (rush shot) / 0xA9
+    /* 0x04 */ s8 kind;       /* not 0: the term callback sets the fighter's held flag 0xA8 (rush shot) / 0xA9
                                  (ring shot) */
     /* 0x05 */ u8 unk5[3];
     /* 0x08 */ s8 hitShape;   /* 0: two spheres (ColSphere_Set, EftHit_SetShapeSpheres), 1: two boxes
                                  (ColCapsule_Set, EftHit_SetShapeBoxes) */
-    /* 0x09 */ s8 unk9;       /* multiplied by count: total number of shots */
+    /* 0x09 */ s8 shots;       /* multiplied by count: total number of shots */
     /* 0x0A */ u8 unkA[0x28 - 0xA];
     /* 0x28 */ s32 life;     /* frames; / 30 is the blast objects' delay in variant 2 */
     /* 0x2C */ s32 shotLife;
@@ -323,7 +323,7 @@ typedef struct EftAbsorb {
     /* 0x048 */ EftModel *model; /* the manager's emitter set */
     /* 0x04C */ EftModelInst inst[2];
     /* 0x5E4 */ u8 unk5E4[0x5F0 - 0x5E4];
-    /* 0x5F0 */ u8 unk5F0[0x840 - 0x5F0]; /* node slots of the set */
+    /* 0x5F0 */ u8 nodes[0x840 - 0x5F0]; /* node slots of the set */
     /* 0x840 */ s32 hands;       /* EftAbsorbArg.hands */
     /* 0x844 */ u32 flags;       /* EFT_ABSORB_* */
     /* 0x848 */ u32 phaseMask;      /* phase mask handed to EftEmit_GetFlagsFromMask: 1 (node 0x36) or 2 (hands), set

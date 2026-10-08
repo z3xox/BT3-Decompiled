@@ -25,7 +25,7 @@ typedef struct BtlActHPose {
     /* 0x70 */ u8 unk70[0x90 - 0x70];
     /* 0x90 */ f32 pitch;      /* second argument of BtlMove_SetHeading as kept in the pose (btl_char_ctl.h: speed) */
     /* 0x94 */ f32 facing;     /* yaw the fighter faces */
-    /* 0x98 */ f32 unk98;      /* zeroed when a change action starts */
+    /* 0x98 */ f32 speed;      /* zeroed when a change action starts */
     /* 0x9C */ f32 fallSpeed;      /* zeroed when a change action starts */
 } BtlActHPose;
 
