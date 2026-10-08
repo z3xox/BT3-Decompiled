@@ -145,9 +145,14 @@ void EftRibbon_LoadKey(EftRbnCur *cur, EftRbnArg *arg, s32 key) {
 }
 
 /* Fills the animated values between two keys: keys 0..1 before animSplit, 1..2 after. */
-#if 0
-/* NON-MATCHING: 228 instructions against 233; not worked on beyond the first version (the statement order follows the
-   disassembly). */
+/* The y, z, w of the key colour are read through a 4-aligned view of the colour table (`f32 [3][4]`): with the
+   16-aligned vector element the compiler shares the address computed for Vec4_Sub, the original computes
+   `k0 * 16 + anim` again for them. `prm` is declared in front of `anim`; the second interval's `t` is built in two
+   statements. */
+typedef struct EftRbnAnim4 {
+    /* 0x00 */ f32 color[3][4];
+} EftRbnAnim4;
+#define CX(n) (((EftRbnAnim4 *)anim)->color[k0][n])
 void EftRibbon_UpdateKeys(EftRbn *w) {
     EftRbnVec d;
     EftRbnVec r;
@@ -155,8 +160,8 @@ void EftRibbon_UpdateKeys(EftRbn *w) {
     EftRbnVec b;
     EftRbnArg *arg = &w->arg;
     EftRbnCur *cur = &w->cur;
-    EftRbnAnim *anim = arg->anim;
     EftRbnPrm *prm = arg->prm;
+    EftRbnAnim *anim = arg->anim;
     f32 t;
     s32 k0;
     s32 k1;
@@ -167,15 +172,16 @@ void EftRibbon_UpdateKeys(EftRbn *w) {
         k0 = 0;
         k1 = 1;
     } else {
-        t = (w->animFrame - w->animSplit) / (w->animTime - w->animSplit);
+        t = w->animFrame - w->animSplit;
+        t /= w->animTime - w->animSplit;
         k0 = 1;
         k1 = 2;
     }
     Vec4_Sub(&d, &anim->color[k1], &anim->color[k0]);
-    cur->color.x = anim->color[k0].x + d.x * t;
-    cur->color.y = anim->color[k0].y + d.y * t;
-    cur->color.z = anim->color[k0].z + d.z * t;
-    cur->color.w = anim->color[k0].w + d.w * t;
+    cur->color.x = CX(0) + d.x * t;
+    cur->color.y = CX(1) + d.y * t;
+    cur->color.z = CX(2) + d.z * t;
+    cur->color.w = CX(3) + d.w * t;
     for (i = 0; i < 2; i++) {
         d.v[0] = anim->pulseR[k1][i] - anim->pulseR[k0][i];
         d.v[1] = anim->pulseG[k1][i] - anim->pulseG[k0][i];
@@ -209,8 +215,7 @@ void EftRibbon_UpdateKeys(EftRbn *w) {
         cur->scroll = prm->scroll[k0] + d.v[0] * t;
     }
 }
-#endif
-INCLUDE_ASM("asm/nonmatchings/battle/eft_ribbon", EftRibbon_UpdateKeys);
+#undef CX
 
 /* Appends a node at the previous last node's position, or at pos for the first one. Returns 0 when the pool is
    empty. (The list's tail is already the new node here, so the first copy copies the node onto itself.) */
@@ -421,8 +426,6 @@ extern void EftGfx_DrawPolyScaledZ(EftRbnVert *verts, s32 blend, s32 arg2, s32 a
    A scrolling ribbon (flag 0x20) is drawn a second time with its fourth texture, the scrolled texture rectangle and
    the nodes' second colour. (The second layer's own corner points, built with EftRbn.alpha as the width, are
    computed but the same corner points as the first layer are drawn.) */
-ASM_STUB_BEGIN(); /* compiled so that EftRibbon_Draw sees the definition; the assembler skips it */
-/* NON-MATCHING: 415 instructions against 414, 238 differ; first version only, written from the disassembly. */
 void EftRibbon_DrawStrip(EftRbn *w, EftRbnArg *arg, EftRbnPrm *prm) {
     EftRbnVec uvA[4] = {
         { { 0.02f, 0.0f, 1.0f, 0.0f } }, { { 0.02f, 0.98f, 1.0f, 0.0f } }, { { 0.98f, 0.0f, 1.0f, 0.0f } }, { { 0.98f, 0.98f, 1.0f, 0.0f } },
@@ -441,10 +444,11 @@ void EftRibbon_DrawStrip(EftRbn *w, EftRbnArg *arg, EftRbnPrm *prm) {
     EftRbnVec uv2[4];
     EftRbnVec col[4];
     EftRbnVec half = { { 0.0f, 0.0f, 0.0f, 0.0f } };
-    EftRbnVert verts[3];
-    s32 first = 1;
+    EftRbnVert verts[9];
+    EftRbnNode **link;
     EftRbnNode *n;
     EftRbnNode *next;
+    s32 first = 1;
     s32 i;
 
     Vec4_Copy(&cam, &gBtlCamView->pos);
@@ -469,7 +473,9 @@ void EftRibbon_DrawStrip(EftRbn *w, EftRbnArg *arg, EftRbnPrm *prm) {
             }
         }
     }
-    for (n = w->head; n != NULL; n = n->next) {
+    link = &w->head;
+    while (*link != NULL) {
+        n = *link;
         next = n->next;
         if (next != NULL) {
             Vec4_Sub(&side, &next->pos, &n->pos);
@@ -479,16 +485,16 @@ void EftRibbon_DrawStrip(EftRbn *w, EftRbnArg *arg, EftRbnPrm *prm) {
             Vec3_Scale(&half, &side, w->width);
             if (first) {
                 Vec3_Sub(&quad[0], &n->pos, &half);
-                Vec3_Add(&quad[1], &n->pos, &half);
                 quad[0].w = 1.0f;
+                Vec3_Add(&quad[1], &n->pos, &half);
                 quad[1].w = 1.0f;
             } else {
                 Vec4_Copy(&quad[0], &prev[0]);
                 Vec4_Copy(&quad[1], &prev[1]);
             }
             Vec3_Sub(&quad[2], &next->pos, &half);
-            Vec3_Add(&quad[3], &next->pos, &half);
             quad[2].w = 1.0f;
+            Vec3_Add(&quad[3], &next->pos, &half);
             quad[3].w = 1.0f;
             Vec4_Copy(&prev[0], &quad[2]);
             Vec4_Copy(&prev[1], &quad[3]);
@@ -496,8 +502,8 @@ void EftRibbon_DrawStrip(EftRbn *w, EftRbnArg *arg, EftRbnPrm *prm) {
                 if (first) {
                     Vec3_Scale(&half, &side, w->alpha);
                     Vec3_Sub(&quad2[0], &n->pos, &half);
-                    Vec3_Add(&quad2[1], &n->pos, &half);
                     quad2[0].w = 1.0f;
+                    Vec3_Add(&quad2[1], &n->pos, &half);
                     quad2[1].w = 1.0f;
                 } else {
                     Vec4_Copy(&quad2[0], &prev2[0]);
@@ -505,8 +511,8 @@ void EftRibbon_DrawStrip(EftRbn *w, EftRbnArg *arg, EftRbnPrm *prm) {
                 }
                 Vec3_Scale(&half, &side, w->alpha);
                 Vec3_Sub(&quad2[2], &next->pos, &half);
-                Vec3_Add(&quad2[3], &next->pos, &half);
                 quad2[2].w = 1.0f;
+                Vec3_Add(&quad2[3], &next->pos, &half);
                 quad2[3].w = 1.0f;
                 Vec4_Copy(&prev2[0], &quad2[2]);
                 Vec4_Copy(&prev2[1], &quad2[3]);
@@ -535,12 +541,9 @@ void EftRibbon_DrawStrip(EftRbn *w, EftRbnArg *arg, EftRbnPrm *prm) {
                 }
             }
         }
+        link = &n->next;
     }
 }
-ASM_STUB_END();
-INCLUDE_RODATA("asm/nonmatchings/battle/eft_ribbon", D_002ED510);
-INCLUDE_RODATA("asm/nonmatchings/battle/eft_ribbon", D_002ED550);
-INCLUDE_ASM("asm/nonmatchings/battle/eft_ribbon", EftRibbon_DrawStrip);
 
 /* ------------------------------------------------------------------------------------------------------------
  * Second part (formerly eft_ac.c), with its own header and view types. Names the first part already declared with
@@ -634,9 +637,9 @@ extern void EftZap_LoadTex(EftZapWork *w);
 /* The first part of the ribbon module (the file before this one, eft_ab). EftRibbon_SetEnd and
    EftRibbon_SetTexFrame match only when EftRibbon_PlaceStrip / EftRibbon_SetTexPair are DEFINED earlier in the same translation
    unit (a branch-likely / delay-slot choice changes otherwise), and so does EftRibbon_Update (one instruction):
-   this file is the tail of that source file. Merged at integration; where the function the callers need is still
-   INCLUDE_ASM (EftRibbon_DrawStrip, EftRibbon_DrawKind1), its attempt is compiled inside
-   ASM_STUB_BEGIN / ASM_STUB_END (include/include_asm.h) so that the compiler has seen a definition. */
+   this file is the tail of that source file. Merged at integration. (EftRibbon_DrawStrip and EftRibbon_DrawKind1,
+   which EftRibbon_Draw needs defined above it, are matching C now; they were compiled as assembler-skipped stubs
+   before.) */
 #define EftRibbon_FreeNodes ((void (*)(EftRibbon *w))EftRibbon_FreeNodes)                                       /* frees the nodes */
 #define EftRibbon_SetTexPair ((void (*)(EftRibbon *w, s32 slot, void *uv, s32 a, s32 b))EftRibbon_SetTexPair)     /* sets a texture frame */
 #define EftRibbon_UpdateTex ((void (*)(EftRibbonPrm *prm, EftRibbon *w, EftRibbonArg *arg))EftRibbon_UpdateTex) /* steps the nodes */
@@ -653,16 +656,10 @@ extern void EftZap_LoadTex(EftZapWork *w);
    from 1 at the head to 0 at the tail. The quad's side vector is the cross product of the segment and the direction
    from the camera; it is flipped when it turns against the previous one, and each quad starts on the previous
    quad's end points. */
-ASM_STUB_BEGIN(); /* compiled so that EftRibbon_Draw sees the definition; the assembler skips it */
-/* NON-MATCHING: 15 of 302 instructions differ: the node pointer and the address of prev[0] swap s6 / s7; everything else
-   (including the frame layout) is identical.
-   Permuter round 2: its "score 0" candidate (no `cam`; the eye copied into `prevSide`) is NOT a match and NOT the
-   same behaviour: prevSide is overwritten at the end of every pass, so the direction to the camera would be wrong
-   from the second quad on, and the frame is 16 bytes off (66 of 302 by fdiff; the permuter's score ignores stack
-   offsets). The original has `cam` at sp + 224 as here. It does show that the swap depends on the pseudos that
-   hold local addresses in front of the loop. Without effect (15): `for` instead of `while` for the link walk,
-   declaration order of link / node, `np` at function scope, a local for node->next; a node-pointer walk gives 27;
-   `cam` declared anywhere else gives 18 to 38. */
+/* The sharp-bend test is the one of EftRibbon_DrawKind2 with an empty body: `dot < 0.82f && dist > 0.8f` and nothing
+   inside. The distance is still computed; its compare is removed as dead code, but only after it has counted as
+   one instruction of the loop for register allocation (with the call alone in the `if`, the node pointer and the
+   address of prev[0] swap s6 / s7). */
 void EftRibbon_DrawKind1(EftRibbon *w, EftRibbonArg *arg, EftRibbonPrm *prm) {
     EftAcVec uvA[4] = { { 1.0f, 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 1.0f, 0.0f } };
     EftAcVec uvB[4] = { { 1.0f, 1.0f, 1.0f, 0.0f }, { 1.0f, 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f, 0.0f } };
@@ -723,8 +720,8 @@ void EftRibbon_DrawKind1(EftRibbon *w, EftRibbonArg *arg, EftRibbonPrm *prm) {
                     Vec3_Scale(V(&half), V(&half), -1.0f);
                     Vec3_Scale(V(&side), V(&side), -1.0f);
                 }
-                if (Vec3_Dot(V(&side), V(&prevSide)) < 0.82f) {
-                    Vec3_Dist(&node->pos, np);
+                if (Vec3_Dot(V(&side), V(&prevSide)) < 0.82f && Vec3_Dist(&node->pos, np) > 0.8f) {
+                    /* empty: EftRibbon_DrawKind2 draws sprites here */
                 }
                 Vec4_Copy(V(&pos[0]), V(&prev[0]));
                 Vec4_Copy(V(&pos[1]), V(&prev[1]));
@@ -757,11 +754,6 @@ void EftRibbon_DrawKind1(EftRibbon *w, EftRibbonArg *arg, EftRibbonPrm *prm) {
         link = &node->next;
     }
 }
-ASM_STUB_END();
-LIT4_WORD(D_002FCEC4, 0x3F51EB85); /* 0.82f */
-INCLUDE_RODATA("asm/nonmatchings/battle/eft_ribbon", D_002ED590);
-INCLUDE_RODATA("asm/nonmatchings/battle/eft_ribbon", D_002ED5D0);
-INCLUDE_ASM("asm/nonmatchings/battle/eft_ribbon", EftRibbon_DrawKind1);
 
 /* Draws a kind 2 ribbon: like kind 1 with per-node colours and a fixed texture strip (u 0.02..0.98). Where the
    ribbon bends sharply (side vectors less than 0.82 aligned and the nodes more than 0.8 apart) three sprites
@@ -1861,14 +1853,20 @@ void EftZap_SpawnLine(EftZapWork *w) {
    places its axis and takes its points from the pool. Returns 0 (after giving the points back) when the life or
    the point count comes out as 0 or the pool runs dry. */
 #if 0
-/* NON-MATCHING: 7 of 567 instructions differ: in the keyA block the registers of def->split and of the constant 1.0f are
-   swapped (f3 / f2); the keyB and keyC blocks, written the same way, match.
-   Cleanup E: the difference from the matching blocks is the memset of colEnd in the same basic block: its four
-   argument instructions lie inside the live ranges and change the local allocation priorities
-   (log2(refs) * refs / length). The original order (1.0f before split, and the second split load last) needs one
-   more instruction between the second `def->split` load and its subtraction than this C has; statement orders,
-   an explicit memset and the position of the colEnd declaration do not give it. Without the block-local `life`
-   f0 / f1 are swapped as well (13). */
+/* NON-MATCHING: 7 of 567 instructions differ, registers only: in the width block def->split (both loads) is in
+   f2 and the constant 1.0f in f3, the original has them the other way round; the rise and radius blocks, written
+   the same way, match. The block differs from those by the four argument instructions of the colEnd memset.
+   What the allocator does there (local-alloc quantities, checked against every variant tried): the quantity of
+   1.0f (the constant and `1.0f - split`, 4 references) has to be allocated before the second def->split load
+   (2 references over 2 instructions) and after `key[1] - key[0]` and key[2], which take f0 and f1. With this C
+   the 1.0f quantity spans 10 instructions (priority 0.8 against 1.0); the original needs it to span at most 8,
+   or one more instruction between the second split load and the subtraction, at the first scheduling pass.
+   Without the block-local `life` the key[1] - key[0] / key[2] pair swaps f0 / f1 as well (13).
+   Tried without effect (7 or worse): statement orders; locals for the keys, the differences and the
+   denominators in every declaration order; a variable for 1.0f or for the split; colEnd cleared by an explicit
+   memset, through a pointer variable, or in an inline function (that one loses the shared address register);
+   empty statements, `do { } while (0)` and empty asm statements in every position (a tied asm copy of the 1.0f
+   gives it too many references: it then takes f0 or f1); the permuter from both forms (best score 40 / 50). */
 s32 EftZap_InitLine(EftZapStrand *line, EftZapWork *w) {
     EftZapDef *def = w->arg.def;
     f32 fps = 30.0f;
@@ -2196,14 +2194,6 @@ void EftZap_UpdateLines(EftZapWork *w) {
    ordering table at the mean depth of the four points (>> 10), in layer `layer` (2 and 3 = layers 0 and 1 with GS
    context 2). With `front` the vertices are drawn at the nearest depth. Nothing is drawn when the projection
    clips the quad. */
-#if 0
-/* NON-MATCHING: 19 of 274 instructions differ (was 45). The packet header now matches: `regs` written as
-   `K + (ctx << 4)` (int shift, constant first), the form of the guide's GS packet header lesson. What is left is
-   behind the Vec4_ToInt call: the original loads the bit-field constant 0xFFFFFF (a1) first, then the first colour
-   byte, `l = layer`, the 0xFF000000FFFFFFFF mask (a0), -1 (a2), and computes `texIdx << 4` last (behind the layer
-   adjustment); here the shift comes first and the two masks are in a0 / a1 the other way round (11 lines there
-   plus the 8 `and` that use them). Moving the texture pointer behind the layer adjustment, or reading it inline
-   at the tex0 store, puts the shift right but exchanges tex / texIdx in s5 / s6 (21). */
 void EftZap_DrawQuad(EftAcVec *pos, EftAcVec color, f32 u0, f32 v0, f32 u1, f32 v1, f32 u2, f32 v2, f32 u3, f32 v3,
                      s32 layer, s32 texIdx, s32 front, EftAcTex *tex) {
     EftAcVec uv[4];
@@ -2216,7 +2206,6 @@ void EftZap_DrawQuad(EftAcVec *pos, EftAcVec color, f32 u0, f32 v0, f32 u1, f32 
     s32 ctx;
     s32 l;
     s32 z;
-    u64 *t;
 
     Vec4_Set(V(&uv[0]), u0, v0, 1.0f, 1.0f);
     Vec4_Set(V(&uv[1]), u1, v1, 1.0f, 1.0f);
@@ -2246,11 +2235,6 @@ void EftZap_DrawQuad(EftAcVec *pos, EftAcVec color, f32 u0, f32 v0, f32 u1, f32 
         scr[3].z = 0xFFFFFF;
     }
     Vec4_ToInt(&icol, V(&color));
-    t = (u64 *)((u8 *)tex + (texIdx << 4));
-    l = layer;
-    if (l >= 2) {
-        l -= 2;
-    }
     p->v[0].rgbaq.r = icol.x;
     p->v[0].rgbaq.g = icol.y;
     p->v[0].rgbaq.b = icol.z;
@@ -2295,7 +2279,11 @@ void EftZap_DrawQuad(EftAcVec *pos, EftAcVec color, f32 u0, f32 v0, f32 u1, f32 
     p->v[3].xyz.y = scr[3].y;
     p->v[3].xyz.z = scr[3].z;
     p->v[3].xyz.f = 0xFF;
-    p->tex0 = *t;
+    p->tex0 = EFT_TEX0(tex, texIdx);
+    l = layer;
+    if (l >= 2) {
+        l -= 2;
+    }
     if (z < 0) {
         e = &gOtZ[0].layer[l];
     } else if (z >= 0x1000) {
@@ -2306,6 +2294,3 @@ void EftZap_DrawQuad(EftAcVec *pos, EftAcVec color, f32 u0, f32 v0, f32 u1, f32 
     e->tail->next = p;
     e->tail = (EftAcOtPrim *)p;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle/eft_ribbon", EftZap_DrawQuad);
-#endif
