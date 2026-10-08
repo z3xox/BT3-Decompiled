@@ -1026,3 +1026,19 @@ More of the same night (the geyser functions):
 - **`case 3: A; break; case 6: A; break;`** is not `case 3: case 6: A; break;`. Sign: an unlabelled copy of `A`
   in each of the other cases and both dispatch branches going straight to the switch's end. The matched twin
   above it was written that way. (BtlScene_IsEffectHidden)
+- **Use the real GS macro, zero terms included**: `GS_SET_CLAMP(2, 2, x0, x1, 0, srcH)` with a variable operand
+  gives another or-chain and schedule than any hand-written equivalent (a 40-instruction header and the reload
+  registers of a third of GfxWater_DrawView).
+- **A macro expanded twice in a row is a plain `{ }` block, not `do { } while (0)`**: the loop notes between the
+  expansions are a scheduling barrier. **"Variables" that are constants**: two adjacent spill slots written
+  `lui; sw` early and `lw; ori; sw` later are literal constants used in a loop, not variables with `|= 7`.
+  **Reload registers off by one everywhere** can come from one instruction needing a scratch register where v0,
+  v1, a0, a1 are all live: find `Using reg N` in the `.greg` dump. (EftStorm_DrawBolts)
+- **A validity test as an else-if chain with the flag assigned in every arm**, not `ok = 0` at the top.
+- **A variable that does not exist**: when a builtin's result (`sqrtf`) lands in a saved register a "variable"
+  also uses, write the expression (`d * 0.2f`) at each use. **A coordinate variable set in front of each
+  vertex** (`sy = ...; p[1] = sx | sy << 16;`). (GfxWater_DrawView)
+- **Raw input and result are two variables** (`time` / `t`) when the original loads the raw value into `$f12` or
+  a temporary first; a second span in two statements (`t = time - mid; t = t / (end - mid);`).
+  (EftChain_BlendKeys)
+- A packet's seven header stores: an exhaustive search of the 5040 orders takes about four minutes.
