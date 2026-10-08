@@ -772,8 +772,9 @@ void StgGrid_MoveUp(s32 *ids, s32 *col, s32 *row, s32 rows) {
 /* Builds the character grid of the current menu screen (gProgress->mode) from the master list: locked
  * characters become CHRGRID_ID_LOCKED, a cell keeps only its unlocked forms, and the list is padded to a
  * multiple of seven with fillers. Then lists the saved custom characters (gSaveData->rec) in `custom`. */
-#if 0
-/* Not matching, 210 of 347 instructions. The mode tests at the top match. In the loop the original keeps every copy of a cell (three of them) and every `id = CHRGRID_ID_EMPTY` store as separate code where this version shares them, and some temporaries sit in other registers (j and j * 4 in t7 / t5; the pointer to the output cell in a0). The original also addresses the saved characters as `gSaveData + 8 + (0x2D50 + i * 0x1C)`. */
+/* Every leaf of the loop body does its own `(*outCount)++` (there is no shared one behind the if / else), and the
+ * custom list's inner loop has its own counter: the three cell copies and the two filler stores then stay
+ * separate code, as in the original (cross-jumping merges only the increments). */
 void ChrGrid_Build(s32 *outCount, ChrGridCell *out, s32 *inCount, ChrGridCell *in, s32 *customCount,
                    ChrGridCell *custom) {
     s32 flags = 0;
@@ -781,6 +782,7 @@ void ChrGrid_Build(s32 *outCount, ChrGridCell *out, s32 *inCount, ChrGridCell *i
     s32 i;
     s32 j;
     s32 pad;
+    s32 k;
 
     if (gProgress->mode >= 0x26 && gProgress->mode < 0x2A) {
         if (gProgress->mode == 0x28) {
@@ -821,43 +823,49 @@ void ChrGrid_Build(s32 *outCount, ChrGridCell *out, s32 *inCount, ChrGridCell *i
                     out[*outCount].formCount = 0;
                     out[*outCount].id = out[*outCount].form[0];
                     (*outCount)++;
-                    continue;
+                } else {
+                    out[*outCount].id = out[*outCount].form[0];
+                    (*outCount)++;
                 }
-                out[*outCount].id = out[*outCount].form[0];
             } else if (out[*outCount].formCount == 1) {
                 out[*outCount].formCount = 0;
                 out[*outCount].id = out[*outCount].form[0];
                 (*outCount)++;
-                continue;
             } else {
                 out[*outCount].id = CHRGRID_ID_LOCKED;
+                (*outCount)++;
             }
         } else {
             switch (in[i].id) {
             case CHRGRID_ID_CUSTOM:
                 if (flags & CHRGRID_NO_CUSTOM) {
                     out[*outCount].id = CHRGRID_ID_EMPTY;
+                    (*outCount)++;
                 } else {
                     out[*outCount] = in[i];
+                    (*outCount)++;
                 }
                 break;
             case CHRGRID_ID_RANDOM:
                 if (flags & CHRGRID_NO_RANDOM) {
                     out[*outCount].id = CHRGRID_ID_EMPTY;
+                    (*outCount)++;
                 } else {
                     out[*outCount] = in[i];
+                    (*outCount)++;
                 }
                 break;
             default:
                 if ((flags & CHRGRID_ALL) || CHARA_UNLOCKED(in[i].id)) {
                     out[*outCount] = in[i];
+                    (*outCount)++;
                 } else {
                     out[*outCount].id = CHRGRID_ID_LOCKED;
+                    (*outCount)++;
                 }
                 break;
             }
         }
-        (*outCount)++;
     }
 
     pad = (*outCount + (CHRGRID_COLS - 1)) / CHRGRID_COLS * CHRGRID_COLS;
@@ -876,9 +884,9 @@ void ChrGrid_Build(s32 *outCount, ChrGridCell *out, s32 *inCount, ChrGridCell *i
             custom[i].id = CHRGRID_ID_LOCKED;
             custom[i].formCount = 0;
             if (gSaveData->rec[i].chara >= 0) {
-                for (j = 0; j < *inCount; j++) {
-                    if (gSaveData->rec[i].chara == in[j].id) {
-                        custom[i] = out[j];
+                for (k = 0; k < *inCount; k++) {
+                    if (gSaveData->rec[i].chara == in[k].id) {
+                        custom[i] = out[k];
                         custom[i].id = gSaveData->rec[i].chara;
                         custom[i].form[0] = gSaveData->rec[i].chara;
                         (*customCount)++;
@@ -889,9 +897,6 @@ void ChrGrid_Build(s32 *outCount, ChrGridCell *out, s32 *inCount, ChrGridCell *i
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ui/menu_util_1", ChrGrid_Build);
-#endif
 
 /* Marks the locked stages of a stage list: a stage whose bit in gSaveData->stageBits is clear becomes
  * STGGRID_ID_LOCKED. In mode 0x28, stages 4 and 0x1B become fillers even when unlocked. */
@@ -1123,30 +1128,13 @@ void TextBox_SetSpacing(TextBox *box, s32 x, s32 y) {
 /* The clip callback: moves the text by the clip's position, tints text and shadow with the clip's colour
    transform, and prints the string unless it has become fully transparent.
 
-   NOT MATCHING: kept as INCLUDE_ASM. The attempt below is behaviourally exact. It differs in how the clamped
-   component reaches its store: the original copies it with `move v1,v0` (seven times; the eighth needs no
-   copy), this C narrows it with `andi v1,v0,0xff` (eight times, so the function is one instruction longer).
-   An `s32` helper gives the plain copy but then the compiler turns the outer test into a branch around, or
-   stores in both arms; some 40 shapes of the clamp were tried. Everything else is identical. */
-/* Second cleanup pass: on this compiler `move` is also what an int-to-long sign extension compiles to
-   (`(s64)u0 << 4` in BtlText_PutSprite), and a helper returning s64 / long does give a move in the arm
-   (`move v0,v0`), but the narrowing then moves to the join (`andi v0,v0,0xff` in front of the `sb`): 48
-   differences. A `u8` result local in a macro is promoted to a full register and has its zero hoisted in front
-   of the branch (204 instructions). So the original copy is most likely a plain copy between two int
-   registers that the allocator could not merge (the next statement's `lbu` already sits in v0 at the join),
-   in a shape where the compiler does not hoist the `= 0` arm; not found (15 more shapes tried here).
-   Cleanup 4: twelve more shapes (nested ternaries on an `s32` temporary, `r = 0xFF; if (t < 0x100) r = t;` in
-   a block or in an `s32` inline helper, min / max macros, a helper taking `u8 *`): 62 to 130 differences, all
-   because the `< 0` test then becomes straight-line code or the zero is hoisted. The `u8` helper below stays
-   the closest form. */
-#if 0
-/* Clamps a colour component to a byte. */
-static inline u8 TextBox_ClampByte(s32 c) {
-    return c < 0 ? 0 : (c > 0xFF ? 0xFF : c);
-}
+   The tint is a three-argument clamp MACRO applied to the whole expression: the expression is written out in
+   each arm and only merged by cse, so the inner choice becomes a conditional move late (after combine) and the
+   copy of its result (`move v1,v0`) survives. An inline helper or a temporary gives other code. */
+#define TB_CLAMP(x, lo, hi) ((x) < (lo) ? (lo) : ((x) > (hi) ? (hi) : (x)))
 
 /* A colour component after a clip's colour transform. */
-#define TB_TINT(c, mul, add) (c) = TextBox_ClampByte((s32)((f32)(c) * (mul)) + (add))
+#define TB_TINT(c, mul, add) (c) = TB_CLAMP((s32)((f32)(c) * (mul)) + (add), 0, 0xFF)
 
 s32 TextBox_DrawClip(TextBoxDraw *draw, TextBoxClipProp *prop) {
     u32 shadow;
@@ -1182,9 +1170,6 @@ s32 TextBox_DrawClip(TextBoxDraw *draw, TextBoxClipProp *prop) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ui/menu_util_1", TextBox_DrawClip);
-#endif
 
 /* Fills box->draw for one string and hangs it on a clip. */
 #define TB_ATTACH(flash, ref, x, y, str, box) \
