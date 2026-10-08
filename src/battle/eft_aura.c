@@ -1,6 +1,5 @@
 #include "common.h"
 #include "battle/eft_aura.h"
-#include "battle/eft_aura_part2.h"
 #include "sys/gfx_ot.h"
 
 /*
