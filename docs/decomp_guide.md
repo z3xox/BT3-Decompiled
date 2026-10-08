@@ -1042,3 +1042,11 @@ More of the same night (the geyser functions):
   a temporary first; a second span in two statements (`t = time - mid; t = t / (end - mid);`).
   (EftChain_BlendKeys)
 - A packet's seven header stores: an exhaustive search of the 5040 orders takes about four minutes.
+- **A hand-written routine wrongly declared `void`** (`Mtx_ProjectPointStq` returns s32) changes allocation behind
+  the call as well as the moves in front of it: the first temporary born after a value-returning call avoids v0.
+- **A literal argument whose load comes first with another argument's load in the delay slot was a foldable
+  float conversion** (`(u32)(hi * 64.0f)` with `hi = 1.0f` assigned just before): it collapses to `li t0,64` but
+  keeps its place in the schedule. (ShenScene_StepSeq's blur call)
+- **Probe**: `extern T alias __asm__("RealName");` is another symbol to cse / gcse and the same assembly: it
+  tells whether a shared `%hi()` register causes a difference (in -G0 code such a register has no known base
+  address and a store through it conflicts with every later struct load in the block).
