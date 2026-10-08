@@ -1,6 +1,5 @@
 #include "common.h"
 #include "battle/btl_act_change.h"
-#include "battle/btl_act_change_part2.h"
 
 /*
  * Fighter action handlers: 0x1FC2B0..0x1FFAC0, in two C files because the one unmatched handler (BtlAct_GrabDash)
