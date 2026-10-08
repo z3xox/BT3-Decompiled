@@ -863,3 +863,60 @@ has the arithmetic argument why no statement order can work with four references
   stored to itself or reloaded (cse); a `register ... asm("$2")` variable.
 - `do { } while (0)` inside a block is a scheduling barrier; a dead conditional splits the
   block.
+
+## Lessons from the night of 2026-10-08 (the functions left in assembly)
+
+Reported by the agents that matched them; each was seen to fix a function, the explanations are theirs.
+
+Source forms:
+- **A loop's own counter.** A counter reused by a later loop carries that loop's register preferences into the
+  earlier one (`.greg`: `;; N preferences: 3 4`). Inner-loop pointers in t-registers where the original has v1 /
+  a0: give each loop its own counter. (ObjShadow_BuildPacket, ChrGrid_Build)
+- **The shared statement in every leaf.** Identical blocks kept apart although each jumps to the same place: the
+  statement behind the if / else or switch (`(*count)++`, a common tail) was written in every arm. The compiler
+  merges equal tails only after register allocation, and each copy counts its references: "same instructions,
+  two or three saved registers rotated" can be `if (k == 2) {A} else if (k == 6) {A}` against `if (k == 2 || k ==
+  6) {A}`. Two switch cases share a tail only when both end the same way: write the whole tail in each case and
+  drop `default: return`. (ChrGrid_Build, EftEmit_Spawn, EftEmit_SpawnType0)
+- **A clamp as a macro over the whole expression** (`((x) < (lo) ? (lo) : ((x) > (hi) ? (hi) : (x)))`, or MAX(0,
+  MIN(x, 255))) gives `move` where an inline u8 helper gives `andi`. (TextBox_DrawClip)
+- **A wrap helper that takes the count**, with `count - 1` written at each use, not a `hi` bound passed in. Probe:
+  if `-fno-sched-spec` gives the original, look for this. (DcPass_WrapPos)
+- **If / else assigning in both arms** (`if (c) x = a; else x = b;`) is not `x = b; if (c) x = a;`: the source value
+  dies at the copy, one more block-local quantity. (HudPrompt_UpdateCue)
+- **The cheap case as its own arm**: `if (paused) n = i; else { loop }`, not `n = i; if (!paused) { loop }`.
+  (HudGauge_UpdateAura)
+- **`for (;;) { ...; if (a || b || c || d) break; }`** is not rotated; a do-while with an `&&` chain is rotated in
+  the middle. (HudGauge_UpdateAura)
+- **A function-level local for an address used in some calls, the expression written out in the others**: a
+  prologue that saves one sN out of order means that register is set in the entry block. (DcPass_DrawStatus)
+- **A constant through a block-local variable** (`{ s32 w = 0x80; f(.., w, ..); }`) stops the second CSE pass
+  from sharing it with the same constant behind a loop that always runs once. (DcPass_DrawStatus; a stand-in)
+- **A dead float compare** (`if (a < K1 && f() > K2) { }`) keeps the call, emits no compare, and counts as an
+  instruction for allocation: look at the sibling function for the full condition. (EftRibbon_DrawKind1)
+- **Declaration order is spill-slot order**; floats declared in front of a vector, an unused parameter kept.
+  (EftRibbon_DrawStrip, EftEmit_SpawnType0)
+- **Prototypes across files**: a caller's local `extern` with pointers before floats changes the argument set-up
+  of the other calls in the same switch too. (EftEmit_Spawn)
+- **A 4-aligned view of a table** (`f32 color[3][4]`) for y, z, w while x shares an address computed for a call.
+  (EftRibbon_UpdateKeys)
+- **A local struct initialiser**: flat members, an array, and a struct holding an array give three different
+  schedules of the stores behind the leading memset. (EftEmit_SpawnType0)
+- **Copy the matched twin**: the statement forms and declaration order of a sibling function that already
+  matches. (EftZap_DrawQuad from EftLink_DrawQuad; DrawKind1 from DrawKind2)
+
+About the compiler (inferred from its source and dumps by the agents):
+- The loop pass hoists a constant while `threshold >= loop insn count`; the threshold is about 126 to 128 without
+  a call and drops by 3 per constant moved. Empty `__asm__("")` statements are a precise probe for how many
+  instructions a loop is short of. A dead counter is removed before the pass and cannot explain a longer loop.
+- Local-alloc priority is `floor_log2(refs) * refs / (death - birth)` in instruction positions inside the block;
+  the `.lreg` "used N times across M insns" figure is another number. Registers tied by an operation form one
+  quantity and their references add up. With exactly three block-local quantities the hand-written sort
+  compares the wrong indices.
+- `p->f = p->f;` is one store that lives until reload and emits nothing: a probe for "one more instruction at the
+  block start" (the first scheduling pass issues two per cycle).
+- `la rD,sym+K(rS)` assembles to `lui / addiu / addu` when rD != rS: not evidence of a separate address constant.
+- Float tie probe: `__asm__("" : "=f"(v) : "0"(v));` (`"=r"` forces mfc1 / mtc1).
+
+Fake matches made tonight (byte-identical, the real source form not found): ObjShadow_BuildPacket (ten empty asm
+statements), DemoCam_Update (`gDemoCam->fixed = gDemoCam->fixed;`), and the width variable in DcPass_DrawStatus.
