@@ -1,6 +1,5 @@
 #include "common.h"
 #include "battle/btl_act_2.h"
-#include "battle/btl_act_2_part2.h"
 #include "battle/btl_act_2_part3.h"
 
 /*
