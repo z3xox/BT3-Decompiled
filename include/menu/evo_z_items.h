@@ -22,7 +22,7 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
  *   item_help.c  0x399240..0x399790  ItemHelp: the item details page shared by many screens
  *   shop.c  0x399790..0x39A978  Shop: head of the item shop object (the rest is in src/menu/menu_w*.c)
  *
- * The structures below are local views; include/menu/sim_event_evo_z.h (UEvoZ) and include/menu/shop.h (Shop) describe
+ * The structures below are local views; include/menu/evo_z.h (UEvoZ) and include/menu/shop.h (Shop) describe
  * the same work areas from the neighbouring chunks.
  */
 

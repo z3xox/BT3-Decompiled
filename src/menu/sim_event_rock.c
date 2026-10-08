@@ -1,4 +1,4 @@
-#include "menu/sim_event_evo_z.h"
+#include "menu/sim_events.h"
 
 /* SimEvent, 0x391430..0x391B70: the rock game (gSimEvent[32]). Read-only data 0x3BAEC0..0x3BAF5C. */
 
