@@ -10,7 +10,6 @@
 #include "sys/dma.h"
 #include "sys/gfx.h"
 #include "sys/tex_file.h"
-#include "sys/flash_part3.h"
 
 extern void *memcpy(void *dst, const void *src, u32 size);
 extern void *memset(void *dst, s32 c, u32 n);
