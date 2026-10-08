@@ -1057,3 +1057,7 @@ More of the same night (the geyser functions):
   (`mtc1 zero,$fN` then `sub.s / lui / trunc / mfc1 / or`); a variable holding 0.0 has it folded. Look for a
   sibling call with the same argument shape and a run-time factor: the constant call is the same expression with
   the factor set to 1. (ShenScene_StepSeq)
+- **The union lesson applies behind a memset too**: `union { Vec v; f32 f[4]; } light = { { 0, 0, 0, 1 } };` for a
+  mostly-zero vector changed the first scheduling pass's order in the block BEHIND the memset (the two halves
+  of a 16-byte constant copy loaded through different base registers are reload inheritance, not a source-level
+  pointer copy). (EftBurst_DrawModel: the 16-instruction miss, the last function of the main executable)
