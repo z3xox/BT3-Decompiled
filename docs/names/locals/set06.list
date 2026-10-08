@@ -1,0 +1,23 @@
+# C files
+src/battle/eft_shot.c
+src/battle/eft_shot_fx.c
+src/battle/eft_shot_tech.c
+src/battle/eft_speed_line_spawn.c
+src/battle/eft_sprite.c
+src/battle/eft_sprite_anim.c
+src/battle/eft_stage_1.c
+src/battle/eft_stage_2.c
+src/battle/eft_streak.c
+src/battle/eft_struggle.c
+src/battle/eft_surface_out.c
+src/battle/eft_sweep.c
+# headers
+include/battle/eft_draw_modules.h
+include/battle/eft_shot.h
+include/battle/eft_shot_tech.h
+include/battle/eft_sprite_anim.h
+include/battle/eft_stage_1.h
+include/battle/eft_stage_2.h
+include/battle/eft_struggle.h
+include/battle/eft_surface_out.h
+include/battle/eft_sweep.h

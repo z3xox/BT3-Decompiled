@@ -1,0 +1,27 @@
+# C files
+src/battle/battle.c
+src/battle/battle_load.c
+src/battle/battle_work.c
+src/battle/btl_act_1.c
+src/battle/btl_act_2.c
+src/battle/btl_act_change.c
+src/battle/btl_act_decide.c
+src/battle/btl_act_super.c
+src/battle/btl_ai_mgr.c
+src/battle/btl_ai_sense.c
+src/battle/btl_ai_seq.c
+src/battle/btl_ai_think.c
+src/battle/btl_anim.c
+# headers
+include/battle/battle.h
+include/battle/battle_work.h
+include/battle/btl_act_1.h
+include/battle/btl_act_2.h
+include/battle/btl_act_change.h
+include/battle/btl_act_decide.h
+include/battle/btl_act_super.h
+include/battle/btl_ai_int.h
+include/battle/btl_ai_mgr.h
+include/battle/btl_ai_sense.h
+include/battle/btl_ai_seq.h
+include/battle/btl_ai_think.h

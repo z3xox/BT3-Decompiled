@@ -1,0 +1,21 @@
+# C files
+src/battle/eft_absorb.c
+src/battle/eft_aura.c
+src/battle/eft_blast_obj.c
+src/battle/eft_body_fx.c
+src/battle/eft_burst.c
+src/battle/eft_chain.c
+src/battle/eft_char_parts.c
+src/battle/eft_core.c
+src/battle/eft_detect.c
+src/battle/eft_disc.c
+src/battle/eft_emit.c
+src/battle/eft_glow.c
+# headers
+include/battle/eft_aura.h
+include/battle/eft_chain.h
+include/battle/eft_char_parts.h
+include/battle/eft_core.h
+include/battle/eft_detect.h
+include/battle/eft_disc.h
+include/battle/eft_emit.h

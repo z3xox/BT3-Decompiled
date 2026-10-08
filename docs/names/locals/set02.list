@@ -1,0 +1,25 @@
+# C files
+src/battle/btl_cam.c
+src/battle/btl_change.c
+src/battle/btl_char_action.c
+src/battle/btl_char_api_1.c
+src/battle/btl_char_api_2.c
+src/battle/btl_char_cam.c
+src/battle/btl_char_flag.c
+src/battle/btl_char_fx_1.c
+src/battle/btl_char_fx_2.c
+src/battle/btl_char_hit.c
+src/battle/btl_char_member.c
+src/battle/btl_char_mgr.c
+# headers
+include/battle/btl_cam.h
+include/battle/btl_char_action.h
+include/battle/btl_char_api_1.h
+include/battle/btl_char_api_2.h
+include/battle/btl_char_cam.h
+include/battle/btl_char_cam_int.h
+include/battle/btl_char_flag.h
+include/battle/btl_char_fx_1.h
+include/battle/btl_char_hit.h
+include/battle/btl_char_member.h
+include/battle/btl_char_mgr.h

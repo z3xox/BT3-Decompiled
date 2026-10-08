@@ -1,0 +1,28 @@
+# C files
+src/battle/eft_ground_dust.c
+src/battle/eft_impact.c
+src/battle/eft_layer3.c
+src/battle/eft_link_1.c
+src/battle/eft_link_2.c
+src/battle/eft_mesh.c
+src/battle/eft_obj_tech.c
+src/battle/eft_orb_tail.c
+src/battle/eft_part10.c
+src/battle/eft_particle.c
+src/battle/eft_quad_1.c
+src/battle/eft_quad_2.c
+src/battle/eft_rays.c
+src/battle/eft_ribbon.c
+src/battle/eft_ring_shot.c
+# headers
+include/battle/eft_ground_dust.h
+include/battle/eft_link_2.h
+include/battle/eft_obj_tech.h
+include/battle/eft_orb_tail.h
+include/battle/eft_part10.h
+include/battle/eft_particle_ext.h
+include/battle/eft_quad_2.h
+include/battle/eft_rays.h
+include/battle/eft_ribbon.h
+include/battle/eft_shot_fx_particle.h
+include/battle/eft_tech_modules.h
