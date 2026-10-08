@@ -116,13 +116,13 @@ typedef struct EftIMarkArg {
 extern s32 EftImpact_SpawnBlast(EftIMarkArg arg, f32 size, f32 unk);
 
 /* Spawners of the other particle modules (previous file), same shape as the four in this file. */
-extern void EftEmit_SpawnType0(EftEmitSet *, EftEmitHandles *, s32, s32, s32, s32, Vec4 *, f32, f32, f32, Vec4 *);
-extern void EftEmit_SpawnType2(EftEmitSet *, EftEmitHandles *, s32, s32, s32, s32, Vec4 *, Vec4 *, f32, f32, f32);
-extern void EftEmit_SpawnType16(EftEmitSet *, EftEmitHandles *, s32, s32, s32, s32, Vec4 *, Vec4 *, f32, f32, f32);
-extern void EftEmit_SpawnType17(EftEmitSet *, EftEmitHandles *, s32, s32, s32, s32, s32, Vec4 *, Vec4 *, Vec4 *, f32, f32, f32);
-extern void EftEmit_SpawnType18(EftEmitSet *, EftEmitHandles *, s32, s32, s32, s32, s32, Vec4 *, Vec4 *, f32, f32, f32);
-extern void EftEmit_SpawnType14(EftEmitSet *, EftEmitHandles *, s32, s32, s32, s32, Vec4 *, Vec4 *, f32, f32, f32);
-extern void EftEmit_SpawnType5(EftEmitSet *, EftEmitHandles *, s32, s32, s32, s32, Vec4 *, Vec4 *, f32, f32, f32);
+extern void EftEmit_SpawnType0(EftEmitSet *, EftEmitHandles *, s32, s32, s32, s32, f32, f32, f32, Vec4 *, Vec4 *);
+extern void EftEmit_SpawnType2(EftEmitSet *, EftEmitHandles *, s32, s32, s32, s32, f32, f32, f32, Vec4 *, Vec4 *);
+extern void EftEmit_SpawnType16(EftEmitSet *, EftEmitHandles *, s32, s32, s32, s32, f32, f32, f32, Vec4 *, Vec4 *);
+extern void EftEmit_SpawnType17(EftEmitSet *, EftEmitHandles *, s32, s32, s32, s32, s32, f32, f32, f32, Vec4 *, Vec4 *, Vec4 *);
+extern void EftEmit_SpawnType18(EftEmitSet *, EftEmitHandles *, s32, s32, s32, s32, s32, f32, f32, f32, Vec4 *, Vec4 *);
+extern void EftEmit_SpawnType14(EftEmitSet *, EftEmitHandles *, s32, s32, s32, s32, f32, f32, f32, Vec4 *, Vec4 *);
+extern void EftEmit_SpawnType5(EftEmitSet *, EftEmitHandles *, s32, s32, s32, s32, f32, f32, f32, Vec4 *, Vec4 *);
 
 /* Particle modules. Per module: create(arg block), parameter setters, set position (two variants), set size,
    set direction, kill, stop, "is alive". */
@@ -509,16 +509,10 @@ void EftEmit_SpawnOwn(EftEmitSet *set, EftEmitState *state, EftEmitNodes *nodes,
 /* Gives one part of an effect pack its command: resolves where it is (node slot, opponent, or the caller's
    position, plus a random offset inside the part's spread when it starts), which way it points and how big it
    is, hands that to the part's module, then records started / stopped and advances the part's scale animation. */
-/* Not matching: 66 of 753 instructions differ, every one a register name: the original keeps def / flags / objId in
-   s3 / s4 / s5, this C in s5 / s3 / s4. Instruction for instruction the code is otherwise identical (stack slots,
-   both jump tables, float constants). Why (global allocation dump): the three are allocated in order of
-   priority = floor(log2(refs)) * refs / live length, with refs weighted by loop depth; here flags has 30 refs over
-   494 insns (0.243), objId 29 over 482 (0.241), def 28 over 515 (0.218), so def comes last. In the original def
-   comes first, which with the same live lengths needs 32 or more weighted refs for def (the log2 factor steps
-   from 4 to 5 there), i.e. four more than this C gives it. Wrapping the rate selection or the scale animation in
-   `do { } while (0)` raises the weight of their def reads but changes the code (the loop pass moves constants):
-   161 and 106 instructions differ. Not found: what gives def the extra references. */
-#if 0
+/* Matching notes. (1) The kind-2 and kind-6 start checks are two bodies in the source: the compiler merges them only
+   after register allocation, and their two extra reads of `def` are what puts def / flags / objId in s3 / s4 / s5.
+   (2) The rate is read once behind the start checks (no goto): the partial-redundancy pass puts the load on each
+   incoming path. (3) Every spawner is called with the three floats in front of the position pointers. */
 void EftEmit_Spawn(EftEmitSet *set, EftEmitState *state, EftEmitNodes *nodes, Vec4 *pos, Vec4 *dir, s32 objId,
                    s32 node, s32 arg7, s32 type, s32 idx, s32 flags, f32 scale) {
     Vec4 p;
@@ -553,7 +547,15 @@ void EftEmit_Spawn(EftEmitSet *set, EftEmitState *state, EftEmitNodes *nodes, Ve
     slot = gEftEmitNodeSlot[sel];
     if (flags & EFT_SPAWN_START) {
         if (!(state->flags[n] & EFT_EMIT_STARTED)) {
-            if (def->kind == 2 || def->kind == 6) {
+            if (def->kind == 2) {
+                if (def->unk9 != 0) {
+                    return;
+                }
+                if (def->rate <= 0.0f) {
+                    return;
+                }
+                state->flags[n] |= EFT_EMIT_ONESHOT;
+            } else if (def->kind == 6) {
                 if (def->unk9 != 0) {
                     return;
                 }
@@ -562,17 +564,12 @@ void EftEmit_Spawn(EftEmitSet *set, EftEmitState *state, EftEmitNodes *nodes, Ve
                 }
                 state->flags[n] |= EFT_EMIT_ONESHOT;
             }
-            if (def->unk9 == 0) {
-                rate = def->rate;
-                if (rate <= 0.0f) {
-                    return;
-                }
-                goto have_rate;
+            if (def->unk9 == 0 && def->rate <= 0.0f) {
+                return;
             }
         }
     }
     rate = def->rate;
-have_rate:
     if (flags & EFT_SPAWN_STOP) {
         if (def->kind == 2) {
             flags &= ~EFT_SPAWN_STOP;
@@ -669,25 +666,25 @@ have_rate:
         }
         switch (type) {
         case 0:
-            EftEmit_SpawnType0(set, handles, flags, arg7, objId, idx, &p, size, scale, rate, &d);
+            EftEmit_SpawnType0(set, handles, flags, arg7, objId, idx, size, scale, rate, &p, &d);
             break;
         case 2:
-            EftEmit_SpawnType2(set, handles, flags, arg7, objId, idx, &p, &d, size, scale, rate);
+            EftEmit_SpawnType2(set, handles, flags, arg7, objId, idx, size, scale, rate, &p, &d);
             break;
         case 16:
-            EftEmit_SpawnType16(set, handles, flags, arg7, objId, idx, &p, &d, size, scale, rate);
+            EftEmit_SpawnType16(set, handles, flags, arg7, objId, idx, size, scale, rate, &p, &d);
             break;
         case 17:
-            EftEmit_SpawnType17(set, handles, flags, arg7, objId, node, idx, &p, pos, &d, size, scale, rate);
+            EftEmit_SpawnType17(set, handles, flags, arg7, objId, node, idx, size, scale, rate, &p, pos, &d);
             break;
         case 18:
-            EftEmit_SpawnType18(set, handles, flags, arg7, objId, node, idx, &p, &d, size, scale, rate);
+            EftEmit_SpawnType18(set, handles, flags, arg7, objId, node, idx, size, scale, rate, &p, &d);
             break;
         case 14:
-            EftEmit_SpawnType14(set, handles, flags, arg7, objId, idx, &p, &d, size, scale, rate);
+            EftEmit_SpawnType14(set, handles, flags, arg7, objId, idx, size, scale, rate, &p, &d);
             break;
         case 5:
-            EftEmit_SpawnType5(set, handles, flags, arg7, objId, idx, &p, &d, size, scale, rate);
+            EftEmit_SpawnType5(set, handles, flags, arg7, objId, idx, size, scale, rate, &p, &d);
             break;
         case 9:
             EftEmit_SpawnType9(set, handles, flags, arg7, objId, idx, size, scale, rate, &p, &d);
@@ -759,8 +756,6 @@ have_rate:
         }
     }
 }
-#endif
-INCLUDE_ASM("asm/nonmatchings/battle/eft_sweep", EftEmit_Spawn);
 
 /* Flags (0x20, "use the alternative node") the emitters whose condition bit is among the fighter's requests. */
 void EftEmit_MarkCond(s32 objId, s32 extra, EftEmitSet *set, EftEmitState *state) {
