@@ -1015,24 +1015,24 @@ void TextBox_Init(TextBox *box, void *text, u32 preset) {
 }
 
 void TextBox_SetAlign(TextBox *box, s32 value) {
-    box->unk50 = value;
+    box->align = value;
 }
 
 void TextBox_SetNoFlush(TextBox *box, s32 value) {
-    box->unk80 = value;
+    box->noFlush = value;
 }
 
 void TextBox_SetOffset(TextBox *box, s32 a, s32 b) {
-    box->unkC = a;
-    box->unk10 = b;
+    box->x = a;
+    box->y = b;
 }
 
 /* Gives the box four values (a rectangle, by the look of it) and marks them valid. */
 void TextBox_SetRect(TextBox *box, s32 a, s32 b, s32 c, s32 d) {
-    box->rect[3] = d;
-    box->rect[0] = a;
-    box->rect[1] = c;
-    box->rect[2] = b;
+    box->clip[3] = d;
+    box->clip[0] = a;
+    box->clip[1] = c;
+    box->clip[2] = b;
     box->flags |= TEXTBOX_FLAG_RECT;
 }
 
@@ -1048,10 +1048,10 @@ void TextBox_SetColor(TextBox *box, u32 rgba) {
 /* Sets the second colour from 0xRRGGBBAA. */
 void TextBox_SetColor2(TextBox *box, u32 rgba) {
     box->flags |= TEXTBOX_FLAG_COLOR2;
-    box->color2[0] = rgba >> 24;
-    box->color2[1] = rgba >> 16;
-    box->color2[2] = rgba >> 8;
-    box->color2[3] = rgba;
+    box->shadow[0] = rgba >> 24;
+    box->shadow[1] = rgba >> 16;
+    box->shadow[2] = rgba >> 8;
+    box->shadow[3] = rgba;
 }
 
 

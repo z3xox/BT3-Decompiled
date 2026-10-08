@@ -1,0 +1,6 @@
+include/ui/reward_window.h	TextBox	unkC	x	HIGH	TextBoxFull names +0xC x; TextBox_SetOffset stores it
+include/ui/reward_window.h	TextBox	unk10	y	HIGH	TextBoxFull names +0x10 y
+include/ui/reward_window.h	TextBox	unk50	align	HIGH	TextBoxFull draw.align; TextBox_SetAlign
+include/ui/reward_window.h	TextBox	unk80	noFlush	HIGH	TextBoxFull draw.noFlush; TextBox_SetNoFlush
+include/ui/reward_window.h	TextBox	color2	shadow	HIGH	TextBoxFull shadow
+include/ui/reward_window.h	TextBox	rect	clip	HIGH	TextBoxFull clip

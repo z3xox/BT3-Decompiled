@@ -70,16 +70,16 @@ typedef struct TextBox {
     /* 0x00 */ s32 flags;      /* TEXTBOX_FLAG_* */
     /* 0x04 */ void *text;     /* text file: line n is at text + (((u32 *)text)[n + 1] & ~3) */
     /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;       /* TextBox_SetOffset: 0 or 0x100 */
-    /* 0x10 */ s32 unk10;
+    /* 0x0C */ s32 x;       /* TextBox_SetOffset: 0 or 0x100 */
+    /* 0x10 */ s32 y;
     /* 0x14 */ u8 unk14[0x1C];
     /* 0x30 */ u8 color[4];    /* r, g, b, a */
-    /* 0x34 */ u8 color2[4];
-    /* 0x38 */ s32 rect[4];    /* TextBox_SetRect stores its arguments as [0], [2], [1], [3] */
+    /* 0x34 */ u8 shadow[4];
+    /* 0x38 */ s32 clip[4];    /* TextBox_SetRect stores its arguments as [0], [2], [1], [3] */
     /* 0x48 */ u8 unk48[8];
-    /* 0x50 */ s32 unk50;      /* 0 or 2 in the presets, 1 in the reward window */
+    /* 0x50 */ s32 align;      /* 0 or 2 in the presets, 1 in the reward window */
     /* 0x54 */ u8 unk54[0x2C];
-    /* 0x80 */ s32 unk80;
+    /* 0x80 */ s32 noFlush;
     /* 0x84 */ u8 unk84[8];
 } TextBox; /* size 0x8C */
 
