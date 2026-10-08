@@ -821,9 +821,7 @@ void EftSprAnim_SetGridUv(Vec4 *uv, s32 grid, s32 cell) {
 }
 
 /*
- * EftSprAnim_DrawQuad (0x1ABF48) and EftSprAnim_DrawQuadSubdiv (0x1AC650) are left in assembly. Both end in the
- * same inlined code, read from the disassembly and reproduced by the attempt below except for register
- * allocation and the order of a few constant loads:
+ * EftSprAnim_DrawQuad (0x1ABF48) and EftSprAnim_DrawQuadSubdiv (0x1AC650) both end in the same inlined code:
  *   - a triangle (three corners with uv and colour) is clipped against the five planes of the view
  *     (EftGfx_UpdateClipPlanes / GetClipPlanes, ClipPoly_ClipPlane), projected (ClipPoly_ProjectCur) and written as a fan;
  *   - each fan triangle is skipped when its three alphas are 0 or less; every projected z is capped at 0xFFFFFF;
@@ -839,48 +837,19 @@ void EftSprAnim_SetGridUv(Vec4 *uv, s32 grid, s32 cell) {
  * diagonals) and gives every quarter the whole texture, mirrored so the pieces join (gEftSprSubdivCorner).
  * Neither reads anything but its arguments, the clip planes and the display list.
  */
-#if 0 /* NON-MATCHING. DrawQuad: the same length and blocks; what differs is (1) the original computes the GS
-         context bit as an int, uses it unextended for the TEX0 / first CLAMP register numbers and sign-extended
-         from 8 bits for PRIM and the last CLAMP (here one s8 is used for all four), (2) it does so after the
-         "i < n" entry test of the fan loop (here before it), (3) the two stq pointers swap registers and
-         two header stores swap. DrawQuadSubdiv: the head (quarters, uv, 151 instructions) is identical; the
-         rest is the same inlined code with the same differences.
-         Second pass (cleanup step 12, about 200 variants, scratch in build/scratch_cleanup2_F/eftad/): the insns
-         the original has are reproduced by `s32 ctx = otLayer >= 2;` inside QueueTri with
-         prim = (abe << 6) | ((s64)(s8)ctx << 9) | 0x1B (abe an s64 local = 1) and
-         gif1 = ((s64)ctx << 4) + ((s64)(s8)ctx << 48) + ((s64)ctx << 8) + 0xF8421421421860: the first loop pass
-         hoists the chain into the fan loop's preheader as in the original, but the rerun of the loop pass then
-         moves slti / xori (and what depends on them) out of the j loop as well (456 instructions, 98 differ).
-         The rerun moves the slti when 64 * 2 * (1 + lifetime of the xori result) >= insns of the j loop (363),
-         so it stays only when the xori result has ONE use, in the next insn. Forms with one use (an int copied
-         to an s64, s8 taken from the s64) keep the chain in place (450 instructions, 46..51 differ) but add an
-         `andi 0xff` (DI to QI truncation) the original does not have; an s8 variable or parameter gives SI
-         sll / sra; ctx computed at the call site, at the top of the fan loop body or in an explicit
-         `if (i < n) { ...; do { } while }` preheader is hoisted by the rerun all the same. Not found: a form in
-         which the int has the two uses the original shows (64-bit shift pair on it, and << 4 / << 8) and is
-         still left alone by the rerun. The z caps, the header store order (emitted: vif1, tag, vif0, gif0,
-         clamp, next, prim, pad, gif1, clampEnd) and the t7 / s0 swap of the stq pointers were not settled
-         either (best order tried: prim, tag, vif1, vif0, gif0, clamp, next, pad, gif1, clampEnd).
-         Round 4 (no better attempt; a register-masked structural diff of this one is 37 lines, 35 with the
-         header order prim, tag, vif0, vif1, gif0, gif1, clamp, next): what the dumps add to the above.
-         (a) `slti` is not moved by the loop pass at all: gcse's PRE inserts `r = otLayer < 2` on the entry edge
-         of the fan loop (behind the `i < n` test, where the original has it), so only the `xori` and what hangs
-         on it are the loop pass's business. (b) A chain is moved as a whole only through "forces": a register
-         used exactly once, by the next movable, hands its savings and lifetime to that one. The fan loop's
-         first run therefore moves the xori only when its result lives 6 insns or more inside the fan loop
-         (64 * 1 * lifetime >= 338), i.e. the context bit is computed EARLY in the loop body with code that is
-         not moved between it and its uses; once hoisted the uses stand right behind it and the j loop's rerun
-         sees a short lifetime. (c) In the rerun the slti (now inside the j loop, result used once) forces the
-         xori, so the test is 64 * 2 * (1 + lifetime) against 364: lifetime 1 stays (256), lifetime 2 goes
-         (384, 20 over). The original's xori result has two RTL uses at most two insns away (a sign extension
-         to 64 bits for << 4 and << 8, which is a plain move, and the 8-bit sign extension for << 9 and << 48),
-         so its j loop was at least 21 RTL insns longer than this attempt's at that point, or the slti did not
-         force (its result used a second time). Neither was reproduced. (d) `li s1,2` sits in the delay slot of
-         the ClipPoly_ProjectCur call in the original (here behind it), and the fan's entry test has the j
-         reload `lw a0,748(sp)` as a dead slot instruction taken from the loop end. */
+/* Matching notes (both functions match since 2026-10-08):
+   - `ctx` is a variable of the clipping function with a DEAD INITIALISER (`s32 ctx = 0;`), assigned inside the fan
+     loop. The first loop pass hoists `ctx = otLayer >= 2` and the packet words built from it into the fan loop's
+     preheader; the dead `ctx = 0` (still there, flow removes it later) is a second set inside the j loop, so the
+     loop pass cannot move the chain out of the j loop as well. Without the initialiser it does.
+   - The context is an int: used as it is for the TEX0 / first CLAMP register numbers (`ctx << 4`, `ctx << 8`) and
+     through `(s8)` for PRIM and the last CLAMP.
+   - QueueTri takes the three stq pointers BEFORE the three colour pointers (it decides which of &stq[i - 1] /
+     &stq[i] is born first, a 166 / 167 live-length race for the last temporary register).
+   - The header statement order was found by a search over both functions (several orders match). */
 /* Queues one triangle (see above). ctx: 1 for the second GS context. */
-static inline void EftSprAnim_QueueTri(EftAeScr *v0, EftAeScr *v1, EftAeScr *v2, Vec4 *c0, Vec4 *c1, Vec4 *c2,
-                                       Vec4 *uv0, Vec4 *uv1, Vec4 *uv2, s32 otLayer, s32 z, u64 tex0, s32 mode, s8 ctx) {
+static inline void EftSprAnim_QueueTri(EftAeScr *v0, EftAeScr *v1, EftAeScr *v2, Vec4 *uv0, Vec4 *uv1, Vec4 *uv2,
+                                       Vec4 *c0, Vec4 *c1, Vec4 *c2, s32 otLayer, s32 z, u64 tex0, s32 mode, s32 ctx) {
     s32 abe = 1;
     s32 l;
     EftAeTriPkt *p;
@@ -891,15 +860,15 @@ static inline void EftSprAnim_QueueTri(EftAeScr *v0, EftAeScr *v1, EftAeScr *v2,
     }
     p = (EftAeTriPkt *)gOtCur;
     gOtCur = (u32 *)(p + 1);
-    p->prim = ((u64)abe << 6) | ((u64)ctx << 9) | 0x1B;
-    p->h.gif1 = ((u64)ctx << 4) + ((u64)ctx << 48) + ((u64)ctx << 8) + 0xF8421421421860;
-    p->h.vif1 = 0x50000008;
     p->h.tag = 0x20000008;
     p->h.vif0 = 0x10000000;
+    p->h.vif1 = 0x50000008;
+    p->prim = ((u64)abe << 6) | ((u64)(s8)ctx << 9) | 0x1B;
+    p->h.next = 0;
+    p->h.gif1 = 0xF8421421421860 + (ctx << 4) + (ctx << 8) + ((s64)(s8)ctx << 48);
+    p->pad = 0;
     p->h.gif0 = 0xE400000000008001;
     p->clamp = 5;
-    p->h.next = 0;
-    p->pad = 0;
     p->clampEnd = 0;
     p->v[0].rgba[0] = c0->x;
     p->v[0].rgba[1] = c0->y;
@@ -972,6 +941,7 @@ static inline void EftSprAnim_DrawTriClip(EftAeClipVtx *poly, s32 otLayer, s32 z
     Vec4 *plane;
     s32 n = 3;
     s32 i;
+    s32 ctx = 0; /* dead, but required: see the matching notes */
 
     EftGfx_UpdateClipPlanes();
     plane = EftGfx_GetClipPlanes();
@@ -980,11 +950,9 @@ static inline void EftSprAnim_DrawTriClip(EftAeClipVtx *poly, s32 otLayer, s32 z
         plane++;
     }
     if (n != 0) {
-        s8 ctx;
-
         ClipPoly_ProjectCur(scr, stq, poly, n);
-        ctx = otLayer >= 2;
         for (i = 2; i < n; i++) {
+            ctx = otLayer >= 2;
             if (scr[0].z > 0xFFFFFF) {
                 scr[0].z = 0xFFFFFF;
             }
@@ -994,8 +962,8 @@ static inline void EftSprAnim_DrawTriClip(EftAeClipVtx *poly, s32 otLayer, s32 z
             if (scr[i].z > 0xFFFFFF) {
                 scr[i].z = 0xFFFFFF;
             }
-            EftSprAnim_QueueTri(&scr[0], &scr[i - 1], &scr[i], &poly[0].col, &poly[i - 1].col, &poly[i].col,
-                                &stq[0], &stq[i - 1], &stq[i], otLayer, z, tex0, mode, ctx);
+            EftSprAnim_QueueTri(&scr[0], &scr[i - 1], &scr[i], &stq[0], &stq[i - 1], &stq[i], &poly[0].col,
+                                &poly[i - 1].col, &poly[i].col, otLayer, z, tex0, mode, ctx);
         }
     }
 }
@@ -1064,10 +1032,6 @@ void EftSprAnim_DrawQuadSubdiv(u64 tex0, Vec4 *corner, Vec4 *uv, Vec4 *color, s3
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle/eft_sprite_anim", EftSprAnim_DrawQuad);
-INCLUDE_ASM("asm/nonmatchings/battle/eft_sprite_anim", EftSprAnim_DrawQuadSubdiv);
-#endif
 
 /* Returns the pack (after a stripped check of its magic). */
 EftSprPack *EftSprPack_Get(EftSprPack *pack) {

@@ -1579,9 +1579,8 @@ void EftAura_BuildFlameMtx(Mtx44 *out, Vec4 *dir, Vec4 *pos) {
 /*
  * Effect tasks, 0x1637A0..0x167E68. See include/battle/eft_n.h.
  *
- * 45 of 47 functions are C. Two are INCLUDE_ASM with the attempt in `#if 0` above them: EftBolt_Shape and
- * EftBolt_Draw (EftAura_DrawFlames matches since cleanup W1). Their float constants are emitted in place with LIT4_WORD, so the file's .lit4
- * is the whole of 0x2FC97C..0x2FCAAC whichever way they are built.
+ * All 47 functions are C (EftAura_DrawFlames since cleanup W1, EftBolt_Shape and EftBolt_Draw since 2026-10-08).
+ * The file's .lit4 is the whole of 0x2FC97C..0x2FCAAC.
  *
  * Nothing here is simulation: no hit record, fighter, battle object or battle event is written. The fighter is
  * only read through BtlCharApi_* getters. libc rand() is drawn by the lightning (EftBolt_Shape, EftBolt_Step,
@@ -2729,11 +2728,19 @@ void EftBolt_FreeSegs(EftBolt *bolt) {
 
 /* Lays the bolt's joints out between `start` and `end` (relative to the bolt's origin): a random zigzag across the
    bolt's normal that bulges along it, and the colour, width and alpha of every joint.
-   Not matching (196 instructions out of place after alignment): the statements, the frame and the order of calls
-   are right; the callee-saved float registers are assigned differently (the original keeps `amp` in $f22, the
-   rand() divisor in $f24 and uses eleven of them, this attempt twelve) and the vector sums are scheduled in another
-   order. The if / else with identical arms is deliberate: the original has a `c.lt.s amp, 0` whose branch is gone. */
-#if 0
+   Matching notes (matched 2026-10-08):
+   - r1 / r2 are used only in front of the loop; inside it `t` is the factor that lives across a rand() call and `r`
+     the one that does not (one variable for both puts every factor in a saved register: twelve instead of eleven).
+   - The if / else with identical arms is deliberate and holds ONLY the second random factor: the original has a
+     `c.lt.s amp, 0` whose branch is gone, the rand() divisor of the first two factors is one register that is not
+     hoisted (set in one block, used in the arms) and the third factor loads its own.
+   - `bright = 1.0f` stands behind the calls, next to `amp = scale` (cse then keeps amp's 1.0 as the first
+     register and makes bright the copy).
+   - The joint widths: `n == 0 || seg->next == NULL` first (the 0.02 arm lies in front of the other one).
+   - POSSIBLY A FAKE: `base = &p0;` between Vec4_Sub and Vec3_Normalize (found by the permuter). Without it the
+     addresses of `dir` and `side` swap s0 / s1: a local-alloc priority race (6 references over 40 instructions
+     against 3 over 10) that one more instruction between those calls in the first scheduling pass decides. The
+     natural source form of that instruction is unknown. */
 void EftBolt_Shape(EftBolt *bolt, EftVec start, EftVec end, f32 scale) {
     Vec4 p0;
     Vec4 p1;
@@ -2747,29 +2754,26 @@ void EftBolt_Shape(EftBolt *bolt, EftVec start, EftVec end, f32 scale) {
     f32 r1;
     f32 r2;
     f32 t;
+    f32 r;
     s32 count;
     s32 thick = 1;
     s32 n = 0;
     EftBoltSeg *seg;
     EftBoltSeg **link;
+    Vec4 *base;
 
-    r1 = rand();
-    r2 = rand();
+    r1 = (RANDF() + amp) * scale;
+    r2 = (RANDF() + amp) * scale;
     count = bolt->count;
-    r1 /= RAND_MAX_F;
     Vec4_Sub(&dir, V(&end), V(&start));
+    base = &p0; /* see the matching notes */
     Vec3_Normalize(&dir, &dir);
     Vec3_Cross(&side, &dir, &bolt->normal);
-    r2 /= RAND_MAX_F;
     Vec3_Cross(&up, &side, &dir);
-    r1 += amp;
-    Vec4_Copy(&p0, V(&start));
-    r1 *= scale;
-    r2 += amp;
+    Vec4_Copy(base, V(&start));
     Vec4_Copy(&p1, V(&end));
     bright = 1.0f;
     amp = scale;
-    r2 *= scale;
     p1.x += up.x * r1;
     p1.y += up.y * r1;
     p1.z += up.z * r1;
@@ -2782,21 +2786,21 @@ void EftBolt_Shape(EftBolt *bolt, EftVec start, EftVec end, f32 scale) {
         seg = *link;
         seg->flags |= 1;
         if (n == 0) {
-            t = (RANDF() - RANDF()) * 0.2f * scale;
-            off.x += side.x * t;
-            off.y += side.y * t;
-            off.z += side.z * t;
+            r = (RANDF() - RANDF()) * 0.2f * scale;
+            off.x += side.x * r;
+            off.y += side.y * r;
+            off.z += side.z * r;
         } else {
             count--;
-            t = (RANDF() * 0.5f + 0.3f) * amp;
+            r = (RANDF() * 0.5f + 0.3f) * amp;
             amp = -amp;
             if (count <= 0) {
                 count = 1;
             }
-            off.x += side.x * t;
-            off.y += side.y * t;
-            off.z += side.z * t;
-            Vec4_Add(&step, &p0, &off);
+            off.x += side.x * r;
+            off.y += side.y * r;
+            off.z += side.z * r;
+            Vec4_Add(&step, base, &off);
             Vec4_Sub(&step, &p1, &step);
             step.x /= count;
             step.y /= count;
@@ -2812,36 +2816,30 @@ void EftBolt_Shape(EftBolt *bolt, EftVec start, EftVec end, f32 scale) {
         seg->pos.z = off.z;
         seg->pos.w = 1.0f;
         t = (f32)(count / bolt->count);
-        r1 = RANDF();
+        r = (RANDF() * 0.5f + 0.3f) * t * amp;
+        off.x += side.x * r;
+        off.y += side.y * r;
+        off.z += side.z * r;
         if (amp < 0.0f) {
-            r1 = (r1 * 0.5f + 0.3f) * t * amp;
-            off.x += side.x * r1;
-            off.y += side.y * r1;
-            off.z += side.z * r1;
-            r1 = (RANDF() * 0.4f + 0.1f) * t * amp;
-            off.x += up.x * r1;
-            off.y += up.y * r1;
-            off.z += up.z * r1;
+            r = (RANDF() * 0.4f + 0.1f) * t * amp;
         } else {
-            r1 = (r1 * 0.5f + 0.3f) * t * amp;
-            off.x += side.x * r1;
-            off.y += side.y * r1;
-            off.z += side.z * r1;
-            r1 = (RANDF() * 0.4f + 0.1f) * t * amp;
-            off.x += up.x * r1;
-            off.y += up.y * r1;
-            off.z += up.z * r1;
+            r = (RANDF() * 0.4f + 0.1f) * t * amp;
         }
-        r1 = (RANDF() * 0.4f + 0.6f) * scale;
-        off.x += up.x * r1;
-        off.y += up.y * r1;
-        off.z += up.z * r1;
+        off.x += up.x * r;
+        off.y += up.y * r;
+        off.z += up.z * r;
+        r = (RANDF() * 0.4f + 0.6f) * scale;
+        off.x += up.x * r;
+        off.y += up.y * r;
+        off.z += up.z * r;
         seg->r = bright * 50.0f / 255.0f;
         seg->g = bright * 30.0f / 255.0f;
         seg->b = bright * 150.0f / 255.0f;
         seg->alphaMax = 150.0f / 255.0f;
         seg->alpha = 0.0f;
-        if (n != 0 && seg->next != NULL) {
+        if (n == 0 || seg->next == NULL) {
+            seg->widthB = seg->widthA = 0.02f;
+        } else {
             thick++;
             seg->flags |= 0x20;
             if (thick == 1) {
@@ -2854,8 +2852,6 @@ void EftBolt_Shape(EftBolt *bolt, EftVec start, EftVec end, f32 scale) {
             if (thick >= 3) {
                 thick = 0;
             }
-        } else {
-            seg->widthA = seg->widthB = 0.02f;
         }
         n++;
         seg->widthA *= scale * 3.0f;
@@ -2863,26 +2859,6 @@ void EftBolt_Shape(EftBolt *bolt, EftVec start, EftVec end, f32 scale) {
         link = &seg->next;
     }
 }
-#else
-LIT4_WORD(D_002FC9B8, 0x4EFFFFFF);
-LIT4_WORD(D_002FC9BC, 0x3D4CCCCC);
-LIT4_WORD(D_002FC9C0, 0x3ECCCCCC);
-LIT4_WORD(D_002FC9C4, 0x3CF5C28F);
-LIT4_WORD(D_002FC9C8, 0x3DE147AE);
-LIT4_WORD(D_002FC9CC, 0x3E4CCCCC);
-LIT4_WORD(D_002FC9D0, 0x3E999999);
-LIT4_WORD(D_002FC9D4, 0x3F199999);
-LIT4_WORD(D_002FC9D8, 0x3E4CCCCC);
-LIT4_WORD(D_002FC9DC, 0x3F599999);
-LIT4_WORD(D_002FC9E0, 0x4EFFFFFF);
-LIT4_WORD(D_002FC9E4, 0x3E999999);
-LIT4_WORD(D_002FC9E8, 0x3DCCCCCC);
-LIT4_WORD(D_002FC9EC, 0x4EFFFFFF);
-LIT4_WORD(D_002FC9F0, 0x3F199999);
-LIT4_WORD(D_002FC9F4, 0x3F169696);
-LIT4_WORD(D_002FC9F8, 0x3CA3D70A);
-INCLUDE_ASM("asm/nonmatchings/battle/eft_aura", EftBolt_Shape);
-#endif
 
 /* One frame of a bolt's joints: reveals them (from the start, or towards the end once the bolt is retracting),
    gives each a two-frame flash, then lets it drift and fade. Returns 1 when the last joint has faded. */
@@ -2980,21 +2956,19 @@ s32 EftBolt_Step(EftBolt *bolt, f32 scale) {
 
 /* Draws a bolt: for each shown joint that has a successor, a camera-facing quad from this joint's width to the
    next one's, coloured per joint, sharing its far edge with the next quad.
-   Not matching: 479 instructions against 481, 42 out of place after a register-masked alignment (61 before cleanup
-   W1). Now in the attempt, all taken from the matched EftAura_DrawFlames: Vu0Cur_ProjectPoint returns a value; the
-   order-table insert is the inline helper with layer 1; the loop is `for (link = &head; *link != NULL; link =
-   &seg->next) { seg = *link; ...` with `continue` (gives the `lw v0,0x30(s6) / bnez v0 / move s6,v0` step); the
-   depth is the plain sum `scr[0].z + scr[1].z + scr[2].z + scr[2].w` (the last term is the original's typo for
-   scr[3].z); the uv stores are in plain field order.
-   What still differs: (1) the corner loop. The original walks TWO reduced pointers, s1 = &scr[i] (the call
-   argument, .w at 12(s1), .x at 0(s1), advanced right behind the x test) and s2 = &scr[i].z (.y at -4(s2), .z at
-   0(s2), advanced behind the z test), increments i at the TOP of the loop (`addiu s4,s4,1` first, with i * 16
-   already in s0 for quad / st / uv) and computes `i < 4` in front of the three tests (`slti v1,s4,4` before the
-   x read): the increment is in front of the tests in the source. This attempt indexes scr and increments at the
-   bottom; `ps = scr; ... ps++` in the loop header is far worse (115). (2) &prev[0] (sp + 64) is recomputed at each
-   use in the original and &prev[1] (s8 = sp + 80) is set in both arms of `if (first)`; here both are hoisted into
-   saved registers, which also swaps s5 / s6 between `seg` and &side. (3) the `bnel` in front of `pkt = gOtCur`. */
-#if 0
+   Matching notes (matched 2026-10-08; the rest is taken from the matched EftAura_DrawFlames: Vu0Cur_ProjectPoint
+   returns a value, the order-table insert is the inline helper with layer 1, the loop is `for (link = &head;
+   *link != NULL; link = &seg->next) { seg = *link; ...` with `continue`):
+   - The screen positions are `s32 scr[4][4]`, not an array of EftNScr. With the 2-D array the member offset joins
+     the index (`scr + (i * 16 + 8)`), all four addresses hang on one base register that gcse hoists, and the loop
+     pass reduces two pointers as the original has them: &scr[i] (x at 0, w at 12, the call argument) and
+     &scr[i][2] (y at -4, z at 0). With the struct the offsets join the base (`(scr + 12) + i * 16`) and only one
+     pointer is reduced.
+   - The packet header is in the usual order (prim, tag, vif0, vif1, gif0, gif1, next). Any order with prim behind
+     the tags puts the address of col0 into a0 before the constants are stored (first scheduling pass), and the
+     four 64-bit constants move from a0..a3 to a1..t0.
+   - The depth is the plain sum `scr[0].z + scr[1].z + scr[2].z + scr[2].w` (the last term is the original's typo
+     for scr[3].z); the uv stores are in plain field order. */
 void EftBolt_Draw(EftBoltWork *work, EftBolt *bolt, f32 alpha) {
     Vec4 quad[4];
     Vec4 prev[2];
@@ -3006,7 +2980,7 @@ void EftBolt_Draw(EftBoltWork *work, EftBolt *bolt, f32 alpha) {
     Vec4 side;
     Vec4 toCam;
     Vec4 tmp;
-    EftNScr scr[4];
+    s32 scr[4][4]; /* x, y, z, w of each corner as Vu0Cur_ProjectPoint writes them (EftNScr); see the notes */
     s32 col0[4];
     s32 col1[4];
     s32 clipped;
@@ -3078,17 +3052,17 @@ void EftBolt_Draw(EftBoltWork *work, EftBolt *bolt, f32 alpha) {
         uv[3].z = 1.0f;
         uv[3].w = 0.0f;
         for (i = 0; i < 4; i++) {
-            Vu0Cur_ProjectPoint(&scr[i], &quad[i]);
-            Vec4_Scale(&st[i], &uv[i], 1.0f / (f32)scr[i].w);
-            if (scr[i].x > 0xFFF0) {
+            Vu0Cur_ProjectPoint((EftNScr *)scr[i], &quad[i]);
+            Vec4_Scale(&st[i], &uv[i], 1.0f / (f32)scr[i][3]);
+            if ((u32)scr[i][0] > 0xFFF0) {
                 clipped = 1;
                 break;
             }
-            if (scr[i].y > 0xFFF0) {
+            if ((u32)scr[i][1] > 0xFFF0) {
                 clipped = 1;
                 break;
             }
-            if (scr[i].z < 0) {
+            if (scr[i][2] < 0) {
                 clipped = 1;
                 break;
             }
@@ -3099,10 +3073,10 @@ void EftBolt_Draw(EftBoltWork *work, EftBolt *bolt, f32 alpha) {
             if (pkt == NULL) {
                 return;
             }
-            pkt->tag = 0x20000008;
-            pkt->vif1 = 0x50000008;
             pkt->prim = 0x5C;
+            pkt->tag = 0x20000008;
             pkt->vif0 = 0x10000000;
+            pkt->vif1 = 0x50000008;
             pkt->gif0 = 0xE400000000008001;
             pkt->gif1 = 0x42142142142160;
             pkt->next = NULL;
@@ -3137,33 +3111,30 @@ void EftBolt_Draw(EftBoltWork *work, EftBolt *bolt, f32 alpha) {
             pkt->v[2].t = st[2].y;
             pkt->v[3].s = st[3].x;
             pkt->v[3].t = st[3].y;
-            pkt->v[0].x = scr[0].x;
-            pkt->v[0].y = scr[0].y;
-            pkt->v[0].z = scr[0].z;
+            pkt->v[0].x = scr[0][0];
+            pkt->v[0].y = scr[0][1];
+            pkt->v[0].z = scr[0][2];
             pkt->v[0].f = 0xFF;
-            pkt->v[1].x = scr[1].x;
-            pkt->v[1].y = scr[1].y;
-            pkt->v[1].z = scr[1].z;
+            pkt->v[1].x = scr[1][0];
+            pkt->v[1].y = scr[1][1];
+            pkt->v[1].z = scr[1][2];
             pkt->v[1].f = 0xFF;
-            pkt->v[2].x = scr[2].x;
-            pkt->v[2].y = scr[2].y;
-            pkt->v[2].z = scr[2].z;
+            pkt->v[2].x = scr[2][0];
+            pkt->v[2].y = scr[2][1];
+            pkt->v[2].z = scr[2][2];
             pkt->v[2].f = 0xFF;
-            pkt->v[3].x = scr[3].x;
-            pkt->v[3].y = scr[3].y;
-            pkt->v[3].z = scr[3].z;
+            pkt->v[3].x = scr[3][0];
+            pkt->v[3].y = scr[3][1];
+            pkt->v[3].z = scr[3][2];
             pkt->v[3].f = 0xFF;
             pkt->tex0 = work->tex0;
-            /* the fourth term is scr[2].w, not scr[3].z: a typo in the original */
-            z = (scr[0].z + scr[1].z + scr[2].z + scr[2].w) >> 10;
+            /* the fourth term is scr[2][3], not scr[3][2]: a typo in the original */
+            z = (scr[0][2] + scr[1][2] + scr[2][2] + scr[2][3]) >> 10;
             EftAura_OtAdd((OtPrim *)pkt, z, 1);
         }
         n = n1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle/eft_aura", EftBolt_Draw);
-#endif
 
 /* Sets a bolt up between two model nodes: its origin, end points along the two given directions, axis and normal,
    and a chain of joints sized to its length (at most 10). Returns 0 when fewer than 3 joints were free. */
