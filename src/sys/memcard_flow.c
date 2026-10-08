@@ -22,22 +22,22 @@ typedef struct McFlowProgress {
     /* 0x008 */ s32 unk8[3];
     /* 0x014 */ s32 flags;       /* bit 2: "continue without saving" was chosen at boot; bit 3: a save was loaded at boot */
     /* 0x018 */ u8 unk18[0x674];
-    /* 0x68C */ s32 unk68C;      /* bit 0 picks the retry question of the scan flow */
+    /* 0x68C */ s32 replayFlags;      /* bit 0 picks the retry question of the scan flow */
     /* 0x690 */ s32 unk690[3];
     /* 0x69C */ McFlowSlotInfo slot[8];
 } McFlowProgress;
 
 /* Card state per port, kept by the card layer (local view; the names are readings of how it is used). */
 typedef struct McCardInfo {
-    /* 0x00 */ s32 unk0;         /* bit 0 after a read: the file was not usable */
+    /* 0x00 */ s32 flags;         /* bit 0 after a read: the file was not usable */
     /* 0x04 */ s32 callResult;
     /* 0x08 */ s32 result;       /* result of the last operation (sceMcSync) */
     /* 0x0C */ s32 type;         /* 2 = PS2 memory card */
     /* 0x10 */ s32 free;         /* free clusters */
     /* 0x14 */ s32 formatted;
-    /* 0x18 */ s32 unk18;
+    /* 0x18 */ s32 fd;
     /* 0x1C */ s32 need;         /* clusters the save still needs (McCard_CalcNeed) */
-    /* 0x20 */ s32 unk20;
+    /* 0x20 */ s32 buf;
 } McCardInfo; /* size 0x24 */
 
 extern McFlowProgress *gProgress;
@@ -763,7 +763,7 @@ void McFlow_UpdateLoad(void) {
                 MCF_GO(0x15);
             }
         } else {
-            if (MCF_CARD.unk0 & 1) {
+            if (MCF_CARD.flags & 1) {
                 MCF_GO(0x1D);
                 break;
             }
@@ -1074,7 +1074,7 @@ void McFlow_UpdateBootLoad(void) {
                 MCF_GO(0x15);
             }
         } else {
-            if (MCF_CARD.unk0 & 1) {
+            if (MCF_CARD.flags & 1) {
                 MCF_GO(0x1D);
                 break;
             }
@@ -1681,7 +1681,7 @@ void McFlow_UpdateReplayScan(void) {
                 gMcFlow->state = 0x28;
             }
         } else {
-            if (MCF_CARD.unk0 & 1) {
+            if (MCF_CARD.flags & 1) {
                 McFlow_ClearSlotInfo(1, gMcFlow->index);
                 gMcFlow->flags |= 0x20;
                 gMcFlow->state = 0x28;
@@ -1714,7 +1714,7 @@ void McFlow_UpdateReplayScan(void) {
             if (Dialog_IsOpen()) {
                 Snd_PlaySe(1, 1);
                 Dialog_SetCursor(1);
-                gMcFlow->state = (gProgress->unk68C & 1) ? 0x12 : 0x16;
+                gMcFlow->state = (gProgress->replayFlags & 1) ? 0x12 : 0x16;
             }
         }
         break;
@@ -1729,7 +1729,7 @@ void McFlow_UpdateReplayScan(void) {
             if (Dialog_IsOpen()) {
                 Snd_PlaySe(1, 1);
                 Dialog_SetCursor(1);
-                gMcFlow->state = (gProgress->unk68C & 1) ? 0x12 : 0x16;
+                gMcFlow->state = (gProgress->replayFlags & 1) ? 0x12 : 0x16;
             }
         }
         break;
@@ -1749,7 +1749,7 @@ void McFlow_UpdateReplayScan(void) {
             if (Dialog_IsOpen()) {
                 Snd_PlaySe(1, 1);
                 Dialog_SetCursor(1);
-                gMcFlow->state = (gProgress->unk68C & 1) ? 0x12 : 0x16;
+                gMcFlow->state = (gProgress->replayFlags & 1) ? 0x12 : 0x16;
             }
         }
         break;
@@ -2367,7 +2367,7 @@ void McFlow_UpdateReplayLoad(void) {
                 MCF_GO(0x15);
             }
         } else {
-            if (MCF_CARD.unk0 & 1) {
+            if (MCF_CARD.flags & 1) {
                 MCF_GO(0x1D);
                 break;
             }

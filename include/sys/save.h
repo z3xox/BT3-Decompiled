@@ -54,7 +54,7 @@ typedef struct SaveSlot {
 /* 0x38 bytes; per-character customisation (menu functions 0x398A60..0x3991D8, main ChrTbl_GetLevel / ChrTbl_GetExp). */
 typedef struct SaveCustom {
     /* 0x00 */ u16 item[SAVE_CUSTOM_SETS][SAVE_CUSTOM_ITEMS]; /* equipped item ids (1-based, 0 = empty) of each of the 3 sets */
-    /* 0x30 */ s32 unk30;  /* running total compared with the table value picked by `level` (EvoZ_RefreshStatus): experience, guess */
+    /* 0x30 */ s32 exp;  /* running total compared with the table value picked by `level` (EvoZ_RefreshStatus): experience, guess */
     /* 0x34 */ u16 level;  /* added to the character table's u16 at +0xE by ChrTbl_GetLevel; indexes its s32 table at +0x10 in ChrTbl_GetExp */
     /* 0x36 */ u16 unk36;
 } SaveCustom;

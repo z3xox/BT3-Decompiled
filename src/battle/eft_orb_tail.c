@@ -82,7 +82,7 @@ typedef struct EftOrbBurstArg {
     /* 0x00 */ EftAbVec pos;
     /* 0x10 */ EftAbVec dir;
     /* 0x20 */ s32 objId;
-    /* 0x24 */ s32 unk24;
+    /* 0x24 */ s32 texIdx;
     /* 0x28 */ f32 rate;
     /* 0x2C */ f32 size;
     /* 0x30 */ EftAbTex *tex;

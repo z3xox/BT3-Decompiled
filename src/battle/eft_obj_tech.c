@@ -1957,7 +1957,7 @@ extern s32 BtlCharApi_IsRushConnected(s32 objId);
 
 /* Argument of EftCam_Start. */
 typedef struct EftRushShotMsg {
-    s32 unk0;
+    s32 anim;
     s32 objId;
     s32 id;
 } EftRushShotMsg;
@@ -1965,11 +1965,11 @@ typedef struct EftRushShotMsg {
 /* Argument of EftFlash_Start (screen flash). */
 typedef struct EftFlashArg {
     /* 0x00 */ EftVec color;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ f32 unk18;
+    /* 0x10 */ f32 in;
+    /* 0x14 */ s32 hold;
+    /* 0x18 */ f32 out;
     /* 0x1C */ s32 objId;
-    /* 0x20 */ s32 unk20;
+    /* 0x20 */ s32 wait;
 } EftFlashArg; /* size 0x30: the vector makes it 16-byte aligned */
 
 /* Argument of EftDelaySe_Start: five (kind, node) pairs. */

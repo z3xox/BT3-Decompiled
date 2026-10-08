@@ -16,7 +16,7 @@ typedef struct PadWatchProgress {
     /* 0x000 */ u8 unk0[0x18];
     /* 0x018 */ s32 mode;
     /* 0x01C */ u8 unk1C[0x604];
-    /* 0x620 */ s32 unk620; /* 1: the screen of mode 0x27 / 0x28 needs both controllers */
+    /* 0x620 */ s32 players; /* 1: the screen of mode 0x27 / 0x28 needs both controllers */
 } PadWatchProgress;
 
 typedef struct PadWatchCommonRes {
@@ -67,7 +67,7 @@ s32 PadWatch_GetMissing(s32 *port) {
         if (gPadWatch->valid[0] != 0 || gPadWatch->valid[1] != 0) {
             if (Battle_GetWork()->running != 0
                     ? (BtlGame_IsReplay() == 0 && Battle_IsSplitScreen() != 0)
-                    : ((u32)(gProgress->mode - 0x27) < 2 && gProgress->unk620 == 1)) {
+                    : ((u32)(gProgress->mode - 0x27) < 2 && gProgress->players == 1)) {
                 if (!(gPadWatch->state[0] & 1)) {
                     if (!(gPadWatch->state[1] & 1)) {
                         if (port != NULL) {
@@ -103,7 +103,7 @@ s32 PadWatch_IsPortMissing(s32 port) {
     }
     if (Battle_GetWork()->running != 0
             ? (BtlGame_IsReplay() == 0 && Battle_IsSplitScreen() != 0)
-            : ((u32)(gProgress->mode - 0x27) < 2 && gProgress->unk620 == 1)) {
+            : ((u32)(gProgress->mode - 0x27) < 2 && gProgress->players == 1)) {
         if (!(gPadWatch->state[port] & 1)) {
             return 1;
         }
@@ -140,7 +140,7 @@ void PadWatch_Update(void) {
     if (gPadWatch->disabled == 0 && (gPadWatch->valid[0] != 0 || gPadWatch->valid[1] != 0)) {
         if (Battle_GetWork()->running != 0
                 ? (BtlGame_IsReplay() == 0 && Battle_IsSplitScreen() != 0)
-                : ((u32)(gProgress->mode - 0x27) < 2 && gProgress->unk620 == 1)) {
+                : ((u32)(gProgress->mode - 0x27) < 2 && gProgress->players == 1)) {
             if (!(now[0] & 1)) {
                 if (!(now[1] & 1)) {
                     gPadWatch->message = PAD_WATCH_MSG_BOTH;

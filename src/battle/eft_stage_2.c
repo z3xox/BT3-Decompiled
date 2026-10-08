@@ -188,17 +188,17 @@ typedef struct EftGeyserSmokeInit {
 
 typedef struct EftGeyserSteamInit {
     /* 0x00 */ EftGeyserQVec pos;
-    /* 0x10 */ EftGeyserQVec unk10; /* direction (0, 0, 0, 1) */
+    /* 0x10 */ EftGeyserQVec dir; /* direction (0, 0, 0, 1) */
     /* 0x20 */ EftGeyserQVec color;
     /* 0x30 */ f32 unk30;           /* speed */
     /* 0x34 */ f32 gravity;         /* 9.8 / 30 */
     /* 0x38 */ f32 unk38;           /* size */
     /* 0x3C */ s32 unk3C;           /* life */
-    /* 0x40 */ f32 unk40;
-    /* 0x44 */ f32 unk44;
-    /* 0x48 */ f32 unk48;
-    /* 0x4C */ f32 unk4C;
-    /* 0x50 */ s32 unk50;
+    /* 0x40 */ f32 posRange;
+    /* 0x44 */ f32 dirRange;
+    /* 0x48 */ f32 speedRange;
+    /* 0x4C */ f32 sizeRange;
+    /* 0x50 */ s32 lifeRange;
 } EftGeyserSteamInit; /* size 0x60 */
 
 /* Starts the geyser's smoke emitter with the colours of the stage's record. Two rand() calls (the

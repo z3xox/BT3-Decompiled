@@ -186,7 +186,7 @@ typedef struct LipPack {
 #define PROGRESS_TEAM_EMPTY 0xA4  /* CHRGRID_ID_EMPTY */
 
 typedef struct ProgressTeam {
-    /* 0x00 */ s32 unk0;
+    /* 0x00 */ s32 flags;
     /* 0x04 */ s32 chara[2][5];
 } ProgressTeam; /* size 0x2C */
 

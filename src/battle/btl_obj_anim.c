@@ -1882,7 +1882,7 @@ extern Vec4 gVu0ZeroVecW1;
 extern Vec4 D_003337D0;
 
 typedef struct BObjProgress {
-    /* 0x00 */ s32 unk00;
+    /* 0x00 */ s32 language;
 } BObjProgress;
 
 typedef struct BObjSave {
@@ -1891,7 +1891,7 @@ typedef struct BObjSave {
 } BObjSave;
 
 typedef struct BObjCommon {
-    /* 0x00 */ s32 unk00;
+    /* 0x00 */ s32 boot;
     /* 0x04 */ BObjFile file3; /* only buf is real: the pointers of the three common files follow each other */
 } BObjCommon;
 
@@ -2324,7 +2324,7 @@ void BtlObj_BindTables(BObj *obj) {
     for (i = 0; i < 4; i++) {
         mdl->charCamAnims[i] = BObjFile_GetEntry(&slot->file[0], i + 0x25);
     }
-    mdl->unkA4 = BObjFile_GetEntry(&slot->file[0], gProgress->unk00 + 0x2D);
+    mdl->unkA4 = BObjFile_GetEntry(&slot->file[0], gProgress->language + 0x2D);
     base = 0x64;
     if (!(gSaveData->flags & 1)) {
         base = 0;

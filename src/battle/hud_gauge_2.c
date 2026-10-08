@@ -44,7 +44,7 @@ typedef struct HudBObj {
     /* 0x000 */ u8 unk0[0x50];
     /* 0x050 */ HudBRes *faceRes; /* sheet of the face picture; NULL: no face drawn */
     /* 0x054 */ u8 unk54[0xA40 - 0x54];
-    /* 0xA40 */ u32 unkA40;       /* bit 0x40000: the face is tinted (0x80, 0x50, 0x70) */
+    /* 0xA40 */ u32 flags;       /* bit 0x40000: the face is tinted (0x80, 0x50, 0x70) */
 } HudBObj;
 
 /* Gauge work (gHudGauge, 0x288 bytes). */
@@ -866,7 +866,7 @@ void HudGauge_DrawFace(HudBGroup *node) {
         for (i = 0; i < node->sprCount; i++) {
             spr = node->sprList[i];
             HudSprite_InitTex(spr, gHudGauge->faceRes[gHudGauge->side], gHudGauge->side, 0);
-            if (BtlCtrl_GetObj(gHudGauge->side)->unkA40 & 0x40000) {
+            if (BtlCtrl_GetObj(gHudGauge->side)->flags & 0x40000) {
                 HudSprite_SetColor(spr, 0x80, 0x50, 0x70, 0x80);
             } else {
                 HudSprite_SetColor(spr, 0x80, 0x80, 0x80, 0x80);

@@ -73,7 +73,7 @@ typedef struct EftPHitRec {
     /* 0x04 */ s32 unk4;
     /* 0x08 */ s32 level;
     /* 0x0C */ s32 type;
-    /* 0x10 */ EftPVec unk10;
+    /* 0x10 */ EftPVec origin;
     /* 0x20 */ EftPVec pos;
     /* 0x30 */ EftPVec prev;
     /* 0x40 */ EftPVec vel;
@@ -235,7 +235,7 @@ void EftDisc_AddHit(EftPTask *task) {
     void *b;
 
     Vec4_Copy(&w->atk, &w->arg.dir);
-    Vec4_Copy(&rec->unk10, &w->arg.pos);
+    Vec4_Copy(&rec->origin, &w->arg.pos);
     Vec4_Copy(&rec->vel, &w->arg.dir);
     Vec4_Copy(&rec->pos, &w->arg.pos);
     Vec4_Copy(&rec->prev, &w->prev);

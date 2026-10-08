@@ -248,3 +248,23 @@ Group 11 (eft_water_part2.h .. option.h; stage, HUD, object renderer, menu overl
 - history_result.c:59 still says "BattleResult.unk44" (dragonBallFound).
 - The 0x3C-byte blocks DcList.unkC44, DcMenu.unk88, DcPassView.unk17C, Option.unk1B0 are only passed as a fourth argument MsgWin_Init does not take.
 - Relocated but never read: StgTimer.unk4, StgColZone.unk10, StgOctNode.unk00 / StgMCell.unk0.
+
+Group 13 (movie.h .. shen_scene.c; sys, ui, and the structures local to C files):
+- Locals named unk… (not fields): battle_load.c:652 unk1C (anim1Chara), btl_char_fx_1.c:173 unkA24 (area), btl_char_cam.c:958-959 and
+  1028-1033, btl_obj.c:569, 571, eft_char_parts.c:272-273, eft_ribbon.c:674, 676, char_select.c:1560, mission_select.c:52-53,
+  survival_select.c:26-27.
+- src/battle/eft_burst.c defines EftView twice (lines 65 and 1135).
+- menu_support.h:101 ChrTblEntry.baseLevel (+0x0E), VChrEntry.baseLevel (evo_z_items.h:78), against ZaChrEntry.slots: PassChk_IsValid checks
+  slots + extraSlots <= 7 and DcPass_Decode stores extraSlots into rec.level: the saved "level" looks like extra item slots and "baseLevel"
+  like the base slot count. To be reconciled.
+- eft_link_2.h:165: EftWLinkArg.frame (+0x38): the only caller (eft_sweep.c:397) passes the texture index it gives EftPart10Arg.texIdxA.
+- eft_obj_tech.h:167: EftKCamArg.pack (+0) is `anim` in EftCamArg (eft_core.h:210).
+- hud_combo.c:83 skillScript against pause_menu.c:50 skillText for object +0xBC (text entry 0x2D + language: skillText fits).
+- duel.h:93 `versus` against `players` (team_select.h:76, char_select.h:125) for progress +0x620.
+- menu_support.h:200: MenuUtilProgress.team[7] of ProgressTeam at +0x69C are replay slots (ReplaySlot replay[], McFlowSlotInfo slot[8]): the
+  count differs (7 against 8).
+- ub.h:132 and ub_rank.h:100 still call save +0x208 unk208 (ubFlags elsewhere). eft_zap.h:122, 124: EftZapArg.unk38 / unk40 are texIdx / type.
+- docs/systems/save_data.md:22 and menu_overlay.md:795 say save +0x1694 / +0x1698 are unknown: the camera distance preset and camera shake off.
+- sys/save.h:63: SaveRec.unk0[0x14] hides u16 item[8] and a word at +0x10 (ZSaveRec in dc.h:81).
+- Type differences behind a name: McCardInfo.unk20 (s32 / void *buf), BObjCommon.unk00 (s32 / void *boot), EftFlashArg.unk14 (s32 / f32 hold),
+  HudPromptObj.unkBC (s32 / pointer), EftArg12.unk40 (a u8[1] array).

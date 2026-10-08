@@ -316,8 +316,8 @@ void Vu1Node_Animate(Vu1Node *node, Vu1Track *track, void *mtx, f32 frame) {
         Vu0Cur_TranslateLocal(node->pos);
         Vu0Cur_RotateYXZ(node->rot);
         Vu0Cur_StoreMtx(node->world);
-        Vec4_Copy(node->unkD0, node->unk30);
-        Vec4_Copy(node->unkE0, node->unk40);
+        Vec4_Copy(node->pivotOut, node->pivot);
+        Vec4_Copy(node->parentPivotOut, node->parentPivot);
         if (node->popCount) {
             Vu0Cur_PopN(node->popCount);
         }
@@ -340,8 +340,8 @@ void Vu1Node_Draw(Vu1Node *node) {
             p = Vu1Pkt_CallProg8(node);
             Mtx_Copy(p + 0x14, node->parent);
             Mtx_Copy(p + 4, node->world);
-            Vec4_Copy(p + 0x24, node->unkD0);
-            Vec4_Copy(p + 0x28, node->unkE0);
+            Vec4_Copy(p + 0x24, node->pivotOut);
+            Vec4_Copy(p + 0x28, node->parentPivotOut);
         }
         if (node->last) {
             break;

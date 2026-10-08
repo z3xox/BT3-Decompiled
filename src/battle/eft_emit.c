@@ -1462,19 +1462,19 @@ typedef struct EftEmitRayArg {
     /* 0x10 */ struct {
         s32 v[4];
     } color;              /* r, g, b, a */
-    /* 0x20 */ f32 unk20;
-    /* 0x24 */ f32 unk24; /* scale * 100 (kind 0) or * 800 (kind 1) */
-    /* 0x28 */ f32 unk28;
-    /* 0x2C */ f32 unk2C; /* EftSetDef.unk10 * scale */
-    /* 0x30 */ f32 unk30; /* EftSetDef.unk14 * scale */
-    /* 0x34 */ s32 unk34;
-    /* 0x38 */ s32 unk38; /* EftSetDef.unk3 */
+    /* 0x20 */ f32 life;
+    /* 0x24 */ f32 length; /* scale * 100 (kind 0) or * 800 (kind 1) */
+    /* 0x28 */ f32 width;
+    /* 0x2C */ f32 inner; /* EftSetDef.unk10 * scale */
+    /* 0x30 */ f32 jitter; /* EftSetDef.unk14 * scale */
+    /* 0x34 */ s32 mode;
+    /* 0x38 */ s32 count; /* EftSetDef.unk3 */
     /* 0x3C */ s32 chr;
-    /* 0x40 */ s32 unk40;
-    /* 0x44 */ s32 unk44;
-    /* 0x48 */ s32 unk48; /* EftSetDef.unk5 */
-    /* 0x4C */ s32 unk4C; /* EftSetDef.unk6 */
-    /* 0x50 */ s32 unk50;
+    /* 0x40 */ s32 blend;
+    /* 0x44 */ s32 space;
+    /* 0x48 */ s32 delay; /* EftSetDef.unk5 */
+    /* 0x4C */ s32 fadeFrames; /* EftSetDef.unk6 */
+    /* 0x50 */ s32 autoKill;
 } EftEmitRayArg; /* size 0x60 */
 
 /* Type 0: a light of kind EftSetDef.unk4 (0 or 1) at the node. Each kind handles all its commands itself (the
@@ -1505,7 +1505,7 @@ void EftEmit_SpawnType0(EftSet *set, EftSetHandles *handles, s32 flags, s32 type
                                   0 };
 
             if (part->phase == 2) {
-                arg.unk50 = 1;
+                arg.autoKill = 1;
             }
             Vec4_Copy((Vec4 *)&arg.pos, pos);
             H(n) = EftRay_Create((EftEmitLightArg *)&arg);

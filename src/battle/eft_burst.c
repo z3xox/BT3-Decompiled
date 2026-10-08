@@ -64,7 +64,7 @@ typedef struct EftVec16 {
 /* The part of the camera view (gBtlCamView) the transition reads. */
 typedef struct EftView {
     /* 0x000 */ u8 unk0[0x40];
-    /* 0x040 */ Mtx44 unk40;    /* DrawSprite: its transform (Mtx_Transpose) is applied to the sprite's corners */
+    /* 0x040 */ Mtx44 world2view2;    /* DrawSprite: its transform (Mtx_Transpose) is applied to the sprite's corners */
     /* 0x080 */ u8 unk80[0xC0];
     /* 0x140 */ Mtx44 proj;     /* camera space to screen */
 } EftView;
@@ -290,7 +290,7 @@ void EftBurst_DrawSprite(EftBurstPtcl *p) {
     lifeMax = p->lifeMax;
     alpha = p->alpha;
     flags = p->flags;
-    Mtx_Transpose(&m, &gBtlCamView->unk40);
+    Mtx_Transpose(&m, &gBtlCamView->world2view2);
     for (i = 0; i < 2; i++) {
         Mtx_MulVec4((Vec4 *)v, &m, (Vec4 *)corner[i]);
         Vec4_Scale((Vec4 *)v, (Vec4 *)v, scale);

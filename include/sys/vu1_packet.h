@@ -32,12 +32,12 @@ typedef struct Vu1Node {
     /* 0x0C */ s32 hasMesh;    /* non-zero when a VIF stream follows at +0xF0 */
     /* 0x10 */ f32 pos[4];
     /* 0x20 */ f32 rot[4];
-    /* 0x30 */ f32 unk30[4];
-    /* 0x40 */ f32 unk40[4];
+    /* 0x30 */ f32 pivot[4];
+    /* 0x40 */ f32 parentPivot[4];
     /* 0x50 */ f32 parent[16]; /* matrix on entry */
     /* 0x90 */ f32 world[16];  /* matrix after pos/rot */
-    /* 0xD0 */ f32 unkD0[4];   /* copies of unk30 / unk40 */
-    /* 0xE0 */ f32 unkE0[4];
+    /* 0xD0 */ f32 pivotOut[4];   /* copies of pivot / parentPivot */
+    /* 0xE0 */ f32 parentPivotOut[4];
     /* 0xF0 */ u32 vif[1];     /* ends with a 0x70000000 word */
 } Vu1Node;
 

@@ -158,8 +158,8 @@ typedef struct EftArg10 {
     /* 0x20 */ Vec4 dir __attribute__((aligned(16)));
     /* 0x30 */ f32 size;
     /* 0x34 */ f32 rate;
-    /* 0x38 */ s32 unk38;
-    /* 0x3C */ s32 unk3C;
+    /* 0x38 */ s32 texIdxA;
+    /* 0x3C */ s32 texIdxB;
     /* 0x40 */ s32 objId;
 } EftArg10; /* size 0x50 */
 extern void *EftPart10_Create(EftArg10 *arg);
@@ -183,8 +183,8 @@ typedef struct EftArg15 {
     /* 0x20 */ Vec4 pos2 __attribute__((aligned(16)));
     /* 0x30 */ f32 size;
     /* 0x34 */ f32 rate;
-    /* 0x38 */ s32 unk38;
-    /* 0x3C */ s32 unk3C;
+    /* 0x38 */ s32 texIdxA;
+    /* 0x3C */ s32 texIdxB;
     /* 0x40 */ s32 objId;
 } EftArg15; /* size 0x50 */
 extern void *EftLink_Create(EftArg15 *arg);
@@ -208,9 +208,9 @@ typedef struct EftArg12 {
     /* 0x20 */ Vec4 pos __attribute__((aligned(16)));
     /* 0x30 */ f32 size;
     /* 0x34 */ f32 rate;
-    /* 0x38 */ s32 unk38;
+    /* 0x38 */ s32 texIdx;
     /* 0x3C */ s32 objId;
-    /* 0x40 */ u8 unk40[1];
+    /* 0x40 */ u8 type[1];
 } EftArg12; /* size 0x50 */
 extern void *EftZap_Create(EftArg12 *arg);
 extern void EftZap_Kill(void *h);
