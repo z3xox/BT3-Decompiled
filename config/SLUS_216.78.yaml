@@ -376,7 +376,6 @@ segments:
       - [0x122400, c, battle/hud_c]
       - [0x122730, c, battle/hud_c_b]
       - [0x124B50, c, battle/hud_c_c]
-      - [0x126488, c, battle/hud_d]
       - [0x126500, c, battle/hud_d_b]
       - [0x12A750, c, battle/hud_e]
       - [0x12B4F8, c, battle/hud_e_b]
