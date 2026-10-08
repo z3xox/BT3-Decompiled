@@ -353,9 +353,9 @@ void EftGndDust_SpawnChip(EftGroundWork *w, Vec4 *pos, Vec4 *dir, EftGroundRgba 
                          s32 fade);
 void EftGndDust_MakeFacingMtx(Mtx44 *out, Vec4 *dir, Vec4 *pos);
 s32 EftGndDust_IsOnScreen(EftAaScr *p);
-void EftGndDust_DrawQuad(Vec4 *pos, Vec4 *color, Mtx44 *mtx, u64 tex0, f32 scale, f32 z0, f32 z1, f32 width, f32 u0,
-                        f32 v0, f32 u1, f32 v1, u8 layer);
-void EftGndDust_DrawPiece(Vec4 *pos, Vec4 *color, Vec4 *dir, s32 layer, u64 tex0, s32 along, f32 w, f32 h, f32 rot);
+void EftGndDust_DrawQuad(Vec4 *pos, Vec4 *color, Mtx44 *mtx, f32 scale, f32 z0, f32 z1, f32 width, f32 u0, f32 v0,
+                        f32 u1, f32 v1, u64 tex0, u8 layer);
+void EftGndDust_DrawPiece(Vec4 *pos, Vec4 *color, Vec4 *dir, s32 layer, f32 w, f32 h, f32 rot, u64 tex0, s32 along);
 
 void EftDelaySe_Start(s32 objId, EftDelaySeDef *def, s32 count);
 void EftDelaySeMgr_Init(EftAaTask *task);

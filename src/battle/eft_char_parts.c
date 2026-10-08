@@ -1,11 +1,5 @@
 #include "common.h"
-/* The header still declares these two with the integer parameters first; the definitions below have the order that
-   matches (see the notes at the functions). Hide the header's declarations until it is updated. */
-#define EftGndDust_DrawQuad EftGndDust_DrawQuad_hdrDecl
-#define EftGndDust_DrawPiece EftGndDust_DrawPiece_hdrDecl
 #include "battle/eft_char_parts.h"
-#undef EftGndDust_DrawQuad
-#undef EftGndDust_DrawPiece
 
 /*
  * Effect modules, 0x199F28..0x19E0C0. See include/battle/eft_char_parts.h for the list.
