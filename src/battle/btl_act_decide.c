@@ -279,14 +279,14 @@ s32 BtlAct_QueueTransform(BtlActJChr *chr, s32 index) {
     chr->form.cost = cost;
     chr->form.partner = -1;
     chr->form.kind = kind;
-    chr->form.unk24 = unk24;
-    chr->form.unk28 = 0;
+    chr->form.objId = unk24;
+    chr->form.objCostume = 0;
     chr->form.variant = BtlMember_GetActiveGauge(chr)->variant;
     chr->form.animChara = chara;
-    chr->form.unk1C = chara;
+    chr->form.anim1Chara = chara;
     chr->form.voiceChara = chara;
     if (BtlMember_GetActive(chr)->chara == 0x6A) {
-        chr->form.unk28 = 2;
+        chr->form.objCostume = 2;
     }
     if (BtlParam_TestSlotResetsVariant(chr, index)) {
         chr->form.variant = 0;
@@ -360,7 +360,7 @@ s32 BtlAct_CanFuse(BtlActJChr *chr, s32 index, s32 needBlast, s32 needAllowed, s
     if (member < 0) {
         return 0;
     }
-    if (BtlMember_GetGauge(chr, member)->unk30 != 0) {
+    if (BtlMember_GetGauge(chr, member)->bodyChanged != 0) {
         return 0;
     }
     if (BtlMember_GetGauge(chr, member)->health <= 0) {
@@ -422,14 +422,14 @@ s32 BtlAct_QueueFusion(BtlActJChr *chr, s32 index, s32 partner) {
     chr->form.index = index;
     chr->form.cost = cost;
     chr->form.kind = 5;
-    chr->form.unk24 = unk24;
+    chr->form.objId = unk24;
     chr->form.chara = chara;
     chr->form.costume = 0;
     chr->form.partner = partner;
-    chr->form.unk28 = BtlMember_Get(chr, partner)->costume;
+    chr->form.objCostume = BtlMember_Get(chr, partner)->costume;
     chr->form.variant = BtlMember_GetActiveGauge(chr)->variant;
     chr->form.animChara = chara;
-    chr->form.unk1C = chara;
+    chr->form.anim1Chara = chara;
     chr->form.voiceChara = chara;
     switch (seq) {
         case 1:
@@ -670,7 +670,7 @@ s32 BtlAct_CanUseSkill(BtlActJChr *chr, u32 slot) {
             }
             break;
         case 0x41:
-            if (chr->unkE5C >= 3) {
+            if (chr->skillCount3 >= 3) {
                 return 0;
             }
             break;
@@ -935,11 +935,11 @@ s32 BtlAct_QueueReaction(BtlActJChr *chr, u32 reaction) {
             }
             break;
         case 34:
-            action = chr->unkE9C + 0x137;
+            action = chr->thrSlot + 0x137;
             break;
         case 29:
         case 30:
-            action = chr->unkE9C + 0x131;
+            action = chr->thrSlot + 0x131;
             break;
         case 41:
             action = chr->unkFF4 + 0x134;
@@ -1194,7 +1194,7 @@ s32 BtlAct_GetDownAction(BtlActJChr *chr) {
  * 0x89, 0x8A, or by height 0x8B (low) / 0x8C (above half of the height range).
  */
 s32 BtlAct_GetEvasionAttack(BtlActJChr *chr) {
-    s32 n = chr->unkD88;
+    s32 n = chr->evasionCount;
 
     n += BtlOpp_GetEvasionCount(chr);
     switch (n % 3) {

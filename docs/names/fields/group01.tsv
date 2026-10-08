@@ -1,0 +1,157 @@
+include/battle/battle.h	BtlClock	unkE	KEEP	KEEP	no code reads or writes it (also unnamed in PClock of menu/ub_score.h); looks like tail padding of the 0x10-byte clock
+include/battle/battle.h	BattleSide	unk1FC	changeAllowed	HIGH	copied to fighter +0x1300 which btl_act_decide.h names form.allowed (0 = transformations, fusions and switches refused); its getter is already BattleSide_GetChangeAllowed
+include/battle/battle.h	BattleSide	unk200	switchEnabled	HIGH	getter BattleSide_GetSwitchEnabled gates the switch gauge fill and the right-stick member switch in btl_char_action.c (lines 912 and 1083)
+include/battle/battle.h	BattleSide	unk20C	KEEP	KEEP	no reader or writer found besides the whole-struct clear
+include/battle/battle.h	BattleRule	unk10	stageChange	HIGH	getter Battle_IsStageChangeEnabled; btl_scene.c tests it before BtlStage_RequestChange when a flagged hit lands on a target below half health; set from the inverted save rule[5]
+include/battle/battle.h	BattleRule	unk18	dragonBall	HIGH	1 + first clear bit 0..6 of SaveData.unlockFlags (menu/history.h: bits 0-6 dragon balls); stg_parts.c moves it to the result with a 1 in 8 chance when a stage object breaks
+include/battle/battle.h	BattleOption	unk14	KEEP	KEEP	only BattleSetup_SetOption14 / Battle_GetOption14 touch it and neither has a caller
+include/battle/battle.h	BattleSetup	unk5A0	finished	MEDIUM	set to 1 at the end of BattleSetup_FinishEx and never read; uncertain whether it means finished or valid
+include/battle/battle.h	BattleSetup	unk5A4	KEEP	KEEP	no reader or writer found
+include/battle/battle.h	BattleResult	unk8	aborted	HIGH	BattleResult_Finish sets it to 1 when winner has BTL_RESULT_ABORT; PBattleResult in menu/ub_score.h already names +0x08 aborted
+include/battle/battle.h	BattleResult	unkC	KEEP	KEEP	no reader or writer found
+include/battle/battle.h	BattleResult	unk1C	maxComboDamage	HIGH	btl_char_mgr.c keeps in [opponent side] the maximum of the hit fighter +0xD40 (comboDamage in btl_char_api_2.h); ub_score.c shows it as a score line
+include/battle/battle.h	BattleResult	unk24	maxComboHits	HIGH	same code keeps the maximum of fighter +0xD44 (comboHits in btl_char_api_2.h / BtlMemberCombo.hits)
+include/battle/battle.h	BattleResult	unk44	dragonBallFound	HIGH	stg_parts.c stores rule.unk18 (1-based dragon ball number) here when a broken stage object drops it; history_result.c sets unlockFlags bit (value - 1)
+include/battle/battle.h	BattleEvents	unk4	mainAction	MEDIUM	return value of Gsc_StartMain(script) = Gsc_StartAction(handle, -1), the id of the started script action; never read so the exact kind of id is unconfirmed
+include/battle/battle.h	BattleWork	unk19FC	KEEP	KEEP	no access; tail padding of the 0x1A00 block after running
+include/battle/battle_setup.h	BtlReplayData	unk0	KEEP	KEEP	opaque u64 view used only for the block copy; the real layout is BtlReplayTracks in battle/btl_replay.h
+include/battle/battle_setup.h	BtlReplay	unk1ABA4	KEEP	KEEP	only cleared by BattleReplay_GetBuffer, never read
+include/battle/battle_work.h	BattleRes	unk0	KEEP	KEEP	no reader or writer in the loader
+include/battle/battle_work.h	BattleRes	unk8	hudFile	HIGH	gCommonRes +0x28: the local view in src/battle/hud.c names this word hudFile (file with the five HUD sprite sheets); loaded here from file 6 + gProgress->unk0[0]
+include/battle/battle_work.h	BattleRes	unk28	KEEP	KEEP	never accessed; by position it would be the size word paired with unk0 (stageSize / bankSize follow the same pattern) but nothing confirms it
+include/battle/battle_work.h	BattleRes	unk30	KEEP	KEEP	never accessed; by position the size word paired with unk8, unconfirmed
+include/battle/battle_work.h	BtlJob	unk1C	anim1Chara	MEDIUM	character whose file 0x599 + n * 10 is passed as the anim1 argument of BtlRes_Reload (animChara feeds anim0); what that second file holds is not known
+include/battle/btl_act_1.h	BtlActAAttack	unk9	level	MEDIUM	BtlActBAttack names +0x09 level; BtlAct_PlayAttackPart requests effect 0xD when it is 1..3; what the level measures is not known
+include/battle/btl_act_1.h	BtlActAAttack	unk10	rate	HIGH	BtlActBAttack names +0x10 rate; record +0x0C * 0.1 or 1.0 and BtlAct_PlayAttackPart divides the part lead time by it
+include/battle/btl_act_1.h	BtlActAAttack	unk18	leadTime	MEDIUM	BtlAct_PlayAttackPart returns the updated lead time in frames into it and BtlMove_WarpAheadOfOpponent takes it; BtlAct_ResetAttack sets 15.0; unit assumed frames
+include/battle/btl_act_1.h	BtlActAAttack	unk1C	speed	HIGH	BtlActBAttack names +0x1C speed; record +0x00 * 10 km/h converted and used as the approach speed in btl_act_2.c (BtlMove_CalcApproachPoint)
+include/battle/btl_act_1.h	BtlActAObj	unkBDC	KEEP	KEEP	a length in 60 Hz frames added to the attack lead; no view names it and its source is not visible here
+include/battle/btl_act_1.h	BtlActAObj	unkCAC	hitCount	HIGH	BtlTechObj in btl_param.h names +0xCAC hitCount; here hitNo == ~hitCount marks the last hit
+include/battle/btl_act_1.h	BtlActAObj	unkCAD	hitNo	HIGH	HitObj (btl_char_hit.h) and BtlTechObj (btl_param.h) name +0xCAD hitNo
+include/battle/btl_act_1.h	BtlActAChr	unkD60	rushStep	HIGH	BtlAct_RushHandler plays animation 0x37 + step and advances it modulo 10; reset by BtlAct_UpdateTimers
+include/battle/btl_act_1.h	BtlActAChr	unkD64	rushRapidStep	HIGH	BtlAct_RushRapidHandler plays animation 0x3C + step, clamped 0..4, and increments it
+include/battle/btl_act_1.h	BtlActAChr	unkD68	dashCount	HIGH	incremented when a homing dash starts out of an attack (btl_act_2.c) and compared with +0xD6C = BtlParam_GetPoweredDashLimit before action 0x19 is offered
+include/battle/btl_act_1.h	BtlActAChr	unkD6C	dashLimit	HIGH	btl_char_mgr.c sets it from BtlParam_GetPoweredDashLimit (or 1) plus ability bonuses; action 0x19 needs dashCount < it
+include/battle/btl_act_1.h	BtlActAChr	unkD70	vanishCount	HIGH	incremented by the vanishing attack; BtlCharApi_GetVanishStrikesLeft returns +0xD74 minus it
+include/battle/btl_act_1.h	BtlActAChr	unkD74	vanishLimit	HIGH	btl_char_mgr.c sets it from BtlParam_GetPoweredVanishLimit (or 1) plus ability bonuses; vanishCount is compared with it
+include/battle/btl_act_1.h	BtlActAChr	unkD78	charge	HIGH	BtlCapiChr (btl_char_api_1.h) and BtlTechChr (btl_param.h) name +0xD78 charge; BtlAct_StepCharge writes the 0..1 level
+include/battle/btl_act_1.h	BtlActAChr	unkD7C	chargeTimer	HIGH	BtlAct_StepCharge adds rate / 22.5 per frame up to 1.0 and derives the charge level from it
+include/battle/btl_act_1.h	BtlActAChr	unkD80	chargeGauge	HIGH	0..100000 gauge that blends the two charge rates in BtlAct_GetChargeRate; btl_char_hit.c adds BtlAtk_GetChargeGaugeGain to it
+include/battle/btl_act_1.h	BtlActAChr	unkD84	chargeFullFrames	HIGH	incremented each frame BtlAct_StepCharge reports a full charge; the full-charge sounds play when it is 0
+include/battle/btl_act_1.h	BtlActAChr	unkD88	evasionCount	MEDIUM	read through BtlOpp_GetEvasionCount and in BtlAct_GetEvasionAttack; btl_char_action.c counts it in actions 0x89..0x8C under flag 8; whether it counts evasions or frames is uncertain
+include/battle/btl_act_1.h	BtlActAChr	unkD8C	KEEP	KEEP	not used through this view; btl_act_2.c uses it as the animation step of action 0x41 whose meaning is unknown
+include/battle/btl_act_1.h	BtlActAChr	unk1354	burstNode	HIGH	model node returned by BtlAct_StartSub19B; btl_char_fx_1.c passes it as EftRushBurstArg.node (eft_trail.h: fighter +0x1354)
+include/battle/btl_act_1.h	BtlActBPose	unk20	dispOffset	MEDIUM	BtlMovePose comment: display offset rebuilt every frame (hover bob and shake); not used in this file so the name rests on that comment
+include/battle/btl_act_1.h	BtlActBPose	unk30	velocity	MEDIUM	BtlMovePose comment: movement of the previous frame used as my velocity; here normalized and compared with the position direction; snapshot detail uncertain
+include/battle/btl_act_1.h	BtlActBGauge	unk28	lowHealthIdle	HIGH	BtlMgrGauge in btl_char_mgr.h names gauge +0x28 lowHealthIdle (health below one bar and nothing forbids it); here it makes a downed fighter mash
+include/battle/btl_act_1.h	BtlActBAttack	unk14	cancelAt	HIGH	BtlActAAttack in the same header names +0x14 cancelAt (animation progress after which the queued follow-up starts)
+include/battle/btl_act_1.h	BtlActBAttack	unk18	leadTime	MEDIUM	lead time in frames built by BtlAct_PlayAttackPart (see BtlActAAttack.unk18); unit assumed frames
+include/battle/btl_act_1.h	BtlActBAttack	unk20	chained	HIGH	BtlActAAttack names +0x20 chained and BtlAct_DecideAttackFollow sets it when a follow-up is queued
+include/battle/btl_act_1.h	BtlActBObjSub	unk18060	contactFlags	MEDIUM	StgColObjWork in stg_collision.h has StgColPoly contact at +0x18060 whose first word is flags; here bit 0x40 is tested on a wall hit; this view only sees the first word
+include/battle/btl_act_1.h	BtlActBObj	unk1660	work	HIGH	HitObj, BtlCollObj, BtlMoveObj, EftDetObj and stg_collision.h all name object +0x1660 work (the fighter work buffer)
+include/battle/btl_act_1.h	BtlActBChr	unkD68	dashCount	HIGH	same field as BtlActAChr +0xD68: homing dashes counted against the dash limit
+include/battle/btl_act_1.h	BtlActBChr	unkD78	charge	HIGH	BtlCapiChr and BtlTechChr name +0xD78 charge
+include/battle/btl_act_1.h	BtlActBChr	unkFC8	reactScale	HIGH	fighter +0xFC8 is HitReact.scale (btl_char_hit.h: attacker charge times the defender parameter); here it scales launch speed and mash help
+include/battle/btl_act_1.h	BtlActBChr	unkFE0	stunTimer	HIGH	BtlActIChr and BtlCapiBChr name +0xFE0 stunTimer (BtlActJChr: stunTime)
+include/battle/btl_act_1.h	BtlActBChr	unkFF0	KEEP	KEEP	countdown set to 15 when a stagger action is left and tested by the move handlers to pick a quick start motion; what the window represents is unclear
+include/battle/btl_act_1.h	BtlActBChr	unk1000	mashLeft	HIGH	decremented on each press of input 0x100000 while downed with gauge +0x28 set; recovery is allowed once it is <= 0
+include/battle/btl_act_2.h	BtlActCPose	unk70	impulse	HIGH	BtlActBPose names +0x70 impulse and BtlMovePose describes it as the knock-back impulse velocity
+include/battle/btl_act_2.h	BtlActCPose	unk98	KEEP	KEEP	this is BtlMovePose.speed (set to BTL_KMH values here) but this view already calls +0x90 speed (really the pitch) so the right name is taken; rename +0x90 first
+include/battle/btl_act_2.h	BtlActCPose	unk9C	fallSpeed	HIGH	BtlMovePose / BtlActBPose / BtlActDPose name +0x9C fallSpeed; zeroed together with the forward speed
+include/battle/btl_act_2.h	BtlActCPose	unkA0	leanX	HIGH	BtlActBPose and BtlActDPose name +0xA0 leanX (BtlMove_SetLeanX)
+include/battle/btl_act_2.h	BtlActCPose	unkA4	leanZ	HIGH	BtlActBPose names +0xA4 leanZ (BtlMove_SetLeanZ)
+include/battle/btl_act_2.h	BtlActCPose	unkA8	bobPhase	MEDIUM	BtlMovePose comment says hover bob phase; no named view and not used in this file
+include/battle/btl_act_2.h	BtlActCPose	unkAC	KEEP	KEEP	forced to 1.0 in most actions and raised by 0.1 up to 1.5 in one move action; meaning unknown
+include/battle/btl_act_2.h	BtlActCPose	unkB0	groundX	MEDIUM	x of the ground point (BtlActBPose has Vec4 ground at +0xB0 and this view has groundY at +0xB4); not used in this file
+include/battle/btl_act_2.h	BtlActCGauge	unk8	KEEP	KEEP	no view names gauge +0x08 and nothing here touches it
+include/battle/btl_act_2.h	BtlActCGauge	unk20	variant	HIGH	BtlMemberGauge and five other views name gauge +0x20 variant (the model variant; non-zero = damaged model)
+include/battle/btl_act_2.h	BtlActCGauge	unk24	lowHealth	HIGH	BtlMgrGauge names gauge +0x24 lowHealth (1 while health < 10000)
+include/battle/btl_act_2.h	BtlActCGauge	unk28	lowHealthIdle	HIGH	BtlMgrGauge names gauge +0x28 lowHealthIdle; here non-zero makes a downed fighter mash to recover
+include/battle/btl_act_2.h	BtlActCGauge	unk2C	variantVoiced	MEDIUM	set to 1 once the get-up voice 0x20 / 0x21 has played for a non-zero variant; only this one use is known
+include/battle/btl_act_2.h	BtlActCGauge	unk30	bodyChanged	MEDIUM	btl_char_mgr.h: BtlChar_IsBodyChanged() = (gauge +0x30 != 0); btl_act_decide.c refuses a fusion with it; what exactly changed is not established
+include/battle/btl_act_2.h	BtlActCMember	unkA0	idleTalkCount	MEDIUM	incremented by action 0x43 (animation 0x185 with voice 0x23) which the neutral state requests after 90 idle frames only while it is 0; that the action is an idle line is a guess
+include/battle/btl_act_2.h	BtlActCChr	unkD44	comboHits	HIGH	BtlCapiBChr names +0xD44 comboHits and BtlMemberCombo.hits sits there; here it must reach 10 before a downed fighter may recover
+include/battle/btl_act_2.h	BtlActCChr	unkD58	searchAngle	HIGH	BtlAct_GrowSearchWindow widens it up to pi and BtlAct_IsOppInSearchWindow compares the yaw to the opponent with it
+include/battle/btl_act_2.h	BtlActCChr	unkD5C	searchRange	HIGH	BtlAct_GrowSearchWindow grows it up to 1000000 and BtlAct_IsOppInSearchWindow compares the distance with it
+include/battle/btl_act_2.h	BtlActCChr	unkD8C	KEEP	KEEP	index 0..2 of the next animation of action 0x41; what that action is is unknown
+include/battle/btl_act_2.h	BtlActCChr	unkDD0	aimDir	HIGH	BtlActDChr in the same header names +0xDD0 aimDir; filled by BtlCharApi_CalcAimDir (FxChr in btl_char_fx_1.h calls it hitPos which does not fit this code)
+include/battle/btl_act_2.h	BtlActCChr	unkDE0	blastShots	HIGH	BtlCapiBChr names +0xDE0 blastShots; incremented per ki blast and compared with BtlParam_GetBlastLimitA
+include/battle/btl_act_2.h	BtlActCChr	unkDE4	blastResetTimer	HIGH	set to 30 by every ki blast; BtlAct_UpdateTimers counts it down and zeroes the shot count at +0xDE0 when it has run out
+include/battle/btl_act_2.h	BtlActCChr	unkDE8	blastAltHand	MEDIUM	toggles between animations 0x71 and 0x72 of consecutive ki blasts; that these are the two hands is inferred
+include/battle/btl_act_2.h	BtlActCChr	unkDEC	blastCharge	HIGH	BtlCapiChr names +0xDEC blastCharge (BtlTechBChr: kiBlastCharge); set from the hold animation progress
+include/battle/btl_act_2.h	BtlActCChr	unkDF0	blastNode	HIGH	result of BtlAct_PlaySubAnim (model node of the hand the blast leaves from) passed to BtlCharApi_CalcAimDir as the node
+include/battle/btl_act_2.h	BtlActCChr	unkFE0	stunTimer	HIGH	BtlActIChr and BtlCapiBChr name +0xFE0 stunTimer
+include/battle/btl_act_2.h	BtlActCChr	unk1000	mashLeft	HIGH	decremented per press while downed; recovery needs it <= 0 (same field as BtlActBChr +0x1000)
+include/battle/btl_act_2.h	BtlActDPose	unk40	moved	HIGH	BtlActBPose names +0x40 moved (whole movement of the previous frame; BtlActCPose: move); its length is compared with a speed here
+include/battle/btl_act_2.h	BtlActDPose	unkA4	leanZ	HIGH	BtlActBPose names +0xA4 leanZ (BtlMove_SetLeanZ)
+include/battle/btl_act_2.h	BtlActDPose	unkA8	bobPhase	MEDIUM	BtlMovePose comment says hover bob phase; no named view and not used in this file
+include/battle/btl_act_2.h	BtlActDPose	unkAC	KEEP	KEEP	raised by 0.1 up to 1.5 in one move action and forced to 1.0 elsewhere; meaning unknown
+include/battle/btl_act_2.h	BtlActDPose	unkB0	groundX	MEDIUM	x of the ground point (BtlActBPose: Vec4 ground at +0xB0; groundY follows at +0xB4); not used in this file
+include/battle/btl_act_2.h	BtlActDPose	unkD0	groundFlags	HIGH	BtlActBPose names +0xD0 groundFlags and the same bit 0x40 is tested here before a landing
+include/battle/btl_act_2.h	BtlActDAttack	unk9	level	MEDIUM	BtlActBAttack names +0x09 level; effect request 0xD when it is 1..3 (btl_act_2.c line 1955); what the level measures is not known
+include/battle/btl_act_2.h	BtlActDAttack	unk10	rate	HIGH	BtlActBAttack names +0x10 rate
+include/battle/btl_act_2.h	BtlActDAttack	unk14	cancelAt	HIGH	BtlActAAttack names +0x14 cancelAt
+include/battle/btl_act_2.h	BtlActDAttack	unk18	leadTime	MEDIUM	lead time built by BtlAct_PlayAttackPart (see BtlActAAttack.unk18); unit assumed frames
+include/battle/btl_act_2.h	BtlActDAttack	unk1C	speed	HIGH	BtlActBAttack names +0x1C speed
+include/battle/btl_act_2.h	BtlActDAttack	unk20	chained	HIGH	BtlActAAttack names +0x20 chained
+include/battle/btl_act_2.h	BtlActDGauge	unk8	KEEP	KEEP	no view names gauge +0x08 and nothing here touches it
+include/battle/btl_act_2.h	BtlActDGauge	unk28	lowHealthIdle	HIGH	BtlMgrGauge names gauge +0x28 lowHealthIdle; here it selects the second idle motion 0x27
+include/battle/btl_act_2.h	BtlActDGauge	unk2C	variantVoiced	MEDIUM	see BtlActCGauge.unk2C (get-up voice played once); not used through this view
+include/battle/btl_act_2.h	BtlActDGauge	unk30	bodyChanged	MEDIUM	btl_char_mgr.h: BtlChar_IsBodyChanged() = (gauge +0x30 != 0); not used through this view
+include/battle/btl_act_2.h	BtlActDMember	unkA0	idleTalkCount	MEDIUM	the neutral handler requests action 0x43 after 90 idle frames only while it is <= 0 and that action increments it; that the action is an idle line is a guess
+include/battle/btl_act_2.h	BtlActDChr	unkD68	dashCount	HIGH	incremented in BtlAct_HomingDashHandler when the dash starts out of an attack; limited by +0xD6C (BtlParam_GetPoweredDashLimit)
+include/battle/btl_act_2.h	BtlActDChr	unkDE0	blastShots	HIGH	BtlCapiBChr names +0xDE0 blastShots
+include/battle/btl_act_2.h	BtlActDChr	unkDE4	blastResetTimer	HIGH	set to 30 with every shot; when it runs out BtlAct_UpdateTimers zeroes +0xDE0
+include/battle/btl_act_2.h	BtlActDChr	unkDE8	blastAltHand	MEDIUM	alternates the ki blast animation (see BtlActCChr.unkDE8); hand meaning inferred; not used through this view
+include/battle/btl_act_2.h	BtlActDChr	unkDEC	blastCharge	HIGH	BtlCapiChr names +0xDEC blastCharge; set from the progress of charge motion 0x8E
+include/battle/btl_act_2.h	BtlActDChr	unkDF0	blastNode	HIGH	result of BtlAct_PlaySubAnim: the model node of the hand the blast leaves from
+include/battle/btl_act_2.h	BtlActDChr	unkFF0	KEEP	KEEP	countdown that selects the quick start motion of actions 0x14 / 0x15 / 0x17 / 0x18; what the window represents is unclear
+include/battle/btl_act_2.h	BtlActEPose	unk40	moved	HIGH	BtlActBPose names +0x40 moved; its length is compared with a speed
+include/battle/btl_act_2.h	BtlActEPose	unk98	KEEP	KEEP	this is BtlMovePose.speed but this view already calls +0x90 speed (really the pitch) so the right name is taken; rename +0x90 first
+include/battle/btl_act_2.h	BtlActEPose	unk9C	fallSpeed	HIGH	BtlMovePose / BtlActBPose / BtlActDPose name +0x9C fallSpeed
+include/battle/btl_act_2.h	BtlActEGauge	unk8	KEEP	KEEP	no view names gauge +0x08 and nothing here touches it
+include/battle/btl_act_2.h	BtlActEGauge	unk28	lowHealthIdle	HIGH	BtlMgrGauge names gauge +0x28 lowHealthIdle
+include/battle/btl_act_2.h	BtlActEAttack	unk10	rate	HIGH	BtlActBAttack names +0x10 rate; BtlAct_PlayAttackPart divides the part lead by it
+include/battle/btl_act_2.h	BtlActEAttack	unk14	cancelAt	HIGH	BtlActAAttack names +0x14 cancelAt
+include/battle/btl_act_2.h	BtlActEAttack	unk18	leadTime	MEDIUM	BtlAct_PlayAttackPart returns the updated lead time into it and BtlMove_WarpAheadOfOpponent takes it; unit assumed frames
+include/battle/btl_act_2.h	BtlActEAttack	unk1C	speed	HIGH	BtlActBAttack names +0x1C speed; used as the approach speed in BtlMove_CalcApproachPoint
+include/battle/btl_act_2.h	BtlActEAttack	unk20	chained	HIGH	BtlActAAttack names +0x20 chained
+include/battle/btl_act_2.h	BtlActEObj	unkBDC	KEEP	KEEP	a length in 60 Hz frames added per attack part; no view names it
+include/battle/btl_act_2.h	BtlActEChr	unkD48	comboTimer	HIGH	BtlCapiBChr names +0xD48 comboTimer (BtlMemberCombo.timer); held at 30 during clash B here
+include/battle/btl_act_2.h	BtlActEChr	unkE54	clashExchanges	HIGH	BtlAct_ClashExchangeHandler zeroes it unless the previous action was 0xFC, else increments it, and picks the strike animation by it modulo 4
+include/battle/btl_act_2.h	BtlActEChr	unkE58	clashAnswerFrame	HIGH	set to -1 on entry then to actionFrame when the asked button is pressed or -2 on a wrong button
+include/battle/btl_act_2.h	BtlActEChr	unkFF0	KEEP	KEEP	same countdown as BtlActDChr +0xFF0; meaning of the window unclear
+include/battle/btl_act_change.h	BtlActHPose	unk98	speed	HIGH	BtlMovePose and three action views name pose +0x98 speed; zeroed with fallSpeed when a change action starts
+include/battle/btl_act_change.h	BtlActHPose	unk9C	fallSpeed	HIGH	BtlMovePose and three action views name pose +0x9C fallSpeed
+include/battle/btl_act_change.h	BtlActHReact	unk4	reactSub	MEDIUM	HitReact +0x04 comes from the attack record field btl_param.h names reactSub (BtlAtk_GetReactionSub); here it is passed to BtlAct_QueueReaction as a reaction id so sub may undersell it
+include/battle/btl_act_change.h	BtlActHReact	unk8	animCycle	MEDIUM	fighter +0xFB8 is named animCycle in BtlActBChr (stagger animation variant counter); not used through this view
+include/battle/btl_act_change.h	BtlActHReact	unk10	noBlend	MEDIUM	non-zero starts the throw animations with blend time 0 instead of 0.3; btl_char_hit.h says it is set from parameter flag bit 19 for attack 0x55 so it may mean more
+include/battle/btl_act_change.h	BtlActHForm	unk1C	anim1Chara	MEDIUM	sixth argument of BtlChange_RequestChara which becomes BtlJob +0x1C: the character of file 0x599 + n * 10 (anim1 of BtlRes_Reload); content of that file not known
+include/battle/btl_act_change.h	BtlActHChr	unkE60	boostStock	MEDIUM	0..10 counter: +1 per throw by character 0x6E and +5 per technique 0x2EF; technique 0x2CD adds damage * it / 5 and zeroes it; what the game calls it is unknown
+include/battle/btl_act_change.h	BtlActIChr	unkD60	rushStep	HIGH	rush chain step set by BtlAct_RushHandler (btl_act_1.c); here < 5 picks action 0x4B and it indexes BtlParam_GetRushFinisher
+include/battle/btl_act_change.h	BtlActIChr	unkD64	rushRapidStep	HIGH	BtlAct_RushRapidHandler (btl_act_1.c) plays animation 0x3C + step; not used through this view
+include/battle/btl_act_change.h	BtlActIChr	unkD68	dashCount	HIGH	compared with +0xD6C before action 0x19 is offered; incremented by the homing dash handler
+include/battle/btl_act_change.h	BtlActIChr	unkD6C	dashLimit	HIGH	set from BtlParam_GetPoweredDashLimit in btl_char_mgr.c; limit of dashCount
+include/battle/btl_act_change.h	BtlActIChr	unkD70	vanishCount	HIGH	compared with +0xD74 before actions 0x5A..0x5D; BtlCharApi_GetVanishStrikesLeft = limit - count
+include/battle/btl_act_change.h	BtlActIChr	unkD74	vanishLimit	HIGH	set from BtlParam_GetPoweredVanishLimit in btl_char_mgr.c
+include/battle/btl_act_change.h	BtlActIChr	unkDE0	blastShots	HIGH	BtlCapiBChr names +0xDE0 blastShots; must be below BtlParam_GetBlastLimitA to fire
+include/battle/btl_act_change.h	BtlActIChr	unkE2C	KEEP	KEEP	not accessed in this file and no view names it
+include/battle/btl_act_change.h	BtlActIChr	unk1080	KEEP	KEEP	btl_char_move.c sets it to 1 / -15 / -1 from parameter flag 8; > 0 allows action 0x24; meaning unknown
+include/battle/btl_act_change.h	BtlActIPose	unk98	speed	HIGH	BtlMovePose names pose +0x98 speed; zeroed here
+include/battle/btl_act_change.h	BtlActIPose	unk9C	fallSpeed	HIGH	BtlMovePose names pose +0x9C fallSpeed; zeroed here
+include/battle/btl_act_change.h	BtlActIAttackRec	unk0	speed	MEDIUM	BtlAct_PrepareAttack turns record +0x00 into the attack advance speed (value * 10 / 1080 per frame); not read through this view and the raw unit is assumed km/h / 10
+include/battle/btl_act_change.h	BtlActIAttackRec	unk3	KEEP	KEEP	not read anywhere found
+include/battle/btl_act_change.h	BtlActIGauge	unk8	KEEP	KEEP	no view names gauge +0x08
+include/battle/btl_act_decide.h	BtlActJGauge	unk30	bodyChanged	MEDIUM	btl_char_mgr.h: BtlChar_IsBodyChanged() = (gauge +0x30 != 0); here non-zero refuses the member as a fusion partner; what exactly changed is not established
+include/battle/btl_act_decide.h	BtlActJGauge	unk34	fused	HIGH	BtlMemberGauge names gauge +0x34 fused (BtlMgrGauge: 1 after a fusion)
+include/battle/btl_act_decide.h	BtlActJForm	unk1C	anim1Chara	MEDIUM	passed to BtlChange_RequestChara as the argument that becomes BtlJob +0x1C (file 0x599 + n * 10 = anim1 of BtlRes_Reload); content of that file not known
+include/battle/btl_act_decide.h	BtlActJForm	unk24	objId	HIGH	BtlActHForm in btl_act_change.h names +0x24 objId (the extra object requested with BtlChange_RequestObject); filled from the parameter bytes
+include/battle/btl_act_decide.h	BtlActJForm	unk28	objCostume	HIGH	BtlActHForm names +0x28 objCostume; the fusion stores the partner costume in it
+include/battle/btl_act_decide.h	BtlActJForm	unk30	objVariant	HIGH	BtlActHForm names +0x30 objVariant
+include/battle/btl_act_decide.h	BtlActJChr	unkD88	evasionCount	MEDIUM	BtlAct_GetEvasionAttack adds it to BtlOpp_GetEvasionCount (opponent +0xD88) to pick the evasion attack; whether it counts evasions or frames is uncertain
+include/battle/btl_act_decide.h	BtlActJChr	unkD8C	KEEP	KEEP	not used through this view; elsewhere the animation step of action 0x41
+include/battle/btl_act_decide.h	BtlActJChr	unkE5C	skillCount3	HIGH	BtlActIChr in btl_act_change.h names +0xE5C skillCount3 (skill 0x41: +1 clamped to 0..3); tested >= 3 here
+include/battle/btl_act_decide.h	BtlActJChr	unkE9C	thrSlot	MEDIUM	fighter +0xE9C is ActGThrow.slot (throw block at +0xE90 in btl_act_super.h); here 0..2 is added to the action of reactions 29 / 30 / 34 so the slot reading is unconfirmed
+include/battle/btl_act_decide.h	BtlActJChr	unkFB4	reactSub	MEDIUM	HitReact +0x04 filled from the attack record field btl_param.h names reactSub; not used through this view
+include/battle/btl_act_decide.h	BtlActJChr	unkFB8	animCycle	MEDIUM	BtlActBChr in btl_act_1.h names +0xFB8 animCycle; not used through this view
+include/battle/btl_act_decide.h	BtlActJChr	unkFF4	KEEP	KEEP	0..2 added to the action of reaction 41; no writer or other name found

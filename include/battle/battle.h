@@ -163,8 +163,8 @@ typedef struct BattleSide {
     /* 0x000 */ s32 memberCount; /* team size, 1..5 (fighter + 0x998) */
     /* 0x004 */ BattleMember members[BTL_MEMBER_MAX];
     /* 0x1F8 */ s32 lead;        /* index of the member that starts the battle */
-    /* 0x1FC */ s32 unk1FC;      /* fighter + 0x1300. 1, or the inverted save rule[3] / rule[4] for a CPU side */
-    /* 0x200 */ s32 unk200;      /* fighter + 0xCF4. 1 from most callers, 0 from menu 0x373A68 */
+    /* 0x1FC */ s32 changeAllowed;      /* fighter + 0x1300. 1, or the inverted save rule[3] / rule[4] for a CPU side */
+    /* 0x200 */ s32 switchEnabled;      /* fighter + 0xCF4. 1 from most callers, 0 from menu 0x373A68 */
     /* 0x204 */ s32 pad;         /* controller number: fighter + 4, used as SAVE_FLAG_PAD_A(pad) */
     /* 0x208 */ s32 control;     /* BTL_CONTROL_* */
     /* 0x20C */ s32 unk20C;
@@ -181,9 +181,9 @@ typedef struct BattleRule {
     /* 0x04 */ s32 bgm;        /* BGM file 0x10B16 + bgm (Battle_ResetWork) */
     /* 0x08 */ s32 timeLimit;  /* index into gBattleTimeLimitTbl: 0 none, 1..5 = 60, 90, 180, 240, 45 s */
     /* 0x0C */ s32 announcer;  /* 0..7: announcement stream = base + announcer * 7 + n (0x22AB50) */
-    /* 0x10 */ s32 unk10;      /* inverted save rule[5] in versus, 1 in mode 4; tested by 0x12D450 */
+    /* 0x10 */ s32 stageChange;      /* inverted save rule[5] in versus, 1 in mode 4; tested by 0x12D450 */
     /* 0x14 */ s32 stage;      /* stage the battle starts on, 0..34 */
-    /* 0x18 */ s32 unk18;      /* mode 1: 1 + index of the first clear bit 0..6 of SaveData.unlockFlags, else 0 */
+    /* 0x18 */ s32 dragonBall;      /* mode 1: 1 + index of the first clear bit 0..6 of SaveData.unlockFlags, else 0 */
     /* 0x1C */ s32 screenMode; /* 1 = split-screen */
     /* 0x20 */ s32 curStage;   /* current stage (in-battle stage changes) */
 } BattleRule; /* size 0x24 */
@@ -205,7 +205,7 @@ typedef struct BattleSetup {
     /* 0x02C */ BattleOption option;
     /* 0x0BC */ s32 script;    /* battle script number + 1 (file 0x1FF + n), 0 = none */
     /* 0x0C0 */ BattleSide sides[2];
-    /* 0x5A0 */ s32 unk5A0;    /* 1 after BattleSetup_FinishEx */
+    /* 0x5A0 */ s32 finished;    /* 1 after BattleSetup_FinishEx */
     /* 0x5A4 */ s32 unk5A4;
 } BattleSetup; /* size 0x5A8 */
 
@@ -225,11 +225,11 @@ typedef struct BattleResult {
     /* 0x0C */ s32 unkC;
     /* 0x10 */ u64 eventSummary; /* built by BattleResult_CollectEvents from side 0's held events */
     /* 0x18 */ s32 frames;     /* BattleResult_CountFrame */
-    /* 0x1C */ s32 unk1C[2];   /* per side, zeroed at fighter init (0x1C02C8) */
-    /* 0x24 */ s32 unk24[2];   /* same */
+    /* 0x1C */ s32 maxComboDamage[2];   /* per side, zeroed at fighter init (0x1C02C8) */
+    /* 0x24 */ s32 maxComboHits[2];   /* same */
     /* 0x2C */ f32 health[2];  /* compared to pick the winner of a time up or of a double finish */
     /* 0x34 */ BtlClock clock; /* copy of the battle clock at the end */
-    /* 0x44 */ s32 unk44;
+    /* 0x44 */ s32 dragonBallFound;
 } BattleResult; /* size 0x48 */
 
 /* One side's event bits (up to 128 events). */
@@ -242,7 +242,7 @@ typedef struct BattleEventSet {
 /* Event work: battle work + 0x1980 (Battle_GetEventWork()). */
 typedef struct BattleEvents {
     /* 0x00 */ s32 script;     /* handle made by Gsc_LoadFile from BattleRes.script; kept by BtlEvent_Reset */
-    /* 0x04 */ s32 unk4;       /* Gsc_StartMain(script), mode 1 only */
+    /* 0x04 */ s32 mainAction;       /* Gsc_StartMain(script), mode 1 only */
     /* 0x08 */ BattleEventSet set[2];
     /* 0x68 */ s32 interrupt;  /* 1: waiting for BtlFacade_AreBothInterruptible() to raise event 0x4C */
     /* 0x6C */ s32 waitFlag;   /* 1 until event 0x4D or 0x4E is new on a side */

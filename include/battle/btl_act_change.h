@@ -26,16 +26,16 @@ typedef struct BtlActHPose {
     /* 0x90 */ f32 pitch;      /* second argument of BtlMove_SetHeading as kept in the pose (btl_char_ctl.h: speed) */
     /* 0x94 */ f32 facing;     /* yaw the fighter faces */
     /* 0x98 */ f32 unk98;      /* zeroed when a change action starts */
-    /* 0x9C */ f32 unk9C;      /* zeroed when a change action starts */
+    /* 0x9C */ f32 fallSpeed;      /* zeroed when a change action starts */
 } BtlActHPose;
 
 /* What the last hit does to this fighter (fighter + 0xFB0; HitReact in btl_char_hit.h). */
 typedef struct BtlActHReact {
     /* 0x00 [0xFB0] */ s32 reaction;
-    /* 0x04 [0xFB4] */ s32 unk4;      /* passed to BtlAct_QueueReaction when the thrown fighter is released */
-    /* 0x08 [0xFB8] */ s32 unk8;
+    /* 0x04 [0xFB4] */ s32 reactSub;      /* passed to BtlAct_QueueReaction when the thrown fighter is released */
+    /* 0x08 [0xFB8] */ s32 animCycle;
     /* 0x0C [0xFBC] */ s32 back;      /* hit from behind */
-    /* 0x10 [0xFC0] */ s32 unk10;     /* non-zero: the throw animations start without blending */
+    /* 0x10 [0xFC0] */ s32 noBlend;     /* non-zero: the throw animations start without blending */
     /* 0x14 [0xFC4] */ s32 silent;    /* no hurt voice */
     /* 0x18 [0xFC8] */ u8 unk18[0x28 - 0x18];
     /* 0x28 [0xFD8] */ f32 launchA;   /* yaw offset of the release direction */
@@ -51,7 +51,7 @@ typedef struct BtlActHForm {
     /* 0x10 [0x12DC] */ s32 kind;        /* 3 / 4 select flag 0x133 / 0x132 in action 0xEE */
     /* 0x14 [0x12E0] */ s32 variant;
     /* 0x18 [0x12E4] */ s32 animChara;
-    /* 0x1C [0x12E8] */ s32 unk1C;
+    /* 0x1C [0x12E8] */ s32 anim1Chara;
     /* 0x20 [0x12EC] */ s32 voiceChara;
     /* 0x24 [0x12F0] */ s32 objId;       /* extra object (BtlChange_RequestObject): the partner / the prop */
     /* 0x28 [0x12F4] */ s32 objCostume;
@@ -84,7 +84,7 @@ typedef struct BtlActHChr {
     /* 0x0DC0 */ s32 drainFrom;      /* first animation frame of the throw's drain window, < 0 = none */
     /* 0x0DC4 */ s32 drainTo;        /* last frame of it */
     /* 0x0DC8 */ u8 unkDC8[0xE60 - 0xDC8];
-    /* 0x0E60 */ s32 unkE60;         /* counter 0..10, +1 per throw by character 0x6E */
+    /* 0x0E60 */ s32 boostStock;         /* counter 0..10, +1 per throw by character 0x6E */
     /* 0x0E64 */ u8 unkE64[0xFB0 - 0xE64];
     /* 0x0FB0 */ BtlActHReact react;
     /* 0x0FE0 */ u8 unkFE0[0x12CC - 0xFE0];
@@ -456,14 +456,14 @@ typedef struct BtlActIChr {
     /* 0x0CEC */ s32 switchUnk18;
     /* 0x0CF0 */ s32 switchVoiceChara;
     /* 0x0CF4 */ u8 unkCF4[0xD60 - 0xCF4];
-    /* 0x0D60 */ s32 unkD60;         /* rush combo step: < 5 picks action 0x4B over 0x4C; (unkD60 + 4) % 5 indexes parameter +0x84 */
-    /* 0x0D64 */ s32 unkD64;
-    /* 0x0D68 */ s32 unkD68;         /* counter with limit unkD6C: action 0x19 from the attack table needs unkD68 < unkD6C */
-    /* 0x0D6C */ s32 unkD6C;
-    /* 0x0D70 */ s32 unkD70;         /* counter with limit unkD74: below it actions 0x5A..0x5D, else the combo finisher */
-    /* 0x0D74 */ s32 unkD74;
+    /* 0x0D60 */ s32 rushStep;         /* rush combo step: < 5 picks action 0x4B over 0x4C; (rushStep + 4) % 5 indexes parameter +0x84 */
+    /* 0x0D64 */ s32 rushRapidStep;
+    /* 0x0D68 */ s32 dashCount;         /* counter with limit dashLimit: action 0x19 from the attack table needs dashCount < dashLimit */
+    /* 0x0D6C */ s32 dashLimit;
+    /* 0x0D70 */ s32 vanishCount;         /* counter with limit vanishLimit: below it actions 0x5A..0x5D, else the combo finisher */
+    /* 0x0D74 */ s32 vanishLimit;
     /* 0x0D78 */ u8 unkD78[0xDE0 - 0xD78];
-    /* 0x0DE0 */ s32 unkDE0;         /* ki blasts fired in a row: must be below BtlParam_GetBlastLimitA to fire another */
+    /* 0x0DE0 */ s32 blastShots;         /* ki blasts fired in a row: must be below BtlParam_GetBlastLimitA to fire another */
     /* 0x0DE4 */ u8 unkDE4[0xE00 - 0xDE4];
     /* 0x0E00 */ s32 skillStackA;    /* skill ids 0x0C / 0x32: 1 on use, +1 up to 3 when the skill stacks */
     /* 0x0E04 */ s32 skillStackB;    /* skill id 0x37: the same */
@@ -493,8 +493,8 @@ typedef struct BtlActIChr {
 typedef struct BtlActIPose {
     /* 0x00 */ Vec4 pos;
     /* 0x10 */ u8 unk10[0x98 - 0x10];
-    /* 0x98 */ f32 unk98;
-    /* 0x9C */ f32 unk9C;
+    /* 0x98 */ f32 speed;
+    /* 0x9C */ f32 fallSpeed;
 } BtlActIPose;
 
 /* Battle object (BtlChar_GetObj). */
@@ -505,7 +505,7 @@ typedef struct BtlActIObj {
 
 /* Attack table record (roster + 0x2C, index = attack id - 0x70): the fields BtlDecide_QueueAttack reads. */
 typedef struct BtlActIAttackRec {
-    /* 0x00 */ u8 unk0;
+    /* 0x00 */ u8 speed;
     /* 0x01 */ s8 leadIn;    /* 0..9: action(s) queued in front of the attack */
     /* 0x02 */ s8 inputKind; /* 1..9: input id 79..87 that must be satisfied; else none */
     /* 0x03 */ u8 unk3;

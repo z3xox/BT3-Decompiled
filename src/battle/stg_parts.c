@@ -390,11 +390,11 @@ s32 BtlStage_DestroyObj(s32 objId, s32 idx, Vec4 *hitPos) {
             rule = &Battle_GetSetup()->rule;
             result = BattleResult_GetPtr();
             if (!BtlCharApi_IsInputInjected(objId)) {
-                if (rule->unk18 != 0) {
+                if (rule->dragonBall != 0) {
                     if (StgObj_GetItemPos(&itemPos, &objs[idx], idx)) {
                         if (((rand() >> 8) & 7) == 0) {
-                            result->unk44 = rule->unk18;
-                            rule->unk18 = 0;
+                            result->dragonBallFound = rule->dragonBall;
+                            rule->dragonBall = 0;
                             StreamSe_PlayDefault(0, 0x8D3A);
                             HudTimer_ShowMark();
                         }

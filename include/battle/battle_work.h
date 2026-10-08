@@ -96,7 +96,7 @@
 typedef struct BattleRes {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ void *stage;        /* stage model file 0x171 + stage (0x198 + stage in split-screen) */
-    /* 0x08 */ void *unk8;         /* file 6 + gProgress->unk0[0] */
+    /* 0x08 */ void *hudFile;         /* file 6 + gProgress->unk0[0] */
     /* 0x0C */ void *bank;         /* sound bank file being (re)loaded: 0x14E + stage, 0xBDA / 0xC7B + character */
     /* 0x10 */ void *script;       /* file 0x1FF + n, only when setup.script != 0 */
     /* 0x14 */ void *transition;   /* file 0x1BF / 0x1C0 during a stage change */
@@ -144,7 +144,7 @@ typedef struct BtlJob {
     /* 0x10 */ s32 side;
     /* 0x14 */ s32 chara;      /* character (or object id) whose model is loaded */
     /* 0x18 */ s32 animChara;  /* file 0x598 + n * 10; BtlLoad_StepObject: costume */
-    /* 0x1C */ s32 unk1C;      /* file 0x599 + n * 10; BtlLoad_StepObject: variant */
+    /* 0x1C */ s32 anim1Chara;      /* file 0x599 + n * 10; BtlLoad_StepObject: variant */
     /* 0x20 */ s32 voiceChara; /* voice bank 0xBDA + n */
     /* 0x24 */ s32 costume;    /* BtlLoad_StepObject: first argument of BtlObj_Create */
     /* 0x28 */ s32 variant;    /* non-zero: model file + 4 */

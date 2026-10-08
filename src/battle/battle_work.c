@@ -56,7 +56,7 @@ void Battle_ResetWork(void) {
     if (Battle_GetMode() == 1) {
         ev = Battle_GetEventWork();
         BtlScript_Restart();
-        ev->unk4 = Gsc_StartMain(ev->script);
+        ev->mainAction = Gsc_StartMain(ev->script);
     }
 }
 

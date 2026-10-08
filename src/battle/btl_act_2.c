@@ -245,17 +245,17 @@ s32 BtlAct_DownHandler(Chr *chr, s32 phase) {
         BtlMove_Step(chr, 6, 5, 6, 0.0f, BTL_KMH(50.0f) / 3.0f);
         BtlMove_ApplyGravity(chr);
         BtlActB_SetReactionFlags(chr);
-        if (BtlMember_GetActiveGauge(chr)->unk28 != 0 && BtlChar_IsFree(chr)) {
+        if (BtlMember_GetActiveGauge(chr)->lowHealthIdle != 0 && BtlChar_IsFree(chr)) {
             BtlChar_SetFlag(chr, 0xE7);
             if (BtlInput_IsPressed(chr, 0x100000)) {
-                chr->unk1000--;
+                chr->mashLeft--;
             }
         }
     }
     if (phase == 2) {
         if (BtlChar_IsFree(chr)) {
-            if (BtlMember_GetActiveGauge(chr)->unk28 == 0 || chr->unk1000 <= 0) {
-                if (chr->unkD44 >= 10) {
+            if (BtlMember_GetActiveGauge(chr)->lowHealthIdle == 0 || chr->mashLeft <= 0) {
+                if (chr->comboHits >= 10) {
                     if (BtlAct_CheckRecoveryInput(chr, 0)) {
                         BtlAct_Request(chr, BtlAct_GetQueued(chr));
                     }
@@ -303,9 +303,9 @@ s32 BtlAct_GetUpHandler(Chr *chr, s32 phase) {
             BtlCharSnd_PlayCommon(chr, 0x1F);
         }
         if (BtlAct_GetCurrent(chr) == 0xE1) {
-            if (BtlMember_GetActiveGauge(chr)->unk20 != 0 && BtlMember_GetActiveGauge(chr)->unk2C == 0) {
+            if (BtlMember_GetActiveGauge(chr)->variant != 0 && BtlMember_GetActiveGauge(chr)->variantVoiced == 0) {
                 BtlChar_PlayVoice(chr, BtlChar_FrameMod(2) ? 0x20 : 0x21);
-                BtlMember_GetActiveGauge(chr)->unk2C = 1;
+                BtlMember_GetActiveGauge(chr)->variantVoiced = 1;
             }
         }
     }
@@ -483,7 +483,7 @@ s32 BtlAct_StunHandler(Chr *chr, s32 phase) {
         BtlActB_SetReactionFlags(chr);
     }
     if (phase == 2) {
-        if (chr->unkFE0 <= 0) {
+        if (chr->stunTimer <= 0) {
             BtlAct_Request(chr, BtlAct_GetIdleFollowUp(chr));
         }
     }
@@ -509,7 +509,7 @@ s32 BtlAct_AirStunHandler(Chr *chr, s32 phase) {
         BtlChar_SetFlag(chr, 0x2A);
     }
     if (phase == 2) {
-        if (chr->unkFE0 <= 0) {
+        if (chr->stunTimer <= 0) {
             BtlAct_Request(chr, BtlAct_GetDownAction(chr));
         }
     }
@@ -533,16 +533,16 @@ s32 BtlAct_GrowSearchWindow(Chr *chr, f32 limit) {
         dAngle *= 0.6f;
         dRange *= 0.6f;
     }
-    old = chr->unkD58;
-    chr->unkD58 = old + dAngle;
-    if (3.14159265f < chr->unkD58) {
-        chr->unkD58 = 3.14159265f;
+    old = chr->searchAngle;
+    chr->searchAngle = old + dAngle;
+    if (3.14159265f < chr->searchAngle) {
+        chr->searchAngle = 3.14159265f;
     }
-    chr->unkD5C += dRange;
-    if (1000000.0f < chr->unkD5C) {
-        chr->unkD5C = 1000000.0f;
+    chr->searchRange += dRange;
+    if (1000000.0f < chr->searchRange) {
+        chr->searchRange = 1000000.0f;
     }
-    if (old < limit && limit <= chr->unkD58) {
+    if (old < limit && limit <= chr->searchAngle) {
         return 1;
     }
     return 0;
@@ -566,8 +566,8 @@ s32 BtlAct_IsOppInSearchWindow(Chr *chr) {
     flag = BtlChar_TestFlag(chr, 0xBA);
     dist = BtlOpp_GetDistanceXZ(chr);
     yaw = __builtin_fabsf(BtlOpp_GetYawFromFacing(chr));
-    if (yaw <= chr->unkD58) {
-        if (dist < chr->unkD5C * ((1.0f - yaw / 3.14159265f) * 0.85f + 0.15f)) {
+    if (yaw <= chr->searchAngle) {
+        if (dist < chr->searchRange * ((1.0f - yaw / 3.14159265f) * 0.85f + 0.15f)) {
             ret = flag == 0;
             if (BtlMember_HasAbility(chr, 0x6C)) {
                 if (BtlAnim_GetId(chr) == 0x17E) {
@@ -645,8 +645,8 @@ s32 BtlAct_SearchHandler(Chr *chr, s32 phase) {
         BtlAct_Request(chr, BtlAct_GetQueued(chr));
     }
     if (phase == 3) {
-        chr->unkD58 = 0.5f;
-        chr->unkD5C = 500.0f;
+        chr->searchAngle = 0.5f;
+        chr->searchRange = 500.0f;
     }
 }
 
@@ -1247,7 +1247,7 @@ s32 BtlAct_Action42(Chr *chr, s32 phase) {
         BtlAnim_Play(chr, 0x192, 0.15f);
         BtlChar_SetHeldFlag(chr, 0xE);
         BtlChar_GetPos(chr)->unk98 = 0.0f;
-        BtlChar_GetPos(chr)->unk9C = 0.0f;
+        BtlChar_GetPos(chr)->fallSpeed = 0.0f;
         BtlMember_Damage(chr, 5000, 0x42B);
         BtlChar_SetHeldFlag(chr, 0x4B);
         BtlCharSnd_PlayCommon(chr, 0x24);
@@ -1281,7 +1281,7 @@ s32 BtlAct_Action43(Chr *chr, s32 phase) {
     if (phase == 0) {
         BtlAnim_Play(chr, 0x185, 0.15f);
         BtlChar_PlayVoice(chr, 0x23);
-        BtlMember_GetActive(chr)->unkA0++;
+        BtlMember_GetActive(chr)->idleTalkCount++;
     }
     if (phase == 1) {
         if (BtlAnim_Advance(chr, 0)) {
@@ -1316,21 +1316,21 @@ s32 BtlAct_KiBlastHandler(Chr *chr, s32 phase) {
 
     if (phase == 0) {
         if (BtlAct_GetPrev(chr) != 0xAE) {
-            chr->unkDE8 = 0;
+            chr->blastAltHand = 0;
         }
-        if (chr->unkDE8 == 0) {
+        if (chr->blastAltHand == 0) {
             BtlAnim_Play(chr, 0x71, 0.1f);
-            chr->unkDE8 = 1;
+            chr->blastAltHand = 1;
         } else {
             BtlAnim_Play(chr, 0x72, 0.1f);
             if (!BtlChar_IsBodyChanged(chr) && !(BtlParam_GetFlags(chr) & 0x100)) {
-                chr->unkDE8 = 0;
+                chr->blastAltHand = 0;
             }
         }
         BtlMember_SpendKi(chr, BtlKiBlast_GetKiCost(chr), 0);
         BtlChar_PlayVoice(chr, 0xC);
-        chr->unkDE0 += BtlKiBlast_GetHitsOf(chr, 0);
-        chr->unkDE4 = 0x1E;
+        chr->blastShots += BtlKiBlast_GetHitsOf(chr, 0);
+        chr->blastResetTimer = 0x1E;
     }
     if (phase == 1) {
         idle = BtlChar_TestFlag(chr, 0xE) ? 0x26 : 0;
@@ -1358,12 +1358,12 @@ s32 BtlAct_KiBlastHandler(Chr *chr, s32 phase) {
         }
         if (BtlChar_TestFlag(chr, 5)) {
             BtlCharApi_GetNodePos(chr->objId, 0x11, &pos);
-            BtlCharApi_CalcAimDir(chr->objId, 0x11, &pos, &chr->unkDD0, -BTL_DEG(36.0f), BTL_DEG(36.0f));
+            BtlCharApi_CalcAimDir(chr->objId, 0x11, &pos, &chr->aimDir, -BTL_DEG(36.0f), BTL_DEG(36.0f));
         } else {
-            chr->unkDD0.x = Mathf_Sin(BtlChar_GetPos(chr)->facing);
-            chr->unkDD0.y = zero;
-            chr->unkDD0.z = Mathf_Cos(BtlChar_GetPos(chr)->facing);
-            chr->unkDD0.w = zero;
+            chr->aimDir.x = Mathf_Sin(BtlChar_GetPos(chr)->facing);
+            chr->aimDir.y = zero;
+            chr->aimDir.z = Mathf_Cos(BtlChar_GetPos(chr)->facing);
+            chr->aimDir.w = zero;
         }
     }
     if (phase == 2) {
@@ -1392,11 +1392,11 @@ s32 BtlAct_ChargedKiBlastHandler(Chr *chr, s32 phase) {
 
     if (phase == 0) {
         BtlAnim_Play(chr, 0x7B, 0.15f);
-        chr->unkDF0 = BtlAct_PlaySubAnim(chr, 0x7D);
+        chr->blastNode = BtlAct_PlaySubAnim(chr, 0x7D);
         BtlChar_SetFxBit(chr, 0x17);
         BtlCharSnd_PlayCommon(chr, 0x2E);
-        chr->unkDE0++;
-        chr->unkDE4 = 0x1E;
+        chr->blastShots++;
+        chr->blastResetTimer = 0x1E;
     }
     if (phase == 1) {
         switch (BtlAnim_GetId(chr)) {
@@ -1407,7 +1407,7 @@ s32 BtlAct_ChargedKiBlastHandler(Chr *chr, s32 phase) {
             case 0x7C:
                 BtlAnim_AdvanceThen(chr, 0x7D, 0.0f, 0);
                 BtlChar_SetFlag(chr, 0x8E);
-                chr->unkDEC = BtlAnim_GetProgress(chr);
+                chr->blastCharge = BtlAnim_GetProgress(chr);
                 break;
             case 0x7D:
                 if (BtlAnim_Advance(chr, 0)) {
@@ -1433,12 +1433,12 @@ s32 BtlAct_ChargedKiBlastHandler(Chr *chr, s32 phase) {
         BtlAct_SetPitchMotion(chr, BtlAnim_GetId(chr) + 3, BtlAnim_GetId(chr) + 6, 1);
         if (BtlChar_TestFlag(chr, 5)) {
             BtlCharApi_GetNodePos(chr->objId, 0x11, &pos);
-            BtlCharApi_CalcAimDir(chr->objId, chr->unkDF0, &pos, &chr->unkDD0, -BTL_DEG(36.0f), BTL_DEG(36.0f));
+            BtlCharApi_CalcAimDir(chr->objId, chr->blastNode, &pos, &chr->aimDir, -BTL_DEG(36.0f), BTL_DEG(36.0f));
         } else {
-            chr->unkDD0.x = Mathf_Sin(BtlChar_GetPos(chr)->facing);
-            chr->unkDD0.y = zero;
-            chr->unkDD0.z = Mathf_Cos(BtlChar_GetPos(chr)->facing);
-            chr->unkDD0.w = zero;
+            chr->aimDir.x = Mathf_Sin(BtlChar_GetPos(chr)->facing);
+            chr->aimDir.y = zero;
+            chr->aimDir.z = Mathf_Cos(BtlChar_GetPos(chr)->facing);
+            chr->aimDir.w = zero;
         }
     }
     if (phase == 2) {
@@ -1487,29 +1487,29 @@ s32 BtlAct_DashKiBlastHandler(Chr *chr, s32 phase) {
         BtlAnim_Play(chr, anim, 0.15f);
         BtlMember_SpendKi(chr, BtlKiBlast_GetKiCost(chr), 0);
         BtlChar_PlayVoice(chr, 0xC);
-        chr->unkDE0 += BtlObjAnim_QueryEvent(BtlChar_GetObj(chr), 4, 0, 3);
-        chr->unkDE4 = 0x1E;
+        chr->blastShots += BtlObjAnim_QueryEvent(BtlChar_GetObj(chr), 4, 0, 3);
+        chr->blastResetTimer = 0x1E;
     }
     if (phase == 1) {
         if (BtlAnim_Advance(chr, 0)) {
             BtlAct_Request(chr, 0xF);
         }
-        dir = &chr->unkDD0;
+        dir = &chr->aimDir;
         Vec4_Copy(dir, &BtlChar_GetPos(chr)->vel);
         switch (BtlAnim_GetId(chr)) {
             case 0x77:
                 break;
             case 0x78:
                 tmp = -dir->x;
-                tmp2 = chr->unkDD0.z;
-                chr->unkDD0.z = tmp;
+                tmp2 = chr->aimDir.z;
+                chr->aimDir.z = tmp;
                 dir->x = tmp2;
                 break;
             case 0x79:
-                tmp = -chr->unkDD0.z;
+                tmp = -chr->aimDir.z;
                 tmp2 = dir->x;
                 dir->x = tmp;
-                chr->unkDD0.z = tmp2;
+                chr->aimDir.z = tmp2;
                 break;
         }
         if ((chr->work[0] & 1) && BtlChar_TestFlag(chr, 5)) {
@@ -1587,11 +1587,11 @@ s32 BtlAct_DashChargedKiBlastHandler(Chr *chr, s32 phase) {
                 break;
         }
         BtlAnim_Play(chr, anim, 0.15f);
-        chr->unkDF0 = BtlAct_PlaySubAnim(chr, anim + 2);
+        chr->blastNode = BtlAct_PlaySubAnim(chr, anim + 2);
         BtlChar_SetFxBit(chr, 0x17);
         BtlCharSnd_PlayCommon(chr, 0x2E);
-        chr->unkDE0++;
-        chr->unkDE4 = 0x1E;
+        chr->blastShots++;
+        chr->blastResetTimer = 0x1E;
     }
     if (phase == 1) {
         switch (BtlAnim_GetId(chr)) {
@@ -1606,7 +1606,7 @@ s32 BtlAct_DashChargedKiBlastHandler(Chr *chr, s32 phase) {
             case 0x8B:
                 BtlAnim_AdvanceThen(chr, BtlAnim_GetId(chr) + 1, 0.0f, 0);
                 BtlChar_SetFlag(chr, 0x8E);
-                chr->unkDEC = BtlAnim_GetProgress(chr);
+                chr->blastCharge = BtlAnim_GetProgress(chr);
                 break;
             case 0x86:
             case 0x89:
@@ -1624,20 +1624,20 @@ s32 BtlAct_DashChargedKiBlastHandler(Chr *chr, s32 phase) {
                 }
                 break;
         }
-        dir = &chr->unkDD0;
+        dir = &chr->aimDir;
         Vec4_Copy(dir, &BtlChar_GetPos(chr)->vel);
         switch (BtlAnim_GetId(chr)) {
             case 0x89:
                 tmp = -dir->x;
-                tmp2 = chr->unkDD0.z;
-                chr->unkDD0.z = tmp;
+                tmp2 = chr->aimDir.z;
+                chr->aimDir.z = tmp;
                 dir->x = tmp2;
                 break;
             case 0x8C:
-                tmp = -chr->unkDD0.z;
+                tmp = -chr->aimDir.z;
                 tmp2 = dir->x;
                 dir->x = tmp;
-                chr->unkDD0.z = tmp2;
+                chr->aimDir.z = tmp2;
                 break;
         }
         if ((chr->work[0] & 1) && BtlChar_TestFlag(chr, 5)) {
@@ -1834,8 +1834,8 @@ s32 BtlAct_KiBlastB2(BtlActDChr *chr, s32 phase) {
         BtlChar_PlayVoice(chr, 0xC);
         BtlChar_GetPos(chr)->speed = 0.0f;
         BtlChar_GetPos(chr)->fallSpeed = 0.0f;
-        chr->unkDE0 += BtlObjAnim_QueryEvent(BtlChar_GetObj(chr), 4, 0, 3);
-        chr->unkDE4 = 0x1E;
+        chr->blastShots += BtlObjAnim_QueryEvent(BtlChar_GetObj(chr), 4, 0, 3);
+        chr->blastResetTimer = 0x1E;
     }
     if (phase == PHASE_RUN) {
         if (BtlAnim_Advance(chr, 0)) {
@@ -1873,11 +1873,11 @@ s32 BtlAct_KiBlastChargeB3(BtlActDChr *chr, s32 phase) {
 
     if (phase == PHASE_ENTER) {
         BtlAnim_Play(chr, 0x8D, 0.15f);
-        chr->unkDF0 = BtlAct_PlaySubAnim(chr, 0x8F);
+        chr->blastNode = BtlAct_PlaySubAnim(chr, 0x8F);
         BtlChar_SetFxBit(chr, 0x17);
         BtlCharSnd_PlayCommon(chr, 0x2E);
-        chr->unkDE0++;
-        chr->unkDE4 = 0x1E;
+        chr->blastShots++;
+        chr->blastResetTimer = 0x1E;
     }
     if (phase == PHASE_RUN) {
         switch (BtlAnim_GetId(chr)) {
@@ -1888,7 +1888,7 @@ s32 BtlAct_KiBlastChargeB3(BtlActDChr *chr, s32 phase) {
             case 0x8E:
                 BtlAnim_AdvanceThen(chr, BtlAnim_GetId(chr) + 1, 0.0f, 0);
                 BtlChar_SetFlag(chr, 0x8E);
-                chr->unkDEC = BtlAnim_GetProgress(chr);
+                chr->blastCharge = BtlAnim_GetProgress(chr);
                 break;
             case 0x8F:
                 if (BtlAnim_Advance(chr, 0)) {
@@ -1952,8 +1952,8 @@ s32 BtlAct_KiVolley95(BtlActDChr *chr, s32 phase) {
         if (atk->cut >= 0) {
             ChrCam_RequestCut(chr, 1, atk->cut);
         }
-        if (atk->unk9 < 4) {
-            if (atk->unk9 > 0) {
+        if (atk->level < 4) {
+            if (atk->level > 0) {
                 BtlChar_SetFxBit(chr, 0xD);
             }
         }
@@ -2042,13 +2042,13 @@ s32 BtlAct_GetIdleMotion(BtlActDChr *chr) {
             if (!BtlChar_TestFlag(chr, 0x11)) {
                 motion = 0x18B;
             } else {
-                motion = (BtlMember_GetActiveGauge(chr)->unk28 != 0) ? 0x27 : 0x26;
+                motion = (BtlMember_GetActiveGauge(chr)->lowHealthIdle != 0) ? 0x27 : 0x26;
             }
         } else {
-            motion = (BtlMember_GetActiveGauge(chr)->unk28 != 0) ? 0x27 : 0x26;
+            motion = (BtlMember_GetActiveGauge(chr)->lowHealthIdle != 0) ? 0x27 : 0x26;
         }
     } else {
-        motion = BtlMember_GetActiveGauge(chr)->unk28 != 0;
+        motion = BtlMember_GetActiveGauge(chr)->lowHealthIdle != 0;
     }
     return motion;
 }
@@ -2104,7 +2104,7 @@ s32 BtlAct_NeutralHandler(BtlActDChr *chr, s32 phase) {
         BtlChar_SetFlag(chr, 0xC9);
         BtlChar_SetFlag(chr, 0x1C);
         BtlChar_SetFlag(chr, 0x25);
-        if (BtlMember_GetActiveGauge(chr)->unk28 != 0) {
+        if (BtlMember_GetActiveGauge(chr)->lowHealthIdle != 0) {
             BtlChar_SetFlag(chr, 0x96);
             if (BtlParam_GetFlags(chr) & 0x10000) {
                 BtlChar_SetFlag(chr, 0x137);
@@ -2122,7 +2122,7 @@ s32 BtlAct_NeutralHandler(BtlActDChr *chr, s32 phase) {
     if (phase == PHASE_DECIDE) {
         if (Battle_GetMode() != 1) {
             if (BtlChar_TestFlag(chr, 3)) {
-                if (((BtlActDMember *)BtlMember_GetActive(chr))->unkA0 <= 0) {
+                if (((BtlActDMember *)BtlMember_GetActive(chr))->idleTalkCount <= 0) {
                     if (!BtlChar_TestFlag(chr, 0xB1)) {
                         if (++(*timer) > 90) {
                             BtlAct_Request(chr, 0x43);
@@ -2151,7 +2151,7 @@ s32 BtlAct_IdleOnceHandler(BtlActDChr *chr, s32 phase) {
         BtlMove_Step(chr, 6, 6, 7, 0.0f, BTL_KMH(100.0f));
         BtlMove_ApplyGravity(chr);
         BtlChar_SetFlag(chr, 0x1C);
-        if (BtlMember_GetActiveGauge(chr)->unk28 != 0) {
+        if (BtlMember_GetActiveGauge(chr)->lowHealthIdle != 0) {
             BtlChar_SetFlag(chr, 0x96);
             if (BtlParam_GetFlags(chr) & 0x10000) {
                 BtlChar_SetFlag(chr, 0x137);
@@ -2239,7 +2239,7 @@ s32 BtlAct_MoveHandler(BtlActDChr *chr, s32 phase) {
                 BtlChar_ClearFlag(chr, 0xE);
             }
         }
-        if (BtlMember_GetActiveGauge(chr)->unk28 != 0) {
+        if (BtlMember_GetActiveGauge(chr)->lowHealthIdle != 0) {
             BtlChar_SetFlag(chr, 0x96);
         }
         if (BtlAnim_GetId(chr) == 0x18B) {
@@ -2325,7 +2325,7 @@ s32 BtlAct_CloseMoveHandler(BtlActDChr *chr, s32 phase) {
         BtlChar_SetFlag(chr, 0x1C);
         BtlChar_SetLookEnabled(chr, 1);
         BtlMove_RequestOrbit(chr, 10.0f, 20.0f);
-        if (BtlMember_GetActiveGauge(chr)->unk28 != 0) {
+        if (BtlMember_GetActiveGauge(chr)->lowHealthIdle != 0) {
             BtlChar_SetFlag(chr, 0x96);
         }
         if (BtlAnim_GetId(chr) == 0x18B) {
@@ -2489,7 +2489,7 @@ s32 BtlAct_DashMoveHandler(BtlActDChr *chr, s32 phase) {
         BtlChar_SetFlag(chr, 0x25);
         BtlMove_RequestOrbit(chr, 50.0f, 100.0f);
         BtlChar_SetFxBit(chr, 0x3A);
-        if (BtlMember_GetActiveGauge(chr)->unk28 != 0) {
+        if (BtlMember_GetActiveGauge(chr)->lowHealthIdle != 0) {
             BtlChar_SetFlag(chr, 0x96);
         }
         if (BtlChar_TestFlag(chr, 0x11)) {
@@ -2595,7 +2595,7 @@ s32 BtlAct_JumpStartHandler(BtlActDChr *chr, s32 phase) {
         BtlMove_RequestOrbit(chr, 20.0f, 50.0f);
         BtlChar_SetFlag(chr, 0x1A);
         BtlChar_SetFxBit(chr, 0x3A);
-        if (BtlMember_GetActiveGauge(chr)->unk28 != 0) {
+        if (BtlMember_GetActiveGauge(chr)->lowHealthIdle != 0) {
             BtlChar_SetFlag(chr, 0x96);
         }
     }
@@ -2685,7 +2685,7 @@ s32 BtlAct_JumpAirHandler(BtlActDChr *chr, s32 phase) {
         BtlMove_RequestOrbit(chr, 20.0f, 50.0f);
         BtlChar_SetFlag(chr, 0x1A);
         BtlChar_SetFxBit(chr, 0x3A);
-        if (BtlMember_GetActiveGauge(chr)->unk28 != 0) {
+        if (BtlMember_GetActiveGauge(chr)->lowHealthIdle != 0) {
             BtlChar_SetFlag(chr, 0x96);
         }
     }
@@ -2769,7 +2769,7 @@ s32 BtlAct_AscendHandler(BtlActDChr *chr, s32 phase) {
         }
         BtlChar_SetFlag(chr, 0xC9);
         BtlMove_RequestOrbit(chr, 20.0f, 50.0f);
-        if (BtlMember_GetActiveGauge(chr)->unk28 != 0) {
+        if (BtlMember_GetActiveGauge(chr)->lowHealthIdle != 0) {
             BtlChar_SetFlag(chr, 0x96);
         }
         BtlChar_SetFxBit(chr, 0x3A);
@@ -2817,7 +2817,7 @@ s32 BtlAct_DescendHandler(BtlActDChr *chr, s32 phase) {
                 BtlAnim_AdvanceLoop(chr, 0);
                 if (BtlAct_GetFramesToGround(chr) < 1.0f) {
                     if (!BtlChar_IsStage4Or27() || BtlChar_TestFlag(chr, 7) || BtlAct_GetGroundY(chr) < -10.0f) {
-                        if (!(BtlChar_GetPos(chr)->unkD0 & 0x40)) {
+                        if (!(BtlChar_GetPos(chr)->groundFlags & 0x40)) {
                             BtlAnim_Request(chr, 0x2D, 0.0f);
                             BtlAct_PlayLandFx(chr, 1);
                         }
@@ -2837,7 +2837,7 @@ s32 BtlAct_DescendHandler(BtlActDChr *chr, s32 phase) {
                 break;
         }
         BtlMove_RequestOrbit(chr, 20.0f, 50.0f);
-        if (BtlMember_GetActiveGauge(chr)->unk28 != 0) {
+        if (BtlMember_GetActiveGauge(chr)->lowHealthIdle != 0) {
             BtlChar_SetFlag(chr, 0x96);
         }
         BtlChar_SetFxBit(chr, 0x3A);
@@ -3034,7 +3034,7 @@ s32 BtlAct_FastDescendHandler(BtlActDChr *chr, s32 phase) {
                 if (BtlInput_TestAction(chr, 0x12, 1)) {
                     stop = 1;
                 }
-                if (!(BtlChar_GetPos(chr)->unkD0 & 0x40000000) || (BtlChar_GetPos(chr)->unkD0 & 0x01000000)) {
+                if (!(BtlChar_GetPos(chr)->groundFlags & 0x40000000) || (BtlChar_GetPos(chr)->groundFlags & 0x01000000)) {
                     if (BtlAct_GetFramesToGround(chr) < 0.3f * 30.0f) {
                         stop = 1;
                     }
@@ -3091,7 +3091,7 @@ s32 BtlAct_HomingDashHandler(BtlActDChr *chr, s32 phase) {
         prev = BtlAct_GetPrev(chr);
         if (BtlAct_IsAttackId(prev)) {
             motion = 0x19;
-            chr->unkD68++;
+            chr->dashCount++;
         } else {
             switch (prev) {
                 case 0x47 ... 0x52:
@@ -3099,7 +3099,7 @@ s32 BtlAct_HomingDashHandler(BtlActDChr *chr, s32 phase) {
                 case 0x53 ... 0x57:
                 case 0x5A ... 0x5D:
                 case 0x6B ... 0x6F:
-                    chr->unkD68++;
+                    chr->dashCount++;
                 case 0x1A:
                 case 0x28:
                     motion = 0x19;
@@ -3215,7 +3215,7 @@ s32 BtlAct_HomingDashHandler(BtlActDChr *chr, s32 phase) {
                         stop = 1;
                     }
                 }
-                if (Vec3_Length(&BtlChar_GetPos(chr)->unk40) < BTL_KMH(100.0f)) {
+                if (Vec3_Length(&BtlChar_GetPos(chr)->moved) < BTL_KMH(100.0f)) {
                     if (++(*slowFrames) >= 16) {
                         stop = 1;
                     }
@@ -3509,7 +3509,7 @@ s32 BtlAct_DragonDashHandler(BtlActEChr *chr, s32 phase) {
                 break;
             case 0x19:
                 flag = BtlMove_IsBlockedByOpponent(chr) != 0;
-                if (Vec3_Length(&BtlChar_GetPos(chr)->unk40) < BTL_KMH(100.0f)) {
+                if (Vec3_Length(&BtlChar_GetPos(chr)->moved) < BTL_KMH(100.0f)) {
                     if (++*counter >= 0x10) {
                         flag = 1;
                     }
@@ -3652,7 +3652,7 @@ s32 BtlAct_StepHandler(BtlActEChr *chr, s32 phase) {
         if (BtlChar_TestFlag(chr, 0x11)) {
             BtlChar_SetHeldFlag(chr, 0xE);
         }
-        if (BtlMember_GetActiveGauge(chr)->unk28) {
+        if (BtlMember_GetActiveGauge(chr)->lowHealthIdle) {
             BtlChar_SetFlag(chr, 0x96);
         }
         BtlMove_RequestOrbit(chr, 5.0f, 10.0f);
@@ -3713,7 +3713,7 @@ s32 BtlAct_StepInHandler(BtlActEChr *chr, s32 phase) {
         if (BtlChar_TestFlag(chr, 0x11)) {
             BtlChar_SetHeldFlag(chr, 0xE);
         }
-        if (BtlMember_GetActiveGauge(chr)->unk28) {
+        if (BtlMember_GetActiveGauge(chr)->lowHealthIdle) {
             BtlChar_SetFlag(chr, 0x96);
         }
     }
@@ -3773,7 +3773,7 @@ s32 BtlAct_VanishStepHandler(BtlActEChr *chr, s32 phase) {
         BtlChar_SetHeldFlag(chr, 0xE);
         BtlCharSnd_PlayCommon(chr, 0x20);
         BtlChar_GetPos(chr)->unk98 = 0.0f;
-        BtlChar_GetPos(chr)->unk9C = 0.0f;
+        BtlChar_GetPos(chr)->fallSpeed = 0.0f;
         switch (BtlAct_GetCurrent(chr)) {
             case 0x21:
             case 0x22:
@@ -3878,7 +3878,7 @@ s32 BtlAct_VanishBehindHandler(BtlActEChr *chr, s32 phase) {
         BtlCharSnd_PlayCommon(chr, 0x20);
         BtlChar_PlayVoice(chr, 0x1D);
         BtlChar_GetPos(chr)->unk98 = 0.0f;
-        BtlChar_GetPos(chr)->unk9C = 0.0f;
+        BtlChar_GetPos(chr)->fallSpeed = 0.0f;
         *counter = 7;
         BtlChar_SetSmallVibration(chr, 0.2f);
     }
@@ -3890,7 +3890,7 @@ s32 BtlAct_VanishBehindHandler(BtlActEChr *chr, s32 phase) {
             --*counter;
             if (*counter >= 2) {
                 BtlChar_GetPos(chr)->unk98 = 0.0f;
-                BtlChar_GetPos(chr)->unk9C = 0.0f;
+                BtlChar_GetPos(chr)->fallSpeed = 0.0f;
             } else if (*counter == 1) {
                 BtlChar_SetFxBit(chr, 0xD);
                 if (!BtlChar_TestFlag(chr, 0xBA)) {
@@ -4006,7 +4006,7 @@ f32 BtlAct_PlayAttackPart(BtlActEChr *chr, BtlActEAttack *atk, s32 frame, f32 ti
 
     if (frame < atk->parts - 1) {
         BtlAnim_PlaySub(chr, atk->motion[frame]);
-        time += obj->unkBDC * 30.0f / 60.0f / atk->unk10;
+        time += obj->unkBDC * 30.0f / 60.0f / atk->rate;
     } else if (frame == atk->parts - 1) {
         s32 n;
 
@@ -4032,7 +4032,7 @@ void BtlAct_VanishAttackHandler(BtlActEChr *chr, s32 phase) {
     }
     if (phase == 1) {
         BtlAnim_AdvanceThen(chr, 0x26, 0.15f, 0);
-        chr->nextAttack.unk18 = BtlAct_PlayAttackPart(chr, &chr->nextAttack, chr->actionFrame, chr->nextAttack.unk18);
+        chr->nextAttack.leadTime = BtlAct_PlayAttackPart(chr, &chr->nextAttack, chr->actionFrame, chr->nextAttack.leadTime);
         switch (*step) {
             case 0:
                 if (++*timer >= 4) {
@@ -4072,7 +4072,7 @@ void BtlAct_VanishAttackQuickHandler(BtlActEChr *chr, s32 phase) {
     }
     if (phase == 1) {
         BtlAnim_AdvanceThen(chr, 0x26, 0.15f, 0);
-        chr->nextAttack.unk18 = BtlAct_PlayAttackPart(chr, &chr->nextAttack, chr->actionFrame, chr->nextAttack.unk18);
+        chr->nextAttack.leadTime = BtlAct_PlayAttackPart(chr, &chr->nextAttack, chr->actionFrame, chr->nextAttack.leadTime);
         switch (*step) {
             case 0:
                 BtlChar_SetFlag(chr, 0xB);
@@ -4099,7 +4099,7 @@ void BtlAct_VanishAttackQuickHandler(BtlActEChr *chr, s32 phase) {
 void BtlAct_WarpBehindAttackHandler(BtlActEChr *chr, s32 phase) {
     if (phase == 1) {
         BtlChar_GetPos(chr)->unk98 = 0.0f;
-        BtlChar_GetPos(chr)->unk9C = 0.0f;
+        BtlChar_GetPos(chr)->fallSpeed = 0.0f;
         if (!BtlChar_TestFlag(chr, 0xBA)) {
             BtlMove_WarpBehindOpponent(chr, 0.0f);
             BtlMove_TurnYaw(chr, 2, 3.14159265f);
@@ -4126,9 +4126,9 @@ void BtlAct_WarpBehindAttackHandler(BtlActEChr *chr, s32 phase) {
 void BtlAct_WarpAheadAttackHandler(BtlActEChr *chr, s32 phase) {
     if (phase == 1) {
         BtlChar_GetPos(chr)->unk98 = 0.0f;
-        BtlChar_GetPos(chr)->unk9C = 0.0f;
+        BtlChar_GetPos(chr)->fallSpeed = 0.0f;
         if (!BtlChar_TestFlag(chr, 0xBA)) {
-            BtlMove_WarpAheadOfOpponent(chr, chr->nextAttack.unk18);
+            BtlMove_WarpAheadOfOpponent(chr, chr->nextAttack.leadTime);
             BtlMove_TurnYaw(chr, 2, 3.14159265f);
             BtlMove_TurnPitch(chr, 1, 3.14159265f);
             BtlMove_TurnModelYaw(chr, 3.14159265f, 1.0f);
@@ -4179,14 +4179,14 @@ s32 BtlAct_SlideToAttackHandler(BtlActEChr *chr, s32 phase) {
                 dist = 8.0f;
                 break;
         }
-        BtlMove_CalcApproachPoint(chr, &point, &target, chr->nextAttack.unk1C, angle, dist, dist + frames + extra);
+        BtlMove_CalcApproachPoint(chr, &point, &target, chr->nextAttack.speed, angle, dist, dist + frames + extra);
         Vec4_Sub(step, &point, &pose->pos);
         Vec4_Scale(step, step, 0.25f);
         Vec4_Copy(face, &target);
     }
     if (phase == 1) {
         pose->unk98 = 0.0f;
-        pose->unk9C = 0.0f;
+        pose->fallSpeed = 0.0f;
         Vec4_Add(&pose->pos, &pose->pos, step);
         if (++*counter == 4) {
             if (BtlAct_HasQueued(chr)) {
@@ -4232,7 +4232,7 @@ void BtlAct_RushToAttackHandler(BtlActEChr *chr, s32 phase) {
         switch (BtlAnim_GetId(chr)) {
             case 0xD:
                 BtlAnim_AdvanceLoop(chr, 0);
-                speed = chr->nextAttack.unk1C;
+                speed = chr->nextAttack.speed;
                 accel = 10000.0f;
                 BtlChar_SetFxBit(chr, 4);
                 if (BtlChar_TestFlag(chr, 0xF)) {
@@ -4262,7 +4262,7 @@ void BtlAct_RushToAttackHandler(BtlActEChr *chr, s32 phase) {
             if (BtlMove_IsBlockedByOpponent(chr)) {
                 reach = 1;
             }
-            if (Vec3_Length(&BtlChar_GetPos(chr)->unk40) < BTL_KMH(100.0f)) {
+            if (Vec3_Length(&BtlChar_GetPos(chr)->moved) < BTL_KMH(100.0f)) {
                 if (++*counter >= 8) {
                     stuck = 1;
                 }
@@ -4332,7 +4332,7 @@ s32 BtlAct_CircleDashHandler(BtlActEChr *chr, s32 phase) {
         BtlChar_PlayVoice(chr, 5);
         BtlChar_SetFxBit(chr, 6);
         pose->unk98 = 0.0f;
-        pose->unk9C = 0.0f;
+        pose->fallSpeed = 0.0f;
         if (0.0f < BtlOpp_GetYawFromItsFacing(chr)) {
             chr->work[0] |= 1;
         }
@@ -4406,7 +4406,7 @@ s32 BtlAct_CircleDashHandler(BtlActEChr *chr, s32 phase) {
                 if (!BtlChar_TestFlag(chr, 5)) {
                     flag = 1;
                 }
-                if (Vec3_Length(&BtlChar_GetPos(chr)->unk40) < BTL_KMH(1000.0f)) {
+                if (Vec3_Length(&BtlChar_GetPos(chr)->moved) < BTL_KMH(1000.0f)) {
                     if (++*counter >= 6) {
                         flag = 1;
                         BtlChar_GetPos(chr)->unk98 = 0.0f;
@@ -4488,7 +4488,7 @@ void BtlAct_RushDashHandler(BtlActEChr *chr, s32 phase) {
                 if (BtlAnim_Advance(chr, 0)) {
                     BtlAct_Request(chr, 0xB);
                     BtlChar_GetPos(chr)->unk98 = 0.0f;
-                    BtlChar_GetPos(chr)->unk9C = 0.0f;
+                    BtlChar_GetPos(chr)->fallSpeed = 0.0f;
                 }
                 speed = 0.0f;
                 yawMode = 6;
@@ -4681,11 +4681,11 @@ void BtlAct_ClashBlowsHandler(BtlActEChr *chr, s32 phase) {
                         BtlAct_CountAndMarkOpponent(chr);
                     }
                 }
-                chr->unkD48 = 30;
+                chr->comboTimer = 30;
                 if (BtlChar_TestFlag(chr, 0xBF)) {
                     BtlAnim_Request(chr, 0x175, 0.15f);
                     BtlAct_CountAndMarkOpponent(chr);
-                    chr->unkD48 = 0;
+                    chr->comboTimer = 0;
                     if (*bonus > 0) {
                         BtlMember_AddKi(chr, *bonus);
                         if (BtlChar_TestFlag(chr, 6)) {
@@ -4749,7 +4749,7 @@ s32 BtlAct_ClashVanishHandler(BtlActEChr *chr, s32 phase) {
         BtlChar_SetFxBit(chr, 0xC);
         BtlCharSnd_PlayCommon(chr, 0x20);
         BtlChar_GetPos(chr)->unk98 = 0.0f;
-        BtlChar_GetPos(chr)->unk9C = 0.0f;
+        BtlChar_GetPos(chr)->fallSpeed = 0.0f;
     }
     if (phase == 1) {
         if (BtlAnim_Advance(chr, 0)) {
@@ -4787,11 +4787,11 @@ s32 BtlAct_ClashExchangeHandler(BtlActEChr *chr, s32 phase) {
         s32 anim = 0;
 
         if (BtlAct_GetPrev(chr) != 0xFC) {
-            chr->unkE54 = 0;
+            chr->clashExchanges = 0;
         } else {
-            chr->unkE54++;
+            chr->clashExchanges++;
         }
-        switch (chr->unkE54 % 4) {
+        switch (chr->clashExchanges % 4) {
             case 0:
                 anim = 0x4C;
                 break;
@@ -4808,10 +4808,10 @@ s32 BtlAct_ClashExchangeHandler(BtlActEChr *chr, s32 phase) {
         BtlAnim_Play(chr, anim, 0.15f);
         BtlAnim_EnableHandle(chr);
         BtlChar_GetPos(chr)->unk98 = 0.0f;
-        BtlChar_GetPos(chr)->unk9C = 0.0f;
+        BtlChar_GetPos(chr)->fallSpeed = 0.0f;
         BtlChar_SetHeldFlag(chr, 0xE);
         BtlChar_RequestPlaceOnPath(chr);
-        chr->unkE58 = -1;
+        chr->clashAnswerFrame = -1;
     }
     if (phase == 1) {
         duration = 0.4f;
@@ -4861,21 +4861,21 @@ s32 BtlAct_ClashExchangeHandler(BtlActEChr *chr, s32 phase) {
                 }
                 if (chr->actionFrame > 0) {
                     BtlChar_SetFlag(chr, c->pick + 0xE9);
-                    if (chr->unkE58 == -1) {
+                    if (chr->clashAnswerFrame == -1) {
                         if (BtlInput_IsPressed(chr, 0x78000000)) {
                             if (BtlInput_IsPressed(chr, 0x8000000 << c->pick)) {
-                                chr->unkE58 = chr->actionFrame;
+                                chr->clashAnswerFrame = chr->actionFrame;
                                 if (!chr->injected) {
                                     BtlCharSnd_PlayCommonFar(chr, 0x14);
                                 }
                             } else if (c->prevPick < 0 || !BtlInput_IsPressed(chr, 0x8000000 << c->prevPick)) {
-                                chr->unkE58 = -2;
+                                chr->clashAnswerFrame = -2;
                             }
                         }
                     }
                 }
                 BtlChar_SetFlag(chr, 0x18);
-                chr->unkD48 = 30;
+                chr->comboTimer = 30;
                 break;
             case 0x175:
                 if (BtlAnim_Advance(chr, 0)) {
@@ -4916,7 +4916,7 @@ s32 BtlAct_ClashExchangeHandler(BtlActEChr *chr, s32 phase) {
         }
         if (BtlChar_TestFlag(chr, 0xC7)) {
             BtlAnim_Request(chr, 0x175, 0.0f);
-            chr->unkD48 = 0;
+            chr->comboTimer = 0;
         }
         if (BtlChar_TestFlag(chr, 0xC8)) {
             BtlAnim_Request(chr, 0x176, 0.0f);

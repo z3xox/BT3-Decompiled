@@ -1,0 +1,247 @@
+include/battle/eft_draw_modules.h	EftTTask	unk3C	KEEP	KEEP	Never read or written in eft_chain.c / eft_streak.c / eft_shot_fx.c and BtlTask in eft_sprite_anim.h also leaves 0x3C as unk3C.
+include/battle/eft_draw_modules.h	EftTTaskList	unk0	parent	HIGH	BtlTaskList in eft_sprite_anim.h names 0x00 parent (the task that owns the list); not used by these files.
+include/battle/eft_draw_modules.h	EftTTex	unk8	KEEP	KEEP	Declared u64 here but eft_detect.h / eft_stage_1.h split it into an image pointer at 0x8 and an unknown word at 0xC, so no single name fits; no code here touches it.
+include/battle/eft_draw_modules.h	EftChainArg	unk24	texIdx	HIGH	Same object as EftArcArg in eft_chain.h (0x24 texIdx, used as texSet->entry[arg.texIdx] in eft_chain.c:315) and EftLineArg.texIdx in eft_quad_2.h.
+include/battle/eft_draw_modules.h	EftChainLink	unk0	relPos	HIGH	EftArcNode in eft_chain.h names 0x00 pos (position relative to the chain) but pos is taken here by the world position at 0x20; eft_chain.c:1720 adds it to the origin to get the world position.
+include/battle/eft_draw_modules.h	EftChainLink	unk10	jit	HIGH	EftArcNode.jit in eft_chain.h (random offset rolled in eft_chain.c:634 and added in Vec3_Add4 at 1720).
+include/battle/eft_draw_modules.h	EftChainStrand	unk64	count	HIGH	EftArcChain.count in eft_chain.h (node count set by EftChain_AllocNodes, eft_chain.c:571).
+include/battle/eft_draw_modules.h	EftChainWork	unkE90	nodeCount	HIGH	EftArc.nodeCount in eft_chain.h (given to EftChain_AllocNodes at eft_chain.c:1011); EftChain_SetParam3 clamps it to 3..7.
+include/battle/eft_draw_modules.h	EftChainWork	unkEA0	delay	HIGH	EftArc.delay in eft_chain.h (frames counted down before the arcs start, eft_chain.c:1393); written by EftChain_SetParam5.
+include/battle/eft_draw_modules.h	EftChainWork	unkEA4	endWait	HIGH	EftArc.endWait in eft_chain.h (frames waited after the end was asked, eft_chain.c:1395); written by EftChain_SetParam6.
+include/battle/eft_draw_modules.h	EftChainMgr	unk4	cursor	HIGH	EftArcPool.cursor in eft_chain.h (gEftChain->cursor is the next node of the pool to try, eft_chain.c:544-559).
+include/battle/eft_draw_modules.h	EftRayArg	unk54	KEEP	KEEP	Three trailing words that no code reads or writes (padding of the 0x60 argument).
+include/battle/eft_draw_modules.h	EftRay	unkC	KEEP	KEEP	No read or write in the ray code of eft_chain.c.
+include/battle/eft_draw_modules.h	EftRayMgr	unk204	KEEP	KEEP	Word after the texture count of a 32 entry texture set; every other view (EftTexSet, EftAdTexSet, EftQTexSet, EftTexTbl) also leaves it unk204 and nothing here uses it.
+include/battle/eft_draw_modules.h	EftRayMgr	unk20C	KEEP	KEEP	Never used; trailing word of the 0x210 block.
+include/battle/eft_draw_modules.h	EftStreak	unk38	KEEP	KEEP	Never used; padding of the 0x40 pool entry.
+include/battle/eft_draw_modules.h	EftStreakWork	unk78	KEEP	KEEP	Never used; padding at the end of the 0x80 work.
+include/battle/eft_draw_modules.h	EftStreakMgr	unkB8	KEEP	KEEP	Never used; padding in front of the 16 byte aligned pool.
+include/battle/eft_draw_modules.h	EftStreakMgr	unk5AC4	KEEP	KEEP	Never used; padding at the end of the work.
+include/battle/eft_emit.h	EftHTask	unk8	KEEP	KEEP	Only use is the bit 4 test in EftVolley_PostUpdate (eft_emit.c:857); BtlTask in eft_sprite_anim.h also has it as s16 unk8.
+include/battle/eft_emit.h	EftHTask	unk28	KEEP	KEEP	Array of four pointers that BtlTask in eft_sprite_anim.h splits into cls / prev / next / nextFree; not used here and one name cannot cover the four.
+include/battle/eft_emit.h	EftHTask	unk3C	KEEP	KEEP	Never used; BtlTask also leaves it unk3C.
+include/battle/eft_emit.h	EftShotParam	unk2	level	HIGH	EftHitDef.level in eft_core.h (eft_core.c:122 copies def->level to the hit record's level); EftJDef in eft_shot_tech.h calls the same word recType, the less supported of the two.
+include/battle/eft_emit.h	EftShotParam	unk5	sub	MEDIUM	EftKDef.sub in eft_obj_tech.h (5 = rush technique, as tested by EftShot_GetLeadTime); uncertain because EftHitDef / EftDetDef / EftShotDef call it kind (taken here by 0x04) and its source field is hitDirKind in btl_tech.h.
+include/battle/eft_emit.h	EftShotParam	unk6	node	MEDIUM	EftOwnerParam.node in eft_sweep.h (handed to EftEmit_Spawn at eft_sweep.c:505); uncertain because EftHitDef only says it is copied to EftHitRec.unk4 and its source fields are unknown.
+include/battle/eft_emit.h	EftShotParam	unk7	KEEP	KEEP	Always written 0 and never read here.
+include/battle/eft_emit.h	EftShotParam	unk8	hitShape	HIGH	EftOwnerParam.hitShape / EftTechDef.hitShape (0 two spheres, 1 two boxes); EftJDef, EftKDef, EftODef, EftHitDef call it shape.
+include/battle/eft_emit.h	EftShotParam	unkA	maxHits	MEDIUM	EftHitDef.maxHits in eft_core.h (read by eft_core.c:425 and 870); uncertain because the source field is hitsC (hit factor 3, less 1) in btl_tech.h.
+include/battle/eft_emit.h	EftShotParam	unkB	KEEP	KEEP	Copied from skill +0x42 / super +0x9F, both unknown, and never read here.
+include/battle/eft_emit.h	EftShotParam	unkC	aimMode	MEDIUM	EftHitDef.aimMode in eft_core.h (eft_core.c:1441: 0 = aim on every call); only that one view names it and BuildParam always writes 0.
+include/battle/eft_emit.h	EftShotParam	unkE	nodes	HIGH	EftOwnerParam.nodes[6] in eft_sweep.h (fighter node per node slot); the default BuildParam writes is node 3 for all six.
+include/battle/eft_emit.h	EftShotParam	unk14	KEEP	KEEP	-1 or super +0x162, never read in this file and unnamed in every other view.
+include/battle/eft_emit.h	EftShotParam	unk15	KEEP	KEEP	Never written or read (padding byte).
+include/battle/eft_emit.h	EftShotParam	unk16	frames	HIGH	EftKDef.frames[6] in eft_obj_tech.h (frame numbers of the six events, -1 none); the defaults 0 / 10 / 20 / -1 fit.
+include/battle/eft_emit.h	EftShotParam	unk22	KEEP	KEEP	Always written 0, never read here.
+include/battle/eft_emit.h	EftShotParam	unk24	KEEP	KEEP	Always written 0, never read here.
+include/battle/eft_emit.h	EftShotParam	unk26	KEEP	KEEP	Never used (padding in front of life).
+include/battle/eft_emit.h	EftShotParam	unk2C	shotLife	MEDIUM	EftJDef.shotLife in eft_shot_tech.h (frames a blast object lives, eft_shot_tech.c:1726); uncertain because EftKDef / EftTechDef declare the same word as an unknown s32.
+include/battle/eft_emit.h	EftShotParam	unk30	scale	HIGH	EftJDef.scale / EftKDef.scale / EftOwnerParam.scale (EftTechDef calls it size); EftVolley_Init copies it to the scale given to the shots.
+include/battle/eft_emit.h	EftShotParam	unk34	speed	HIGH	EftJDef / EftKDef / EftOwnerParam / EftTechDef all name 0x34 speed; source is shotSpeed in btl_tech.h and it is the speed argument of the shots.
+include/battle/eft_emit.h	EftShotParam	unk38	homing	HIGH	EftJDef.homing / EftKDef.homing / EftODef.homing (largest turn per frame); source is shotTurn in btl_tech.h and it is the maxTurn argument of EftVolleyAim_Update.
+include/battle/eft_emit.h	EftShotParam	unk40	impactFx	MEDIUM	EftHitDef.impactFx in eft_core.h (effect id of the impact on a fighter); only that view names it and EftJDef / EftTechDef declare 0x40 as an s32.
+include/battle/eft_emit.h	EftShotParam	unk42	groundFx	HIGH	EftHitDef.groundFx in eft_core.h and EftOwnerParam.markEffect in eft_sweep.h agree: the effect started where the technique touches the stage.
+include/battle/eft_emit.h	EftShotParam	unk46	KEEP	KEEP	Never written or read.
+include/battle/eft_emit.h	EftShotParam	unk48	blurOn	HIGH	EftJDef.blurOn in eft_shot_tech.h and EftOwnerParam.lightOnBit in eft_sweep.h: index of the event that starts the stage tint.
+include/battle/eft_emit.h	EftShotParam	unk4A	blurOff	HIGH	EftJDef.blurOff / EftOwnerParam.lightOffBit: index of the event that ends the stage tint.
+include/battle/eft_emit.h	EftShotParam	unk4C	shotSpeed	MEDIUM	EftKDef.shotSpeed in eft_obj_tech.h (eft_obj_tech.c:422 takes it as the object's speed); only that view names it and how it differs from speed at 0x34 is not shown here.
+include/battle/eft_emit.h	EftShotParam	unk50	impactScale	MEDIUM	EftHitDef.impactScale in eft_core.h; only that view names it.
+include/battle/eft_emit.h	EftShotParam	unk54	groundScale	HIGH	EftHitDef.groundScale in eft_core.h and EftOwnerParam.markSize in eft_sweep.h agree: size of the stage impact effect.
+include/battle/eft_emit.h	EftShotParam	unk58	subKind	HIGH	EftJDef.subKind[8] in eft_shot_tech.h; EftTechDef says the same (kind of the effect EftStreak_Start starts at the n-th event, negative = none).
+include/battle/eft_emit.h	EftShotParam	unk60	subAngle	HIGH	EftJDef.subAngle[8] in eft_shot_tech.h; EftTechDef says its angle in degrees.
+include/battle/eft_emit.h	EftShotParam	unk80	subArg	MEDIUM	EftJDef.subArg in eft_shot_tech.h (eft_shot_tech.c:1873); the name only says it goes with the sub-effects, its meaning is not established.
+include/battle/eft_emit.h	EftShotParam	unk82	KEEP	KEEP	Never written or read (padding).
+include/battle/eft_emit.h	EftShotParam	unk84	hitScale	MEDIUM	EftHitDef names 0x84 scale (returned by EftHit_GetScale into the hit shape's scale) but scale is proposed for 0x30 here; uncertain how the two scales relate.
+include/battle/eft_emit.h	EftShotParam	unk88	power	MEDIUM	EftRDef.power in eft_struggle.h (struggle power); only that view names it.
+include/battle/eft_emit.h	EftHStartArg	unk8	KEEP	KEEP	Only copied whole into the slot; EftHitSrc.unk8 in eft_core.h (copied to EftHitRec.unkF0) is also unknown.
+include/battle/eft_emit.h	EftHStartArg	unkC	KEEP	KEEP	Only copied whole into the slot, no reader found.
+include/battle/eft_emit.h	EftHStartArg	unk14	speed	HIGH	EftShot_Start stores it into EftShotParam +0x34 (speed) at eft_emit.c:340.
+include/battle/eft_emit.h	EftHStartArg	unk18	homing	HIGH	EftShot_Start stores it into EftShotParam +0x38 (homing / turn rate) at eft_emit.c:341.
+include/battle/eft_emit.h	EftHSlot	unk40	KEEP	KEEP	Only zeroed by EftShot_Start; no reader in this file.
+include/battle/eft_emit.h	EftHChar	unk530	curSlot	HIGH	EftShotChar.curSlot in eft_shot.c (EftShot_SetCurSlot / EftShot_GetCurSlot write and read this word).
+include/battle/eft_emit.h	EftShotClassRow	unk8	KEEP	KEEP	Third word of a gEftShotClass row, never read here.
+include/battle/eft_emit.h	EftSkillSrc	unk8	KEEP	KEEP	BtlSkillData names 0x08 flags but flags is taken here by 0x00 (flagsA in btl_tech.h); not read by BuildParam.
+include/battle/eft_emit.h	EftSkillSrc	unk14	level	HIGH	Copied to EftShotParam +0x02, which eft_core.c copies to the hit record's level.
+include/battle/eft_emit.h	EftSkillSrc	unk20	shotSpeed	HIGH	BtlSkillData.shotSpeed in btl_tech.h; copied to the param's speed.
+include/battle/eft_emit.h	EftSkillSrc	unk28	shotTurn	HIGH	BtlSkillData.shotTurn in btl_tech.h (degrees per second); copied to the param's homing.
+include/battle/eft_emit.h	EftSkillSrc	unk30	scale	MEDIUM	Copied to EftShotParam +0x30, the effect scale; btl_tech.h only has shotUnk30 for it.
+include/battle/eft_emit.h	EftSkillSrc	unk38	node	MEDIUM	Copied to EftShotParam +0x06 (node in eft_sweep.h); same doubt as that field.
+include/battle/eft_emit.h	EftSkillSrc	unk3A	shots	HIGH	BtlSkillData.shots in btl_tech.h; copied to EftShotParam.shots.
+include/battle/eft_emit.h	EftSkillSrc	unk3C	hitsB	HIGH	BtlSkillData.hitsB in btl_tech.h (hit factor 2); BuildParam copies it to EftShotParam.volley (shots per fire event).
+include/battle/eft_emit.h	EftSkillSrc	unk3E	hitShape	HIGH	Copied to EftShotParam +0x08, the hit shape (0 spheres, 1 boxes) in five other views.
+include/battle/eft_emit.h	EftSkillSrc	unk40	hitsC	HIGH	BtlSkillData.hitsC in btl_tech.h (hit factor 3, less 1); copied to EftShotParam +0x0A.
+include/battle/eft_emit.h	EftSkillSrc	unk42	KEEP	KEEP	Copied to EftShotParam +0x0B, which nothing identifies.
+include/battle/eft_emit.h	EftSkillSrc	unk44	groundFx	HIGH	Copied to EftShotParam +0x42 (groundFx / markEffect).
+include/battle/eft_emit.h	EftSkillSrc	unk46	impactFx	MEDIUM	Copied to EftShotParam +0x40 (EftHitDef.impactFx); same doubt as that field.
+include/battle/eft_emit.h	EftSkillSrc	unk48	nodes	HIGH	Copied to EftShotParam +0x0E.., the six fighter nodes of the node slots.
+include/battle/eft_emit.h	EftSkillSrc	unk54	frames	HIGH	Copied to EftShotParam +0x16.., the frame numbers of the six events.
+include/battle/eft_emit.h	EftSkillSrc	unk62	hitDirKind	HIGH	BtlSkillData.hitDirKind in btl_tech.h; copied to EftShotParam +0x05.
+include/battle/eft_emit.h	EftSkillSrc	unk6E	blurOn	HIGH	Copied to EftShotParam +0x48 (event index that starts the stage tint).
+include/battle/eft_emit.h	EftSkillSrc	unk70	blurOff	HIGH	Copied to EftShotParam +0x4A (event index that ends the stage tint).
+include/battle/eft_emit.h	EftSuperSrc	unkC	KEEP	KEEP	BtlSuperData names 0x0C flags but flags is taken here by 0x00 (flagsA in btl_tech.h); not read by BuildParam.
+include/battle/eft_emit.h	EftSuperSrc	unk1E	level	HIGH	Copied to EftShotParam +0x02, which eft_core.c copies to the hit record's level.
+include/battle/eft_emit.h	EftSuperSrc	unk30	shotLife	MEDIUM	Copied to EftShotParam +0x2C (EftJDef.shotLife); same doubt as that field.
+include/battle/eft_emit.h	EftSuperSrc	unk3C	power	MEDIUM	Copied to EftShotParam +0x88 (EftRDef.power, struggle power); one view only.
+include/battle/eft_emit.h	EftSuperSrc	unk48	hitScale	MEDIUM	Copied to EftShotParam +0x84 (what EftHit_GetScale returns); same doubt as that field.
+include/battle/eft_emit.h	EftSuperSrc	unk54	shotSpeed	HIGH	BtlSuperData.shotSpeed in btl_tech.h; copied to the param's speed.
+include/battle/eft_emit.h	EftSuperSrc	unk60	shotTurn	HIGH	BtlSuperData.shotTurn in btl_tech.h; copied to the param's homing.
+include/battle/eft_emit.h	EftSuperSrc	unk6C	scale	MEDIUM	Copied to EftShotParam +0x30, the effect scale; btl_tech.h only has shotUnk6C for it.
+include/battle/eft_emit.h	EftSuperSrc	unk78	groundScale	HIGH	Copied to EftShotParam +0x54 (groundScale / markSize).
+include/battle/eft_emit.h	EftSuperSrc	unk84	impactScale	MEDIUM	Copied to EftShotParam +0x50 (EftHitDef.impactScale); one view only.
+include/battle/eft_emit.h	EftSuperSrc	unk90	node	MEDIUM	Copied to EftShotParam +0x06 (node in eft_sweep.h); same doubt as that field.
+include/battle/eft_emit.h	EftSuperSrc	unk93	shots	HIGH	BtlSuperData.shots in btl_tech.h; copied to EftShotParam.shots.
+include/battle/eft_emit.h	EftSuperSrc	unk96	hitsB	HIGH	BtlSuperData.hitsB in btl_tech.h; BuildParam copies it to EftShotParam.volley.
+include/battle/eft_emit.h	EftSuperSrc	unk99	hitShape	HIGH	Copied to EftShotParam +0x08, the hit shape.
+include/battle/eft_emit.h	EftSuperSrc	unk9C	hitsC	HIGH	BtlSuperData.hitsC in btl_tech.h; copied to EftShotParam +0x0A.
+include/battle/eft_emit.h	EftSuperSrc	unk9F	KEEP	KEEP	Copied to EftShotParam +0x0B, which nothing identifies.
+include/battle/eft_emit.h	EftSuperSrc	unkA2	groundFx	HIGH	Copied to EftShotParam +0x42 (groundFx / markEffect).
+include/battle/eft_emit.h	EftSuperSrc	unkA5	impactFx	MEDIUM	Copied to EftShotParam +0x40 (EftHitDef.impactFx); same doubt as that field.
+include/battle/eft_emit.h	EftSuperSrc	unkA8	nodes	HIGH	Copied to EftShotParam +0x0E.., the six fighter nodes of the node slots.
+include/battle/eft_emit.h	EftSuperSrc	unkBA	subKind	HIGH	Copied to EftShotParam +0x58.. (EftJDef.subKind).
+include/battle/eft_emit.h	EftSuperSrc	unkD4	subAngle	HIGH	Copied to EftShotParam +0x60.. (EftJDef.subAngle).
+include/battle/eft_emit.h	EftSuperSrc	unk134	subArg	MEDIUM	Copied to EftShotParam +0x80 (EftJDef.subArg); same doubt as that field.
+include/battle/eft_emit.h	EftSuperSrc	unk137	KEEP	KEEP	Never read (byte between two arrays).
+include/battle/eft_emit.h	EftSuperSrc	unk13B	hitDirKind	HIGH	BtlSuperData.hitDirKind in btl_tech.h at the same offset; copied to EftShotParam +0x05.
+include/battle/eft_emit.h	EftSuperSrc	unk15C	blurOn	HIGH	Copied to EftShotParam +0x48.
+include/battle/eft_emit.h	EftSuperSrc	unk15F	blurOff	HIGH	Copied to EftShotParam +0x4A.
+include/battle/eft_emit.h	EftSuperSrc	unk162	KEEP	KEEP	Copied to EftShotParam +0x14, which nothing identifies.
+include/battle/eft_emit.h	EftSuperSrc	unk214	KEEP	KEEP	Copied to EftShotParam +0x4C (EftKDef.shotSpeed) but shotSpeed is the btl_tech.h name of 0x54 in this structure, and what tells the two speeds apart is not shown.
+include/battle/eft_emit.h	EftSetHead	unk6	aimKind	HIGH	Returned by EftEmit_GetAimKind and switched on by EftVolley_Aim (7 straight up, 8 lifted 45 degrees).
+include/battle/eft_emit.h	EftSetHead	unk7	KEEP	KEEP	Never read here.
+include/battle/eft_emit.h	EftSetHead	unk8	width0	HIGH	EftEmitHdr.width0 in eft_sweep.h; EftEmit_InitState copies it to the state's trail width.
+include/battle/eft_emit.h	EftSetHead	unkC	KEEP	KEEP	Two floats that EftEmitHdr in eft_sweep.h names width1 and width2; declared as one array here, so one name cannot carry both.
+include/battle/eft_emit.h	EftSetHead	unk14	widthTime	HIGH	EftEmitHdr.widthTime in eft_sweep.h (seconds; InitState multiplies it by 30).
+include/battle/eft_emit.h	EftSetHead	unk18	widthSplit	HIGH	EftEmitHdr.widthSplit in eft_sweep.h (InitState multiplies the frame count by it).
+include/battle/eft_emit.h	EftSetHead	unk1C	widthStep	HIGH	EftEmitHdr.widthStep in eft_sweep.h; not read in this file.
+include/battle/eft_emit.h	EftSetHead	unk20	endFrames	HIGH	Returned by EftEmit_GetEndFrames: frames an instance lives on after its end was asked (EftVolleyWork.endLimit).
+include/battle/eft_emit.h	EftSetHead	unk21	flags	HIGH	EftEmitHdr.flags in eft_sweep.h (bit 4: the second animation is used); here only returned by EftEmit_GetHead21.
+include/battle/eft_emit.h	EftSetHead	unk22	KEEP	KEEP	Only returned by EftEmit_GetHead22.
+include/battle/eft_emit.h	EftSetHead	unk25	KEEP	KEEP	Only returned by EftEmit_GetHead25.
+include/battle/eft_emit.h	EftSetHead	unk26	KEEP	KEEP	Only returned by EftEmit_GetHead26.
+include/battle/eft_emit.h	EftSetHead	unk28	KEEP	KEEP	Only returned by EftEmit_GetHead28.
+include/battle/eft_emit.h	EftSetHead	unk2C	b0	HIGH	EftEmitHdr.b0 in eft_sweep.h (first key of the second animation); InitState copies it to the state's width2.
+include/battle/eft_emit.h	EftSetHead	unk30	KEEP	KEEP	Two floats that EftEmitHdr names b1 and b2; declared as one array here.
+include/battle/eft_emit.h	EftSetHead	unk38	bTime	HIGH	EftEmitHdr.bTime in eft_sweep.h (seconds; InitState multiplies it by 30).
+include/battle/eft_emit.h	EftSetHead	unk3C	bSplit	HIGH	EftEmitHdr.bSplit in eft_sweep.h.
+include/battle/eft_emit.h	EftSetDef	unk2	texIdx	HIGH	Passed as the texture index of every module's create argument: EftArcArg.texIdx, EftLineArg.texIdx, EftRaysArg.tex (texture number in *res), EftLinkArg.frame, EftPart10 texIdxA.
+include/battle/eft_emit.h	EftSetDef	unk3	count	HIGH	Ray count of the light (EftRayArg.count), EftRibbon_SetMaxNodes, and the chain's node count (EftChain_SetParam3).
+include/battle/eft_emit.h	EftSetDef	unk4	mode	MEDIUM	EftAnimPartArg.mode for type 14 (picks the draw layer) and the light kind 0 / 1 for type 0; uncertain whether one word fits both uses.
+include/battle/eft_emit.h	EftSetDef	unk5	delay	HIGH	Given to every module's start delay setter (EftRays_SetDelay, EftBill_SetDelay, EftRibbon_SetDelay, EftAnimPart_SetDelay, EftPtcl_SetStartDelay, EftPart10_SetDelay, EftLink_SetDelay) and to EftRayArg.delay.
+include/battle/eft_emit.h	EftSetDef	unk6	hold	HIGH	Frames a part keeps running after its stop: EftRays_SetHold, EftAnimPart_SetHold, EftPart10_SetHold, and the same thing under other names (EftBill_SetEndDelay, EftLink_SetStopDelay, EftPtcl_SetStopDelay, EftRibbon_SetFadeDelay).
+include/battle/eft_emit.h	EftSetDef	unk7	fade	HIGH	Fade length: EftRays_SetFade, EftAnimPart_SetFade, EftPart10_SetFade, EftLink_SetFade, EftRibbon_SetFadeTime (EftPtcl_SetLinger).
+include/battle/eft_emit.h	EftSetDef	unkA	node	HIGH	EftEmitDef.node in eft_sweep.h and EftOPart.node in eft_rays.h (index of the node slot; 5 makes the part follow the direction here).
+include/battle/eft_emit.h	EftSetDef	unk10	offset	HIGH	EftEmitDef.offset in eft_sweep.h; every spawner pushes the position along dir by unk10 * scale.
+include/battle/eft_emit.h	EftSetDef	unk14	offset2	HIGH	EftEmitDef.offset2 in eft_sweep.h; EftEmit_SpawnType17 pushes the second point by it.
+include/battle/eft_emit.h	EftSetDef	unk18	rate	HIGH	EftEmitDef.rate in eft_sweep.h; not read in this file.
+include/battle/eft_emit.h	EftSetDef	unk1C	scale0	HIGH	EftEmitDef.scale0 in eft_sweep.h (first key of the scale animation); InitState copies it to the part's current scale.
+include/battle/eft_emit.h	EftSetDef	unk34	flags2	HIGH	EftEmitDef.flags2 in eft_sweep.h; bits 2 and 8 tested here to make extra module calls.
+include/battle/eft_emit.h	EftSetDef	unk35	cond	HIGH	EftEmitDef.cond in eft_sweep.h (bit number tested by EftEmit_MarkCond); not read in this file.
+include/battle/eft_emit.h	EftSetDef	unk36	altNode	HIGH	EftEmitDef.altNode in eft_sweep.h; EftEmit_GetFlags takes it in place of the node when the state flag 0x20 is set.
+include/battle/eft_emit.h	EftSetState	unk168	scale	HIGH	EftEmitState.scale in eft_sweep.h; InitState fills it with each part's scale0.
+include/battle/eft_emit.h	EftSetState	unk2A8	trailWidth	HIGH	EftEmitState.trailWidth in eft_sweep.h; InitState fills it with the header's width0.
+include/battle/eft_emit.h	EftSetState	unk2AC	trailSplitFrames	MEDIUM	InitState stores widthTime * 30 * widthSplit: the frame at which the first leg of the width animation ends; unnamed in eft_sweep.h, the name is mine.
+include/battle/eft_emit.h	EftSetState	unk2B0	trailFrames	MEDIUM	InitState stores widthTime * 30: length of the width animation in frames; unnamed in eft_sweep.h, the name is mine.
+include/battle/eft_emit.h	EftSetState	unk2B4	trailTime	HIGH	EftEmitState.trailTime in eft_sweep.h; zeroed by InitState.
+include/battle/eft_emit.h	EftSetState	unk2B8	width2	HIGH	EftEmitState.width2 in eft_sweep.h; InitState fills it with the header's b0.
+include/battle/eft_emit.h	EftSetState	unk2BC	splitFrames2	MEDIUM	InitState stores bTime * 30 * bSplit: end of the first leg of the second animation; unnamed in eft_sweep.h, the name is mine.
+include/battle/eft_emit.h	EftSetState	unk2C0	frames2	MEDIUM	InitState stores bTime * 30: length of the second animation in frames; unnamed in eft_sweep.h, the name is mine.
+include/battle/eft_emit.h	EftSetState	unk2C4	time2	HIGH	EftEmitState.time2 in eft_sweep.h; zeroed by InitState.
+include/battle/eft_emit.h	EftEmitLightArg	unk20	life	HIGH	EftRayArg.life in eft_draw_modules.h (the header says the two are the same argument); the spawner passes its rate argument.
+include/battle/eft_emit.h	EftEmitLightArg	unk24	length	HIGH	EftRayArg.length (scale * 100 or * 800).
+include/battle/eft_emit.h	EftEmitLightArg	unk28	width	HIGH	EftRayArg.width.
+include/battle/eft_emit.h	EftEmitLightArg	unk2C	inner	HIGH	EftRayArg.inner (distance of the rays' near end from the centre; part offset * scale).
+include/battle/eft_emit.h	EftEmitLightArg	unk30	jitter	HIGH	EftRayArg.jitter (random extra distance per ray; part offset2 * scale).
+include/battle/eft_emit.h	EftEmitLightArg	unk34	mode	HIGH	EftRayArg.mode (EFT_RAY_MODE_*; 1 and 3 passed).
+include/battle/eft_emit.h	EftEmitLightArg	unk38	count	HIGH	EftRayArg.count (rays; EftSetDef +0x03).
+include/battle/eft_emit.h	EftEmitLightArg	unk40	blend	HIGH	EftRayArg.blend.
+include/battle/eft_emit.h	EftEmitLightArg	unk44	space	HIGH	EftRayArg.space (0 in the world, 1 on the screen).
+include/battle/eft_emit.h	EftEmitLightArg	unk48	delay	HIGH	EftRayArg.delay (EftSetDef +0x05).
+include/battle/eft_emit.h	EftEmitLightArg	unk4C	fadeFrames	HIGH	EftRayArg.fadeFrames (EftSetDef +0x06).
+include/battle/eft_emit.h	EftEmitLightArg	unk50	autoKill	HIGH	EftRayArg.autoKill; set to 1 for a phase 2 part at eft_emit.c:1508.
+include/battle/eft_emit.h	EftEmitArg2	unk2	texIdx	HIGH	EftRaysArg in eft_rays.h names this byte tex (texture number in *res); tex is taken here by the pointer at 0x04, and the value is EftSetDef +0x02.
+include/battle/eft_emit.h	EftEmitArg2	unk3	KEEP	KEEP	Always 0; EftRaysArg also leaves it unk3.
+include/battle/eft_emit.h	EftEmitArgA	unk24	texIdx	HIGH	EftArcArg.texIdx (eft_chain.h) and EftLineArg.texIdx (eft_quad_2.h) at the same offset of the same argument; EftPtclArg leaves it unk24.
+include/battle/eft_emit.h	EftEmitArg17	unk28	texIdx	MEDIUM	Filled from EftSetDef +0x02 like the texture index of the other create arguments; uncertain because EftRibbonArg in eft_ribbon.h leaves it unk28 and the ribbon code was not read.
+include/battle/eft_emit.h	EftEmitArg14	unk4	mode	HIGH	EftAnimPartArg.mode in eft_char_parts.h (0..9: picks the draw layer).
+include/battle/eft_emit.h	EftVolleyShot	unk20	KEEP	KEEP	Declared Vec4 but EftVolleyAimShot in eft_detect.h has s32 script / f32 speed / f32 maxTurn there; a rename cannot express that, the type is what needs changing.
+include/battle/eft_emit.h	EftVolleyShot	unk30	offset	MEDIUM	Passed as the offset argument of EftVolleyAim_Update (eft_detect.c:560); what the offset is applied to was not read.
+include/battle/eft_emit.h	EftVolleyShot	unk4C	KEEP	KEEP	Never used (padding of the 0x50 entry).
+include/battle/eft_emit.h	EftVolleyShotArg	unk28	scale	HIGH	EftBlastObjArg.scale in eft_rays.h; EftVolley_Fire passes the work's copy of the param's scale.
+include/battle/eft_emit.h	EftVolleyShotArg	unk2C	speed	HIGH	EftBlastObjArg.speed in eft_rays.h; EftVolley_Fire passes the work's copy of the param's speed.
+include/battle/eft_emit.h	EftVolleyWork	unk4	speed	HIGH	EftVolley_Init copies EftShotParam +0x34 (speed); passed as speed to the shot argument and to EftVolleyAim_InitShot / Update.
+include/battle/eft_emit.h	EftVolleyWork	unk8	homing	HIGH	EftVolley_Init copies EftShotParam +0x38 (homing); passed as maxTurn to EftVolleyAim_InitShot / Update.
+include/battle/eft_emit.h	EftVolleyWork	unkC	KEEP	KEEP	A copy of the param's scale that nothing reads again except to copy it to 0x14.
+include/battle/eft_emit.h	EftVolleyWork	unk10	scale	HIGH	Copy of EftShotParam +0x30; the scale given to the shots and to EftEmit_SpawnOwn.
+include/battle/eft_emit.h	EftVolleyWork	unk14	KEEP	KEEP	A third copy of the scale, never read.
+include/battle/eft_emit.h	EftVolleyWork	unk18	KEEP	KEEP	Never used.
+include/battle/eft_emit.h	EftVolleyWork	unk50	firePos	MEDIUM	Position of the firing node copied when the fire event (bit 4) arrives; only ever copied on to 0x60, so its own purpose is not shown.
+include/battle/eft_emit.h	EftVolleyWork	unk60	pos	MEDIUM	The position EftEmit_SpawnOwn is given for the parts and EftVolley_Aim aims with; uncertain whether it is better described as the aim origin.
+include/battle/eft_emit.h	EftVolleyWork	unk13C8	nodeSide	HIGH	Result of EftVolleyAim_GetNodeSide(pose.node), passed as the side argument of EftVolleyAim_InitShot.
+include/battle/eft_emit.h	EftVolleyWork	unk13CC	KEEP	KEEP	Never used.
+include/battle/eft_emit.h	EftShotNullWork	unk0	KEEP	KEEP	Only cleared by the memset of the init.
+include/battle/eft_ground_dust.h	EftBillDef	unk18	keySplit	HIGH	EftLineDef.split in eft_quad_2.h (the same pack record: fraction of the key animation spent on the first leg); written keySplit to go with keyTime here, as EftLinkDef.keySplit does.
+include/battle/eft_ground_dust.h	EftBillArg	unk24	texIdx	HIGH	EftLineArg.texIdx in eft_quad_2.h (same argument); passed twice to EftLine_SetTex as the entries of the texture table.
+include/battle/eft_ground_dust.h	EftBillArg	unk38	def2	HIGH	EftLineArg.def2 in eft_quad_2.h (the second parameter block, pack resource word 1).
+include/battle/eft_ground_dust.h	EftBill	unkD8	KEEP	KEEP	Set by EftBill_SetUnkD8; a positive value sets flag 0x800 at the stop, and what that flag does is not in this file.
+include/battle/eft_ground_dust.h	EftBill	unkE4	keySplit	HIGH	EftLineWork.animSplit in eft_quad_2.h; the init stores keyTime * the definition's split (frames of the first leg).
+include/battle/eft_ground_dust.h	EftGndDustArg	unk54	speedRand	HIGH	EftGroundDef.speedRand in eft_char_parts.h (same argument); speed = speed + unk54 * Rand_Float01() at eft_ground_dust.c:1312.
+include/battle/eft_ground_dust.h	EftGndDustArg	unk5C	gravity	HIGH	EftGroundDef.gravity in eft_char_parts.h; scales the acceleration vector at eft_ground_dust.c:1298.
+include/battle/eft_ground_dust.h	EftGndDustPart	unkA2	KEEP	KEEP	Never used (padding after scale).
+include/battle/eft_ground_dust.h	EftGndDustTex	unk84	loaded	HIGH	EftGroundTex.loaded in eft_char_parts.h (bit per entry whose TEX0 was fetched; EftYTex16.loaded / EftArcTexSet.built are the same word); the manager clears it every frame.
+include/battle/eft_ground_dust.h	EftGndDustStage	unk54	speedRand	HIGH	Copied into EftGndDustArg +0x54 at eft_ground_dust.c:1231; the present name is the offset of that other field, the word itself is at 0x10.
+include/battle/eft_link_2.h	EftWTexEntry	unk8	KEEP	KEEP	Declared u64; other views split it into an image pointer and an unknown word, and this file only copies it.
+include/battle/eft_link_2.h	EftWLinkDef	unk84	ofsAlongMin	MEDIUM	eft_link_1.c:258 offsets a sprite along the chain direction by Rand_FloatRange(value of 0x84, value of 0x90); the name is mine, eft_particle_unused.h only notes jitter along the chain.
+include/battle/eft_link_2.h	EftWLinkDef	unk90	ofsAlongMax	MEDIUM	Upper bound of the same random offset along the chain (eft_link_1.c:258); the name is mine.
+include/battle/eft_link_2.h	EftWLinkDef	unk19F	layer	HIGH	EftLinkDef.layer in eft_particle_unused.h (def->layer is the layer argument of the draw calls in eft_link_1.c:204).
+include/battle/eft_link_2.h	EftWLinkNode	unk70	KEEP	KEEP	Set to (0, 0, 1, 1) by EftLink_InitNode and not read in this file.
+include/battle/eft_link_2.h	EftWLinkArg	unk38	frame	HIGH	EftLinkArg.frame in eft_particle_unused.h (texture of the set: the index used by EFT_LINK_TEX0); it is the texture index EftSetDef +0x02.
+include/battle/eft_link_2.h	EftWLinkArg	unk3C	texIdxB	MEDIUM	Second index given to EftLink_SelectTex (eft_link_1.c:47), named by analogy with EftPart10.texIdxB; EftLinkArg leaves it unk3C and the spawner always passes 0.
+include/battle/eft_link_2.h	EftWLink	unk90	col0Delta	HIGH	Second half of a {current, change between the two keys} pair: EftLinkWork.vec[n][1] in eft_particle_unused.h, written as key[k] - key[k - 1] in eft_link_1.c.
+include/battle/eft_link_2.h	EftWLink	unkB0	col0RangeDelta	HIGH	Change between keys of col0Range (EftLinkWork.vec[1][1]).
+include/battle/eft_link_2.h	EftWLink	unkD0	col1Delta	HIGH	Change between keys of col1 (EftLinkWork.vec[2][1]).
+include/battle/eft_link_2.h	EftWLink	unkF0	col1RangeDelta	HIGH	Change between keys of col1Range (EftLinkWork.vec[3][1]).
+include/battle/eft_link_2.h	EftWLink	unk108	mulRDelta	HIGH	Change between keys of mulR (EftLinkWork.pair[0][1]).
+include/battle/eft_link_2.h	EftWLink	unk118	mulGDelta	HIGH	Change between keys of mulG (EftLinkWork.pair[1][1]).
+include/battle/eft_link_2.h	EftWLink	unk128	mulBDelta	HIGH	Change between keys of mulB (EftLinkWork.pair[2][1]).
+include/battle/eft_link_2.h	EftWLink	unk134	mulTimeDelta	HIGH	EftLinkAnim.delta of the value in front of it (EftLinkWork.val4[0]).
+include/battle/eft_link_2.h	EftWLink	unk13C	fade0Delta	HIGH	EftLinkAnim.delta of fade0 (EftLinkWork.val4[1]).
+include/battle/eft_link_2.h	EftWLink	unk144	fade1Delta	HIGH	EftLinkAnim.delta of fade1 (EftLinkWork.val4[2]).
+include/battle/eft_link_2.h	EftWLink	unk14C	rotXDelta	HIGH	EftLinkWork.val[0].delta = def->rotX[k] - def->rotX[k - 1] (eft_link_1.c:335).
+include/battle/eft_link_2.h	EftWLink	unk154	rotXRangeDelta	HIGH	EftLinkWork.val[1].delta (eft_link_1.c:336).
+include/battle/eft_link_2.h	EftWLink	unk15C	rotZDelta	HIGH	EftLinkWork.val[2].delta (eft_link_1.c:337).
+include/battle/eft_link_2.h	EftWLink	unk164	rotZRangeDelta	HIGH	EftLinkWork.val[3].delta (eft_link_1.c:338).
+include/battle/eft_link_2.h	EftWLink	unk16C	dirAngDelta	HIGH	EftLinkWork.val[4].delta (eft_link_1.c:339).
+include/battle/eft_link_2.h	EftWLink	unk174	dirAngRangeDelta	HIGH	EftLinkWork.val[5].delta (eft_link_1.c:340).
+include/battle/eft_link_2.h	EftWLink	unk17C	spinDelta	HIGH	EftLinkWork.val[6].delta (eft_link_1.c:341).
+include/battle/eft_link_2.h	EftWLink	unk184	spinRangeDelta	HIGH	EftLinkWork.val[7].delta (eft_link_1.c:342).
+include/battle/eft_link_2.h	EftWLink	unk18C	twistDelta	HIGH	EftLinkWork.val[8].delta (eft_link_1.c:343).
+include/battle/eft_link_2.h	EftWLink	unk194	ofsXDelta	HIGH	EftLinkWork.val[9].delta (eft_link_1.c:344).
+include/battle/eft_link_2.h	EftWLink	unk19C	ofsYDelta	HIGH	EftLinkWork.val[10].delta (eft_link_1.c:345).
+include/battle/eft_link_2.h	EftWLink	unk1A0	ofsAlongMin	MEDIUM	EftLink_SetKey copies EftWLinkDef +0x84 here; lower bound of the random offset along the chain (eft_link_1.c:258); the name is mine.
+include/battle/eft_link_2.h	EftWLink	unk1A4	ofsAlongMinDelta	MEDIUM	EftLinkWork.val[11].delta (eft_link_1.c:346); depends on the name of 0x1A0.
+include/battle/eft_link_2.h	EftWLink	unk1A8	ofsAlongMax	MEDIUM	EftLink_SetKey copies EftWLinkDef +0x90 here; upper bound of the same offset; the name is mine.
+include/battle/eft_link_2.h	EftWLink	unk1AC	ofsAlongMaxDelta	MEDIUM	EftLinkWork.val[12].delta (eft_link_1.c:347); depends on the name of 0x1A8.
+include/battle/eft_link_2.h	EftWLink	unk1B4	distDelta	HIGH	EftLinkWork.val[13].delta (eft_link_1.c:348).
+include/battle/eft_link_2.h	EftWLink	unk1BC	distRangeDelta	HIGH	EftLinkWork.val[14].delta (eft_link_1.c:349).
+include/battle/eft_link_2.h	EftWLink	unk1C4	distBaseDelta	HIGH	EftLinkWork.val[15].delta (eft_link_1.c:350).
+include/battle/eft_link_2.h	EftWLink	unk1D4	sizeDelta	HIGH	EftLinkWork.vecA[1] = def->size[k] - def->size[k - 1] (eft_link_1.c:351-353).
+include/battle/eft_link_2.h	EftWLink	unk1EC	sizeRangeDelta	HIGH	EftLinkWork.vecB[1] (eft_link_1.c:354-356).
+include/battle/eft_link_2.h	EftWLink	unk1FC	lifeDelta	HIGH	EftLinkWork.val2[0].delta (eft_link_1.c:357).
+include/battle/eft_link_2.h	EftWLink	unk204	lifeRangeDelta	HIGH	EftLinkWork.val2[1].delta (eft_link_1.c:358).
+include/battle/eft_link_2.h	EftWLink	unk20C	waitDelta	HIGH	EftLinkWork.val2[2].delta (eft_link_1.c:359).
+include/battle/eft_link_2.h	EftWLink	unk214	waitRangeDelta	HIGH	EftLinkWork.val2[3].delta (eft_link_1.c:360).
+include/battle/eft_link_2.h	EftWLink	unk220	pulseDelta	HIGH	Change between keys of pulse (EftLinkWork.pair2[1]).
+include/battle/eft_link_2.h	EftWLinkMgr	unk4	KEEP	KEEP	Never used (padding in front of the pool).
+include/battle/eft_link_2.h	EftWLinkMgr	unk10694	KEEP	KEEP	Never used (padding in front of the matrix).
+include/battle/eft_link_2.h	EftPart10Arg	unk3C	texIdxB	HIGH	EftPart10.texIdxB in eft_part10.h (emitter +0x6C = argument +0x3C; eft_part10.c:1270); the spawner passes the same EftSetDef +0x02 as for 0x38.
+include/battle/eft_link_2.h	EftPart10Ptcl	unk20	axisScale	MEDIUM	eft_part10.h names 0x20 scale, but scale is taken here by the float at 0xF4; its x and y are the width and height factors of the billboard in EftPart10_Draw, the name is mine.
+include/battle/eft_link_2.h	EftPart10	unkF4	angADelta	HIGH	Second half of an EftPart10Key {v, d} pair (eft_part10.h: the value and its change over the current key segment).
+include/battle/eft_link_2.h	EftPart10	unkFC	angARangeDelta	HIGH	Change half of the angARange pair (EftPart10Key in eft_part10.h).
+include/battle/eft_link_2.h	EftPart10	unk104	angBDelta	HIGH	Change half of the angB pair (EftPart10Key in eft_part10.h).
+include/battle/eft_link_2.h	EftPart10	unk10C	angBRangeDelta	HIGH	Change half of the angBRange pair (EftPart10Key in eft_part10.h).
+include/battle/eft_link_2.h	EftPart10	unk180	keyTime	HIGH	EftPart10.keyTime in eft_part10.h (frames); eft_link_2.c:1432 switches to key 2 when frame >= unk180.
+include/battle/eft_link_2.h	EftPart10	unk24C	fade0Delta	HIGH	Change half of the fade0 pair (EftPart10Key at 0x248 in eft_part10.h).
+include/battle/eft_link_2.h	EftPart10	unk254	fade1Delta	HIGH	Change half of the fade1 pair (EftPart10Key at 0x250 in eft_part10.h).
+include/battle/eft_link_2.h	EftPart10	unk258	spinA	HIGH	EftPart10.spinA in eft_part10.h (emitter spin per frame); zeroed at eft_link_2.c:1364 when the definition has no spin (flag 0x40 clear).
+include/battle/eft_link_2.h	EftWView	unk40	world2view2	HIGH	btl_cam.h names 0x040 of the camera view world2view2 (EftTCamView calls it view); inverted by Mtx_InverseRT at eft_link_2.c:707.
+include/battle/eft_link_2.h	EftWView	unk140	world2screen	HIGH	btl_cam.h and EftZView name 0x140 world2screen; loaded as the current matrix by EftPart10_Draw.

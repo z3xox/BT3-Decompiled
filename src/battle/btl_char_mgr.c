@@ -350,8 +350,8 @@ void BtlChar_Reset(BtlMgrChr *chr) {
         chr->unk99C = 100000;
     }
     res = BattleResult_GetPtr();
-    res->unk1C[chr->side] = 0;
-    res->unk24[chr->side] = 0;
+    res->maxComboDamage[chr->side] = 0;
+    res->maxComboHits[chr->side] = 0;
     if (BtlMember_GetActiveGauge(chr)->unk20 != 0) {
         BtlChar_GetObj(chr)->flags |= 0x40000000;
     }
@@ -914,11 +914,11 @@ void BtlChar_RaiseEvents(BtlMgrChr *chr) {
         BattleResult *res = BattleResult_GetPtr();
         s32 opp = BtlOpp_GetPlayer(chr);
 
-        if (res->unk1C[opp] < chr->unkD40) {
-            res->unk1C[opp] = chr->unkD40;
+        if (res->maxComboDamage[opp] < chr->unkD40) {
+            res->maxComboDamage[opp] = chr->unkD40;
         }
-        if (res->unk24[opp] < chr->unkD44) {
-            res->unk24[opp] = chr->unkD44;
+        if (res->maxComboHits[opp] < chr->unkD44) {
+            res->maxComboHits[opp] = chr->unkD44;
         }
         res->health[chr->side] = BtlMember_GetTeamHealthRatio(chr) * 100.0f;
         if (BtlMember_GetActiveGauge(chr)->health == 1) {

@@ -303,7 +303,7 @@ s32 BtlLoad_StepObject(BtlJob *job) {
         Battle_GetWork()->flags |= BATTLE_FLAG_LOAD_OBJECT;
         id = job->chara + BTL_FILE_OBJECT;
         if (job->chara < 0x100) {
-            if (job->unk1C != 0) {
+            if (job->anim1Chara != 0) {
                 id = job->chara * 10 + job->animChara + (BTL_FILE_CHARA + 4);
             } else {
                 id = job->chara * 10 + job->animChara + BTL_FILE_CHARA;
@@ -379,7 +379,7 @@ s32 BtlLoad_StepChara(BtlJob *job) {
         }
         if (job->modelOnly == 0) {
             file8 = job->animChara * 10 + (BTL_FILE_CHARA + 8);
-            file9 = job->unk1C * 10 + (BTL_FILE_CHARA + 9);
+            file9 = job->anim1Chara * 10 + (BTL_FILE_CHARA + 9);
             voice = job->voiceChara + ((gSaveData->flags & SAVE_FLAG_VOICE) ? BTL_FILE_VOICE_ALT : BTL_FILE_VOICE);
             BtlRes_Reload(BattleSide_GetModelSlot(job->side), model, file8, file9);
             res->bank = File_Request3(voice, res->bank, res->bankSize);
@@ -537,7 +537,7 @@ s32 BtlLoad_StepInitial(BtlJob *job) {
                 m->buf[0] = File_Request3(m->chara * 2 + side + BTL_FILE_CHARA_DATA, m->buf[0], BTL_MEMBER_BUF_SIZE);
             }
         }
-        res->unk8 = File_Request3(gProgress->unk0[0] + 6, NULL, 0);
+        res->hudFile = File_Request3(gProgress->unk0[0] + 6, NULL, 0);
         job->state++;
         break;
     case 5:
@@ -636,7 +636,7 @@ void BtlLoad_PollObjectRequest(void) {
             job->costume = slot;
             job->chara = id;
             job->animChara = costume;
-            job->unk1C = variant;
+            job->anim1Chara = variant;
             Job_Push((Job *)job);
             BtlChange_NotifyTaken();
         }
@@ -670,7 +670,7 @@ void BtlLoad_PollCharaRequest(void) {
             job->step = BtlLoad_StepChara;
             job->chara = chara;
             job->animChara = animChara;
-            job->unk1C = unk1C;
+            job->anim1Chara = unk1C;
             job->voiceChara = voiceChara;
             job->costume = costume;
             job->variant = variant;
@@ -720,7 +720,7 @@ void BtlLoad_Reload(void) {
             job->kind = BTL_JOB_KIND_RESTART;
             job->chara = chara;
             job->animChara = chara;
-            job->unk1C = chara;
+            job->anim1Chara = chara;
             job->voiceChara = chara;
             job->costume = costume;
             job->variant = variant;
@@ -782,8 +782,8 @@ void BtlLoad_FreeAll(void) {
     }
     Heap_Free(res->bank);
     res->bank = NULL;
-    Heap_Free(res->unk8);
-    res->unk8 = NULL;
+    Heap_Free(res->hudFile);
+    res->hudFile = NULL;
     Heap_Free(res->stage);
     res->stage = NULL;
     if (res != NULL && res->transition != NULL) {
@@ -1468,7 +1468,7 @@ void BattleSetup_SetRule(s32 screenMode, s32 mode, s32 bgm, s32 timeLimit, s32 a
     }
     rule->timeLimit = timeLimit;
     rule->announcer = announcer;
-    rule->unk10 = unk10;
+    rule->stageChange = unk10;
     rule->stage = stage;
     rule->curStage = stage;
 }
@@ -1481,8 +1481,8 @@ void BattleSetup_SetSide(s32 sideNo, s32 control, s32 pad, s32 memberCount, s32 
     side->control = control;
     side->pad = pad;
     side->memberCount = memberCount;
-    side->unk200 = unk200;
-    side->unk1FC = unk1FC;
+    side->switchEnabled = unk200;
+    side->changeAllowed = unk1FC;
     side->lead = lead;
     BattleSetup_InitCharaBits(&side->charaBits, bits);
 }
@@ -1597,19 +1597,19 @@ void BattleSetup_FinishEx(s32 wide) {
         }
     }
     rule = &SETUP()->rule;
-    rule->unk18 = 0;
+    rule->dragonBall = 0;
     if (Battle_GetMode() == 1) {
         for (i = 0; i < 7; i++) {
             s32 mask = 1 << i;
 
             if (!(gSaveData->unlockFlags & mask)) {
-                rule->unk18 = i + 1;
+                rule->dragonBall = i + 1;
                 break;
             }
         }
     }
     BattleSetup_DefaultOptions();
-    SETUP()->unk5A0 = 1;
+    SETUP()->finished = 1;
     memset(&gBattleReplay, 0, sizeof(BtlReplay));
     gBattleReplay.setup = *SETUP();
 }
@@ -1759,7 +1759,7 @@ void Battle_ResetStage(void) {
 
 /* Returns rule word 0x10 (setup + 0x18). */
 s32 Battle_IsStageChangeEnabled(void) {
-    return SETUP()->rule.unk10;
+    return SETUP()->rule.stageChange;
 }
 
 /* Per-side option A (save 0x1694 by default). */
@@ -1793,12 +1793,12 @@ s32 BattleSide_IsCpu(s32 side) {
 
 /* Returns side word 0x200. */
 s32 BattleSide_GetSwitchEnabled(s32 side) {
-    return Side(side)->unk200;
+    return Side(side)->switchEnabled;
 }
 
 /* Returns side word 0x1FC. */
 s32 BattleSide_GetChangeAllowed(s32 side) {
-    return Side(side)->unk1FC;
+    return Side(side)->changeAllowed;
 }
 
 /* Character the side starts the battle with. */

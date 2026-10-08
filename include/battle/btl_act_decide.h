@@ -33,7 +33,7 @@ typedef struct BtlActJGauge {
     /* 0x04 */ u8 unk4[0x20 - 0x4];
     /* 0x20 */ s32 variant;
     /* 0x24 */ u8 unk24[0x30 - 0x24];
-    /* 0x30 */ s32 unk30;        /* non-zero: this member cannot be fused with */
+    /* 0x30 */ s32 bodyChanged;        /* non-zero: this member cannot be fused with */
     /* 0x34 */ s32 unk34;
     /* 0x38 */ s32 skillLock[2]; /* > 0: skill slot 0 / 1 (blast 1) with flag 0x10 is locked */
     /* 0x40 */ u8 unk40[0x4C - 0x40];
@@ -49,12 +49,12 @@ typedef struct BtlActJForm {
     /* 0x10 [0x12DC] */ s32 kind;       /* transformation: parameter byte + 0xA4; fusion: 5 */
     /* 0x14 [0x12E0] */ s32 variant;    /* active gauge + 0x20, or 0 when parameter flag (0x10 << index) is set */
     /* 0x18 [0x12E4] */ s32 animChara;  /* = chara */
-    /* 0x1C [0x12E8] */ s32 unk1C;      /* = chara */
+    /* 0x1C [0x12E8] */ s32 anim1Chara;      /* = chara */
     /* 0x20 [0x12EC] */ s32 voiceChara; /* = chara */
-    /* 0x24 [0x12F0] */ s32 unk24;      /* parameter byte + 0xA8 (transformation) / + 0xB7 (fusion) */
-    /* 0x28 [0x12F4] */ s32 unk28;      /* transformation: 0, or 2 when the active character is 0x6A; fusion: the partner's costume */
+    /* 0x24 [0x12F0] */ s32 objId;      /* parameter byte + 0xA8 (transformation) / + 0xB7 (fusion) */
+    /* 0x28 [0x12F4] */ s32 objCostume;      /* transformation: 0, or 2 when the active character is 0x6A; fusion: the partner's costume */
     /* 0x2C [0x12F8] */ s32 partner;    /* fusion: member index of the partner; transformation: -1 */
-    /* 0x30 [0x12FC] */ s32 unk30;
+    /* 0x30 [0x12FC] */ s32 objVariant;
     /* 0x34 [0x1300] */ s32 allowed;    /* 0 = transformations, fusions and switches are refused (unless flag 0x10F) */
 } BtlActJForm;
 
@@ -69,7 +69,7 @@ typedef struct BtlActJChr {
     /* 0x04A4 */ u8 unk4A4[0x99C - 0x4A4];
     /* 0x099C */ s32 switchGauge;    /* 0..100000: a member switch needs it full */
     /* 0x09A0 */ u8 unk9A0[0xD88 - 0x9A0];
-    /* 0x0D88 */ s32 unkD88;
+    /* 0x0D88 */ s32 evasionCount;
     /* 0x0D8C */ s32 unkD8C;
     /* 0x0D90 */ s32 attackId;       /* id BtlAct_PrepareAttack was last called with */
     /* 0x0D94 */ u8 unkD94[0xE00 - 0xD94];
@@ -78,13 +78,13 @@ typedef struct BtlActJChr {
     /* 0x0E08 */ u8 unkE08[0xE40 - 0xE08];
     /* 0x0E40 */ s32 techDelay;      /* countdown: no technique input while > 0 */
     /* 0x0E44 */ u8 unkE44[0xE5C - 0xE44];
-    /* 0x0E5C */ s32 unkE5C;         /* counter, full at 3 */
+    /* 0x0E5C */ s32 skillCount3;         /* counter, full at 3 */
     /* 0x0E60 */ u8 unkE60[0xE9C - 0xE60];
-    /* 0x0E9C */ s32 unkE9C;         /* 0..2: variant added to the actions of reactions 29, 30 and 34 */
+    /* 0x0E9C */ s32 thrSlot;         /* 0..2: variant added to the actions of reactions 29, 30 and 34 */
     /* 0x0EA0 */ u8 unkEA0[0xFB0 - 0xEA0];
     /* 0x0FB0 */ s32 reaction;       /* HitReact.reaction */
-    /* 0x0FB4 */ s32 unkFB4;
-    /* 0x0FB8 */ s32 unkFB8;
+    /* 0x0FB4 */ s32 reactSub;
+    /* 0x0FB8 */ s32 animCycle;
     /* 0x0FBC */ s32 hitBack;        /* HitReact.back: hit from behind */
     /* 0x0FC0 */ u8 unkFC0[0xFCC - 0xFC0];
     /* 0x0FCC */ f32 hitYaw;         /* HitReact.yaw: direction the hit pushes */

@@ -1,0 +1,192 @@
+include/battle/btl_script_cmd.h	BtlScriptCmdWindow	unk8	scale	HIGH	FontStyle (include/sys/font.h, the block Font_GetStyle returns and SetWindow copies) names 0x08 scale: multiplies scaleX and scaleY; option -s
+include/battle/btl_script_cmd.h	BtlScriptCmdWindow	unk10	color2	HIGH	FontStyle names 0x10 color2 (copied to the print command, never read by the printer)
+include/battle/btl_script_cmd.h	BtlScriptCmdWindow	unk14	spacingX	HIGH	FontStyle names 0x14 spacingX (extra pixels after each glyph); option -p first operand, default 2
+include/battle/btl_script_cmd.h	BtlScriptCmdWindow	unk18	spacingY	HIGH	FontStyle names 0x18 spacingY (extra pixels between lines); option -p second operand, default 5
+include/battle/btl_script_cmd.h	BtlScriptCmdWindow	unk1C	align	HIGH	FontStyle names 0x1C align (FONT_ALIGN_*); option -w
+include/battle/btl_script_cmd.h	BtlScriptCmdWindow	unk20	flags	HIGH	FontStyle names 0x20 flags (bit 0: stop at the first line break)
+include/battle/btl_script_cmd.h	BtlScriptCmdWindow	unk24	shadowMode	HIGH	FontStyle names 0x24 shadowMode (FONT_SHADOW_*); option -T
+include/battle/btl_script_cmd.h	BtlScriptCmdWindow	unk2C	shadowDx	HIGH	FontStyle names 0x2C shadowDx; option -O first operand
+include/battle/btl_script_cmd.h	BtlScriptCmdWindow	unk2E	shadowDy	HIGH	FontStyle names 0x2E shadowDy; option -O second operand
+include/battle/btl_script_cmd.h	BtlScriptCmdReward	unk0	points	HIGH	HistReward (include/menu/history.h, the same gProgress + 0x40 block) names 0x00 points[3] by level
+include/battle/btl_script_cmd.h	BtlScriptCmdReward	unkC	item	HIGH	HistReward names 0x0C item[3] (item ids, -1 none)
+include/battle/btl_script_cmd.h	BtlScriptCmdReward	unk18	chara	HIGH	HistReward names 0x18 chara[3] (character ids, -1 none)
+include/battle/btl_script_cmd.h	BtlScriptCmdReward	unk24	stage	HIGH	HistReward names 0x24 stage[3] (stage ids, -1 none)
+include/battle/btl_script_cmd.h	BtlScriptCmdReward	unk30	episode	HIGH	HistReward names 0x30 episode[3] (episode numbers, -1 none)
+include/battle/btl_script_cmd.h	BtlScriptCmdProgress	unk0	language	MEDIUM	0 / 1 picks the story text file base 0x231 / 0x263 in BtlScriptCmd_LoadText and battle_load.c requests file 6 + this value; uncertain whether it is the text language or a region / version selector, and no other gProgress view names it
+include/battle/btl_seq.h	BtlTextWork	unk10	padType	HIGH	BtlMenuWork (include/battle/pause_menu.h, the same 0x120-byte block) names 0x10 padType = Pad_GetLastStatus(pad); here it is the bit tested against a line's mask digit
+include/battle/btl_seq.h	BtlTextWork	unk14	top	HIGH	BtlMenuWork names 0x14 top (BtlMenu *, the tree being shown); not used in btl_seq.c
+include/battle/btl_stats.h	BtlAnimObj	unk14C	mix	HIGH	BobjAnim in include/battle/btl_obj_anim.h names object + 0xC8C mix (weight of layer 1); written by BtlAnim_SetSubMix
+include/battle/btl_stats.h	BtlStatChr	unkEE4	KEEP	KEEP	only passed as the useTable argument of BtlObjAnim_PlayFrom during a rush sequence; no writer seen and no other fighter view names 0xEE4
+include/battle/btl_tech.h	BtlTechBParam	unk5C	KEEP	KEEP	BtlParam_GetUnk5C has no caller
+include/battle/btl_tech.h	BtlTechBParam	unk68	stepCancelRatio	HIGH	BtlParam_GetStepCancelRatio: in btl_act_2.c the queued action is requested once BtlAnim_GetProgress exceeds it (step animations other than 0x1C)
+include/battle/btl_tech.h	BtlTechBParam	unk6C	backStepCancelRatio	HIGH	BtlParam_GetBackStepCancelRatio: the same progress threshold when the animation is 0x1C
+include/battle/btl_tech.h	BtlTechBParam	unk70	poweredDashLimit	MEDIUM	BtlParam_GetPoweredDashLimit, copied to fighter + 0xD6C every frame with flag 6 (powered-up); the name is the getter's and fighter + 0xD6C itself is unnamed in every view
+include/battle/btl_tech.h	BtlTechBParam	unk72	poweredVanishLimit	MEDIUM	BtlParam_GetPoweredVanishLimit, copied to fighter + 0xD74 with flag 6; the name is the getter's and + 0xD74 is unnamed in every view
+include/battle/btl_tech.h	BtlTechBParam	unk8F	comboFinish	MEDIUM	indexed by BtlParam_GetComboFinish (callers switch on a combo finisher mode 0..5); the array as declared (0x38 bytes) runs over fields BtlParam names from 0x98 on, so the real extent is unknown
+include/battle/btl_tech.h	BtlTechBParam	unkC7	KEEP	KEEP	a percent read by BtlParam_GetUnkC7Scale; only test seen is < 0.001 against technique 0x2D5, meaning unknown
+include/battle/btl_tech.h	BtlTechBParam	unkC8	KEEP	KEEP	BtlParam_GetUnkC8 has no caller
+include/battle/btl_tech.h	BtlKiBlastData	unk3	KEEP	KEEP	passed to the effect as launch block byte 0x1B (eft_disc.h reads that byte as a level 2 / 4 / 6 picking a texture pair, other views leave it unknown); not enough to name
+include/battle/btl_tech.h	BtlKiBlastData	unk28	radius	MEDIUM	BtlKiBlast_GetRadius, stored at 0x28 of the launch block; the effect views (EftKiPropArg, EftDiscAtk) call that slot scale, so it may be a size factor rather than a radius
+include/battle/btl_tech.h	BtlKiBlastData	unk2C	KEEP	KEEP	stored at 0x2C of the launch block, unnamed in every effect view
+include/battle/btl_tech.h	BtlKiBlastData	unk31	spreadMode	MEDIUM	BtlKiBlast_GetSpreadMode, read once in btl_char_fx_1.c when the blast is fired; the name is the getter's, the values were not checked
+include/battle/btl_tech.h	BtlSuperData	unk1E	clashPower	HIGH	BtlSuper_GetClashPower: compared with the incoming hit's level in BtlColl_TryDodge and stored / 20 in the fighter's clashPower (btl_act_super.c)
+include/battle/btl_tech.h	BtlSuperData	unk90	KEEP	KEEP	BtlSuper_GetUnk90 has no caller
+include/battle/btl_tech.h	BtlSuperData	unk99	KEEP	KEEP	not read in btl_tech.c
+include/battle/btl_tech.h	BtlSuperData	unk14D	landingKind	MEDIUM	BtlSuper_GetLandingKind, stored in the throw block (thr.unk14) by btl_hit_reaction.c; the name is the getter's, the receiving field is unnamed
+include/battle/btl_tech.h	BtlSuperData	unk165	aiKind	MEDIUM	BtlSuper_GetAiKind: only read through the character API for the opponent's current technique (AI query); the name is the getter's
+include/battle/btl_tech.h	BtlSuperData	unk16B	KEEP	KEEP	a single byte between two arrays, never read (padding)
+include/battle/btl_tech.h	BtlSuperData	unk220	throwPartnerStep	MEDIUM	BtlSuper_GetThrowPartnerStep, stored in the throw block (thr.unk18); the name is the getter's
+include/battle/btl_tech.h	BtlSuperData	unk223	stageFxEndStep	MEDIUM	BtlSuper_GetStageFxEndStep: effect bit 0x11 is set while the rush step is below it (negative reads as 999); the name is the getter's
+include/battle/btl_tech.h	BtlSuperData	unk226	throwObjectSlot	MEDIUM	BtlSuper_GetThrowObjectSlot, stored in the throw block (thr.unk2C); the name is the getter's
+include/battle/btl_tech.h	BtlSkillData	unk14	KEEP	KEEP	BtlSkill_GetUnk14 has no caller (by position it is the counterpart of BtlSuperData.clashPower, unproven)
+include/battle/btl_tech.h	BtlSkillData	unk38	KEEP	KEEP	BtlSkill_GetUnk38 has no caller
+include/battle/btl_tech.h	BtlSkillData	unk3E	KEEP	KEEP	not read in btl_tech.c
+include/battle/btl_tech.h	BtlSkillData	unk9E	aiKind	MEDIUM	BtlSkill_GetAiKind: read only through the character API for the opponent's current skill; the name is the getter's
+include/battle/btl_tech.h	BtlTechBPose	unkAC	KEEP	KEEP	multiplies move speeds 4, 5 and turn rate 0 and is forced to 1.0 outside a few actions (btl_char_action.h); a speed factor, but no view names it and what sets it above 1 was not found
+include/battle/btl_tech.h	BtlTechBGauge	unk20	variant	HIGH	the member gauge views in btl_char_member.h, btl_act_super.h and btl_char_hit.h name 0x20 variant (BattleMember.variant, the model variant in use)
+include/battle/btl_tech.h	BtlTechBChr	unkE5C	skillCount3	HIGH	another fighter view names 0xE5C skillCount3 (skill 0x41: +1, clamped to 0..3); here it scales technique 0x268
+include/battle/btl_tech.h	BtlTechBChr	unkE60	KEEP	KEEP	a counter that scales technique 0x2CD by 20 % each; the other views leave it unknown and disagree on its range (0..5 / 0..10)
+include/battle/col_box.h	ColMesh	unk4	KEEP	KEEP	never read in col_box.c
+include/battle/col_box.h	ColMesh	unk8	KEEP	KEEP	never read in col_box.c
+include/battle/col_primitives.h	CpSphere	unk18	KEEP	KEEP	never written or read (tail of the 0x20-byte record)
+include/battle/col_primitives.h	CpCapsule	unk24	KEEP	KEEP	never written or read (tail of the 0x30-byte record)
+include/battle/eft_aura.h	EftSpdTex	unk8	KEEP	KEEP	second doubleword of a texture set entry; eft_detect.h's EftTexSetEntry splits it as void *image + s32 unkC, which a u64 cannot be renamed to
+include/battle/eft_aura.h	EftAura	unk14	KEEP	KEEP	a second copy of the aura type (written by the setup, never read)
+include/battle/eft_aura.h	EftAura	unk1C	texFirst	HIGH	EftAuraWork (the same block) names 0x1C texFirst: first texture of the pair with flag 0x80
+include/battle/eft_aura.h	EftAura	unk30	frame	HIGH	EftAuraWork names 0x30 frame: unpaused frames since the task started
+include/battle/eft_aura.h	EftAura	unk50	alphaFade	HIGH	0..1 driven by fadeA; multiplies the alpha of both the flames and the sparks (a = aura->alpha * unk50 * alpha)
+include/battle/eft_aura.h	EftAura	unk54	alphaFadeRate	HIGH	the per-frame step of unk50 while it rises (grows by 1 / cfg->unk1B0 each frame)
+include/battle/eft_aura.h	EftAura	unk58	sizeFade	HIGH	0..1 driven by fadeB; multiplies the flame quad's width and height in the draw
+include/battle/eft_aura.h	EftAura	unk5C	sizeFadeRate	HIGH	the per-frame step of unk58 while it rises (grows by 1 / cfg->unk1A8 each frame)
+include/battle/eft_aura.h	EftAura	unk310	pushCentre	MEDIUM	position of node 0x30; EftAura_GetFlameSideDir pushes the flames away from its x, z; what node 0x30 is on the model is not known
+include/battle/eft_aura.h	EftAuraFlame	unk4	shape	MEDIUM	0 for a part's first flame, 1 for its second; row of the quad corner table and (with flip) of the uv table; the name is my reading
+include/battle/eft_aura.h	EftAuraFlame	unk8	partNode	MEDIUM	copy of the low byte of the part's model node (EftAuraData.part[part].node at the same address); never read
+include/battle/eft_aura.h	EftAuraFlame	unk3C	KEEP	KEEP	never read or written by name
+include/battle/eft_aura.h	EftAuraSpark	unk7	KEEP	KEEP	always 1, passed as a late integer argument of EftSpr_DrawRot whose meaning is unnamed
+include/battle/eft_aura.h	EftAuraPool	unk0	count	HIGH	EftAuraMgr (the same block) names 0x00 count: BtlScene_GetCharCount()
+include/battle/eft_aura.h	EftAuraCfgFlame	unk0	partNode	MEDIUM	low byte of what EftAuraData.part[] (the same table) names node, the part's model node; `node` is already taken in this struct by the second node (nodeEnd in the other view)
+include/battle/eft_aura.h	EftAuraCfgFlame	unk8	nodeRef	HIGH	EftAuraDataPart (the same record) names 0x8 nodeRef: node the flame leans away from
+include/battle/eft_aura.h	EftAuraCfg	unk1A0	KEEP	KEEP	scaled by the flame's power and added to its sideways and outward push; a spread factor, but no clear single meaning
+include/battle/eft_aura.h	EftAuraCfg	unk1A8	sizeFadeInTime	MEDIUM	frames: aura->unk5C grows by 1 / this while unk58 (flame size factor) rises; it is the reciprocal of an acceleration rather than an exact duration
+include/battle/eft_aura.h	EftAuraCfg	unk1AC	sizeFadeOutTime	HIGH	frames unk58 (flame size factor) takes to fall from 1 to 0: unk58 -= 1 / this
+include/battle/eft_aura.h	EftAuraCfg	unk1B0	alphaFadeInTime	MEDIUM	frames: aura->unk54 grows by 1 / this while unk50 (alpha factor) rises; reciprocal of an acceleration rather than an exact duration
+include/battle/eft_aura.h	EftAuraCfg	unk1B4	alphaFadeOutTime	HIGH	frames unk50 (alpha factor) takes to fall from 1 to 0: unk50 -= 1 / this
+include/battle/eft_aura.h	EftAuraCfg	unk4A0	fadeNodeLast	MEDIUM	the same word as EftAuraData.fadeNode[6]: the draw reads seven fade nodes and the seventh is here; not read through this view
+include/battle/eft_aura.h	EftAuraPrm	unk18	KEEP	KEEP	weight between the nearest and second nearest fade node distances; a blend weight with no obvious short name
+include/battle/eft_aura.h	EftAuraPrm	unk28	KEEP	KEEP	never read
+include/battle/eft_aura.h	EftAuraPrm	unkB8	KEEP	KEEP	never read
+include/battle/eft_aura.h	EftAuraWork	unk14	KEEP	KEEP	a second copy of the aura type, never read
+include/battle/eft_aura.h	EftAuraWork	unk50	alphaFade	HIGH	same block as EftAura: multiplies the flame and spark alpha, driven by fadeA
+include/battle/eft_aura.h	EftAuraWork	unk54	alphaFadeRate	HIGH	same block as EftAura: per-frame step of unk50
+include/battle/eft_aura.h	EftAuraWork	unk58	sizeFade	HIGH	same block as EftAura: multiplies the flame width and height, driven by fadeB
+include/battle/eft_aura.h	EftAuraWork	unk5C	sizeFadeRate	HIGH	same block as EftAura: per-frame step of unk58
+include/battle/eft_aura.h	EftAuraWork	unk6C	KEEP	KEEP	never read or written
+include/battle/eft_aura.h	EftAuraWork	unk310	pushCentre	MEDIUM	same block as EftAura: node 0x30, the point the flames are pushed away from; what node 0x30 is is not known
+include/battle/eft_aura.h	EftAuraWork	unk50C	KEEP	KEEP	never read or written
+include/battle/eft_aura.h	EftNTexEntry	unk8	KEEP	KEEP	second doubleword of a texture set entry (image pointer + a word in eft_detect.h's view); a u64 here
+include/battle/eft_aura.h	EftNTexSet	unk204	stepped	MEDIUM	the same 32-entry set as EftPTexSet (eft_disc.h) and EftRaysTex, which name the word after count stepped (bit n: entry n advanced this frame); eft_orb_tail.h / eft_part10.h call it ready and eft_chain.h built, and it is not read in eft_aura.c
+include/battle/eft_aura.h	EftAuraTexGroup	unk24	KEEP	KEEP	never read
+include/battle/eft_aura.h	EftAuraMgr	unk2C	KEEP	KEEP	never read
+include/battle/eft_aura.h	EftAuraDataSpark	unk0	KEEP	KEEP	this view is shifted by 4 against EftAuraCfgSpark: for spark[0] it is the seventh fade node, for the others the previous emitter's pull node; do not name
+include/battle/eft_aura.h	EftBolt	unk40	KEEP	KEEP	never read or written by name
+include/battle/eft_aura.h	EftBoltFlash	unk2C	KEEP	KEEP	never read or written
+include/battle/eft_aura.h	EftBoltPool	unk0	count	HIGH	EftOBoltPool (include/battle/eft_rays.h, the same 0x478-byte block) names 0x00 count = BtlScene_GetCharCount()
+include/battle/eft_chain.h	EftTask	unk8	KEEP	KEEP	not used here; BtlTask (eft_sprite_anim.h) has s16 unk8, u8 unkA, u8 unkB, s32 unkC there, all unknown
+include/battle/eft_chain.h	EftTask	unk3C	KEEP	KEEP	unknown in BtlTask too
+include/battle/eft_chain.h	EftSTexEntry	unk8	KEEP	KEEP	second doubleword of a texture set entry (image pointer + a word in eft_detect.h's view)
+include/battle/eft_chain.h	EftKiPropArg	unk16	KEEP	KEEP	the fighter stores obj->unkA24 (the object's stage zone in eft_detect.h) but FxHitArg2 / EftDiscAtk / EftHitAtk all leave it unknown
+include/battle/eft_chain.h	EftKiPropArg	unk1B	KEEP	KEEP	BtlKiBlastData.unk3; eft_disc.h calls this byte level, a name already used here at 0x18
+include/battle/eft_chain.h	EftKiPropArg	unk1E	KEEP	KEEP	not used
+include/battle/eft_chain.h	EftKiPropArg	unk24	turn	HIGH	EftDiscAtk (the same launch block) names 0x24 turn and the fighter stores BtlKiBlast_GetTurnRate there (btl_char_fx_1.c)
+include/battle/eft_chain.h	EftKiPropArg	unk2C	KEEP	KEEP	BtlKiBlastData.unk2C, unknown at the source
+include/battle/eft_chain.h	EftKiPropArg	unk30	KEEP	KEEP	not used here; FxHitArg2 has size, unk34.. in this range
+include/battle/eft_chain.h	EftKiProp	unkD8	KEEP	KEEP	not used by name in eft_chain.c
+include/battle/eft_chain.h	EftKiProp	unkE4	KEEP	KEEP	scale * 5 per the comment; purpose not shown
+include/battle/eft_chain.h	EftKiProp	unkF6	KEEP	KEEP	not used by name
+include/battle/eft_chain.h	EftKiProp	unkF8	KEEP	KEEP	not used by name
+include/battle/eft_chain.h	EftKiProp	unkFA	KEEP	KEEP	not used by name
+include/battle/eft_chain.h	EftKiPropRes	unk0	KEEP	KEEP	not used
+include/battle/eft_chain.h	EftArcTexSet	unk100	count	HIGH	the same 16-entry texture set as EftAbTex (eft_orb_tail.h) and EftTexSet16 (eft_detect.h), which name 0x100 count
+include/battle/eft_chain.h	EftArcParam	unk7	KEEP	KEEP	not read
+include/battle/eft_chain.h	EftArcArg	unk3C	KEEP	KEEP	not read
+include/battle/eft_chain.h	EftArcNode	unk58	KEEP	KEEP	not read (tail of the 0x60-byte node)
+include/battle/eft_chain.h	EftArcChain	unk20	KEEP	KEEP	not read by name
+include/battle/eft_chain.h	EftArcChain	unkC8	KEEP	KEEP	not read (tail of the 0xD0-byte chain)
+include/battle/eft_chain.h	EftArc	unkF08	KEEP	KEEP	not read
+include/battle/eft_char_parts.h	EftAaScr	unkC	w	HIGH	the other views of this screen position (EftPScr in eft_disc.h, eft_draw_modules.h, eft_quad_2.h, eft_shot_fx_particle.h) name 0xC w
+include/battle/eft_char_parts.h	EftAaTask	unk1	chr	HIGH	BtlTask (include/battle/eft_sprite_anim.h, the full task) names 0x01 chr: free for the class, the shot layer stores the character index
+include/battle/eft_char_parts.h	EftGroundPiece	unk20	base	HIGH	EftGndDustPart (include/battle/eft_ground_dust.h, the same 0xC0-byte record from the same pool) names 0x20 base
+include/battle/eft_char_parts.h	EftGroundPiece	unkB4	alpha	HIGH	EftGndDustPart names 0xB4 alpha: 1 while alive, then fade / fadeLen; both spawners here set it to 1
+include/battle/eft_char_parts.h	EftGroundPiece	unkB8	growDamp	HIGH	EftGndDustPart names 0xB8 growDamp; 1 from SpawnPiece, an argument of SpawnPieceEx
+include/battle/eft_char_parts.h	EftGroundTexEntry	unk8	KEEP	KEEP	second doubleword of a texture set entry (image pointer + a word in eft_detect.h's view)
+include/battle/eft_char_parts.h	EftGroundTex	unk80	count	HIGH	the same 8-entry texture set as EftTexSet8 (eft_detect.h), which names 0x80 count
+include/battle/eft_char_parts.h	EftBladeTrail	unk1284	KEEP	KEEP	a random 60..89 that is never read
+include/battle/eft_char_parts.h	EftBladeTrail	unk1288	KEEP	KEEP	never read or written
+include/battle/eft_char_parts.h	EftBlade	unk12A0	KEEP	KEEP	a random vector (rand * 20, -10, rand * 20) that is never read
+include/battle/eft_char_parts.h	EftAaOrbTailWork	unk0	param	HIGH	EftOrbTailMgr (include/battle/eft_orb_tail.h, the same 0xB960-byte block) names 0x0 param: common pack entry 0x25B
+include/battle/eft_char_parts.h	EftAaOrbTailWork	unk4	color	HIGH	EftOrbTailMgr names 0x4 color: common pack entry 0x25A
+include/battle/eft_char_parts.h	EftAaOrbTailWork	unk428	burstImage	HIGH	EftOrbTailMgr names 0x428 burstImage[3]
+include/battle/eft_char_parts.h	EftAaOrbTailWork	unk434	burstPalette	HIGH	EftOrbTailMgr names 0x434 burstPalette[7] (by colour group)
+include/battle/eft_core.h	EftHitTask	unk0	KEEP	KEEP	an s32 over BtlTask's bits / chr / index (u8, u8, u16); cannot take one name
+include/battle/eft_core.h	EftHitTask	unkC	KEEP	KEEP	unknown in BtlTask too
+include/battle/eft_core.h	EftHitDef	unk0	KEEP	KEEP	not read
+include/battle/eft_core.h	EftHitDef	unk6	KEEP	KEEP	copied to EftHitRec.unk4, whose meaning is unknown
+include/battle/eft_core.h	EftHitDef	unk7	KEEP	KEEP	not read
+include/battle/eft_core.h	EftHitDef	unk9	KEEP	KEEP	>= 2 means the technique cannot clash; the scale of the value is unknown
+include/battle/eft_core.h	EftHitDef	unkB	hitInterval	MEDIUM	EftHit_GetHitInterval: in EftDet_HitFighterMulti a new hit is only counted once that many frames passed since the last one; rated MEDIUM because the unit (frames of countA) rests on one caller
+include/battle/eft_core.h	EftHitDef	unk34	KEEP	KEEP	copied to EftHitRec.shape.unk8 (a blast puts its speed there); not proven to be a speed for techniques
+include/battle/eft_core.h	EftHitDef	unk38	KEEP	KEEP	not read
+include/battle/eft_core.h	EftHitSrc	unk8	KEEP	KEEP	copied to EftHitRec.unkF0, unknown
+include/battle/eft_core.h	EftHitAtk	unk14	code	HIGH	the same launch block as FxHitArg2 (btl_char_fx_1.h) and EftKiPropArg, which name 0x14 code (model part code of the animation event; EftDiscAtk calls it node)
+include/battle/eft_core.h	EftHitAtk	unk16	KEEP	KEEP	obj->unkA24 at the source; unknown in every view of the launch block
+include/battle/eft_core.h	EftHitAtk	unk1A	type	HIGH	FxHitArg2 and EftKiPropArg name 0x1A type (BtlKiBlast_GetType); here 1 picks the second impact variant
+include/battle/eft_core.h	EftHitAtk	unk1B	KEEP	KEEP	BtlKiBlastData.unk3; views disagree (eft_disc.h: level, others unknown)
+include/battle/eft_core.h	EftHitAtk	unk1C	KEEP	KEEP	an s32 over the launch block's s16 frames + s16 unk1E; not read here
+include/battle/eft_core.h	EftHitAtk	unk20	speed	HIGH	EftKiPropArg and EftDiscAtk name 0x20 speed and the fighter stores BtlKiBlast_GetSpeed there
+include/battle/eft_core.h	EftHitShape	unk8	KEEP	KEEP	a blast's speed or the technique definition's unk34; not read in eft_core.c
+include/battle/eft_core.h	EftHitBox	unk0	KEEP	KEEP	first vector of the 0x30-byte volume (the layout of CpCapsule: a, b, radius, so probably the other end), not read here
+include/battle/eft_core.h	EftHitRec	unk4	KEEP	KEEP	def->unk6 or the launch block's byte 0x1B; the disc sets 1 / 2 / 4 / 6 by texture; meaning unknown
+include/battle/eft_core.h	EftHitRec	unk10	origin	HIGH	EftJHitRec (include/battle/eft_shot_tech.h, the same 0x190-byte record) names 0x10 origin (rec->origin = w->origin); the disc copies its start position there
+include/battle/eft_core.h	EftHitRec	unk54	KEEP	KEEP	bit 1 of the technique's flags; btl_char_coll.h describes its effect (direction from the hit position, cannot be deflected) but no view names it
+include/battle/eft_core.h	EftHitRec	unk58	KEEP	KEEP	not read
+include/battle/eft_core.h	EftHitRec	unk6C	KEEP	KEEP	not read
+include/battle/eft_core.h	EftHitRec	unkF0	KEEP	KEEP	src->unk8 or the launch block's unk16, both unknown
+include/battle/eft_core.h	EftCamArg	unk8	KEEP	KEEP	not read
+include/battle/eft_detect.h	EftDetSphere	unk14	KEEP	KEEP	the tail of CpSphere (col_primitives.h): [0] is radiusSq, [1..2] unused; an array, so it cannot take that name
+include/battle/eft_detect.h	EftDetCapsule	unk24	KEEP	KEEP	tail of the 0x30-byte capsule, unused
+include/battle/eft_detect.h	EftDetShape	unk8	KEEP	KEEP	see EftHitShape.unk8; not read
+include/battle/eft_detect.h	EftDetShape	unk14	KEEP	KEEP	not read
+include/battle/eft_detect.h	EftDetShape	unk9C	KEEP	KEEP	not read
+include/battle/eft_detect.h	EftDetRec	unk4	KEEP	KEEP	see EftHitRec.unk4
+include/battle/eft_detect.h	EftDetRec	unk10	origin	HIGH	EftJHitRec (eft_shot_tech.h, the same record) names 0x10 origin
+include/battle/eft_detect.h	EftDetRec	unk54	KEEP	KEEP	three words: EftHitRec's unk54 and unk58[2], all unknown
+include/battle/eft_detect.h	EftDetRec	unk6C	KEEP	KEEP	not read
+include/battle/eft_detect.h	EftDetStageCtx	unk0	KEEP	KEEP	the head of the block is a CpSweep (ColSweep_FromCapsule fills it): these two vectors are cap.a and cap.b (start, end); as an array it cannot take both names
+include/battle/eft_detect.h	EftDetStageCtx	unk24	KEEP	KEEP	tail of the CpSweep's capsule, unused
+include/battle/eft_detect.h	EftDetStageCtx	unk30	KEEP	KEEP	the CpSweep's start sphere: [0] position, [1] radius / radius squared; an array of two vectors, cannot take one name
+include/battle/eft_detect.h	EftDetStageCtx	unk50	delta	HIGH	CpSweep (col_primitives.h) names 0x50 delta = cap.b - cap.a; ColSweep_FromCapsule(&ctx, &cap) writes it
+include/battle/eft_detect.h	EftDetStageCtx	unk60	dir	HIGH	CpSweep names 0x60 dir = delta / length; the next field here is already called length
+include/battle/eft_detect.h	EftDetStageCtx	unk74	KEEP	KEEP	tail of the CpSweep, unused
+include/battle/eft_detect.h	EftDetStageCtx	unk8C	KEEP	KEEP	not read
+include/battle/eft_detect.h	EftDetPoly	unk4	vtx	HIGH	ColPoly (include/battle/col_box.h, the same 0x20-byte polygon) names 0x04 vtx[3]: indices into the mesh's vertex array
+include/battle/eft_detect.h	EftDetObj	unkCAD	hitNo	HIGH	HitObj (btl_char_hit.h) and BtlTechObj (btl_param.h), views of the same battle object, name 0xCAD hitNo: number of the animation's current hit, negative when none
+include/battle/eft_detect.h	EftTexSetEntry	unkC	KEEP	KEEP	not read
+include/battle/eft_detect.h	EftTexPack	unk4	KEEP	KEEP	not read
+include/battle/eft_detect.h	EftVram	unk808	KEEP	KEEP	not read
+include/battle/eft_disc.h	EftPTask	unk3C	KEEP	KEEP	unknown in BtlTask too
+include/battle/eft_disc.h	EftPPart	unk9	KEEP	KEEP	unknown in EftJPart (eft_shot_tech.h) too
+include/battle/eft_disc.h	EftPGroup	unk4	KEEP	KEEP	unknown in EftJGroup too
+include/battle/eft_disc.h	EftPSet	unk4	KEEP	KEEP	unknown in EftJSet too
+include/battle/eft_disc.h	EftPTexEntry	unk8	KEEP	KEEP	second doubleword of a texture set entry (image pointer + a word in eft_detect.h's view)
+include/battle/eft_disc.h	EftDiscAtk	unk16	KEEP	KEEP	unknown in every view of the launch block
+include/battle/eft_disc.h	EftDiscAtk	unk18	kind	HIGH	EftHitAtk (eft_core.h) and BtlCollAtk (btl_char_coll.h) name 0x18 kind (ki blast kind); FxHitArg2 / EftKiPropArg call it level, a name already used here at 0x1B
+include/battle/eft_disc.h	EftDiscAtk	unk1A	type	HIGH	FxHitArg2 and EftKiPropArg name 0x1A type (BtlKiBlast_GetType)
+include/battle/eft_disc.h	EftDiscAtk	unk1E	KEEP	KEEP	not read
+include/battle/eft_disc.h	EftPGlow	unk8	paramFlags	HIGH	EftGlow (include/battle/eft_trail.h, the same 0x2E0-byte work) names 0x008 paramFlags = BtlCharApi_ObjGetParamFlags0
+include/battle/eft_disc.h	EftPGlow	unk1C	KEEP	KEEP	EftGlow names the two words type and type2 (aura type, twice); an array of two cannot take both names
+include/battle/eft_disc.h	EftPGlow	unk28	texFirst	HIGH	EftGlow names 0x028 texFirst (textured variant: first texture), next to texCount
+include/battle/eft_disc.h	EftPGlowPart	unkF	KEEP	KEEP	not read
+include/battle/eft_disc.h	EftPGlowMgr	unk18	KEEP	KEEP	EftGlowMgr (eft_trail.h) names the first word live (glow tasks alive) and leaves the second unknown; an array of two
+include/battle/eft_disc.h	EftPGlowCfg	unk1BC	KEEP	KEEP	not read
+include/battle/eft_disc.h	EftPGlowKind	unk28	push	HIGH	{base, random range} stored in the quad's offset.w, which the step uses as how far a trailing quad is pushed along its direction (eft_glow.c lines 473, 902)
+include/battle/eft_disc.h	EftPGlowCfg2	unk24	KEEP	KEEP	not read

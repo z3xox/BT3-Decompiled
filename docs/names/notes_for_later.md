@@ -90,3 +90,19 @@ Group 09 (eft_rays.h .. eft_stage_1.h):
 - eft_shot_tech.h:73: EftJSrc.objId20 is the field every other view names `chr`.
 - eft_disc.h:104: the `hand` comment reads as inverted (eft_body_fx.c:344: non-zero means nodes 0x14 / 0x15).
 - eft_zap.h:124 against eft_ribbon.h:291: the zap argument's +0x40 byte is unk40 in one and `type` in the other.
+
+Group 01 (battle.h .. btl_act_decide.h):
+- btl_act_2.h:22-23 (BtlActCPose) and :263-264 (BtlActEPose): +0x90 `speed` and +0x94 `facing` are the heading pitch and yaw (BtlMovePose,
+  BtlActBPose, BtlActDPose, BtlActHPose: pitch@0x90, yaw@0x94, speed@0x98); `vel` at +0x80 is the unit travel direction (`dir` elsewhere).
+  Their unk98 is the pose's speed and could not take the name while +0x90 has it.
+- btl_act_2.h:18: BtlActCPose.move "y = fall speed": +0x40 is the whole movement of the previous frame (`moved` in BtlActBPose).
+- btl_act_change.h:27: the comment on BtlActHPose.pitch cites "btl_char_ctl.h: speed", the same wrong name for +0x90.
+- btl_char_fx_1.h FxChr: +0xDD0 hitPos / +0xDF0 hitKind conflict with the action code (the ki blast aim direction and the firing hand's node).
+- btl_act_decide.h:76-77 against btl_act_change.h:468-469: +0xE00 / +0xE04 are dodges / dodgesB in four views, skillStackA / B in BtlActIChr.
+- btl_char_action.h:185: unkD88 "frames with flag 8 in actions 0x89..0x8C": read through BtlOpp_GetEvasionCount, used modulo 3: a count.
+- btl_act_2.h:70: BtlActCChr.unkD44 is the combo hit count (comboHits, BtlMemberCombo.hits).
+- btl_act_decide.h:54-57: BtlActJForm.unk24 / 28 / 30 are objId / objCostume / objVariant of BtlActHForm.
+- Found: BattleRule.unk18 and BattleResult.unk44 are the Dragon Ball drop (1 + the first unset of the seven dragon-ball bits; stg_parts.c
+  moves it to the result with a 1-in-8 chance when a stage object breaks; history_result.c sets the bit). BattleRes.unk8 is the HUD sprite file.
+- The +0x1C word of the form request / BtlJob (switchUnk18, form1C, the unk18 argument of BtlChange_RequestChara) is the character for the
+  second resource file (0x599 + n * 10): `anim1Chara` proposed; the other spellings should follow.

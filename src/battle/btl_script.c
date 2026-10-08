@@ -496,9 +496,9 @@ void BtlScript_StartWaitEvents(void) {
         if (req->kind == BTL_SCRIPT_REQ_EVENT && req->trigger == BTL_SCRIPT_TRIGGER_WAIT_OFF) {
             cur = &work->cur;
             *cur = req->u.start;
-            Gsc_KillTask(ev->unk4);
+            Gsc_KillTask(ev->mainAction);
             BtlScript_ResetView();
-            ev->unk4 = Gsc_StartAction(ev->script, cur->action);
+            ev->mainAction = Gsc_StartAction(ev->script, cur->action);
         }
     }
 }
@@ -632,9 +632,9 @@ void BtlScript_StartPending(void) {
         cur = &work->cur;
         if (ok) {
             *cur = work->pending->u.start;
-            Gsc_KillTask(ev->unk4);
+            Gsc_KillTask(ev->mainAction);
             BtlScript_ResetView();
-            ev->unk4 = Gsc_StartAction(ev->script, cur->action);
+            ev->mainAction = Gsc_StartAction(ev->script, cur->action);
         }
     }
 }
