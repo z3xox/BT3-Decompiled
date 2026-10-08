@@ -35,14 +35,14 @@ typedef struct AiThSeq {
     /* 0x10 */ s32 step;
     /* 0x14 */ AiThSeqEntry stack[8];
     /* 0x54 */ s32 timer;
-    /* 0x58 */ s32 unk58;
+    /* 0x58 */ s32 waitTimer;
     /* 0x5C */ s32 unk5C[3];
     /* 0x68 */ s32 ruleSet;    /* (m) rule list being evaluated (0..7) */
     /* 0x6C */ s32 firedSet;   /* (m) rule list of the rule that last fired */
     /* 0x70 */ s32 unk70;
     /* 0x74 */ f32 dirX;
     /* 0x78 */ f32 dirZ;
-    /* 0x7C */ s32 unk7C;
+    /* 0x7C */ s32 prevId;
     /* 0x80 */ s32 firedRule;  /* (m) index of the rule that last fired */
     /* 0x84 */ s32 roll;       /* (m) trace: last roll */
     /* 0x88 */ s32 threshold;  /* (m) trace: what it was compared with */
@@ -59,14 +59,14 @@ typedef struct AiThRange {
 /* Situation: work + 0x2C0. Filled by sense (0x1BFF70, outside this file). */
 typedef struct AiThStatus {
     /* 0x00 */ u64 flags;      /* (m) bit n set = rules of situation group n may run this frame */
-    /* 0x08 */ s32 unk8;
+    /* 0x08 */ s32 downTimer;
     /* 0x0C */ s32 oppClass;
     /* 0x10 */ s32 oppAction;
     /* 0x14 */ s32 react;
     /* 0x18 */ s32 timer18;
     /* 0x1C */ s32 timer1C;
     /* 0x20 */ s32 timer20;
-    /* 0x24 */ s32 unk24;
+    /* 0x24 */ s32 act10Dist;
 } AiThStatus; /* size 0x28 */
 
 /* One pre-drawn roll per condition position. */
@@ -92,8 +92,8 @@ typedef struct AiThPlan {
     /* 0xA1 */ u8 padA1[3];
     /* 0xA4 */ s32 cooldown;   /* (m) counted down once per frame */
     /* 0xA8 */ u8 ruleNo;      /* (m) index of the rule being tested */
-    /* 0xA9 */ u8 unkA9;       /* (m) low byte of the roll of the last basic condition that passed */
-    /* 0xAA */ u8 unkAA;       /* (m) group of the last "set next list" rule */
+    /* 0xA9 */ u8 lastRoll;       /* (m) low byte of the roll of the last basic condition that passed */
+    /* 0xAA */ u8 nextGroup;       /* (m) group of the last "set next list" rule */
     /* 0xAB */ u8 range;       /* (m) range of the rolls drawn for the current group */
     /* 0xAC */ s32 clsCount[14];    /* (m) statistics: "set next list" rules fired, per class */
     /* 0xE4 */ s32 nextCount[14][6]; /* (m) ... per class and list */
@@ -149,11 +149,11 @@ typedef struct AiThRuleList {
 /* Action table section. */
 typedef struct AiThActTable {
     /* 0x000 */ s32 unk0;
-    /* 0x004 */ void *unk4;        /* (m) set at bind time to the table at +0x788 */
+    /* 0x004 */ void *steps;        /* (m) set at bind time to the table at +0x788 */
     /* 0x008 */ u8 unk8[0x280];
     /* 0x288 */ u16 seqFlags[0x80];
     /* 0x388 */ s8 actClass[0x400]; /* (m) per fighter action id */
-    /* 0x788 */ u8 unk788[1];
+    /* 0x788 */ u8 stepData[1];
 } AiThActTable;
 
 /* The action table seen from its +8, the form AiThCond_ActRateByFlags uses. */
@@ -218,7 +218,7 @@ typedef struct AiThChrMoves {
 typedef struct AiThChrSkills {
     /* 0x000 */ u32 state[3];  /* bit 0x100 */
     /* 0x00C */ u32 flags[3];  /* (m) bits 0x2000, 0x8000000 */
-    /* 0x018 */ s16 unk18[3];  /* 0x280 is tested */
+    /* 0x018 */ s16 id[3];  /* 0x280 is tested */
     /* 0x01E */ s16 power[3];  /* compared with the opponent's current skill */
     /* 0x024 */ u8 unk24[0x6F];
     /* 0x093 */ s8 rank[3];    /* tie-break of the same comparison */

@@ -78,7 +78,7 @@ typedef struct BtlAiSeqA {
     /* 0x74 */ f32 dirX;       /* (m) the fighter's facing on the previous frame (step handler 12) */
     /* 0x78 */ f32 dirZ;       /* (m) */
     /* 0x7C */ s32 prevId;     /* (m) the action that just ended when action 0x43 is chained after it */
-    /* 0x80 */ s32 unk80;
+    /* 0x80 */ s32 firedRule;
     /* 0x84 */ s32 roll;
     /* 0x88 */ s32 threshold;
     /* 0x8C */ s32 unk8C[3];

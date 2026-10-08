@@ -67,10 +67,10 @@ typedef struct View {
     /* 0x040 */ Mtx44 world2view2;  /*   only the second is read again */
     /* 0x080 */ Mtx44 view2screen;  /* projection to GS screen coordinates (View_BuildProjection) */
     /* 0x0C0 */ Mtx44 view2clip;    /* projection to clip space */
-    /* 0x100 */ Mtx44 unk100;       /* diagonal + translation built by View_BuildProjection, not read here */
+    /* 0x100 */ Mtx44 clip2screen;       /* diagonal + translation built by View_BuildProjection, not read here */
     /* 0x140 */ Mtx44 world2screen; /* view2screen * world2view2 (View_UpdateMatrices) */
     /* 0x180 */ Mtx44 world2clip;   /* view2clip * world2view2 */
-    /* 0x1C0 */ Mtx44 unk1C0;       /* built by View_BuildProjection, not read here */
+    /* 0x1C0 */ Mtx44 frustum;       /* built by View_BuildProjection, not read here */
     /* 0x200 */ s32 scissorX0;
     /* 0x204 */ s32 scissorX1;
     /* 0x208 */ s32 scissorY0;
@@ -87,7 +87,7 @@ typedef struct View {
     /* 0x24C */ f32 zMax;         /* 10877000 */
     /* 0x250 */ f32 nearZ;        /* 0.3 */
     /* 0x254 */ f32 farZ;         /* 65536 */
-    /* 0x258 */ f32 unk258;       /* 1, scales [0][0] and [1][1] of the projections */
+    /* 0x258 */ f32 projScale;       /* 1, scales [0][0] and [1][1] of the projections */
     /* 0x25C */ f32 unk25C;
 } __attribute__((aligned(16))) View; /* size 0x260; the alignment is needed for the struct copy in BtlCam_SetViewLayout to match */
 

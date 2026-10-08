@@ -1,0 +1,118 @@
+include/battle/btl_act_super.h	BtlSuperPose	unk98	speed	HIGH	BtlMovePose (btl_char_move.h) and ActGPose in this same header name pose +0x98 speed; zeroed with the vertical speed in BtlSuper_Begin
+include/battle/btl_act_super.h	BtlSuperAnimData	unk0	KEEP	KEEP	u16 never read; it overlays BobjAnim.unk00 and eventCount (two u8 in btl_obj_anim.h) so one name does not fit
+include/battle/btl_act_super.h	BtlSuperChr	dmgUnk0	dmgTotalStart	HIGH	queue +0x00: written with the same value as dmgTotal when the queue is filled and never counted down (only writes in btl_act_super.c and the clear in btl_char_member.c)
+include/battle/btl_act_super.h	BtlSuperChr	dmgUnk14	dmgDrainHealthStart	HIGH	queue +0x14: written with drainHealth when the drain is set up and never counted down
+include/battle/btl_act_super.h	BtlSuperChr	dmgUnk20	dmgDrainKiStart	HIGH	queue +0x20: BtlActThrow_SetupDamage writes the ki drain here together with drainKi; never counted down
+include/battle/btl_act_super.h	BtlSuperChr	unkE5C	skillCount3	HIGH	btl_act_change.h names fighter +0xE5C skillCount3 (skill 0x41 adds 1, clamp 0..3); here zeroed when technique 0x268 ends
+include/battle/btl_act_super.h	BtlSuperChr	unkE60	KEEP	KEEP	counter 0..10 (+5 per technique 0x2EF, +1 per throw by character 0x6E, scales technique 0x2CD) but no view names it and the techniques are not identified
+include/battle/btl_act_super.h	BtlSuperChr	unkEC4	thrFailed	MEDIUM	this is the throw block word +0x34 (0xE90 + 0x34): coin flip BtlChar_FrameMod(2) for technique bit 0x400, when set the rush deals 1 damage and the victim returns to neutral; that it means a failed technique is a reading (must match ActGThrow.unk34)
+include/battle/btl_act_super.h	BtlSuperChr	unkEE8	thrHalfDamage	HIGH	throw block word +0x58 (0xE90 + 0x58): set by BtlColl_StartThrow when the victim animation has table bit 0x800, its only reader halves the rush damage in BtlSuper_SetupRushDamage
+include/battle/btl_act_super.h	BtlSuperChr	form14	formVariant	HIGH	BtlActHForm / BtlActJForm name form +0x14 variant; passed as the variant argument of BtlChange_RequestChara
+include/battle/btl_act_super.h	BtlSuperChr	form18	formAnimChara	HIGH	BtlActHForm / BtlActJForm name form +0x18 animChara; passed as animChara to BtlChange_RequestChara
+include/battle/btl_act_super.h	BtlSuperChr	form1C	KEEP	KEEP	form +0x1C is unk1C in every view (BtlActHForm, BtlActJForm) and the BtlChange_RequestChara parameter it feeds is itself unnamed (unk18)
+include/battle/btl_act_super.h	BtlSuperChr	form20	formVoiceChara	HIGH	BtlActHForm / BtlActJForm name form +0x20 voiceChara; passed as voiceChara to BtlChange_RequestChara
+include/battle/btl_act_super.h	ActGPose	unk20	dispOfs	HIGH	btl_char_api_1.h names pose +0x20 dispOfs (display offset rebuilt every frame); not used in this file
+include/battle/btl_act_super.h	ActGPose	unk30	vel	HIGH	btl_char_api_1.h names pose +0x30 vel (movement of the previous frame); not used in this file
+include/battle/btl_act_super.h	ActGPose	unk50	rootPos	HIGH	btl_char_api_1.h and btl_char_ctl.h name pose +0x50 rootPos (root motion position)
+include/battle/btl_act_super.h	ActGPose	unk60	rootRot	HIGH	btl_char_api_1.h, btl_char_ctl.h and btl_act_change.h name pose +0x60 rootRot
+include/battle/btl_act_super.h	ActGThrow	unk10	stepCount	HIGH	filled from BtlSuper_GetStepCount; BtlAct_SuperRushSequenceHandler compares the motion level with unk10 - 1 as the last step
+include/battle/btl_act_super.h	ActGThrow	unk14	landingKind	HIGH	filled from BtlSuper_GetLandingKind and passed to BtlAct_GetLandingAction for the victim
+include/battle/btl_act_super.h	ActGThrow	unk18	partnerStep	HIGH	filled from BtlSuper_GetThrowPartnerStep (-1 = none); the step that waits for the partner object and after which BtlPartner_PlayAnim runs
+include/battle/btl_act_super.h	ActGThrow	unk1C	lastStep	MEDIUM	filled from BtlSuper_GetLastStep; used as the step in which the victim model is reloaded when unk4C is set, so last is only the getter name
+include/battle/btl_act_super.h	ActGThrow	unk20	partnerChara	MEDIUM	BtlSuper_GetThrowChara, passed as id to BtlChange_RequestObject when >= 0; the object is driven by BtlPartner_* but could be a prop rather than a character
+include/battle/btl_act_super.h	ActGThrow	unk24	partnerCostume	MEDIUM	BtlSuper_GetThrowCostume, costume argument of BtlChange_RequestObject; same doubt as partnerChara
+include/battle/btl_act_super.h	ActGThrow	unk28	partnerVariant	MEDIUM	BtlSuper_GetThrowGauge20, variant argument of BtlChange_RequestObject; same doubt as partnerChara
+include/battle/btl_act_super.h	ActGThrow	unk2C	partnerSlot	MEDIUM	BtlSuper_GetThrowObjectSlot, slot argument of BtlChange_RequestObject; same doubt as partnerChara
+include/battle/btl_act_super.h	ActGThrow	unk30	turnVictim	MEDIUM	technique bit 0x400000: when set the victim gets flag 0x94 and react.turnYaw / turnPitch from +0x60 / +0x64; the effect is plain and only the wording is a choice
+include/battle/btl_act_super.h	ActGThrow	unk34	failed	MEDIUM	technique bit 0x400 and BtlChar_FrameMod(2): the victim ends in neutral action 0xB and the rush deals 1 damage; that this is a failed technique is a reading
+include/battle/btl_act_super.h	ActGThrow	unk38	KEEP	KEEP	technique bit 0x100000: attacker raises flags 0x8B and 9 and the victim 0x97 and 0xA, whose meanings are not documented
+include/battle/btl_act_super.h	ActGThrow	unk3C	faceAttacker	MEDIUM	technique bit 0x800000: the caught victim calls BtlMove_TurnYaw(2) / TurnPitch(5) by 180 degrees at the start; that mode 2 means towards the opponent is inferred from the beam handlers
+include/battle/btl_act_super.h	ActGThrow	unk40	koSkipLanding	MEDIUM	BtlSuper_GetFlagsA bit 0x2000000: a victim that is dead after the sequence goes to action 0xEB (waiting for a member switch) and skips the landing action; wording is a choice
+include/battle/btl_act_super.h	ActGThrow	unk44	caughtLoop	MEDIUM	1 when the catch reaction is 0x1E: BtlAct_SuperRushCaughtHandler plays sound 0x12 and loops the caught animation until flag 0xAF drops; what reaction 0x1E is called is not known
+include/battle/btl_act_super.h	ActGThrow	unk48	atkReload	MEDIUM	technique bit 0x2000 and attacker variant 0: the attacker model is reloaded (BtlAct_SetFormCurrent + BtlChange_RequestChara) in the last step; name is a choice
+include/battle/btl_act_super.h	ActGThrow	unk4C	defReload	MEDIUM	technique bit 0x80000 and victim variant 0: the victim model is reloaded in step +0x1C; name is a choice
+include/battle/btl_act_super.h	ActGThrow	unk50	placeFirstStep	MEDIUM	technique bit 0x800: BtlChar_RequestPlaceRelative is also called in step 0 (level != 0 || unk50); name is a choice
+include/battle/btl_act_super.h	ActGThrow	unk54	KEEP	KEEP	technique bit 0x10000; the only reader is BtlAnim_Play (as fighter +0xEE4) which passes it as useTable to BtlObjAnim_PlayFrom during a rush sequence, too thin to name
+include/battle/btl_act_super.h	ActGThrow	unk58	halfDamage	HIGH	set when the victim animation has table bit 0x800; its only reader (fighter +0xEE8 in BtlSuper_SetupRushDamage) halves the rush damage
+include/battle/btl_act_super.h	ActGThrow	unk5C	raiseAtEnd	MEDIUM	technique bit 0x4000000: when the attacker leaves the action pos.y += BtlAct_GetHeight instead of raising held flag 0xE; the source comment says put on the ground so the direction is uncertain
+include/battle/btl_act_super.h	ActGThrow	unk60	turnYaw	HIGH	BtlSuper_GetThrowAngleA: added to the attacker yaw to give the victim react.turnYaw
+include/battle/btl_act_super.h	ActGThrow	unk64	turnPitch	HIGH	BtlSuper_GetThrowAngleB: stored (negated when hit from the front) into the victim react.turnPitch
+include/battle/btl_act_super.h	ActGReact	unk4	KEEP	KEEP	HitReact: attack record + 0x20 or 0x13, passed to BtlAct_QueueReaction; no view names it and this file does not use it
+include/battle/btl_act_super.h	ActGReact	unk8	animCycle	HIGH	btl_act_1.h names fighter +0xFB8 (react + 8) animCycle, the stagger animation variant counter; not used in this file
+include/battle/btl_act_super.h	ActGReact	unk10	noBlend	MEDIUM	btl_act_change.h comment: non-zero makes the throw animations start without blending; HitReact only says attack 0x55 and parameter bit 19, and this file does not use it
+include/battle/btl_act_super.h	ActGReact	unk34	KEEP	KEEP	fighter +0xFE4: a countdown (30 after queued damage, flag 0x96) per btl_char_member.h / btl_char_action.h; purpose not established
+include/battle/btl_act_super.h	ActGReact	unk38	shakeTimer	MEDIUM	fighter +0xFE8: btl_char_move.h says > 0 makes the model shake sideways and HitReact sets 3 with reaction 2; no view names it and this file does not use it
+include/battle/btl_act_super.h	ActGReact	unk40	KEEP	KEEP	fighter +0xFF0: countdown set to 15 when a stagger action is left (btl_act_1.h), selects quick starts (btl_act_2.h); no agreed meaning
+include/battle/btl_act_super.h	ActGReact	unk48	KEEP	KEEP	fighter +0xFF8: HitReact says grab frames, btl_char_action.h says countdown for flags 0x93 / 0x137 / 0x96; no agreed meaning
+include/battle/btl_act_super.h	ActGForm	unk0	index	HIGH	BtlActHForm and BtlActJForm name form +0x00 index (transformation / fusion index)
+include/battle/btl_act_super.h	ActGForm	unkC	cost	HIGH	BtlActHForm and BtlActJForm name form +0x0C cost (blast gauge cost)
+include/battle/btl_act_super.h	ActGForm	unk10	kind	HIGH	BtlActHForm and BtlActJForm name form +0x10 kind
+include/battle/btl_act_super.h	ActGForm	unk14	variant	HIGH	BtlActHForm and BtlActJForm name it variant; passed as variant to BtlChange_RequestChara
+include/battle/btl_act_super.h	ActGForm	unk18	animChara	HIGH	BtlActHForm and BtlActJForm name it animChara; passed as animChara to BtlChange_RequestChara
+include/battle/btl_act_super.h	ActGForm	unk1C	KEEP	KEEP	unk1C in every view and the BtlChange_RequestChara parameter it feeds is unnamed
+include/battle/btl_act_super.h	ActGForm	unk20	voiceChara	HIGH	BtlActHForm and BtlActJForm name it voiceChara; passed as voiceChara to BtlChange_RequestChara
+include/battle/btl_act_super.h	ActGForm	unk24	objId	HIGH	BtlActHForm names form +0x24 objId (extra object for BtlChange_RequestObject); BtlActJForm leaves it unk24; not used in this file
+include/battle/btl_act_super.h	ActGForm	unk28	objCostume	HIGH	BtlActHForm names form +0x28 objCostume; BtlActJForm leaves it unk28; not used in this file
+include/battle/btl_act_super.h	ActGForm	unk2C	partner	HIGH	BtlActHForm and BtlActJForm name form +0x2C partner (fusion: member index of the partner)
+include/battle/btl_act_super.h	ActGGauge	unk8	KEEP	KEEP	gauge +0x08 is unk8 in every view (BtlMemberGauge: not touched) and unused here
+include/battle/btl_act_super.h	ActGGauge	unk1C	maxPower	HIGH	BtlMemberGauge names gauge +0x1C maxPower (0..30000)
+include/battle/btl_act_super.h	ActGGauge	unk4C	fired	HIGH	BtlSuperGauge in this same header names +0x4C fired[5]; incremented per slot when a self-destruct technique is used
+include/battle/btl_act_super.h	ActGQueue	unk0	totalStart	HIGH	BtlActThrow_SetupDamage writes the damage here and to total; total is counted down, this is only compared with perHit * hits
+include/battle/btl_act_super.h	ActGQueue	unk14	drainHealthStart	HIGH	written with drainHealth when the drain is set up; never counted down
+include/battle/btl_act_super.h	ActGQueue	unk20	drainKiStart	HIGH	written with drainKi when the drain is set up; never counted down
+include/battle/btl_ai.h	BtlAiSeq	unk58	waitTimer	HIGH	BtlAiSeqA (btl_ai_seq.h) names seq +0x58 waitTimer: frames the run phase has waited for the input to take effect; step handler 17 clears it
+include/battle/btl_ai.h	BtlAiSeq	unk5C	KEEP	KEEP	s32[3] spanning three different fields that BtlAiSeqA names startState, charge (f32) and startDist (f32); needs splitting, not one name; no code uses it through this view
+include/battle/btl_ai.h	BtlAiSeq	unk6C	KEEP	KEEP	s32[2] spanning firedSet (+0x6C, AiThSeq) and an unknown word at +0x70; needs splitting; unused through this view
+include/battle/btl_ai.h	BtlAiSeq	unk7C	prevId	HIGH	BtlAiSeqA names seq +0x7C prevId (the action that just ended when action 0x43 is chained); step handler 23 switches on action ids 0x22..0x35
+include/battle/btl_ai.h	BtlAiSeq	unk80	firedRule	HIGH	AiThSeq (btl_ai_think.h) names seq +0x80 firedRule: index of the rule that last fired
+include/battle/btl_ai.h	BtlAiSeq	unk8C	KEEP	KEEP	s32[3] spanning firedGroup (+0x8C, AiThSeq) and two unknown words; needs splitting; unused through this view
+include/battle/btl_ai.h	BtlAiOutput	unk48	accX	HIGH	AiActPad (btl_ai_sense.h) names pad +0x48 accX, the stick accumulator of the frame; note it is f32 there and s32 here
+include/battle/btl_ai.h	BtlAiOutput	unk4C	accY	HIGH	AiActPad names pad +0x4C accY; f32 there and s32 here
+include/battle/btl_ai.h	BtlAiOutput	unk50	KEEP	KEEP	unk50 in AiActPad too; no code touches it
+include/battle/btl_ai.h	BtlAiStatus	unk8	downTimer	HIGH	AiActStatus (btl_ai_sense.h) names status +0x08 downTimer: set to 4 while BtlCharApi_IsAttackHitPending is 1 then counted down (the name itself looks doubtful, see report)
+include/battle/btl_ai.h	BtlAiStatus	unk24	act10Dist	MEDIUM	BtlAiSeq_PhaseStart stores the fighter distance (as f32) when step 0 of action 10 is chosen and 0 for any other action; BtlAiSense_CheckAct10 compares half of it with the distance; what action 10 is is not known
+include/battle/btl_ai.h	BtlAiPlan	unk0	cls	HIGH	AiThPlan (btl_ai_think.h) names plan +0x00 cls: class 0..13 of the rule situation group
+include/battle/btl_ai.h	BtlAiPlan	unk4	next	HIGH	AiThPlan names plan +0x04 next: which rule list follows list 0; set from a kind 4 rule in AiThink_EvalRules
+include/battle/btl_ai.h	BtlAiPlan	unk8	slot	HIGH	AiThPlan names plan +0x08 slot: chosen move / skill slot, -1 none; used as index into the skill cost and kind arrays
+include/battle/btl_ai.h	BtlAiPlan	rolls.unk4	acc	HIGH	member of the anonymous rolls[] struct (not the plan.unk4 above): AiThRoll names it acc, the running sum of rates compared with roll
+include/battle/btl_ai.h	BtlAiPlan	unk54	sub	HIGH	AiThPlan names plan +0x54 sub (0..3 by situation group); condition 17 writes its argument here
+include/battle/btl_ai.h	BtlAiPlan	unkA9	lastRoll	MEDIUM	AiThink_TestBasic stores the roll of the basic condition that passed (low byte); written only, a trace value, so the purpose is not confirmed
+include/battle/btl_ai.h	BtlAiPlan	unkAA	nextGroup	MEDIUM	AiThink_EvalRules stores rule->group here together with plan->next for a kind 4 (set next list) rule; no reader found
+include/battle/btl_ai.h	BtlAiPlan	unkAB	range	HIGH	AiThPlan names plan +0xAB range: range of the rolls drawn for the current group
+include/battle/btl_ai.h	BtlAiWork	unkC	kit	HIGH	AiThWork (btl_ai_think.h) names work +0x0C kit (AITH_KIT_* bits); conditions 14..16 test bits 0..2
+include/battle/btl_ai.h	BtlAiWork	unk10	costRange	MEDIUM	s32[2] that AiThWork names costMin (+0x10) and costMax (+0x14): skill costs / 1000; pick function reads [0] and [1] into seq->timer; better split into the two AiThWork names if the array is not needed for matching
+include/battle/btl_ai.h	BtlAiWork	unk1C	KEEP	KEEP	s32[2] at +0x1C: unk in every view and no code touches it
+include/battle/btl_ai.h	BtlAi	unkA58	KEEP	KEEP	no code touches it; AiActMgr calls the same bytes padA58
+include/battle/btl_ai_int.h	BtlAiChrMoves	unk10	id	HIGH	BtlCapiBMoves (btl_char_api_2.h) and AiThChrMoves name move table +0x10 id[2]; step code switches on it by move slot (the 0x47 length only pads up to +0x9E)
+include/battle/btl_ai_int.h	BtlAiChrMoves	unk9E	kind	HIGH	BtlCapiBMoves and AiThChrMoves name move table +0x9E kind[2] (BtlSkill_GetAiKind)
+include/battle/btl_ai_int.h	BtlAiChrSkills	unk13E	type	HIGH	btl_tech.h names skill table +0x13E type[3] (BtlSuper_GetType); indexed by plan skill slot in step handler 17
+include/battle/btl_ai_int.h	BtlAiChrSkills	unk165	kind	HIGH	AiThChrSkills names skill table +0x165 kind[3] and BtlCapiBSkills names the same bytes kind (BtlSuper_GetAiKind); compared with 5 here
+include/battle/btl_ai_sense.h	AiActSeq	unk0C	KEEP	KEEP	s32[2] spanning stepCount (+0x0C) and step (+0x10) of BtlAiSeq; needs splitting, not one name; unused in btl_ai_sense.c
+include/battle/btl_ai_sense.h	AiActPad	unk50	KEEP	KEEP	unk50 in BtlAiOutput too; no code touches it
+include/battle/btl_ai_sense.h	AiActStatus	unk24	act10Dist	MEDIUM	fighter distance stored by BtlAiSeq_PhaseStart when step 0 of action 10 is chosen; BtlAiSense_CheckAct10 compares half of it with the distance; what action 10 is is not known
+include/battle/btl_ai_seq.h	BtlAiSeqActTable	unk0	KEEP	KEEP	first word of the action table section; never read
+include/battle/btl_ai_seq.h	BtlAiSeqA	unk6C	KEEP	KEEP	s32[2] spanning firedSet (+0x6C, AiThSeq) and an unknown word at +0x70; needs splitting; unused here
+include/battle/btl_ai_seq.h	BtlAiSeqA	unk80	firedRule	HIGH	AiThSeq names seq +0x80 firedRule: index of the rule that last fired
+include/battle/btl_ai_seq.h	BtlAiSeqA	unk8C	KEEP	KEEP	s32[3] spanning firedGroup (+0x8C, AiThSeq) and two unknown words; needs splitting; unused here
+include/battle/btl_ai_think.h	AiThSeq	unk58	waitTimer	HIGH	BtlAiSeqA names seq +0x58 waitTimer
+include/battle/btl_ai_think.h	AiThSeq	unk5C	KEEP	KEEP	s32[3] spanning startState, charge (f32) and startDist (f32) of BtlAiSeqA; needs splitting; unused here
+include/battle/btl_ai_think.h	AiThSeq	unk70	KEEP	KEEP	unknown in every view; no code touches it
+include/battle/btl_ai_think.h	AiThSeq	unk7C	prevId	HIGH	BtlAiSeqA names seq +0x7C prevId
+include/battle/btl_ai_think.h	AiThSeq	unk90	KEEP	KEEP	s32[2] after firedGroup: unknown in every view; no code touches it
+include/battle/btl_ai_think.h	AiThStatus	unk8	downTimer	HIGH	AiActStatus names status +0x08 downTimer (same doubt about the name as for BtlAiStatus)
+include/battle/btl_ai_think.h	AiThStatus	unk24	act10Dist	MEDIUM	same word as AiActStatus.unk24 / BtlAiStatus.unk24: the fighter distance when action 10 chose step 0 (f32 there, s32 here); what action 10 is is not known
+include/battle/btl_ai_think.h	AiThPlan	unkA9	lastRoll	MEDIUM	AiThink_TestBasic stores the low byte of the roll of the basic condition that passed; written only, so the purpose is not confirmed
+include/battle/btl_ai_think.h	AiThPlan	unkAA	nextGroup	MEDIUM	AiThink_EvalRules stores rule->group here with plan->next for a set-next-list rule; no reader found
+include/battle/btl_ai_think.h	AiThPlan	unk234	KEEP	KEEP	last word of the plan; no code touches it
+include/battle/btl_ai_think.h	AiThWork	unk1C	KEEP	KEEP	s32[2] at +0x1C: unknown in every view and unused
+include/battle/btl_ai_think.h	AiThActTable	unk0	KEEP	KEEP	first word of the action table section; never read
+include/battle/btl_ai_think.h	AiThActTable	unk4	steps	HIGH	BtlAiSeqActTable (btl_ai_seq.h) names act +0x04 steps (BtlAiSeqStep array); AiThink_BindData points it at the table at +0x788
+include/battle/btl_ai_think.h	AiThActTable	unk788	stepData	MEDIUM	one-byte marker of where the step array that +0x04 is pointed at begins (data + 0x8D0 = act + 0x788); never referenced by name, so the name is only a label
+include/battle/btl_ai_think.h	AiThProfile	unk0	KEEP	KEEP	first word of a profile before the two rate blocks; never read
+include/battle/btl_ai_think.h	AiThMgr	unkA58	KEEP	KEEP	no code touches it; AiActMgr calls the same bytes padA58
+include/battle/btl_ai_think.h	AiThChrSkills	unk18	id	HIGH	btl_tech.h names skill table +0x18 id[3] (technique id); compared with technique 0x280 here
+include/battle/btl_cam.h	View	unk100	clip2screen	MEDIUM	View_BuildProjection builds a scale + translation matrix (x / y scale, centre 2048 / 2048, z range midpoint and half range): the viewport transform; never read and the x / y scale factors were not checked against view2screen
+include/battle/btl_cam.h	View	unk1C0	frustum	MEDIUM	View_BuildProjection builds a standard off-centre perspective matrix from l / r / b / t of the 512 x 448 window and nearZ / farZ; never read, so which projection it stands for is unconfirmed
+include/battle/btl_cam.h	View	unk258	projScale	HIGH	multiplies [0][0] and [1][1] of view2screen and view2clip in View_BuildProjection; the last argument of View_SetProjection (always 1)
+include/battle/btl_cam.h	View	unk25C	KEEP	KEEP	last word of the view; no code touches it
+include/battle/btl_cam.h	BtlCamView	unk28C	KEEP	KEEP	no code touches it

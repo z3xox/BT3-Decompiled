@@ -49,14 +49,14 @@ typedef struct BtlAiSeq {
                                   choose what runs next */
     /* 0x14 */ BtlAiSeqEntry stack[8];
     /* 0x54 */ s32 timer;      /* (m) per-step counter / parameter */
-    /* 0x58 */ s32 unk58;      /* (m) cleared by step handler 17 */
+    /* 0x58 */ s32 waitTimer;      /* (m) cleared by step handler 17 */
     /* 0x5C */ s32 unk5C[3];
     /* 0x68 */ s32 ruleSet;    /* which of the eight rule lists the thinker is evaluating (0x1BAC30) */
     /* 0x6C */ s32 unk6C[2];
     /* 0x74 */ f32 dirX;
     /* 0x78 */ f32 dirZ;
-    /* 0x7C */ s32 unk7C;      /* (m) switched on by step handler 23 (0x22..0x35) */
-    /* 0x80 */ s32 unk80;
+    /* 0x7C */ s32 prevId;      /* (m) switched on by step handler 23 (0x22..0x35) */
+    /* 0x80 */ s32 firedRule;
     /* 0x84 */ s32 roll;       /* (m) last percent roll (0..99) of a condition: debug trace, never read here */
     /* 0x88 */ s32 threshold;  /* (m) what that roll was compared with */
     /* 0x8C */ s32 unk8C[3];
@@ -102,8 +102,8 @@ typedef struct BtlAiOutput {
     /* 0x08 */ f32 stickY;     /* (m) */
     /* 0x0C */ s32 toggle[14]; /* each flipped 0 <-> 1 every frame by 0x1BCD70 (alternating presses) */
     /* 0x44 */ s32 toggle44;   /* flipped as well */
-    /* 0x48 */ s32 unk48;      /* cleared every frame */
-    /* 0x4C */ s32 unk4C;      /* cleared every frame */
+    /* 0x48 */ s32 accX;      /* cleared every frame */
+    /* 0x4C */ s32 accY;      /* cleared every frame */
     /* 0x50 */ s32 unk50;
     /* 0x54 */ s32 timer;      /* counted down every frame */
 } BtlAiOutput; /* size 0x58 */
@@ -111,35 +111,35 @@ typedef struct BtlAiOutput {
 /* Situation: work + 0x2C0. */
 typedef struct BtlAiStatus {
     /* 0x00 */ u64 flags;      /* (m) situation bits; a rule only runs when the bit of its group is set */
-    /* 0x08 */ s32 unk8;
+    /* 0x08 */ s32 downTimer;
     /* 0x0C */ s32 oppClass;   /* (m) class of the opponent's current action (BtlAiActTable.actClass) */
     /* 0x10 */ s32 oppAction;  /* (m) opponent's current action id */
     /* 0x14 */ s32 react;      /* (m) reaction bits, set by the conditions through BtlAi_NoteOpponent */
     /* 0x18 */ s32 timer18;    /* (m) set to 90 by condition 33 (arg 0) */
     /* 0x1C */ s32 timer1C;    /* (m) set to 90 by condition 33 (arg 1) */
     /* 0x20 */ s32 timer20;    /* (m) set to 90 by condition 34 */
-    /* 0x24 */ s32 unk24;
+    /* 0x24 */ s32 act10Dist;
 } BtlAiStatus; /* size 0x28 */
 
 /* Rule evaluation and plan: work + 0x2E8. */
 typedef struct BtlAiPlan {
-    /* 0x00 */ s32 unk0;       /* result of 0x1B9A08 for the rule being tested */
-    /* 0x04 */ s32 unk4;       /* 0..5: which rule list follows list 0 ({1, 2, 3, 5, 6, 7}); a rule of kind 4 sets it */
+    /* 0x00 */ s32 cls;       /* result of 0x1B9A08 for the rule being tested */
+    /* 0x04 */ s32 next;       /* 0..5: which rule list follows list 0 ({1, 2, 3, 5, 6, 7}); a rule of kind 4 sets it */
     /* 0x08 */ s32 unk8;       /* (m) skill slot; -1 = none */
     /* 0x0C */ s32 cond;       /* (m) condition id being tested: index into gBtlAiCondFuncIndex */
     /* 0x10 */ s32 condNo;     /* its position in the rule (0..7) */
     /* 0x14 */ struct {
         s32 roll;
-        s32 unk4;
+        s32 next;
     } rolls[8];                /* eight Rand_Range(100) rolls drawn for every rule group that is tested */
-    /* 0x54 */ s32 unk54;      /* (m) written by condition 17 */
+    /* 0x54 */ s32 sub;      /* (m) written by condition 17 */
     /* 0x58 */ s8 rate[14];    /* (m) per virtual button (0..13): BtlAi_GetPairRate of the AI type's profile */
     /* 0x66 */ u8 unk66[0x3E];
     /* 0xA4 */ s32 cooldown;   /* (m) counted down once per frame; step handler 15 sets 300 */
     /* 0xA8 */ u8 ruleNo;      /* index of the rule being tested */
-    /* 0xA9 */ u8 unkA9;
-    /* 0xAA */ u8 unkAA;
-    /* 0xAB */ u8 unkAB;
+    /* 0xA9 */ u8 lastRoll;
+    /* 0xAA */ u8 nextGroup;
+    /* 0xAB */ u8 range;
     /* 0xAC */ u8 scratch[0x188]; /* (m) cleared whenever the AI type or level is set */
     /* 0x234 */ u8 unk234[4];
 } BtlAiPlan; /* size 0x238 */
@@ -149,8 +149,8 @@ typedef struct BtlAiWork {
     /* 0x000 */ s32 objId;     /* (m) fighter / side number (0 or 1); the opponent is objId ^ 1 */
     /* 0x004 */ s32 type;      /* (m) BattleMember.aiType: index into BtlAiData.profile[] */
     /* 0x008 */ s32 level;     /* (m) BattleMember.cpuLevel: 0..29, -1 = passive dummy */
-    /* 0x00C */ s32 unkC;      /* (m) bits 0..2 are tested by conditions 14..16 */
-    /* 0x010 */ s32 unk10[2];
+    /* 0x00C */ s32 kit;      /* (m) bits 0..2 are tested by conditions 14..16 */
+    /* 0x010 */ s32 costRange[2];
     /* 0x018 */ u8 *param;     /* (m) the character's own AI parameters (fighter + 0x934); NULL = no AI */
     /* 0x01C */ s32 unk1C[2];
     /* 0x024 */ s32 flags;     /* (m) bit 0: param is a heap copy owned by the work (Heap_Free on reset) */

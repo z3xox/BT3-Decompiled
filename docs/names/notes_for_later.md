@@ -56,3 +56,21 @@ System, menu support:
 - src/ui/menu_util_1.c: the comment on TextBox_SetMaxSize mentions an `unused` parameter that does not exist.
 - src/sys/memcard.c: the header comment still calls the file stem a placeholder.
 - src/sys/vu1_packet.c: the header numbers the second variant of program 2 as "prog 3"; the listings and docs call it 2b.
+
+## From the field-name groups
+
+Group 02 (btl_act_super.h .. btl_cam.h):
+- Arrays that span several named fields and want splitting, not one name: BtlAiSeq.unk5C[3], unk6C[2], unk8C[3]; AiThSeq.unk5C[3];
+  BtlAiSeqA.unk6C[2], unk8C[3]; AiActSeq.unk0C[2]. BtlAiWork.unk10[2] is costMin / costMax in AiThWork.
+- BtlAiPlan has two unk4: the plan's own (+0x04, `next`) and the one inside the anonymous rolls[] struct (`acc`): the second by hand.
+- Types differ between views: BtlAiOutput +0x48 / +0x4C (accX / accY) s32 here, f32 in AiActPad; status +0x24 (act10Dist) s32 / f32.
+- ActGThrow is the same block as BtlCollThrow (btl_char_coll.h): names for +0x10..+0x64 to be reconciled; also btl_char_api_1.h thrUnk10 / 1C /
+  48 / 4C, btl_stats.h unkEE4, BtlMemberQueue unk0 / unk14 / unk20 (totalStart, drainHealthStart, drainKiStart).
+- btl_act_super.h:84 / :86: unkEC4 and unkEE8 are words +0x34 / +0x58 of the throw block at +0xE90, filled in BtlColl_StartThrow.
+- btl_act_super.h:25-26: BtlSuperPose calls +0x9C velY; every other pose view has +0x98 speed, +0x9C fallSpeed (positive = down).
+- btl_act_super.c:2108: comment says unk5C puts the attacker "on the ground when the action ends"; the code at :2437 raises the fighter.
+- btl_ai_sense.h AiActStatus.downTimer (+0x08): set to 4 while an attack hit is pending, then counted down: nothing about being down.
+- btl_act_decide.h:83 unkE9C sits at throw block +0x0C, which BtlCollThrow names `slot`: not checked whether the descriptions agree.
+- btl_char_ctl.h:78: the sixth parameter of BtlChange_RequestChara is named unk18 but receives form +0x1C.
+- btl_char_hit.h HitReact: the comments for unk38 and unk48 describe fighter +0xFE8 / +0xFF8, which other headers describe as countdowns:
+  the react block and those timers overlap, one of the two layouts needs a look.

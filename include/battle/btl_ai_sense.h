@@ -94,7 +94,7 @@ typedef struct AiActStatus {
     /* 0x18 */ s32 timer18;   /* (m) */
     /* 0x1C */ s32 timer1C;   /* (m) */
     /* 0x20 */ s32 timer20;   /* (m) */
-    /* 0x24 */ f32 unk24;     /* (m) a distance; half of it is compared with the fighter distance */
+    /* 0x24 */ f32 act10Dist;     /* (m) a distance; half of it is compared with the fighter distance */
 } AiActStatus; /* size 0x28 */
 
 /* One side's CPU controller. */

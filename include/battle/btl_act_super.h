@@ -60,15 +60,15 @@ typedef struct BtlSuperChr {
     /* 0x0968 */ u8 unk968[0xD94 - 0x968];
     /* The damage queue against the opponent (BtlMemberQueue in btl_char_member.h), filled by
        BtlSuper_SetupRushDamage. */
-    /* 0x0D94 */ s32 dmgUnk0;      /* the total again (1 with technique flag B 0x400 and + 0xEC4 set) */
+    /* 0x0D94 */ s32 dmgTotalStart;      /* the total again (1 with technique flag B 0x400 and + 0xEC4 set) */
     /* 0x0D98 */ s32 dmgTotal;     /* total damage, rounded up to 10 */
     /* 0x0D9C */ s32 dmgPerHit;    /* total / (hits + 5), at most 15000, rounded up to 10 */
     /* 0x0DA0 */ s32 dmgHits;      /* number of 0x200000000 events in the animation(s) */
     /* 0x0DA4 */ s32 dmgFlags;     /* BTL_DMG_*: 0x180 plus 0x800000 / 0x1000000 / 0x2000000 by class */
-    /* 0x0DA8 */ s32 dmgUnk14;     /* the health drain again */
+    /* 0x0DA8 */ s32 dmgDrainHealthStart;     /* the health drain again */
     /* 0x0DAC */ s32 drainHealth;  /* health still to drain */
     /* 0x0DB0 */ s32 drainHealthStep; /* per frame: drain / max((to - from) / 2, 1) + 1 */
-    /* 0x0DB4 */ s32 dmgUnk20;
+    /* 0x0DB4 */ s32 dmgDrainKiStart;
     /* 0x0DB8 */ s32 drainKi;
     /* 0x0DBC */ s32 drainKiStep;
     /* 0x0DC0 */ s32 drainFrom;    /* first frame of the drain window, -1 = none */
@@ -78,12 +78,12 @@ typedef struct BtlSuperChr {
     /* 0x0E44 */ f32 charge;       /* charge level of a chargeable technique, 0..1 */
     /* 0x0E48 */ s32 chargeFull;   /* frames the charge has been full (the sounds play on the first) */
     /* 0x0E4C */ u8 unkE4C[0xE5C - 0xE4C];
-    /* 0x0E5C */ s32 unkE5C;       /* counter (full at 3, fighter.md); zeroed when technique 0x268 ends */
+    /* 0x0E5C */ s32 skillCount3;       /* counter (full at 3, fighter.md); zeroed when technique 0x268 ends */
     /* 0x0E60 */ s32 unkE60;       /* counter 0..10: + 5 per technique 0x2EF, zeroed when technique 0x2CD ends */
     /* 0x0E64 */ u8 unkE64[0xEC4 - 0xE64];
-    /* 0x0EC4 */ s32 unkEC4;       /* non-zero: a flag B 0x400 technique deals 1 damage, undefended and exact */
+    /* 0x0EC4 */ s32 thrFailed;       /* non-zero: a flag B 0x400 technique deals 1 damage, undefended and exact */
     /* 0x0EC8 */ u8 unkEC8[0xEE8 - 0xEC8];
-    /* 0x0EE8 */ s32 unkEE8;       /* non-zero: rush damage is halved */
+    /* 0x0EE8 */ s32 thrHalfDamage;       /* non-zero: rush damage is halved */
     /* 0x0EEC */ u8 unkEEC[0xEF8 - 0xEEC];
     /* Measured from a rush technique's animation chain by BtlSuper_MeasureRushStep. */
     /* 0x0EF8 */ s32 rushHits;     /* 0x200000000 events in all steps */
@@ -98,10 +98,10 @@ typedef struct BtlSuperChr {
     /* 0x12D0 */ s32 formChara;
     /* 0x12D4 */ s32 formCostume;
     /* 0x12D8 */ u8 unk12D8[0x12E0 - 0x12D8];
-    /* 0x12E0 */ s32 form14;       /* passed to BtlChange_RequestChara as variant, animChara, unk18, voiceChara */
-    /* 0x12E4 */ s32 form18;
+    /* 0x12E0 */ s32 formVariant;       /* passed to BtlChange_RequestChara as variant, animChara, unk18, voiceChara */
+    /* 0x12E4 */ s32 formAnimChara;
     /* 0x12E8 */ s32 form1C;
-    /* 0x12EC */ s32 form20;
+    /* 0x12EC */ s32 formVoiceChara;
     /* 0x12F0 */ u8 unk12F0[0x1594 - 0x12F0];
     /* 0x1594 */ s32 inputClass;   /* class whose button command is watched; -1 again every frame */
     /* 0x1598 */ u8 unk1598[0x1600 - 0x1598];
@@ -151,11 +151,11 @@ void BtlAct_SuperQuickLongBeamHandler(BtlSuperChr *chr, s32 phase);
 typedef struct ActGPose {
     /* 0x00 */ Vec4 pos;
     /* 0x10 */ Vec4 rot;
-    /* 0x20 */ Vec4 unk20;
-    /* 0x30 */ Vec4 unk30;
+    /* 0x20 */ Vec4 dispOfs;
+    /* 0x30 */ Vec4 vel;
     /* 0x40 */ Vec4 moved;      /* whole movement of the previous frame */
-    /* 0x50 */ Vec4 unk50;
-    /* 0x60 */ Vec4 unk60;
+    /* 0x50 */ Vec4 rootPos;
+    /* 0x60 */ Vec4 rootRot;
     /* 0x70 */ Vec4 impulse;
     /* 0x80 */ Vec4 dir;
     /* 0x90 */ f32 pitch;       /* heading pitch */
@@ -170,37 +170,37 @@ typedef struct ActGThrow {
     /* 0x04 */ s32 atkSide;
     /* 0x08 */ s32 defSide;
     /* 0x0C */ s32 slot;
-    /* 0x10 */ s32 unk10;
-    /* 0x14 */ s32 unk14;
-    /* 0x18 */ s32 unk18;
-    /* 0x1C */ s32 unk1C;
-    /* 0x20 */ s32 unk20;
-    /* 0x24 */ s32 unk24;
-    /* 0x28 */ s32 unk28;
-    /* 0x2C */ s32 unk2C;
-    /* 0x30 */ s32 unk30;
-    /* 0x34 */ s32 unk34;
+    /* 0x10 */ s32 stepCount;
+    /* 0x14 */ s32 landingKind;
+    /* 0x18 */ s32 partnerStep;
+    /* 0x1C */ s32 lastStep;
+    /* 0x20 */ s32 partnerChara;
+    /* 0x24 */ s32 partnerCostume;
+    /* 0x28 */ s32 partnerVariant;
+    /* 0x2C */ s32 partnerSlot;
+    /* 0x30 */ s32 turnVictim;
+    /* 0x34 */ s32 failed;
     /* 0x38 */ s32 unk38;
-    /* 0x3C */ s32 unk3C;
-    /* 0x40 */ s32 unk40;
-    /* 0x44 */ s32 unk44;
-    /* 0x48 */ s32 unk48;
-    /* 0x4C */ s32 unk4C;
-    /* 0x50 */ s32 unk50;
+    /* 0x3C */ s32 faceAttacker;
+    /* 0x40 */ s32 koSkipLanding;
+    /* 0x44 */ s32 caughtLoop;
+    /* 0x48 */ s32 atkReload;
+    /* 0x4C */ s32 defReload;
+    /* 0x50 */ s32 placeFirstStep;
     /* 0x54 */ s32 unk54;
-    /* 0x58 */ s32 unk58;
-    /* 0x5C */ s32 unk5C;
-    /* 0x60 */ f32 unk60;
-    /* 0x64 */ f32 unk64;
+    /* 0x58 */ s32 halfDamage;
+    /* 0x5C */ s32 raiseAtEnd;
+    /* 0x60 */ f32 turnYaw;
+    /* 0x64 */ f32 turnPitch;
 } ActGThrow; /* size 0x68 */
 
 /* Hit reaction block (chr + 0xFB0). Same layout as HitReact in btl_char_hit.h. */
 typedef struct ActGReact {
     /* 0x00 */ s32 reaction;
     /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;
+    /* 0x08 */ s32 animCycle;
     /* 0x0C */ s32 back;
-    /* 0x10 */ s32 unk10;
+    /* 0x10 */ s32 noBlend;
     /* 0x14 */ s32 silent;
     /* 0x18 */ f32 scale;
     /* 0x1C */ f32 yaw;
@@ -210,7 +210,7 @@ typedef struct ActGReact {
     /* 0x2C */ f32 launchB;
     /* 0x30 */ s32 stun;
     /* 0x34 */ s32 unk34;
-    /* 0x38 */ s32 unk38;
+    /* 0x38 */ s32 shakeTimer;
     /* 0x3C */ s32 damage;      /* deferred damage */
     /* 0x40 */ s32 unk40;
     /* 0x44 */ s32 slot;
@@ -219,18 +219,18 @@ typedef struct ActGReact {
 
 /* Form-change request (chr + 0x12CC). Same layout as BtlActForm. */
 typedef struct ActGForm {
-    /* 0x00 */ s32 unk0;
+    /* 0x00 */ s32 index;
     /* 0x04 */ s32 chara;
     /* 0x08 */ s32 costume;
-    /* 0x0C */ s32 unkC;
-    /* 0x10 */ s32 unk10;
+    /* 0x0C */ s32 cost;
+    /* 0x10 */ s32 kind;
     /* 0x14 */ s32 unk14;       /* model variant requested (1 from BtlAct_SetFormCurrent) */
-    /* 0x18 */ s32 unk18;
+    /* 0x18 */ s32 animChara;
     /* 0x1C */ s32 unk1C;
-    /* 0x20 */ s32 unk20;
-    /* 0x24 */ s32 unk24;
-    /* 0x28 */ s32 unk28;
-    /* 0x2C */ s32 unk2C;
+    /* 0x20 */ s32 voiceChara;
+    /* 0x24 */ s32 objId;
+    /* 0x28 */ s32 objCostume;
+    /* 0x2C */ s32 partner;
 } ActGForm;
 
 /* Gauge block of the active member (BtlMember_GetActiveGauge). */
@@ -242,23 +242,23 @@ typedef struct ActGGauge {
     /* 0x10 */ s32 kiMax;
     /* 0x14 */ s32 blast;
     /* 0x18 */ s32 blastMax;
-    /* 0x1C */ s32 unk1C;
+    /* 0x1C */ s32 maxPower;
     /* 0x20 */ s32 variant;     /* model variant in use; 0 = undamaged */
     /* 0x24 */ u8 unk24[0x4C - 0x24];
-    /* 0x4C */ s32 unk4C[5];    /* by technique slot: counts self-destruct techniques (flag B 0x2000) used */
+    /* 0x4C */ s32 fired[5];    /* by technique slot: counts self-destruct techniques (flag B 0x2000) used */
 } ActGGauge;
 
 /* Damage queue (chr + 0xD94). Same layout as BtlMemberQueue in btl_char_member.h, plus the word after it. */
 typedef struct ActGQueue {
-    /* 0x00 */ s32 unk0;            /* the total again */
+    /* 0x00 */ s32 totalStart;            /* the total again */
     /* 0x04 */ s32 total;           /* health damage still to deal */
     /* 0x08 */ s32 perHit;          /* amount per trigger while more than one hit is left */
     /* 0x0C */ s32 hits;            /* triggers left */
     /* 0x10 */ s32 flags;           /* BTL_DMG_* */
-    /* 0x14 */ s32 unk14;           /* the health drain again */
+    /* 0x14 */ s32 drainHealthStart;           /* the health drain again */
     /* 0x18 */ s32 drainHealth;     /* health still to drain */
     /* 0x1C */ s32 drainHealthStep; /* per frame */
-    /* 0x20 */ s32 unk20;           /* the ki drain again */
+    /* 0x20 */ s32 drainKiStart;           /* the ki drain again */
     /* 0x24 */ s32 drainKi;         /* ki still to drain */
     /* 0x28 */ s32 drainKiStep;     /* per frame */
     /* 0x2C */ s32 drainFrom;       /* animation frame of the 0x20000 event, -1 = no drain */

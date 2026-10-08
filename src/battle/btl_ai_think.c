@@ -139,20 +139,20 @@ s32 BtlAiCond_Plan8Is2(BtlAiWork *ai, u8 arg) {
 
 /* Conditions 14, 15, 16: bits 0, 1, 2 of work + 0xC. */
 s32 BtlAiCond_WorkBit0(BtlAiWork *ai, u8 arg) {
-    return (ai->unkC & 1) == arg;
+    return (ai->kit & 1) == arg;
 }
 
 s32 BtlAiCond_WorkBit1(BtlAiWork *ai, u8 arg) {
-    return ((ai->unkC >> 1) & 1) == arg;
+    return ((ai->kit >> 1) & 1) == arg;
 }
 
 s32 BtlAiCond_WorkBit2(BtlAiWork *ai, u8 arg) {
-    return ((ai->unkC >> 2) & 1) == arg;
+    return ((ai->kit >> 2) & 1) == arg;
 }
 
 /* Condition 17: not a test, stores arg in the plan and passes. */
 s32 BtlAiCond_SetPlan54(BtlAiWork *ai, u8 arg) {
-    ai->plan.unk54 = arg;
+    ai->plan.sub = arg;
     return 1;
 }
 
@@ -952,7 +952,7 @@ s32 AiThink_TestBasic(AiThWork *ai) {
     seq->roll = r->roll;
     seq->threshold = r->acc;
     if (r->roll < r->acc) {
-        plan->unkA9 = r->roll;
+        plan->lastRoll = r->roll;
         return 1;
     }
     return 0;
@@ -1261,7 +1261,7 @@ s32 AiThink_TestSkill(AiThWork *ai) {
                 continue;
             }
         }
-        if ((skills->flags[i] & 0x2000) || skills->unk18[i] == 0x280) {
+        if ((skills->flags[i] & 0x2000) || skills->id[i] == 0x280) {
             if (dist > 10000) {
                 continue;
             }
@@ -2144,7 +2144,7 @@ void AiThink_EvalRules(AiThWork *ai, AiThRuleList *list) {
             s32 next = rule->param - 0x7F;
 
             plan->next = next;
-            plan->unkAA = rule->group;
+            plan->nextGroup = rule->group;
             if (cls == 14) {
                 return;
             }
@@ -2249,7 +2249,7 @@ void AiThink_BindData(s32 owned) {
     gBtlAi->own &= ~1;
     p = (u8 *)data + 0x148;
     data->act = (AiThActTable *)p;
-    ((AiThActTable *)p)->unk4 = (u8 *)data + 0x8D0;
+    ((AiThActTable *)p)->steps = (u8 *)data + 0x8D0;
     p += data->size[0];
     for (i = 0; i < 8; i++) {
         data->rules[i] = (AiThRuleList *)p;

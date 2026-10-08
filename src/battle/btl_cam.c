@@ -69,8 +69,8 @@ void View_BuildProjection(View *view) {
     oy = (view->centerY - 2048.0f) / (view->screenSize.y * view->aspectY);
 
     Mtx_StoreIdentity(&view->view2screen);
-    view->view2screen.m[0][0] = view->screenDist * view->unk258;
-    view->view2screen.m[1][1] = view->screenDist * view->unk258;
+    view->view2screen.m[0][0] = view->screenDist * view->projScale;
+    view->view2screen.m[1][1] = view->screenDist * view->projScale;
     view->view2screen.m[2][2] = 0.0f;
     view->view2screen.m[3][2] = 1.0f;
     view->view2screen.m[2][3] = 1.0f;
@@ -90,28 +90,28 @@ void View_BuildProjection(View *view) {
     b = (-224.0f - (view->centerY - 2048.0f)) / view->aspectY * -s;
     t = (224.0f - (view->centerY - 2048.0f)) / view->aspectY * -s;
     s = 1.0f / (r - l);
-    view->unk1C0.m[0][0] = 2.0f * view->nearZ * s;
-    view->unk1C0.m[0][1] = 0.0f;
-    view->unk1C0.m[0][2] = (r + l) * s;
-    view->unk1C0.m[0][3] = 0.0f;
+    view->frustum.m[0][0] = 2.0f * view->nearZ * s;
+    view->frustum.m[0][1] = 0.0f;
+    view->frustum.m[0][2] = (r + l) * s;
+    view->frustum.m[0][3] = 0.0f;
     s = 1.0f / (b - t);
-    view->unk1C0.m[1][0] = 0.0f;
-    view->unk1C0.m[1][1] = 2.0f * view->nearZ * s;
-    view->unk1C0.m[1][2] = (b + t) * s;
-    view->unk1C0.m[1][3] = 0.0f;
+    view->frustum.m[1][0] = 0.0f;
+    view->frustum.m[1][1] = 2.0f * view->nearZ * s;
+    view->frustum.m[1][2] = (b + t) * s;
+    view->frustum.m[1][3] = 0.0f;
     s = 1.0f / (view->farZ - view->nearZ);
-    view->unk1C0.m[2][0] = 0.0f;
-    view->unk1C0.m[2][1] = 0.0f;
-    view->unk1C0.m[2][2] = -view->nearZ * s;
-    view->unk1C0.m[2][3] = -(view->farZ * view->nearZ) * s;
-    view->unk1C0.m[3][0] = 0.0f;
-    view->unk1C0.m[3][1] = 0.0f;
-    view->unk1C0.m[3][2] = -1.0f;
-    view->unk1C0.m[3][3] = 0.0f;
+    view->frustum.m[2][0] = 0.0f;
+    view->frustum.m[2][1] = 0.0f;
+    view->frustum.m[2][2] = -view->nearZ * s;
+    view->frustum.m[2][3] = -(view->farZ * view->nearZ) * s;
+    view->frustum.m[3][0] = 0.0f;
+    view->frustum.m[3][1] = 0.0f;
+    view->frustum.m[3][2] = -1.0f;
+    view->frustum.m[3][3] = 0.0f;
 
     Mtx_StoreIdentity(&view->view2clip);
-    view->view2clip.m[0][0] = 2.0f * view->nearZ / (2.0f * hw) * view->unk258;
-    view->view2clip.m[1][1] = 2.0f * view->nearZ / (2.0f * hh) * view->unk258;
+    view->view2clip.m[0][0] = 2.0f * view->nearZ / (2.0f * hw) * view->projScale;
+    view->view2clip.m[1][1] = 2.0f * view->nearZ / (2.0f * hh) * view->projScale;
     view->view2clip.m[2][2] = (view->farZ + view->nearZ) / (view->farZ - view->nearZ);
     view->view2clip.m[2][3] = 1.0f;
     view->view2clip.m[3][2] = view->farZ * view->nearZ * -2.0f / (view->farZ - view->nearZ);
@@ -121,14 +121,14 @@ void View_BuildProjection(View *view) {
     tmp.m[3][1] = oy;
     Mtx_Mul(&view->view2clip, &tmp, &view->view2clip);
 
-    Mtx_StoreIdentity(&view->unk100);
-    view->unk100.m[0][0] = view->screenDist * view->aspectX * hw / view->nearZ;
-    view->unk100.m[1][1] = view->screenDist * view->aspectY * hh / view->nearZ;
-    view->unk100.m[2][2] = (view->zMin - view->zMax) * 0.5f;
-    view->unk100.m[3][0] = 2048.0f;
-    view->unk100.m[3][1] = 2048.0f;
-    view->unk100.m[3][2] = (view->zMax + view->zMin) * 0.5f;
-    view->unk100.m[3][3] = 1.0f;
+    Mtx_StoreIdentity(&view->clip2screen);
+    view->clip2screen.m[0][0] = view->screenDist * view->aspectX * hw / view->nearZ;
+    view->clip2screen.m[1][1] = view->screenDist * view->aspectY * hh / view->nearZ;
+    view->clip2screen.m[2][2] = (view->zMin - view->zMax) * 0.5f;
+    view->clip2screen.m[3][0] = 2048.0f;
+    view->clip2screen.m[3][1] = 2048.0f;
+    view->clip2screen.m[3][2] = (view->zMax + view->zMin) * 0.5f;
+    view->clip2screen.m[3][3] = 1.0f;
 }
 
 /* Stores the projection parameters (the larger aspect factor becomes 1) and rebuilds the projection. */
@@ -142,7 +142,7 @@ void View_SetProjection(View *view, Vec4 *screenSize, f32 screenDist, f32 aspect
     view->zMax = zMax;
     view->nearZ = nearZ;
     view->farZ = farZ;
-    view->unk258 = unk258;
+    view->projScale = unk258;
     view->aspectX = aspectX;
     view->aspectY = aspectY;
     if (aspectX > 1.0f) {

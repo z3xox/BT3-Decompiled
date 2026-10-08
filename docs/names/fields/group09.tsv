@@ -1,0 +1,151 @@
+include/battle/eft_rays.h	EftOTask	unk3C	KEEP	KEEP	last word of the 0x40-byte task; never accessed and unnamed in every other task view (BtlTask.unk3C in eft_sprite_anim.h)
+include/battle/eft_rays.h	EftOTexEntry	unk8	image	MEDIUM	eft_detect.h EftTexSetEntry and eft_sprite_anim.h EftAeTex name the pointer at 0x8 image (unkC after it); uncertain because this view declares one u64 covering the pointer and the unknown word
+include/battle/eft_rays.h	EftOTexSet	unk204	stepped	HIGH	eft_disc.h EftPTexSet names 0x204 stepped (bit n: entry advanced this frame) and EftDiscMgr_Update zeroes texA/texB.unk204 every frame; eft_sprite_anim.h calls the same word kept
+include/battle/eft_rays.h	EftOBoltTex	unk4	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_rays.h	EftOBoltTex	unkC	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_rays.h	EftOBoltTex	unk24	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_rays.h	EftOBoltPool	unkC	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_rays.h	EftOBoltWork	unk8	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_rays.h	EftRaysArg	unk3	KEEP	KEEP	never read by EftRays_Init; eft_emit.h EftEmitArg2 also leaves 0x03 unnamed
+include/battle/eft_rays.h	EftRaysKey	unk8	KEEP	KEEP	EftRays_SetKey and EftRays_LerpKey read only height, width and color of a key
+include/battle/eft_rays.h	EftRay	unk24	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_rays.h	EftRay	unk44	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_rays.h	EftRay	unk74	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_rays.h	EftRays	unk0	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_rays.h	EftRays	unk58	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_rays.h	EftODef	unk2	level	HIGH	eft_core.h EftHitDef names 0x02 level and eft_core.c:122 copies def->level to the hit record's level (eft_shot_tech.h calls it recType, which no code supports)
+include/battle/eft_rays.h	EftOEmitNodes	unkC	KEEP	KEEP	unnamed in eft_sweep.h EftEmitNodes too; never accessed here
+include/battle/eft_rays.h	EftOPart	unk9	KEEP	KEEP	unnamed in eft_sweep.h EftEmitDef too; never accessed here
+include/battle/eft_rays.h	EftOGroupDef	unk0	KEEP	KEEP	eft_shot_tech.h comments info[0] as the group id but eft_sweep.h EftEmitGroupDef leaves it unnamed and this file never reads it
+include/battle/eft_rays.h	EftOGroup	unk4	KEEP	KEEP	unnamed in eft_sweep.h EftEmitGroup too; never accessed here
+include/battle/eft_rays.h	EftOSet	unk4	KEEP	KEEP	unnamed in eft_sweep.h EftEmitSet too; never accessed here
+include/battle/eft_rays.h	EftBlastObjModel	unk37	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_rays.h	EftBlastObjModel	unk3C	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_rays.h	EftBlastObj	unk34	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_rays.h	EftBlastObj	unk55C	KEEP	KEEP	alignment gap between the emitter state and the 16-byte aligned dir; never accessed
+include/battle/eft_rays.h	EftBlastObj	unk594	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_rays.h	EftBodyFxArg	unk4	setIdx	HIGH	EftBodyFx_Init does w->set = &gEftBodyFx->set[arg->unk4]: the index of the effect pack (the header comment says the same)
+include/battle/eft_rays.h	EftBodyFx	unk2FC	KEEP	KEEP	alignment gap after the emitter state; never accessed
+include/battle/eft_rays.h	EftBodyFx	unk564	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_rays.h	EftODiscRes	unk410	KEEP	KEEP	only zeroed once in EftDiscMgr_Init right after a memset-style setup; never read and unnamed in eft_disc.h (EftDiscMgr.unk0 covers it)
+include/battle/eft_rays.h	EftODiscArg	unk8	KEEP	KEEP	padding before the 16-byte aligned dir; eft_disc.h EftDiscArg has no field there
+include/battle/eft_rays.h	EftODisc	unk3AC	KEEP	KEEP	alignment gap after the emitter state; never accessed
+include/battle/eft_ribbon.h	EftAcTex	unk8	image	MEDIUM	eft_detect.h EftTexSetEntry and eft_sprite_anim.h EftAeTex name the pointer at 0x8 image; uncertain because this view declares one u64 covering the pointer and the unknown word
+include/battle/eft_ribbon.h	EftRibbonPrm	unk14	animSplit	HIGH	EftRibbon_Init computes w->unk100 = animTime * prm->unk14 and eft_orb_tail.h EftRbn names 0x100 animSplit (frame of the middle key): the fraction of animTime at the middle key
+include/battle/eft_ribbon.h	EftRibbonArg	unk28	texBase	HIGH	eft_orb_tail.h EftRbnArg names 0x28 texBase and eft_ribbon.c:92-103 uses arg->texBase as the first texture entry of the ribbon
+include/battle/eft_ribbon.h	EftRibbon	unk8	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_ribbon.h	EftRibbon	unkD8	KEEP	KEEP	copy of arg->unk28 (texBase) made at init and overwritten by EftRibbon_SetUnkD8 (no caller); nothing reads it so its own meaning is not shown
+include/battle/eft_ribbon.h	EftRibbon	unk100	animSplit	HIGH	eft_orb_tail.h EftRbn names 0x100 animSplit (frame of the middle key); set to animTime * prm->unk14 in EftRibbon_Init
+include/battle/eft_ribbon.h	EftZapInit	unk38	texIdx	MEDIUM	EftZap_Init passes it as both entries to EftZap_SetTexPair(w, arg.tex, a, b) which makes it the work's texIdx and the index of both table entries; uncertain whether the original meant an image/palette base (eft_emit.h says it comes from EftSetDef.unk3)
+include/battle/eft_ribbon.h	EftZapStrand	unk128	KEEP	KEEP	never accessed here; eft_zap.h also leaves 0x128 unnamed (as f32[2])
+include/battle/eft_ribbon.h	EftZapWork	unk160	delay	HIGH	eft_zap.h EftZap names 0x160 delay (frames, set from a part definition byte); EftZap_Update counts it down to 0
+include/battle/eft_ribbon.h	EftZapWork	unk188	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_ribbon.h	EftZapPool	unk4	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_shot.h	EftScrXyz	unkC	w	MEDIUM	the same projected GS position is declared x, y, z, w in eft_ribbon.h EftAcScr, eft_zap.h EftAdScr and eft_stage_1.h EftBIVec; uncertain because nothing reads the fourth word here
+include/battle/eft_shot.h	EftTexEntry	unk8	image	MEDIUM	eft_detect.h EftTexSetEntry and eft_sprite_anim.h EftAeTex name the pointer at 0x8 image; uncertain because this view declares one u64 covering the pointer and the unknown word
+include/battle/eft_shot.h	EftTexSet	unk204	stepped	HIGH	eft_disc.h EftPTexSet names 0x204 stepped (bit n: entry advanced this frame; eft_disc.c:412-422 uses it so); eft_sprite_anim.h calls the same word kept
+include/battle/eft_shot.h	EftShotDef	unk2	level	HIGH	eft_core.h EftHitDef names 0x02 level and eft_core.c:122 copies def->level to the hit record's level
+include/battle/eft_shot.h	EftShotDef	unk4	cls	MEDIUM	eft_core.h EftHitDef names 0x04 cls (EftHit_IsTechClass) and this struct already has kind at 0x05 like eft_core.h; uncertain because eft_emit.h EftShotParam and eft_obj_tech.h EftKDef call 0x04 kind (0 skill, 1 technique, 2 ultimate as EftShot_BuildParam fills it)
+include/battle/eft_shot.h	EftShotSlot	unk20	chr	HIGH	eft_emit.h EftHSlot and eft_obj_tech.h EftKSrc name 0x20 chr (character index)
+include/battle/eft_shot.h	EftStormBolt	unk28	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_shot.h	EftStorm	unk208	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_shot.h	EftSmokeArg	unk4C	KEEP	KEEP	never read by EftSmoke_Init or its update; the creators in eft_stage_2.c do not name it either
+include/battle/eft_shot.h	EftSmoke	unk4	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_shot.h	EftSmoke	unk64	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_shot.h	EftSmokeMgr	unk4	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_shot.h	EftBoundVtx	unk10	KEEP	KEEP	EftBound_BuildWall fills pos, st and col only; the second vector (a normal by position) is never written or read
+include/battle/eft_shot.h	EftBoundMesh	unk6	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_shot.h	EftBoundMesh	unk24	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_shot.h	EftBoundParam	unk8	KEEP	KEEP	never read
+include/battle/eft_shot.h	EftBoundParam	unk10	KEEP	KEEP	read once in EftBound_Init (work->unk8 = param->unk10 - BtlStage_GetTop()) into a value nothing uses; a height of some kind but which one is not shown
+include/battle/eft_shot.h	EftBoundParam	unk28	KEEP	KEEP	never read
+include/battle/eft_shot.h	EftBoundChar	unk8	KEEP	KEEP	param->unk10 - BtlStage_GetTop(), written at init and only used to compute unkC; never read afterwards
+include/battle/eft_shot.h	EftBoundChar	unkC	KEEP	KEEP	BtlStage_GetBottom() - unk8, written at init and never read
+include/battle/eft_shot.h	EftBoundChar	unk1C	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_shot.h	EftBoundChar	unk850	KEEP	KEEP	a second EftBoundMesh that is cleared, tested and drawn with EftBound_DrawMesh but never activated; what surface it was for (the top/bottom values suggest a ceiling or floor) cannot be told
+include/battle/eft_shot.h	EftBound	unk8	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_shot.h	EftShotChar	unk534	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_shot_fx_particle.h	EftShotFxTex	unk8	image	MEDIUM	eft_detect.h EftTexSetEntry and eft_sprite_anim.h EftAeTex name the pointer at 0x8 image; uncertain because this view declares one u64 covering the pointer and the unknown word
+include/battle/eft_shot_fx_particle.h	EftShotFxWork	unkC	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_shot_fx_particle.h	EftShotFxWork	unk5C	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_shot_fx_particle.h	EftUPtclDef	unk280	angSpin	MEDIUM	eft_particle_unused.h EftPtclDef names the twelve floats angX, angXRange, spinX, spinXRange, angY ... spinZRange and eft_particle.c:1195-1206 reads them so; uncertain only because one array name has to stand for {ang, angRange, spin, spinRange} x 3 axes (better split into the named fields)
+include/battle/eft_shot_fx_particle.h	EftUPtclTex	unk8	image	MEDIUM	eft_detect.h EftTexSetEntry and eft_sprite_anim.h EftAeTex name the pointer at 0x8 image; uncertain because this view declares one u64 covering the pointer and the unknown word
+include/battle/eft_shot_fx_particle.h	EftUPtclRes	unk100	count	MEDIUM	the block is a 16-entry texture set and eft_detect.h EftTexSet16 / eft_sprite_anim.h EftAeTexSet16 name 0x100 count; uncertain because nothing in the particle files reads it
+include/battle/eft_shot_fx_particle.h	EftUPtcl	unk124	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_shot_fx_particle.h	EftUPtclWork	unk1DF	KEEP	KEEP	never accessed; eft_particle_unused.h EftPtclWork leaves it unnamed too
+include/battle/eft_shot_fx_particle.h	EftUPtclWork	unk1EC	KEEP	KEEP	never accessed; eft_particle_unused.h EftPtclWork leaves it unnamed too
+include/battle/eft_shot_fx_particle.h	EftUPtclWork	unk218	KEEP	KEEP	never accessed; eft_particle_unused.h EftPtclWork leaves it unnamed too
+include/battle/eft_shot_fx_particle.h	EftUPtclMgr	unk4C	KEEP	KEEP	never accessed; eft_particle_unused.h leaves it unnamed too
+include/battle/eft_shot_tech.h	EftJTask	unk0	dead	HIGH	eft_obj_tech.h EftKTask names the first byte dead (bit 0 set by BtlTask_SetDead); eft_sprite_anim.h BtlTaskBits has the same bit as dead
+include/battle/eft_shot_tech.h	EftJTask	unk4	flags	HIGH	eft_core.h EftHitTask names 0x04 flags (EFT_TASK_*: 1 hit a fighter, 4 hit the stage) and eft_shot_tech.c:1050/1439/1445 tests exactly those bits
+include/battle/eft_shot_tech.h	EftJTask	unk3C	KEEP	KEEP	last word of the task; never accessed and unnamed in every other task view
+include/battle/eft_shot_tech.h	EftJDef	unk4	cls	MEDIUM	eft_core.h EftHitDef names 0x04 cls and eft_shot.h keeps kind for 0x05; uncertain because eft_emit.h EftShotParam and eft_obj_tech.h EftKDef call 0x04 kind (0 skill, 1 technique, 2 ultimate as EftShot_BuildParam fills it)
+include/battle/eft_shot_tech.h	EftJDef	unk5	kind	MEDIUM	eft_core.h EftHitDef and eft_shot.h EftShotDef name 0x05 kind (0..2, 4, 7, 8, 9 tested by the hit code); uncertain because eft_obj_tech.h calls it sub and eft_emit.h uses kind for 0x04; not read in this file
+include/battle/eft_shot_tech.h	EftJDef	unk6	KEEP	KEEP	unnamed everywhere (eft_core.h: copied to EftHitRec.unk4); not read here
+include/battle/eft_shot_tech.h	EftJDef	unk7	KEEP	KEEP	unnamed everywhere; not read here
+include/battle/eft_shot_tech.h	EftJDef	unk40	KEEP	KEEP	not read here; eft_core.h EftHitDef splits these four bytes into s16 impactFx (0x40) and s16 groundFx (0x42) so one s32 name would be wrong
+include/battle/eft_shot_tech.h	EftJDef	unk46	KEEP	KEEP	unnamed in eft_emit.h EftShotParam too; not read here
+include/battle/eft_shot_tech.h	EftJSrc	unk4	slot	HIGH	eft_core.h EftHitSrc, eft_obj_tech.h EftKSrc and eft_emit.h EftHStartArg name 0x04 slot (technique slot 0..4)
+include/battle/eft_shot_tech.h	EftJSrc	unk8	KEEP	KEEP	unnamed everywhere (eft_core.h: copied to EftHitRec.unkF0); not read here
+include/battle/eft_shot_tech.h	EftJPart	unk9	KEEP	KEEP	unnamed in eft_sweep.h EftEmitDef too; not read here
+include/battle/eft_shot_tech.h	EftJGroup	unk4	KEEP	KEEP	unnamed in eft_sweep.h EftEmitGroup too; not read here
+include/battle/eft_shot_tech.h	EftJSet	unk4	KEEP	KEEP	unnamed in eft_sweep.h EftEmitSet too; not read here
+include/battle/eft_shot_tech.h	EftJPieceArg	unk3C	grow	HIGH	0x3C: eft_disc.h EftDiscArg and eft_rays.h EftODiscArg (the same block, passed to EftDisc_Create) name it so (seconds to reach full size)
+include/battle/eft_shot_tech.h	EftJPieceArg	unk40	fade	HIGH	0x40: eft_disc.h EftDiscArg and eft_rays.h EftODiscArg (the same block, passed to EftDisc_Create) name it so (fraction of the life after which it fades out)
+include/battle/eft_shot_tech.h	EftJPieceArg	unk48	bank	HIGH	0x48: eft_disc.h EftDiscArg and eft_rays.h EftODiscArg (the same block, passed to EftDisc_Create) name it so
+include/battle/eft_shot_tech.h	EftJPieceArg	unk4C	roll	HIGH	0x4C: eft_disc.h EftDiscArg and eft_rays.h EftODiscArg (the same block, passed to EftDisc_Create) name it so (in turns; EftMulti_FirePiece stores atan2 / 2 pi)
+include/battle/eft_shot_tech.h	EftJPieceArg	unk50	rollTime	HIGH	0x50: eft_disc.h EftDiscArg and eft_rays.h EftODiscArg (the same block, passed to EftDisc_Create) name it so
+include/battle/eft_shot_tech.h	EftJPieceArg	unk54	texA	HIGH	0x54: eft_disc.h EftDiscArg and eft_rays.h EftODiscArg (the same block, passed to EftDisc_Create) name it so
+include/battle/eft_shot_tech.h	EftJPieceArg	unk55	texB	HIGH	0x55: eft_disc.h EftDiscArg and eft_rays.h EftODiscArg (the same block, passed to EftDisc_Create) name it so
+include/battle/eft_shot_tech.h	EftJPieceArg	unk57	kind	HIGH	0x57: eft_disc.h EftDiscArg and eft_rays.h EftODiscArg (the same block, passed to EftDisc_Create) name it so (2 held technique piece, 4 technique piece: the two values EftMulti_FirePiece writes)
+include/battle/eft_shot_tech.h	EftJPieceArg	unk58	lastHit	HIGH	0x58: eft_disc.h EftDiscArg and eft_rays.h EftODiscArg (the same block, passed to EftDisc_Create) name it so
+include/battle/eft_shot_tech.h	EftJPieceArg	unk5C	hand	HIGH	0x5C: eft_disc.h EftDiscArg and eft_rays.h EftODiscArg (the same block, passed to EftDisc_Create) name it so (EftMulti_FirePiece alternates it with the piece count)
+include/battle/eft_shot_tech.h	EftMultiMgr	unk20C	texStepped	HIGH	the texture set starts at 0x008 so 0x20C is its word 0x204, named stepped in eft_disc.h; EftMultiMgr_Update zeroes it every frame like the other managers do
+include/battle/eft_shot_tech.h	EftMulti	unkC	baseScale	MEDIUM	set to def->scale at init and copied to unk14; by position it is what EftBlast calls scale (target scale) but this struct already has scale for the drawn one; uncertain because nothing reads it later
+include/battle/eft_shot_tech.h	EftMulti	unk14	radius	MEDIUM	set from the definition scale right after scale just as EftPropShot.radius / EftBlast.radius are; uncertain because this module adds no hit shapes and never reads it
+include/battle/eft_shot_tech.h	EftMulti	unk18	releaseScale	HIGH	set per effect id (4, 1, 5) when a piece is fired and passed to EftDisc_SetScale(p->h, w->unk18) when the piece is released
+include/battle/eft_shot_tech.h	EftMulti	unk1C	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_shot_tech.h	EftMulti	unk40	fireHandPos	MEDIUM	position of fighter node 0x15 sampled on the fire request; the piece's roll comes from unk40 - unk50; uncertain that node 0x15 is the hand (the disc comments say so)
+include/battle/eft_shot_tech.h	EftMulti	unk50	releaseHandPos	MEDIUM	position of fighter node 0x15 sampled on the release request; subtracted from unk40 to get the throw's roll; same uncertainty about the node
+include/battle/eft_shot_tech.h	EftMulti	unk60	origin	HIGH	same sequence as EftBlast / EftPropShot (Vec4_Copy(origin, muzzle), Vec4_Copy(head, origin)) and same place just before head
+include/battle/eft_shot_tech.h	EftMulti	unk80	tail	HIGH	same as EftBlast / EftPropShot tail: filled from fighter node 0x11 when fired, follows head, and moved by the same delta as head in the post-update
+include/battle/eft_shot_tech.h	EftMulti	unk390	KEEP	KEEP	four node vectors filled by EftEmit_UpdateNodesReq; [0] is what EftBlast / EftPropShot call hand (given to EftAim_GetDir) and [1..3] are unknown so one name for the array would be wrong (needs a split)
+include/battle/eft_shot_tech.h	EftMulti	unk3D0	muzzle	HIGH	seventh vector of the node block that EftBlast / EftPropShot name muzzle; used the same way (piece position and origin are copied from it)
+include/battle/eft_shot_tech.h	EftMulti	unk618	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_shot_tech.h	EftProp	unk6C	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_shot_tech.h	EftPropShotMgr	unk0	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_shot_tech.h	EftPropShot	unk8	baseScale	MEDIUM	set to def->scale at init and copied to radius; by position it is what EftBlast calls scale (target scale) but this struct already has scale at 0x0C; uncertain because nothing reads it later
+include/battle/eft_shot_tech.h	EftPropShot	unk14	KEEP	KEEP	never accessed (EftBlast has the charge ratio at this offset but nothing shows that here)
+include/battle/eft_shot_tech.h	EftPropShot	unk380	KEEP	KEEP	node vectors between hand and muzzle; never read individually
+include/battle/eft_shot_tech.h	EftJHitRec	unk4	KEEP	KEEP	three words that eft_core.h EftHitRec names unk4, level and type; this file never writes them and one array name would be wrong
+include/battle/eft_shot_tech.h	EftBlastMgr	unk0	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_shot_tech.h	EftBlast	unk390	KEEP	KEEP	node vectors between hand and muzzle; never read individually
+include/battle/eft_shot_tech.h	EftJShotModel	unk36	KEEP	KEEP	only ever set to -1 (here and in eft_obj_tech.c); eft_rays.h EftBlastObjModel has an animation step at 0x36 of a similar block but nothing shows this one is used that way
+include/battle/eft_shot_tech.h	EftJShotModel	unk37	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_shot_tech.h	EftJShotSlot	unk14	KEEP	KEEP	never accessed in this file
+include/battle/eft_shot_tech.h	EftJShotSlot	unk1C	KEEP	KEEP	never accessed in this file
+include/battle/eft_shot_tech.h	EftJShotTech	unk5A0	origin	HIGH	first of the four hit pose vectors (origin, pos, prev, vel as in EftJHitRec of this header; start in eft_rays.h EftOHitPose): EftShotTech_Start copies start into it and it into pos; start is already taken at 0x550
+include/battle/eft_shot_tech.h	EftJShotArg	unk24	life	HIGH	the block is the argument of EftBlastObj_Create and eft_rays.h EftBlastObjArg names 0x24 life (seconds; 0 = until stopped)
+include/battle/eft_shot_tech.h	EftJFlashArg	unk10	in	HIGH	0x10: eft_trail.h EftFlashArg (argument of EftFlash_Start) names it so (seconds to fade in; 0.5 here)
+include/battle/eft_shot_tech.h	EftJFlashArg	unk14	hold	HIGH	0x14: eft_trail.h EftFlashArg (argument of EftFlash_Start) names it so (seconds to hold; note it is f32 there and s32 0 in this view)
+include/battle/eft_shot_tech.h	EftJFlashArg	unk18	out	HIGH	0x18: eft_trail.h EftFlashArg (argument of EftFlash_Start) names it so (seconds to fade out; 1.0 here)
+include/battle/eft_shot_tech.h	EftJFlashArg	unk20	wait	HIGH	0x20: eft_trail.h EftFlashArg (argument of EftFlash_Start) names it so (1: hold until the rush finish reaches state 2; set for effect id 0x27C)
+include/battle/eft_sprite_anim.h	BtlTask	unk8	result	HIGH	eft_core.h EftHitTask names 0x08 result (EftHit_CalcResult, written every frame by EftHit_UpdateResults) and eft_rays.h EftOTask agrees; BtlTask_Init clears it
+include/battle/eft_sprite_anim.h	BtlTask	unkA	countA	MEDIUM	eft_core.h EftHitTask names 0x0A countA (EftHit_IncCountA / SetCountA / GetCountA); uncertain because that name is itself a placeholder for a counter whose meaning is not known
+include/battle/eft_sprite_anim.h	BtlTask	unkB	hitCount	HIGH	eft_core.h EftHitTask names 0x0B hitCount (EftHit_IncHitCount / GetHitCount: hits landed by a multi-hit technique); BtlTask_Init clears it
+include/battle/eft_sprite_anim.h	BtlTask	unkC	KEEP	KEEP	never accessed; unnamed in every task view
+include/battle/eft_sprite_anim.h	BtlTask	unk3C	KEEP	KEEP	never accessed; unnamed in every task view
+include/battle/eft_sprite_anim.h	EftAeTex	unkC	KEEP	KEEP	never accessed; unnamed in eft_detect.h and eft_stage_1.h too
+include/battle/eft_sprite_anim.h	EftAeTexPack	unk4	KEEP	KEEP	header words between count and images that the loader never reads
+include/battle/eft_sprite_anim.h	EftSprKey	unk38	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_sprite_anim.h	EftSprLayerDef	unk1	KEEP	KEEP	never read by the player
+include/battle/eft_sprite_anim.h	EftSprLayer	unk54	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_sprite_anim.h	EftSprSlot	unk608	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word
+include/battle/eft_stage_1.h	EftBTask	unk3C	KEEP	KEEP	last word of the task; never accessed and unnamed in every other task view
+include/battle/eft_stage_1.h	EftBTex	unkC	KEEP	KEEP	never accessed; unnamed in eft_detect.h and eft_sprite_anim.h too
+include/battle/eft_stage_1.h	EftBTexSet	unk204	stepped	HIGH	eft_disc.h EftPTexSet names 0x204 stepped (bit n: entry advanced this frame); eft_sprite_anim.h calls the same word kept
+include/battle/eft_stage_1.h	EftBubbleChr	unk4	KEEP	KEEP	only zeroed in EftBubble_StartBurst; never read
+include/battle/eft_stage_1.h	EftStageScroll	unk2B8	KEEP	KEEP	second integer of the stage file's scroll block stored as a float; never read
+include/battle/eft_stage_1.h	EftGeyserParam	unk48	KEEP	KEEP	set to 1.0 by the manager and never read
+include/battle/eft_stage_1.h	EftGeyserParam	unk4C	KEEP	KEEP	set to 1.0 by the manager and never read
+include/battle/eft_stage_1.h	EftGeyserMgr	unk4	KEEP	KEEP	no code in the including sources reads or writes it; looks like padding or an untouched word

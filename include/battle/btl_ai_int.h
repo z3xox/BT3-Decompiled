@@ -14,15 +14,15 @@ extern s32 gBtlAiCondFuncIndex[]; /* rule condition id -> index of the condition
 /* Part of the fighter data that BtlCharApi_GetMoveTable returns. */
 typedef struct BtlAiChrMoves {
     /* 0x00 */ u8 unk0[0x10];
-    /* 0x10 */ s16 unk10[0x47];
-    /* 0x9E */ s8 unk9E[2];
+    /* 0x10 */ s16 id[0x47];
+    /* 0x9E */ s8 kind[2];
 } BtlAiChrMoves;
 
 /* Part of the fighter data that BtlCharApi_GetSkillTable returns. */
 typedef struct BtlAiChrSkills {
     /* 0x000 */ u8 unk0[0x13E];
-    /* 0x13E */ s8 unk13E[0x27];
-    /* 0x165 */ s8 unk165[0x37];
+    /* 0x13E */ s8 type[0x27];
+    /* 0x165 */ s8 kind[0x37];
     /* 0x19C */ s32 cost[1];
 } BtlAiChrSkills;
 

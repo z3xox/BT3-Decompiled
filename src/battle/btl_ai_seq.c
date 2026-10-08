@@ -357,10 +357,10 @@ void BtlAiSeq_PhaseStart(BtlAiWork *ai) {
     seq->phase = 2;
     if (top->id == 10) {
         if (seq->step == 0) {
-            *(f32 *)&status->unk24 = gBtlAi->dist;
+            *(f32 *)&status->act10Dist = gBtlAi->dist;
         }
     } else {
-        *(f32 *)&status->unk24 = 0.0f;
+        *(f32 *)&status->act10Dist = 0.0f;
     }
     BtlAiSeq_PhaseRun(ai);
 }
@@ -572,10 +572,10 @@ s32 BtlAiPick_KiTarget(BtlAiWork *ai, s32 n, s32 arg) {
         seq->timer = 101;
         break;
     case 2:
-        seq->timer = ai->unk10[1];
+        seq->timer = ai->costRange[1];
         break;
     case 3:
-        seq->timer = ai->unk10[0];
+        seq->timer = ai->costRange[0];
         break;
     }
     return 0;
@@ -1289,10 +1289,10 @@ s32 BtlAiStep_ReachClassMoveSlot(BtlAiWork *ai) {
     if (busy != 0) {
         return 1;
     }
-    if (p->unk9E[step] == 4) {
+    if (p->kind[step] == 4) {
         seq->flags |= 0x400;
     }
-    switch (p->unk10[step]) {
+    switch (p->id[step]) {
     case 0xC:
     case 0x33:
     case 0x37:
@@ -1369,8 +1369,8 @@ s32 BtlAiStep_FireSkill(BtlAiWork *ai) {
         if (*top == 0x3F) {
             return 1;
         }
-        seq->unk58 = 0;
-        if (!(p->unk165[plan->unk8] == 5 && BtlChar_IsStage4Or27() != 0)) {
+        seq->waitTimer = 0;
+        if (!(p->kind[plan->unk8] == 5 && BtlChar_IsStage4Or27() != 0)) {
             goto tail;
         }
         if (cls[0] != 0x16) {
@@ -1384,7 +1384,7 @@ s32 BtlAiStep_FireSkill(BtlAiWork *ai) {
     }
     return 0;
 tail:
-    kind = p->unk13E[plan->unk8];
+    kind = p->type[plan->unk8];
     if (kind == 2) {
         if (cls[0] != 0x16) {
             return 1;
@@ -1510,7 +1510,7 @@ s32 BtlAiStep_Unk23(BtlAiWork *ai) {
     if (BtlChar_IsStage4Or27() == 0) {
         return 1;
     }
-    switch (seq->unk7C) {
+    switch (seq->prevId) {
     case 0x32:
         n = 7;
         break;
@@ -1542,7 +1542,7 @@ s32 BtlAiStep_Unk23(BtlAiWork *ai) {
     default:
         return 0;
     }
-    if (p->unk165[BtlCharApi_GetParamByte8F(ai->objId, n)] != 5) {
+    if (p->kind[BtlCharApi_GetParamByte8F(ai->objId, n)] != 5) {
         return 1;
     }
     seq->step = 0;

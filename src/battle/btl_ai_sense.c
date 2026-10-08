@@ -1030,7 +1030,7 @@ s32 BtlAiSense_CheckAct10(AiActSide *s) {
     if (s->act.depth == 0 || e->id != 10) {
         return 0;
     }
-    if (st->unk24 * 0.5f > gBtlAi->dist) {
+    if (st->act10Dist * 0.5f > gBtlAi->dist) {
         if (gBtlAi->dist > m->dist[1]) {
             return 2;
         }
