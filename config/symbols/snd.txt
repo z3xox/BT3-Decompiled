@@ -39,7 +39,7 @@ Vu1Node_Draw = 0x00123C48; // type:func // guess
 // 0x123F48(fno, data, size): FlushCache(0), sceSifCallRpc(&gSndRpc->client, fno, 0, data, size, gSndRpc, 0x40, 0, 0),
 // returns gSndRpc->reply[0]. Every stub below ends in it.
 Snd_RpcCall = 0x00123F48; // type:func
-// 0x123FC0: func_002B4AF0(&gSndRpc->client), which is sceSifCheckStatRpc by its body. No callers.
+// 0x123FC0: sceSifCheckStatRpc(&gSndRpc->client), which is sceSifCheckStatRpc by its body. No callers.
 Snd_RpcIsBusy = 0x00123FC0; // type:func
 // One stub per function number; the number is the evidence, the meaning comes from the arguments and callers.
 // 1: only from Snd_Term. 2: only from Snd_Reset, after clearing the queue.
@@ -68,7 +68,7 @@ Snd_QueueStopId = 0x001241F0; // type:func // guess
 Snd_QueueStopHandle = 0x00124248; // type:func // guess
 // 0x1242F0: RPC 9, then (queue not empty) copies the 0x184-byte queue to the send buffer and sends RPC 0xD, then clears it.
 Snd_RpcFlush = 0x001242F0; // type:func
-// func_002967C0(1, cmd, ...) is libsdr's sceSdRemote: 0x80D0 = rSdVoiceTrans(1, 0, iopAddr, spuAddr, size),
+// sceSdRemote(1, cmd, ...) is libsdr's sceSdRemote: 0x80D0 = rSdVoiceTrans(1, 0, iopAddr, spuAddr, size),
 // 0x80F0 = rSdVoiceTransStatus(1, 1 wait / 0 check).
 Snd_SpuTransfer = 0x001244F0; // type:func
 Snd_SpuTransferWait = 0x00124520; // type:func

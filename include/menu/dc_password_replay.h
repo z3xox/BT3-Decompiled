@@ -30,7 +30,7 @@ extern void Flash_ClipSetCallbackA(MFlash *flash, MFlashRef *ref, void *fn, void
 extern void Flash_ClipSetCallbackB(MFlash *flash, MFlashRef *ref, void *fn, void *arg);
 extern void Sprite_SetScissor(s32 x0, s32 x1, s32 y0, s32 y1);
 extern void TextBox_Init(MTextBox *box, void *text, u32 preset);
-extern void TextBox_SetUnk80(MTextBox *box, s32 value);
+extern void TextBox_SetNoFlush(MTextBox *box, s32 value);
 extern void TextBox_SetRect(MTextBox *box, s32 x0, s32 x1, s32 y0, s32 y1);
 extern void TextBox_AttachLine(MFlash *flash, MFlashRef *ref, s32 x, s32 y, s32 line, MTextBox *box);
 extern s32 Dialog_Input(s32 allowCancel);

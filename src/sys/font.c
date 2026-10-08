@@ -1274,8 +1274,8 @@ extern s32 gFontIconFrame;     /* animation clock */
 extern s32 gFontIconTick;      /* counts calls at 60 Hz so the clock runs at 30 Hz */
 extern FontIconEntry *gFontIconTables[FONT_ICON_PAD_TYPES];
 extern FontTagDef gFontTags[4];
-extern u16 D_002C6428[]; /* "DEF" */
-extern FontIconDef D_002C6838[];
+extern u16 gFontColorDefWord[]; /* "DEF" */
+extern FontIconDef gFontIconDefs[];
 
 s32 FontIcon_IsOnScreen(s32 x0, s32 y0, s32 x1, s32 y1);
 FontIconEntry *FontIcon_Find(u16 *str, s32 padType);
@@ -1680,7 +1680,7 @@ void FontTag_Color(FontTagDef *def, u64 **pkt, FontCmd *cmd, FontCmd *saved, s32
     s32 i;
     u16 ch;
 
-    if (FontTag_Match(s, D_002C6428, 3)) {
+    if (FontTag_Match(s, gFontColorDefWord, 3)) {
         color = saved->color;
         s = p + 5;
     } else {
@@ -1736,7 +1736,7 @@ FontIconRes *FontIcon_GetRes(void) {
 
 /* The icon definitions. */
 FontIconDef *FontIcon_GetDefs(void) {
-    return D_002C6838;
+    return gFontIconDefs;
 }
 
 /* Restarts the icon animation clock. */

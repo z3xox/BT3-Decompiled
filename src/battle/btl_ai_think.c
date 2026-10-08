@@ -12,25 +12,25 @@
  */
 
 /* The object's file-scope tables, 0x2EDA70..0x2EDF08: they come before all of its function-local data, so they
- * were defined at the top of the source file. D_002EDA70 maps a rule condition id to the index of its condition
+ * were defined at the top of the source file. gBtlAiCondFuncIndex maps a rule condition id to the index of its condition
  * function; the others are column tables read by the rule evaluator further on in the object (not decompiled
  * here). Kept as assembly data until that code is. */
-INCLUDE_RODATA("asm/nonmatchings/battle/btl_ai_think", D_002EDA70);
-INCLUDE_RODATA("asm/nonmatchings/battle/btl_ai_think", D_002EDC70);
-INCLUDE_RODATA("asm/nonmatchings/battle/btl_ai_think", D_002EDCE0);
-INCLUDE_RODATA("asm/nonmatchings/battle/btl_ai_think", D_002EDD50);
-INCLUDE_RODATA("asm/nonmatchings/battle/btl_ai_think", D_002EDDC0);
-INCLUDE_RODATA("asm/nonmatchings/battle/btl_ai_think", D_002EDDD8);
-INCLUDE_RODATA("asm/nonmatchings/battle/btl_ai_think", D_002EDE10);
-INCLUDE_RODATA("asm/nonmatchings/battle/btl_ai_think", D_002EDEB0);
-INCLUDE_RODATA("asm/nonmatchings/battle/btl_ai_think", D_002EDEE8);
+INCLUDE_RODATA("asm/nonmatchings/battle/btl_ai_think", gBtlAiCondFuncIndex);
+INCLUDE_RODATA("asm/nonmatchings/battle/btl_ai_think", gBtlAiRateColsBasic);
+INCLUDE_RODATA("asm/nonmatchings/battle/btl_ai_think", gBtlAiRateColsA);
+INCLUDE_RODATA("asm/nonmatchings/battle/btl_ai_think", gBtlAiRateColsB);
+INCLUDE_RODATA("asm/nonmatchings/battle/btl_ai_think", gBtlAiRateColsAct);
+INCLUDE_RODATA("asm/nonmatchings/battle/btl_ai_think", gBtlAiRateColsC);
+INCLUDE_RODATA("asm/nonmatchings/battle/btl_ai_think", gBtlAiRateColsD);
+INCLUDE_RODATA("asm/nonmatchings/battle/btl_ai_think", gBtlAiRateColsE);
+INCLUDE_RODATA("asm/nonmatchings/battle/btl_ai_think", gBtlAiRateColsF);
 
 /* ---- Second object: helpers, rule conditions (table at 0x2C4768, same order), rate getters. ---- */
 
 /* Records the opponent's current action and its class, and raises reaction bits. */
 void BtlAi_NoteOpponent(BtlAiWork *ai, s32 react) {
     BtlAiActTable *act = gBtlAi->data->act;
-    s32 action = BtlCharApi_GetUnk974(ai->objId ^ 1);
+    s32 action = BtlCharApi_GetAnimId(ai->objId ^ 1);
     BtlAiStatus *st = &ai->status;
     s32 cls = act->actClass[action];
 
@@ -128,7 +128,7 @@ s32 BtlAiCond_Unk11(BtlAiWork *ai, u8 arg) {
 }
 
 /* Condition 12: BtlCharApi_TestOppSkillFlags equals arg. */
-s32 BtlAiCond_Unk12(BtlAiWork *ai, u8 arg) {
+s32 BtlAiCond_OppSkillFlags(BtlAiWork *ai, u8 arg) {
     return BtlCharApi_TestOppSkillFlags(ai->objId) == arg;
 }
 
@@ -176,7 +176,7 @@ s32 BtlAiCond_LevelBelowDummy(BtlAiWork *ai, u8 arg) {
 /* Helper of condition 20: 75% chance to react to an opponent action of class 1..7, 22 or 23. */
 s32 BtlAiCond_GuardRoll(BtlAiWork *ai) {
     BtlAiStatus *st = &ai->status;
-    s8 cls = gBtlAi->data->act->actClass[BtlCharApi_GetUnk974(ai->objId ^ 1)];
+    s8 cls = gBtlAi->data->act->actClass[BtlCharApi_GetAnimId(ai->objId ^ 1)];
     s32 roll = Rand_Range(100);
 
     if (!((u32)(cls - 1) < 7) && cls != 0x16 && cls != 0x17) {
@@ -201,7 +201,7 @@ s32 BtlAiCond_React(BtlAiWork *ai, u8 arg) {
     s32 blastC[5] = { 0, 2, 3, 4, 5 };
     s32 step = LEVEL_IDX(ai);
     s32 roll = Rand_Range(100);
-    s32 action = BtlCharApi_GetUnk974(ai->objId ^ 1);
+    s32 action = BtlCharApi_GetAnimId(ai->objId ^ 1);
     s32 chance;
 
     switch (arg) {
@@ -260,7 +260,7 @@ s32 BtlAiCond_React40000(BtlAiWork *ai, u8 arg) {
 }
 
 /* Condition 24: BtlCharApi_HasBlastLimit equals arg. */
-s32 BtlAiCond_Unk24(BtlAiWork *ai, u8 arg) {
+s32 BtlAiCond_HasBlastLimit(BtlAiWork *ai, u8 arg) {
     return BtlCharApi_HasBlastLimit(ai->objId) == arg;
 }
 
@@ -286,7 +286,7 @@ s32 BtlAiCond_Rate5(BtlAiWork *ai, u8 arg) {
     s8 *hi = (s8 *)ai->param + 0x100;
     s32 roll = Rand_Range(100);
     s32 chance = RATE(ai, lo, hi, 5);
-    s32 a = BtlCharApi_GetParamUnk14(ai->objId);
+    s32 a = BtlCharApi_GetParamFlags2(ai->objId);
     s32 b = BtlCharApi_GetParamFlags(ai->objId);
 
     if (!(a & 0x20) && !(b & 2)) {
@@ -296,7 +296,7 @@ s32 BtlAiCond_Rate5(BtlAiWork *ai, u8 arg) {
 }
 
 /* Condition 27: BtlCharApi_FindIncomingBlast(1) is 2 (only with arg 1). */
-s32 BtlAiCond_Unk27(BtlAiWork *ai, u8 arg) {
+s32 BtlAiCond_IncomingBlastClass2(BtlAiWork *ai, u8 arg) {
     if (BtlCharApi_FindIncomingBlast(ai->objId, 1) == 2 && arg == 1) {
         return 1;
     }
@@ -344,7 +344,7 @@ s32 BtlAiCond_Rate4(BtlAiWork *ai, u8 arg) {
 /* Condition 31: AI-type rate chosen by which of the opponent actions 0x37..0x3A / 0x3C..0x3F is running. */
 s32 BtlAiCond_TypeRateByOppAction(BtlAiWork *ai, u8 arg) {
     BtlAiSeq *seq = &ai->seq;
-    s32 action = BtlCharApi_GetUnk974(ai->objId ^ 1);
+    s32 action = BtlCharApi_GetAnimId(ai->objId ^ 1);
     u8 *prof = gBtlAi->data->profile[ai->type];
     s8 *lo = (s8 *)prof + 0x2A8;
     s8 *hi = (s8 *)prof + 0x568;
@@ -385,7 +385,7 @@ s32 BtlAiCond_Rate8(BtlAiWork *ai, u8 arg) {
     s8 *hi = (s8 *)ai->param + 0x100;
     s32 roll = Rand_Range(100);
     s32 chance = RATE(ai, lo, hi, 8);
-    s32 force = BtlCharApi_GetUnk1290(ai->objId);
+    s32 force = BtlCharApi_GetStoryAiForce(ai->objId);
 
     if (arg == 0) {
         st->timer18 = 90;
@@ -569,7 +569,7 @@ s32 BtlAi_GetPairRate(BtlAiWork *ai, u32 kind, s32 off, s8 *base_lo, s8 *base_hi
     if (byGauge == 1) {
         BtlAi_ScaleByGauge(ai, &lo, &hi);
     }
-    if (D_002EDA70[plan->cond] == 0x26) {
+    if (gBtlAiCondFuncIndex[plan->cond] == 0x26) {
         f32 k = BtlAi_GetLowGaugeFactor(ai);
 
         lo = (s32)((f32)lo * k);
@@ -684,8 +684,8 @@ s32 BtlAi_GetQuadRate(BtlAiWork *ai, u32 kind, s32 off, s8 *base_lo, s8 *base_hi
  * CPU opponent: weighted rule conditions (functions 35..117 of the condition table at 0x2C4768), the rule
  * evaluator, the thinker, and the binding of the AI data and of one side. 0x1B80F8..0x1BB128.
  *
- * Same object as the code above: it uses the file-scope tables at the top of the file (D_002EDA70 ..
- * D_002EDEE8; AiThink_FindWeightColumn only assembles as in the original when they are defined in its file) and
+ * Same object as the code above: it uses the file-scope tables at the top of the file (gBtlAiCondFuncIndex ..
+ * gBtlAiRateColsF; AiThink_FindWeightColumn only assembles as in the original when they are defined in its file) and
  * its function-local constants continue the same .rodata (0x2EE020 .. 0x2EE248).
  *
  * One frame of thinking (AiThink_Think, called by BtlAiMgr_Update after sense 0x1BFF70):
@@ -705,29 +705,29 @@ s32 BtlAi_GetQuadRate(BtlAiWork *ai, u32 kind, s32 off, s8 *base_lo, s8 *base_hi
  * them is always taken. The first rule that passes ends the evaluation: kind 0 does nothing, kind 4 sets
  * plan.next, any other kind pushes up to four actions (BtlAiSeq_PushRule).
  *
- * Condition ids: the byte in the rule is an id; D_002EDA70[id] is the index into the function table. The
+ * Condition ids: the byte in the rule is an id; gBtlAiCondFuncIndex[id] is the index into the function table. The
  * weighted conditions do not look at their argument byte: they identify themselves by plan.cond (the id) and
  * look up their column in the weight table of the list in hand.
  */
 
-extern s32 D_002EDA70[];       /* rule condition id -> index into the condition function table */
-extern AiThCondFunc D_002C4768[]; /* condition function table */
-extern u8 D_002EDC70[];        /* [14][8] condition code (id - 35) of each column of AiThRates.basic */
-extern u8 D_002EDCE0[];        /* [14][8] condition code (id - 40) of each column of tblA */
-extern u8 D_002EDD50[];        /* [14][8] ... of tblB */
-extern u8 D_002EDDC0[];        /* [24] condition code (id - 40) of each byte of AiThRates.act */
-extern u8 D_002EDDD8[];        /* [14][4] ... of tblC */
-extern u8 D_002EDE10[];        /* [20][8] ... of tblD */
-extern u8 D_002EDEB0[];        /* [14][4] ... of tblE */
-extern u8 D_002EDEE8[];        /* [4][8] ... of tblF */
+extern s32 gBtlAiCondFuncIndex[];       /* rule condition id -> index into the condition function table */
+extern AiThCondFunc gBtlAiCondFuncs[]; /* condition function table */
+extern u8 gBtlAiRateColsBasic[];        /* [14][8] condition code (id - 35) of each column of AiThRates.basic */
+extern u8 gBtlAiRateColsA[];        /* [14][8] condition code (id - 40) of each column of tblA */
+extern u8 gBtlAiRateColsB[];        /* [14][8] ... of tblB */
+extern u8 gBtlAiRateColsAct[];        /* [24] condition code (id - 40) of each byte of AiThRates.act */
+extern u8 gBtlAiRateColsC[];        /* [14][4] ... of tblC */
+extern u8 gBtlAiRateColsD[];        /* [20][8] ... of tblD */
+extern u8 gBtlAiRateColsE[];        /* [14][4] ... of tblE */
+extern u8 gBtlAiRateColsF[];        /* [4][8] ... of tblF */
 
 extern void *memset(void *dst, s32 c, u32 n);
 extern char *strcpy(char *dst, const char *src);
 extern AiThObj *BtlObj_Get(s32 id);
 extern s32 BtlChar_IsStage4Or27(void);
-extern s32 BtlCharApi_GetUnk974(s32 objId);
+extern s32 BtlCharApi_GetAnimId(s32 objId);
 extern s32 BtlCharApi_TestFlag05(s32 objId);
-extern u64 BtlCharApi_GetUnk1288(s32 objId);
+extern u64 BtlCharApi_GetActionBits(s32 objId);
 extern s32 BtlAi_ScaleByLevel(s32 level, s32 lo, s32 hi);
 extern void BtlAiMgr_SetType(s32 side, s32 aiType);
 extern void BtlAiMgr_SetLevel(s32 side, s32 cpuLevel);
@@ -742,15 +742,15 @@ extern s32 BtlCharApi_GetHp(s32 objId);
 extern s32 BtlCharApi_HasParamBit80(s32 objId);
 extern s32 BtlCharApi_GetCpuLevel(s32 objId);
 extern s32 BtlCharApi_GetAiType(s32 objId);
-extern s32 BtlCharApi_GetParamUnk14(s32 objId);
-extern s32 BtlCharApi_GetParamUnk18(s32 objId);
+extern s32 BtlCharApi_GetParamFlags2(s32 objId);
+extern s32 BtlCharApi_GetParamFlags3(s32 objId);
 extern s32 BtlCharApi_GetOppSkillClass(s32 objId);
 extern s32 BtlCharApi_IsMoveFlag100(s32 objId, s32 slot);
 extern s32 BtlCharApi_GetStunTimer(s32 objId);
 extern s32 BtlCharApi_IsAnimFlag2800(s32 objId);
 extern s32 BtlCharApi_TestPoseBit80(s32 objId, s32 arg);
 extern s32 BtlCharApi_TestFlag98(s32 objId);
-extern s32 BtlCharApi_GetUnkE40(s32 objId);
+extern s32 BtlCharApi_GetTechniqueCooldown(s32 objId);
 extern s32 BtlSide_GetKi(s32 objId);
 extern s32 BtlSide_GetBlast(s32 objId);
 extern s32 BtlSide_IsPoweredUp(s32 objId);
@@ -922,7 +922,7 @@ s32 AiThink_FindBasicColumn(s32 cls, s32 code) {
     if (cls == 14) {
         return -2;
     }
-    p = &D_002EDC70[cls * 8];
+    p = &gBtlAiRateColsBasic[cls * 8];
     if (code < 0) {
         return -1;
     }
@@ -985,22 +985,22 @@ s32 AiThink_FindWeightColumn(AiThPlan *plan) {
 
         switch (plan->next) {
         case 0:
-            v = D_002EDCE0[i + plan->cls * 8];
+            v = gBtlAiRateColsA[i + plan->cls * 8];
             break;
         case 1:
-            v = D_002EDD50[i + plan->cls * 8];
+            v = gBtlAiRateColsB[i + plan->cls * 8];
             break;
         case 2:
-            v = D_002EDDD8[i + plan->cls * 4];
+            v = gBtlAiRateColsC[i + plan->cls * 4];
             break;
         case 3:
-            v = D_002EDE10[i + plan->sub * 8];
+            v = gBtlAiRateColsD[i + plan->sub * 8];
             break;
         case 4:
-            v = D_002EDEB0[i + plan->cls * 4];
+            v = gBtlAiRateColsE[i + plan->cls * 4];
             break;
         case 5:
-            v = D_002EDEE8[i + plan->sub * 8];
+            v = gBtlAiRateColsF[i + plan->sub * 8];
             break;
         default:
             return -1;
@@ -1020,7 +1020,7 @@ s32 AiThink_TestWeighted(AiThWork *ai, s32 byGauge) {
     AiThSeq *seq = &ai->seq;
     u8 *prof = PROFILE(ai);
     AiThRoll *r = &plan->rolls[plan->condNo];
-    s32 fn = D_002EDA70[plan->cond];
+    s32 fn = gBtlAiCondFuncIndex[plan->cond];
     AiThChrSkills *skills = BtlCharApi_GetSkillTable(ai->objId);
     s32 dist = BtlCharApi_GetHp(ai->objId);
     s32 near = BtlAi_ScaleByLevel(ai->level, prof[0x2AE], prof[0x56E]);
@@ -1198,12 +1198,12 @@ s32 AiThink_TestSkill(AiThWork *ai) {
     dist = BtlCharApi_GetHp(ai->objId);
     oppSlot = BtlCharApi_GetOppSkillClass(ai->objId);
     opp = BtlCharApi_GetSkillTable(ai->objId ^ 1);
-    if (BtlCharApi_GetUnkE40(ai->objId) != 0) {
+    if (BtlCharApi_GetTechniqueCooldown(ai->objId) != 0) {
         return 0;
     }
-    if (D_002EDA70[plan->cond] == 0x6B) {
+    if (gBtlAiCondFuncIndex[plan->cond] == 0x6B) {
         anyBasic = 1;
-    } else if (D_002EDA70[plan->cond] == 0x6A) {
+    } else if (gBtlAiCondFuncIndex[plan->cond] == 0x6A) {
         beatOpp = 1;
         if (oppSlot != -1) {
             if (opp->state[oppSlot] & 0x100) {
@@ -1217,7 +1217,7 @@ s32 AiThink_TestSkill(AiThWork *ai) {
         return 0;
     }
     plan->slot = -1;
-    if (D_002EDA70[plan->cond] == 0x5E) {
+    if (gBtlAiCondFuncIndex[plan->cond] == 0x5E) {
         if (ai->range.dist[0] * 1.5f < gBtlAi->distance) {
             return 0;
         }
@@ -1291,9 +1291,9 @@ s32 AiThink_TestSkill(AiThWork *ai) {
     return 1;
 }
 
-/* Condition function 40: the weighted test while bit 0 of BtlCharApi_GetParamUnk14 is set. */
+/* Condition function 40: the weighted test while bit 0 of BtlCharApi_GetParamFlags2 is set. */
 s32 AiThCond_WeightedIfBit0(AiThWork *ai, u8 arg) {
-    if (BtlCharApi_GetParamUnk14(ai->objId) & 1) {
+    if (BtlCharApi_GetParamFlags2(ai->objId) & 1) {
         return AiThink_TestWeighted(ai, 0);
     }
     return 0;
@@ -1413,7 +1413,7 @@ s32 AiThCond_WeightedByHeight(AiThWork *ai, u8 arg) {
     BtlCharApi_GetPos(ai->objId, &pos);
     BtlCharApi_GetPos(ai->objId ^ 1, &opp);
     dy = opp.y - pos.y;
-    switch (D_002EDA70[plan->cond]) {
+    switch (gBtlAiCondFuncIndex[plan->cond]) {
     case 0x36:
     case 0x53:
         if (opp.y < pos.y - height) {
@@ -1458,7 +1458,7 @@ s32 AiThCond_ActRateByFlags(AiThWork *ai, u8 arg) {
     s32 roll = Rand_Range(100);
     AiThProfile *prof = (AiThProfile *)PROFILE(ai);
     s32 code = plan->cond - 40;
-    u64 f = BtlCharApi_GetUnk1288(ai->objId);
+    u64 f = BtlCharApi_GetActionBits(ai->objId);
     AiThActTable *act = gBtlAi->data->act;
     s32 action[2];
     s8 cls[2];
@@ -1469,7 +1469,7 @@ s32 AiThCond_ActRateByFlags(AiThWork *ai, u8 arg) {
         return 0;
     }
     for (i = 0; i < 24; i++) {
-        if (code == D_002EDDC0[i]) {
+        if (code == gBtlAiRateColsAct[i]) {
             idx = i;
         }
     }
@@ -1482,11 +1482,11 @@ s32 AiThCond_ActRateByFlags(AiThWork *ai, u8 arg) {
     if (chance < roll) {
         return 0;
     }
-    action[0] = BtlCharApi_GetUnk974(ai->objId);
-    action[1] = BtlCharApi_GetUnk974(ai->objId ^ 1);
+    action[0] = BtlCharApi_GetAnimId(ai->objId);
+    action[1] = BtlCharApi_GetAnimId(ai->objId ^ 1);
     cls[0] = ((AiThActBody *)((u8 *)act + 8))->actClass[action[0]];
     cls[1] = ((AiThActBody *)((u8 *)act + 8))->actClass[action[1]];
-    switch (D_002EDA70[plan->cond]) {
+    switch (gBtlAiCondFuncIndex[plan->cond]) {
     case 0x38:
         if (!(f & 0x80)) {
             return 0;
@@ -1599,7 +1599,7 @@ s32 AiThink_RollActRate(AiThWork *ai, s32 cond) {
     s32 i;
 
     for (i = 0; i < 24; i++) {
-        if (code == D_002EDDC0[i]) {
+        if (code == gBtlAiRateColsAct[i]) {
             idx = i;
         }
     }
@@ -1611,8 +1611,8 @@ s32 AiThink_RollActRate(AiThWork *ai, s32 cond) {
 
 /* Condition functions 114, 115, 117: the weighted test, only with fighter flag 6 and one ability bit. */
 s32 AiThCond_WeightedIfAbility(AiThWork *ai, u8 arg) {
-    s32 ab = BtlCharApi_GetParamUnk18(ai->objId);
-    s32 fn = D_002EDA70[ai->plan.cond];
+    s32 ab = BtlCharApi_GetParamFlags3(ai->objId);
+    s32 fn = gBtlAiCondFuncIndex[ai->plan.cond];
 
     if (BtlSide_IsPoweredUp(ai->objId) == 0) {
         return 0;
@@ -1713,14 +1713,14 @@ s32 AiThink_HasSkillKind(AiThWork *ai, s32 kind) {
     return 0;
 }
 
-/* Whether the fighter's ability word (BtlCharApi_GetParamUnk18) has one of the bits. */
+/* Whether the fighter's ability word (BtlCharApi_GetParamFlags3) has one of the bits. */
 s32 AiThink_HasAbility(AiThWork *ai, s32 mask) {
-    return (BtlCharApi_GetParamUnk18(ai->objId) & mask) != 0;
+    return (BtlCharApi_GetParamFlags3(ai->objId) & mask) != 0;
 }
 
 /* Whether this fighter can ever do what a condition code (id - 40) stands for. */
 s32 AiThink_IsCodeUsable(AiThWork *ai, s32 code) {
-    s32 r = BtlCharApi_GetParamUnk14(ai->objId) & 1;
+    s32 r = BtlCharApi_GetParamFlags2(ai->objId) & 1;
 
     if (code == 0) {
         return r;
@@ -1891,7 +1891,7 @@ s32 AiThink_SumSubRates(AiThWork *ai, s32 sub) {
     s32 sum = 0;
     s32 c;
     s32 i;
-    u8 *codes = &D_002EDEE8[sub * 8];
+    u8 *codes = &gBtlAiRateColsF[sub * 8];
     u8 *prof = PROFILE(ai);
     s8 *lo0 = (s8 *)prof + 0x288;
     s8 *hi0 = (s8 *)prof + 0x548;
@@ -1931,9 +1931,9 @@ void AiThink_BuildTotals(AiThWork *ai) {
     s32 j;
 
     for (i = 0; i < 14; i++) {
-        plan->total[0][i] = AiThink_SumPairRates(ai, i, (s8 *)prof + 0x74, (s8 *)prof + 0x334, D_002EDCE0);
-        plan->total[1][i] = AiThink_SumPairRates(ai, i, (s8 *)prof + 0xE4, (s8 *)prof + 0x3A4, D_002EDD50);
-        plan->total[2][i] = AiThink_SumQuadRates(ai, i, (s8 *)prof + 0x178, (s8 *)prof + 0x438, D_002EDDD8);
+        plan->total[0][i] = AiThink_SumPairRates(ai, i, (s8 *)prof + 0x74, (s8 *)prof + 0x334, gBtlAiRateColsA);
+        plan->total[1][i] = AiThink_SumPairRates(ai, i, (s8 *)prof + 0xE4, (s8 *)prof + 0x3A4, gBtlAiRateColsB);
+        plan->total[2][i] = AiThink_SumQuadRates(ai, i, (s8 *)prof + 0x178, (s8 *)prof + 0x438, gBtlAiRateColsC);
     }
     for (j = 0; j < 4; j++) {
         plan->total[3][j] = AiThink_SumSubRates(ai, j);
@@ -2102,7 +2102,7 @@ void AiThink_EvalRules(AiThWork *ai, AiThRuleList *list) {
                         }
                     }
                 }
-                if (D_002EDA70[rule->cond[0]] == 0x26) {
+                if (gBtlAiCondFuncIndex[rule->cond[0]] == 0x26) {
                     range = AiThink_GetCond38Range(ai);
                 }
                 plan->range = range;
@@ -2127,7 +2127,7 @@ void AiThink_EvalRules(AiThWork *ai, AiThRuleList *list) {
             pass = rule->cond[i];
             plan->condNo = i;
             plan->cond = pass;
-            pass = D_002C4768[D_002EDA70[pass]](ai, rule->arg[i]);
+            pass = gBtlAiCondFuncs[gBtlAiCondFuncIndex[pass]](ai, rule->arg[i]);
             res[i] = pass;
             if (pass == 0) {
                 goto next;
@@ -2175,7 +2175,7 @@ void AiThink_EvalRules(AiThWork *ai, AiThRuleList *list) {
  * computed in front of the first branch and its compare lands in that branch's delay slot). */
 s32 AiThink_GetBlastStep(AiThWork *ai) {
     AiThActTable *act = gBtlAi->data->act;
-    s32 action = BtlCharApi_GetUnk974(ai->objId);
+    s32 action = BtlCharApi_GetAnimId(ai->objId);
     AiThSeq *seq = &ai->seq;
     s32 k = action - 0x3C;
 

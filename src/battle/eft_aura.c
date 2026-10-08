@@ -62,7 +62,7 @@ extern void BtlPool_Free(s32 slot, void *ptr);
 extern s32 *BtlScene_GetCommonEntry(s32 idx);
 extern s32 BtlScene_IsCharInView(s32 objId);
 extern f32 BtlCharApi_GetHeight(s32 objId);
-extern f32 BtlCharApi_GetPartUnk5C(s32 objId, s32 node);
+extern f32 BtlCharApi_GetNodeBoundSize(s32 objId, s32 node);
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out);
 extern void BtlCharApi_GetFrameMove(s32 objId, Vec4 *out);
 extern void BtlCharApi_GetVelocity(s32 objId, Vec4 *out);
@@ -92,7 +92,7 @@ s32 EftSpdLine_SpawnStreakRing(s32 objId, Vec4 *dir, s32 node, s32 count, f32 un
         return 0;
     }
     minSize = 0.8f;
-    size = BtlCharApi_GetPartUnk5C(objId, node) * 0.4f;
+    size = BtlCharApi_GetNodeBoundSize(objId, node) * 0.4f;
     if (size < minSize) {
         size = BtlCharApi_GetHeight(objId) * 0.05f * minSize;
     }

@@ -129,13 +129,13 @@ void MisResult_Init(s32 section) {
     for (i = 0; i < 6; i++) {
         TextBox_Init(&MR->box[i], MR->text, 0);
         if (i == 4 || i == 5) {
-            TextBox_SetUnk50(&MR->box[i], 1);
+            TextBox_SetAlign(&MR->box[i], 1);
         } else {
-            TextBox_SetUnk50(&MR->box[i], 0);
+            TextBox_SetAlign(&MR->box[i], 0);
         }
     }
     TextBox_Init(&MR->itemBox, MR->itemText, 0);
-    TextBox_SetUnk50(&MR->itemBox, 0);
+    TextBox_SetAlign(&MR->itemBox, 0);
     TextBox_SetLineOffsets(&MR->itemBox, 0xC, 0, 0, 0, 0);
     TextBox_SetMaxWidth(&MR->box[3], 0xEB);
     TextBox_SetLineOffsets(&MR->box[3], 0, -10, 0, 0, 0);

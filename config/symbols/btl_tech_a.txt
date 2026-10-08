@@ -2,7 +2,7 @@
 // attack record accessors (BtlAtk_*), the character parameter block accessors (BtlParam_*). The comment above each
 // name is the one-line description from the C; names marked guess are named for what they read, not what it means.
 // The opponent's +0xD50, 0 while the opponent is frozen or the battle flag 0x2000 is set.
-BtlCtrl_GetOppUnkD50 = 0x0020BA80; // type:func // guess
+BtlCtrl_IsOppComboDamageNew = 0x0020BA80; // type:func // guess
 // The battle object of the side's fighter.
 BtlCtrl_GetObj = 0x0020BAF0; // type:func
 // Which of flags 0xDE..0xE2 the fighter has, as 0..4; -1 for none or while frozen.
@@ -58,7 +58,7 @@ BtlCtrl_GetWork5A8Count = 0x0020C8C8; // type:func // guess
 // Sets the CPU level of every member of a fighter.
 BtlCtrl_SetCpuLevel = 0x0020C940; // type:func
 // The active member's gauge word +0x30 is set.
-BtlCtrl_TestMemberUnk70 = 0x0020C9B8; // type:func // guess
+BtlCtrl_IsMemberBodyChanged = 0x0020C9B8; // type:func // guess
 // The id of the attack record the fighter's current action / animation uses, -1 when it is not attacking.
 BtlAtk_GetId = 0x0020C9F0; // type:func
 // The fighter's current attack record; ids outside 0..0xA2 (and -1) give record 0. The id used goes to *id.
@@ -82,7 +82,7 @@ BtlAtk_GetKiGain = 0x0020D600; // type:func // guess
 // Ki the defender pays when it guards: record +0x08 * curve row 5, x2 (ability 0x44) or x1.5 (0x6D).
 BtlAtk_GetGuardKiCost = 0x0020D6D0; // type:func // guess
 // Record +0x10 divided by the hit count: what a hit adds to the fighter's +0xD80 gauge (decays 400 per frame).
-BtlAtk_GetUnk10 = 0x0020D768; // type:func // guess
+BtlAtk_GetChargeGaugeGain = 0x0020D768; // type:func // guess
 // Reaction id, record +0x1B.
 BtlAtk_GetReaction = 0x0020D7E0; // type:func
 // Reaction id +0x1C (defender animation flag 0x800), or +0x1B when it is 0.
@@ -144,9 +144,9 @@ BtlAtk_GetGuardKindE = 0x0020DF20; // type:func // guess
 // Record +0x2B: 0 / 1 selects defender flag 0x66 / 0x67 on a guard.
 BtlAtk_GetGuardFlagSel = 0x0020DF40; // type:func // guess
 // Record +0x2C: armour levels the attack ignores.
-BtlAtk_GetUnk2C = 0x0020DF60; // type:func // guess
+BtlAtk_GetArmorIgnore = 0x0020DF60; // type:func // guess
 // +0x2C of record `id`.
-BtlAtk_GetUnk2COf = 0x0020DF80; // type:func // guess
+BtlAtk_GetArmorIgnoreOf = 0x0020DF80; // type:func // guess
 // The ki charge rate scaled by ability: x0.4 (0x31), x0.6 (0x30) or x0.8 (0x2F), then x1.25 (0x75).
 BtlParam_ScaleKiCharge = 0x0020DFA0; // type:func // guess
 // Parameter +0x10: flag word.
@@ -156,11 +156,11 @@ BtlParam_GetFlags2 = 0x0020E0B8; // type:func
 // Parameter +0x18: skill bits that also need the powered-up mode.
 BtlParam_GetFlags3 = 0x0020E0E0; // type:func
 // Parameter +0x00 (u16).
-BtlParam_GetUnk0 = 0x0020E108; // type:func // guess
+BtlParam_GetCharaFlags = 0x0020E108; // type:func // guess
 // Parameter +0x02: 4 is tested by the hit code (not thrown, not rushed).
-BtlParam_GetUnk2 = 0x0020E130; // type:func // guess
+BtlParam_GetSizeClass = 0x0020E130; // type:func // guess
 // Parameter +0xAC: the transformation slot a neutral input picks.
-BtlParam_GetUnkAC = 0x0020E158; // type:func // guess
+BtlParam_GetDefaultSlot = 0x0020E158; // type:func // guess
 // Parameter +0x98 + slot: transformation target, 0xFF = none.
 BtlParam_GetSlotId = 0x0020E180; // type:func // guess
 // Parameter +0x9C + slot, times 100000: blast gauge a transformation costs.
@@ -172,23 +172,23 @@ BtlParam_GetSlotA4 = 0x0020E220; // type:func // guess
 // Parameter +0xA8 + slot.
 BtlParam_GetSlotA8 = 0x0020E250; // type:func // guess
 // Parameter +0xAD.
-BtlParam_GetUnkAD = 0x0020E280; // type:func // guess
+BtlParam_GetFormFlags = 0x0020E280; // type:func // guess
 // How many of the four transformation targets at +0x98 are not 0xFF.
 BtlParam_CountSlots = 0x0020E2A8; // type:func
 // Bit 4 + n of parameter +0xAD.
-BtlParam_TestUnkADBit = 0x0020E300; // type:func // guess
+BtlParam_TestSlotResetsVariant = 0x0020E300; // type:func // guess
 // Parameter +0xB4 + n: fusion n.
-BtlParam_GetUnkB4 = 0x0020E340; // type:func // guess
+BtlParam_GetFusionResult = 0x0020E340; // type:func // guess
 // Parameter +0xB7 + n: fusion n.
 BtlParam_GetUnkB7 = 0x0020E370; // type:func // guess
 // Parameter +0xBA + n * 4 + m: partner m of fusion n.
-BtlParam_GetUnkBA = 0x0020E3A0; // type:func // guess
+BtlParam_GetFusionPartner = 0x0020E3A0; // type:func // guess
 // Parameter +0xAE + n, times 100000: blast gauge fusion n costs.
 BtlParam_GetCostAE = 0x0020E3E8; // type:func // guess
 // Parameter +0xC6.
 BtlParam_GetUnkC6 = 0x0020E428; // type:func // guess
 // Parameter +0xB1 + n: fusion n.
-BtlParam_GetUnkB1 = 0x0020E450; // type:func // guess
+BtlParam_GetFusionSequence = 0x0020E450; // type:func // guess
 // Aura kind (passed to func_0024FE78 on the object): parameter +0x03, replaced by 0..10 when the member has one of abilities 0x4D..0x53, 0x74, 0x54..0x56 (first match in that order).
 BtlParam_GetAuraKind = 0x0020E480; // type:func // guess
 // Search type 0..9 of the active member's costume (parameter +0x58 + costume, costume above 3 reads 0); types 2..4 become 7 (8 for type 4) while the member's gauge word +0x20 is set.
@@ -206,15 +206,15 @@ BtlParam_IsTypeSetA = 0x0020E858; // type:func // guess
 // The search type is 0..4, 6 or 9 (no caller found).
 BtlParam_IsTypeSetB = 0x0020E8C0; // type:func // guess
 // How many class-0 ki blasts may be alive at once: parameter +0x80 less 3 / 2 / 1 by ability 0x11 / 0x10 / 0xF, but at least 1 when the raw value is positive.
-BtlParam_GetCount80 = 0x0020E920; // type:func // guess
+BtlParam_GetBlastLimitA = 0x0020E920; // type:func // guess
 // Parameter +0x82: the same limit for class-1 blasts.
-BtlParam_GetUnk82 = 0x0020E9C8; // type:func // guess
+BtlParam_GetBlastLimitB = 0x0020E9C8; // type:func // guess
 // Parameter +0x84 + n (n above 3 reads entry 0).
-BtlParam_GetUnk84 = 0x0020E9F0; // type:func // guess
+BtlParam_GetRushFinisher = 0x0020E9F0; // type:func // guess
 // Parameter +0x88 + n (n above 1 reads entry 0).
-BtlParam_GetUnk88 = 0x0020EA28; // type:func // guess
+BtlParam_GetChainKind = 0x0020EA28; // type:func // guess
 // Parameter +0x8A + n (n above 4 reads entry 0).
-BtlParam_GetUnk8A = 0x0020EA60; // type:func // guess
+BtlParam_GetFinisherChoice = 0x0020EA60; // type:func // guess
 // Parameter +0x1C.
 BtlParam_GetUnk1C = 0x0020EA98; // type:func // guess
 // Parameter +0x20.

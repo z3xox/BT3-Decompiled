@@ -119,7 +119,7 @@ extern u8 gEftBladeColor[0x20];
 extern u8 gEftDelaySeClass[0x18];
 extern u8 gEftBladeClass[0x18];
 extern u8 gEftAnimPartClass[0x18];
-extern Vec4 D_002EC2C0;
+extern Vec4 gVu0ZeroVecW1;
 
 /* ---- ground effect pieces (tail of the module that starts in eft_z) ------------------------------------- */
 
@@ -560,7 +560,7 @@ void EftGndDust_DrawPiece(Vec4 *pos, Vec4 *color, Vec4 *dir, s32 layer, f32 w, f
     Mtx44 m;
 
     if (along != 0) {
-        EftGndDust_MakeFacingMtx(&m, dir, &D_002EC2C0);
+        EftGndDust_MakeFacingMtx(&m, dir, &gVu0ZeroVecW1);
         EftGndDust_DrawQuad(pos, color, &m, 1.0f, h, 0.0f, w, 0.0f, 0.0f, 1.0f, 1.0f, tex0, layer);
     } else {
         EftGfx_DrawSprite(pos, color, w, h, 0.0f, 0.0f, 1.0f, 1.0f, rot, layer, 0, tex0);

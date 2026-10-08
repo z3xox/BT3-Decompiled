@@ -6,7 +6,7 @@
 // of 8 (the profile's tables at +0x1B0 and +0x288). Same switch shape as BtlAi_GetPairRate.
 AiThink_GetSubRate = 0x001B80F8; // type:func // guess
 AiThink_GetSubRate4 = 0x001B8218; // type:func // guess
-// (class, code): index of `code` in row `class` of D_002EDC70, -1 not found, -2 for class 14. Also called by
+// (class, code): index of `code` in row `class` of gBtlAiRateColsBasic, -1 not found, -2 for class 14. Also called by
 // BtlAiMgr_BuildRates with code 3.
 AiThink_FindBasicColumn = 0x001B82C0; // type:func
 // Adds the rate of the condition's column in the profile's first table to the running sum of the condition
@@ -15,7 +15,7 @@ AiThink_TestBasic = 0x001B8338; // type:func
 // Entry 38 of the condition table: TestBasic unless fighter flag 6 (0x20B7C0) or func_00209DF8.
 AiThCond_BasicNoFlag6 = 0x001B8428; // type:func
 // (plan): index of (plan.cond - 40) in the row of the code table that belongs to plan.next (six tables
-// D_002EDCE0..D_002EDEE8, row plan.cls or plan.sub).
+// gBtlAiRateColsA..gBtlAiRateColsF, row plan.cls or plan.sub).
 AiThink_FindWeightColumn = 0x001B8480; // type:func
 // (work, byGauge): same accumulate-and-compare with the rate taken from the profile table of plan.next.
 AiThink_TestWeighted = 0x001B8608; // type:func
@@ -40,7 +40,7 @@ AiThCond_Basic = 0x001B93A8; // type:func
 AiThCond_Weighted = 0x001B93C0; // type:func
 // Entries 54, 55, 83, 84: TestWeighted after comparing the two fighters' Y (0x2053F0) with the height (0x204EA0).
 AiThCond_WeightedByHeight = 0x001B93D8; // type:func
-// Entries 56..76: Rand_Range(100) against profile byte +0x154[n] / +0x414[n] (n from D_002EDDC0), then one bit of
+// Entries 56..76: Rand_Range(100) against profile byte +0x154[n] / +0x414[n] (n from gBtlAiRateColsAct), then one bit of
 // the fighter's own word +0x1288 chosen by the entry.
 AiThCond_ActRateByFlags = 0x001B9580; // type:func // guess
 // (work, condition id): the rate roll of the same without the flag test. Called at 0x1B4ACC (func_001B4A50).

@@ -105,7 +105,7 @@ void DiscFusion_Init(s32 section) {
     Dialog_Init(MPACK_AT(gDiscFusion->res, 5), gDiscFusion->text, 0);
     for (i = 0; i < DISCFUSION_DISC_NUM; i++) {
         TextBox_Init(&gDiscFusion->box[i], gDiscFusion->text, 0);
-        TextBox_SetUnk50(&gDiscFusion->box[i], 0);
+        TextBox_SetAlign(&gDiscFusion->box[i], 0);
     }
     DiscFusion_UpdateHave();
     gDiscFusion->voiceLine = -1;

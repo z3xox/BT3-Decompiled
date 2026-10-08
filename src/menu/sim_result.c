@@ -111,10 +111,10 @@ void SimResult_Init(s32 section) {
     gSimResult->itemText = MPACK_AT(gSimResult->res, 14);
     for (i = 0; i < 6; i++) {
         TextBox_Init(&gSimResult->box[i], gSimResult->text, 0);
-        TextBox_SetUnk50(&gSimResult->box[i], 0);
+        TextBox_SetAlign(&gSimResult->box[i], 0);
     }
     TextBox_Init(&gSimResult->itemBox, gSimResult->itemText, 0);
-    TextBox_SetUnk50(&gSimResult->itemBox, 0);
+    TextBox_SetAlign(&gSimResult->itemBox, 0);
     TextBox_SetLineOffsets(&gSimResult->itemBox, 12, 0, 0, 0, 0);
     gSimResult->bonusTbl = MPACK_AT(gSimResult->res, 13);
 

@@ -1,7 +1,7 @@
 // Effect tasks, 0x16C2E0..0x170A50 (src/battle/eft_p.c, src/battle/eft_p_b.c).
 //
 // --- Disc projectile, tail of the module (its init 0x16B6B8 and update 0x16BAC8 are in the file before) ---
-// Task class D_002C3B38 = { Update 0x16BAC8, Init 0x16B6B8, Term 0x16C548, PostUpdate 0x16C2E0, Reset 0x16C4F0,
+// Task class gEftDiscClass = { Update 0x16BAC8, Init 0x16B6B8, Term 0x16C548, PostUpdate 0x16C2E0, Reset 0x16C4F0,
 // Draw 0x16C3B0 }, work 0x4C0 bytes: a spinning model projectile ("disc" is a guess from the spin and the two
 // animated textures). Kinds 0 / 1 are a fighter's ki blast (held in the hand, then thrown), 3 a ki blast thrown
 // from a model node, 2 / 4 the pieces of the multi-piece technique EftMulti (eft_j.c). The manager's work is

@@ -88,13 +88,13 @@ void SurvResult_Init(s32 section) {
     for (i = 0; i < 6; i++) {
         TextBox_Init(&gSurvResult->box[i], gSurvResult->text, 0);
         if (i == 5) {
-            TextBox_SetUnk50(&gSurvResult->box[5], 1);
+            TextBox_SetAlign(&gSurvResult->box[5], 1);
         } else {
-            TextBox_SetUnk50(&gSurvResult->box[i], 0);
+            TextBox_SetAlign(&gSurvResult->box[i], 0);
         }
     }
     TextBox_Init(&gSurvResult->itemBox, gSurvResult->itemText, 0);
-    TextBox_SetUnk50(&gSurvResult->itemBox, 0);
+    TextBox_SetAlign(&gSurvResult->itemBox, 0);
     TextBox_SetLineOffsets(&gSurvResult->itemBox, 0xC, 0, 0, 0, 0);
     gSurvResult->price = MPACK_AT(gSurvResult->res, 13);
     gSurvResult->voiceLine = -1;

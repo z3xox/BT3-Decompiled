@@ -21,8 +21,8 @@ BtlSuper_SetRushFlags = 0x001F56D8; // type:func // guess
 BtlSuper_ShakeOnEvent = 0x001F5748; // type:func
 // Sets the animation step so that the 0x400 event is reached in the given time.
 BtlSuper_FitAnimToEvent = 0x001F5AF0; // type:func // guess
-// BtlAct_SetObjUnk(chr, 0.2, 2.0) and BtlChar_SetVibration(chr, 0.8, 0.1): called together in every charge loop.
-BtlSuper_SetObjUnk = 0x001F5BF0; // type:func // guess
+// BtlAct_AddSway(chr, 0.2, 2.0) and BtlChar_SetVibration(chr, 0.8, 0.1): called together in every charge loop.
+BtlSuper_AddSway = 0x001F5BF0; // type:func // guess
 BtlSuper_VibrateCharge = 0x001F5C10; // type:func // guess
 // BtlAct_PushAngle backwards (yaw + pi, speed 1, 5) by the technique's kind byte.
 BtlSuper_Recoil = 0x001F5C30; // type:func // guess

@@ -41,7 +41,7 @@
  *     have it, BtlCam_GetDefaultView(); when neither has it, -1.
  *   - BtlCam_GetDefaultView(): mode 8: 0 if BattleSide_GetControl(0) == 0, else 1 if
  *     BattleSide_GetControl(1) == 0, else the word at 0x2FF280 (no writer found: 0); other modes:
- *     BtlCharApi_GetMgrUnk134() during a replay, else 0.
+ *     BtlCharApi_GetReplayViewSide() during a replay, else 0.
  *   - Last, if DemoCam_IsActive() (scripted camera: intro cuts, fixed pose) DemoCam_Update() builds and
  *     loads its view instead and the result is 1.
  *

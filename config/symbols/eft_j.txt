@@ -54,7 +54,7 @@ EftPropShotMgr_Update = 0x00155560; // type:func // guess
 EftPropShotMgr_Reset = 0x00155580; // type:func // guess
 
 // Effect type 0 "blast" (row 1: manager 0x2C38C8, item 0x2C38E0): the plain blast / beam. Same shot logic as type 6
-// without the prop; its size follows the fighter's charge (BtlCharApi_GetUnkE44 / E5CRatio / E60Ratio). Effect ids
+// without the prop; its size follows the fighter's charge (BtlCharApi_GetTechCharge / E5CRatio / E60Ratio). Effect ids
 // 0x268, 0x2CD, 0x14B are special-cased in Init.
 EftBlast_AddHit = 0x00155588; // type:func // guess
 EftBlast_UpdateBlur = 0x00155718; // type:func // guess

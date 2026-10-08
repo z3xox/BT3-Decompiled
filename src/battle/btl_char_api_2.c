@@ -52,7 +52,7 @@ extern BtlCharApiObj *BtlChar_GetObj(BtlCharApiChr *chr); /* BtlObj_Get(chr->obj
 extern Vec4 *BtlChar_GetPos(BtlCharApiChr *chr);          /* &chr->pos */
 extern s32 BtlChar_IsFrozen(BtlCharApiChr *chr);            /* chr->unk1320 > 0 */
 extern s32 BtlChar_IsDead(BtlCharApiChr *chr);            /* vitals->hp < 1 */
-extern s32 BtlChar_TestMemberUnk70(BtlCharApiChr *chr);            /* vitals->unk30 != 0 */
+extern s32 BtlChar_IsBodyChanged(BtlCharApiChr *chr);            /* vitals->unk30 != 0 */
 extern void BtlChar_SetVibration(BtlCharApiChr *chr, f32 power, f32 time);
 extern void BtlChar_SetSmallVibration(BtlCharApiChr *chr, f32 time);
 extern s32 BtlAct_GetCurrent(BtlCharApiChr *chr);            /* chr->action */
@@ -62,8 +62,8 @@ extern s32 BtlAct_GetMotionLevel(BtlCharApiChr *chr, s32 action);
 extern s32 BtlCharApi_IsInRushSequence(s32 objId);                     /* action id in 0x12D..0x12F or 0x139..0x13B */
 extern s32 BtlCharApi_IsInClashA(s32 objId);                     /* action id in 0x130..0x132 */
 extern s32 BtlCharApi_IsInClashBC(s32 objId);                     /* action id 0xFA or 0xFC */
-extern s32 BtlParam_GetUnk84(BtlCharApiChr *chr, u32 n);
-extern s32 BtlParam_GetUnk8A(BtlCharApiChr *chr, u32 n);
+extern s32 BtlParam_GetRushFinisher(BtlCharApiChr *chr, u32 n);
+extern s32 BtlParam_GetFinisherChoice(BtlCharApiChr *chr, u32 n);
 extern s32 BtlSuper_GetFlags(BtlCharApiChr *chr, s32 slot);  /* attribute word of technique `slot` */
 extern s32 BtlSuper_IsThrow(BtlCharApiChr *chr, s32 slot);
 extern s32 BtlObjAnim_TestEvent(BtlCharApiObj *obj, u64 mask);
@@ -169,11 +169,11 @@ s32 BtlCharApi_IsAction103OrFlagA6(s32 objId) {
 }
 
 /* Whether word +0x70 of the fighter's active member block is set. */
-s32 BtlCharApi_HasMemberUnk70(s32 objId) {
+s32 BtlCharApi_IsMemberBodyChanged(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return BtlChar_TestMemberUnk70(chr);
+        return BtlChar_IsBodyChanged(chr);
     }
     return 0;
 }
@@ -327,7 +327,7 @@ s32 BtlCharApi_ObjTestFlagBit21(s32 objId) {
 }
 
 /* Float at fighter +0xE44. */
-f32 BtlCharApi_GetUnkE44(s32 objId) {
+f32 BtlCharApi_GetTechCharge(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
@@ -337,7 +337,7 @@ f32 BtlCharApi_GetUnkE44(s32 objId) {
 }
 
 /* Fighter counter +0xE5C as a 0..1 ratio of 3. */
-f32 BtlCharApi_GetUnkE5CRatio(s32 objId) {
+f32 BtlCharApi_GetSkillCount3Ratio(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
 
@@ -502,7 +502,7 @@ s32 BtlCharApi_ObjGetAttrKind(s32 objId, u64 mask) {
 }
 
 /* Object float +0xC78, raised by the fighter's +0xEFC entries while it is in actions 0x12D..0x12F / 0x139..0x13B. */
-f32 BtlCharApi_GetChargedUnkC78(s32 objId) {
+f32 BtlCharApi_GetRushSequenceFrame(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
     f32 value;
     s32 n;
@@ -522,7 +522,7 @@ f32 BtlCharApi_GetChargedUnkC78(s32 objId) {
 }
 
 /* Object float +0xC78. */
-f32 BtlCharApi_ObjGetUnkC78(s32 objId) {
+f32 BtlCharApi_ObjGetAnimFrame(s32 objId) {
     BtlCharApiObj *obj = BtlObj_Get(objId);
 
     if (obj != NULL) {
@@ -532,7 +532,7 @@ f32 BtlCharApi_ObjGetUnkC78(s32 objId) {
 }
 
 /* Object float +0xC80. */
-f32 BtlCharApi_ObjGetUnkC80(s32 objId) {
+f32 BtlCharApi_ObjGetAnimStep(s32 objId) {
     BtlCharApiObj *obj = BtlObj_Get(objId);
 
     if (obj != NULL) {
@@ -552,7 +552,7 @@ s32 BtlCharApi_ObjQuery24D610(s32 objId, s32 arg1, s32 arg2) {
 }
 
 /* Fighter word +0x974. */
-s32 BtlCharApi_GetUnk974(s32 objId) {
+s32 BtlCharApi_GetAnimId(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
@@ -562,7 +562,7 @@ s32 BtlCharApi_GetUnk974(s32 objId) {
 }
 
 /* The manager's table entry for fighter word +0x974. */
-void *BtlCharApi_GetUnk974Data(s32 objId) {
+void *BtlCharApi_GetAnimFlags(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
@@ -596,7 +596,7 @@ s32 BtlCharApi_GetCamPose(s32 objId, Vec4 *pos, Vec4 *rot) {
 }
 
 /* Float at fighter +0x4A0. */
-f32 BtlCharApi_GetCamUnk4A0(s32 objId) {
+f32 BtlCharApi_GetCamYaw(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
@@ -673,7 +673,7 @@ s32 BtlCharApi_IsCamShown(s32 objId) {
 }
 
 /* Copies the vector at fighter +0x460. */
-void BtlCharApi_GetCamUnk460(s32 objId, Vec4 *out) {
+void BtlCharApi_GetCamBodyPos(s32 objId, Vec4 *out) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
@@ -682,7 +682,7 @@ void BtlCharApi_GetCamUnk460(s32 objId, Vec4 *out) {
 }
 
 /* Manager word +0x134 while +0x130 is 0, else 0 (the default view during a replay). */
-s32 BtlCharApi_GetMgrUnk134(void) {
+s32 BtlCharApi_GetReplayViewSide(void) {
     return BtlReplay_GetViewSide();
 }
 
@@ -749,7 +749,7 @@ s32 BtlCharApi_GetParamByte84(s32 objId, u32 n) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return BtlParam_GetUnk84(chr, n);
+        return BtlParam_GetRushFinisher(chr, n);
     }
     return 0;
 }
@@ -759,7 +759,7 @@ s32 BtlCharApi_GetParamByte8A(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return BtlParam_GetUnk8A(chr, 0);
+        return BtlParam_GetFinisherChoice(chr, 0);
     }
     return 0;
 }
@@ -769,13 +769,13 @@ s32 BtlCharApi_GetParamByte8D(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return BtlParam_GetUnk8A(chr, 3);
+        return BtlParam_GetFinisherChoice(chr, 3);
     }
     return 0;
 }
 
 /* The 64-bit word at fighter +0x1288. */
-u64 BtlCharApi_GetUnk1288(s32 objId) {
+u64 BtlCharApi_GetActionBits(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
@@ -785,7 +785,7 @@ u64 BtlCharApi_GetUnk1288(s32 objId) {
 }
 
 /* 1 if object byte +0xCAD is not the complement of +0xCAC; else 0 with flag 0x60; else whether +0xCAD is >= 0. */
-s32 BtlCharApi_CheckUnkCAC(s32 objId) {
+s32 BtlCharApi_IsAttackHitPending(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
     BtlCharApiObj *obj;
 
@@ -891,35 +891,35 @@ extern void BtlCharApi_GetPos(s32 objId, Vec4 *out);           /* position of an
 extern f32 BtlCharApi_GetRadius(s32 objId);                       /* body radius */
 extern u32 BtlAtk_GetId(BtlCapiBChr *chr);                /* attack id in use */
 extern s32 BtlAtk_GetFlags(BtlCapiBChr *chr);                /* its attribute word */
-extern s32 BtlAtk_GetUnk2COf(BtlCapiBChr *chr, s32 level);     /* s8 +0x2C of the record of attack `level` (BtlAtk_GetRecordOf) */
+extern s32 BtlAtk_GetArmorIgnoreOf(BtlCapiBChr *chr, s32 level);     /* s8 +0x2C of the record of attack `level` (BtlAtk_GetRecordOf) */
 extern s32 BtlParam_GetFlags(BtlCapiBChr *chr);                /* param->flags */
-extern s32 BtlParam_GetUnk0(BtlCapiBChr *chr);                /* param->unk0 */
-extern s32 BtlParam_GetUnkAC(BtlCapiBChr *chr);                /* param->transformSlot */
+extern s32 BtlParam_GetCharaFlags(BtlCapiBChr *chr);                /* param->unk0 */
+extern s32 BtlParam_GetDefaultSlot(BtlCapiBChr *chr);                /* param->transformSlot */
 extern s32 BtlParam_GetSlotId(BtlCapiBChr *chr, s32 slot);      /* param->transformId[slot] */
 extern s32 BtlParam_GetSlotCost(BtlCapiBChr *chr, s32 slot);      /* param->transformCost[slot] * 100000 */
 extern s32 BtlParam_CountSlots(BtlCapiBChr *chr);                /* number of transformId[] entries != 0xFF */
-extern s32 BtlParam_GetUnkB4(BtlCapiBChr *chr, s32 slot);      /* param->fusionId[slot] */
+extern s32 BtlParam_GetFusionResult(BtlCapiBChr *chr, s32 slot);      /* param->fusionId[slot] */
 extern s32 BtlParam_GetCostAE(BtlCapiBChr *chr, s32 slot);      /* param->fusionCost[slot] * 100000 */
-extern s32 BtlParam_GetCount80(BtlCapiBChr *chr);                /* param->blastLimit less abilities 0x11 / 0x10 / 0xF */
-extern s32 BtlParam_GetUnk82(BtlCapiBChr *chr);                /* param->blastLimitB */
+extern s32 BtlParam_GetBlastLimitA(BtlCapiBChr *chr);                /* param->blastLimit less abilities 0x11 / 0x10 / 0xF */
+extern s32 BtlParam_GetBlastLimitB(BtlCapiBChr *chr);                /* param->blastLimitB */
 extern s32 BtlParam_GetGaugeB(BtlCapiBChr *chr);                /* param word +0x2C */
-extern s32 BtlParam_GetUnk8F(BtlCapiBChr *chr, s32 n);         /* param->unk8F[n] */
+extern s32 BtlParam_GetComboFinish(BtlCapiBChr *chr, s32 n);         /* param->unk8F[n] */
 extern s32 BtlKiBlast_GetFlagsOfHit(BtlCapiBBlastRec *rec);           /* flag word of the blast's definition */
 #define BtlSuper_GetFlags ((s32 (*)(BtlCapiBChr *chr, s32 cls))BtlSuper_GetFlags)       /* skills->flags[cls - 2] */
 extern s32 BtlSuper_GetType(BtlCapiBChr *chr, s32 cls);       /* skills->unk13C[cls] */
 extern s32 BtlSuper_GetKiCost(BtlCapiBChr *chr, s32 cls);       /* skills->cost[cls], halved with ability 0x2B */
 extern s32 BtlSuper_GetPromptRowIndex(BtlCapiBChr *chr, s32 n);         /* skills->unk227[n] */
-extern s32 BtlSuper_GetUnk165(BtlCapiBChr *chr, s32 cls);       /* skills->kind[cls] */
+extern s32 BtlSuper_GetAiKind(BtlCapiBChr *chr, s32 cls);       /* skills->kind[cls] */
 extern s32 BtlSkill_GetFlags(BtlCapiBChr *chr, s32 slot);      /* moves->flags[slot] */
-extern s32 BtlSkill_GetUnk9E(BtlCapiBChr *chr, s32 slot);      /* moves->kind[slot] */
+extern s32 BtlSkill_GetAiKind(BtlCapiBChr *chr, s32 slot);      /* moves->kind[slot] */
 extern s32 BtlSkill_GetBlastCost(BtlCapiBChr *chr, s32 slot);      /* moves->stock[slot] (-1 with ability 0x15, min 1) * 100000 */
 
 extern s32 BtlCharApi_ObjQuery24D610(s32 objId, s32 arg1, s32 arg2);
-extern f32 BtlCharApi_ObjGetUnkC78(s32 objId);
-extern f32 BtlCharApi_ObjGetUnkC80(s32 objId);
+extern f32 BtlCharApi_ObjGetAnimFrame(s32 objId);
+extern f32 BtlCharApi_ObjGetAnimStep(s32 objId);
 
 /* Whether object byte +0xCAD is the complement of +0xCAC. */
-s32 BtlCharApi_IsUnkCACPaired(s32 objId) {
+s32 BtlCharApi_IsAttackHitsDone(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
     BtlCapiBObj *obj;
 
@@ -961,9 +961,9 @@ s32 BtlCharApi_GetBlastRoom(s32 objId) {
     s32 room;
 
     if (chr != NULL) {
-        left = BtlParam_GetCount80(chr) - chr->blastShots;
+        left = BtlParam_GetBlastLimitA(chr) - chr->blastShots;
         BtlMove_CanFireBlast(chr, 0, &count);
-        room = BtlParam_GetCount80(chr) - count;
+        room = BtlParam_GetBlastLimitA(chr) - count;
         if (left < room) {
             room = left;
         }
@@ -977,7 +977,7 @@ s32 BtlCharApi_HasBlastLimit(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return BtlParam_GetCount80(chr) > 0;
+        return BtlParam_GetBlastLimitA(chr) > 0;
     }
     return 0;
 }
@@ -990,9 +990,9 @@ s32 BtlCharApi_GetBlastRoomB(s32 objId) {
     s32 room;
 
     if (chr != NULL) {
-        left = BtlParam_GetCount80(chr) - chr->blastShots;
+        left = BtlParam_GetBlastLimitA(chr) - chr->blastShots;
         BtlMove_CanFireBlast(chr, 1, &count);
-        room = BtlParam_GetUnk82(chr) - count;
+        room = BtlParam_GetBlastLimitB(chr) - count;
         if (left < room) {
             room = left;
         }
@@ -1164,8 +1164,8 @@ f32 BtlCharApi_GetTechniqueProgress(s32 objId) {
     if (frame < 0) {
         return -1.0f;
     }
-    start = BtlCharApi_ObjGetUnkC78(objId);
-    len = BtlCharApi_ObjGetUnkC80(objId);
+    start = BtlCharApi_ObjGetAnimFrame(objId);
+    len = BtlCharApi_ObjGetAnimStep(objId);
     if (0.01f < len) {
         return ((f32)frame - start) / len;
     }
@@ -1300,7 +1300,7 @@ s32 BtlCharApi_HasParamBit80(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return (BtlParam_GetUnk0(chr) >> 7) & 1;
+        return (BtlParam_GetCharaFlags(chr) >> 7) & 1;
     }
     return 0;
 }
@@ -1311,7 +1311,7 @@ s32 BtlCharApi_CanTransform(s32 objId) {
     s32 slot;
 
     if (chr != NULL) {
-        slot = BtlParam_GetUnkAC(chr);
+        slot = BtlParam_GetDefaultSlot(chr);
         if (slot < 0) {
             return 0;
         }
@@ -1367,7 +1367,7 @@ s32 BtlCharApi_GetAiType(s32 objId) {
 }
 
 /* Whether fighter word +0x1070 is not -30. */
-s32 BtlCharApi_IsUnk1070Set(s32 objId) {
+s32 BtlCharApi_IsCounterWindowBusy(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
@@ -1383,7 +1383,7 @@ s32 BtlCharApi_GetTransformCost(s32 objId) {
 
     if (chr != NULL) {
         if (BtlParam_CountSlots(chr) != 0) {
-            slot = BtlParam_GetUnkAC(chr);
+            slot = BtlParam_GetDefaultSlot(chr);
             if (slot == -1) {
                 return 0;
             }
@@ -1531,7 +1531,7 @@ s32 BtlCharApi_IsChangingForm(s32 objId) {
 }
 
 /* Word +0x14 of the character's parameter block. */
-s32 BtlCharApi_GetParamUnk14(s32 objId) {
+s32 BtlCharApi_GetParamFlags2(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
@@ -1551,7 +1551,7 @@ s32 BtlCharApi_GetParamFlags(s32 objId) {
 }
 
 /* Word +0x18 of the character's parameter block. */
-s32 BtlCharApi_GetParamUnk18(s32 objId) {
+s32 BtlCharApi_GetParamFlags3(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
@@ -1642,7 +1642,7 @@ s32 BtlCharApi_GetOppSkillKind(s32 objId) {
     if (!BtlAct_IsTechniqueId(BtlAct_GetCurrent(opp))) {
         return -1;
     }
-    return BtlSuper_GetUnk165(opp, BtlAct_GetCurrentClass(opp));
+    return BtlSuper_GetAiKind(opp, BtlAct_GetCurrentClass(opp));
 }
 
 /* Bit 4 of the flag word of the technique the opponent is performing. */
@@ -1715,7 +1715,7 @@ s32 BtlCharApi_GetOppMoveKind(s32 objId) {
     if ((u32)(BtlAct_GetCurrent(opp) - 0xFD) >= 6) {
         return -1;
     }
-    return BtlSkill_GetUnk9E(opp, BtlAct_GetCurrentClass(opp));
+    return BtlSkill_GetAiKind(opp, BtlAct_GetCurrentClass(opp));
 }
 
 /* Fighter word +0xE50 (button presses counted in clashes B and C). */
@@ -1817,7 +1817,7 @@ s32 BtlCharApi_GetPromptButtons(s32 objId) {
 }
 
 /* Fighter word +0x1290 in story mode (Battle_GetMode() == 1), else 0. */
-s32 BtlCharApi_GetUnk1290(s32 objId) {
+s32 BtlCharApi_GetStoryAiForce(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
@@ -1830,7 +1830,7 @@ s32 BtlCharApi_GetUnk1290(s32 objId) {
 }
 
 /* Whether fighter word +0x106C is below -29. */
-s32 BtlCharApi_IsUnk106CLow(s32 objId) {
+s32 BtlCharApi_IsDodgeWindowReady(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
@@ -1884,7 +1884,7 @@ s32 BtlCharApi_GetArmorBreakLevel(s32 objId) {
         }
     }
     for (i = 0; i < 5; i++) {
-        if (level - BtlAtk_GetUnk2COf(chr, i) <= 0) {
+        if (level - BtlAtk_GetArmorIgnoreOf(chr, i) <= 0) {
             if (i < 2) {
                 return 0;
             }
@@ -1904,8 +1904,8 @@ s32 BtlCharApi_GetParamByte2(s32 objId) {
     return 0;
 }
 
-/* Float at fighter +0xE44 (a second copy of BtlCharApi_GetUnkE44). */
-f32 BtlCharApi_GetUnkE44B(s32 objId) {
+/* Float at fighter +0xE44 (a second copy of BtlCharApi_GetTechCharge). */
+f32 BtlCharApi_GetTechChargeB(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
@@ -1915,7 +1915,7 @@ f32 BtlCharApi_GetUnkE44B(s32 objId) {
 }
 
 /* Fighter +0xD74 minus +0xD70, or -1 when +0xD74 is 0 (no caller). */
-s32 BtlCharApi_GetUnkD74Diff(s32 objId) {
+s32 BtlCharApi_GetVanishStrikesLeft(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
@@ -1979,7 +1979,7 @@ s32 BtlCharApi_TestFlagBE(s32 objId) {
 }
 
 /* Fighter word +0xE40. */
-s32 BtlCharApi_GetUnkE40(s32 objId) {
+s32 BtlCharApi_GetTechniqueCooldown(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
@@ -1993,7 +1993,7 @@ s32 BtlCharApi_GetParamByte8F(s32 objId, s32 n) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return BtlParam_GetUnk8F(chr, n);
+        return BtlParam_GetComboFinish(chr, n);
     }
     return 0;
 }
@@ -2449,7 +2449,7 @@ s32 BtlCtrl_Fuse(s32 player, s32 id) {
     if (chr != NULL) {
         slot = -1;
         for (i = 0; i < 3; i++) {
-            if (BtlParam_GetUnkB4(chr, i) == id) {
+            if (BtlParam_GetFusionResult(chr, i) == id) {
                 slot = i;
                 break;
             }
@@ -2925,7 +2925,7 @@ s32 BtlSide_GetSwitchTargetHpMax(s32 side) {
 }
 
 /* Word +0x2C of the side's character parameter block. */
-s32 BtlSide_GetParamUnk2C(s32 side) {
+s32 BtlSide_GetKiRecoverGoal(s32 side) {
     BtlCapiBChr *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {

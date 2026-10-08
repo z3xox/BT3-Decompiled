@@ -126,7 +126,7 @@ typedef struct BtlAiPlan {
     /* 0x00 */ s32 unk0;       /* result of 0x1B9A08 for the rule being tested */
     /* 0x04 */ s32 unk4;       /* 0..5: which rule list follows list 0 ({1, 2, 3, 5, 6, 7}); a rule of kind 4 sets it */
     /* 0x08 */ s32 unk8;       /* (m) skill slot; -1 = none */
-    /* 0x0C */ s32 cond;       /* (m) condition id being tested: index into D_002EDA70 */
+    /* 0x0C */ s32 cond;       /* (m) condition id being tested: index into gBtlAiCondFuncIndex */
     /* 0x10 */ s32 condNo;     /* its position in the rule (0..7) */
     /* 0x14 */ struct {
         s32 roll;

@@ -49,7 +49,7 @@ extern void BtlColl_StartThrow(BtlFlagChr *chr, BtlFlagChr *target, s32 cls, s32
 extern void BtlMember_Damage(BtlFlagChr *chr, s32 damage, s32 flags);    /* applies damage */
 
 extern BtlFlagRoster *gBtlChars;
-extern Vec4 D_002EC2A0; /* zero vector */
+extern Vec4 gVu0ZeroVec; /* zero vector */
 
 typedef struct BtlClashProgress {
     /* 0x00 */ u8 unk0[0x3C];
@@ -169,7 +169,7 @@ void BtlClash_SetOrbitCut(s32 player, s32 type) {
         dist += EftStruggle_GetCamDist(player, type);
         break;
     }
-    ChrCam_SetCut(chr, &D_002EC2A0, &D_002EC2A0, &D_002EC2A0, &D_002EC2A0, &D_002EC2A0, &D_002EC2A0, nodeA, yaw, 0.0f,
+    ChrCam_SetCut(chr, &gVu0ZeroVec, &gVu0ZeroVec, &gVu0ZeroVec, &gVu0ZeroVec, &gVu0ZeroVec, &gVu0ZeroVec, nodeA, yaw, 0.0f,
                   pitch, 0.0f, dist, 0.0f, nodeA, nodeB, nodeB, 1, 0x45);
 }
 
@@ -199,7 +199,7 @@ void BtlClash_SetMidCut(Vec4 *mid, f32 bias) {
     yaw = BtlUtil_WrapAngle(atan2f(d.x, d.z) + ang);
     pitch = -Mathf_Asin(d.y);
     pitch *= bias;
-    ChrCam_SetCut(chr, mid, &D_002EC2A0, mid, &D_002EC2A0, &look, &D_002EC2A0, -1, yaw, 0.0f, pitch, 0.0f,
+    ChrCam_SetCut(chr, mid, &gVu0ZeroVec, mid, &gVu0ZeroVec, &look, &gVu0ZeroVec, -1, yaw, 0.0f, pitch, 0.0f,
                   EftStruggle_GetMidDist() + base, 0.0f, -1, -1, -1, 1, 0x45);
 }
 
@@ -220,7 +220,7 @@ void BtlClash_SetPathCut(s32 n) {
         look.y = pos.y - sinf(p[4]);
         look.z = pos.z + cosf(p[5]);
         look.w = 1.0f;
-        ChrCam_SetCut(BtlChar_Get(0), &pos, &D_002EC2A0, &pos, &D_002EC2A0, &look, &D_002EC2A0, -1, 0.0f, 0.0f, 0.0f,
+        ChrCam_SetCut(BtlChar_Get(0), &pos, &gVu0ZeroVec, &pos, &gVu0ZeroVec, &look, &gVu0ZeroVec, -1, 0.0f, 0.0f, 0.0f,
                       0.0f, 0.0f, 0.0f, -1, -1, -1, 1, 0x45);
     }
 }

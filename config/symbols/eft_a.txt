@@ -39,7 +39,7 @@ EftHit_IsMultiHit = 0x0012E718; // type:func // guess
 EftHit_IncHitCount = 0x0012E738; // type:func // guess
 EftHit_GetHitCount = 0x0012E750; // type:func // guess
 EftHit_GetMaxHits = 0x0012E768; // type:func // guess
-EftHit_GetDefUnkB = 0x0012E798; // type:func // guess
+EftHit_GetHitInterval = 0x0012E798; // type:func // guess
 EftHit_IncCountA = 0x0012E7C8; // type:func // guess
 EftHit_SetCountA = 0x0012E7E8; // type:func // guess
 EftHit_GetCountA = 0x0012E800; // type:func // guess
@@ -100,7 +100,7 @@ EftCam_Init = 0x0012F550; // type:func
 EftCam_Term = 0x0012F588; // type:func
 EftCam_Clear = 0x0012F5B8; // type:func
 // Start(arg {anim, objId, unk8}): DemoCam_SetAnim / SetChr / SetTime / Start; Update follows the fighter's technique
-// timer (BtlCharApi_GetChargedUnkC78) or advances 2.0 per frame; Stop: DemoCam_Stop.
+// timer (BtlCharApi_GetRushSequenceFrame) or advances 2.0 per frame; Stop: DemoCam_Stop.
 EftCam_Start = 0x0012F5F0; // type:func // guess
 EftCam_SetHold = 0x0012F6A0; // type:func // guess
 EftCam_SetPaused = 0x0012F6B0; // type:func // guess

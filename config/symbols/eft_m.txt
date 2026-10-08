@@ -1,7 +1,7 @@
 // Effect tasks, 0x15F728..0x1637A0 (src/battle/eft_m.c).
 //
 // --- Speed lines (the module itself; its two spawners called by the fighter are in eft_l, 0x15EF18 / 0x15F3D8) ---
-// The module's task table is D_002C3A18 = { Update 0x15FB28, Init 0x15FA88, Term 0x15FAF0, stub 0x15FB58, 0,
+// The module's task table is gEftSpdLineClass = { Update 0x15FB28, Init 0x15FA88, Term 0x15FAF0, stub 0x15FB58, 0,
 // Draw 0x15FB60 }, listed in the layer table D_002C3FB0. Its work (gEftSpdLine, 0x18D0 bytes from the BtlPool)
 // holds 30 "trail" segments of 0x50 bytes and 40 "streak" segments of 0x60 bytes, each kind on its own doubly
 // linked list, drawn as camera-facing textured quads between two points. The fighter effect layer feeds it

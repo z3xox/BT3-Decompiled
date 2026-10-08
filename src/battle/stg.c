@@ -97,7 +97,7 @@ extern f32 gStgLastBottom;     /* gStgLastBottom */
 extern StgPlace gStgDbgPlaces[6]; /* gStgDbgPlaces */
 extern Vec4 gStgLastLightVecA; /* gStgLastLightVecA */
 extern Vec4 gStgLastLightVecB;  /* gStgLastLightVecB */
-extern Vec4 D_002EC2C0;        /* zero vector */
+extern Vec4 gVu0ZeroVecW1;        /* zero vector */
 extern StgView *gBtlCamView;
 
 #define STG_RES ((BattleRes *)gCommonRes->unk20)

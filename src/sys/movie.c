@@ -30,7 +30,7 @@ extern s32 ADXF_GetStat(ADXF adxf);
 extern s32 ADXF_Tell(ADXF adxf);    /* file position in sectors (locked wrapper around adxf_Tell) */
 extern s32 ADXT_GetStat(ADXT_HN adxt);
 extern void ADXT_Pause(ADXT_HN adxt, s32 sw);
-extern s32 func_00277A70(ADXT_HN adxt); /* non-zero while the player's own stream must not be disturbed (inferred) */
+extern s32 ADXT_GetStatRead(ADXT_HN adxt); /* non-zero while the player's own stream must not be disturbed (inferred) */
 extern void ADXM_ExecMain(void);
 
 /* hardware timer helpers (src/sys/timer.c, declared locally): timer 0 counts horizontal blanks */
@@ -290,7 +290,7 @@ void Movie_Run(void) {
             if (!(Timer_GetFrames(0) < MOVIE_FRAME_FIELDS)) {
                 break;
             }
-            if (ADXF_GetStat(m->adxf) != ADXF_STAT_READING && func_00277A70(m->adxt) == 0) {
+            if (ADXF_GetStat(m->adxf) != ADXF_STAT_READING && ADXT_GetStatRead(m->adxt) == 0) {
                 Movie_ReadAhead(gMovieTagIdle);
             }
         } while (Movie_FindBuf(0) != NULL);
@@ -388,7 +388,7 @@ s32 Movie_CbBackground(sceMpeg *mp, void *cbData, void *data) {
     Movie *m = gMovie;
 
     Movie_Demux();
-    if (ADXF_GetStat(m->adxf) != ADXF_STAT_READING && func_00277A70(m->adxt) == 0) {
+    if (ADXF_GetStat(m->adxf) != ADXF_STAT_READING && ADXT_GetStatRead(m->adxt) == 0) {
         Movie_ReadAhead("background");
     }
     return 1;

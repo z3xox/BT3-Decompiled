@@ -30,7 +30,7 @@ extern s32 Snd_PlaySe(u32 mask, s32 id);
 
 extern s32 Rand_Libc(void);           /* libc rand(), not the shared Mersenne Twister */
 extern void TextBox_Init(MTextBox *box, void *text, u32 preset);
-extern void TextBox_SetUnk50(MTextBox *box, s32 value);
+extern void TextBox_SetAlign(MTextBox *box, s32 value);
 extern void TextBox_SetLineOffsets(MTextBox *box, s32 y1, s32 y2, s32 y3, s32 y4, s32 y5);
 extern void TextBox_AttachLine(MFlash *flash, MFlashRef *ref, s32 x, s32 y, s32 line, MTextBox *box);
 extern void Num_Draw(MFlash *flash, char *fmt, s32 first, s32 count, s32 value, s32 w, s32 h, s32 mode);

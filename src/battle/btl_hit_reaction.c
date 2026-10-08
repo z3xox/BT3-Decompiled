@@ -12,7 +12,7 @@
  * The function after this file, BtlColl_NextPoolMember (0x1CDCA8), is the first one of btl_char_member.c.
  */
 
-extern Vec4 D_002EC2A0; /* zero vector */
+extern Vec4 gVu0ZeroVec; /* zero vector */
 
 extern s32 BtlChar_GetCount(void);
 extern BtlCollChr *BtlChar_Get(s32 i);
@@ -76,7 +76,7 @@ extern s32 BtlAct_TestPoweredSkill(BtlCollChr *chr, s32 mask);
 extern f32 BtlCharApi_GetHeight(s32 objId);
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out); /* world position of a model node */
 extern s32 BtlParam_GetFlags(BtlCollChr *chr);            /* parameter word +0x10 of the fighter's object */
-extern s32 BtlParam_GetUnk2(BtlCollChr *chr);
+extern s32 BtlParam_GetSizeClass(BtlCollChr *chr);
 extern f32 BtlParam_GetUnkC7Scale(BtlCollChr *chr);
 extern s32 BtlObjAnim_QueryEvent(BtlCollObj *obj, u64 arg1, s32 arg2, s32 arg3);
 extern s32 BtlStage_GetWaterLevel(f32 *height);
@@ -99,7 +99,7 @@ extern f32 BtlKiBlast_GetGuardPushOfHit(BtlCollHit *hit);
 extern s32 BtlSuper_GetFlagsA(BtlCollChr *chr, s32 slot);
 extern u32 BtlSuper_GetFlags(BtlCollChr *chr, s32 slot);  /* technique flag word */
 extern s32 BtlSuper_GetId(BtlCollChr *chr, s32 slot);  /* technique id */
-extern s32 BtlSuper_GetUnk1E(BtlCollChr *chr, s32 slot);
+extern s32 BtlSuper_GetClashPower(BtlCollChr *chr, s32 slot);
 extern s32 BtlSuper_GetShots(BtlCollChr *chr, s32 slot);
 extern s32 BtlSuper_GetHitsB(BtlCollChr *chr, s32 slot);
 extern s32 BtlSuper_GetHitDirKind(BtlCollChr *chr, s32 slot);
@@ -108,7 +108,7 @@ extern s32 BtlSuper_GetReact(BtlCollChr *chr, s32 slot);  /* reaction ids */
 extern s32 BtlSuper_GetReactAlt(BtlCollChr *chr, s32 slot);
 extern s32 BtlSuper_GetReactS800(BtlCollChr *chr, s32 slot);
 extern s32 BtlSuper_GetReactAltS800(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetUnk14D(BtlCollChr *chr, s32 slot);
+extern s32 BtlSuper_GetLandingKind(BtlCollChr *chr, s32 slot);
 extern s32 BtlSuper_GetGuardKind(BtlCollChr *chr, s32 slot);
 extern s32 BtlSuper_GetHitSound(BtlCollChr *chr, s32 slot, s32 alt); /* hit sound kind */
 extern s32 BtlSuper_GetStepCount(BtlCollChr *chr, s32 slot);
@@ -121,8 +121,8 @@ extern f32 BtlSuper_GetThrowAngleB(BtlCollChr *chr, s32 slot);
 extern s32 BtlSuper_GetThrowChara(BtlCollChr *chr, s32 slot);
 extern s32 BtlSuper_GetThrowCostume(BtlCollChr *chr, s32 slot);
 extern s32 BtlSuper_GetThrowGauge20(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetUnk220(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetUnk226(BtlCollChr *chr, s32 slot);
+extern s32 BtlSuper_GetThrowPartnerStep(BtlCollChr *chr, s32 slot);
+extern s32 BtlSuper_GetThrowObjectSlot(BtlCollChr *chr, s32 slot);
 extern s32 BtlSuper_GetLastStep(BtlCollChr *chr, s32 slot);
 extern s32 BtlSuper_GetDamage(BtlCollChr *chr, s32 slot, s32 arg2, s32 arg3); /* damage */
 
@@ -165,8 +165,8 @@ s32 BtlColl_StartThrow(BtlCollChr *atk, BtlCollChr *def, s32 slot, u32 techFlags
     atk->thr.unk20 = BtlSuper_GetThrowChara(atk, slot);
     atk->thr.unk24 = BtlSuper_GetThrowCostume(atk, slot);
     atk->thr.unk28 = BtlSuper_GetThrowGauge20(atk, slot);
-    atk->thr.unk2C = BtlSuper_GetUnk226(atk, slot);
-    atk->thr.unk18 = BtlSuper_GetUnk220(atk, slot);
+    atk->thr.unk2C = BtlSuper_GetThrowObjectSlot(atk, slot);
+    atk->thr.unk18 = BtlSuper_GetThrowPartnerStep(atk, slot);
     atk->thr.unk1C = BtlSuper_GetLastStep(atk, slot);
     BtlChar_SetFlag(atk, 0x94);
     atk->react.faceYaw = BtlChar_GetPos(atk)->yaw;
@@ -179,7 +179,7 @@ s32 BtlColl_StartThrow(BtlCollChr *atk, BtlCollChr *def, s32 slot, u32 techFlags
         pick = BtlChar_FrameMod(2) != 0;
     }
     atk->thr.unk34 = pick;
-    atk->thr.unk14 = BtlSuper_GetUnk14D(atk, slot);
+    atk->thr.unk14 = BtlSuper_GetLandingKind(atk, slot);
     if (techFlags & 0x400000) {
         atk->thr.unk30 = 1;
         atk->thr.unk60 = BtlSuper_GetThrowAngleA(atk, slot);
@@ -319,7 +319,7 @@ f32 BtlColl_GetHitDir(BtlCollChr *chr, BtlCollHit *hit, Vec4 *outDir) {
     } else if (fromAtk) {
         BtlOpp_GetDelta(chr, &dir);
         dir.y += BtlOpp_GetHalfHeightDiff(chr);
-        Vec4_Sub(&dir, &D_002EC2A0, &dir);
+        Vec4_Sub(&dir, &gVu0ZeroVec, &dir);
     } else {
         Vec4_Copy(&dir, &hit->vel);
     }
@@ -473,7 +473,7 @@ s32 BtlColl_GuardStrike(BtlCollChr *chr, BtlCollHit *hit) {
 }
 
 /* A rush attack (slot 2..4) hits a guarding fighter. Catch reactions (0x1D, 0x1E, 0x22) are swallowed with only a
- * sound when BtlParam_GetUnk2 is 4 and the technique lacks bit 0x8000000; unblockable techniques (bit 1) go through. */
+ * sound when BtlParam_GetSizeClass is 4 and the technique lacks bit 0x8000000; unblockable techniques (bit 1) go through. */
 s32 BtlColl_GuardRush(BtlCollChr *chr, BtlCollHit *hit) {
     Vec4 dir;
     s32 weak = 0;
@@ -499,7 +499,7 @@ s32 BtlColl_GuardRush(BtlCollChr *chr, BtlCollHit *hit) {
     case 0x1D:
     case 0x1E:
     case 0x22:
-        if (BtlParam_GetUnk2(chr) == 4 && !(BtlSuper_GetFlags(atk, slot) & 0x8000000)) {
+        if (BtlParam_GetSizeClass(chr) == 4 && !(BtlSuper_GetFlags(atk, slot) & 0x8000000)) {
             BtlColl_PlayHitSound(NULL, hit, BtlSuper_GetHitSound(atk, slot, alt));
             return 1;
         }
@@ -933,7 +933,7 @@ s32 BtlColl_StartRushCatch(BtlCollChr *chr, BtlCollChr *atk, BtlCollHit *hit, s3
     atk->thr.atkSide = atk->side;
     atk->thr.defSide = chr->side;
     atk->thr.slot = slot;
-    atk->thr.unk14 = BtlSuper_GetUnk14D(atk, slot);
+    atk->thr.unk14 = BtlSuper_GetLandingKind(atk, slot);
     tf = BtlSuper_GetFlags(atk, slot);
     back = 0;
     if (tf & 0x10000000) {
@@ -1105,7 +1105,7 @@ s32 BtlColl_TryDodge(s32 objId, BtlCollHit *hit) {
         slot = BtlAct_GetCurrentClass(chr);
         if (slot >= 2 && slot < 5) {
             if (BtlSuper_GetType(chr, slot) == 8) {
-                if (BtlSuper_GetUnk1E(chr, slot) >= hit->unk8) {
+                if (BtlSuper_GetClashPower(chr, slot) >= hit->unk8) {
                     return 1;
                 }
             }
@@ -1670,7 +1670,7 @@ void BtlColl_UpdateGround(BtlCollChr *chr) {
 /* Begin-frame reset of the action-class bits. */
 void BtlColl_ClearActionBits(BtlCollChr *chr) {
     chr->actBits = 0;
-    BtlColl_SetUnk1294(chr, -1);
+    BtlColl_SetFramesLeftOverride(chr, -1);
 }
 
 /* Records the class of an action started this frame as one bit of chr->actBits. */
@@ -1817,7 +1817,7 @@ void BtlColl_AddActionBit(BtlCollChr *chr, s32 action) {
 }
 
 /* Sets chr->unk1294. */
-void BtlColl_SetUnk1294(BtlCollChr *chr, s32 v) {
+void BtlColl_SetFramesLeftOverride(BtlCollChr *chr, s32 v) {
     chr->unk1294 = v;
 }
 
@@ -1838,5 +1838,5 @@ void BtlColl_SetFramesToReach(BtlCollChr *chr, f32 scale) {
     if (rate < 0.01f) {
         return;
     }
-    BtlColl_SetUnk1294(chr, (s32)((need - have) / rate + 0.99f));
+    BtlColl_SetFramesLeftOverride(chr, (s32)((need - have) / rate + 0.99f));
 }

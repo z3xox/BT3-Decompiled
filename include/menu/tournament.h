@@ -27,7 +27,7 @@ extern void *memcpy(void *, const void *, u32);
 extern void Flash_ClipSetOffset(MFlash *flash, MFlashRef *ref, s32 x, s32 y);
 extern void Flash_SetOffset(MFlash *flash, s32 x, s32 y);
 extern void TextBox_Init(MTextBox *box, void *text, u32 preset);
-extern void TextBox_SetUnk80(MTextBox *box, s32 value);
+extern void TextBox_SetNoFlush(MTextBox *box, s32 value);
 extern void TextBox_AttachLine(MFlash *flash, MFlashRef *ref, s32 x, s32 y, s32 line, MTextBox *box);
 extern s32 ChrTbl_WrapCostume(s32 chara, s32 *costume);
 extern s32 ChrTbl_GetCost(s32 chara);

@@ -24,7 +24,7 @@
 
 extern s32 Rand_Libc(void);     /* the C library rand(), not the shared Mersenne Twister */
 extern void TextBox_Init(MTextBox *box, void *text, u32 preset);
-extern void TextBox_SetUnk50(MTextBox *box, s32 value);
+extern void TextBox_SetAlign(MTextBox *box, s32 value);
 extern void TextBox_SetMaxWidth(MTextBox *box, s32 w);
 extern void TextBox_SetLineOffsets(MTextBox *box, s32 a, s32 b, s32 c, s32 d, s32 e);
 extern void TextBox_AttachLine(MFlash *flash, MFlashRef *ref, s32 x, s32 y, s32 line, MTextBox *box);

@@ -48,7 +48,7 @@ BtlColl_UpdateGround = 0x001CD558; // type:func // guess
 // k * length.
 BtlColl_ClearActionBits = 0x001CD9C8; // type:func // guess
 BtlColl_AddActionBit = 0x001CD9E8; // type:func // guess
-BtlColl_SetUnk1294 = 0x001CDBE0; // type:func // guess
+BtlColl_SetFramesLeftOverride = 0x001CDBE0; // type:func // guess
 BtlColl_SetFramesToReach = 0x001CDBE8; // type:func // guess
 // 0x1CDCA8(chr): side 1 only, advances the opponent pool (battle work +0x5A8) through BtlMember_Replace.
 BtlColl_NextPoolMember = 0x001CDCA8; // type:func // guess

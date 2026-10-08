@@ -39,10 +39,10 @@ extern s32 BtlObj_Create(s32 type, void *res, s32 active);
 extern u8 *BtlObj_Get(s32 id);
 extern void BtlObjAnim_PlayModel(u8 *obj, s32 anim, s32 mode);
 extern void BtlObjXf_SetMtx(u8 *obj, Mtx44 *m);
-extern void BtlObj_SetUnkB30(u8 *obj, s32 value);
+extern void BtlObj_SetAlphaAdd(u8 *obj, s32 value);
 extern void BtlObj_Init(s32 prealloc);
 extern void BtlObj_Term(void);
-extern void BtlObj_SetUnk44FC4(f32 value);
+extern void BtlObj_SetDefaultAnimStep(f32 value);
 extern void BtlObj_UpdateAll(void);
 extern void BtlObj_UpdateVisibility(s32 view);
 extern void BtlObj_FinishVisibility(s32 split);
@@ -167,14 +167,14 @@ s32 ShenScene_StepSeq(ShenSeq *seq) {
         SHEN_OBJ_FLAGS(dragon->obj) &= ~0x02000000;
         BtlObjXf_SetMtx(dragon->obj, &m);
         BtlObjAnim_PlayModel(dragon->obj, 0, 2);
-        BtlObj_SetUnkB30(dragon->obj, 0x40);
+        BtlObj_SetAlphaAdd(dragon->obj, 0x40);
         w = gShenScene;
         balls = &w->actor[SHENSCENE_ACTOR_BALLS];
         SHEN_OBJ_FLAGS(balls->obj) &= ~0x02000000;
         BtlObjXf_SetMtx(balls->obj, &m);
         BtlObjAnim_PlayModel(balls->obj, 0, 2);
         Ramp_Start(SHEN_RAMP(&w->actor[SHENSCENE_ACTOR_BALLS]), 0.5f, 0.0f, 127.0f);
-        BtlObj_SetUnkB30(balls->obj, (u8)(u32)SHEN_RAMP(balls)->value);
+        BtlObj_SetAlphaAdd(balls->obj, (u8)(u32)SHEN_RAMP(balls)->value);
         seq->step++;
         break;
     }
@@ -188,7 +188,7 @@ s32 ShenScene_StepSeq(ShenSeq *seq) {
                 Ramp_Start(ramp, 0.5f, 127.0f, 0.0f);
             }
         }
-        BtlObj_SetUnkB30(actor->obj, (u8)(u32)SHEN_RAMP(actor)->value);
+        BtlObj_SetAlphaAdd(actor->obj, (u8)(u32)SHEN_RAMP(actor)->value);
         if (DemoCam_GetTime() >= 354.0f) {
             static const ShenVec c = {0.0f, 0.0f, 1.0f, 1.0f};
 
@@ -247,7 +247,7 @@ s32 ShenScene_StepSeq(ShenSeq *seq) {
                 Ramp_Start(ramp, 2.0f, 64.0f, 0.0f);
             }
         }
-        BtlObj_SetUnkB30(actor->obj, (u8)(u32)SHEN_RAMP(actor)->value);
+        BtlObj_SetAlphaAdd(actor->obj, (u8)(u32)SHEN_RAMP(actor)->value);
         {
             static const ShenVec c = {0.0f, -0.3f, 0.55f, 1.0f};
 
@@ -273,7 +273,7 @@ s32 ShenScene_StepSeq(ShenSeq *seq) {
 
             SHEN_OBJ_FLAGS(balls->obj) |= 2;
             BtlObjAnim_PlayModel(balls->obj, 1, 1);
-            BtlObj_SetUnkB30(balls->obj, 0x7F);
+            BtlObj_SetAlphaAdd(balls->obj, 0x7F);
         }
         seq->step++;
         /* fall through */
@@ -521,7 +521,7 @@ void ShenScene_Init(s32 dragon) {
     memset(gShenScene, 0, sizeof(ShenScene));
     gShenScene->dragon = dragon;
     BtlObj_Init(0);
-    BtlObj_SetUnk44FC4(2.0f);
+    BtlObj_SetDefaultAnimStep(2.0f);
     Job_Clear();
     job = &gShenScene->job;
     memset(job, 0, sizeof(ShenJob));

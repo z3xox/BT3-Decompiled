@@ -424,9 +424,9 @@ void UbTeamSel_Init(s32 section) {
     gUbTeamSel->texA[17] = MTEX(res, 0);
     gUbTeamSel->sel->flags |= UBTEAM_SEL_FACE_READY;
     TextBox_Init(&gUbTeamSel->box[0], gUbTeamSel->nameText, 1);
-    TextBox_SetUnk80(&gUbTeamSel->box[0], 1);
+    TextBox_SetNoFlush(&gUbTeamSel->box[0], 1);
     TextBox_Init(&gUbTeamSel->box[1], gUbTeamSel->formText, 3);
-    TextBox_SetUnk80(&gUbTeamSel->box[1], 1);
+    TextBox_SetNoFlush(&gUbTeamSel->box[1], 1);
 }
 
 /* Frees the screen: the windows, the movies, the portrait buffers and the work area. */

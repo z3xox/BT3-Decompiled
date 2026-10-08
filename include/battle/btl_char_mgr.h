@@ -44,7 +44,7 @@ typedef struct BtlMgrGauge {
     /* 0x24 */ s32 lowHealth;  /* 1 while health < 10000 */
     /* 0x28 */ s32 lowHealthIdle; /* lowHealth and nothing forbids it (see BtlChar_PostScene) */
     /* 0x2C */ s32 unk2C;
-    /* 0x30 */ s32 unk30;      /* BtlChar_TestMemberUnk70() = (unk30 != 0); set to 1 with flag 0xA6 */
+    /* 0x30 */ s32 unk30;      /* BtlChar_IsBodyChanged() = (unk30 != 0); set to 1 with flag 0xA6 */
     /* 0x34 */ s32 unk34;      /* 1 after a fusion */
 } BtlMgrGauge;
 
@@ -85,7 +85,7 @@ typedef struct BtlMgrObj {
     /* 0x0A40 */ u32 flags;      /* bit 1: drawn in front / highlighted (see BtlChars_UpdateObjFlag2),
                                     bit 30: BtlMgrGauge.unk20 */
     /* 0x0A44 */ u8 unkA44[0x1660 - 0xA44];
-    /* 0x1660 */ u8 *unk1660;    /* block whose word at + 0x18028 mirrors BtlChar_TestMemberUnk70() */
+    /* 0x1660 */ u8 *unk1660;    /* block whose word at + 0x18028 mirrors BtlChar_IsBodyChanged() */
 } BtlMgrObj;
 
 /* Partial view of a fighter (0x1600 bytes, BtlChar_Get). */
@@ -133,9 +133,9 @@ typedef struct BtlMgrChr {
     /* 0x0D5C */ f32 unkD5C;     /* 500.0 after a round reset */
     /* 0x0D60 */ u8 unkD60[0xD68 - 0xD60];
     /* 0x0D68 */ s32 unkD68;
-    /* 0x0D6C */ s32 unkD6C;     /* per-frame level: 1 (or BtlParam_GetUnk70 with flag 6) + ability 1 / 0 bonus */
+    /* 0x0D6C */ s32 unkD6C;     /* per-frame level: 1 (or BtlParam_GetPoweredDashLimit with flag 6) + ability 1 / 0 bonus */
     /* 0x0D70 */ s32 unkD70;
-    /* 0x0D74 */ s32 unkD74;     /* per-frame level: 1 (or BtlParam_GetUnk72 with flag 6) + ability 3 / 2 bonus */
+    /* 0x0D74 */ s32 unkD74;     /* per-frame level: 1 (or BtlParam_GetPoweredVanishLimit with flag 6) + ability 3 / 2 bonus */
     /* 0x0D78 */ u8 unkD78[0xE00 - 0xD78];
     /* 0x0E00 */ s32 unkE00[5];  /* 0xE00..0xE40 is cleared when the object is bound */
     /* 0x0E14 */ s32 unkE14;     /* a timer: > 0 forbids lowHealthIdle */

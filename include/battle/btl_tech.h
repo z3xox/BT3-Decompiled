@@ -62,7 +62,7 @@ typedef struct BtlTechBParam {
     /* 0x78 */ f32 chargeRateB;   /* attack charge rate at gauge +0xD80 == 100000 */
     /* 0x7C */ f32 damageTaken;   /* multiplier of the damage the character takes (BtlMember_Damage) */
     /* 0x80 */ u8 unk80[0x8F - 0x80];
-    /* 0x8F */ u8 unk8F[0xC7 - 0x8F]; /* BtlParam_GetUnk8F indexes it; from 0x98 on BtlParam has other fields */
+    /* 0x8F */ u8 unk8F[0xC7 - 0x8F]; /* BtlParam_GetComboFinish indexes it; from 0x98 on BtlParam has other fields */
     /* 0xC7 */ u8 unkC7;          /* percent; BtlParam_GetUnkC7Scale */
     /* 0xC8 */ f32 unkC8;
 } BtlTechBParam;
@@ -72,7 +72,7 @@ typedef struct BtlKiBlastData {
     /* 0x00 */ u16 flags;       /* 1: cannot be guarded (except by guard kind 6); 2: cannot be deflected, reflected
                                    or absorbed; 0x10: no flinch against a tougher victim or one whose state has bit
                                    0x100; 0x20: copied into the spawn request. Bits 1 and 2 are dropped while the
-                                   owner's BtlChar_TestMemberUnk70 is set. (Uses are in btl_hit_reaction.c.) */
+                                   owner's BtlChar_IsBodyChanged is set. (Uses are in btl_hit_reaction.c.) */
     /* 0x02 */ s8 type;         /* spark module, sound class, deflect rules */
     /* 0x03 */ s8 unk3;
     /* 0x04 */ s32 damage;      /* total over all hits */
@@ -287,18 +287,18 @@ typedef struct BtlTechBChr {
 
 /* ---- general parameters ---- */
 f32 BtlParam_GetUnk5C(BtlTechBChr *chr);
-f32 BtlParam_GetUnk68(BtlTechBChr *chr);
-f32 BtlParam_GetUnk6C(BtlTechBChr *chr);
+f32 BtlParam_GetStepCancelRatio(BtlTechBChr *chr);
+f32 BtlParam_GetBackStepCancelRatio(BtlTechBChr *chr);
 f32 BtlParam_GetHitReactScale(BtlTechBChr *chr);
-s32 BtlParam_GetUnk70(BtlTechBChr *chr);
-s32 BtlParam_GetUnk72(BtlTechBChr *chr);
+s32 BtlParam_GetPoweredDashLimit(BtlTechBChr *chr);
+s32 BtlParam_GetPoweredVanishLimit(BtlTechBChr *chr);
 f32 BtlParam_GetChargeRateA(BtlTechBChr *chr);
 f32 BtlParam_GetChargeRateB(BtlTechBChr *chr);
 f32 BtlParam_GetDamageTakenScale(BtlTechBChr *chr);
 f32 BtlParam_GetGauge99CTime(BtlTechBChr *chr);
 f32 BtlParam_GetUnkC7Scale(BtlTechBChr *chr);
 f32 BtlParam_GetUnkC8(BtlTechBChr *chr);
-s32 BtlParam_GetUnk8F(BtlTechBChr *chr, s32 n);
+s32 BtlParam_GetComboFinish(BtlTechBChr *chr, s32 n);
 s32 BtlParam_GetDashSound(BtlTechBChr *chr);
 s32 BtlParam_GetChargeStartSound(BtlTechBChr *chr);
 s32 BtlParam_GetChargeLoopSound(BtlTechBChr *chr);
@@ -337,9 +337,9 @@ f32 BtlKiBlast_GetTurnRateOf(BtlTechBChr *chr, u32 kind);
 s32 BtlKiBlast_GetFrames(BtlTechBChr *chr);
 s32 BtlKiBlast_GetFramesOfHit(BtlTechBHit *hit);
 s32 BtlKiBlast_GetFramesOf(BtlTechBChr *chr, u32 kind);
-s32 BtlKiBlast_GetUnk31(BtlTechBChr *chr);
-s32 BtlKiBlast_GetUnk31OfHit(BtlTechBHit *hit);
-s32 BtlKiBlast_GetUnk31Of(BtlTechBChr *chr, u32 kind);
+s32 BtlKiBlast_GetSpreadMode(BtlTechBChr *chr);
+s32 BtlKiBlast_GetSpreadModeOfHit(BtlTechBHit *hit);
+s32 BtlKiBlast_GetSpreadModeOf(BtlTechBChr *chr, u32 kind);
 s32 BtlKiBlast_GetReact(BtlTechBChr *chr);
 s32 BtlKiBlast_GetReactOfHit(BtlTechBHit *hit);
 s32 BtlKiBlast_GetReactOf(BtlTechBChr *chr, u32 kind);
@@ -361,9 +361,9 @@ s32 BtlKiBlast_GetUnk3Of(BtlTechBChr *chr, u32 kind);
 s32 BtlKiBlast_GetHits(BtlTechBChr *chr);
 s32 BtlKiBlast_GetHitsOfHit(BtlTechBHit *hit);
 s32 BtlKiBlast_GetHitsOf(BtlTechBChr *chr, u32 kind);
-f32 BtlKiBlast_GetUnk28(BtlTechBChr *chr);
-f32 BtlKiBlast_GetUnk28OfHit(BtlTechBHit *hit);
-f32 BtlKiBlast_GetUnk28Of(BtlTechBChr *chr, u32 kind);
+f32 BtlKiBlast_GetRadius(BtlTechBChr *chr);
+f32 BtlKiBlast_GetRadiusOfHit(BtlTechBHit *hit);
+f32 BtlKiBlast_GetRadiusOf(BtlTechBChr *chr, u32 kind);
 f32 BtlKiBlast_GetUnk2C(BtlTechBChr *chr);
 f32 BtlKiBlast_GetUnk2COfHit(BtlTechBHit *hit);
 f32 BtlKiBlast_GetUnk2COf(BtlTechBChr *chr, u32 kind);
@@ -389,7 +389,7 @@ s32 BtlSuper_GetHitCount(BtlTechBChr *chr, s32 slot);
 u32 BtlSuper_GetFlagsA(BtlTechBChr *chr, s32 slot);
 u32 BtlSuper_GetFlags(BtlTechBChr *chr, s32 slot);
 s32 BtlSuper_GetId(BtlTechBChr *chr, s32 slot);
-s32 BtlSuper_GetUnk1E(BtlTechBChr *chr, s32 slot);
+s32 BtlSuper_GetClashPower(BtlTechBChr *chr, s32 slot);
 f32 BtlSuper_GetShotTime(BtlTechBChr *chr, s32 slot);
 f32 BtlSuper_GetShotSpeed(BtlTechBChr *chr, s32 slot);
 f32 BtlSuper_GetShotTurnRate(BtlTechBChr *chr, s32 slot);
@@ -404,7 +404,7 @@ s32 BtlSuper_GetReact(BtlTechBChr *chr, s32 slot);
 s32 BtlSuper_GetReactAlt(BtlTechBChr *chr, s32 slot);
 s32 BtlSuper_GetReactS800(BtlTechBChr *chr, s32 slot);
 s32 BtlSuper_GetReactAltS800(BtlTechBChr *chr, s32 slot);
-s32 BtlSuper_GetUnk14D(BtlTechBChr *chr, s32 slot);
+s32 BtlSuper_GetLandingKind(BtlTechBChr *chr, s32 slot);
 s32 BtlSuper_GetGuardKind(BtlTechBChr *chr, s32 slot);
 s32 BtlSuper_GetHitSound(BtlTechBChr *chr, s32 slot, s32 alt);
 s32 BtlSuper_GetStepCount(BtlTechBChr *chr, s32 slot);
@@ -424,12 +424,12 @@ f32 BtlSuper_GetRushSpeed(BtlTechBChr *chr, s32 slot);
 s32 BtlSuper_GetThrowChara(BtlTechBChr *chr, s32 slot);
 s32 BtlSuper_GetThrowCostume(BtlTechBChr *chr, s32 slot);
 s32 BtlSuper_GetThrowGauge20(BtlTechBChr *chr, s32 slot);
-s32 BtlSuper_GetUnk220(BtlTechBChr *chr, s32 slot);
-s32 BtlSuper_GetUnk223(BtlTechBChr *chr, s32 slot);
-s32 BtlSuper_GetUnk226(BtlTechBChr *chr, s32 slot);
+s32 BtlSuper_GetThrowPartnerStep(BtlTechBChr *chr, s32 slot);
+s32 BtlSuper_GetStageFxEndStep(BtlTechBChr *chr, s32 slot);
+s32 BtlSuper_GetThrowObjectSlot(BtlTechBChr *chr, s32 slot);
 s32 BtlSuper_GetPromptRowIndex(BtlTechBChr *chr, s32 slot);
 BtlTechBPromptRow *BtlSuper_GetPromptRow(BtlTechBChr *chr, s32 slot);
-s32 BtlSuper_GetUnk165(BtlTechBChr *chr, s32 slot);
+s32 BtlSuper_GetAiKind(BtlTechBChr *chr, s32 slot);
 s32 BtlSuper_GetLastStep(BtlTechBChr *chr, s32 slot);
 s32 BtlSuper_GetFrames22C(BtlTechBChr *chr, s32 slot);
 s32 BtlSuper_GetFrames238(BtlTechBChr *chr, s32 slot);
@@ -453,7 +453,7 @@ s32 BtlSkill_GetHitsB(BtlTechBChr *chr, s32 slot);
 s32 BtlSkill_GetHitsC(BtlTechBChr *chr, s32 slot);
 s32 BtlSkill_GetHitDirKind(BtlTechBChr *chr, s32 slot);
 s32 BtlSkill_GetSequence(BtlTechBChr *chr, s32 slot);
-s32 BtlSkill_GetUnk9E(BtlTechBChr *chr, s32 slot);
+s32 BtlSkill_GetAiKind(BtlTechBChr *chr, s32 slot);
 s32 BtlSkill_GetStatKind(BtlTechBChr *chr, s32 slot);
 s32 BtlSkill_GetReact(BtlTechBChr *chr, s32 slot);
 s32 BtlSkill_GetReactS800(BtlTechBChr *chr, s32 slot);

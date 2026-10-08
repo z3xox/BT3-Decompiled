@@ -33,8 +33,8 @@ extern f32 BtlCharApi_GetCenterHeight(s32 objId);                              /
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out);        /* world position of a model node */
 extern f32 BtlCharApi_GetRadius(s32 objId);                              /* body radius */
 extern s32 BtlCharApi_IsInSkill(s32 objId);                              /* action is 0xFD..0x102 */
-extern s32 BtlParam_GetUnk0(BtlFlagChr *chr);                        /* u16 at +0 of the object's parameter block */
-extern s32 BtlParam_GetUnk2(BtlFlagChr *chr);                        /* s8 at +2 of the object's parameter block */
+extern s32 BtlParam_GetCharaFlags(BtlFlagChr *chr);                        /* u16 at +0 of the object's parameter block */
+extern s32 BtlParam_GetSizeClass(BtlFlagChr *chr);                        /* s8 at +2 of the object's parameter block */
 extern f32 BtlParam_GetUnkC7Scale(BtlFlagChr *chr);
 
 #define OPPONENT(chr) ((chr)->player == 0 ? BtlChar_Get(1) : BtlChar_Get(0))
@@ -184,7 +184,7 @@ f32 BtlOpp_GetRadius(BtlFlagChr *chr) {
 
 /* Signed byte +2 of the opponent's parameter block. */
 s32 BtlOpp_GetParamByte2(BtlFlagChr *chr) {
-    return BtlParam_GetUnk2(OPPONENT(chr));
+    return BtlParam_GetSizeClass(OPPONENT(chr));
 }
 
 /* The opponent's height (object +0xFF4). */
@@ -193,13 +193,13 @@ f32 BtlOpp_GetHeight(BtlFlagChr *chr) {
 }
 
 /* The opponent's object +0xFFC. */
-f32 BtlOpp_GetObjUnkFFC(BtlFlagChr *chr) {
+f32 BtlOpp_GetCenterHeight(BtlFlagChr *chr) {
     return BtlCharApi_GetCenterHeight(OPPONENT(chr)->objId);
 }
 
 /* Word +0 of the opponent's parameter block. */
 s32 BtlOpp_GetParamWord0(BtlFlagChr *chr) {
-    return BtlParam_GetUnk0(OPPONENT(chr));
+    return BtlParam_GetCharaFlags(OPPONENT(chr));
 }
 
 /* The opponent's player index. */
@@ -228,7 +228,7 @@ s32 BtlOpp_GetSeenAction(BtlFlagChr *chr) {
 }
 
 /* The same choice for the opponent's +0x964 / +0x968. */
-s32 BtlOpp_GetSeenUnk964(BtlFlagChr *chr) {
+s32 BtlOpp_GetSeenActionFrame(BtlFlagChr *chr) {
     BtlFlagChr *opp = OPPONENT(chr);
 
     if (BtlChar_GetStage(chr) < 6 || BtlChar_GetStage(opp) < 6) {
@@ -243,7 +243,7 @@ f32 BtlOpp_GetObjUnkFF8(BtlFlagChr *chr) {
 }
 
 /* Copies the opponent's vector at +0x15A0. */
-void BtlOpp_GetUnk15A0(BtlFlagChr *chr, Vec4 *out) {
+void BtlOpp_GetLookOffset(BtlFlagChr *chr, Vec4 *out) {
     BtlFlagChr *opp = OPPONENT(chr);
 
     Vec4_Copy(out, &opp->unk15A0);
@@ -260,7 +260,7 @@ void BtlOpp_GetObjVecFA0(BtlFlagChr *chr, Vec4 *out) {
 }
 
 /* The opponent's +0xD88. */
-s32 BtlOpp_GetUnkD88(BtlFlagChr *chr) {
+s32 BtlOpp_GetEvasionCount(BtlFlagChr *chr) {
     return OPPONENT(chr)->unkD88;
 }
 

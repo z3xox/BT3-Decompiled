@@ -79,10 +79,10 @@ extern void sceSifInitRpc(s32 mode);
 extern s32 sceSifBindRpc(SndSifClient *client, s32 id, s32 mode);
 extern s32 sceSifCallRpc(SndSifClient *client, s32 fno, s32 mode, void *send, s32 sendSize, void *recv, s32 recvSize,
                          void *endFunc, void *endParam);
-extern s32 func_002B4AF0(SndSifClient *client); /* sceSifCheckStatRpc */
+extern s32 sceSifCheckStatRpc(SndSifClient *client); /* sceSifCheckStatRpc */
 extern s32 sceSdRemoteInit(void);
-extern s32 func_00296B48(s32 priority);          /* sceSdRemoteCallbackInit */
-extern s32 func_002967C0(s32 block, s32 cmd, ...); /* sceSdRemote */
+extern s32 sceSdRemoteCallbackInit(s32 priority);          /* sceSdRemoteCallbackInit */
+extern s32 sceSdRemote(s32 block, s32 cmd, ...); /* sceSdRemote */
 
 extern void *IopHeap_Alloc(s32 size);  /* sceSifAllocIopHeap wrapper */
 extern void IopHeap_Free(void *addr); /* sceSifFreeIopHeap wrapper */
@@ -104,7 +104,7 @@ s32 Snd_RpcCall(s32 cmd, void *data, s32 size) {
 
 /* True while an RPC call on the sound client is still in flight (sceSifCheckStatRpc). */
 s32 Snd_RpcIsBusy(void) {
-    return func_002B4AF0(&gSndRpc->client);
+    return sceSifCheckStatRpc(&gSndRpc->client);
 }
 
 /* Allocates the RPC block, binds to SOUNDS.IRX (retrying until it answers) and sends INIT. */
@@ -272,17 +272,17 @@ void Snd_RpcCmd8(s32 a) {
 
 /* Starts a DMA upload of IOP memory to SPU RAM: sceSdRemote(1, rSdVoiceTrans, core 1, write, iopAddr, spuAddr, size). */
 void Snd_SpuTransfer(void *iopAddr, s32 spuAddr, s32 size) {
-    func_002967C0(1, 0x80D0, 1, 0, iopAddr, spuAddr, size);
+    sceSdRemote(1, 0x80D0, 1, 0, iopAddr, spuAddr, size);
 }
 
 /* Blocks until the SPU upload is over: sceSdRemote(1, rSdVoiceTransStatus, core 1, wait). */
 s32 Snd_SpuTransferWait(void) {
-    return func_002967C0(1, 0x80F0, 1, 1);
+    return sceSdRemote(1, 0x80F0, 1, 1);
 }
 
 /* Polls the SPU upload: sceSdRemote(1, rSdVoiceTransStatus, core 1, check); 1 = finished. */
 s32 Snd_SpuTransferCheck(void) {
-    return func_002967C0(1, 0x80F0, 1, 0);
+    return sceSdRemote(1, 0x80F0, 1, 0);
 }
 
 /* RPC 0xE (no arguments). No callers reach it. */
@@ -430,7 +430,7 @@ void Snd_Init(void) {
     gSndMgr->iopBuf = IopHeap_Alloc(0xA4800);
     SpuHeap_Init();
     sceSdRemoteInit();
-    func_00296B48(5);
+    sceSdRemoteCallbackInit(5);
     Snd_RpcInit();
     Snd_SetMasterVolume(0x7F);
 }

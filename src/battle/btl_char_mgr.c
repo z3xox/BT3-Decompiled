@@ -89,7 +89,7 @@
  *   BtlObjAnim_SamplePose, BtlObjAnim_UpdateEvents, BtlObjPose_CalcMatrices, BtlObjBody_Warp, BtlObjHit_BuildVolumes, BtlObj_SetColorPreset, BtlObj_BindCommonTables,
  *   BtlObj_SaveNodePositions, BtlObj_SetMoveVec, BtlObj_InitChains, BtlObj_UpdateChains   BtlObj (model / skeleton) updates
  *   BtlChars_Snapshot(n)     per fighter BtlChar_Snapshot(chr, &pose, &pose + 0x10, n): position snapshot n
- *   BtlParam_GetUnkAD(chr)   byte 0xAD of the object's parameter block (BtlObj + 0x91C)
+ *   BtlParam_GetFormFlags(chr)   byte 0xAD of the object's parameter block (BtlObj + 0x91C)
  *   BtlAtk_GetId(chr)   id of the technique in use
  *   Vec4_SetZero(v)     zeroes a Vec4
  * BtlChar_GetObj / BtlChar_GetPos / BtlChar_IsFrozen / BtlUtil_Clamp / BtlUtil_Max and the ChrCam_ / BtlReplay_
@@ -200,7 +200,7 @@ extern s32 BtlUtil_Max(s32 a, s32 b);
 extern BtlMgrObj *BtlChar_GetObj(BtlMgrChr *chr);
 extern BtlMgrPose *BtlChar_GetPos(BtlMgrChr *chr);
 extern s32 BtlChar_IsFrozen(BtlMgrChr *chr);
-extern s32 BtlChar_TestMemberUnk70(BtlMgrChr *chr);
+extern s32 BtlChar_IsBodyChanged(BtlMgrChr *chr);
 extern void BtlChar_UpdateVibration(BtlMgrChr *chr);
 extern void BtlChar_StopVoiceOnFlag(BtlMgrChr *chr);
 extern void BtlChar_TickVoiceTimers(BtlMgrChr *chr);
@@ -216,11 +216,11 @@ extern s32 BtlCharApi_EnteredTechnique(s32 objId);
 extern s32 BtlCharApi_IsSkillStart(s32 objId);
 extern s32 BtlCharApi_IsChanging(s32 objId);
 extern s32 BtlAtk_GetId(BtlMgrChr *chr);
-extern s32 BtlParam_GetUnk0(BtlMgrChr *chr);
-extern s32 BtlParam_GetUnkAD(BtlMgrChr *chr);
+extern s32 BtlParam_GetCharaFlags(BtlMgrChr *chr);
+extern s32 BtlParam_GetFormFlags(BtlMgrChr *chr);
 extern s32 BtlParam_GetAuraKind(BtlMgrChr *chr);
-extern s32 BtlParam_GetUnk70(BtlMgrChr *chr);
-extern s32 BtlParam_GetUnk72(BtlMgrChr *chr);
+extern s32 BtlParam_GetPoweredDashLimit(BtlMgrChr *chr);
+extern s32 BtlParam_GetPoweredVanishLimit(BtlMgrChr *chr);
 extern void BtlObjAnim_SamplePose(BtlMgrObj *obj);
 extern void BtlObjAnim_UpdateEvents(BtlMgrObj *obj);
 extern void BtlObjBody_Warp(BtlMgrObj *obj, void *vec);
@@ -233,7 +233,7 @@ extern void BtlObj_SetMoveVec(BtlMgrObj *obj, void *vec);
 extern void BtlObj_InitChains(BtlMgrObj *obj);
 extern void BtlObj_UpdateChains(BtlMgrObj *obj);
 
-/* The word of the object's +0x1660 block that mirrors BtlChar_TestMemberUnk70(). */
+/* The word of the object's +0x1660 block that mirrors BtlChar_IsBodyChanged(). */
 #define OBJ_WORD_18028(obj) (*(s32 *)((obj)->unk1660 + 0x18028))
 
 /* A table inside a data file: the header word gives its byte offset. */
@@ -331,8 +331,8 @@ void BtlChar_Reset(BtlMgrChr *chr) {
     BtlObjAnim_SamplePose(obj);
     BtlObjPose_CalcMatrices(obj);
     chr->memberCount = BattleSide_GetMemberCount(side);
-    chr->unk1300 = BattleSide_GetUnk1FC(side);
-    chr->unkCF4 = BattleSide_GetUnk200(side);
+    chr->unk1300 = BattleSide_GetChangeAllowed(side);
+    chr->unkCF4 = BattleSide_GetSwitchEnabled(side);
     BtlChar_CopyAllBonus(chr);
     BtlChar_CopyAllAbility(chr);
     for (i = 0; i < chr->memberCount; i++) {
@@ -389,13 +389,13 @@ void BtlChar_OnModelLoaded(BtlMgrChr *chr) {
         ratio = BtlMember_GetHealthRatio(chr);
         BtlMember_LoadParams(chr, BtlMember_GetActiveIndex(chr), 0, 0.0f, 0);
         g->health = (f32)g->healthMax * ratio + 0.5f;
-        if (BtlParam_GetUnkAD(chr) & 1) {
+        if (BtlParam_GetFormFlags(chr) & 1) {
             g->health += 5000;
         }
-        if (BtlParam_GetUnkAD(chr) & 2) {
+        if (BtlParam_GetFormFlags(chr) & 2) {
             g->health += 10000;
         }
-        if (BtlParam_GetUnkAD(chr) & 4) {
+        if (BtlParam_GetFormFlags(chr) & 4) {
             g->ki = g->kiMax;
         }
         g->health = BtlUtil_Clamp(g->health, 1, g->healthMax);
@@ -423,7 +423,7 @@ void BtlChar_OnModelLoaded(BtlMgrChr *chr) {
         if (BtlMember_HasAbility(chr, 0x61)) {
             g->blast = g->blastMax;
         }
-        if (BtlChar_TestMemberUnk70(chr)) {
+        if (BtlChar_IsBodyChanged(chr)) {
             BtlObj_BindCommonTables(obj);
         }
         break;
@@ -448,16 +448,16 @@ void BtlChar_OnModelLoaded(BtlMgrChr *chr) {
             g->health += og->health;
             g->healthMax += og->healthMax;
             g->blastMax = gBtlChars->tbl[4][m->chara * 4 + 3] * 100000;
-            if (BtlParam_GetUnkAD(chr) & 1) {
+            if (BtlParam_GetFormFlags(chr) & 1) {
                 g->health += 5000;
             }
-            if (BtlParam_GetUnkAD(chr) & 2) {
+            if (BtlParam_GetFormFlags(chr) & 2) {
                 g->health += 10000;
             }
-            if (BtlParam_GetUnkAD(chr) & 4) {
+            if (BtlParam_GetFormFlags(chr) & 4) {
                 g->ki = g->kiMax;
             }
-            if (BtlParam_GetUnkAD(chr) & 8) {
+            if (BtlParam_GetFormFlags(chr) & 8) {
                 BtlChar_SetHeldFlag(chr, 6);
                 g->unk1C = 30000;
                 g->ki = g->kiMax;
@@ -1017,8 +1017,8 @@ void BtlChar_BeginFrame(BtlMgrChr *chr) {
     chr->prev1262 = chr->unk1262;
     memset(&chr->unk1262, 0, sizeof(chr->unk1262));
     if (BtlChar_TestFlag(chr, 6)) {
-        chr->unkD6C = BtlParam_GetUnk70(chr);
-        chr->unkD74 = BtlParam_GetUnk72(chr);
+        chr->unkD6C = BtlParam_GetPoweredDashLimit(chr);
+        chr->unkD74 = BtlParam_GetPoweredVanishLimit(chr);
     } else {
         chr->unkD6C = 1;
         chr->unkD74 = 1;
@@ -1214,7 +1214,7 @@ void BtlChar_PostScene(BtlMgrChr *chr) {
     BtlFx_UpdatePostScene(chr);
     if (BtlMember_GetActiveGauge(chr)->health < 10000) {
         BtlMember_GetActiveGauge(chr)->lowHealth = 1;
-        if (!(BtlParam_GetUnk0(chr) & 0x80) && chr->unkE14 <= 0 && chr->unkE18 <= 0 && !BtlChar_TestFlag(chr, 6)) {
+        if (!(BtlParam_GetCharaFlags(chr) & 0x80) && chr->unkE14 <= 0 && chr->unkE18 <= 0 && !BtlChar_TestFlag(chr, 6)) {
             BtlMember_GetActiveGauge(chr)->lowHealthIdle = 1;
         } else {
             BtlMember_GetActiveGauge(chr)->lowHealthIdle = 0;
@@ -1247,7 +1247,7 @@ void BtlChar_UpdateLate(BtlMgrChr *chr) {
     BtlCharSnd_PlayTechSounds(chr);
     BtlMove_UpdateAnimVoice(chr);
     BtlStat_ClearFrameMods(chr);
-    if (BtlChar_TestMemberUnk70(chr)) {
+    if (BtlChar_IsBodyChanged(chr)) {
         OBJ_WORD_18028(obj) = 1;
         BtlStat_SetFrameMod(chr, 0, -10, 1);
         BtlStat_SetFrameMod(chr, 1, -10, 1);

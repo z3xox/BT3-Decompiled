@@ -53,13 +53,13 @@ extern s32 BtlInput_IsHeld(BtlMoveChr *chr, u32 mask);
 
 extern s32 BtlAnim_TestAttr(BtlMoveChr *chr, u64 mask);
 extern void BtlCharSnd_PlayStream(BtlMoveChr *chr, s32 id);
-extern void BtlAnim_SetUnkC8C(BtlMoveChr *chr, f32 v);
+extern void BtlAnim_SetSubMix(BtlMoveChr *chr, f32 v);
 extern void BtlAnim_SetStep(BtlMoveChr *chr, f32 v);
 extern void BtlAnim_ApplyBlend(BtlMoveChr *chr);
 extern void BtlAct_Update(BtlMoveChr *chr);
 extern BtlMoveBlastList *EftHit_GetList(void);
-extern s32 BtlParam_GetCount80(BtlMoveChr *chr);
-extern s32 BtlParam_GetUnk82(BtlMoveChr *chr);
+extern s32 BtlParam_GetBlastLimitA(BtlMoveChr *chr);
+extern s32 BtlParam_GetBlastLimitB(BtlMoveChr *chr);
 extern f32 BtlInput_GetStickX(BtlMoveChr *chr);
 extern f32 BtlInput_GetStickY(BtlMoveChr *chr);
 extern f32 BtlOpp_GetYaw(BtlMoveChr *chr);
@@ -73,7 +73,7 @@ extern void BtlOpp_GetTargetPos(BtlMoveChr *chr, Vec4 *out);
 extern void BtlOpp_GetVelocity(BtlMoveChr *chr, Vec4 *out);
 extern void BtlOpp_GetObjVecFA0(BtlMoveChr *chr, Vec4 *out);
 extern void BtlCharApi_GetBodyPos(s32 objId, Vec4 *out);
-extern void BtlChar_SetUnk1310(BtlMoveChr *chr, Vec4 *v);
+extern void BtlChar_RequestBodyWarp(BtlMoveChr *chr, Vec4 *v);
 extern f32 BtlStage_GetInnerRadius(void);
 extern f32 BtlStage_GetTop(void);
 extern f32 BtlStage_GetBottom(void);
@@ -143,7 +143,7 @@ void BtlMove_UpdateAnimVoice(BtlMoveChr *chr) {
 
 /* Resets the object's animation rates before the action handlers run: obj+0xC8C = 0, step (obj+0xC80) = 2. */
 void BtlMove_ResetAnimStep(BtlMoveChr *chr) {
-    BtlAnim_SetUnkC8C(chr, 0.0f);
+    BtlAnim_SetSubMix(chr, 0.0f);
     BtlAnim_SetStep(chr, 2.0f);
 }
 
@@ -217,7 +217,7 @@ s32 BtlMove_IsHeadingIntoWall(BtlMoveChr *chr, f32 angle) {
 }
 
 /* Counts the fighter's live blasts of one class (0: definition kinds 0, 4, 8; 1: the others), stores the count and
-   returns 1 while it is below the character's limit for the class (BtlParam_GetCount80 / BtlParam_GetUnk82). */
+   returns 1 while it is below the character's limit for the class (BtlParam_GetBlastLimitA / BtlParam_GetBlastLimitB). */
 s32 BtlMove_CanFireBlast(BtlMoveChr *chr, s32 mode, s32 *outCount) {
     s32 n = 0;
     BtlMoveBlastList *list = EftHit_GetList();
@@ -260,12 +260,12 @@ s32 BtlMove_CanFireBlast(BtlMoveChr *chr, s32 mode, s32 *outCount) {
     }
     switch (mode) {
     case 0:
-        if (n < BtlParam_GetCount80(chr)) {
+        if (n < BtlParam_GetBlastLimitA(chr)) {
             return 1;
         }
         break;
     case 1:
-        if (n < BtlParam_GetUnk82(chr)) {
+        if (n < BtlParam_GetBlastLimitB(chr)) {
             return 1;
         }
         break;
@@ -906,7 +906,7 @@ void BtlMove_SnapToOpponent(BtlMoveChr *chr) {
     pose->speed = 0.0f;
     pose->fallSpeed = 0.0f;
     Vec4_SetZero(&pose->unk70);
-    BtlChar_SetUnk1310(chr, &opp);
+    BtlChar_RequestBodyWarp(chr, &opp);
     BtlChar_SetFlag(chr, 0x3F);
     BtlChar_SetFlag(chr, 0x24);
 }

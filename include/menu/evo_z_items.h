@@ -45,8 +45,8 @@ typedef struct VItemEntry {
 #define VITEM_UNCOUNTED 0x100  /* not counted for the collection percentage */
 
 extern void TextBox_Init(MTextBox *box, void *text, u32 preset);
-extern void TextBox_SetUnk50(MTextBox *box, s32 value);
-extern void TextBox_SetUnk80(MTextBox *box, s32 value);
+extern void TextBox_SetAlign(MTextBox *box, s32 value);
+extern void TextBox_SetNoFlush(MTextBox *box, s32 value);
 extern void TextBox_AttachLine(MFlash *flash, MFlashRef *ref, s32 x, s32 y, s32 line, MTextBox *box);
 extern s32 ItemTbl_GetClass(s32 item, VItemEntry *table);
 

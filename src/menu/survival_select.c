@@ -137,7 +137,7 @@ void SurvSel_Init(s32 section) {
     gSurvSel->subtitles = MPACK_AT(gSurvSel->res, 17);
     for (i = 0; i < 4; i++) {
         TextBox_Init(&gSurvSel->box[i], gSurvSel->text, 0);
-        TextBox_SetUnk50(&gSurvSel->box[i], 0);
+        TextBox_SetAlign(&gSurvSel->box[i], 0);
     }
     gSurvSel->voiceLine = -1;
     gSurvSel->voiceSkip = 0;

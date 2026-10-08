@@ -255,7 +255,7 @@ void BtlAnim_PlaySub(BtlStatChr *chr, s32 anim) {
 }
 
 /* Sets object + 0xC8C. */
-void BtlAnim_SetUnkC8C(BtlStatChr *chr, f32 v) {
+void BtlAnim_SetSubMix(BtlStatChr *chr, f32 v) {
     BtlChar_GetObj(chr)->anim.unk14C = v;
 }
 

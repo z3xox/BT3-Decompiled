@@ -97,7 +97,7 @@ extern s32 EftHit_IsMultiHit(EftDetRec *rec);
 extern void EftHit_IncHitCount(EftDetRec *rec);
 extern s32 EftHit_GetHitCount(EftDetRec *rec);
 extern s32 EftHit_GetMaxHits(EftDetRec *rec);
-extern s32 EftHit_GetDefUnkB(EftDetRec *rec);
+extern s32 EftHit_GetHitInterval(EftDetRec *rec);
 extern void EftHit_IncCountA(EftDetRec *rec);
 extern void EftHit_SetCountA(EftDetRec *rec, s32 value);
 extern s32 EftHit_GetCountA(EftDetRec *rec);
@@ -153,10 +153,10 @@ extern EftVram *gEftVram;
 extern EftVolleyAimStep *gEftVolleyAimScripts[];
 extern void *gStgColMesh;
 extern EftDetResult gStgGroundResult;
-extern EftDetVec D_002EC2C0; /* {0, 0, 0, 1}: "no movement" */
-extern EftDetVec D_002EC2E0; /* {0, 1, 0, 1}: down */
-extern const f32 D_002FEAF8[]; /* FLT_MAX */
-extern const f32 D_002FEAFC[]; /* FLT_MAX */
+extern EftDetVec gVu0ZeroVecW1; /* {0, 0, 0, 1}: "no movement" */
+extern EftDetVec gStgDownDir; /* {0, 1, 0, 1}: down */
+extern const f32 gEftDetFltMax[]; /* FLT_MAX */
+extern const f32 gStgGroundFltMax[]; /* FLT_MAX */
 
 #define EFT_DET_DEG(x) ((x) / 180.0f * 3.14159265f)
 #define EFT_DET_PI 3.14159265f
@@ -754,8 +754,8 @@ void EftDet_PrepareAll(void) {
     list = EftHit_GetList();
     for (i = 0; i < list->count; i++) {
         list->rec[i].shape.hitFlags = 0;
-        list->rec[i].shape.stageDist = D_002FEAF8[0];
-        list->rec[i].shape.dist = D_002FEAF8[0];
+        list->rec[i].shape.stageDist = gEftDetFltMax[0];
+        list->rec[i].shape.dist = gEftDetFltMax[0];
         prepare[list->rec[i].shape.type](&list->rec[i].shape);
     }
 }
@@ -785,7 +785,7 @@ s32 EftDet_SpheresVsFighter(EftDetObj *obj, EftDetShape *shape) {
         return 0;
     }
     for (part = *body;; part++) {
-        if (ColSphere_SweepSphere(b, part->box, &shape->delta, &D_002EC2C0, &t)) {
+        if (ColSphere_SweepSphere(b, part->box, &shape->delta, &gVu0ZeroVecW1, &t)) {
             if (t <= 0.000001f || 1.0f <= t) {
                 if (ColSphere_TestSphere(b, part->box)) {
                     Vec4_Copy(&shape->hitPos, &b->pos);
@@ -831,7 +831,7 @@ s32 EftDet_CapsuleVsFighter(EftDetObj *obj, EftDetShape *shape) {
     }
     ColSphere_Set(&sphere, a, a->radius);
     for (part = *body;; part++) {
-        if (ColSphere_SweepSphere(&sphere, part->box, &shape->delta, &D_002EC2C0, &t)) {
+        if (ColSphere_SweepSphere(&sphere, part->box, &shape->delta, &gVu0ZeroVecW1, &t)) {
             if (t <= 0.000001f || 1.0f <= t) {
                 if (ColSphere_TestSphere(&sphere, part->box)) {
                     hits++;
@@ -893,7 +893,7 @@ s32 EftDet_HitFighterMulti(EftDetRec *rec, s32 target, s32 idx) {
     s32 hits;
 
     EftHit_IncCountA(rec);
-    interval = EftHit_GetDefUnkB(rec);
+    interval = EftHit_GetHitInterval(rec);
     maxHits = EftHit_GetMaxHits(rec);
     frames = EftHit_GetCountA(rec);
     hits = EftHit_GetHitCount(rec);
@@ -1405,7 +1405,7 @@ s32 StgGround_Cb(EftDetNode *node, StgGroundCtx *ctx) {
     if (poly->flags & 0x8000000) {
         return 0;
     }
-    if (!(Vec3_Dot(&D_002EC2E0, &poly->nrm) < 0.0f)) {
+    if (!(Vec3_Dot(&gStgDownDir, &poly->nrm) < 0.0f)) {
         return 0;
     }
     ColMesh_GetPolyVerts(gStgColMesh, poly, &tri.v[0], &tri.v[1], &tri.v[2]);
@@ -1425,7 +1425,7 @@ void StgGround_Probe(s32 zone, EftDetBox *box, StgGroundOut *out, f32 minY) {
     void *z;
 
     if (out != NULL) {
-        out->y = D_002FEAFC[0];
+        out->y = gStgGroundFltMax[0];
     }
     ColBox_GetCenter(box, &center);
     b = *box;

@@ -273,7 +273,7 @@ s32 BtlAct_IsAirMotion(BtlActChr *chr, s32 useSaved);
 void BtlAct_PrepareSwitch(BtlActChr *chr);
 void BtlAct_PushAngle(BtlActChr *chr, f32 angle, f32 speed, f32 arg);
 void BtlAct_PushDir(BtlActChr *chr, Vec4 *dir, f32 speed, f32 arg);
-void BtlAct_SetObjUnk(BtlActChr *chr, f32 a, f32 b);
+void BtlAct_AddSway(BtlActChr *chr, f32 a, f32 b);
 s32 BtlAct_IsAttackId(s32 id);
 s32 BtlAct_TestAttackSkill(BtlActChr *chr, s32 attack);
 void BtlAct_PrepareAttack(BtlActChr *chr, s32 id);

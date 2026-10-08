@@ -83,9 +83,9 @@ void GetWin_Init(u32 *pack, s32 lang) {
     TextBox_SetColor(&gGetWin->box[1], 0xFFFF0080);
 
     for (i = 0; i < GETWIN_TEXT_COUNT; i++) {
-        TextBox_SetUnk80(&gGetWin->box[i], 1);
-        TextBox_SetUnk50(&gGetWin->box[i], 1);
-        TextBox_SetUnkC(&gGetWin->box[i], 0x100, 0);
+        TextBox_SetNoFlush(&gGetWin->box[i], 1);
+        TextBox_SetAlign(&gGetWin->box[i], 1);
+        TextBox_SetOffset(&gGetWin->box[i], 0x100, 0);
     }
 
     gGetWin->items = PACK_AT(pack, 10);

@@ -33,6 +33,7 @@ options:
   symbol_addrs_path:
     - config/symbol_addrs.txt
     - config/symbols/lib.txt
+    - config/symbols/named_2026_10.txt
     - config/symbols/game.txt
     - config/symbols/sys_util.txt
     - config/symbols/sys_file.txt

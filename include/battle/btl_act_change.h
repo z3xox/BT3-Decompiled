@@ -129,7 +129,7 @@ extern void Vec4_Sub(Vec4 *dst, Vec4 *a, Vec4 *b);
 extern f32 Vec3_Length(Vec4 *v);
 extern void Vec3_Normalize(Vec4 *dst, Vec4 *src);
 
-extern Vec4 D_002EC2A0; /* (0, 0, 0, 0) */
+extern Vec4 gVu0ZeroVec; /* (0, 0, 0, 0) */
 
 extern f32 BtlUtil_WrapAngle(f32 a);
 extern f32 BtlUtil_LengthXZ(Vec4 *v);
@@ -395,7 +395,7 @@ s32 BtlAct_SwitchLeave(BtlActHChr *chr, s32 phase);
  *                                                                   press + up / down / left /
  *                                                                   right / none               -> 0x6D / 0x6E / 0x6B / 0x6C / 0x6E
  *   0x4          ki >= BtlKiBlast_GetKiCostOf(0), chr+0xDE0 <
- *                BtlParam_GetCount80, BtlMove_CanFireBlast(0);
+ *                BtlParam_GetBlastLimitA, BtlMove_CanFireBlast(0);
  *                mark 0xAE                                          89 blast tap               -> 0xAE ki blast (0x3A first as for 0x44)
  *   0x8          the same with cost kind 3, CanFireBlast(1);
  *                mark 0xAF                                          90 blast held 6 frames     -> 0xAF charged ki blast
@@ -409,16 +409,16 @@ s32 BtlAct_SwitchLeave(BtlActHChr *chr, s32 phase);
  *   0x40000      flags2 & 0x10, cost kind 0xB, CanFireBlast(1);
  *                mark 0xB3                                          90                         -> 0xB3
  *   0x10         flags2 & 0x800; mark 0x5E                          77 up + blast press        -> 0x5E
- *   0x800000     the same                                           77                         -> by BtlParam_GetUnk8A(1): 0 -> 0x5E;
+ *   0x800000     the same                                           77                         -> by BtlParam_GetFinisherChoice(1): 0 -> 0x5E;
  *                                                                                                 1 -> 0x40 then 0x5E; else nothing
  *   0x20         flags2 & 0x1000; mark 0x5F                         78 down + blast press      -> 0x5F
- *   0x1000000    the same                                           78                         -> by BtlParam_GetUnk8A(2): 0x5F / 0x40, 0x5F
- *   0x200000     F = finisher BtlParam_GetUnk84((chr+0xD60 + 4) % 5)
+ *   0x1000000    the same                                           78                         -> by BtlParam_GetFinisherChoice(2): 0x5F / 0x40, 0x5F
+ *   0x200000     F = finisher BtlParam_GetRushFinisher((chr+0xD60 + 4) % 5)
  *                names: 0..4 -> 0x60, 0x61, 0x62, 0x63, 0x66;
  *                5 -> 0x64 with flag 0x8F, else 0x65; mark F        66 blast press             -> F (rush chain finisher)
  *   0x400000 / 0x2000000 / 0x8000000
  *                kind 0 (mask 0x400000), 3 (0x2000000), or 4 when
- *                BtlParam_GetCount80 <= 0; v = BtlParam_GetUnk8A(kind):
+ *                BtlParam_GetBlastLimitA <= 0; v = BtlParam_GetFinisherChoice(kind):
  *                v / 2 picks the finisher as above (0..5), odd v
  *                puts action 0x40 in front; mark the finisher       66 (kind 0, 3) or
  *                                                                   88 blast tap-or-hold (4)   -> [0x40,] finisher
@@ -428,10 +428,10 @@ s32 BtlAct_SwitchLeave(BtlActHChr *chr, s32 phase);
  *   0x100000     BtlDecide_QueueAttack(chr, 0x9B) first; then, if chr+0xD70 < chr+0xD74:
  *                flags2 & 0x2000; mark 0x5C                         68 / 69 / 70 / 71 blast
  *                                                                   press + up/down/left/right -> 0x5C / 0x5D / 0x5A / 0x5B vanish strike
- *                else, flags3 & 0x1000 and not BtlChar_TestMemberUnk70: BtlAct_QueueComboFinish
+ *                else, flags3 & 0x1000 and not BtlChar_IsBodyChanged: BtlAct_QueueComboFinish
  *   0x400                                                           95 guard held + blast      -> 0x67
  *   0x1000                                                          96 guard press, no dir     -> 0x68
- *   0x800                                                           96                         -> 0x40 if BtlParam_GetUnk88(1) == 5, else 0x69
+ *   0x800                                                           96                         -> 0x40 if BtlParam_GetChainKind(1) == 5, else 0x69
  *
  * BtlDecide_QueueAttack(chr, id): `id` is an attack action 0x70.. with a record in the roster's attack table.
  *   Needs BtlAct_TestAttackSkill. record +5 (kind): 0 always; 1..8 only when the opponent is seen in action
@@ -463,7 +463,7 @@ typedef struct BtlActIChr {
     /* 0x0D70 */ s32 unkD70;         /* counter with limit unkD74: below it actions 0x5A..0x5D, else the combo finisher */
     /* 0x0D74 */ s32 unkD74;
     /* 0x0D78 */ u8 unkD78[0xDE0 - 0xD78];
-    /* 0x0DE0 */ s32 unkDE0;         /* ki blasts fired in a row: must be below BtlParam_GetCount80 to fire another */
+    /* 0x0DE0 */ s32 unkDE0;         /* ki blasts fired in a row: must be below BtlParam_GetBlastLimitA to fire another */
     /* 0x0DE4 */ u8 unkDE4[0xE00 - 0xDE4];
     /* 0x0E00 */ s32 skillStackA;    /* skill ids 0x0C / 0x32: 1 on use, +1 up to 3 when the skill stacks */
     /* 0x0E04 */ s32 skillStackB;    /* skill id 0x37: the same */

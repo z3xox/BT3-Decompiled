@@ -718,7 +718,7 @@ void EftBillMgr_Reset(EftZTask *task) {
 EftZTask *EftBill_Create(EftBillArg *arg) {
     EftBillArg a = *arg;
 
-    return BtlTaskList_AddTail(gEftBillList, D_002C40F0, &a);
+    return BtlTaskList_AddTail(gEftBillList, gEftBillClass, &a);
 }
 
 /* The sprite's work when `task` is a live sprite task, else NULL. */
@@ -960,22 +960,22 @@ EftZTask *EftGndDust_Create(EftGndDustArg *arg, s32 kind) {
     }
     switch (kind) {
     case 0:
-        task = BtlTaskList_AddTail(gEftGndDustList, D_002C4120, arg);
+        task = BtlTaskList_AddTail(gEftGndDustList, gEftGndDustPuffClass, arg);
         break;
     case 1:
-        task = BtlTaskList_AddTail(gEftGndDustList, D_002C4138, arg);
+        task = BtlTaskList_AddTail(gEftGndDustList, gEftGndDustSlideClass, arg);
         break;
     case 2:
-        task = BtlTaskList_AddTail(gEftGndDustList, D_002C4150, arg);
+        task = BtlTaskList_AddTail(gEftGndDustList, gEftGndDustDashClass, arg);
         break;
     case 3:
-        task = BtlTaskList_AddTail(gEftGndDustList, D_002C4168, arg);
+        task = BtlTaskList_AddTail(gEftGndDustList, gEftGndDustBurstClass, arg);
         break;
     case 4:
-        task = BtlTaskList_AddTail(gEftGndDustList, D_002C4180, arg);
+        task = BtlTaskList_AddTail(gEftGndDustList, gEftGndDustLandClass, arg);
         break;
     case 5:
-        task = BtlTaskList_AddTail(gEftGndDustList, D_002C4198, arg);
+        task = BtlTaskList_AddTail(gEftGndDustList, gEftGndDustImpactClass, arg);
         break;
     }
     return task;

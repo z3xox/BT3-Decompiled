@@ -8,7 +8,7 @@
  * Effect code, 0x180BF8..0x1853C8. Two modules, both drawing only:
  *
  *   0x180BF8..0x182CE8  src/battle/eft_shot_fx.c, second part (formerly eft_u.c): vanish lines, the rest of the module that starts at 0x1809C0 in
- *                       its first part (EftShotFx_FindFree, EftShotFx_Start, EftShotFxMgr_Init). Task class D_002C3EC0 =
+ *                       its first part (EftShotFx_FindFree, EftShotFx_Start, EftShotFxMgr_Init). Task class gEftShotFxClass =
  *                       {update, init, term, post-update, 0, draw}. The functions keep eft_t's `EftShotFx` prefix so
  *                       the module has one name; what it draws is the teleport ("vanish") effect: fighter effect
  *                       requests 0xC (vanish), 0xD (reappear), 0xE / 0xF (the short forms of both) and object

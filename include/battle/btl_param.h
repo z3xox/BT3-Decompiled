@@ -64,7 +64,7 @@ typedef struct BtlAtkRecord {
     /* 0x0A */ u16 kiGain;      /* BtlAtk_GetKiGain: +50% (ability 0x6E) or +25% (0x20), / hits when hits >= 1 */
     /* 0x0C */ u16 throwC;      /* BtlAtk_GetThrowParamC: raw; read by the throw setup at 0x1FC008 */
     /* 0x0E */ u16 throwE;      /* BtlAtk_GetThrowParamE: raw; the same */
-    /* 0x10 */ u16 unk10;       /* BtlAtk_GetUnk10: / hits when hits >= 1; added to fighter + 0xD80 per hit */
+    /* 0x10 */ u16 unk10;       /* BtlAtk_GetChargeGaugeGain: / hits when hits >= 1; added to fighter + 0xD80 per hit */
     /* 0x12 */ u8 pushHit;      /* BtlAtk_GetPushOnHit: units of 10 km/h, returned per frame */
     /* 0x13 */ u8 pushGuard;    /* BtlAtk_GetPushOnGuard: the same */
     /* 0x14 */ u8 launchSpeed;  /* BtlAtk_GetLaunchSpeed: the same, * curve row 8; the attacker's own speed */
@@ -91,7 +91,7 @@ typedef struct BtlAtkRecord {
     /* 0x29 */ s8 guardA;       /* BtlAtk_GetGuardKindA: against guard kind 1 */
     /* 0x2A */ s8 guardE;       /* BtlAtk_GetGuardKindE: raw; against guard kind 5 */
     /* 0x2B */ s8 guardFlagSel; /* BtlAtk_GetGuardFlagSel: raw; 0 / 1 -> defender flag 0x66 / 0x67 on a guard */
-    /* 0x2C */ s8 armorIgnore;  /* BtlAtk_GetUnk2C / BtlAtk_GetUnk2COf: raw; armour levels the attack ignores */
+    /* 0x2C */ s8 armorIgnore;  /* BtlAtk_GetArmorIgnore / BtlAtk_GetArmorIgnoreOf: raw; armour levels the attack ignores */
     /* 0x2D */ u8 unk2D[3];     /* no reader in this module */
 } BtlAtkRecord; /* size 0x30 */
 
@@ -105,8 +105,8 @@ typedef struct BtlAtkRecord {
  * meanings come from the callers (see the report). +0x5C..+0x7F and +0x8F.. are documented in btl_tech.h.
  */
 typedef struct BtlParam {
-    /* 0x00 */ u16 unk0;          /* BtlParam_GetUnk0: bit 0x80 is tested by seven callers */
-    /* 0x02 */ s8 unk2;           /* BtlParam_GetUnk2: 4 exempts the character from throws, rushes and some dodges */
+    /* 0x00 */ u16 unk0;          /* BtlParam_GetCharaFlags: bit 0x80 is tested by seven callers */
+    /* 0x02 */ s8 unk2;           /* BtlParam_GetSizeClass: 4 exempts the character from throws, rushes and some dodges */
     /* 0x03 */ s8 auraKind;       /* BtlParam_GetAuraKind: replaced by 0..10 by abilities 0x4D..0x56, 0x74 */
     /* 0x04 */ u8 unk4[0x10 - 0x4];
     /* 0x10 */ u32 flags;         /* BtlParam_GetFlags */
@@ -129,24 +129,24 @@ typedef struct BtlParam {
     /* 0x54 */ f32 maxPowerTime;  /* seconds the max power gauge lasts; BtlParam_GetMaxPowerDrain */
     /* 0x58 */ s8 searchType[4];  /* per costume; BtlParam_GetType */
     /* 0x5C */ u8 unk5C[0x80 - 0x5C]; /* btl_tech.h */
-    /* 0x80 */ s16 blastLimitA;   /* BtlParam_GetCount80: live ki blasts of class 0 allowed at once */
-    /* 0x82 */ s16 blastLimitB;   /* BtlParam_GetUnk82: the same for class 1 */
-    /* 0x84 */ u8 unk84[4];       /* BtlParam_GetUnk84 */
-    /* 0x88 */ u8 unk88[2];       /* BtlParam_GetUnk88: argument of BtlAct_GetChainAction when actions 0x67..0x69 end by flag 0x70 */
-    /* 0x8A */ u8 unk8A[5];       /* BtlParam_GetUnk8A */
+    /* 0x80 */ s16 blastLimitA;   /* BtlParam_GetBlastLimitA: live ki blasts of class 0 allowed at once */
+    /* 0x82 */ s16 blastLimitB;   /* BtlParam_GetBlastLimitB: the same for class 1 */
+    /* 0x84 */ u8 unk84[4];       /* BtlParam_GetRushFinisher */
+    /* 0x88 */ u8 unk88[2];       /* BtlParam_GetChainKind: argument of BtlAct_GetChainAction when actions 0x67..0x69 end by flag 0x70 */
+    /* 0x8A */ u8 unk8A[5];       /* BtlParam_GetFinisherChoice */
     /* 0x8F */ u8 unk8F[0x98 - 0x8F];
     /* 0x98 */ u8 transTarget[4]; /* BtlParam_GetSlotId: transformation targets; 0xFF = none (BtlParam_CountSlots) */
     /* 0x9C */ u8 transCost[4];   /* BtlParam_GetSlotCost: blast stocks, returned * 100000 */
     /* 0xA0 */ u8 transSeq[4];    /* BtlParam_GetSlotA0 */
     /* 0xA4 */ u8 transKind[4];   /* BtlParam_GetSlotA4 */
     /* 0xA8 */ u8 transA8[4];     /* BtlParam_GetSlotA8 */
-    /* 0xAC */ s8 transDefault;   /* BtlParam_GetUnkAC: the target a neutral input picks */
-    /* 0xAD */ u8 unkAD;          /* BtlParam_GetUnkAD; bit 4 + n: BtlParam_TestUnkADBit(n) (caller: BtlAct_QueueTransform) */
+    /* 0xAC */ s8 transDefault;   /* BtlParam_GetDefaultSlot: the target a neutral input picks */
+    /* 0xAD */ u8 unkAD;          /* BtlParam_GetFormFlags; bit 4 + n: BtlParam_TestSlotResetsVariant(n) (caller: BtlAct_QueueTransform) */
     /* 0xAE */ u8 fusionCost[3];  /* BtlParam_GetCostAE: blast stocks, returned * 100000 */
-    /* 0xB1 */ u8 fusionSeq[3];   /* BtlParam_GetUnkB1 */
-    /* 0xB4 */ u8 fusionResult[3]; /* BtlParam_GetUnkB4 */
+    /* 0xB1 */ u8 fusionSeq[3];   /* BtlParam_GetFusionSequence */
+    /* 0xB4 */ u8 fusionResult[3]; /* BtlParam_GetFusionResult */
     /* 0xB7 */ u8 fusionB7[3];    /* BtlParam_GetUnkB7 */
-    /* 0xBA */ u8 fusionPartner[3][4]; /* BtlParam_GetUnkBA */
+    /* 0xBA */ u8 fusionPartner[3][4]; /* BtlParam_GetFusionPartner */
     /* 0xC6 */ u8 unkC6;          /* BtlParam_GetUnkC6 (no caller found) */
 } BtlParam;
 
@@ -188,7 +188,7 @@ typedef struct BtlTechChr {
     /* 0x0000 */ u8 unk0[0x998];
     /* 0x0998 */ s32 memberCount;
     /* 0x099C */ u8 unk99C[0xD50 - 0x99C];
-    /* 0x0D50 */ s32 unkD50;        /* BtlCtrl_GetOppUnkD50 reads the opponent's */
+    /* 0x0D50 */ s32 unkD50;        /* BtlCtrl_IsOppComboDamageNew reads the opponent's */
     /* 0x0D54 */ u8 unkD54[0xD68 - 0xD54];
     /* 0x0D68 */ s32 unkD68;        /* non-zero selects attack ids 0x3E..0x42 instead of 0x34..0x3D */
     /* 0x0D6C */ u8 unkD6C[0xD78 - 0xD6C];
@@ -250,7 +250,7 @@ typedef struct BtlTechProgress {
 } BtlTechProgress;
 
 /* by side */
-s32 BtlCtrl_GetOppUnkD50(s32 side);
+s32 BtlCtrl_IsOppComboDamageNew(s32 side);
 BtlTechObj *BtlCtrl_GetObj(s32 side);
 s32 BtlCtrl_GetFlagDEtoE2(s32 side);
 s32 BtlCtrl_GetClashCount(s32 side);
@@ -278,7 +278,7 @@ s32 BtlCtrl_GetStatMod3(s32 side);
 s32 BtlCtrl_CanUseTechnique(s32 player, s32 slot);
 s32 BtlCtrl_GetWork5A8Count(void);
 void BtlCtrl_SetCpuLevel(s32 player, s32 level);
-s32 BtlCtrl_TestMemberUnk70(s32 player);
+s32 BtlCtrl_IsMemberBodyChanged(s32 player);
 
 /* attack */
 s32 BtlAtk_GetId(BtlTechChr *chr);
@@ -292,7 +292,7 @@ s32 BtlAtk_GetThrowParamC(BtlTechChr *chr);
 s32 BtlAtk_GetThrowParamE(BtlTechChr *chr);
 s32 BtlAtk_GetKiGain(BtlTechChr *chr);
 s32 BtlAtk_GetGuardKiCost(BtlTechChr *chr);
-s32 BtlAtk_GetUnk10(BtlTechChr *chr);
+s32 BtlAtk_GetChargeGaugeGain(BtlTechChr *chr);
 s32 BtlAtk_GetReaction(BtlTechChr *chr);
 s32 BtlAtk_GetReactionB(BtlTechChr *chr);
 s32 BtlAtk_GetReactionC(BtlTechChr *chr);
@@ -323,31 +323,31 @@ s32 BtlAtk_RankGuardKind(u32 kind);
 s32 BtlAtk_GetBestGuardKind(BtlTechChr *chr);
 s32 BtlAtk_GetGuardKindE(BtlTechChr *chr);
 s32 BtlAtk_GetGuardFlagSel(BtlTechChr *chr);
-s32 BtlAtk_GetUnk2C(BtlTechChr *chr);
-s32 BtlAtk_GetUnk2COf(BtlTechChr *chr, u32 id);
+s32 BtlAtk_GetArmorIgnore(BtlTechChr *chr);
+s32 BtlAtk_GetArmorIgnoreOf(BtlTechChr *chr, u32 id);
 s32 BtlParam_ScaleKiCharge(BtlTechChr *chr, s32 val);
 
 /* parameter block */
 u32 BtlParam_GetFlags(BtlTechChr *chr);
 u32 BtlParam_GetFlags2(BtlTechChr *chr);
 u32 BtlParam_GetFlags3(BtlTechChr *chr);
-s32 BtlParam_GetUnk0(BtlTechChr *chr);
-s32 BtlParam_GetUnk2(BtlTechChr *chr);
-s32 BtlParam_GetUnkAC(BtlTechChr *chr);
+s32 BtlParam_GetCharaFlags(BtlTechChr *chr);
+s32 BtlParam_GetSizeClass(BtlTechChr *chr);
+s32 BtlParam_GetDefaultSlot(BtlTechChr *chr);
 s32 BtlParam_GetSlotId(BtlTechChr *chr, s32 slot);
 s32 BtlParam_GetSlotCost(BtlTechChr *chr, s32 slot);
 s32 BtlParam_GetSlotA0(BtlTechChr *chr, s32 slot);
 s32 BtlParam_GetSlotA4(BtlTechChr *chr, s32 slot);
 s32 BtlParam_GetSlotA8(BtlTechChr *chr, s32 slot);
-s32 BtlParam_GetUnkAD(BtlTechChr *chr);
+s32 BtlParam_GetFormFlags(BtlTechChr *chr);
 s32 BtlParam_CountSlots(BtlTechChr *chr);
-s32 BtlParam_TestUnkADBit(BtlTechChr *chr, s32 n);
-s32 BtlParam_GetUnkB4(BtlTechChr *chr, s32 n);
+s32 BtlParam_TestSlotResetsVariant(BtlTechChr *chr, s32 n);
+s32 BtlParam_GetFusionResult(BtlTechChr *chr, s32 n);
 s32 BtlParam_GetUnkB7(BtlTechChr *chr, s32 n);
-s32 BtlParam_GetUnkBA(BtlTechChr *chr, s32 n, s32 m);
+s32 BtlParam_GetFusionPartner(BtlTechChr *chr, s32 n, s32 m);
 s32 BtlParam_GetCostAE(BtlTechChr *chr, s32 n);
 s32 BtlParam_GetUnkC6(BtlTechChr *chr);
-s32 BtlParam_GetUnkB1(BtlTechChr *chr, s32 n);
+s32 BtlParam_GetFusionSequence(BtlTechChr *chr, s32 n);
 s32 BtlParam_GetAuraKind(BtlTechChr *chr);
 s32 BtlParam_GetType(BtlTechChr *chr);
 f32 BtlParam_GetTypeValueA(BtlTechChr *chr);
@@ -356,11 +356,11 @@ f32 BtlParam_GetTypeValueC(BtlTechChr *chr);
 s32 BtlParam_IsType2to4(BtlTechChr *chr);
 s32 BtlParam_IsTypeSetA(BtlTechChr *chr);
 s32 BtlParam_IsTypeSetB(BtlTechChr *chr);
-s32 BtlParam_GetCount80(BtlTechChr *chr);
-s32 BtlParam_GetUnk82(BtlTechChr *chr);
-s32 BtlParam_GetUnk84(BtlTechChr *chr, u32 n);
-s32 BtlParam_GetUnk88(BtlTechChr *chr, u32 n);
-s32 BtlParam_GetUnk8A(BtlTechChr *chr, u32 n);
+s32 BtlParam_GetBlastLimitA(BtlTechChr *chr);
+s32 BtlParam_GetBlastLimitB(BtlTechChr *chr);
+s32 BtlParam_GetRushFinisher(BtlTechChr *chr, u32 n);
+s32 BtlParam_GetChainKind(BtlTechChr *chr, u32 n);
+s32 BtlParam_GetFinisherChoice(BtlTechChr *chr, u32 n);
 s32 BtlParam_GetUnk1C(BtlTechChr *chr);
 s32 BtlParam_GetUnk20(BtlTechChr *chr);
 s32 BtlParam_GetUnk24(BtlTechChr *chr);

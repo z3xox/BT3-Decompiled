@@ -115,7 +115,7 @@ f32 BtlCharApi_GetCenterHeight(s32 objId) {
 }
 
 /* Object float +0x1000 (model header +0x24); 5 for no object. No caller. */
-f32 BtlCharApi_GetBodyUnk1000(s32 objId) {
+f32 BtlCharApi_GetCamSideSlope(s32 objId) {
     BtlCapiObj *obj = BtlObj_Get(objId);
 
     if (obj != NULL) {
@@ -285,7 +285,7 @@ s32 BtlCharApi_GetPartnerObjId(s32 objId) {
 }
 
 /* Pointer n (0..4) of the five at +0x9C of fighter `player`'s object. */
-s32 BtlCharApi_GetPlayerObjUnk9C(s32 player, u32 n) {
+s32 BtlCharApi_GetPlayerEffectPack(s32 player, u32 n) {
     BtlCapiChr *chr = BtlChar_Get(player);
     BtlCapiObj *obj;
 
@@ -333,7 +333,7 @@ void *BtlCharApi_GetPlayerSkillData(s32 player) {
 }
 
 /* Word +0x58 of fighter `player`'s object. No caller. */
-s32 BtlCharApi_GetPlayerObjUnk58(s32 player) {
+s32 BtlCharApi_GetPlayerCharPack(s32 player) {
     BtlCapiChr *chr = BtlChar_Get(player);
     BtlCapiObj *obj;
 
@@ -621,7 +621,7 @@ void BtlCharApi_GetNodeQuat(s32 objId, s32 node, Quat *out) {
 }
 
 /* Float +0x5C of what BtlObj_FindBound(obj, n) returns, 1.0 when there is none. */
-f32 BtlCharApi_GetPartUnk5C(s32 objId, s32 n) {
+f32 BtlCharApi_GetNodeBoundSize(s32 objId, s32 n) {
     BtlCapiObj *obj = BtlObj_Get(objId);
     BtlCapiPart *part;
 

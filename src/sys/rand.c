@@ -4,7 +4,7 @@
 extern void *memset(void *dst, s32 c, u32 n);
 extern void srand(u32 seed);
 extern s32 rand(void);
-extern long func_002BB390(void);
+extern long GetTimerSystemTime(void);
 
 extern u32 gRandState[RAND_N];
 extern s32 gRandIndex;
@@ -86,7 +86,7 @@ void Rand_Init(void) {
     s32 i;
 
     memset(key, 0, sizeof(key));
-    srand(func_002BB390());
+    srand(GetTimerSystemTime());
     for (i = 0; i < 4; i++) {
         key[i] = rand();
     }

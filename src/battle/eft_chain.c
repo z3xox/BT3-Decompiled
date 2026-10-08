@@ -25,7 +25,7 @@ extern EftSView *gBtlCamView;
    reproduces exactly that (see EftChain_DrawStrand). */
 extern u32 *volatile gOtCurRead __asm__("gOtCur");
 extern EftArcPool *gEftChain;
-extern void *D_002C3E18[6]; /* task class of the prop ki blast */
+extern void *gEftKiObjClass[6]; /* task class of the prop ki blast */
 
 extern s32 rand(void);
 extern void *memset(void *dst, s32 c, u32 n);
@@ -141,7 +141,7 @@ void EftKiObj_Create(EftKiPropArg arg) {
     void *list = EftChar_GetList(arg.owner, 1);
 
     if (list != NULL) {
-        BtlTaskList_AddTail(list, D_002C3E18, &arg);
+        BtlTaskList_AddTail(list, gEftKiObjClass, &arg);
     }
 }
 
@@ -1529,7 +1529,7 @@ extern s32 BtlCharApi_IsInClashA(s32 objId);
 #define EftChain_DrawStrands ((void (*)(EftTTask *task))EftChain_DrawStrands)                    /* draws the strands */
 #define EftChain_Update ((void (*)(EftTTask *task))EftChain_Update)                    /* update callback of the chain task class */
 
-extern void *D_002C3E48[6]; /* chain task class */
+extern void *gEftChainClass[6]; /* chain task class */
 extern void *gEftRayClass[6]; /* ray task class */
 
 #define gEftChain ((EftChainMgr *)gEftChain)
@@ -1603,7 +1603,7 @@ void EftChainMgr_Reset(EftTTask *task) {
 
 /* Starts a chain effect; returns its task (the handle of the functions below). */
 EftTTask *EftChain_Create(EftChainArg arg) {
-    return BtlTaskList_AddTail(gEftChainList, D_002C3E48, &arg);
+    return BtlTaskList_AddTail(gEftChainList, gEftChainClass, &arg);
 }
 
 /* The strand at 0x140 past a walking pointer: the original steps a pointer from the work's start. */

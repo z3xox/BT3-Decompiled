@@ -27,7 +27,7 @@ extern s32 BtlUtil_Max(s32 a, s32 b);
 extern s32 BtlChar_GetCount(void);
 extern BtlFlagChr *BtlChar_Get(s32 i);
 extern void *BtlChar_GetObj(BtlFlagChr *chr);
-extern s32 BtlChar_TestMemberUnk70(BtlFlagChr *chr);
+extern s32 BtlChar_IsBodyChanged(BtlFlagChr *chr);
 extern void BtlObj_SetSubState(void *obj, s32 state, s32 arg);
 extern s32 Battle_IsSplitScreen(void);
 extern s32 Battle_GetMode(void);
@@ -238,7 +238,7 @@ void BtlCharSnd_PlayRequests(void) {
         }
         chr = BtlChar_Get(owner);
         chara = *(s32 *)((u8 *)BtlChar_GetObj(chr) + 0xC);
-        if (BtlChar_TestMemberUnk70(chr)) {
+        if (BtlChar_IsBodyChanged(chr)) {
             chara = 0x56;
         }
         switch (req->p.kind) {

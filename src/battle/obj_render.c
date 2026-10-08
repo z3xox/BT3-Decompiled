@@ -61,8 +61,8 @@ extern void Dma_AddZbuf(s32 zbp, s32 zmsk);
 /* The VU0 routine in front of this file (0x10FFD0): skins and projects one seam vertex. */
 extern void ObjSeam_TransformVtx(ObjSeamVtx *vtx, ObjSeamWork *work, Mtx44 *mtx, Vec4 *ofs);
 
-extern Vec4 D_002EC2C0; /* zero vector */
-extern Vec4 D_002C3440; /* 128, 128, 128, 128 */
+extern Vec4 gVu0ZeroVecW1; /* zero vector */
+extern Vec4 gObjDrawVec128; /* 128, 128, 128, 128 */
 
 #define OBJ_FLAG_BITS(p) ((ObjDrawFlagBits *)&(p)->flags)
 /* FRAME value for the colour buffer being drawn, with a write mask. */
@@ -79,7 +79,7 @@ void ObjSeam_Transform(ObjDrawObj *obj, ObjDrawView *view) {
     if (obj->mdl.model->seamOfs != 0) {
         sec = (ObjSeamSec *)((u8 *)obj->mdl.model + obj->mdl.model->seamOfs);
         vtx = (ObjSeamVtx *)((u8 *)obj->mdl.model + sec->vtxOfs);
-        Mtx_MakeNormalLight(&work.light, &view->lightDir, &D_002EC2C0, &D_002EC2C0);
+        Mtx_MakeNormalLight(&work.light, &view->lightDir, &gVu0ZeroVecW1, &gVu0ZeroVecW1);
         work.k.w = 0.5f;
         for (i = 0; i < sec->vtxCount; i++) {
             ObjDrawPart *part = BtlObj_FindBound(obj, vtx[i].node);
@@ -547,9 +547,9 @@ void ObjDraw_DrawParts(ObjDrawObj *obj, ObjDrawView *view, s32 mode, u64 tex0, u
                         Mtx_Copy(&pkt->mtxA, &node->mtxA);
                         Vec4_Copy(&pkt->ofsA, &part->ofsA);
                         Vec4_Copy(&pkt->ofsB, &part->ofsB);
-                        Mtx_MakeNormalLight(&pkt->light, &view->lightDir, &D_002EC2C0, &D_002EC2C0);
+                        Mtx_MakeNormalLight(&pkt->light, &view->lightDir, &gVu0ZeroVecW1, &gVu0ZeroVecW1);
                         Vec4_Copy(&pkt->color, &view->color);
-                        Vec4_Copy(&pkt->k, &D_002C3440);
+                        Vec4_Copy(&pkt->k, &gObjDrawVec128);
                         Vu0Screen_StoreMtx(&pkt->screen);
                         Vu0Clip_StoreMtx(&pkt->clip);
                     }
@@ -613,9 +613,9 @@ void ObjDraw_DrawParts(ObjDrawObj *obj, ObjDrawView *view, s32 mode, u64 tex0, u
         Mtx_Copy(&pkt->mtxA, &headNode->mtxA);
         Vec4_Copy(&pkt->ofsA, &headPart->ofsA);
         Vec4_Copy(&pkt->ofsB, &headPart->ofsB);
-        Mtx_MakeNormalLight(&pkt->light, &view->lightDir, &D_002EC2C0, &D_002EC2C0);
+        Mtx_MakeNormalLight(&pkt->light, &view->lightDir, &gVu0ZeroVecW1, &gVu0ZeroVecW1);
         Vec4_Copy(&pkt->color, &view->color);
-        Vec4_Copy(&pkt->k, &D_002C3440);
+        Vec4_Copy(&pkt->k, &gObjDrawVec128);
         Vu0Screen_StoreMtx(&pkt->screen);
         Vu0Clip_StoreMtx(&pkt->clip);
         if (!noMask) {

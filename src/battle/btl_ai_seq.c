@@ -119,7 +119,7 @@ extern void BtlCharApi_GetPos(s32 objId, BtlAiVec *out);
 extern void BtlCharApi_GetRot(s32 objId, BtlAiVec *out);
 extern f32 BtlCharApi_GetChargeRate(s32 objId);
 extern s32 BtlCharApi_AnyHasFlag128(void);
-extern s32 BtlCharApi_GetUnkD74Diff(s32 objId);
+extern s32 BtlCharApi_GetVanishStrikesLeft(s32 objId);
 extern s32 BtlCharApi_PickFusionSlot(s32 objId);
 extern s32 BtlCharApi_PickTransformSlot(s32 objId);
 extern s32 BtlCharApi_GetActiveMember(s32 objId);
@@ -128,8 +128,8 @@ extern s32 BtlCharApi_GetMemberHpPercent(s32 objId, s32 member);
 extern s32 BtlCharApi_GetMemberKiPercent(s32 objId, s32 member);
 extern s32 BtlCharApi_GetSwitchTarget(s32 objId);
 extern s32 BtlCharApi_IsBlockedByOpponent(s32 objId);
-extern u64 BtlCharApi_GetUnk1288(s32 objId);
-extern s32 BtlCharApi_CheckUnkCAC(s32 objId);
+extern u64 BtlCharApi_GetActionBits(s32 objId);
+extern s32 BtlCharApi_IsAttackHitPending(s32 objId);
 extern s32 BtlCharApi_IsBlastPassing(s32 objId);
 extern s32 BtlCharApi_GetBlastShots(s32 objId);
 extern f32 Vec3_Length(BtlAiVec *v);
@@ -150,7 +150,7 @@ extern f32 cosf(f32 x);
 s32 BtlAiSeq_IsInterrupted(BtlAiWork *ai, s32 id) {
     BtlAiSeqBody *body = &AI_DATA->act->body;
     u16 flags = body->flags[id];
-    s8 cls = body->stateClass[BtlCharApi_GetUnk974(ai->objId)];
+    s8 cls = body->stateClass[BtlCharApi_GetAnimId(ai->objId)];
     s32 kind = BtlCharApi_GetOppSkillKind(ai->objId);
     BtlAiSeqA *seq = SEQA(ai);
 
@@ -206,7 +206,7 @@ s32 BtlAiSeq_CheckHeight(BtlAiWork *ai, s32 mode) {
 s32 BtlAiSeq_CheckStageAbort(BtlAiWork *ai, s32 id) {
     BtlAiSeqA *seq = SEQA(ai);
     BtlAiOutput *out = &ai->out;
-    s8 cls = AI_DATA->act->body.stateClass[BtlCharApi_GetUnk974(ai->objId)];
+    s8 cls = AI_DATA->act->body.stateClass[BtlCharApi_GetAnimId(ai->objId)];
     s32 special = BtlChar_IsStage4Or27();
     s32 pose[2];
     BtlAiVec pos;
@@ -281,7 +281,7 @@ void BtlAiSeq_PhaseInit(BtlAiWork *ai) {
     BtlAiSeqEntry *top = &SEQ_TOP(seq);
     BtlAiSeqBody *body = &AI_DATA->act->body;
     u16 flags = body->flags[top->id];
-    s8 cls = body->stateClass[BtlCharApi_GetUnk974(ai->objId)];
+    s8 cls = body->stateClass[BtlCharApi_GetAnimId(ai->objId)];
 
     seq->group = 0;
     BtlAiPad_Clear(out, 0);
@@ -324,7 +324,7 @@ void BtlAiSeq_PhaseStart(BtlAiWork *ai) {
     seq->timer = 0;
     seq->waitTimer = 0;
     seq->flags &= ~0x1E40;
-    seq->startState = BtlCharApi_GetUnk974(ai->objId);
+    seq->startState = BtlCharApi_GetAnimId(ai->objId);
     seq->charge = BtlCharApi_GetChargeRate(ai->objId);
     seq->startDist = gBtlAi->dist;
     seq->dirX = 0.0f;
@@ -383,8 +383,8 @@ void BtlAiSeq_PhaseRun(BtlAiWork *ai) {
     s32 state[2];
     s8 cls[2];
 
-    state[0] = BtlCharApi_GetUnk974(ai->objId);
-    state[1] = BtlCharApi_GetUnk974(ai->objId ^ 1);
+    state[0] = BtlCharApi_GetAnimId(ai->objId);
+    state[1] = BtlCharApi_GetAnimId(ai->objId ^ 1);
     cls[0] = body->stateClass[state[0]];
     cls[1] = body->stateClass[state[1]];
     step = &step[seq->step];
@@ -422,11 +422,11 @@ void BtlAiSeq_PhaseRun(BtlAiWork *ai) {
 
 /* After the last action of a plan: decides whether action 0x43 follows it. Needs the powered-up mode (fighter
  * flag 6), the plan's first action to be one of 0x22, 0x24, 0x26, 0x29, 0x2A, 0x2B, 0x32, 0x35 (or 0x2D / 0x2E
- * with BtlCharApi_GetUnkD74Diff == 0), and a successful AiThink_RollActRate(ai, 0x4C), which draws. The same ten
+ * with BtlCharApi_GetVanishStrikesLeft == 0), and a successful AiThink_RollActRate(ai, 0x4C), which draws. The same ten
  * ids are the ones step handler 23 maps to a slot number. */
 s32 BtlAiSeq_RollPowerUpChain(BtlAiWork *ai) {
     BtlAiSeqEntry *first = &ai->seq.stack[0];
-    s32 diff = BtlCharApi_GetUnkD74Diff(ai->objId);
+    s32 diff = BtlCharApi_GetVanishStrikesLeft(ai->objId);
 
     if (BtlSide_IsPoweredUp(ai->objId) == 0) {
         return 0;
@@ -458,7 +458,7 @@ s32 BtlAiSeq_RollPowerUpChain(BtlAiWork *ai) {
  * BTLAI_SEQ_CHAIN; the next action starts at phase 0 on the next frame. */
 void BtlAiSeq_PhaseEnd(BtlAiWork *ai) {
     BtlAiSeqA *seq = SEQA(ai);
-    s8 cls = AI_DATA->act->body.stateClass[BtlCharApi_GetUnk974(ai->objId)];
+    s8 cls = AI_DATA->act->body.stateClass[BtlCharApi_GetAnimId(ai->objId)];
     BtlAiSeqEntry *top = &SEQ_TOP(seq);
 
     if (cls == 10 && top->id != 14) {
@@ -930,7 +930,7 @@ s32 BtlAiStep_ReachClass(BtlAiWork *ai) {
     BtlAiSeqActTable *act = AI_DATA->act;
     BtlAiSeqBody *body = &act->body;
     BtlAiSeqStep *step = &act->steps[body->first[top->id]];
-    s32 state = BtlCharApi_GetUnk974(ai->objId);
+    s32 state = BtlCharApi_GetAnimId(ai->objId);
     s8 cls = body->stateClass[state];
     u8 flags = body->stateFlags[state];
 
@@ -977,8 +977,8 @@ s32 BtlAiStep_UntilBlocked(BtlAiWork *ai) {
     BtlAiSeqA *seq = SEQA(ai);
     BtlAiSeqActTable *act = AI_DATA->act;
     s32 blocked = BtlCharApi_IsBlockedByOpponent(ai->objId);
-    s8 cls = act->body.stateClass[BtlCharApi_GetUnk974(ai->objId)];
-    u64 flag = BtlCharApi_GetUnk1288(ai->objId) & 0x20000000;
+    s8 cls = act->body.stateClass[BtlCharApi_GetAnimId(ai->objId)];
+    u64 flag = BtlCharApi_GetActionBits(ai->objId) & 0x20000000;
 
     if (cls == 0) {
         return 1;
@@ -1024,7 +1024,7 @@ s32 BtlAiStep_BlockedAndCharged(BtlAiWork *ai) {
 
 /* Step handler 6: finished when the fighter's state class is not 1..7. */
 s32 BtlAiStep_NotHit(BtlAiWork *ai) {
-    s8 cls = AI_DATA->act->body.stateClass[BtlCharApi_GetUnk974(ai->objId)];
+    s8 cls = AI_DATA->act->body.stateClass[BtlCharApi_GetAnimId(ai->objId)];
 
     if ((u32)(cls - 1) < 7) {
         return 0;
@@ -1065,7 +1065,7 @@ s32 BtlAiStep_Charged(BtlAiWork *ai) {
 
 /* Step handler 8: the guard step. What ends it depends on the step parameter (pick 13): -1 = the opponent's
  * technique is not of kind 1 or 2; 15 (any other value) = no foreign blast is flying past; 0 = the opponent has
- * stopped attacking (BtlCharApi_CheckUnkCAC) and its state has flag bit 1 clear. For action 0x45 it also picks
+ * stopped attacking (BtlCharApi_IsAttackHitPending) and its state has flag bit 1 clear. For action 0x45 it also picks
  * the step to play from the opponent's state class (0x10 -> 1, 0x11 -> 2, else 0) on every frame. */
 /* FAKE MATCH (permuter): two constants held in variables. `hitCls = 0x10` is set at the top (in front of the
  * flag), and `none = 0` is set behind the id block and compared with the timer. Without them 2 of 74 instructions
@@ -1086,9 +1086,9 @@ s32 BtlAiStep_Charged(BtlAiWork *ai) {
 s32 BtlAiStep_GuardUntilSafe(BtlAiWork *ai) {
     BtlAiSeqA *seq = SEQA(ai);
     BtlAiSeqActTable *act = AI_DATA->act;
-    s32 state = BtlCharApi_GetUnk974(ai->objId ^ 1);
+    s32 state = BtlCharApi_GetAnimId(ai->objId ^ 1);
     s8 cls = act->body.stateClass[state];
-    s32 attacking = BtlCharApi_CheckUnkCAC(ai->objId ^ 1);
+    s32 attacking = BtlCharApi_IsAttackHitPending(ai->objId ^ 1);
     s32 passing = BtlCharApi_IsBlastPassing(ai->objId);
     BtlAiSeqEntry *top = &SEQ_TOP(seq);
     u8 flags = act->body.stateFlags[state];
@@ -1122,13 +1122,13 @@ s32 BtlAiStep_GuardUntilSafe(BtlAiWork *ai) {
     return attacking == 0;
 }
 
-/* Step handler 9: finished 30 frames after the opponent stopped attacking (BtlCharApi_CheckUnkCAC; the count
+/* Step handler 9: finished 30 frames after the opponent stopped attacking (BtlCharApi_IsAttackHitPending; the count
  * restarts while it attacks, and stands still while any fighter has flag 0x128); never while the opponent's
  * state has flag bit 1. With no attack at all it ends when the step parameter has been counted below 0. */
 s32 BtlAiStep_GuardCountdown(BtlAiWork *ai) {
     BtlAiSeqA *seq = SEQA(ai);
-    u8 flags = AI_DATA->act->body.stateFlags[BtlCharApi_GetUnk974(ai->objId ^ 1)];
-    s32 attacking = BtlCharApi_CheckUnkCAC(ai->objId ^ 1);
+    u8 flags = AI_DATA->act->body.stateFlags[BtlCharApi_GetAnimId(ai->objId ^ 1)];
+    s32 attacking = BtlCharApi_IsAttackHitPending(ai->objId ^ 1);
 
     if (flags & 2) {
         return 0;
@@ -1223,9 +1223,9 @@ s32 BtlAiStep_SwitchQueued(BtlAiWork *ai) {
 
 /* Step handler 14: compares a fighter value of both sides (kind 1 or 2 in seq->timer), picks one of two AI-type
  * rates for it and, on a successful roll, moves seq->step on (modulo 4). */
-s32 BtlAiStep_Unk14(BtlAiWork *ai) {
+s32 BtlAiStep_ClashMash(BtlAiWork *ai) {
     BtlAiSeq *seq = &ai->seq;
-    s8 cls = gBtlAi->data->act->actClass[BtlCharApi_GetUnk974(ai->objId)];
+    s8 cls = gBtlAi->data->act->actClass[BtlCharApi_GetAnimId(ai->objId)];
     s32 roll = Rand_Range(100);
     u8 *prof = gBtlAi->data->profile[ai->type];
     u8 *lo = prof + 0x2AC;
@@ -1274,7 +1274,7 @@ s32 BtlAiStep_Unk14(BtlAiWork *ai) {
 }
 
 /* Step handler 15: runs BtlAiStep_ReachClass; once that is done, checks the queued move and arms the 300-frame cooldown. */
-s32 BtlAiStep_Unk15(BtlAiWork *ai) {
+s32 BtlAiStep_ReachClassMoveSlot(BtlAiWork *ai) {
     BtlAiPlan *plan = &ai->plan;
     s32 busy = BtlAiStep_ReachClass(ai);
     BtlAiChrMoves *p = BtlCharApi_GetMoveTable(ai->objId);
@@ -1341,7 +1341,7 @@ s32 BtlAiStep_FireSkill(BtlAiWork *ai) {
     BtlAiChrSkills *p = BtlCharApi_GetSkillTable(ai->objId);
     BtlAiActTable *act = gBtlAi->data->act;
     s32 busy = BtlAiStep_ReachClass(ai);
-    f32 rate = BtlCharApi_GetUnkE44B(ai->objId);
+    f32 rate = BtlCharApi_GetTechChargeB(ai->objId);
     u32 *top = &SEQ_TOP(seq).id;
     s32 action[2];
     s8 cls[2];
@@ -1352,8 +1352,8 @@ s32 BtlAiStep_FireSkill(BtlAiWork *ai) {
     if (plan->unk8 == -1) {
         return 1;
     }
-    action[0] = BtlCharApi_GetUnk974(ai->objId);
-    action[1] = BtlCharApi_GetUnk974(ai->objId ^ 1);
+    action[0] = BtlCharApi_GetAnimId(ai->objId);
+    action[1] = BtlCharApi_GetAnimId(ai->objId ^ 1);
     tbl = (BtlAiActBody *)((u8 *)act + 8);
     cls[0] = tbl->actClass[action[0]];
     cls[1] = tbl->actClass[action[1]];
@@ -1414,7 +1414,7 @@ tail:
 }
 
 /* Step handler 18: counts seq->timer down, reloading it by level and distance, then runs BtlAiStep_NotHit. */
-s32 BtlAiStep_Unk18(BtlAiWork *ai) {
+s32 BtlAiStep_MashUntilNotHit(BtlAiWork *ai) {
     s32 near[5] = { 15, 7, 5, 3, 3 };
     s32 far[5] = { 15, 10, 7, 5, 3 };
     BtlAiSeq *seq = &ai->seq;
@@ -1435,7 +1435,7 @@ s32 BtlAiStep_Unk18(BtlAiWork *ai) {
 }
 
 /* Step handler 19: same countdown, done when BtlCharApi_GetStunTimer is not positive. */
-s32 BtlAiStep_Unk19(BtlAiWork *ai) {
+s32 BtlAiStep_MashUntilStunEnds(BtlAiWork *ai) {
     s32 near[5] = { 15, 7, 5, 3, 3 };
     s32 far[5] = { 15, 10, 7, 5, 3 };
     BtlAiSeq *seq = &ai->seq;
@@ -1456,12 +1456,12 @@ s32 BtlAiStep_Unk19(BtlAiWork *ai) {
 }
 
 /* Step handler 20: done when BtlCharApi_IsOppSkillFlag4 is zero. */
-s32 BtlAiStep_Unk20(BtlAiWork *ai) {
+s32 BtlAiStep_WhileOppSkillFlag4(BtlAiWork *ai) {
     return BtlCharApi_IsOppSkillFlag4(ai->objId) == 0;
 }
 
 /* Step handler 21: same countdown, done when BtlCharApi_TestFlagBE is zero. */
-s32 BtlAiStep_Unk21(BtlAiWork *ai) {
+s32 BtlAiStep_MashUntilKiBack(BtlAiWork *ai) {
     s32 near[5] = { 15, 7, 5, 3, 3 };
     s32 far[5] = { 15, 10, 7, 5, 3 };
     BtlAiSeq *seq = &ai->seq;
@@ -1501,7 +1501,7 @@ s32 BtlAiStep_Unk23(BtlAiWork *ai) {
     BtlAiSeq *seq = &ai->seq;
     s32 busy = BtlAiStep_ReachClass(ai);
     BtlAiChrSkills *p = BtlCharApi_GetSkillTable(ai->objId);
-    s8 cls = gBtlAi->data->act->actClass[BtlCharApi_GetUnk974(ai->objId)];
+    s8 cls = gBtlAi->data->act->actClass[BtlCharApi_GetAnimId(ai->objId)];
     s32 n;
 
     if (busy == 0) {

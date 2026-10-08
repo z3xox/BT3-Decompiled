@@ -113,10 +113,10 @@ void UbResult_Init(s32 section) {
     gUbResult->itemText = MPACK_AT(gUbResult->res, 14);
     for (i = 0; i < 4; i++) {
         TextBox_Init(&gUbResult->box[i], gUbResult->text, 0);
-        TextBox_SetUnk50(&gUbResult->box[i], 0);
+        TextBox_SetAlign(&gUbResult->box[i], 0);
     }
     TextBox_Init(&gUbResult->itemBox, gUbResult->itemText, 0);
-    TextBox_SetUnk50(&gUbResult->itemBox, 0);
+    TextBox_SetAlign(&gUbResult->itemBox, 0);
     TextBox_SetLineOffsets(&gUbResult->itemBox, 12, 0, 0, 0, 0);
     gUbResult->bonusTbl = MPACK_AT(gUbResult->res, 13);
     gUbResult->voiceLine = -1;

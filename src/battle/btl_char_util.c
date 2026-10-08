@@ -231,7 +231,7 @@ s32 BtlChar_IsDead(BtlCharGetChr *chr) {
 }
 
 /* 1 when the active member's word 0x70 is set. */
-s32 BtlChar_TestMemberUnk70(BtlCharGetChr *chr) {
+s32 BtlChar_IsBodyChanged(BtlCharGetChr *chr) {
     return BtlMember_GetActiveGauge(chr)->unk30 != 0;
 }
 

@@ -47,7 +47,7 @@ BtlAct_IsAirMotion = 0x001E0A20; // type:func // guess
 BtlAct_PrepareSwitch = 0x001E0AB8; // type:func // guess
 BtlAct_PushAngle = 0x001E0B58; // type:func // guess
 BtlAct_PushDir = 0x001E0BD8; // type:func // guess
-BtlAct_SetObjUnk = 0x001E0C80; // type:func // guess
+BtlAct_AddSway = 0x001E0C80; // type:func // guess
 
 // Attack actions 0x70..0xAD and their parameter block (pending at chr +0xD1C, latched at +0xCF8).
 BtlAct_IsAttackId = 0x001E0CC0; // type:func // guess

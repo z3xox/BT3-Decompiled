@@ -88,8 +88,8 @@ extern s32 BtlCharApi_GetOpponentObjId(s32 objId);
 extern s32 BtlCharApi_ObjHasFlags42(s32 objId);
 extern void BtlCharApi_ObjSetFlag100(s32 objId, s32 on);
 
-extern f32 BtlCharApi_GetUnkE44(s32 objId);
-extern f32 BtlCharApi_GetUnkE5CRatio(s32 objId);
+extern f32 BtlCharApi_GetTechCharge(s32 objId);
+extern f32 BtlCharApi_GetSkillCount3Ratio(s32 objId);
 extern f32 BtlCharApi_GetUnkE60Ratio(s32 objId);
 extern void EftEmit_UpdateWidth2(EftJSet *set, void *emit);
 extern s32 EftShot_GetAttrKind(s32 objId, u64 evt);
@@ -1224,7 +1224,7 @@ void EftBlast_UpdateParts(s32 objId, EftJTask *task, EftJSet *set, s32 mode) {
 
 /*
  * Init callback of an item: copies speed and scale from the definition, applies the per-id cases (0x268: scale
- * + 0.3 * BtlCharApi_GetUnkE5CRatio and flags 0x1800; 0x2CD: scale * 0.8 + min(BtlCharApi_GetUnkE60Ratio, 0.7)
+ * + 0.3 * BtlCharApi_GetSkillCount3Ratio and flags 0x1800; 0x2CD: scale * 0.8 + min(BtlCharApi_GetUnkE60Ratio, 0.7)
  * and flag 0x800; 0x14B: flag 0x800), binds the manager's emitter set, takes the speed from the set's second
  * width track when it has one (flag 0x200), reads the end time and tags the task with its character's reset bit.
  *
@@ -1248,7 +1248,7 @@ void EftBlast_Init(EftJTask *task, EftJSrc *arg) {
     w->speed = def->speed;
     w->scale = def->scale;
     if (src->def->id == 0x268) {
-        f32 ratio = BtlCharApi_GetUnkE5CRatio(src->objId);
+        f32 ratio = BtlCharApi_GetSkillCount3Ratio(src->objId);
 
         w->ratio = ratio;
         w->scale += ratio * 0.3f;
@@ -1325,7 +1325,7 @@ void EftBlast_Update(EftJTask *task) {
         switch (task->state) {
         case 0:
             if (!(w->flags & 0x800)) {
-                f32 ratio = BtlCharApi_GetUnkE44(src->objId);
+                f32 ratio = BtlCharApi_GetTechCharge(src->objId);
 
                 w->ratio = ratio;
                 w->drawScale = w->scale * (ratio * 0.5f + 1.0f);

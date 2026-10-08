@@ -161,7 +161,7 @@ typedef struct EftBattleWork {
 } EftBattleWork;
 extern EftBattleWork *Battle_GetWork(void);
 
-extern EftEVec D_002C3630; /* (0, 0, 0, 1) */
+extern EftEVec gEftWaterOrigin; /* (0, 0, 0, 1) */
 
 extern EftTransPart *EftBurst_AllocPtcl(void);
 extern void EftBurst_InitSpark(EftTransPart *part, s32 idx);
@@ -1012,8 +1012,8 @@ void EftWater_Draw(void) {
                 EftWaterSplash_DrawList(gEftDust->splashList[0]);
                 EftWaterTrail_DrawList(gEftDust->trailList[0]);
                 EftWaterRing_DrawList(gEftDust->ringList[0]);
-                EftWaterSpray_DrawList(gEftDust->sprayList[0], D_002C3630);
-                EftWaterDrop_DrawList(gEftDust->dropList[0], D_002C3630);
+                EftWaterSpray_DrawList(gEftDust->sprayList[0], gEftWaterOrigin);
+                EftWaterDrop_DrawList(gEftDust->dropList[0], gEftWaterOrigin);
                 EftWaterMist_DrawList(gEftDust->mistList[0]);
                 Vu0Cur_Pop();
             }
@@ -1206,7 +1206,7 @@ void EftWater_AddSplash(EftWaterSplash **head, EftWaterSplash **tail, EftEVec po
             speed *= scale;
             sizeVel *= scale;
             gravity *= scale;
-            EftWaterSpray_Spawn(&splash->sprayList[0], &splash->sprayList[1], D_002C3630, dist, height, yaw + step * i, pitch,
+            EftWaterSpray_Spawn(&splash->sprayList[0], &splash->sprayList[1], gEftWaterOrigin, dist, height, yaw + step * i, pitch,
                           0.0f, 0.8f, 0.65f, speed, 0.0f, sizeVel, -5.0f, gravity, spread + 1.0f, 1.2f, life, 0.0f, 0x8C,
                           0x8C, 0x8C, 3, 0, 0x102);
         }
@@ -1222,7 +1222,7 @@ void EftWater_AddSplash(EftWaterSplash **head, EftWaterSplash **tail, EftEVec po
             speed *= scale;
             sizeVel *= scale;
             gravity *= scale;
-            EftWaterSpray_Spawn(&splash->sprayList[0], &splash->sprayList[1], D_002C3630, dist, height, yaw + step * i, pitch,
+            EftWaterSpray_Spawn(&splash->sprayList[0], &splash->sprayList[1], gEftWaterOrigin, dist, height, yaw + step * i, pitch,
                           0.0f, 0.9f, 0.75f, speed, 0.0f, sizeVel, -5.0f, gravity, spread + 1.2f, 0.7f, life, 0.1f, 0x8C,
                           0x8C, 0x8C, 3, 0, 0x101);
         }
@@ -1239,7 +1239,7 @@ void EftWater_AddSplash(EftWaterSplash **head, EftWaterSplash **tail, EftEVec po
             size *= scale;
             sizeVel *= scale;
             gravity *= scale;
-            EftWaterDrop_Spawn(&splash->dropList[0], &splash->dropList[1], D_002C3630, yaw + step * i, pitch, speed,
+            EftWaterDrop_Spawn(&splash->dropList[0], &splash->dropList[1], gEftWaterOrigin, yaw + step * i, pitch, speed,
                           EFT_RANDF() * 360.0f, 0.0f, size, sizeVel, -5.0f, gravity, life, 0.0f, 0x80, 0x80, 0x80, 4, 0,
                           0x106);
         }
@@ -1256,7 +1256,7 @@ void EftWater_AddSplash(EftWaterSplash **head, EftWaterSplash **tail, EftEVec po
             size *= scale;
             sizeVel *= scale;
             gravity *= scale;
-            EftWaterDrop_Spawn(&splash->dropList[0], &splash->dropList[1], D_002C3630, yaw + step * i, pitch, speed,
+            EftWaterDrop_Spawn(&splash->dropList[0], &splash->dropList[1], gEftWaterOrigin, yaw + step * i, pitch, speed,
                           EFT_RANDF() * 360.0f, 0.0f, size, sizeVel, -5.0f, gravity, life, 0.0f, 0x80, 0x80, 0x80, 1, 0,
                           0xA);
         }
@@ -1319,7 +1319,7 @@ typedef struct EftWaterCamView {
 
 #define Battle_GetWork ((EftWaterBattleWork *(*)(void))Battle_GetWork)
 #define gBtlCamView ((EftWaterCamView *)gBtlCamView)
-#define D_002C3630 (*(EftWaterVec *)&D_002C3630) /* (0, 0, 0, 1) */
+#define gEftWaterOrigin (*(EftWaterVec *)&gEftWaterOrigin) /* (0, 0, 0, 1) */
 
 extern void *memset(void *dst, s32 c, u32 n);
 extern s32 rand(void);
@@ -1719,8 +1719,8 @@ s32 EftWaterTrail_Update(EftWaterTrail *trail) {
 /* Draws every trail of a list (its particles hold world positions, so the origin is zero). */
 void EftWaterTrail_DrawList(EftWaterTrail *trail) {
     for (; trail != NULL; trail = trail->next) {
-        EftWaterDrop_DrawList(trail->dropHead, D_002C3630);
-        EftWaterSpray_DrawList(trail->sprayHead, D_002C3630);
+        EftWaterDrop_DrawList(trail->dropHead, gEftWaterOrigin);
+        EftWaterSpray_DrawList(trail->sprayHead, gEftWaterOrigin);
         EftWaterRing_DrawList(trail->ringHead);
     }
 }
@@ -1771,7 +1771,7 @@ void EftWaterDrop_Spawn(EftWaterDrop **head, EftWaterDrop **tail, EftWaterVec po
             (*tail)->next = drop;
         }
         *tail = drop;
-        Vec4_Copy(&drop->pos, &D_002C3630);
+        Vec4_Copy(&drop->pos, &gEftWaterOrigin);
         Vec4_Copy(&drop->base, &pos);
         drop->rot = rot;
         drop->rotVel = rotVel;
@@ -2275,7 +2275,7 @@ void EftWaterSpray_DrawList(EftWaterSpray *spray, EftWaterVec origin) {
     for (; spray != NULL; spray = spray->next) {
         if (spray->flags & EFT_WATER_LIVE) {
             Vec3_Lerp(&rot, &up, &spray->dir, spray->tilt);
-            EftUtil_MakeFacingMtx(&orient, &rot, &D_002C3630);
+            EftUtil_MakeFacingMtx(&orient, &rot, &gEftWaterOrigin);
             Vec4_Add(&pos, &spray->pos, &origin);
             pos.w = 1.0f;
             EftWater_DrawSprayQuad(&pos, &orient, &world2screen, spray->roll, spray->size, spray->nearScale, 0.0f,
@@ -2497,7 +2497,7 @@ void EftWaterMist_DrawList(EftWaterMist *mist) {
     for (; mist != NULL; mist = mist->next) {
         if (mist->live) {
             Vec3_Lerp(&rot, (EftWaterVec *)&up, &mist->dir, mist->tilt);
-            EftUtil_MakeFacingMtx(&orient, &rot, &D_002C3630);
+            EftUtil_MakeFacingMtx(&orient, &rot, &gEftWaterOrigin);
             EftWater_DrawSprayQuad(&mist->pos, &orient, &world2screen, mist->roll, mist->size, mist->nearScale,
                                    0.0f, mist->widthScale, mist->r, mist->g, mist->b, 0x40,
                                    (u32)mist->progress, &gEftDust->tex[mist->tex].tex0, mist->layer);

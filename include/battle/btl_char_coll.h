@@ -41,7 +41,7 @@ typedef struct BtlCollAtk {
 typedef struct BtlCollHit {
     /* 0x00 */ s32 ownerId;    /* roster index / object id of the attacker (BtlChar_Get index) */
     /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8;       /* compared with BtlSuper_GetUnk1E(chr, class) in BtlColl_TryDodge */
+    /* 0x08 */ s32 unk8;       /* compared with BtlSuper_GetClashPower(chr, class) in BtlColl_TryDodge */
     /* 0x0C */ s32 type;       /* BTL_HIT_* */
     /* 0x10 */ u8 unk10[0x10];
     /* 0x20 */ Vec4 pos;       /* where it hit: sounds, camera shake and rumble are placed here */
@@ -117,13 +117,13 @@ typedef struct BtlCollThrow {
     /* 0x08 */ s32 defSide;
     /* 0x0C */ s32 slot;
     /* 0x10 */ s32 unk10;     /* BtlSuper_GetStepCount */
-    /* 0x14 */ s32 unk14;     /* BtlSuper_GetUnk14D */
-    /* 0x18 */ s32 unk18;     /* BtlSuper_GetUnk220, or -1 */
+    /* 0x14 */ s32 unk14;     /* BtlSuper_GetLandingKind */
+    /* 0x18 */ s32 unk18;     /* BtlSuper_GetThrowPartnerStep, or -1 */
     /* 0x1C */ s32 unk1C;     /* BtlSuper_GetLastStep, or -1 */
     /* 0x20 */ s32 unk20;     /* BtlSuper_GetThrowChara; -1 in the victim */
     /* 0x24 */ s32 unk24;     /* BtlSuper_GetThrowCostume; 0 in the victim */
     /* 0x28 */ s32 unk28;     /* BtlSuper_GetThrowGauge20; 0 in the victim */
-    /* 0x2C */ s32 unk2C;     /* BtlSuper_GetUnk226; 1 in the victim */
+    /* 0x2C */ s32 unk2C;     /* BtlSuper_GetThrowObjectSlot; 1 in the victim */
     /* 0x30 */ s32 unk30;     /* technique bit 0x400000 */
     /* 0x34 */ s32 unk34;     /* technique bit 0x400: BtlChar_FrameMod(2) != 0 */
     /* 0x38 */ s32 unk38;     /* technique bit 0x100000 */
@@ -223,7 +223,7 @@ void BtlColl_PlayContactSound(BtlCollHit *hit);
 void BtlColl_UpdateGround(BtlCollChr *chr);
 void BtlColl_ClearActionBits(BtlCollChr *chr);
 void BtlColl_AddActionBit(BtlCollChr *chr, s32 action);
-void BtlColl_SetUnk1294(BtlCollChr *chr, s32 v);
+void BtlColl_SetFramesLeftOverride(BtlCollChr *chr, s32 v);
 void BtlColl_SetFramesToReach(BtlCollChr *chr, f32 scale);
 void BtlColl_NextPoolMember(BtlCollChr *chr); /* 0x1CDCA8: first function of src/battle/btl_char_member.c */
 

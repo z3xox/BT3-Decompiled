@@ -1758,7 +1758,7 @@ void Battle_ResetStage(void) {
 }
 
 /* Returns rule word 0x10 (setup + 0x18). */
-s32 Battle_GetRuleUnk10(void) {
+s32 Battle_IsStageChangeEnabled(void) {
     return SETUP()->rule.unk10;
 }
 
@@ -1792,12 +1792,12 @@ s32 BattleSide_IsCpu(s32 side) {
 }
 
 /* Returns side word 0x200. */
-s32 BattleSide_GetUnk200(s32 side) {
+s32 BattleSide_GetSwitchEnabled(s32 side) {
     return Side(side)->unk200;
 }
 
 /* Returns side word 0x1FC. */
-s32 BattleSide_GetUnk1FC(s32 side) {
+s32 BattleSide_GetChangeAllowed(s32 side) {
     return Side(side)->unk1FC;
 }
 

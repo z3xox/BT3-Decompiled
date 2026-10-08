@@ -65,7 +65,7 @@ EftQuad_SetOwnOrigin = 0x00194FA8; // type:func // guess
 EftQuad_SetCut = 0x00195000; // type:func // guess
 //
 // --- Line (effect pack part kind 16), helpers ---
-// Task class D_002C40F0 = { update 0x1961A0, init 0x195EE8, term 0x196190, stub 0x1967C0, reset 0x1967C8, draw
+// Task class gEftBillClass = { update 0x1961A0, init 0x195EE8, term 0x196190, stub 0x1967C0, reset 0x1967C8, draw
 // 0x1967E0 }, in the file after this one. Callers: the init (SetKey, SetTex), the update (Animate, SetKey, LoadTex),
 // the draw (DrawSprite / DrawClipped) and 0x196D48 (SetTex).
 EftLine_SetTex = 0x00195038; // type:func // guess

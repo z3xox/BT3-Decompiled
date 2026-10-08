@@ -31,7 +31,7 @@ extern s32 BtlChar_TestFlag(BtlMemberChr *chr, s32 bit);
 extern void BtlChar_ClearFlag(BtlMemberChr *chr, s32 bit);
 extern void BtlEvent_Raise(s32 side, s32 ev);
 extern s32 Battle_GetMode(void);
-extern f32 BtlCharApi_GetChargedUnkC78(s32 objId);
+extern f32 BtlCharApi_GetRushSequenceFrame(s32 objId);
 extern f32 Mathf_Sin(f32 angle);
 extern f32 Mathf_Cos(f32 angle);
 extern s32 BtlAnim_GetId(BtlMemberChr *chr);
@@ -498,7 +498,7 @@ extern f32 Vec3_Length(Vec4 *v);
 extern f32 BtlUtil_WrapAngle(f32 a);
 #define BtlChar_GetObj ((FxObj *(*)(FxChr *chr))BtlChar_GetObj)
 #define BtlChar_GetPos ((FxPose *(*)(FxChr *chr))BtlChar_GetPos)
-extern s32 BtlChar_TestMemberUnk70(FxChr *chr);
+extern s32 BtlChar_IsBodyChanged(FxChr *chr);
 #define BtlMember_GetActiveGauge ((FxGauge *(*)(FxChr *chr))BtlMember_GetActiveGauge)
 #define BtlMember_HasAnyListedAbility ((s32 (*)(FxChr *chr))BtlMember_HasAnyListedAbility)
 #define BtlChar_TestFxBit ((s32 (*)(FxChr *chr, s32 bit))BtlChar_TestFxBit)           /* test */
@@ -508,7 +508,7 @@ extern void BtlCharApi_GetNodePos(s32 objId, s32 part, Vec4 *out); /* world posi
 #define BtlCharSnd_PlayCommon ((void (*)(FxChr *chr, s32 sound))BtlCharSnd_PlayCommon)
 extern void BtlOpp_GetDelta(FxChr *chr, Vec4 *out);
 extern s32 BtlParam_GetFlags(FxChr *chr);
-extern void BtlParam_GetUnk0(FxChr *chr);
+extern void BtlParam_GetCharaFlags(FxChr *chr);
 extern s32 BtlKiBlast_GetType(FxChr *chr);
 extern s32 BtlKiBlast_GetUnk3(FxChr *chr);
 extern void BtlObj_SetColorMode(FxObj *obj, s32 bit, s32 on);
@@ -575,7 +575,7 @@ void BtlFx_SpawnHitSparkReq17(FxChr *chr) {
         arg.kind = chr->hitKind;
         arg.unk18 = BtlKiBlast_GetUnk3(chr);
         arg.scale = 1.0f;
-        if (BtlChar_TestMemberUnk70(chr)) {
+        if (BtlChar_IsBodyChanged(chr)) {
             type = 1;
         }
         if (arg.kind == 0x15) {
@@ -637,15 +637,15 @@ s32 BtlFx_UpdateAura(FxChr *chr) {
     if (!(BtlParam_GetFlags(chr) & 0x10)) {
         if (BtlChar_IsFxBitNew(chr, 7)) {
             EftAura_Command(chr->objId, 2);
-            BtlParam_GetUnk0(chr);
+            BtlParam_GetCharaFlags(chr);
         }
         if (BtlChar_IsFxBitEnded(chr, 7)) {
             EftAura_Command(chr->objId, 3);
-            BtlParam_GetUnk0(chr);
+            BtlParam_GetCharaFlags(chr);
         }
         if (BtlChar_TestFxBit(chr, 8)) {
             EftAura_Command(chr->objId, 4);
-            BtlParam_GetUnk0(chr);
+            BtlParam_GetCharaFlags(chr);
         }
     }
 }
@@ -812,7 +812,7 @@ extern f32 BtlUtil_WrapAngle(f32 a);
 #define BtlChar_GetObj ((FxObj *(*)(FxChr *chr))BtlChar_GetObj)
 #define BtlChar_GetPos ((FxPose *(*)(FxChr *chr))BtlChar_GetPos)
 #define BtlChar_TestFlag ((s32 (*)(FxChr *chr, s32 flag))BtlChar_TestFlag)
-extern s32 BtlChar_TestMemberUnk70(FxChr *chr);
+extern s32 BtlChar_IsBodyChanged(FxChr *chr);
 #define BtlChar_SetFxBit ((void (*)(FxChr *chr, s32 bit))BtlChar_SetFxBit)          /* set */
 #define BtlChar_ClearFxBit ((void (*)(FxChr *chr, s32 bit))BtlChar_ClearFxBit)          /* clear */
 #define BtlChar_TestFxBit ((s32 (*)(FxChr *chr, s32 bit))BtlChar_TestFxBit)           /* test */
@@ -871,9 +871,9 @@ extern s32 BtlKiBlast_GetFlags(FxChr *chr);
 extern f32 BtlKiBlast_GetSpeed(FxChr *chr);
 extern f32 BtlKiBlast_GetTurnRate(FxChr *chr);
 extern s32 BtlKiBlast_GetFrames(FxChr *chr);
-extern s32 BtlKiBlast_GetUnk31(FxChr *chr);
+extern s32 BtlKiBlast_GetSpreadMode(FxChr *chr);
 extern s32 BtlKiBlast_GetHits(FxChr *chr);
-extern f32 BtlKiBlast_GetUnk28(FxChr *chr);
+extern f32 BtlKiBlast_GetRadius(FxChr *chr);
 extern f32 BtlKiBlast_GetUnk2C(FxChr *chr);
 extern s32 BtlObjAnim_GetEventArg(FxObj *obj, u64 mask);
 #define BtlObjAnim_MaskToNode ((s32 (*)(s32 bits))BtlObjAnim_MaskToNode)
@@ -1302,7 +1302,7 @@ void BtlFx_FireKiBlast(FxChr *chr) {
     f32 speed;
 
     if (BtlAnim_TestAttr(chr, 4)) {
-        react = BtlKiBlast_GetUnk31(chr);
+        react = BtlKiBlast_GetSpreadMode(chr);
         code = BtlObjAnim_MaskToNode(BtlObjAnim_GetEventArg(obj, 4));
         Vec4_Copy(&hitPos, &chr->hitPos);
         count = BtlKiBlast_GetHits(chr);
@@ -1319,7 +1319,7 @@ void BtlFx_FireKiBlast(FxChr *chr) {
         arg.unk1C = BtlKiBlast_GetFrames(chr);
         arg.unk20 = BtlKiBlast_GetSpeed(chr);
         arg.unk24 = BtlKiBlast_GetTurnRate(chr);
-        arg.unk28 = BtlKiBlast_GetUnk28(chr);
+        arg.unk28 = BtlKiBlast_GetRadius(chr);
         arg.unk2C = BtlKiBlast_GetUnk2C(chr);
         arg.unk34 = 1;
         arg.unk38 = 1;
@@ -1366,7 +1366,7 @@ void BtlFx_FireKiBlast(FxChr *chr) {
             arg.size = 0;
             break;
         }
-        if (BtlChar_TestMemberUnk70(chr)) {
+        if (BtlChar_IsBodyChanged(chr)) {
             switch (arg.level) {
             case 0:
             case 4:

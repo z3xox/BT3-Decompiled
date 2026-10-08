@@ -21,7 +21,7 @@
 CharSel *gCharSel = NULL;
 
 extern void TextBox_Init(MTextBox *box, void *text, u32 preset);
-extern void TextBox_SetUnk80(MTextBox *box, s32 value);
+extern void TextBox_SetNoFlush(MTextBox *box, s32 value);
 extern void TextBox_AttachLine(MFlash *flash, MFlashRef *ref, s32 x, s32 y, s32 line, MTextBox *box);
 extern void Flash_ClipSetOffset(MFlash *flash, MFlashRef *ref, s32 x, s32 y);
 extern void IconWin_SetIcon(s32 icon);
@@ -582,9 +582,9 @@ void CharSel_Init(s32 section) {
     }
     for (i = 0; i < CHARSEL_SIDES; i++) {
         TextBox_Init(&gCharSel->nameBox[i], gCharSel->nameText, i + 1);
-        TextBox_SetUnk80(&gCharSel->nameBox[i], 1);
+        TextBox_SetNoFlush(&gCharSel->nameBox[i], 1);
         TextBox_Init(&gCharSel->formBox[i], gCharSel->formText, i + 3);
-        TextBox_SetUnk80(&gCharSel->formBox[i], 1);
+        TextBox_SetNoFlush(&gCharSel->formBox[i], 1);
     }
 }
 

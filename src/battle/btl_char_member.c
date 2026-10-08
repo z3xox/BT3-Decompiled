@@ -45,7 +45,7 @@ extern s32 BtlChar_TestFlag(BtlMemberChr *chr, s32 bit);
 extern void BtlChar_ClearFlag(BtlMemberChr *chr, s32 bit);
 extern void BtlEvent_Raise(s32 side, s32 ev);
 extern s32 Battle_GetMode(void);
-extern f32 BtlCharApi_GetChargedUnkC78(s32 objId);
+extern f32 BtlCharApi_GetRushSequenceFrame(s32 objId);
 extern f32 Mathf_Sin(f32 angle);
 extern f32 Mathf_Cos(f32 angle);
 extern s32 BtlAnim_GetId(BtlMemberChr *chr);
@@ -792,7 +792,7 @@ void BtlMembers_UpdateQueuedDamage(void) {
         }
         if (BtlCharApi_IsInTechnique(chr->objId) && BtlCharApi_IsInRushSequence(chr->objId)) {
             active = 1;
-            frame = BtlCharApi_GetChargedUnkC78(chr->objId);
+            frame = BtlCharApi_GetRushSequenceFrame(chr->objId);
         }
         if (active && chr->queue.drainFrom < frame) {
             if (chr->queue.drainHealth > 0) {

@@ -7,7 +7,7 @@
 ; sent as one strip (a per-vertex "no draw" flag in the position's w), and the two-quadword header of a
 ; batch is not sent to the GS. See docs/systems/vu1/prog6.md for the full comparison.
 ;
-; Loaded by   Vu1Pkt_LoadProg6(view, mtx, vec)   src/sys/vu1_packet.c (microprogram D_002C1F00..D_002C2D30,
+; Loaded by   Vu1Pkt_LoadProg6(view, mtx, vec)   src/sys/vu1_packet.c (microprogram gVu1Prog6..gVu1Prog7,
 ;                                                17 quadwords of constants, BASE 0x92, OFFSET 0x1B2)
 ; Run by      Vu1Pkt_CallProg6(chain)            MSCALF 0, then the caller's chain
 ; Only user   ObjShadow_Draw                     src/sys/gfxm_e_b.c; the chain is built by ObjShadow_BuildPacket

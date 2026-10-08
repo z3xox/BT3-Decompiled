@@ -1085,7 +1085,7 @@ void SimDay_Init(s32 section) {
     gSimDay->text = MPACK_AT(gSimDay->res, 32);
     for (i = 0; i < 3; i++) {
         TextBox_Init(&gSimDay->box[i], gSimDay->text, 0);
-        TextBox_SetUnk50(&gSimDay->box[i], 1);
+        TextBox_SetAlign(&gSimDay->box[i], 1);
     }
     Dialog_Init(MPACK_AT(gSimDay->res, 33), gSimDay->msgText, 0);
     gSimDay->eventTbl = (void *)MPACK_AT(gSimDay->res, 28);

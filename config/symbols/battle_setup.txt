@@ -113,7 +113,7 @@ Battle_GetStage = 0x0012AC18; // type:func
 Battle_SetStage = 0x0012AC38; // type:func
 Battle_IsStageChanged = 0x0012AC60; // type:func
 Battle_ResetStage = 0x0012AC98; // type:func
-Battle_GetRuleUnk10 = 0x0012ACD0; // type:func // guess
+Battle_IsStageChangeEnabled = 0x0012ACD0; // type:func // guess
 
 // Per-side getters / setters (side * 0x270 + 0xC0). Read together by the fighter init 0x1C02C8: 0x12ACF0 ->
 // fighter+0x49C, 0x12AD20 == 0 -> +0x4B8, 0x12ADD0 (control == 2) -> +0x1278, 0x12B190 -> +0x998 (team size), 0x12AE58
@@ -130,8 +130,8 @@ BattleSide_GetOptionB = 0x0012AD20; // type:func // guess
 BattleSide_GetPad = 0x0012AD50; // type:func // guess
 BattleSide_GetControl = 0x0012AD90; // type:func
 BattleSide_IsCpu = 0x0012ADD0; // type:func
-BattleSide_GetUnk200 = 0x0012AE18; // type:func // guess
-BattleSide_GetUnk1FC = 0x0012AE58; // type:func // guess
+BattleSide_GetSwitchEnabled = 0x0012AE18; // type:func // guess
+BattleSide_GetChangeAllowed = 0x0012AE58; // type:func // guess
 BattleSide_GetStartChara = 0x0012AE98; // type:func
 BattleSide_GetStartCostume = 0x0012AED8; // type:func
 BattleSide_GetStartVariant = 0x0012AF18; // type:func // guess

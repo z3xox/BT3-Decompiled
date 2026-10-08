@@ -978,35 +978,35 @@ void TextBox_Init(TextBox *box, void *text, u32 preset) {
     box->text = text;
     switch (preset) {
     case 1:
-        TextBox_SetUnk50(box, 2);
-        TextBox_SetUnkC(box, 0x100, 0);
+        TextBox_SetAlign(box, 2);
+        TextBox_SetOffset(box, 0x100, 0);
         TextBox_SetMaxWidth(box, 0xE1);
         break;
     case 2:
-        TextBox_SetUnk50(box, 0);
-        TextBox_SetUnkC(box, 0, 0);
+        TextBox_SetAlign(box, 0);
+        TextBox_SetOffset(box, 0, 0);
         TextBox_SetMaxWidth(box, 0xE1);
         break;
     case 3:
-        TextBox_SetUnk50(box, 2);
-        TextBox_SetUnkC(box, 0x100, 0);
+        TextBox_SetAlign(box, 2);
+        TextBox_SetOffset(box, 0x100, 0);
         TextBox_SetColor(box, 0xFFFF0080);
         TextBox_SetMaxWidth(box, 0xD4);
         break;
     case 4:
-        TextBox_SetUnk50(box, 0);
-        TextBox_SetUnkC(box, 0, 0);
+        TextBox_SetAlign(box, 0);
+        TextBox_SetOffset(box, 0, 0);
         TextBox_SetColor(box, 0xFFFF0080);
         TextBox_SetMaxWidth(box, 0xD4);
         break;
     case 5:
-        TextBox_SetUnk50(box, 0);
-        TextBox_SetUnk80(box, 1);
-        TextBox_SetUnkC(box, 0, 0);
+        TextBox_SetAlign(box, 0);
+        TextBox_SetNoFlush(box, 1);
+        TextBox_SetOffset(box, 0, 0);
         TextBox_SetLineOffsets(box, 0x20, 0x14, 0xA, 0, 0);
         break;
     case 6:
-        TextBox_SetUnk50(box, 0);
+        TextBox_SetAlign(box, 0);
         TextBox_SetMaxWidth(box, 0x160);
         break;
     case 0:
@@ -1014,15 +1014,15 @@ void TextBox_Init(TextBox *box, void *text, u32 preset) {
     }
 }
 
-void TextBox_SetUnk50(TextBox *box, s32 value) {
+void TextBox_SetAlign(TextBox *box, s32 value) {
     box->unk50 = value;
 }
 
-void TextBox_SetUnk80(TextBox *box, s32 value) {
+void TextBox_SetNoFlush(TextBox *box, s32 value) {
     box->unk80 = value;
 }
 
-void TextBox_SetUnkC(TextBox *box, s32 a, s32 b) {
+void TextBox_SetOffset(TextBox *box, s32 a, s32 b) {
     box->unkC = a;
     box->unk10 = b;
 }

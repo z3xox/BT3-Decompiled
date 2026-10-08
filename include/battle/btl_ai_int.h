@@ -9,7 +9,7 @@
 
 extern BtlAi *gBtlAi;
 extern BtlAiStateFunc gBtlAiStateFuncs[4];
-extern s32 D_002EDA70[]; /* rule condition id -> index of the condition function */
+extern s32 gBtlAiCondFuncIndex[]; /* rule condition id -> index of the condition function */
 
 /* Part of the fighter data that BtlCharApi_GetMoveTable returns. */
 typedef struct BtlAiChrMoves {
@@ -35,7 +35,7 @@ typedef struct BtlAiActBody {
 extern s32 BtlSeq_GetState(void);
 extern s32 BtlChar_IsStage4Or27(void);
 extern void BtlCharApi_SetInjectedInput(s32 objId, u32 buttons, f32 stickX, f32 stickY);
-extern s32 BtlCharApi_GetUnk974(s32 objId); /* the fighter's current action id */
+extern s32 BtlCharApi_GetAnimId(s32 objId); /* the fighter's current action id */
 extern s32 BtlAiStep_ReachClass(BtlAiWork *ai);
 extern s32 BtlAiStep_NotHit(BtlAiWork *ai);
 extern void BtlAiPad_Clear(BtlAiOutput *out, s32 keep);
@@ -52,7 +52,7 @@ extern BtlAiChrMoves *BtlCharApi_GetMoveTable(s32 objId);
 extern s32 BtlCharApi_HasBlastLimit(s32 objId);
 extern s32 BtlCharApi_GetHp(s32 objId);
 extern s32 BtlCharApi_GetMaxPower(s32 objId); /* member entry + 0x1C */
-extern s32 BtlCharApi_GetParamUnk14(s32 objId);
+extern s32 BtlCharApi_GetParamFlags2(s32 objId);
 extern s32 BtlCharApi_GetParamFlags(s32 objId);
 extern s32 BtlCharApi_GetOppSkillKind(s32 objId);
 extern s32 BtlCharApi_IsOppSkillFlag4(s32 objId);
@@ -62,8 +62,8 @@ extern s32 BtlCharApi_GetClashCountA(s32 objId);
 extern s32 BtlCharApi_IsMoveSlotActive(s32 objId, u32 slot);
 extern s32 BtlCharApi_GetStunTimer(s32 objId);
 extern s32 BtlCharApi_GetPromptButtons(s32 objId);
-extern s32 BtlCharApi_GetUnk1290(s32 objId);
-extern f32 BtlCharApi_GetUnkE44B(s32 objId);
+extern s32 BtlCharApi_GetStoryAiForce(s32 objId);
+extern f32 BtlCharApi_GetTechChargeB(s32 objId);
 extern s32 BtlCharApi_TestPoseBit80(s32 objId, s32 arg);
 extern s32 BtlCharApi_TestFlagBE(s32 objId);
 extern s32 BtlCharApi_GetParamByte8F(s32 objId, s32 arg);

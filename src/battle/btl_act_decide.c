@@ -22,7 +22,7 @@ extern f32 BtlUtil_WrapAngle(f32 a);
 extern BtlActJPose *BtlChar_GetPos(BtlActJChr *chr);
 extern s32 BtlChar_IsFree(BtlActJChr *chr);
 extern s32 BtlChar_IsDead(BtlActJChr *chr);
-extern s32 BtlChar_TestMemberUnk70(BtlActJChr *chr);
+extern s32 BtlChar_IsBodyChanged(BtlActJChr *chr);
 extern s32 BtlChar_TestFlag(BtlActJChr *chr, s32 bit);
 extern void BtlChar_SetFlag(BtlActJChr *chr, s32 bit);
 extern void BtlChar_ClearFlag(BtlActJChr *chr, s32 bit);
@@ -32,7 +32,7 @@ extern s32 BtlInput_TestAction(BtlActJChr *chr, s32 id, s32 want);
 extern s32 BtlAnim_GetId(BtlActJChr *chr);
 extern s32 BtlAnim_GetFlags(s32 anim);
 extern s32 BtlOpp_GetPlayer(BtlActJChr *chr);
-extern s32 BtlOpp_GetUnkD88(BtlActJChr *chr);
+extern s32 BtlOpp_GetEvasionCount(BtlActJChr *chr);
 
 extern BtlActJMember *BtlMember_Get(BtlActJChr *chr, s32 member);
 extern BtlActJMember *BtlMember_GetActive(BtlActJChr *chr);
@@ -59,20 +59,20 @@ extern s32 BtlDecide_Main(BtlActJChr *chr, u32 mask);  /* the input -> action de
 extern s32 BtlDecide_QueueAttack(BtlActJChr *chr, s32 attack); /* builds the queue for an attack id */
 
 /* Character parameter block (object + 0x91C) readers. */
-extern s32 BtlParam_GetUnkAC(BtlActJChr *chr);                       /* s8 + 0xAC: default transformation index */
+extern s32 BtlParam_GetDefaultSlot(BtlActJChr *chr);                       /* s8 + 0xAC: default transformation index */
 extern s32 BtlParam_GetSlotId(BtlActJChr *chr, s32 index);            /* u8 + 0x98[index]: transformation target character, 0xFF = none */
 extern s32 BtlParam_GetSlotCost(BtlActJChr *chr, s32 index);            /* u8 + 0x9C[index] * 100000: transformation blast cost */
 extern s32 BtlParam_GetSlotA0(BtlActJChr *chr, s32 index);            /* u8 + 0xA0[index]: transformation sequence 0..4 */
 extern s32 BtlParam_GetSlotA4(BtlActJChr *chr, s32 index);            /* u8 + 0xA4[index]: transformation kind (3 needs the stage flag) */
 extern s32 BtlParam_GetSlotA8(BtlActJChr *chr, s32 index);            /* u8 + 0xA8[index] */
 extern s32 BtlParam_CountSlots(BtlActJChr *chr);                       /* number of transformation targets that are not 0xFF */
-extern s32 BtlParam_TestUnkADBit(BtlActJChr *chr, s32 index);            /* u8 + 0xAD & (0x10 << index) */
-extern s32 BtlParam_GetUnkB4(BtlActJChr *chr, s32 index);            /* u8 + 0xB4[index]: fusion result character, 0xFF = none */
+extern s32 BtlParam_TestSlotResetsVariant(BtlActJChr *chr, s32 index);            /* u8 + 0xAD & (0x10 << index) */
+extern s32 BtlParam_GetFusionResult(BtlActJChr *chr, s32 index);            /* u8 + 0xB4[index]: fusion result character, 0xFF = none */
 extern s32 BtlParam_GetUnkB7(BtlActJChr *chr, s32 index);            /* u8 + 0xB7[index] */
-extern s32 BtlParam_GetUnkBA(BtlActJChr *chr, s32 index, s32 n);     /* u8 + 0xBA[index][n]: fusion partner characters */
+extern s32 BtlParam_GetFusionPartner(BtlActJChr *chr, s32 index, s32 n);     /* u8 + 0xBA[index][n]: fusion partner characters */
 extern s32 BtlParam_GetCostAE(BtlActJChr *chr, s32 index);            /* u8 + 0xAE[index] * 100000: fusion blast cost */
-extern s32 BtlParam_GetUnkB1(BtlActJChr *chr, s32 index);            /* u8 + 0xB1[index]: fusion sequence 1 / 2 */
-extern s32 BtlParam_GetUnk8F(BtlActJChr *chr, s32 index);            /* u8 + 0x8F[index]: combo finisher mode 0..5 */
+extern s32 BtlParam_GetFusionSequence(BtlActJChr *chr, s32 index);            /* u8 + 0xB1[index]: fusion sequence 1 / 2 */
+extern s32 BtlParam_GetComboFinish(BtlActJChr *chr, s32 index);            /* u8 + 0x8F[index]: combo finisher mode 0..5 */
 extern s32 BtlParam_CanFly(BtlActJChr *chr);                       /* parameter flag 0x1000 clear, or ability 0x36 */
 
 /* Technique table (object + 0x92C) and skill table (object + 0x930) readers. */
@@ -156,7 +156,7 @@ s32 BtlAct_QueueComboFinish(BtlActJChr *chr) {
             tech3 = 0x116;
             break;
     }
-    switch (BtlParam_GetUnk8F(chr, col)) {
+    switch (BtlParam_GetComboFinish(chr, col)) {
         case 0:
             BtlAct_SetQueue(chr, n++, tech2);
             break;
@@ -208,7 +208,7 @@ s32 BtlAct_CanTransform(BtlActJChr *chr, u32 index, s32 needBlast, s32 needAllow
     if (BtlChar_TestFlag(chr, 0xAF)) {
         return 0;
     }
-    if (BtlChar_TestMemberUnk70(chr)) {
+    if (BtlChar_IsBodyChanged(chr)) {
         return 0;
     }
     chara = BtlParam_GetSlotId(chr, index);
@@ -235,7 +235,7 @@ s32 BtlAct_CanTransform(BtlActJChr *chr, u32 index, s32 needBlast, s32 needAllow
  */
 s32 BtlAct_CheckTransformInput(BtlActJChr *chr) {
     s32 index = -1;
-    s32 def = BtlParam_GetUnkAC(chr);
+    s32 def = BtlParam_GetDefaultSlot(chr);
 
     if (BtlInput_TestAction(chr, 0x63, 1)) {
         index = def;
@@ -288,7 +288,7 @@ s32 BtlAct_QueueTransform(BtlActJChr *chr, s32 index) {
     if (BtlMember_GetActive(chr)->chara == 0x6A) {
         chr->form.unk28 = 2;
     }
-    if (BtlParam_TestUnkADBit(chr, index)) {
+    if (BtlParam_TestSlotResetsVariant(chr, index)) {
         chr->form.variant = 0;
     }
     switch (seq) {
@@ -335,10 +335,10 @@ s32 BtlAct_CanFuse(BtlActJChr *chr, s32 index, s32 needBlast, s32 needAllowed, s
     if (BtlChar_TestFlag(chr, 0xAF)) {
         return 0;
     }
-    if (BtlChar_TestMemberUnk70(chr)) {
+    if (BtlChar_IsBodyChanged(chr)) {
         return 0;
     }
-    chara = BtlParam_GetUnkB4(chr, index);
+    chara = BtlParam_GetFusionResult(chr, index);
     cost = BtlParam_GetCostAE(chr, index);
     if (chara == 0xFF) {
         return 0;
@@ -352,7 +352,7 @@ s32 BtlAct_CanFuse(BtlActJChr *chr, s32 index, s32 needBlast, s32 needAllowed, s
     member = -1;
     i = 0;
     while (i < 4) {
-        member = BtlMember_FindPresentIndex(chr, BtlParam_GetUnkBA(chr, index, i++));
+        member = BtlMember_FindPresentIndex(chr, BtlParam_GetFusionPartner(chr, index, i++));
         if (member >= 0) {
             break;
         }
@@ -400,9 +400,9 @@ s32 BtlAct_CheckFusionInput(BtlActJChr *chr) {
  * action 0xF1 or 0xF2 by the fusion's sequence.
  */
 s32 BtlAct_QueueFusion(BtlActJChr *chr, s32 index, s32 partner) {
-    s32 chara = BtlParam_GetUnkB4(chr, index);
+    s32 chara = BtlParam_GetFusionResult(chr, index);
     s32 cost = BtlParam_GetCostAE(chr, index);
-    s32 seq = BtlParam_GetUnkB1(chr, index);
+    s32 seq = BtlParam_GetFusionSequence(chr, index);
     s32 unk24 = BtlParam_GetUnkB7(chr, index);
     s32 i;
     s32 action;
@@ -410,7 +410,7 @@ s32 BtlAct_QueueFusion(BtlActJChr *chr, s32 index, s32 partner) {
     if (partner < 0) {
         i = 0;
         while (i < 4) {
-            partner = BtlMember_FindPresentIndex(chr, BtlParam_GetUnkBA(chr, index, i++));
+            partner = BtlMember_FindPresentIndex(chr, BtlParam_GetFusionPartner(chr, index, i++));
             if (partner >= 0) {
                 break;
             }
@@ -522,7 +522,7 @@ s32 BtlAct_CanUseTechnique(BtlActJChr *chr, s32 slot) {
     if ((u32)(slot - 2) >= 3) {
         return 0;
     }
-    if (BtlChar_TestMemberUnk70(chr)) {
+    if (BtlChar_IsBodyChanged(chr)) {
         return 0;
     }
     if (!BtlChar_TestFlag(chr, 5)) {
@@ -633,7 +633,7 @@ s32 BtlAct_CanUseSkill(BtlActJChr *chr, u32 slot) {
     }
     flags = BtlSkill_GetFlags(chr, slot);
     stack = (flags >> 8) & 1;
-    if (BtlChar_TestMemberUnk70(chr)) {
+    if (BtlChar_IsBodyChanged(chr)) {
         return 0;
     }
     if (!BtlChar_TestFlag(chr, 5) && (flags & 1)) {
@@ -1196,7 +1196,7 @@ s32 BtlAct_GetDownAction(BtlActJChr *chr) {
 s32 BtlAct_GetEvasionAttack(BtlActJChr *chr) {
     s32 n = chr->unkD88;
 
-    n += BtlOpp_GetUnkD88(chr);
+    n += BtlOpp_GetEvasionCount(chr);
     switch (n % 3) {
         case 1:
             return 0x89;

@@ -104,7 +104,7 @@ BtlAnim_ApplyBlend = 0x001C4388; // type:func // guess
 BtlAnim_PlaySub = 0x001C4450; // type:func // guess
 // Setters: obj +0xC8C; obj +0xC80 (step); step = length / (seconds * 30), or length when seconds < 1/30; obj +0xCB8;
 // fighter +0x988.
-BtlAnim_SetUnkC8C = 0x001C44D0; // type:func // guess
+BtlAnim_SetSubMix = 0x001C44D0; // type:func // guess
 BtlAnim_SetStep = 0x001C44F8; // type:func // guess
 BtlAnim_SetDuration = 0x001C4520; // type:func // guess
 BtlAnim_SetObjRate = 0x001C4580; // type:func // guess

@@ -29,7 +29,7 @@ extern BtlTechBObj *BtlChar_GetObj(BtlTechBChr *chr);
 extern BtlTechBPose *BtlChar_GetPos(BtlTechBChr *chr);
 extern BtlTechBChr *BtlChar_Get(s32 i);
 extern s32 BtlChar_TestFlag(BtlTechBChr *chr, s32 flag);
-extern s32 BtlChar_TestMemberUnk70(BtlTechBChr *chr);
+extern s32 BtlChar_IsBodyChanged(BtlTechBChr *chr);
 extern s32 BtlUtil_RoundUp(s32 v, s32 unit);
 extern s32 BtlMember_HasAbility(BtlTechBChr *chr, s32 n);
 extern BtlTechBMember *BtlMember_GetActive(BtlTechBChr *chr);
@@ -44,7 +44,7 @@ extern f32 BtlStat_GetSpeedScale(BtlTechBChr *chr);
 extern f32 BtlStat_GetBlast2DamageScale(BtlTechBChr *chr);
 extern f32 BtlStat_GetUltimateDamageScale(BtlTechBChr *chr);
 extern s32 BtlParam_GetFlags(BtlTechBChr *chr);
-extern s32 BtlParam_GetUnk0(BtlTechBChr *chr);
+extern s32 BtlParam_GetCharaFlags(BtlTechBChr *chr);
 extern s32 Battle_GetStage(void);
 extern s32 Battle_IsSplitScreen(void);
 extern s32 BattleReplay_IsActive(void);
@@ -81,12 +81,12 @@ f32 BtlParam_GetUnk5C(BtlTechBChr *chr) {
 }
 
 /* Parameter +0x68 (float; BtlAct_StepHandler). */
-f32 BtlParam_GetUnk68(BtlTechBChr *chr) {
+f32 BtlParam_GetStepCancelRatio(BtlTechBChr *chr) {
     return BtlChar_GetObj(chr)->param->unk68;
 }
 
 /* Parameter +0x6C (float; BtlAct_StepHandler). */
-f32 BtlParam_GetUnk6C(BtlTechBChr *chr) {
+f32 BtlParam_GetBackStepCancelRatio(BtlTechBChr *chr) {
     return BtlChar_GetObj(chr)->param->unk6C;
 }
 
@@ -96,12 +96,12 @@ f32 BtlParam_GetHitReactScale(BtlTechBChr *chr) {
 }
 
 /* Parameter +0x70 (s16): copied to fighter +0xD6C every frame. */
-s32 BtlParam_GetUnk70(BtlTechBChr *chr) {
+s32 BtlParam_GetPoweredDashLimit(BtlTechBChr *chr) {
     return BtlChar_GetObj(chr)->param->unk70;
 }
 
 /* Parameter +0x72 (s16): copied to fighter +0xD74 every frame. */
-s32 BtlParam_GetUnk72(BtlTechBChr *chr) {
+s32 BtlParam_GetPoweredVanishLimit(BtlTechBChr *chr) {
     return BtlChar_GetObj(chr)->param->unk72;
 }
 
@@ -159,7 +159,7 @@ f32 BtlParam_GetUnkC8(BtlTechBChr *chr) {
 }
 
 /* Parameter byte +0x8F + n. */
-s32 BtlParam_GetUnk8F(BtlTechBChr *chr, s32 n) {
+s32 BtlParam_GetComboFinish(BtlTechBChr *chr, s32 n) {
     return BtlChar_GetObj(chr)->param->unk8F[n];
 }
 
@@ -173,7 +173,7 @@ s32 BtlParam_GetDashSound(BtlTechBChr *chr) {
 
 /* Common sound 0x15 (charge start); characters with parameter word 0 bit 0x100 also play 0x3E. */
 s32 BtlParam_GetChargeStartSound(BtlTechBChr *chr) {
-    if (BtlParam_GetUnk0(chr) & 0x100) {
+    if (BtlParam_GetCharaFlags(chr) & 0x100) {
         BtlCharSnd_PlayCommon(chr, 0x3E);
     }
     return 0x15;
@@ -181,7 +181,7 @@ s32 BtlParam_GetChargeStartSound(BtlTechBChr *chr) {
 
 /* Common sound 0x16 (charge loop); with word 0 bit 0x100 also plays 0x3F. */
 s32 BtlParam_GetChargeLoopSound(BtlTechBChr *chr) {
-    if (BtlParam_GetUnk0(chr) & 0x100) {
+    if (BtlParam_GetCharaFlags(chr) & 0x100) {
         BtlCharSnd_PlayCommon(chr, 0x3F);
     }
     return 0x16;
@@ -189,7 +189,7 @@ s32 BtlParam_GetChargeLoopSound(BtlTechBChr *chr) {
 
 /* Common sound 0x17 (entering the powered-up state); with word 0 bit 0x100 also plays 0x40. */
 s32 BtlParam_GetMaxPowerSound(BtlTechBChr *chr) {
-    if (BtlParam_GetUnk0(chr) & 0x100) {
+    if (BtlParam_GetCharaFlags(chr) & 0x100) {
         BtlCharSnd_PlayCommon(chr, 0x40);
     }
     return 0x17;
@@ -442,11 +442,11 @@ BtlKiBlastData *BtlKiBlast_Get(BtlTechBChr *chr, u32 kind) {
     return &BtlChar_GetObj(chr)->kiBlast[kind];
 }
 
-/* Record flags; bits 0 and 1 are dropped while BtlChar_TestMemberUnk70. */
+/* Record flags; bits 0 and 1 are dropped while BtlChar_IsBodyChanged. */
 s32 BtlKiBlast_GetFlags(BtlTechBChr *chr) {
     s32 flags = BtlKiBlast_GetCurrent(chr, NULL)->flags;
 
-    switch (BtlChar_TestMemberUnk70(chr)) {
+    switch (BtlChar_IsBodyChanged(chr)) {
     case 0:
         break;
     default:
@@ -459,7 +459,7 @@ s32 BtlKiBlast_GetFlags(BtlTechBChr *chr) {
 s32 BtlKiBlast_GetFlagsOfHit(BtlTechBHit *hit) {
     s32 flags = BtlKiBlast_GetOfHit(hit, NULL, NULL)->flags;
 
-    switch (BtlChar_TestMemberUnk70(BtlChar_Get(hit->shot->side))) {
+    switch (BtlChar_IsBodyChanged(BtlChar_Get(hit->shot->side))) {
     case 0:
         break;
     default:
@@ -472,7 +472,7 @@ s32 BtlKiBlast_GetFlagsOfHit(BtlTechBHit *hit) {
 s32 BtlKiBlast_GetFlagsOf(BtlTechBChr *chr, u32 kind) {
     s32 flags = BtlKiBlast_Get(chr, kind)->flags;
 
-    switch (BtlChar_TestMemberUnk70(chr)) {
+    switch (BtlChar_IsBodyChanged(chr)) {
     case 0:
         break;
     default:
@@ -636,17 +636,17 @@ s32 BtlKiBlast_GetFramesOf(BtlTechBChr *chr, u32 kind) {
 }
 
 /* Record +0x31. */
-s32 BtlKiBlast_GetUnk31(BtlTechBChr *chr) {
+s32 BtlKiBlast_GetSpreadMode(BtlTechBChr *chr) {
     return BtlKiBlast_GetCurrent(chr, NULL)->unk31;
 }
 
 /* The same for a hit record. */
-s32 BtlKiBlast_GetUnk31OfHit(BtlTechBHit *hit) {
+s32 BtlKiBlast_GetSpreadModeOfHit(BtlTechBHit *hit) {
     return BtlKiBlast_GetOfHit(hit, NULL, NULL)->unk31;
 }
 
 /* The same for a kind. */
-s32 BtlKiBlast_GetUnk31Of(BtlTechBChr *chr, u32 kind) {
+s32 BtlKiBlast_GetSpreadModeOf(BtlTechBChr *chr, u32 kind) {
     return BtlKiBlast_Get(chr, kind)->unk31;
 }
 
@@ -783,17 +783,17 @@ s32 BtlKiBlast_GetHitsOf(BtlTechBChr *chr, u32 kind) {
 }
 
 /* Record +0x28 (float). */
-f32 BtlKiBlast_GetUnk28(BtlTechBChr *chr) {
+f32 BtlKiBlast_GetRadius(BtlTechBChr *chr) {
     return BtlKiBlast_GetCurrent(chr, NULL)->unk28;
 }
 
 /* The same for a hit record. */
-f32 BtlKiBlast_GetUnk28OfHit(BtlTechBHit *hit) {
+f32 BtlKiBlast_GetRadiusOfHit(BtlTechBHit *hit) {
     return BtlKiBlast_GetOfHit(hit, NULL, NULL)->unk28;
 }
 
 /* The same for a kind. */
-f32 BtlKiBlast_GetUnk28Of(BtlTechBChr *chr, u32 kind) {
+f32 BtlKiBlast_GetRadiusOf(BtlTechBChr *chr, u32 kind) {
     return BtlKiBlast_Get(chr, kind)->unk28;
 }
 
@@ -1007,7 +1007,7 @@ s32 BtlSuper_GetId(BtlTechBChr *chr, s32 slot) {
 }
 
 /* Table +0x1E (s16): compared with hit +0x8 by BtlColl_TryDodge. */
-s32 BtlSuper_GetUnk1E(BtlTechBChr *chr, s32 slot) {
+s32 BtlSuper_GetClashPower(BtlTechBChr *chr, s32 slot) {
     return BtlChar_GetObj(chr)->super->unk1E[slot - 2];
 }
 
@@ -1096,7 +1096,7 @@ s32 BtlSuper_GetReactAltS800(BtlTechBChr *chr, s32 slot) {
 }
 
 /* Table +0x14D (copied into the throw description). */
-s32 BtlSuper_GetUnk14D(BtlTechBChr *chr, s32 slot) {
+s32 BtlSuper_GetLandingKind(BtlTechBChr *chr, s32 slot) {
     return BtlChar_GetObj(chr)->super->unk14D[slot - 2];
 }
 
@@ -1267,12 +1267,12 @@ s32 BtlSuper_GetThrowGauge20(BtlTechBChr *chr, s32 slot) {
 }
 
 /* Table +0x220 (s8; throw description +0x18). */
-s32 BtlSuper_GetUnk220(BtlTechBChr *chr, s32 slot) {
+s32 BtlSuper_GetThrowPartnerStep(BtlTechBChr *chr, s32 slot) {
     return BtlChar_GetObj(chr)->super->unk220[slot - 2];
 }
 
 /* Table +0x223 (s8); 999 when negative. */
-s32 BtlSuper_GetUnk223(BtlTechBChr *chr, s32 slot) {
+s32 BtlSuper_GetStageFxEndStep(BtlTechBChr *chr, s32 slot) {
     s32 n = BtlChar_GetObj(chr)->super->unk223[slot - 2];
 
     if (n < 0) {
@@ -1282,7 +1282,7 @@ s32 BtlSuper_GetUnk223(BtlTechBChr *chr, s32 slot) {
 }
 
 /* Table +0x226 (s8; throw description +0x2C). */
-s32 BtlSuper_GetUnk226(BtlTechBChr *chr, s32 slot) {
+s32 BtlSuper_GetThrowObjectSlot(BtlTechBChr *chr, s32 slot) {
     return BtlChar_GetObj(chr)->super->unk226[slot - 2];
 }
 
@@ -1297,7 +1297,7 @@ BtlTechBPromptRow *BtlSuper_GetPromptRow(BtlTechBChr *chr, s32 slot) {
 }
 
 /* Table +0x165 (s8). */
-s32 BtlSuper_GetUnk165(BtlTechBChr *chr, s32 slot) {
+s32 BtlSuper_GetAiKind(BtlTechBChr *chr, s32 slot) {
     return BtlChar_GetObj(chr)->super->unk165[slot - 2];
 }
 
@@ -1519,7 +1519,7 @@ s32 BtlSkill_GetSequence(BtlTechBChr *chr, s32 slot) {
 }
 
 /* Table +0x9E (s8). */
-s32 BtlSkill_GetUnk9E(BtlTechBChr *chr, s32 slot) {
+s32 BtlSkill_GetAiKind(BtlTechBChr *chr, s32 slot) {
     return BtlChar_GetObj(chr)->skill->unk9E[slot];
 }
 

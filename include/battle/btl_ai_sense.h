@@ -86,7 +86,7 @@ typedef struct AiActPad {
 /* Situation: side + 0x2C0. */
 typedef struct AiActStatus {
     /* 0x00 */ u64 flags;     /* (m) situation bits rebuilt every frame by BtlAiSense_Update (AIACT_SIT_*) */
-    /* 0x08 */ s32 downTimer; /* (m) 4 while BtlCharApi_CheckUnkCAC is 1, then counted down */
+    /* 0x08 */ s32 downTimer; /* (m) 4 while BtlCharApi_IsAttackHitPending is 1, then counted down */
     /* 0x0C */ s32 oppClass;  /* (m) the opponent's state class when bit 29 was last raised */
     /* 0x10 */ s32 oppAction; /* (m) */
     /* 0x14 */ s32 react;     /* (m) persistent bits. Bits 0, 1 and 3 are rebuilt every frame; bits 5..20 are

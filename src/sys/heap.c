@@ -12,7 +12,7 @@ extern s32 gHeapSize[HEAP_COUNT];
 extern s32 gHeapDebugValue;
 extern u8 gHeapDebugFlag;
 extern s32 gHeapDebugUnused;
-extern u8 D_3BE71C[];
+extern u8 gProgramImageEnd[];
 extern s32 gHeapUnk70[HEAP_COUNT];
 extern s32 gHeapUnk78[HEAP_COUNT];
 
@@ -70,7 +70,7 @@ HeapBlock *Heap_NextBlock(HeapBlock *block) {
 }
 
 void Heap_Create(void) {
-    s32 size = 0x1EFB000 - (u32)D_3BE71C;
+    s32 size = 0x1EFB000 - (u32)gProgramImageEnd;
     HeapBlock *start;
 
     size += Mem_Align4Pad(size);

@@ -203,7 +203,7 @@ void MisSel_Init(s32 section) {
     gMisSel->subtitles = MPACK_AT(gMisSel->res, 17);
     for (i = 0; i < 7; i++) {
         TextBox_Init(&gMisSel->box[i], gMisSel->text, 0);
-        TextBox_SetUnk50(&gMisSel->box[i], 0);
+        TextBox_SetAlign(&gMisSel->box[i], 0);
         if (i < MISSEL_ROWS) {
             TextBox_SetMaxWidth(&gMisSel->box[i], 0xEB);
             TextBox_SetLineOffsets(&gMisSel->box[i], 0, -10, 0, 0, 0);

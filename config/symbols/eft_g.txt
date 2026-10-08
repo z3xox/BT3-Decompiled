@@ -79,7 +79,7 @@ EftBoundMgr_AddChar = 0x0014A7C8; // type:func // guess
 EftBoundMgr_Enable = 0x0014A7F8; // type:func // guess
 EftBoundMgr_Disable = 0x0014A810; // type:func // guess
 
-// Shot slots, scene layer 1 (class 0x2C36D0, left as D_002C36D0 because btl_scene.c uses that name):
+// Shot slots, scene layer 1 (class 0x2C36D0, left as gEftShotMgrClass because btl_scene.c uses that name):
 // per character five slots (0, 1 = ki blasts, 2..4 = techniques; the kinds of BtlMemberAuraReq). The per
 // character class is 0x2C36E8 {Update, Init, Term}. The module continues after 0x14B108.
 gEftShotCharClass = 0x002C36E8; // size:0x18 // guess

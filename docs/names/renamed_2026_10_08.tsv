@@ -1,0 +1,173 @@
+old	new	rating (the agent's: solid = the code shows the meaning; uncertain = a reasonable reading, marked "guess" in config)	evidence (kept only for names that had no line in config before; the rest of the agents' sentences were lost with the build folder)
+Battle_GetRuleUnk10	Battle_IsStageChangeEnabled	solid	
+BattleSide_GetUnk200	BattleSide_GetSwitchEnabled	solid	
+BattleSide_GetUnk1FC	BattleSide_GetChangeAllowed	solid	
+EftHit_GetDefUnkB	EftHit_GetHitInterval	solid	
+BtlAiStep_Unk14	BtlAiStep_ClashMash	solid	
+BtlAiStep_Unk15	BtlAiStep_ReachClassMoveSlot	uncertain	
+BtlAiStep_Unk18	BtlAiStep_MashUntilNotHit	uncertain	
+BtlAiStep_Unk19	BtlAiStep_MashUntilStunEnds	uncertain	
+BtlAiStep_Unk20	BtlAiStep_WhileOppSkillFlag4	uncertain	
+BtlAiStep_Unk21	BtlAiStep_MashUntilKiBack	uncertain	
+BtlAiCond_Unk12	BtlAiCond_OppSkillFlags	uncertain	
+BtlAiCond_Unk24	BtlAiCond_HasBlastLimit	solid	
+BtlAiCond_Unk27	BtlAiCond_IncomingBlastClass2	uncertain	
+BtlAnim_SetUnkC8C	BtlAnim_SetSubMix	solid	
+BtlColl_SetUnk1294	BtlColl_SetFramesLeftOverride	solid	
+BtlChar_SetUnk1310	BtlChar_RequestBodyWarp	solid	
+BtlChar_ResetUnk1310	BtlChar_ResetBodyWarp	uncertain	
+BtlOpp_GetObjUnkFFC	BtlOpp_GetCenterHeight	solid	
+BtlOpp_GetSeenUnk964	BtlOpp_GetSeenActionFrame	solid	
+BtlOpp_GetUnk15A0	BtlOpp_GetLookOffset	solid	
+BtlOpp_GetUnkD88	BtlOpp_GetEvasionCount	solid	
+BtlChar_TestMemberUnk70	BtlChar_IsBodyChanged	solid	
+BtlAct_SetObjUnk	BtlAct_AddSway	solid	
+BtlSuper_SetObjUnk	BtlSuper_AddSway	solid	
+BtlCharApi_GetBodyUnk1000	BtlCharApi_GetCamSideSlope	solid	
+BtlCharApi_GetPlayerObjUnk9C	BtlCharApi_GetPlayerEffectPack	uncertain	
+BtlCharApi_GetPlayerObjUnk58	BtlCharApi_GetPlayerCharPack	solid	
+BtlCharApi_GetPartUnk5C	BtlCharApi_GetNodeBoundSize	uncertain	
+BtlCharApi_HasMemberUnk70	BtlCharApi_IsMemberBodyChanged	solid	
+BtlCharApi_GetUnkE44	BtlCharApi_GetTechCharge	solid	
+BtlCharApi_GetUnkE5CRatio	BtlCharApi_GetSkillCount3Ratio	solid	
+BtlCharApi_GetChargedUnkC78	BtlCharApi_GetRushSequenceFrame	solid	
+BtlCharApi_ObjGetUnkC78	BtlCharApi_ObjGetAnimFrame	solid	
+BtlCharApi_ObjGetUnkC80	BtlCharApi_ObjGetAnimStep	solid	
+BtlCharApi_GetUnk974	BtlCharApi_GetAnimId	solid	
+BtlCharApi_GetUnk974Data	BtlCharApi_GetAnimFlags	solid	
+BtlCharApi_GetCamUnk4A0	BtlCharApi_GetCamYaw	solid	
+BtlCharApi_GetCamUnk460	BtlCharApi_GetCamBodyPos	solid	
+BtlCharApi_GetMgrUnk134	BtlCharApi_GetReplayViewSide	solid	
+BtlCharApi_GetUnk1288	BtlCharApi_GetActionBits	solid	
+BtlCharApi_CheckUnkCAC	BtlCharApi_IsAttackHitPending	solid	
+BtlCharApi_IsUnkCACPaired	BtlCharApi_IsAttackHitsDone	solid	
+BtlCharApi_IsUnk1070Set	BtlCharApi_IsCounterWindowBusy	uncertain	
+BtlCharApi_GetParamUnk14	BtlCharApi_GetParamFlags2	solid	
+BtlCharApi_GetParamUnk18	BtlCharApi_GetParamFlags3	solid	
+BtlCharApi_GetUnk1290	BtlCharApi_GetStoryAiForce	uncertain	
+BtlCharApi_IsUnk106CLow	BtlCharApi_IsDodgeWindowReady	uncertain	
+BtlCharApi_GetUnkE44B	BtlCharApi_GetTechChargeB	solid	
+BtlCharApi_GetUnkD74Diff	BtlCharApi_GetVanishStrikesLeft	uncertain	
+BtlCharApi_GetUnkE40	BtlCharApi_GetTechniqueCooldown	solid	
+BtlSide_GetParamUnk2C	BtlSide_GetKiRecoverGoal	solid	
+BtlCtrl_GetOppUnkD50	BtlCtrl_IsOppComboDamageNew	solid	
+BtlCtrl_TestMemberUnk70	BtlCtrl_IsMemberBodyChanged	solid	
+BtlAtk_GetUnk10	BtlAtk_GetChargeGaugeGain	solid	
+BtlAtk_GetUnk2C	BtlAtk_GetArmorIgnore	solid	
+BtlAtk_GetUnk2COf	BtlAtk_GetArmorIgnoreOf	solid	
+BtlParam_GetUnk0	BtlParam_GetCharaFlags	solid	
+BtlParam_GetUnk2	BtlParam_GetSizeClass	solid	
+BtlParam_GetUnkAC	BtlParam_GetDefaultSlot	solid	
+BtlParam_GetUnkAD	BtlParam_GetFormFlags	solid	
+BtlParam_TestUnkADBit	BtlParam_TestSlotResetsVariant	solid	
+BtlParam_GetUnkB4	BtlParam_GetFusionResult	solid	
+BtlParam_GetUnkBA	BtlParam_GetFusionPartner	solid	
+BtlParam_GetUnkB1	BtlParam_GetFusionSequence	solid	
+BtlParam_GetCount80	BtlParam_GetBlastLimitA	solid	
+BtlParam_GetUnk82	BtlParam_GetBlastLimitB	solid	
+BtlParam_GetUnk84	BtlParam_GetRushFinisher	solid	
+BtlParam_GetUnk88	BtlParam_GetChainKind	solid	
+BtlParam_GetUnk8A	BtlParam_GetFinisherChoice	solid	
+BtlParam_GetUnk68	BtlParam_GetStepCancelRatio	solid	
+BtlParam_GetUnk6C	BtlParam_GetBackStepCancelRatio	solid	
+BtlParam_GetUnk70	BtlParam_GetPoweredDashLimit	solid	
+BtlParam_GetUnk72	BtlParam_GetPoweredVanishLimit	solid	
+BtlParam_GetUnk8F	BtlParam_GetComboFinish	solid	
+BtlKiBlast_GetUnk31	BtlKiBlast_GetSpreadMode	solid	
+BtlKiBlast_GetUnk31OfHit	BtlKiBlast_GetSpreadModeOfHit	solid	
+BtlKiBlast_GetUnk31Of	BtlKiBlast_GetSpreadModeOf	solid	
+BtlKiBlast_GetUnk28	BtlKiBlast_GetRadius	solid	
+BtlKiBlast_GetUnk28OfHit	BtlKiBlast_GetRadiusOfHit	solid	
+BtlKiBlast_GetUnk28Of	BtlKiBlast_GetRadiusOf	solid	
+BtlSuper_GetUnk1E	BtlSuper_GetClashPower	solid	
+BtlSuper_GetUnk14D	BtlSuper_GetLandingKind	solid	
+BtlSuper_GetUnk220	BtlSuper_GetThrowPartnerStep	solid	
+BtlSuper_GetUnk223	BtlSuper_GetStageFxEndStep	solid	
+BtlSuper_GetUnk226	BtlSuper_GetThrowObjectSlot	solid	
+BtlSuper_GetUnk165	BtlSuper_GetAiKind	solid	
+BtlSkill_GetUnk9E	BtlSkill_GetAiKind	solid	
+BtlObj_GetUnk44FC4	BtlObj_GetDefaultAnimStep	solid	
+BtlObj_SetUnk44FC4	BtlObj_SetDefaultAnimStep	solid	
+BtlObj_SetUnkB30	BtlObj_SetAlphaAdd	solid	
+TextBox_SetUnk50	TextBox_SetAlign	solid	
+TextBox_SetUnk80	TextBox_SetNoFlush	solid	
+TextBox_SetUnkC	TextBox_SetOffset	solid	
+func_00277A70	ADXT_GetStatRead	uncertain	CRI ADX library: lock / unlock wrapper around func_00277AA8, which takes the player's stream (adxt+8, else the
+func_002967C0	sceSdRemote	solid	Sony libsdr, right after sceSdRemoteInit: variadic (block, command, args...) that copies six arguments into th
+func_00296B48	sceSdRemoteCallbackInit	solid	Sony libsdr: clears the callback slots, sends command 0xE620 through sceSdRemote and creates and starts the th
+func_002A1A48	sceMcInit	solid	Sony libmc: creates the semaphores "sceMc_sema_regs" / "sceMc_sema_timer", binds SIF RPC 0x80000400 ("bind err
+func_002A1E58	sceMcOpen	solid	libmc RPC function number 2 (open) with port, slot, a name copied with strncpy(0x3FF) and mode, already #defin
+func_002A1F80	sceMcMkdir	solid	Calls the open function with mode 0x40 and on success records command 0xB (libmc's mkdir number), already #def
+func_002A1FB8	sceMcClose	solid	libmc RPC function number 3 (close) with one fd argument, already #defined as sceMcClose.
+func_002A2078	sceMcSeek	solid	libmc RPC function number 4 (seek) with fd, offset, origin, already #defined as sceMcSeek.
+func_002A2208	sceMcRead	solid	libmc RPC function number 5 (read) with fd, buffer, size and its own end callback, already #defined as sceMcRe
+func_002A2320	sceMcWrite	solid	libmc RPC function number 6 (write) with fd, buffer, size, FlushCache before the call, already #defined as sce
+func_002A2498	sceMcSync	solid	Polls (mode 1) or waits (mode 0) on the libmc semaphore, returns the pending command number through *cmd and t
+func_002A25B8	sceMcGetInfo	solid	libmc RPC function number 1 (card info) storing the three output pointers type / free / format for its end cal
+func_002A27A8	sceMcGetDir	solid	libmc RPC function number 0xD (getdir) with port, slot, name, mode, maxent and a table of maxent * 0x40 bytes,
+func_002A2AC8	sceMcFormat	solid	libmc RPC function number 0x10 (format) with port and slot, already #defined as sceMcFormat.
+func_002B4AF0	sceSifCheckStatRpc	solid	Sony libkernel sifrpc, right after sceSifCallRpc: returns 1 when the client's packet exists, has the client's
+func_002BB390	GetTimerSystemTime	solid	Sony libkernel timer: under DI / EI reads T2 count and mode (0x10001000 / 0x10001010), adds the overflow count
+D_002BF6B0	gVu1Prog0	solid	Start of the VIF packet with VU1 microprogram 0 (src/vu1/prog0.vsm, lit fighter model part), Vu1Pkt_LoadProg0
+D_002BFAB0	gVu1Prog1	solid	VIF packet with VU1 microprogram 1 (prog1.vsm, fighter fade pass), uploaded by Vu1Pkt_LoadProg1, also the end
+D_002BFEA0	gVu1Prog2a	solid	VIF packet with VU1 microprogram 2a (prog2a.vsm, flat shadow), uploaded by Vu1Pkt_LoadProg2(0).
+D_002C01C0	gVu1Prog2b	solid	VIF packet with VU1 microprogram 2b (prog2b.vsm, silhouette, the "prog 3" of the old numbering), uploaded by V
+D_002C04F0	gVu1Prog4	solid	VIF packet with VU1 microprogram 4 (prog4.vsm, stage geometry with clipper), uploaded by Vu1Pkt_LoadProg4.
+D_002C1180	gVu1Prog5	solid	VIF packet with VU1 microprogram 5 (prog5.vsm), uploaded by Vu1Pkt_LoadProg5.
+D_002C1F00	gVu1Prog6	solid	VIF packet with VU1 microprogram 6 (prog6.vsm, ground shadow), uploaded by Vu1Pkt_LoadProg6.
+D_002C2D30	gVu1Prog7	solid	VIF packet with VU1 microprogram 7 (prog7.vsm, stage debris), uploaded by Vu1Pkt_LoadProg7.
+D_002C3080	gVu1Prog8	solid	VIF packet with VU1 microprogram 8 (prog8.vsm, animated stage objects), uploaded by Vu1Pkt_LoadProg8.
+D_002C3380	gVu1ProgEnd	solid	End of the .vutext block: used only as the end address of program 8 (D_002C3380 - D_002C3080 is its packet siz
+D_002C3440	gObjDrawVec128	uncertain	Constant vector (128, 128, 128, 128) in .data copied into ObjDrawPkt.k for the VU1 program in the normal draw
+D_002C3550	gEftStageClass	solid	BtlTaskClass {EftStage_Update, EftStage_Init, EftStage_Term}: scene layer 0.
+D_002C35D0	gEftBurstLayerClass	solid	BtlTaskClass {EftBurstLayer_Update, EftBurstLayer_Init, EftBurstLayer_Term}: scene layer 4.
+D_002C3630	gEftWaterOrigin	solid	Constant vector (0, 0, 0, 1) in .data, read only: the zero offset of the spray / drop draw lists and spawners
+D_002C36D0	gEftShotMgrClass	solid	BtlTaskClass {EftShotMgr_Update, EftShotMgr_Init, EftShotMgr_Term}: scene layer 1 (the per-character class nex
+D_002C3A18	gEftSpdLineClass	solid	Task class table {EftSpdLine_Update, _Init, _Term, _Stub, 0, _Draw}, mentioned only in the file header comment
+D_002C3B38	gEftDiscClass	solid	Task class table {EftDisc_Update, _Init, _Term, _PostUpdate, _Reset, _Draw}, every disc creator adds it to the
+D_002C3E00	gEftKiObjMgrClass	solid	Task class table {EftKiObjMgr_Update, _Init, _Term, 0, 0, 0}, the trail code picks it as the manager class whe
+D_002C3E18	gEftKiObjClass	solid	Task class table {EftKiObj_Update, _Init, _Term, _PostUpdateCb, _Reset, _DrawCb}, EftKiObj_Create adds a task
+D_002C3E48	gEftChainClass	solid	Task class table {EftChain_Update, _Init, _Term, _PostUpdate, _Reset, _Draw}, the chain creator adds it to gEf
+D_002C3EC0	gEftShotFxClass	solid	Task class table {EftShotFx_Update, EftShotFxMgr_Init, EftShotFx_Term, EftShotFx_PostUpdate, 0, EftShotFx_Draw
+D_002C40F0	gEftBillClass	solid	Task class table {EftBill_Update, _Init, _Term, _PostUpdate, _Reset, _Draw}, the bill creator adds it to gEftB
+D_002C4120	gEftGndDustPuffClass	solid	Task class table of the EftGndDustPuff_* callbacks, dust kind 0 in the spawner's switch.
+D_002C4138	gEftGndDustSlideClass	solid	Task class table of the EftGndDustSlide_* callbacks, dust kind 1.
+D_002C4150	gEftGndDustDashClass	solid	Task class table of the EftGndDustDash_* callbacks, dust kind 2.
+D_002C4168	gEftGndDustBurstClass	solid	Task class table of the EftGndDustBurst_* callbacks, dust kind 3.
+D_002C4180	gEftGndDustLandClass	solid	Task class table of the EftGndDustLand_* callbacks, dust kind 4.
+D_002C4198	gEftGndDustImpactClass	solid	Task class table of the EftGndDustImpact_* callbacks, dust kind 5.
+D_002C4768	gBtlAiCondFuncs	solid	Table of the rule condition functions, called as D_002C4768[D_002EDA70[id]](ai, arg) by the rule evaluator, it
+D_002C6428	gFontColorDefWord	solid	UTF-16 string "DEF" in the tag-name strings in front of gFontTags, FontTag_Color matches it after "<COL=" to r
+D_002C6838	gFontIconDefs	solid	Array of 0xC-byte FontIconDef records (tex, size, advance, frame count), returned by FontIcon_GetDefs.
+D_002C6C10	gStgLastLightDir	solid	BtlStage_GetLightDir stores the stage's light direction here on success and returns this copy when there is no
+D_002C6C20	gBtlObjTalkPattern7	solid	Seven {frame, mouth shape} records (frames 0..0x15), picked at random with talkCount = 7 as face->talkKeys.
+D_002C6C40	gBtlObjTalkPattern5	solid	Five {frame, mouth shape} records, the other talk pattern, picked with talkCount = 5.
+D_002C6C58	gBtlObjJawTrack0	solid	Four {x, y, z, frame} jaw rotation keys, BtlObjFace_PickJawKeys case 0 for models without flag 0x400000 (face-
+D_002C6C98	gBtlObjJawTrack1	solid	Same, case 1 of the default set.
+D_002C6CD8	gBtlObjJawTrack2	solid	Same, case 2 of the default set.
+D_002C6D18	gBtlObjJawTrack3	solid	Same, default case of the default set.
+D_002C6D58	gBtlObjJawTrackAlt0	solid	Four jaw rotation keys, BtlObjFace_PickJawKeys case 0 for models with flag 0x400000 (the second set).
+D_002C6D98	gBtlObjJawTrackAlt1	solid	Same, case 1 of the flag-0x400000 set.
+D_002C6DD8	gBtlObjJawTrackAlt2	solid	Same, case 2 of the flag-0x400000 set.
+D_002C6E18	gBtlObjJawTrackAlt3	solid	Same, default case of the flag-0x400000 set.
+D_002EC260	gMtxIdentity	solid	Constant 4x4 identity matrix (1.0 on the diagonal): the base matrix of Vec4_RotateEuler and the reference of t
+D_002EC2A0	gVu0ZeroVec	solid	Rodata Vec4 (0,0,0,0) in the vu0 math constants (between the identity matrix D_002EC260 and gVu0AxisZW), every
+D_002EC2C0	gVu0ZeroVecW1	solid	Rodata Vec4 (0,0,0,1) in the vu0 math constants, used as zero translation / identity rotation / 'no movement'
+D_002EC2E0	gStgDownDir	solid	Constant vector (0, 1, 0, 1), +Y being down, StgShadow_Cb and StgGround_Cb dot it with the polygon normal to k
+D_002ECB60	gEftShotTechUpDir	solid	Constant vector (0, -1, 0, 1) = up (+Y is down), EftShotTech_UpdateTargetBurst copies it as the direction of t
+D_002EDA70	gBtlAiCondFuncIndex	solid	s32 table indexed by a rule's condition id (plan->cond) giving the index into the condition function table, al
+D_002EDC70	gBtlAiRateColsBasic	solid	u8 [14][8]: the condition code (id - 35) of each column of AiThRates.basic, searched per class row by AiThink_
+D_002EDCE0	gBtlAiRateColsA	solid	u8 [14][8]: condition code (id - 40) of each column of AiThRates.tblA (weight table 0), row plan.cls, passed t
+D_002EDD50	gBtlAiRateColsB	solid	u8 [14][8]: the same for AiThRates.tblB (weight table 1), row plan.cls, passed to AiThink_SumPairRates with pr
+D_002EDDC0	gBtlAiRateColsAct	solid	u8 [24]: condition code (id - 40) of each byte of AiThRates.act, searched linearly to find the act rate of a c
+D_002EDDD8	gBtlAiRateColsC	solid	u8 [14][4]: condition codes of the columns of AiThRates.tblC (weight table 2), row plan.cls, passed to AiThink
+D_002EDE10	gBtlAiRateColsD	solid	u8 [20][8]: condition codes of the columns of AiThRates.tblD (weight table 3), row plan.sub.
+D_002EDEB0	gBtlAiRateColsE	solid	u8 [14][4]: condition codes of the columns of AiThRates.tblE (weight table 4), row plan.cls.
+D_002EDEE8	gBtlAiRateColsF	solid	u8 [4][8]: condition codes of the columns of AiThRates.tblF (weight table 5), row plan.sub.
+D_002F2420	gBtlObjRefNodePos	solid	71 x {x, y, z} floats: the reference translation of each model node, subtracted from a motion's translation ke
+D_002FC32C	gVu0RandSeed	solid	Float constant 0.1234141 next to gVu0HalfPi, Vu0_Init passes it to Rand_SeedFloat at boot.
+D_002FE9E4	gEftStormNegZero	solid	Float -0.0f in .sdata, the storm strip draw (gEftStorm) uses it as the y of corner[3].
+D_002FEAF8	gEftDetFltMax	solid	Float 0x7F7FFFFE (FLT_MAX), EftDet_PrepareAll resets every record's stageDist and dist to it.
+D_002FEAFC	gStgGroundFltMax	solid	Float 0x7F7FFFFE (FLT_MAX), StgGround_Probe presets out->y with it, the documented 'no ground found' value.
+D_002FEBA8	gColObbFltMax	solid	A single float 0x7F7FFFFE (FLT_MAX as this compiler reads it) in .sdata, ColObb_Contact loads it as the starti
+D_003BE71C	gProgramImageEnd	solid	Address symbol at 0x3BE71C, the end of the loaded image (end of DBZP.BIN, the linker's _end in the original),

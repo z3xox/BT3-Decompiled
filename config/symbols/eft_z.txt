@@ -1,7 +1,7 @@
 // Effect tasks, 0x195EE8..0x199F28 (src/battle/eft_z.c, include/battle/eft_z.h).
 //
 // --- Effect pack part kind 16: a camera-facing sprite (second half of the module; it starts before 0x195EE8) ---
-// Item class D_002C40F0 = { Update 0x1961A0, Init 0x195EE8, Term 0x196190, PostUpdate stub 0x1967C0,
+// Item class gEftBillClass = { Update 0x1961A0, Init 0x195EE8, Term 0x196190, PostUpdate stub 0x1967C0,
 // Reset 0x1967C8, Draw 0x1967E0 }; manager class D_002C40D8 = { stub 0x1969F0, Init 0x196970, Term 0x1969C0, 0,
 // stub 0x1969F8, 0 }. The item work is 0x140 bytes (the 0x40-byte create argument at its head); the manager
 // makes a child list of 40. Draw calls EftGfx_DrawSprite / EftPrim_DrawQuadDepth, hence "bill(board)".
@@ -41,12 +41,12 @@ gEftBillList = 0x002FEA98; // size:0x4 // guess
 // bytes: two pools of 0xC0-byte particles, an animated texture from common entry 0xB, the stage's dust
 // template, one task slot per fighter for the two continuous emitters) and a child list of 16 tasks with 0xE0
 // bytes of work each. EftGndDust_Create(arg, kind) adds a task of one of six classes (jump table 0x2ED310):
-//   0 Puff    D_002C4120  four particles around a point (stage debris)
-//   1 Slide   D_002C4138  emitter following a fighter, every 5th frame (request 0x30)
-//   2 Dash    D_002C4150  emitter following a fighter, every 6th frame (request 0x33)
-//   3 Burst   D_002C4168  one burst at a fighter (request 0x34, and 0x35 under water)
-//   4 Land    D_002C4180  ring of 3 + 8 + 1 particles at a ground point (request 0x35; EftShotTech_UpdateTargetBurst)
-//   5 Impact  D_002C4198  two particles at a ground point (a projectile hitting the ground; request 0x32, per foot)
+//   0 Puff    gEftGndDustPuffClass  four particles around a point (stage debris)
+//   1 Slide   gEftGndDustSlideClass  emitter following a fighter, every 5th frame (request 0x30)
+//   2 Dash    gEftGndDustDashClass  emitter following a fighter, every 6th frame (request 0x33)
+//   3 Burst   gEftGndDustBurstClass  one burst at a fighter (request 0x34, and 0x35 under water)
+//   4 Land    gEftGndDustLandClass  ring of 3 + 8 + 1 particles at a ground point (request 0x35; EftShotTech_UpdateTargetBurst)
+//   5 Impact  gEftGndDustImpactClass  two particles at a ground point (a projectile hitting the ground; request 0x32, per foot)
 // Evidence for the names: the callers (BtlFx_UpdateGroundFx in btl_char_fx.c, BtlStage_UpdateObjs,
 // EftHit_SpawnBlastImpact) and the particle counts; the words slide / dash / land are guesses.
 EftGndDust_Create = 0x00196E40; // type:func

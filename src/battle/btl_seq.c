@@ -178,7 +178,7 @@ extern u64 *gSaveData; /* local view: only charaBits (+0xC10) is used here */
 extern u16 *BtlMenu_GetScript(void);
 extern u16 *BtlMenu_GetScript2(void);
 extern u16 *BtlText_NextLine(u16 *line);        /* start of the next line */
-extern s32 BtlCtrl_TestMemberUnk70(s32 side);
+extern s32 BtlCtrl_IsMemberBodyChanged(s32 side);
 extern s32 Font_GetCmdCount(void);
 extern void Font_Flush(s32 font);
 extern s32 Font_GetGlyphHeight(void);
@@ -299,7 +299,7 @@ s32 BtlText_CheckUnlock(u16 **cursor) {
 
         p += 4;
         if (id == 0x56) {
-            if (BtlCtrl_TestMemberUnk70(work->side) != 0) {
+            if (BtlCtrl_IsMemberBodyChanged(work->side) != 0) {
                 ret = 0;
             }
         } else {
@@ -725,7 +725,7 @@ extern void BtlScript_AbortEvents(void);
 extern u8 *BtlScript_GetCurrentEvent(void);
 extern void HudNotice_Show(s32 id);          /* HUD announcement */
 extern s32 BtlCharApi_AnyHasFlag128(void);             /* any character has flag 0x128 */
-extern s32 BtlCharApi_HasMemberUnk70(s32 side);
+extern s32 BtlCharApi_IsMemberBodyChanged(s32 side);
 extern s32 BtlCtrl_TestFlag7(s32 side);         /* character flag 7 */
 extern s32 BtlCtrl_IsTeamDead(s32 side);         /* every character of the side has no health */
 extern s32 BtlPause_GetPadCount(void);
@@ -1126,9 +1126,9 @@ s32 BtlSeqWinTalk_Setup(BtlSeqTalkCtx *ctx) {
     u8 *loseTbl = loseObj->talkTbl;
 
     if (BattleResult_IsPlayerWin()) {
-        if (winTbl == NULL || loseTbl == NULL || BtlCharApi_HasMemberUnk70(winner) || BtlCharApi_HasMemberUnk70(loser)) {
+        if (winTbl == NULL || loseTbl == NULL || BtlCharApi_IsMemberBodyChanged(winner) || BtlCharApi_IsMemberBodyChanged(loser)) {
             ctx->side[0] = winner;
-            if (BtlCharApi_HasMemberUnk70(winner)) {
+            if (BtlCharApi_IsMemberBodyChanged(winner)) {
                 ctx->chara[0] = 0x56;
             } else {
                 ctx->chara[0] = winObj->chara;
@@ -1151,7 +1151,7 @@ s32 BtlSeqWinTalk_Setup(BtlSeqTalkCtx *ctx) {
         HudNotice_Show(6);
     } else {
         ctx->side[0] = loser;
-        if (BtlCharApi_HasMemberUnk70(loser)) {
+        if (BtlCharApi_IsMemberBodyChanged(loser)) {
             ctx->chara[0] = 0x56;
         } else {
             ctx->chara[0] = loseObj->chara;

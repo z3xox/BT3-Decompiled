@@ -682,7 +682,7 @@ void Train_Init(s32 section) {
         TextBox_Init(&gTrain->box[i], gTrain->text, 2);
         TextBox_SetLineOffsets(&gTrain->box[i], 9, 0, 0, 0, 0);
         TextBox_SetMaxSize(&gTrain->box[i], 0x100, 0x40);
-        TextBox_SetUnkC(&gTrain->box[i], 0xA, 4);
+        TextBox_SetOffset(&gTrain->box[i], 0xA, 4);
     }
     gTrain->pageText = Train_Section(17, TR_HOST "font_BattleTutorial_JP_PS2_.dat");
     gTrain->tbl.lessons = (TrainLesson *)Train_Section(22, TR_HOST "ut_normal_index_data_PS2_.dat");

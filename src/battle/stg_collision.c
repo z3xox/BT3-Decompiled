@@ -92,8 +92,8 @@ extern void *gStgColMesh;
 extern s32 gStgColZoneMisses;
 extern s32 gStgColZoneVisits;
 extern f32 gStgColFar[];
-extern StgColVec D_002EC2C0;       /* zero vector */
-extern StgColVec D_002EC2E0;       /* (0, 1, 0): down */
+extern StgColVec gVu0ZeroVecW1;       /* zero vector */
+extern StgColVec gStgDownDir;       /* (0, 1, 0): down */
 
 /* Queries test the zone's static mesh, whole objects and broken objects. */
 void StgCol_SetModeAll(void) {
@@ -217,7 +217,7 @@ s32 StgCol_TraceSphere(s32 zoneIdx, StgColSweep *seg, StgColVec *hitPos, f32 *fr
     if (ctx.length > 0.0f) {
         Vec3_Scale(&ctx.dir, &ctx.delta, 1.0f / ctx.length);
     } else {
-        Vec4_Copy(&ctx.dir, &D_002EC2C0);
+        Vec4_Copy(&ctx.dir, &gVu0ZeroVecW1);
     }
     ctx.dist = ctx.length;
     StgCol_SetModeAll();
@@ -358,7 +358,7 @@ s32 StgCol_MoveFighter(StgColFighter *obj, StgColPushCtx *ctx, s32 zoneIdx, s32 
         Vec4_Copy(&sphere->pos, &ctx->sphere.pos);
         return 1;
     }
-    Vec4_Copy(&body->push, &D_002EC2C0);
+    Vec4_Copy(&body->push, &gVu0ZeroVecW1);
     return 0;
 }
 
@@ -419,7 +419,7 @@ void StgCol_UpdateFighter(StgColFighter *obj, s32 keepSphere, s32 grow) {
         dist = sqrtf(Vec3_Dot(&delta, &delta));
     } else {
         ctx.sphere = *cur;
-        Vec4_Copy(&delta, &D_002EC2C0);
+        Vec4_Copy(&delta, &gVu0ZeroVecW1);
         body->teleported = 0;
         dist = 0.0f;
     }
@@ -806,7 +806,7 @@ s32 StgShadow_Cb(StgColNode *node, StgShadowCtx *ctx) {
     if (poly->flags & (STGCOL_POLY_NO_SOLID | STGCOL_POLY_NO_SHADOW | STGCOL_POLY_40 | STGCOL_POLY_20)) {
         return 0;
     }
-    if (!(Vec3_Dot(&D_002EC2E0, &poly->nrm) < 0.0f)) {
+    if (!(Vec3_Dot(&gStgDownDir, &poly->nrm) < 0.0f)) {
         return 0;
     }
     ColMesh_GetPolyVerts(gStgColMesh, poly, &tri.v[0], &tri.v[1], &tri.v[2]);

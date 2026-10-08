@@ -38,7 +38,7 @@ extern s32 BattleReplay_IsActive(void);
 extern s32 BattleSide_GetControl(s32 side);
 extern void BtlCharApi_GetCamPose(s32 objId, Vec4 *pos, Vec4 *rot); /* the fighter camera's pose */
 extern s32 BtlCharApi_HasCamPriority(s32 objId);                /* the fighter camera's priority */
-extern s32 BtlCharApi_GetMgrUnk134(void);
+extern s32 BtlCharApi_GetReplayViewSide(void);
 extern s32 StgCol_TraceSphere(s32 obj, void *seg, Vec4 *hitPos, f32 *frac, void *unk);
 extern s32 BtlStage_FindZoneNear(s32 arg0, Vec4 *pos);
 extern s32 D_002FF280[2];
@@ -417,7 +417,7 @@ s32 BtlCam_GetDefaultView(void) {
         return 0;
     }
     if (BattleReplay_IsActive() != 0) {
-        return BtlCharApi_GetMgrUnk134();
+        return BtlCharApi_GetReplayViewSide();
     }
     return 0;
 }

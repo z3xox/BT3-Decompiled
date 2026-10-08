@@ -30,7 +30,7 @@ typedef struct BtlAiSeqBody {
     /* 0x200 */ s8 timeout[0x80];    /* (m) per action id: seconds the run phase may last before the input has taken
                                             effect; 0 or less = no limit */
     /* 0x280 */ u16 flags[0x80];     /* (m) per action id: BTLAI_SEQF_* */
-    /* 0x380 */ s8 stateClass[0x200]; /* (m) per fighter state id (BtlCharApi_GetUnk974) */
+    /* 0x380 */ s8 stateClass[0x200]; /* (m) per fighter state id (BtlCharApi_GetAnimId) */
     /* 0x580 */ u8 stateFlags[0x200]; /* (m) per fighter state id; bit 1 (0x02) is tested here: the state cannot be
                                              taken as "reached" / the opponent is still a threat */
 } BtlAiSeqBody;

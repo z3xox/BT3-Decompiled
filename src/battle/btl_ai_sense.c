@@ -70,9 +70,9 @@ extern s32 BtlAi_ScaleByLevel(s32 level, s32 lo, s32 hi);
 extern s32 BtlAiSeq_IsInterrupted(AiActSide *s, s32 actionId); /* the action must stop (by actFlags and state class) */
 
 /* Fighter accessors by object id (btl_char_api_2.c and the not yet decompiled 0x204E78.. object). */
-extern s32 BtlCharApi_GetUnk974(s32 objId);            /* state id */
-extern u64 BtlCharApi_GetUnk1288(s32 objId);           /* 64-bit word at fighter +0x1288 */
-extern s32 BtlCharApi_CheckUnkCAC(s32 objId);
+extern s32 BtlCharApi_GetAnimId(s32 objId);            /* state id */
+extern u64 BtlCharApi_GetActionBits(s32 objId);           /* 64-bit word at fighter +0x1288 */
+extern s32 BtlCharApi_IsAttackHitPending(s32 objId);
 extern s32 BtlCharApi_GetParamByte84(s32 objId, u32 n);
 extern s32 BtlCharApi_GetParamByte8A(s32 objId);
 extern s32 BtlCharApi_GetParamByte8D(s32 objId);
@@ -83,7 +83,7 @@ extern f32 BtlCharApi_GetSpeed(s32 objId);                   /* fighter +0xA8 (a
 extern f32 BtlCharApi_GetChargeRate(s32 objId);                   /* max(0, fighter +0xD78, fighter +0xDEC) */
 extern f32 BtlCharApi_GetRadius(s32 objId);                   /* body radius */
 extern s32 BtlCharApi_IsInClashA(s32 objId);                   /* action id in 0x130..0x132 */
-extern s32 BtlCharApi_IsUnkCACPaired(s32 objId);
+extern s32 BtlCharApi_IsAttackHitsDone(s32 objId);
 extern s32 BtlCharApi_GetAction(s32 objId);                   /* action id (fighter +0x948) */
 extern s32 BtlCharApi_GetBlastShots(s32 objId);                   /* fighter +0xDE0 */
 extern s32 BtlCharApi_GetBlastRoom(s32 objId);
@@ -97,7 +97,7 @@ extern s32 BtlCharApi_GetHpMax(s32 objId);                   /* health maximum *
 extern s32 BtlCharApi_CanTransform(s32 objId);
 extern s32 BtlCharApi_CanFuse(s32 objId);
 extern s32 BtlCharApi_CanSwitch(s32 objId);
-extern s32 BtlCharApi_IsUnk1070Set(s32 objId);                   /* fighter +0x1070 != -30 */
+extern s32 BtlCharApi_IsCounterWindowBusy(s32 objId);                   /* fighter +0x1070 != -30 */
 extern s32 BtlCharApi_GetTransformCost(s32 objId);                   /* gauge cost: parameter byte * 100000 */
 extern s32 BtlCharApi_IsChangingForm(s32 objId);                   /* action id in 0xEC..0xF2 (changing form) */
 extern s32 BtlCharApi_GetParamFlags(s32 objId);                   /* parameter word +0x10 */
@@ -106,8 +106,8 @@ extern s32 BtlCharApi_IsOppSkillFlag4(s32 objId);
 extern s32 BtlCharApi_GetOppMoveKind(s32 objId);
 extern s32 BtlCharApi_GetStunTimer(s32 objId);                   /* fighter +0xFE0 */
 extern s32 BtlCharApi_GetPromptButtons(s32 objId);                   /* buttons a switch prompt accepts, 0 none */
-extern s32 BtlCharApi_GetUnk1290(s32 objId);
-extern s32 BtlCharApi_IsUnk106CLow(s32 objId);                   /* fighter +0x106C < -29 */
+extern s32 BtlCharApi_GetStoryAiForce(s32 objId);
+extern s32 BtlCharApi_IsDodgeWindowReady(s32 objId);                   /* fighter +0x106C < -29 */
 extern s32 BtlCharApi_GetArmorBreakLevel(s32 objId);
 extern s32 BtlCharApi_GetParamByte2(s32 objId);                   /* parameter byte +2 */
 extern s32 BtlCharApi_TestFlagBE(s32 objId);                   /* fighter flag 0xBE */
@@ -121,8 +121,8 @@ extern s32 BtlSide_IsPoweredUp(s32 side);                    /* fighter flag 6 *
 /* Both fighters' state ids and state classes, the way six functions here fetch them: two local arrays
    (s32 state[2]; s8 cls[2]; index 0 own, 1 opponent). */
 #define AIACT_GET_STATES(s, tbl, state, cls)                                   \
-    (state)[0] = BtlCharApi_GetUnk974((s)->side);                              \
-    (state)[1] = BtlCharApi_GetUnk974((s)->side ^ 1);                          \
+    (state)[0] = BtlCharApi_GetAnimId((s)->side);                              \
+    (state)[1] = BtlCharApi_GetAnimId((s)->side ^ 1);                          \
     (cls)[0] = ((AiActTables8 *)((u8 *)(tbl) + 8))->stateClass[(state)[0]];    \
     (cls)[1] = ((AiActTables8 *)((u8 *)(tbl) + 8))->stateClass[(state)[1]]
 
@@ -292,7 +292,7 @@ void BtlAiAtk_Reset(s32 side, AiActAtk *atk) {
     atk->hold = 0;
     atk->press = 0;
     atk->charge = 0.0f;
-    atk->state = BtlCharApi_GetUnk974(side);
+    atk->state = BtlCharApi_GetAnimId(side);
     atk->flags &= ~7;
     atk->waitTimer = 15;
     atk->idleTimer = 15;
@@ -339,7 +339,7 @@ f32 BtlAiAtk_RollCharge(AiActSide *s, s8 base, s8 range) {
 void BtlAiAtk_SetInput(AiActSide *s, u32 kind) {
     AiActAtk *atk = &s->atk;
     s32 action = BtlCharApi_GetAction(s->side);
-    s32 state = BtlCharApi_GetUnk974(s->side);
+    s32 state = BtlCharApi_GetAnimId(s->side);
     s32 row = 0;
     u8 bit = s->param[0] & 1;
     f32 t;
@@ -416,7 +416,7 @@ void BtlAiAtk_SetInput(AiActSide *s, u32 kind) {
 s32 BtlAiAtk_PickOption(AiActSide *s, s8 *lo, s8 *hi) {
     AiActAtk *atk = &s->atk;
     AiActStatus *st = &s->st;
-    s32 state = BtlCharApi_GetUnk974(s->side);
+    s32 state = BtlCharApi_GetAnimId(s->side);
     s32 step = state < 0x3C ? state - 0x37 : state - 0x3C;
     s32 roll = Rand_Range(100) + 1;
     s32 sum;
@@ -525,7 +525,7 @@ s32 BtlAiAtk_PickLastStep(AiActSide *s, s8 *lo, s8 *hi) {
 void BtlAiCombo_Init(AiActSide *s) {
     AiActSeq *act = &s->act;
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 cls = tbl->stateClass[BtlCharApi_GetUnk974(s->side)];
+    s32 cls = tbl->stateClass[BtlCharApi_GetAnimId(s->side)];
 
     BtlAiPad_Set(s, 0, AIACT_BTN_RUSH, 0, 0, 0.0f, 0.0f);
     if ((u32)(cls - 13) < 2) {
@@ -591,7 +591,7 @@ void BtlAiAtk_Run(AiActSide *s) {
     AiActSeq *act = &s->act;
     AiActAtk *atk = &s->atk;
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 state = BtlCharApi_GetUnk974(s->side);
+    s32 state = BtlCharApi_GetAnimId(s->side);
     f32 held = BtlCharApi_GetChargeRate(s->side);
     AiActEntry *e = AIACT_TOP(act);
     s32 cls = tbl->stateClass[state];
@@ -729,7 +729,7 @@ void BtlAiFollow_Start(AiActSide *s) {
 void BtlAiFollow_End(AiActSide *s) {
     AiActSeq *act = &s->act;
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 cls = tbl->stateClass[BtlCharApi_GetUnk974(s->side)];
+    s32 cls = tbl->stateClass[BtlCharApi_GetAnimId(s->side)];
     AiActAtk *atk = &s->atk;
     AiActEntry *e = &s->act.stack[0];
 
@@ -761,8 +761,8 @@ void BtlAiFollow_Dispatch(AiActSide *s) {
 void BtlAiAct36_Init(AiActSide *s) {
     AiActSeq *act = &s->act;
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 cls = tbl->stateClass[BtlCharApi_GetUnk974(s->side)];
-    u64 w = BtlCharApi_GetUnk1288(s->side);
+    s32 cls = tbl->stateClass[BtlCharApi_GetAnimId(s->side)];
+    u64 w = BtlCharApi_GetActionBits(s->side);
 
     BtlAiPad_Set(s, 0, AIACT_BTN_BLAST, 0, 0, 0.0f, 0.0f);
     if (!(w & 0x1000)) {
@@ -794,7 +794,7 @@ void BtlAiAct36_Start(AiActSide *s) {
     hi = row + 0x1DE;
     canPress = BtlCharApi_GetBlastRoom(s->side);
     canHold = BtlCharApi_GetBlastRoomB(s->side);
-    w = BtlCharApi_GetUnk1288(s->side);
+    w = BtlCharApi_GetActionBits(s->side);
     BtlAiAtk_Reset(s->side, atk);
     act->phase = 2;
     BtlAiPad_Clear(&s->pad, 0);
@@ -837,7 +837,7 @@ s32 BtlAiSense_GetRange(AiActSide *s) {
 }
 
 /* Situation bit 56: a technique with a gauge cost (BtlCharApi_GetTransformCost) can be used. Outside mode 1's
-   BtlCharApi_GetUnk1290: not for 600 frames after a form change, and only when health is at or below a level-scaled
+   BtlCharApi_GetStoryAiForce: not for 600 frames after a form change, and only when health is at or below a level-scaled
    percentage (parameter bytes 0xF / 0x107). */
 s32 BtlAiSense_CheckBit56(AiActSide *s) {
     AiActStatus *st = &s->st;
@@ -847,7 +847,7 @@ s32 BtlAiSense_CheckBit56(AiActSide *s) {
     f32 ratio = (f32)hp / (f32)BtlCharApi_GetHpMax(s->side);
     s32 limit = BtlAi_ScaleByLevel(s->cpuLevel, (s8)s->param[0xF], (s8)s->param[0x107]);
 
-    if (!BtlCharApi_GetUnk1290(s->side)) {
+    if (!BtlCharApi_GetStoryAiForce(s->side)) {
         if (BtlCharApi_IsChangingForm(s->side)) {
             st->timer18 = 600;
             return 0;
@@ -980,7 +980,7 @@ s32 BtlAiSense_CheckBit32(AiActSide *s) {
     s32 sub = BtlCharApi_GetOppMoveKind(s->side);
     f32 radius = BtlCharApi_GetRadius(s->side);
     f32 speed = BtlCharApi_GetSpeed(s->side ^ 1);
-    s32 ready = BtlCharApi_IsUnk106CLow(s->side);
+    s32 ready = BtlCharApi_IsDodgeWindowReady(s->side);
     s32 ret;
 
     if ((u32)(kind - 1) < 2 || kind == 5) {
@@ -1046,7 +1046,7 @@ s32 BtlAiSense_Basic(AiActSide *s) {
     s32 seq = BtlSeq_GetState();
     f32 ratio = (f32)BtlSide_GetKi(s->side) / 100000.0f;
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 cls = tbl->stateClass[BtlCharApi_GetUnk974(s->side)];
+    s32 cls = tbl->stateClass[BtlCharApi_GetAnimId(s->side)];
     s32 r;
 
     if (seq == 3) {
@@ -1131,17 +1131,17 @@ void BtlAiSense_NoteOppState(AiActSide *s) {
 }
 
 /* 1 = nothing more to sense this frame: the state has flag bit 0, or the state class is 15..17 and either
-   BtlCharApi_CheckUnkCAC is 1 or fewer than 4 frames passed since it was. */
+   BtlCharApi_IsAttackHitPending is 1 or fewer than 4 frames passed since it was. */
 /* The class is biased by 15 before the `busy` test and compared after it. With the range test in a variable set
    in front of `if (busy)`, the compiler's branch prediction sees only `x == 0` at the second branch (predicted
    not taken, delay slot filled from the fall-through path); with the compare next to its branch it sees an
    unsigned compare (no prediction, slot filled from the target: the original's `beqzl` + `move v0,zero`). */
 s32 BtlAiSense_IsBusy(AiActSide *s) {
     AiActTables8 *tbl = (AiActTables8 *)((u8 *)gBtlAi->data->tables + 8);
-    s32 state = BtlCharApi_GetUnk974(s->side);
+    s32 state = BtlCharApi_GetAnimId(s->side);
     u8 busy = tbl->stateFlags[state] & 1;
     s32 cls = (s8)tbl->stateClass[state] - 15;
-    s32 r = BtlCharApi_CheckUnkCAC(s->side);
+    s32 r = BtlCharApi_IsAttackHitPending(s->side);
     AiActStatus *st = &s->st;
 
     if (busy) {
@@ -1163,7 +1163,7 @@ s32 BtlAiSense_IsBusy(AiActSide *s) {
 /* Situation bit 49: state class 6 and the bottom action is not 0x50. */
 s32 BtlAiSense_CheckBit49(AiActSide *s) {
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 cls = tbl->stateClass[BtlCharApi_GetUnk974(s->side)];
+    s32 cls = tbl->stateClass[BtlCharApi_GetAnimId(s->side)];
     AiActSeq *act = &s->act;
     AiActEntry *e = &s->act.stack[0];
 
@@ -1198,7 +1198,7 @@ s32 BtlAiSense_CheckBit51(AiActSide *s) {
 
 /* Situation bit 43: bit 41 of fighter +0x1288 set, bits 42..44 clear, react bit 0x80000 set. */
 s32 BtlAiSense_CheckBit43(AiActSide *s) {
-    u64 w = BtlCharApi_GetUnk1288(s->side);
+    u64 w = BtlCharApi_GetActionBits(s->side);
     AiActStatus *st = &s->st;
     u64 other = w & 0x1C0000000000;
 
@@ -1224,9 +1224,9 @@ s32 BtlAiSense_CheckBit40(AiActSide *s) {
     AiActEntry *e = &s->act.stack[0];
     AiActSide *opp = &gBtlAi->side[s->side ^ 1];
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 oppState = BtlCharApi_GetUnk974(s->side ^ 1);
+    s32 oppState = BtlCharApi_GetAnimId(s->side ^ 1);
     s32 cls = tbl->stateClass[oppState];
-    u64 w = BtlCharApi_GetUnk1288(s->side);
+    u64 w = BtlCharApi_GetActionBits(s->side);
 
     if (!BtlSide_IsPoweredUp(opp->side)) {
         st->react &= ~0x10;
@@ -1286,7 +1286,7 @@ s32 BtlAiSense_CheckBit41(AiActSide *s) {
 }
 
 /* Situation bit 28: close range, own state class not 13..23, the opponent in class 13..17 and not turned
-   away from this fighter, BtlCharApi_IsUnkCACPaired, react bit 0x20 clear. */
+   away from this fighter, BtlCharApi_IsAttackHitsDone, react bit 0x20 clear. */
 s32 BtlAiSense_CheckBit28(AiActSide *s) {
     AiActTables *tbl = gBtlAi->data->tables;
     s32 state[2];
@@ -1306,7 +1306,7 @@ s32 BtlAiSense_CheckBit28(AiActSide *s) {
     if (!((u32)((u8)cls[1] - 13) < 5)) {
         return 0;
     }
-    if (!BtlCharApi_IsUnkCACPaired(s->side)) {
+    if (!BtlCharApi_IsAttackHitsDone(s->side)) {
         return 0;
     }
     if (st->react & 0x20) {
@@ -1317,7 +1317,7 @@ s32 BtlAiSense_CheckBit28(AiActSide *s) {
 
 /* Situation bit 29: close range, the opponent in state class 15..17, react bit 0x200 clear. */
 s32 BtlAiSense_CheckBit29(AiActSide *s) {
-    s32 cls = gBtlAi->data->tables->stateClass[BtlCharApi_GetUnk974(s->side ^ 1)];
+    s32 cls = gBtlAi->data->tables->stateClass[BtlCharApi_GetAnimId(s->side ^ 1)];
     AiActStatus *st = &s->st;
 
     if (st->react & 0x200) {
@@ -1347,7 +1347,7 @@ s32 BtlAiSense_CheckBit35(AiActSide *s) {
     if (progress == -1.0f) {
         return 0;
     }
-    if (BtlCharApi_IsUnk1070Set(s->side)) {
+    if (BtlCharApi_IsCounterWindowBusy(s->side)) {
         return 0;
     }
     if (1.0f < progress) {
@@ -1362,7 +1362,7 @@ s32 BtlAiSense_CheckBit31(AiActSide *s) {
     AiActStatus *st = &s->st;
     f32 progress = BtlCharApi_GetTechniqueProgress(s->side ^ 1);
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 cls = tbl->stateClass[BtlCharApi_GetUnk974(s->side ^ 1)];
+    s32 cls = tbl->stateClass[BtlCharApi_GetAnimId(s->side ^ 1)];
 
     if (!BtlCharApi_GetOppSkillKind(s->side)) {
         if (progress < 0.0f) {
@@ -1389,7 +1389,7 @@ s32 BtlAiSense_CheckBit31(AiActSide *s) {
 s32 BtlAiSense_CheckBit33(AiActSide *s) {
     AiActStatus *st = &s->st;
 
-    if (BtlCharApi_GetUnk1288(s->side) & 0x200000000000) {
+    if (BtlCharApi_GetActionBits(s->side) & 0x200000000000) {
         if (st->react & 0x100) {
         return 0;
     }
@@ -1491,7 +1491,7 @@ void BtlAiSense_Reactions(AiActSide *s) {
     s8 cls[2];
     AiActSeq *act = &s->act;
     AiActStatus *st = &s->st;
-    u64 w = BtlCharApi_GetUnk1288(s->side);
+    u64 w = BtlCharApi_GetActionBits(s->side);
     AiActEntry *e;
     s32 r;
 
@@ -1628,7 +1628,7 @@ void BtlAiSense_Derived(AiActSide *s) {
     s32 state[2];
     s8 cls[2];
     AiActStatus *st = &s->st;
-    u64 w = BtlCharApi_GetUnk1288(s->side);
+    u64 w = BtlCharApi_GetActionBits(s->side);
     s32 oppBusy = BtlCharApi_GetStunTimer(s->side ^ 1);
 
     AIACT_GET_STATES(s, tbl, state, cls);
@@ -1700,7 +1700,7 @@ void BtlAiSense_Derived(AiActSide *s) {
 void BtlAiSense_Update(AiActSide *s) {
     AiActStatus *st = &s->st;
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 cls = tbl->stateClass[BtlCharApi_GetUnk974(s->side ^ 1)];
+    s32 cls = tbl->stateClass[BtlCharApi_GetAnimId(s->side ^ 1)];
     s32 react;
     s32 i;
 

@@ -1,0 +1,58 @@
+# Wrong or stale names and comments found while naming placeholders (2026-10-08)
+
+Reported by the five agents that proposed the names of docs/names/renamed_2026_10_08.tsv. Not acted on yet,
+except where a rename of that list covers it. For the pass over fields and local variables.
+
+CPU opponent:
+- btl_char_api_2.c: the comment on the getter of fighter +0xD74 says "(no caller)"; BtlAiSeq_RollPowerUpChain calls it.
+- btl_char_api_2.c: the comments on the two +0x974 getters are stale: they return BtlAnim_GetId(chr) and BtlAnim_GetFlags(BtlAnim_GetId(chr)).
+- btl_ai_seq.c, AI steps 18 / 19 / 21: the local `dist` holds BtlCharApi_GetHp (compared with 10000); the tables `near` / `far` are low /
+  high health; the comment on handler 18 says "by level and distance": it is by level and own health. The same in btl_ai_think.c near line 1199.
+- btl_ai_seq.c, steps 15 and 23: the local `busy = BtlAiStep_ReachClass(ai)` is inverted (1 = class reached).
+- AI locals named `state` that hold the animation id; the AI data's stateClass / stateFlags tables are indexed by animation id.
+- btl_char_api_2.h param view: unk14 / unk18 are flags2 / flags3 (btl_param.h); unk1288 is actBits (btl_char_coll.h); unkCAD is hitNo.
+- Two AI functions were left as Unk (step 23, condition 11): both hinge on "stage 4 or 27" and pose bit 0x80, whose meaning is not known.
+- docs/systems/ai.md: old file names, "still assembly" statements.
+
+Effects, stage, objects:
+- btl_char_api_2.h:59 `f32 unkEFC[4]; /* length not known */` is `f32 stepFrame[5]` in btl_act_super.h:305.
+- The comment above the rush-sequence frame getter (btl_char_api_2.c, about line 503) is wrong: animation frame plus the lengths of the earlier steps.
+- Fighter +0xD50: unkD50 in btl_param.h:191 and btl_char_mgr.h:130 is BtlMemberCombo.changed (btl_char_member.h); +0xD4C unkD4C is comboNewHit.
+- Fighter +0xE60: contradictory comments across headers; the code adds 1 (btl_act_change.c:160) and 5 (btl_act_super.c:557), clamped to 0..10.
+- BtlParam_GetGaugeB returns kiRecoverGoal: a weak name.
+- The member gauge word +0x20 is described as "member +0x60" in btl_char_api_2.h:22; BtlMemberQueue.unk20 (btl_char_member.h:90) is another thing.
+- eft_quad_2.h:16 and :495 call the class at 0x2C40F0 the "EftLine" / "line task" class; its callbacks are EftBill_*.
+- The class at 0x2C3EC0 has EftShotFxMgr_Init as its init among EftShotFx_* callbacks: one prefix is probably wrong.
+- eft_trail.c:728 declares the class at 0x2C3E00 as u8[0x18]; the other class tables are void *[6].
+- eft_detect.c:157 and stg_collision.c:96 describe the vector at 0x2EC2E0 differently, with two struct types.
+- Setters of fields nothing reads were left as Unk: EftRibbon_SetUnkD8, EftZap_SetUnk40, HudNode_SetUnk8, EftBill_SetUnkD8.
+
+Fighter:
+- BtlCharApi_GetTechniqueProgress (btl_char_api_2.c, about line 1151) is misnamed: (event frame - current frame) / step = updates left until an animation event.
+- btl_char_api_1.c:335 "No caller" for the character pack getter: BtlScene_GetCharPackEntry (btl_scene.c:254) calls it; the prototypes disagree (s32 / s32 *).
+- btl_obj_anim.c, above BtlObjFace_PickJawKeys: "eye direction tracks" are jaw rotation tracks (node 0x31).
+- btl_act_super.c:2097: technique 0x280 "a random character": the character comes from the technique table.
+- btl_scene.c:548 "rule word 0x18" is rule word 0x10 (setup + 0x18).
+- The two zero vectors at 0x2EC2A0 / 0x2EC2C0 each cover 0x20 bytes: a second unreferenced vector follows each ((1,1,1,1) and (1,0,0,1)).
+- Fields to follow the renamed accessors: unk1310 (body warp), camUnk460 / cam.unk40 (camera body position), unk1294, thr.unk14 / 18 / 2C,
+  unk44FC4 (default animation step, btl_obj.h; its comment "getter / setter only" is out of date), unkB30 (alphaAdd), rule.unk10,
+  BattleSide.unk1FC / unk200 and the parameters of BattleSetup_SetSide in the menu files (team_select.c calls the first `handicap[]`).
+- btl_char_fx_1.c, BtlFx_FireKiBlast: the local `react` holds ki blast record +0x31, the volley spread mode.
+- BtlCharApi_GetOppSkillKind reads the technique table (slots 2..4) and BtlCharApi_GetOppMoveKind the skill table (slots 0..1): the names are
+  crossed relative to the module prefixes; the extern comments at btl_char_api_2.c:912 / 914 have the same mix-up.
+- Fighter +0x964 is unk964 / unk968 / prev964 in btl_char_flag.h and btl_char_mgr.h, actionFrame in btl_act_1.h and btl_act_2.h.
+- Several headers have unkE44 where btl_act_super.h and btl_tech.h have charge / techCharge; btl_stats.h has unk14C where btl_obj_anim.h has mix.
+- Accessors still named by offset that have named fields: BtlParam_GetSlotA0 / A4 (transSeq / transKind), BtlParam_GetCostAE (fusionCost),
+  BtlOpp_GetParamByte2, BtlOpp_GetParamWord0, BtlCharApi_GetParamByte84 / 8A / 8D, BtlCharApi_HasParamBit80.
+- "Body changed" (the member flag at +0x70, technique 0x280, character 0x56) is a reading, not a confirmed name.
+
+System, menu support:
+- src/sys/adx.c:17 cites an array at 0x334788 [voice][kind]: it is gBtlScript.voice (0x333BC0 + 0xBC8), indexed [side * 2 + window].
+- include/sys/game_pad.h:75: the table at 0x2EF050 is the rodata copy of the local padBit[] in BtlInput_GetKeyMask, not a global.
+- include/sys/gfx_screen.h:92: an unused extern for the constant-pool word 224 of GfxWater_DrawView: delete.
+- src/sys/rigid.c:423: the "variable" at 0x2FE818 is a .lit4 literal (3 pi / 4).
+- include/ui/reward_window.h: its TextBox struct has unkC, unk10, unk50, unk80, color2, rect where TextBoxFull (menu_support.h) has x, y,
+  draw.align, draw.noFlush, shadow, clip: TextBox_SetColor2 is the shadow colour, TextBox_SetRect the font clip rectangle.
+- src/ui/menu_util_1.c: the comment on TextBox_SetMaxSize mentions an `unused` parameter that does not exist.
+- src/sys/memcard.c: the header comment still calls the file stem a placeholder.
+- src/sys/vu1_packet.c: the header numbers the second variant of program 2 as "prog 3"; the listings and docs call it 2b.

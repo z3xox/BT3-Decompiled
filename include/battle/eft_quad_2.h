@@ -13,7 +13,7 @@
  *    paths, the pool allocator and list links, the key-frame animation of the emitter's parameters, and the
  *    interface the effect pack library calls (EftEmit_SpawnType9 in eft_sweep.c).
  *
- * 2. 0x195038..0x195EE8: helpers of part kind 16, "EftLine" (task class D_002C40F0 = { update 0x1961A0, init
+ * 2. 0x195038..0x195EE8: helpers of part kind 16, "EftLine" (task class gEftBillClass = { update 0x1961A0, init
  *    0x195EE8, term 0x196190, stub 0x1967C0, reset 0x1967C8, draw 0x1967E0 }, in the file after this one): one
  *    camera-facing textured strip between a point and that point + dir * length, with three-key animation of
  *    its colour, UV window, width and length.
@@ -492,7 +492,7 @@ typedef struct EftLineArg {
     /* 0x3C */ s32 unk3C;
 } EftLineArg; /* size 0x40 */
 
-/* Work of a line task (class D_002C40F0). Only the fields this file touches are named. */
+/* Work of a line task (class gEftBillClass). Only the fields this file touches are named. */
 typedef struct EftLineWork {
     /* 0x000 */ EftLineArg arg;
     /* 0x040 */ EftLineCur cur;   /* EftLine_SetKey / EftLine_Animate */

@@ -33,7 +33,7 @@ typedef struct EftPTask {
     /* 0x3C */ s32 unk3C;
 } EftPTask; /* size 0x40 */
 
-/* ---- disc projectile (task class D_002C3B38, work 0x4C0 bytes) ------------------------------------------- */
+/* ---- disc projectile (task class gEftDiscClass, work 0x4C0 bytes) ------------------------------------------- */
 
 /* Definition and source of a technique (EftJDef / EftJSrc of eft_shot_tech.h); only what is read here. */
 typedef struct EftPDef {

@@ -16,7 +16,7 @@ BtlObjAnim_ZeroRootAxes = 0x0024C728; // type:func
 BtlObjAnim_RebaseRoot = 0x0024C800; // type:func
 BtlObjAnim_ClearNodeRot = 0x0024C890; // type:func
 
-// Player. Init: step = BtlObj_GetUnk44FC4() (2.0), identity extra rotations, volume scale 1. StartBlend(obj, s):
+// Player. Init: step = BtlObj_GetDefaultAnimStep() (2.0), identity extra rotations, volume scale 1. StartBlend(obj, s):
 // stores every node's pose and sets blend = 1, blendStep = 1 / (s * 30). SamplePose: local pose of every node for
 // the current frame. UpdateEvents: hit window, hit counters and the events of (previous frame, frame].
 // Play(obj, layer, anim, reset) / PlayFrom(obj, other, anim, useTable) / PromoteLayer / PlayAuto(obj, anim, mode) /
@@ -80,7 +80,7 @@ BtlObjFlash_GetColor = 0x0024E700; // type:func // guess
 BtlObjFade_Step = 0x0024E790; // type:func // guess
 BtlObjFade_Get = 0x0024E810; // type:func // guess
 // Stores a byte at object + 0xB30 (one caller at 0x259EC8.., meaning unknown).
-BtlObj_SetUnkB30 = 0x0024E860; // type:func
+BtlObj_SetAlphaAdd = 0x0024E860; // type:func
 
 // Face (the state block is the second part's BObjFace). Reset(face, keep): stop the talk pattern. HasLipTrack(mdl, n):
 // lip track n (0..99) exists. CopyTexAlpha: alpha bytes of the model's face texture record -> every eye texture.

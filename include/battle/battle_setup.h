@@ -162,15 +162,15 @@ s32 Battle_GetStage(void);
 void Battle_SetStage(s32 stage);
 s32 Battle_IsStageChanged(void);
 void Battle_ResetStage(void);
-s32 Battle_GetRuleUnk10(void);
+s32 Battle_IsStageChangeEnabled(void);
 
 s32 BattleSide_GetOptionA(s32 side);
 s32 BattleSide_GetOptionB(s32 side);
 s32 BattleSide_GetPad(s32 side);
 s32 BattleSide_GetControl(s32 side);
 s32 BattleSide_IsCpu(s32 side);
-s32 BattleSide_GetUnk200(s32 side);
-s32 BattleSide_GetUnk1FC(s32 side);
+s32 BattleSide_GetSwitchEnabled(s32 side);
+s32 BattleSide_GetChangeAllowed(s32 side);
 s32 BattleSide_GetStartChara(s32 side);
 s32 BattleSide_GetStartCostume(s32 side);
 s32 BattleSide_GetStartVariant(s32 side);

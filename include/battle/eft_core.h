@@ -257,7 +257,7 @@ s32 EftHit_IsMultiHit(EftHitRec *rec);
 void EftHit_IncHitCount(EftHitRec *rec);
 s32 EftHit_GetHitCount(EftHitRec *rec);
 s32 EftHit_GetMaxHits(EftHitRec *rec);
-s32 EftHit_GetDefUnkB(EftHitRec *rec);
+s32 EftHit_GetHitInterval(EftHitRec *rec);
 void EftHit_IncCountA(EftHitRec *rec);
 void EftHit_SetCountA(EftHitRec *rec, s32 value);
 s32 EftHit_GetCountA(EftHitRec *rec);

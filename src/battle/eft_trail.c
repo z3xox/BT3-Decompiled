@@ -725,7 +725,7 @@ extern EftCharRoot *gEftChar;        /* 0x2FEA48 */
 extern u8 gEftCharClass[0x18];       /* 0x2C3BC8 */
 extern void *gEftCharKindClass[11];  /* 0x2C3BE0: manager class of each kind */
 extern u8 gEftKiBombMgrClass[0x18];          /* manager class used for kind 2 when the fighter has a type 3 ki blast */
-extern u8 D_002C3E00[0x18];          /* manager class used for kind 1 when the fighter has a type 2 ki blast */
+extern u8 gEftKiObjMgrClass[0x18];          /* manager class used for kind 1 when the fighter has a type 2 ki blast */
 
 void EftChar_SetPool(s32 chr);
 void EftChar_ResetPool(s32 chr);
@@ -841,7 +841,7 @@ void EftChar_CreateKind(s32 chr, s32 kind, s32 mode) {
 
     if (mode != 0) {
         if (mode & 2) {
-            cls = D_002C3E00;
+            cls = gEftKiObjMgrClass;
         }
         if (mode & 4) {
             cls = gEftKiBombMgrClass;

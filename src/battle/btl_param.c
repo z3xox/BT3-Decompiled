@@ -37,7 +37,7 @@ extern BtlTechObj *BtlChar_GetObj(BtlTechChr *chr);
 extern BtlTechPad *BtlChar_GetPad(BtlTechChr *chr);
 extern s32 BtlChar_IsFrozen(BtlTechChr *chr);
 extern s32 BtlChar_IsDead(BtlTechChr *chr);
-extern s32 BtlChar_TestMemberUnk70(BtlTechChr *chr);
+extern s32 BtlChar_IsBodyChanged(BtlTechChr *chr);
 extern s32 BtlChar_TestFlag(BtlTechChr *chr, s32 flag);
 extern s32 BtlChar_IsFlagRaised(BtlTechChr *chr, s32 flag); /* set this frame and not the frame before */
 extern s32 BtlOpp_GetPlayer(BtlTechChr *chr);
@@ -79,7 +79,7 @@ extern s32 BtlObjAnim_QueryEvent(BtlTechObj *obj, u64 mask, s32 layer, s32 what)
 /* ---- queries by side -------------------------------------------------------------------------------------------- */
 
 /* The opponent's +0xD50, 0 while the opponent is frozen or the battle flag 0x2000 is set. */
-s32 BtlCtrl_GetOppUnkD50(s32 side) {
+s32 BtlCtrl_IsOppComboDamageNew(s32 side) {
     BtlTechChr *chr = BtlChar_FindBySide(side);
     BtlTechChr *opp;
 
@@ -672,11 +672,11 @@ void BtlCtrl_SetCpuLevel(s32 player, s32 level) {
 }
 
 /* The active member's gauge word +0x30 is set. */
-s32 BtlCtrl_TestMemberUnk70(s32 player) {
+s32 BtlCtrl_IsMemberBodyChanged(s32 player) {
     BtlTechChr *chr = BtlChar_Get(player);
 
     if (chr != NULL) {
-        return BtlChar_TestMemberUnk70(chr);
+        return BtlChar_IsBodyChanged(chr);
     }
     return 0;
 }
@@ -1052,7 +1052,7 @@ s32 BtlAtk_GetGuardKiCost(BtlTechChr *chr) {
 }
 
 /* Record +0x10 divided by the hit count: what a hit adds to the fighter's +0xD80 gauge (decays 400 per frame). */
-s32 BtlAtk_GetUnk10(BtlTechChr *chr) {
+s32 BtlAtk_GetChargeGaugeGain(BtlTechChr *chr) {
     BtlTechObj *obj = BtlChar_GetObj(chr);
     s32 val = BtlAtk_GetRecord(chr, NULL)->unk10;
     s32 hits = BtlObjAnim_QueryEvent(obj, 1, 0, 3);
@@ -1294,12 +1294,12 @@ s32 BtlAtk_GetGuardFlagSel(BtlTechChr *chr) {
 }
 
 /* Record +0x2C: armour levels the attack ignores. */
-s32 BtlAtk_GetUnk2C(BtlTechChr *chr) {
+s32 BtlAtk_GetArmorIgnore(BtlTechChr *chr) {
     return BtlAtk_GetRecord(chr, NULL)->armorIgnore;
 }
 
 /* +0x2C of record `id`. */
-s32 BtlAtk_GetUnk2COf(BtlTechChr *chr, u32 id) {
+s32 BtlAtk_GetArmorIgnoreOf(BtlTechChr *chr, u32 id) {
     return BtlAtk_GetRecordOf(chr, id)->armorIgnore;
 }
 
@@ -1336,17 +1336,17 @@ u32 BtlParam_GetFlags3(BtlTechChr *chr) {
 }
 
 /* Parameter +0x00 (u16). */
-s32 BtlParam_GetUnk0(BtlTechChr *chr) {
+s32 BtlParam_GetCharaFlags(BtlTechChr *chr) {
     return BtlChar_GetObj(chr)->param->unk0;
 }
 
 /* Parameter +0x02: 4 is tested by the hit code (not thrown, not rushed). */
-s32 BtlParam_GetUnk2(BtlTechChr *chr) {
+s32 BtlParam_GetSizeClass(BtlTechChr *chr) {
     return BtlChar_GetObj(chr)->param->unk2;
 }
 
 /* Parameter +0xAC: the transformation slot a neutral input picks. */
-s32 BtlParam_GetUnkAC(BtlTechChr *chr) {
+s32 BtlParam_GetDefaultSlot(BtlTechChr *chr) {
     return BtlChar_GetObj(chr)->param->transDefault;
 }
 
@@ -1376,7 +1376,7 @@ s32 BtlParam_GetSlotA8(BtlTechChr *chr, s32 slot) {
 }
 
 /* Parameter +0xAD. */
-s32 BtlParam_GetUnkAD(BtlTechChr *chr) {
+s32 BtlParam_GetFormFlags(BtlTechChr *chr) {
     return BtlChar_GetObj(chr)->param->unkAD;
 }
 
@@ -1395,12 +1395,12 @@ s32 BtlParam_CountSlots(BtlTechChr *chr) {
 }
 
 /* Bit 4 + n of parameter +0xAD. */
-s32 BtlParam_TestUnkADBit(BtlTechChr *chr, s32 n) {
+s32 BtlParam_TestSlotResetsVariant(BtlTechChr *chr, s32 n) {
     return (BtlChar_GetObj(chr)->param->unkAD & (0x10 << n)) != 0;
 }
 
 /* Parameter +0xB4 + n: fusion n. */
-s32 BtlParam_GetUnkB4(BtlTechChr *chr, s32 n) {
+s32 BtlParam_GetFusionResult(BtlTechChr *chr, s32 n) {
     return BtlChar_GetObj(chr)->param->fusionResult[n];
 }
 
@@ -1410,7 +1410,7 @@ s32 BtlParam_GetUnkB7(BtlTechChr *chr, s32 n) {
 }
 
 /* Parameter +0xBA + n * 4 + m: partner m of fusion n. */
-s32 BtlParam_GetUnkBA(BtlTechChr *chr, s32 n, s32 m) {
+s32 BtlParam_GetFusionPartner(BtlTechChr *chr, s32 n, s32 m) {
     return BtlChar_GetObj(chr)->param->fusionPartner[n][m];
 }
 
@@ -1425,7 +1425,7 @@ s32 BtlParam_GetUnkC6(BtlTechChr *chr) {
 }
 
 /* Parameter +0xB1 + n: fusion n. */
-s32 BtlParam_GetUnkB1(BtlTechChr *chr, s32 n) {
+s32 BtlParam_GetFusionSequence(BtlTechChr *chr, s32 n) {
     return BtlChar_GetObj(chr)->param->fusionSeq[n];
 }
 
@@ -1567,7 +1567,7 @@ s32 BtlParam_IsTypeSetB(BtlTechChr *chr) {
 
 /* How many class-0 ki blasts may be alive at once: parameter +0x80 less 3 / 2 / 1 by ability 0x11 / 0x10 / 0xF, but
    at least 1 when the raw value is positive. */
-s32 BtlParam_GetCount80(BtlTechChr *chr) {
+s32 BtlParam_GetBlastLimitA(BtlTechChr *chr) {
     BtlParam *param = BtlChar_GetObj(chr)->param;
     s32 v = param->blastLimitA;
 
@@ -1587,12 +1587,12 @@ s32 BtlParam_GetCount80(BtlTechChr *chr) {
 }
 
 /* Parameter +0x82: the same limit for class-1 blasts. */
-s32 BtlParam_GetUnk82(BtlTechChr *chr) {
+s32 BtlParam_GetBlastLimitB(BtlTechChr *chr) {
     return BtlChar_GetObj(chr)->param->blastLimitB;
 }
 
 /* Parameter +0x84 + n (n above 3 reads entry 0). */
-s32 BtlParam_GetUnk84(BtlTechChr *chr, u32 n) {
+s32 BtlParam_GetRushFinisher(BtlTechChr *chr, u32 n) {
     BtlParam *param = BtlChar_GetObj(chr)->param;
 
     if (n >= 4) {
@@ -1602,7 +1602,7 @@ s32 BtlParam_GetUnk84(BtlTechChr *chr, u32 n) {
 }
 
 /* Parameter +0x88 + n (n above 1 reads entry 0). */
-s32 BtlParam_GetUnk88(BtlTechChr *chr, u32 n) {
+s32 BtlParam_GetChainKind(BtlTechChr *chr, u32 n) {
     BtlParam *param = BtlChar_GetObj(chr)->param;
 
     if (n >= 2) {
@@ -1612,7 +1612,7 @@ s32 BtlParam_GetUnk88(BtlTechChr *chr, u32 n) {
 }
 
 /* Parameter +0x8A + n (n above 4 reads entry 0). */
-s32 BtlParam_GetUnk8A(BtlTechChr *chr, u32 n) {
+s32 BtlParam_GetFinisherChoice(BtlTechChr *chr, u32 n) {
     BtlParam *param = BtlChar_GetObj(chr)->param;
 
     if (n >= 5) {

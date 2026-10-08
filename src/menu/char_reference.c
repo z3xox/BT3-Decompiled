@@ -140,7 +140,7 @@ void CharRef_Init(s32 section) {
         TextBox_SetRect(&gCharRef->box[CHARREF_BOX_LIST_FORM + i], 0, 0x200, 0x49, 0x135);
     }
     for (i = 0; i < CHARREF_BOX_NUM; i++) {
-        TextBox_SetUnk80(&gCharRef->box[i], 1);
+        TextBox_SetNoFlush(&gCharRef->box[i], 1);
     }
     gCharRef->subtitles = MPACK_AT(gCharRef->res, 20);
     Flash_Create(&gCharRef->flash[0], MPACK_AT(gCharRef->res, 1), gCharRef->tex);

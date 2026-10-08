@@ -78,8 +78,8 @@ BtlChars_UpdateHold = 0x001D7C30; // type:func // guess
 BtlChar_SavePlacement = 0x001D7E68; // type:func
 BtlChar_SetSavedPlacement = 0x001D7F00; // type:func
 // chr+0x1310 = *v and flag 0x55; chr+0x1310 = *obj->unkFA0.
-BtlChar_SetUnk1310 = 0x001D7F98; // type:func
-BtlChar_ResetUnk1310 = 0x001D7FC8; // type:func
+BtlChar_RequestBodyWarp = 0x001D7F98; // type:func
+BtlChar_ResetBodyWarp = 0x001D7FC8; // type:func (guess)
 // Fills chr+0xE70 / +0xE80 through func_00211E78 and raises flag 0xF6; raises flag 0xF8.
 BtlChar_RequestPlaceRelative = 0x001D7FF8; // type:func // guess
 BtlChar_RequestPlaceOnPath = 0x001D8068; // type:func // guess

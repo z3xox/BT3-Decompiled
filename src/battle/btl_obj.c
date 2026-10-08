@@ -389,12 +389,12 @@ void BtlObj_InitTable(void) {
 }
 
 /* Returns the float at table + 0x44FC4. */
-f32 BtlObj_GetUnk44FC4(void) {
+f32 BtlObj_GetDefaultAnimStep(void) {
     return BtlObj_GetTable()->unk44FC4;
 }
 
 /* Sets the float at table + 0x44FC4. */
-void BtlObj_SetUnk44FC4(f32 value) {
+void BtlObj_SetDefaultAnimStep(f32 value) {
     BtlObj_GetTable()->unk44FC4 = value;
 }
 

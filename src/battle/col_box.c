@@ -645,7 +645,7 @@ s32 ColObb_Overlaps(ColObb *a, ColObb *b) {
  * the face cases (ColObbV); one function-level 12-byte scratch (`tmp`) that holds the three corner signs of the
  * face cases and the helper vector of the edge cases at the same stack slot; `w` local to each half of a case.
  */
-extern f32 D_002FEBA8[];     /* 0x2FEBA8: FLT_MAX (initialised data, reached with lui / lwc1, so not a small extern) */
+extern f32 gColObbFltMax[];     /* 0x2FEBA8: FLT_MAX (initialised data, reached with lui / lwc1, so not a small extern) */
 extern f32 sqrtf(f32 x);
 extern void *memset(void *dst, s32 c, u32 n);
 extern void Vec3_Normalize(ColVec *dst, ColVec *src);
@@ -683,7 +683,7 @@ s32 ColObb_Contact(ColObb *a, ColObb *b, ColVec *normal, ColVec *point, f32 *dep
     s32 code = -1;
     s32 eq;
 
-    *depth = D_002FEBA8[0];
+    *depth = gColObbFltMax[0];
     Vec4_Sub(&diff, &b->center, &a->center);
 
     R.m[0][0] = Vec3_Dot(&a->axis[0], &b->axis[0]);

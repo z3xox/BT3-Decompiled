@@ -71,14 +71,14 @@ void EvoZ_Init(s32 section) {
             TextBox_Init(box, gEvoZ->text[1], 3);
         } else if (i < 3) {
             TextBox_Init(box, gEvoZ->text[2], 6);
-            TextBox_SetUnk80(box, 1);
+            TextBox_SetNoFlush(box, 1);
         } else if (i < 10) {
             TextBox_Init(box, gEvoZ->text[2], 6);
-            TextBox_SetUnk80(box, 1);
+            TextBox_SetNoFlush(box, 1);
             TextBox_SetRect(box, 0, 0x200, 0xC6, 0x198);
         } else {
             TextBox_Init(box, gEvoZ->text[2], 6);
-            TextBox_SetUnk80(box, 1);
+            TextBox_SetNoFlush(box, 1);
         }
     }
 }

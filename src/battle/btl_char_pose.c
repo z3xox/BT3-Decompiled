@@ -39,7 +39,7 @@ extern void Vec4_SetZeroW1(Vec4 *v);
 extern void Vec4_SetZero(Vec4 *v);
 
 extern BtlCtlRoster *gBtlChars;
-extern Vec4 D_002EC2A0; /* (0, 0, 0, 0) */
+extern Vec4 gVu0ZeroVec; /* (0, 0, 0, 0) */
 
 extern s32 BtlChar_GetCount(void);
 extern BtlCtlChr *BtlChar_Get(s32 index);
@@ -157,8 +157,8 @@ void BtlChar_Place(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, s32 area) {
 
     Vec4_Copy(&pose->pos, pos);
     Vec4_Copy(&pose->rot, rot);
-    Vec4_Copy(&pose->unk30, &D_002EC2A0);
-    Vec4_Copy(&pose->unk40, &D_002EC2A0);
+    Vec4_Copy(&pose->unk30, &gVu0ZeroVec);
+    Vec4_Copy(&pose->unk40, &gVu0ZeroVec);
     pose->heading = rot->y;
     pose->speed = 0.0f;
     pose->unk98 = 0.0f;
@@ -442,13 +442,13 @@ void BtlChar_SetSavedPlacement(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, Vec4 *unk13
 }
 
 /* Stores a vector at +0x1310 and raises flag 0x55. */
-void BtlChar_SetUnk1310(BtlCtlChr *chr, Vec4 *v) {
+void BtlChar_RequestBodyWarp(BtlCtlChr *chr, Vec4 *v) {
     Vec4_Copy(&chr->unk1310, v);
     BtlChar_SetFlag(chr, 0x55);
 }
 
 /* Reloads +0x1310 from the object's vector. */
-void BtlChar_ResetUnk1310(BtlCtlChr *chr) {
+void BtlChar_ResetBodyWarp(BtlCtlChr *chr) {
     BtlCtlObj *obj = BtlChar_GetObj(chr);
 
     Vec4_Copy(&chr->unk1310, obj->unkFA0);

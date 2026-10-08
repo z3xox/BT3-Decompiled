@@ -41,7 +41,7 @@ extern s32 BtlGame_IsReplay(void); /* returns gBtlGameReplayActive */
 extern s32 BtlCtrl_GetWork5A8Count(void);
 extern s32 BtlSide_GetHp(s32 side);
 extern s32 BtlSide_GetKi(s32 side);
-extern s32 BtlSide_GetParamUnk2C(s32 side);
+extern s32 BtlSide_GetKiRecoverGoal(s32 side);
 extern s32 BtlSide_TestFlagBE(s32 side);
 extern s32 BtlCtrl_GetStatMod0(s32 side);
 extern s32 BtlCtrl_GetStatMod1(s32 side);
@@ -53,7 +53,7 @@ extern void *BtlCtrl_GetObj(s32 side);
 extern s32 BtlSide_IsComboHitNew(s32 side);
 extern s32 BtlCtrl_GetClashCount(s32 side);
 extern s32 BtlSide_GetComboHits(s32 side);
-extern s32 BtlCtrl_GetOppUnkD50(s32 side);
+extern s32 BtlCtrl_IsOppComboDamageNew(s32 side);
 extern s32 BtlSide_GetComboDamage(s32 side);
 extern s32 BtlSide_IsComboShown(s32 side);
 extern s32 BtlCtrl_GetFlagDEtoE2(s32 side);
@@ -315,7 +315,7 @@ void Hud_PreUpdate(void) {
 
         HudGauge_SetHp(side, BtlSide_GetHp(side));
         HudGauge_SetKi(side, BtlSide_GetKi(side));
-        v = BtlSide_GetParamUnk2C(side);
+        v = BtlSide_GetKiRecoverGoal(side);
         if (BtlSide_TestFlagBE(side)) {
             HudGauge_SetKiReserve(side, v);
         } else {
@@ -361,7 +361,7 @@ void Hud_PreUpdate(void) {
                     HudCombo_SetHits(side, BtlSide_GetComboHits(side));
                 }
             }
-            if (BtlCtrl_GetOppUnkD50(side)) {
+            if (BtlCtrl_IsOppComboDamageNew(side)) {
                 v = BtlSide_GetComboDamage(side);
                 if (v >= 0) {
                     HudCombo_SetDamage(side, v, isNew);

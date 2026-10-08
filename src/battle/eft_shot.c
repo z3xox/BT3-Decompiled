@@ -131,7 +131,7 @@ extern void *gEftSmokeClass[6];
 extern void *gEftBoundClass[6];
 extern void *gEftShotCharClass[6];
 extern void *gEftTechEvtClass[6];   /* class of the first task of the shot layer (next file) */
-extern f32 D_002FE9E4[];      /* -0.0f, small data reached without $gp */
+extern f32 gEftStormNegZero[];      /* -0.0f, small data reached without $gp */
 
 typedef struct EftStageView {
     /* 0x00 */ s32 unk0[2];
@@ -562,7 +562,7 @@ void EftStorm_DrawBolts(EftStormBolt *bolt) {
     Vec4_Set(&corner[0], -4.0f, -1.5f, 0.0f, 0.0f);
     Vec4_Set(&corner[1], 4.0f, 8.0f, 0.0f, 0.0f);
     Vec4_Set(&corner[2], -8.0f, -3.0f, 0.0f, 0.0f);
-    Vec4_Set(&corner[3], 8.0f, D_002FE9E4[0], 0.0f, 0.0f);
+    Vec4_Set(&corner[3], 8.0f, gEftStormNegZero[0], 0.0f, 0.0f);
     col = EftStage_GetTintScale() * 128.0f;
     Vec4_Scale(&corner[0], &corner[0], 150.0f);
     Vec4_Scale(&corner[1], &corner[1], 150.0f);

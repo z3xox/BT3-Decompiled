@@ -7,7 +7,7 @@
  * A fighter turns its head (model node 0x2E) and neck (node 0x2F) towards the other fighter's head.
  *   look.offset  eased 20% per frame towards (object position - position of node 0x2F), i.e. head -> origin.
  *   direction    (other's position - own position) + own look.offset - the OTHER fighter's look.offset
- *                (BtlOpp_GetDelta, BtlOpp_GetUnk15A0), normalised, then eased 30% per frame into look.dir
+ *                (BtlOpp_GetDelta, BtlOpp_GetLookOffset), normalised, then eased 30% per frame into look.dir
  *                (copied at once when look.snap is set).
  *   BtlChar_UpdateLook: the direction is taken into the head node's space (inverse of the node matrix, turned by
  *                the neck pitch parameter). Tracking starts when |yaw| < 1.5 and -0.6 < pitch' < 0.6 (pitch' =
@@ -50,7 +50,7 @@ extern s32 BtlChar_TestFlag(BtlCtlChr *chr, s32 bit);
 extern f32 BtlUtil_WrapAngle(f32 angle);
 extern s32 *BtlMember_GetActive(BtlCtlChr *chr);
 extern void BtlOpp_GetDelta(BtlCtlChr *chr, Vec4 *out);
-extern void BtlOpp_GetUnk15A0(BtlCtlChr *chr, Vec4 *out);
+extern void BtlOpp_GetLookOffset(BtlCtlChr *chr, Vec4 *out);
 extern f32 BtlCharApi_GetHeight(s32 objId);
 extern s32 BtlParam_GetFlags(BtlCtlChr *chr);
 extern BtlCtlNode *BtlObj_GetNode(BtlCtlObj *obj, s32 node);
@@ -151,7 +151,7 @@ void BtlChar_UpdateLook(BtlCtlChr *chr) {
     Mtx_InverseRT(&inv, &m);
     BtlOpp_GetDelta(chr, &target);
     Vec4_Add(&target, &target, &look->offset);
-    BtlOpp_GetUnk15A0(chr, &other);
+    BtlOpp_GetLookOffset(chr, &other);
     Vec4_Sub(&target, &target, &other);
     Vec3_Normalize(&target, &target);
     target.w = blend;
@@ -291,7 +291,7 @@ void BtlChar_UpdateLookAlt(BtlCtlChr *chr) {
     Mtx_InverseRT(&inv, &m);
     BtlOpp_GetDelta(chr, &target);
     Vec4_Add(&target, &target, &look->offset);
-    BtlOpp_GetUnk15A0(chr, &other);
+    BtlOpp_GetLookOffset(chr, &other);
     Vec4_Sub(&target, &target, &other);
     Vec3_Normalize(&target, &target);
     target.w = blend;

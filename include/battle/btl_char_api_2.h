@@ -56,7 +56,7 @@ typedef struct BtlCharApiChr {
     /* 0x0E5C */ s32 unkE5C;        /* counter, full at 3 */
     /* 0x0E60 */ s32 unkE60;        /* counter, full at 5 */
     /* 0x0E64 */ u8 unkE64[0xEFC - 0xE64];
-    /* 0x0EFC */ f32 unkEFC[4];     /* length not known; summed by BtlCharApi_GetChargedUnkC78 */
+    /* 0x0EFC */ f32 unkEFC[4];     /* length not known; summed by BtlCharApi_GetRushSequenceFrame */
     /* 0x0F0C */ u8 unkF0C[0x1278 - 0xF0C];
     /* 0x1278 */ s32 injectOn;      /* input comes from the three fields below (btl_input.h) */
     /* 0x127C */ u32 injectButtons;
@@ -123,7 +123,7 @@ s32 BtlCharApi_TestFlagA4(s32 objId);
 s32 BtlCharApi_GetMemberUnk60(s32 objId);
 s32 BtlCharApi_IsFlag8Action104(s32 objId);
 s32 BtlCharApi_IsAction103OrFlagA6(s32 objId);
-s32 BtlCharApi_HasMemberUnk70(s32 objId);
+s32 BtlCharApi_IsMemberBodyChanged(s32 objId);
 void BtlCharApi_SetHeldFlagA7(s32 objId);
 void BtlCharApi_SetHeldFlagA8(s32 objId);
 void BtlCharApi_SetHeldFlagA9(s32 objId);
@@ -136,8 +136,8 @@ void BtlCharApi_GetSound(s32 side, s32 n, s32 *handle, s32 *out3, s32 *out4);
 void BtlCharApi_ObjClearMaskBit3(s32 objId);
 void BtlCharApi_ObjSetMaskBit3(s32 objId);
 s32 BtlCharApi_ObjTestFlagBit21(s32 objId);
-f32 BtlCharApi_GetUnkE44(s32 objId);
-f32 BtlCharApi_GetUnkE5CRatio(s32 objId);
+f32 BtlCharApi_GetTechCharge(s32 objId);
+f32 BtlCharApi_GetSkillCount3Ratio(s32 objId);
 f32 BtlCharApi_GetUnkE60Ratio(s32 objId);
 void BtlCharApi_ObjSetFlag100(s32 objId, s32 on);
 s32 BtlCharApi_ObjHasFlags102(s32 objId);
@@ -148,20 +148,20 @@ void BtlCharApi_RumbleNear(Vec4 *pos, f32 near, f32 far, f32 power, f32 time);
 s32 BtlCharApi_ObjTestAttr(s32 objId, u64 mask);
 s32 BtlCharApi_ObjGetAttrValue(s32 objId, u64 mask);
 s32 BtlCharApi_ObjGetAttrKind(s32 objId, u64 mask);
-f32 BtlCharApi_GetChargedUnkC78(s32 objId);
-f32 BtlCharApi_ObjGetUnkC78(s32 objId);
-f32 BtlCharApi_ObjGetUnkC80(s32 objId);
+f32 BtlCharApi_GetRushSequenceFrame(s32 objId);
+f32 BtlCharApi_ObjGetAnimFrame(s32 objId);
+f32 BtlCharApi_ObjGetAnimStep(s32 objId);
 s32 BtlCharApi_ObjQuery24D610(s32 objId, s32 arg1, s32 arg2);
-s32 BtlCharApi_GetUnk974(s32 objId);
-void *BtlCharApi_GetUnk974Data(s32 objId);
+s32 BtlCharApi_GetAnimId(s32 objId);
+void *BtlCharApi_GetAnimFlags(s32 objId);
 s32 BtlCharApi_TestFlag2B(s32 objId);
 s32 BtlCharApi_GetCamPose(s32 objId, Vec4 *pos, Vec4 *rot);
-f32 BtlCharApi_GetCamUnk4A0(s32 objId);
+f32 BtlCharApi_GetCamYaw(s32 objId);
 s32 BtlCharApi_HasCamPriority(s32 objId);
 void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 arg3, f32 arg4);
 s32 BtlCharApi_IsCamShown(s32 objId);
-void BtlCharApi_GetCamUnk460(s32 objId, Vec4 *out);
-s32 BtlCharApi_GetMgrUnk134(void);
+void BtlCharApi_GetCamBodyPos(s32 objId, Vec4 *out);
+s32 BtlCharApi_GetReplayViewSide(void);
 s32 BtlCharApi_AnyCamPriority(void);
 s32 BtlCharApi_IsInputInjected(s32 objId);
 void BtlCharApi_SetInjectedInput(s32 objId, u32 buttons, f32 stickX, f32 stickY);
@@ -170,8 +170,8 @@ s32 BtlCharApi_TestFlag05(s32 objId);
 s32 BtlCharApi_GetParamByte84(s32 objId, u32 n);
 s32 BtlCharApi_GetParamByte8A(s32 objId);
 s32 BtlCharApi_GetParamByte8D(s32 objId);
-u64 BtlCharApi_GetUnk1288(s32 objId);
-s32 BtlCharApi_CheckUnkCAC(s32 objId);
+u64 BtlCharApi_GetActionBits(s32 objId);
+s32 BtlCharApi_IsAttackHitPending(s32 objId);
 s32 BtlCharApi_TestFlag60(s32 objId);
 
 
@@ -293,18 +293,18 @@ typedef struct BtlCapiBParam {
     /* 0x14 */ s32 unk14;
     /* 0x18 */ s32 unk18;
     /* 0x1C */ u8 unk1C[0x80 - 0x1C];
-    /* 0x80 */ s16 blastLimit;      /* class-0 blasts alive at once (BtlParam_GetCount80) */
-    /* 0x82 */ s16 blastLimitB;     /* class-1 (BtlParam_GetUnk82) */
+    /* 0x80 */ s16 blastLimit;      /* class-0 blasts alive at once (BtlParam_GetBlastLimitA) */
+    /* 0x82 */ s16 blastLimitB;     /* class-1 (BtlParam_GetBlastLimitB) */
     /* 0x84 */ u8 unk84[0x8F - 0x84];
-    /* 0x8F */ u8 unk8F[9];         /* BtlParam_GetUnk8F(chr, n) */
+    /* 0x8F */ u8 unk8F[9];         /* BtlParam_GetComboFinish(chr, n) */
     /* 0x98 */ u8 transformId[4];   /* 0xFF = none (BtlParam_GetSlotId) */
     /* 0x9C */ u8 transformCost[4]; /* blast stocks (BtlParam_GetSlotCost) */
     /* 0xA0 */ u8 unkA0[0xAC - 0xA0];
-    /* 0xAC */ s8 transformSlot;    /* the slot the AI uses, -1 none (BtlParam_GetUnkAC) */
+    /* 0xAC */ s8 transformSlot;    /* the slot the AI uses, -1 none (BtlParam_GetDefaultSlot) */
     /* 0xAD */ u8 unkAD;
     /* 0xAE */ u8 fusionCost[3];    /* blast stocks (BtlParam_GetCostAE) */
     /* 0xB1 */ u8 unkB1[3];
-    /* 0xB4 */ u8 fusionId[3];      /* (BtlParam_GetUnkB4) */
+    /* 0xB4 */ u8 fusionId[3];      /* (BtlParam_GetFusionResult) */
 } BtlCapiBParam;
 
 /* Technique table (battle object +0x92C, BtlCharApi_GetSkillTable). Arrays are indexed by technique class
@@ -316,7 +316,7 @@ typedef struct BtlCapiBSkills {
     /* 0x018 */ u8 unk18[0x13C - 0x18];
     /* 0x13C */ s8 unk13C[5];       /* by class (BtlSuper_GetType) */
     /* 0x141 */ u8 unk141[0x163 - 0x141];
-    /* 0x163 */ s8 kind[5];         /* by class (BtlSuper_GetUnk165) */
+    /* 0x163 */ s8 kind[5];         /* by class (BtlSuper_GetAiKind) */
     /* 0x168 */ u8 unk168[0x194 - 0x168];
     /* 0x194 */ s32 cost[5];        /* by class: ki cost (BtlSuper_GetKiCost) */
     /* 0x1A8 */ u8 unk1A8[0x227 - 0x1A8];
@@ -331,7 +331,7 @@ typedef struct BtlCapiBMoves {
     /* 0x14 */ u8 unk14[0x94 - 0x14];
     /* 0x94 */ s8 stock[2];         /* blast stocks the move costs (BtlSkill_GetBlastCost) */
     /* 0x96 */ u8 unk96[0x9E - 0x96];
-    /* 0x9E */ s8 kind[2];          /* BtlSkill_GetUnk9E */
+    /* 0x9E */ s8 kind[2];          /* BtlSkill_GetAiKind */
 } BtlCapiBMoves;
 
 /* Battle object of a fighter (BtlChar_GetObj). */
@@ -416,7 +416,7 @@ typedef struct BtlCapiBWork {
 } BtlCapiBWork;
 
 /* --- by object id --- */
-s32 BtlCharApi_IsUnkCACPaired(s32 objId);
+s32 BtlCharApi_IsAttackHitsDone(s32 objId);
 s32 BtlCharApi_GetAction(s32 objId);
 s32 BtlCharApi_GetBlastShots(s32 objId);
 s32 BtlCharApi_GetBlastRoom(s32 objId);
@@ -445,14 +445,14 @@ s32 BtlCharApi_CanFuse(s32 objId);
 s32 BtlCharApi_CanSwitch(s32 objId);
 s32 BtlCharApi_GetCpuLevel(s32 objId);
 s32 BtlCharApi_GetAiType(s32 objId);
-s32 BtlCharApi_IsUnk1070Set(s32 objId);
+s32 BtlCharApi_IsCounterWindowBusy(s32 objId);
 s32 BtlCharApi_GetTransformCost(s32 objId);
 s32 BtlCharApi_PickFusionSlot(s32 objId);
 s32 BtlCharApi_PickTransformSlot(s32 objId);
 s32 BtlCharApi_IsChangingForm(s32 objId);
-s32 BtlCharApi_GetParamUnk14(s32 objId);
+s32 BtlCharApi_GetParamFlags2(s32 objId);
 s32 BtlCharApi_GetParamFlags(s32 objId);
-s32 BtlCharApi_GetParamUnk18(s32 objId);
+s32 BtlCharApi_GetParamFlags3(s32 objId);
 s32 BtlCharApi_GetMemberCount(s32 objId);
 s32 BtlCharApi_GetActiveMember(s32 objId);
 s32 BtlCharApi_GetSwitchTarget(s32 objId);
@@ -469,17 +469,17 @@ s32 BtlCharApi_IsMoveSlotActive(s32 objId, u32 slot);
 s32 BtlCharApi_IsMoveFlag100(s32 objId, u32 slot);
 s32 BtlCharApi_GetStunTimer(s32 objId);
 s32 BtlCharApi_GetPromptButtons(s32 objId);
-s32 BtlCharApi_GetUnk1290(s32 objId);
-s32 BtlCharApi_IsUnk106CLow(s32 objId);
+s32 BtlCharApi_GetStoryAiForce(s32 objId);
+s32 BtlCharApi_IsDodgeWindowReady(s32 objId);
 s32 BtlCharApi_GetArmorBreakLevel(s32 objId);
 s32 BtlCharApi_GetParamByte2(s32 objId);
-f32 BtlCharApi_GetUnkE44B(s32 objId);
-s32 BtlCharApi_GetUnkD74Diff(s32 objId);
+f32 BtlCharApi_GetTechChargeB(s32 objId);
+s32 BtlCharApi_GetVanishStrikesLeft(s32 objId);
 s32 BtlCharApi_IsAnimFlag2800(s32 objId);
 s32 BtlCharApi_TestPoseBit80(s32 objId, s32 always);
 s32 BtlCharApi_TestFlag98(s32 objId);
 s32 BtlCharApi_TestFlagBE(s32 objId);
-s32 BtlCharApi_GetUnkE40(s32 objId);
+s32 BtlCharApi_GetTechniqueCooldown(s32 objId);
 s32 BtlCharApi_GetParamByte8F(s32 objId, s32 n);
 
 /* --- by player index: sequence poses --- */
@@ -550,7 +550,7 @@ s32 BtlSide_GetSwitchTarget(s32 side);
 s32 BtlSide_CountAlive(s32 side);
 s32 BtlSide_GetSwitchTargetHp(s32 side);
 s32 BtlSide_GetSwitchTargetHpMax(s32 side);
-s32 BtlSide_GetParamUnk2C(s32 side);
+s32 BtlSide_GetKiRecoverGoal(s32 side);
 s32 BtlSide_IsPoweredUp(s32 side);
 s32 BtlSide_TestFlagBE(s32 side);
 s32 BtlCtrl_IsActiveDead(s32 player);

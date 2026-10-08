@@ -62,7 +62,7 @@ typedef struct WItemEntry {
 extern s32 ItemTbl_GetClass(s32 item, WItemEntry *table);
 extern void Sprite_SetScissor(s32 x0, s32 x1, s32 y0, s32 y1);
 extern void TextBox_Init(MTextBox *box, void *text, u32 preset);
-extern void TextBox_SetUnk80(MTextBox *box, s32 value);
+extern void TextBox_SetNoFlush(MTextBox *box, s32 value);
 extern void TextBox_SetRect(MTextBox *box, s32 a, s32 b, s32 c, s32 d);
 
 /* ---- Shop (0x399790..0x39E940; this chunk has it from 0x39A978) ---- */

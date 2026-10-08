@@ -154,7 +154,7 @@ void UbzSel_Init(void) {
     gUbzSel->text = MPACK_AT(gUbzSel->res, 10);
     for (i = 0; i < UBZSEL_BOX_NUM; i++) {
         TextBox_Init(&gUbzSel->box[i], gUbzSel->text, 0);
-        TextBox_SetUnk50(&gUbzSel->box[i], 0);
+        TextBox_SetAlign(&gUbzSel->box[i], 0);
     }
     gUbzSel->voiceLine = -1;
     gUbzSel->voiceSkip = 0;

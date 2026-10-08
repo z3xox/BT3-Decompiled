@@ -116,7 +116,7 @@ void BtlSuper_SetClass(BtlSuperChr *chr, s32 cls);
 void BtlSuper_SetRushFlags(BtlSuperChr *chr);
 void BtlSuper_ShakeOnEvent(BtlSuperChr *chr, s32 cls, s32 kind);
 void BtlSuper_FitAnimToEvent(BtlSuperChr *chr, f32 seconds);
-void BtlSuper_SetObjUnk(BtlSuperChr *chr);
+void BtlSuper_AddSway(BtlSuperChr *chr);
 void BtlSuper_VibrateCharge(BtlSuperChr *chr);
 void BtlSuper_Recoil(BtlSuperChr *chr, s32 cls, s32 loop);
 void BtlSuper_MeasureRushStep(BtlSuperChr *chr, s32 cls, s32 step);

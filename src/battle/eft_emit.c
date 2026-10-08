@@ -41,7 +41,7 @@ extern void BtlTask_SetDead(EftHTask *task);          /* task->kill |= 1 */
 extern void BtlTask_SetOwnerTag(void *task, s32 flags);   /* task->flags |= flags */
 extern EftHTask *BtlTask_GetParent(EftHTask *task);     /* the task that owns the list this task is in */
 
-extern s32 BtlCharApi_GetPlayerObjUnk9C(s32 player, u32 n);
+extern s32 BtlCharApi_GetPlayerEffectPack(s32 player, u32 n);
 extern void *BtlCharApi_GetPlayerSuperData(s32 player);
 extern void *BtlCharApi_GetPlayerSkillData(s32 player);
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out);
@@ -407,7 +407,7 @@ f32 EftShot_GetLeadTime(EftHSlot *slot) {
 
 /* The effect pack of a technique slot, from the fighter object. */
 s32 EftShot_GetCharPack(s32 chr, s32 slot) {
-    return BtlCharApi_GetPlayerObjUnk9C(chr, slot);
+    return BtlCharApi_GetPlayerEffectPack(chr, slot);
 }
 
 /* ---- effect type -1: nothing ------------------------------------------------------------------------------ */

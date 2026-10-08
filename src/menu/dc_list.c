@@ -1078,23 +1078,23 @@ void DcList_Init(DcList *list) {
     for (i = 0; i < 4; i++) {
         TextBox_Init(&list->view.nameBox[i], list->nameText, 2);
         TextBox_SetRect(&list->view.nameBox[i], 0xAF, 0x1FF, 0x6A, 0x139);
-        TextBox_SetUnk80(&list->view.nameBox[i], 1);
+        TextBox_SetNoFlush(&list->view.nameBox[i], 1);
         TextBox_Init(&list->view.formBox[i], list->formText, 4);
         TextBox_SetRect(&list->view.formBox[i], 0xAF, 0x1FF, 0x6A, 0x139);
-        TextBox_SetUnk80(&list->view.formBox[i], 1);
+        TextBox_SetNoFlush(&list->view.formBox[i], 1);
     }
     TextBox_Init(&list->view.nameBoxB, list->nameText, 1);
-    TextBox_SetUnk80(&list->view.nameBoxB, 1);
+    TextBox_SetNoFlush(&list->view.nameBoxB, 1);
     TextBox_Init(&list->view.formBoxB, list->formText, 3);
-    TextBox_SetUnk80(&list->view.formBoxB, 1);
+    TextBox_SetNoFlush(&list->view.formBoxB, 1);
     TextBox_Init(&list->view.nameBoxL, list->nameText, 1);
-    TextBox_SetUnk80(&list->view.nameBoxL, 1);
+    TextBox_SetNoFlush(&list->view.nameBoxL, 1);
     TextBox_Init(&list->view.formBoxL, list->formText, 3);
-    TextBox_SetUnk80(&list->view.formBoxL, 1);
+    TextBox_SetNoFlush(&list->view.formBoxL, 1);
     list->itemText = DcList_Section(list, 21, DCLIST_HOST "font_zitem_name_JP_PS2_.pak");
     for (j = 0; j < DCLIST_ITEM_ROWS; j++) {
         TextBox_Init(&list->view.itemBox[j], list->itemText, 2);
-        TextBox_SetUnk80(&list->view.itemBox[j], 1);
+        TextBox_SetNoFlush(&list->view.itemBox[j], 1);
     }
     list->msgText = DcList_Section(list, 13, DCLIST_HOST "dc_msg_JP_PS2_.pak");
     MsgWin_Init(DcList_Section(list, 11, DCLIST_HOST "if_msg_window_PS2_.pak"), list->msgText, 0, (s32)list->unkC44);

@@ -59,7 +59,7 @@ extern void BtlChar_SetSmallVibration(BtlActAChr *chr, f32 seconds);
 extern void BtlChar_SetVibration(BtlActAChr *chr, f32 power, f32 seconds);
 extern void BtlCharSnd_PlayCommon(BtlActAChr *chr, s32 id);
 extern s32 BtlChar_TestFlag(BtlActAChr *chr, u32 n);
-extern s32 BtlChar_TestMemberUnk70(BtlActAChr *chr);
+extern s32 BtlChar_IsBodyChanged(BtlActAChr *chr);
 extern void BtlChar_ToggleHeldFlag(BtlActAChr *chr, u32 n);
 extern void BtlColl_AddActionBit(BtlActAChr *chr, s32 action);
 extern s32 BtlInput_TestAction(BtlActAChr *chr, s32 id, s32 want);
@@ -569,7 +569,7 @@ s32 BtlAct_RushRapidHandler(BtlActAChr *chr, s32 phase) {
                 break;
         }
         if (can) {
-            if (BtlChar_TestFlag(chr, 6) && BtlAct_TestAttackSkill(chr, 0x3C) && !BtlChar_TestMemberUnk70(chr)) {
+            if (BtlChar_TestFlag(chr, 6) && BtlAct_TestAttackSkill(chr, 0x3C) && !BtlChar_IsBodyChanged(chr)) {
                 BtlDecide_QueueAttack(chr, 0xAC);
             } else {
                 BtlDecide_QueueAttack(chr, 0x9D);
@@ -1940,7 +1940,7 @@ extern f32 BtlMember_GetHealthRatio(BtlActBChr *chr);
 extern void BtlCharSnd_PlayBank8(BtlActBChr *chr, s32 id);
 extern void BtlCharSnd_StopCommon(BtlActBChr *chr, s32 id);
 #define BtlOpp_GetSeenAction ((s32 (*)(BtlActBChr *chr))BtlOpp_GetSeenAction)
-extern s32 BtlOpp_GetSeenUnk964(BtlActBChr *chr);
+extern s32 BtlOpp_GetSeenActionFrame(BtlActBChr *chr);
 extern f32 BtlOpp_GetPitchAdjusted(BtlActBChr *chr);
 #define BtlOpp_GetYawFromFacing ((f32 (*)(BtlActBChr *chr))BtlOpp_GetYawFromFacing)
 #define BtlColl_AddActionBit ((void (*)(BtlActBChr *chr, s32 action))BtlColl_AddActionBit)
@@ -1969,7 +1969,7 @@ extern void BtlAct_LatchAttack(BtlActBChr *chr);
 #define BtlDecide_QueueAttack ((s32 (*)(BtlActBChr *chr, s32 attack))BtlDecide_QueueAttack) /* queue an attack table record */
 extern s32 BtlAct_GetChainAction(BtlActBChr *chr, s32 kind);
 #define BtlAtk_GetLaunchSpeed ((f32 (*)(BtlActBChr *chr))BtlAtk_GetLaunchSpeed)
-extern s32 BtlParam_GetUnk88(BtlActBChr *chr, s32 which);
+extern s32 BtlParam_GetChainKind(BtlActBChr *chr, s32 which);
 extern s32 BtlParam_GetKiDrain67(BtlActBChr *chr);
 #define BtlParam_GetDashSound ((s32 (*)(BtlActBChr *chr))BtlParam_GetDashSound)
 
@@ -2057,7 +2057,7 @@ s32 BtlAct_AttackHandler(BtlActBChr *chr, s32 phase) {
         }
         if (atk->cut >= 0) {
             cut = 0;
-            if (!BtlAct_IsAttackId(BtlOpp_GetSeenAction(chr)) || chr->actionFrame < BtlOpp_GetSeenUnk964(chr)) {
+            if (!BtlAct_IsAttackId(BtlOpp_GetSeenAction(chr)) || chr->actionFrame < BtlOpp_GetSeenActionFrame(chr)) {
                 cut = 1;
             }
             if (cut) {
@@ -2161,10 +2161,10 @@ s32 BtlAct_Action67to69(BtlActBChr *chr, s32 phase) {
             switch (BtlAct_GetCurrent(chr)) {
                 case 0x67:
                 case 0x68:
-                    BtlAct_Request(chr, BtlAct_GetChainAction(chr, BtlParam_GetUnk88(chr, 0)));
+                    BtlAct_Request(chr, BtlAct_GetChainAction(chr, BtlParam_GetChainKind(chr, 0)));
                     break;
                 case 0x69:
-                    BtlAct_Request(chr, BtlAct_GetChainAction(chr, BtlParam_GetUnk88(chr, 1)));
+                    BtlAct_Request(chr, BtlAct_GetChainAction(chr, BtlParam_GetChainKind(chr, 1)));
                     break;
             }
         }

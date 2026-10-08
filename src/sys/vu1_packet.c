@@ -65,7 +65,7 @@ u32 *Vu1Pkt_CallProg7(u32 chain, f32 w) {
 u32 *Vu1Pkt_LoadProg7(void) {
     u32 *p;
 
-    Dma_AddRef(D_002C2D30, D_002C3080 - D_002C2D30);
+    Dma_AddRef(gVu1Prog7, gVu1Prog8 - gVu1Prog7);
     p = Dma_Alloc(0xF0);
     Vu0Screen_StoreMtx(p + 0x14);
     Vu0Clip_StoreMtx(p + 0x24);
@@ -99,7 +99,7 @@ u32 *Vu1Pkt_CallProg0(u32 chain) {
 u32 *Vu1Pkt_LoadProg0(void) {
     u32 *p;
 
-    Dma_AddRef(D_002BF6B0, D_002BFAB0 - D_002BF6B0);
+    Dma_AddRef(gVu1Prog0, gVu1Prog1 - gVu1Prog0);
     p = Dma_Alloc(0x240);
     p[0] = VU1_DMA_CNT | 0x23;
     p[1] = 0;
@@ -131,7 +131,7 @@ u32 *Vu1Pkt_CallProg1(u32 obj) {
 u32 *Vu1Pkt_LoadProg1(void) {
     u32 *p;
 
-    Dma_AddRef(D_002BFAB0, D_002BFEA0 - D_002BFAB0);
+    Dma_AddRef(gVu1Prog1, gVu1Prog2a - gVu1Prog1);
     p = Dma_Alloc(0x240);
     p[0] = VU1_DMA_CNT | 0x23;
     p[1] = 0;
@@ -164,9 +164,9 @@ u32 *Vu1Pkt_LoadProg2(s32 alt) {
     u32 *p;
 
     if (alt) {
-        Dma_AddRef(D_002C01C0, D_002C04F0 - D_002C01C0);
+        Dma_AddRef(gVu1Prog2b, gVu1Prog4 - gVu1Prog2b);
     } else {
-        Dma_AddRef(D_002BFEA0, D_002C01C0 - D_002BFEA0);
+        Dma_AddRef(gVu1Prog2a, gVu1Prog2b - gVu1Prog2a);
     }
     p = Dma_Alloc(0x150);
     p[0] = VU1_DMA_CNT | 0x14;
@@ -198,7 +198,7 @@ void Vu1Pkt_CallProg4(u32 chain) {
 void Vu1Pkt_LoadProg4(void *mtx) {
     u32 *p;
 
-    Dma_AddRef(D_002C04F0, D_002C1180 - D_002C04F0);
+    Dma_AddRef(gVu1Prog4, gVu1Prog5 - gVu1Prog4);
     p = Dma_Alloc(0xE0);
     Mtx_Copy(p + 0x24, mtx);
     Vu0Screen_StoreMtx(p + 4);
@@ -232,7 +232,7 @@ void Vu1Pkt_CallProg5(u32 chain, void *mtx) {
 void Vu1Pkt_LoadProg5(void *mtx) {
     u32 *p;
 
-    Dma_AddRef(D_002C1180, D_002C1F00 - D_002C1180);
+    Dma_AddRef(gVu1Prog5, gVu1Prog6 - gVu1Prog5);
     p = Dma_Alloc(0x120);
     Mtx_StoreIdentity(p + 4);
     Mtx_Copy(p + 0x34, mtx);
@@ -369,7 +369,7 @@ u32 *Vu1Pkt_CallProg8(Vu1Node *node) {
 u32 *Vu1Pkt_LoadProg8(void) {
     u32 *p;
 
-    Dma_AddRef(D_002C3080, D_002C3380 - D_002C3080);
+    Dma_AddRef(gVu1Prog8, gVu1ProgEnd - gVu1Prog8);
     p = Dma_Alloc(0x140);
     p[0] = VU1_DMA_CNT | 0x13;
     p[1] = 0;
@@ -400,7 +400,7 @@ void Vu1Pkt_CallProg6(u32 chain) {
 void Vu1Pkt_LoadProg6(u8 *obj, void *mtx, f32 *vec) {
     u32 *p;
 
-    Dma_AddRef(D_002C1F00, D_002C2D30 - D_002C1F00);
+    Dma_AddRef(gVu1Prog6, gVu1Prog7 - gVu1Prog6);
     p = Dma_Alloc(0x130);
     memset(p, 0, 0x130);
     Mtx_Copy(p + 0x24, obj + 0x100);

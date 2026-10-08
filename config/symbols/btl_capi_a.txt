@@ -11,7 +11,7 @@ BtlCharApi_GetChara = 0x00204E78; // type:func
 BtlCharApi_GetHeight = 0x00204EA0; // type:func
 BtlCharApi_GetBodyUnkFF8 = 0x00204ED0; // type:func // guess
 BtlCharApi_GetCenterHeight = 0x00204F00; // type:func // guess
-BtlCharApi_GetBodyUnk1000 = 0x00204F30; // type:func // guess
+BtlCharApi_GetCamSideSlope = 0x00204F30; // type:func // guess
 // Character parameter block (obj +0x91C): u16 +0 (callers test bits 4, 8, 0x80), word +0x10, float +0xC8.
 // 0x204FC0: aura type = 3 with object flag 0x40000, else parameter byte +3 (BtlParam_GetAuraKind for a fighter); the two
 // callers pass it with the u16 to the aura effect constructors (0x164410, 0x170BB8).
@@ -32,10 +32,10 @@ BtlCharApi_GetPlayer = 0x00205230; // type:func
 BtlCharApi_GetOpponentObjId = 0x00205260; // type:func
 BtlCharApi_GetPartnerObjId = 0x00205298; // type:func
 // By roster index: obj +0x9C[n] (n < 5), obj +0x92C (technique table), obj +0x930 (skill table), obj +0x58.
-BtlCharApi_GetPlayerObjUnk9C = 0x002052D8; // type:func
+BtlCharApi_GetPlayerEffectPack = 0x002052D8; // type:func (guess)
 BtlCharApi_GetPlayerSuperData = 0x00205330; // type:func
 BtlCharApi_GetPlayerSkillData = 0x00205370; // type:func
-BtlCharApi_GetPlayerObjUnk58 = 0x002053B0; // type:func
+BtlCharApi_GetPlayerCharPack = 0x002053B0; // type:func
 // Pose readers. 0x2053F0: pose.pos + pose +0x20 (display offset) for a fighter, obj +0x970 otherwise: the position every
 // outside module uses. 0x2054A0: without the offset. 0x205528: pose +0x10 / obj +0x960. 0x2055B0: rotation plus root motion
 // rotation (pose +0x60), or plus the Euler angles of node 0's quaternion. 0x2056A0: pose +0x94 / obj +0x964. 0x2056F8,
@@ -61,7 +61,7 @@ BtlCharApi_GetNodeMtx = 0x00205A10; // type:func
 BtlCharApi_GetNodeMtx50 = 0x00205A98; // type:func
 BtlCharApi_GetNodeRot = 0x00205B20; // type:func // guess
 BtlCharApi_GetNodeQuat = 0x00205B78; // type:func
-BtlCharApi_GetPartUnk5C = 0x00205C00; // type:func
+BtlCharApi_GetNodeBoundSize = 0x00205C00; // type:func (guess)
 // 0x205C58: BtlChar_GetSpacing(chr, 0), the range BtlChar_UpdateLockOn compares the opponent distance with. 0x205C98: 1.0 /
 // 0.0 for an existing object.
 BtlCharApi_GetCloseRange = 0x00205C58; // type:func

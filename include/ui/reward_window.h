@@ -70,7 +70,7 @@ typedef struct TextBox {
     /* 0x00 */ s32 flags;      /* TEXTBOX_FLAG_* */
     /* 0x04 */ void *text;     /* text file: line n is at text + (((u32 *)text)[n + 1] & ~3) */
     /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;       /* TextBox_SetUnkC: 0 or 0x100 */
+    /* 0x0C */ s32 unkC;       /* TextBox_SetOffset: 0 or 0x100 */
     /* 0x10 */ s32 unk10;
     /* 0x14 */ u8 unk14[0x1C];
     /* 0x30 */ u8 color[4];    /* r, g, b, a */
@@ -84,9 +84,9 @@ typedef struct TextBox {
 } TextBox; /* size 0x8C */
 
 void TextBox_Init(TextBox *box, void *text, u32 preset);
-void TextBox_SetUnk50(TextBox *box, s32 value);
-void TextBox_SetUnk80(TextBox *box, s32 value);
-void TextBox_SetUnkC(TextBox *box, s32 a, s32 b);
+void TextBox_SetAlign(TextBox *box, s32 value);
+void TextBox_SetNoFlush(TextBox *box, s32 value);
+void TextBox_SetOffset(TextBox *box, s32 a, s32 b);
 void TextBox_SetRect(TextBox *box, s32 a, s32 b, s32 c, s32 d);
 void TextBox_SetColor(TextBox *box, u32 rgba);
 void TextBox_SetColor2(TextBox *box, u32 rgba);

@@ -57,8 +57,8 @@ typedef struct Vu1Track {
 } Vu1Track;
 
 /* VU1 microprograms (in the .vutext/.vudata area right after .text). */
-extern u8 D_002BF6B0[], D_002BFAB0[], D_002BFEA0[], D_002C01C0[], D_002C04F0[], D_002C1180[], D_002C1F00[], D_002C2D30[],
-    D_002C3080[], D_002C3380[];
+extern u8 gVu1Prog0[], gVu1Prog1[], gVu1Prog2a[], gVu1Prog2b[], gVu1Prog4[], gVu1Prog5[], gVu1Prog6[], gVu1Prog7[],
+    gVu1Prog8[], gVu1ProgEnd[];
 
 u32 *Vu1Pkt_CallProg7(u32 chain, f32 w);
 u32 *Vu1Pkt_LoadProg7(void);

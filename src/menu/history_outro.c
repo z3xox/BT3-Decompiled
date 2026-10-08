@@ -14,8 +14,8 @@ HistOutro *gHistOutro = NULL; /* 0x3B12F8 */
 
 extern char *strcpy(char *, const char *);
 extern void TextBox_Init(MTextBox *box, void *text, u32 preset);
-extern void TextBox_SetUnk80(MTextBox *box, s32 value);
-extern void TextBox_SetUnk50(MTextBox *box, s32 value);
+extern void TextBox_SetNoFlush(MTextBox *box, s32 value);
+extern void TextBox_SetAlign(MTextBox *box, s32 value);
 extern void TextBox_AttachLine(MFlash *flash, MFlashRef *ref, s32 x, s32 y, s32 line, MTextBox *box);
 extern void Flash_StepFrames(MFlash *flash, s32 step);
 extern void Voice_StopWithLip(void);
@@ -184,8 +184,8 @@ void HistOutro_Init(s32 section) {
     }
     for (i = 0; i < 3; i++) {
         TextBox_Init(&gHistOutro->box[i], gHistOutro->text, 0);
-        TextBox_SetUnk80(&gHistOutro->box[i], 1);
-        TextBox_SetUnk50(&gHistOutro->box[i], 1);
+        TextBox_SetNoFlush(&gHistOutro->box[i], 1);
+        TextBox_SetAlign(&gHistOutro->box[i], 1);
     }
 
     switch (gProgress->subMenu) {

@@ -450,7 +450,7 @@ s32 BtlObjFlash_Step(BobjObj *obj);
 s32 BtlObjFlash_GetColor(BobjObj *obj, Vec4 *color, f32 *alpha);
 s32 BtlObjFade_Step(BobjObj *obj);
 s32 BtlObjFade_Get(BobjObj *obj, f32 *out);
-void BtlObj_SetUnkB30(BobjObj *obj, s32 value);
+void BtlObj_SetAlphaAdd(BobjObj *obj, s32 value);
 void BtlObjFace_Reset(BobjFace *face, s32 keep);
 s32 BtlObjMdl_HasLipTrack(BobjMdl *mdl, u32 index);
 void BtlObjMdl_CopyTexAlpha(BobjMdl *mdl, BobjTexTable *src, BobjTexTable *dst);

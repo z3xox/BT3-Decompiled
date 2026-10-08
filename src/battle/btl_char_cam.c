@@ -877,7 +877,7 @@ shake:
 f32 ChrCam_GetSideLimit(ChrCamChr *chr) {
     f32 a;
 
-    a = Mathf_Atan(BtlCharApi_GetBodyUnk1000(chr->objId));
+    a = Mathf_Atan(BtlCharApi_GetCamSideSlope(chr->objId));
     if (a < 0.785398163f) {
         a = 0.785398163f;
     }
@@ -1189,10 +1189,10 @@ void ChrCam_StartCut(ChrCamChr *chr) {
     }
     cutFlags = def->cutFlags;
     if (flags & CHRCUTDEF_BLEND) {
-        ChrCam_BlendToCut(chr, &vecADelta, (Vec4 *)&D_002EC2A0, &vecCDelta, unk8C, unk94, valADelta, valBDelta,
+        ChrCam_BlendToCut(chr, &vecADelta, (Vec4 *)&gVu0ZeroVec, &vecCDelta, unk8C, unk94, valADelta, valBDelta,
                           valCDelta, time, cutFlags);
     } else {
-        ChrCam_SetCut(chr, &vecA, &vecADelta, &vecB, (Vec4 *)&D_002EC2A0, &vecC, &vecCDelta, unk88, valA,
+        ChrCam_SetCut(chr, &vecA, &vecADelta, &vecB, (Vec4 *)&gVu0ZeroVec, &vecC, &vecCDelta, unk88, valA,
                       valADelta, valB, valBDelta, valC, valCDelta, unk8C, unk90, unk94, time, cutFlags);
     }
 }

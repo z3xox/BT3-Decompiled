@@ -52,7 +52,7 @@ typedef struct ChrCam {
     /* 0x10 [0x430] */ Vec4 pos;      /* camera position after BtlCam_TraceStage: what the views get */
     /* 0x20 [0x440] */ Vec4 rot;      /* Euler angles (pitch, yaw, roll), each wrapped to -pi..pi; w forced to 0 */
     /* 0x30 [0x450] */ Vec4 target;   /* point looked at (the trace starts here) */
-    /* 0x40 [0x460] */ Vec4 unk40;    /* copy of *(Vec4 *)(obj + 0xFA0), refreshed by ChrCam_UpdateInput; read by BtlCharApi_GetCamUnk460 */
+    /* 0x40 [0x460] */ Vec4 unk40;    /* copy of *(Vec4 *)(obj + 0xFA0), refreshed by ChrCam_UpdateInput; read by BtlCharApi_GetCamBodyPos */
     /* 0x50 [0x470] */ CamShake shake;
     /* 0x70 [0x490] */ s32 hitObj;    /* BtlCam_TraceStage: what was hit */
     /* 0x74 [0x494] */ s32 hit;       /* BtlCam_TraceStage result (1 = the stage is between target and eye); returned by BtlCharApi_GetCamPose, read by 0x1D16F8 */

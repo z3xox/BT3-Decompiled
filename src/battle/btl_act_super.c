@@ -61,7 +61,7 @@ extern void BtlAct_Request(BtlSuperChr *chr, s32 id);
 extern s32 BtlAct_GetRequested(BtlSuperChr *chr);
 extern s32 BtlAct_IsTechniqueId(s32 id);
 extern void BtlAct_PushAngle(BtlSuperChr *chr, f32 angle, f32 speed, f32 arg);
-extern void BtlAct_SetObjUnk(BtlSuperChr *chr, f32 a, f32 b);
+extern void BtlAct_AddSway(BtlSuperChr *chr, f32 a, f32 b);
 extern void BtlAnim_PlaySub(BtlSuperChr *chr, s32 anim);
 extern void BtlAnim_SetStep(BtlSuperChr *chr, f32 step);
 extern void BtlAnim_SetDuration(BtlSuperChr *chr, f32 seconds);
@@ -73,7 +73,7 @@ extern s32 BtlOpp_GetParamWord0(BtlSuperChr *chr);
 extern void BtlOpp_GetTargetRot(BtlSuperChr *chr, Vec4 *out);
 extern void BtlOpp_GetObjVecFA0(BtlSuperChr *chr, Vec4 *out);
 extern void BtlMove_SetHeading(BtlSuperChr *chr, f32 yaw, f32 pitch);
-extern void BtlChar_SetUnk1310(BtlSuperChr *chr, Vec4 *v);
+extern void BtlChar_RequestBodyWarp(BtlSuperChr *chr, Vec4 *v);
 
 extern s32 BtlAct_GetCurrentClass(BtlSuperChr *chr);
 extern s32 BtlAct_GetPrev(BtlSuperChr *chr);
@@ -309,9 +309,9 @@ void BtlSuper_FitAnimToEvent(BtlSuperChr *chr, f32 seconds) {
     BtlAnim_SetStep(chr, step);
 }
 
-/* Forwards 0.2 and 2.0 to BtlAct_SetObjUnk. */
-void BtlSuper_SetObjUnk(BtlSuperChr *chr) {
-    BtlAct_SetObjUnk(chr, 0.2f, 2.0f);
+/* Forwards 0.2 and 2.0 to BtlAct_AddSway. */
+void BtlSuper_AddSway(BtlSuperChr *chr) {
+    BtlAct_AddSway(chr, 0.2f, 2.0f);
 }
 
 /* Charge rumble: power 0.8 for 0.1 s. */
@@ -550,7 +550,7 @@ void BtlSuper_SetupRushDamage(BtlSuperChr *chr, s32 cls, s32 fromAnim) {
         BtlMove_SetHeading(chr, rot.y, 0.0f);
         BtlChar_SetFlag(chr, 0x9B);
         BtlOpp_GetObjVecFA0(chr, &v);
-        BtlChar_SetUnk1310(chr, &v);
+        BtlChar_RequestBodyWarp(chr, &v);
     }
     if (BtlSuper_GetId(chr, cls) == 0x2EF) {
         if (!(BtlOpp_GetParamWord0(chr) & 0x80)) {
@@ -628,7 +628,7 @@ void BtlAct_SuperBeamHandler(BtlSuperChr *chr, s32 phase) {
             BtlAnim_AdvanceLoop(chr, 0);
             BtlSuper_RequestHitStop(chr, 0);
             BtlSuper_SetClass(chr, cls);
-            BtlSuper_SetObjUnk(chr);
+            BtlSuper_AddSway(chr);
             BtlSuper_VibrateCharge(chr);
             if (++*timer > BTL_SUPER_TIMEOUT) {
                 BtlChar_SetHeldFlag(chr, 0xA7);
@@ -780,7 +780,7 @@ void BtlAct_SuperWarpBeamHandler(BtlSuperChr *chr, s32 phase) {
         case 0x128:
         case 0x14A:
             BtlAnim_AdvanceLoop(chr, 0);
-            BtlSuper_SetObjUnk(chr);
+            BtlSuper_AddSway(chr);
             BtlSuper_VibrateCharge(chr);
             aim = 1;
             switch (*stage) {
@@ -964,7 +964,7 @@ void BtlAct_SuperLongBeamHandler(BtlSuperChr *chr, s32 phase) {
             BtlAnim_AdvanceLoop(chr, 0);
             BtlSuper_RequestHitStop(chr, 0);
             BtlSuper_SetClass(chr, cls);
-            BtlSuper_SetObjUnk(chr);
+            BtlSuper_AddSway(chr);
             BtlSuper_VibrateCharge(chr);
             if (++*timer > BTL_SUPER_TIMEOUT) {
                 BtlChar_SetHeldFlag(chr, 0xA7);
@@ -1097,7 +1097,7 @@ void BtlAct_SuperChargeHandler(BtlSuperChr *chr, s32 phase) {
         case 0x128:
         case 0x14A:
             BtlAnim_AdvanceLoop(chr, 0);
-            BtlSuper_SetObjUnk(chr);
+            BtlSuper_AddSway(chr);
             BtlSuper_VibrateCharge(chr);
             aim = 1;
             BtlSuper_SetClass(chr, cls);
@@ -1275,7 +1275,7 @@ void BtlAct_SuperRepeatHandler(BtlSuperChr *chr, s32 phase) {
         case 0x14A:
             BtlAnim_AdvanceLoop(chr, 0);
             BtlSuper_RequestHitStop(chr, 0);
-            BtlSuper_SetObjUnk(chr);
+            BtlSuper_AddSway(chr);
             BtlSuper_VibrateCharge(chr);
             BtlSuper_SetClass(chr, cls);
             if (BtlInput_TestAction(chr, 0x6F, 1)) {
@@ -1700,7 +1700,7 @@ extern s32 BtlAct_GetLandingAction(ActGChr *chr, s32 slot, s32 arg2);
 extern f32 BtlOpp_GetTargetYaw(ActGChr *chr);
 #define BtlMove_SetHeading ((void (*)(ActGChr *chr, f32 yaw, f32 pitch))BtlMove_SetHeading)
 extern void BtlMove_MoveVertical(ActGChr *chr, f32 speed, f32 accel);
-extern s32 BtlSuper_GetUnk1E(ActGChr *chr, s32 slot);
+extern s32 BtlSuper_GetClashPower(ActGChr *chr, s32 slot);
 #define BtlSuper_GetHitDirKind ((s32 (*)(ActGChr *chr, s32 slot))BtlSuper_GetHitDirKind)
 #define BtlMember_HasAbility ((s32 (*)(ActGChr *chr, s32 n))BtlMember_HasAbility)
 #define BtlMember_GetActiveGauge ((ActGGauge *(*)(ActGChr *chr))BtlMember_GetActiveGauge)
@@ -1726,7 +1726,7 @@ extern s32 BtlOpp_GetPlayer(ActGChr *chr);
 extern ActGChr *BtlChar_Get(s32 i);
 extern s32 BtlChar_IsDead(ActGChr *chr);
 extern void BtlChar_RequestPlaceRelative(ActGChr *chr, s32 slot, s32 step, s32 self);
-extern void BtlChar_ResetUnk1310(ActGChr *chr);
+extern void BtlChar_ResetBodyWarp(ActGChr *chr);
 extern void BtlChange_RequestObject(s32 player, s32 id, s32 costume, s32 variant, s32 slot);
 extern void BtlPartner_LinkToOwner(ActGChr *chr);
 extern void BtlPartner_SetFlag80(ActGChr *chr, s32 on);
@@ -1737,7 +1737,7 @@ extern void BtlPartner_Release(ActGChr *chr);
 #define BtlAnim_GetFrame ((f32 (*)(ActGChr *chr))BtlAnim_GetFrame)
 extern s32 BtlAct_GetMotionLevel(ActGChr *chr, s32 motion);
 #define BtlSuper_GetFlagsA ((s32 (*)(ActGChr *chr, s32 slot))BtlSuper_GetFlagsA)
-extern s32 BtlSuper_GetUnk223(ActGChr *chr, s32 slot);
+extern s32 BtlSuper_GetStageFxEndStep(ActGChr *chr, s32 slot);
 #define BtlSuper_SetupRushDamage ((void (*)(ActGChr *chr, s32 slot, s32 fromAnim))BtlSuper_SetupRushDamage)
 extern s32 BtlSuper_GetFrames22C(ActGChr *chr, s32 slot);
 extern s32 BtlSuper_GetFrames238(ActGChr *chr, s32 slot);
@@ -2263,7 +2263,7 @@ void BtlAct_SuperRushSequenceHandler(ActGChr *chr, s32 phase) {
                     case 1:
                         if (BtlChange_IsLoadedFor(chr->thr.defSide)) {
                             if (!(chr->work[0] & 1)) {
-                                BtlChar_ResetUnk1310(chr);
+                                BtlChar_ResetBodyWarp(chr);
                                 BtlChange_SetReady(chr->thr.defSide);
                                 BtlAnim_Request(chr, BtlAnim_GetId(chr), 0.0f);
                             }
@@ -2301,7 +2301,7 @@ void BtlAct_SuperRushSequenceHandler(ActGChr *chr, s32 phase) {
                     case 1:
                         if (BtlChange_IsLoadedFor(chr->thr.atkSide)) {
                             if (chr->work[0] & 1) {
-                                BtlChar_ResetUnk1310(chr);
+                                BtlChar_ResetBodyWarp(chr);
                                 BtlChange_SetReady(chr->thr.atkSide);
                                 BtlAnim_Request(chr, BtlAnim_GetId(chr), 0.0f);
                             }
@@ -2350,7 +2350,7 @@ void BtlAct_SuperRushSequenceHandler(ActGChr *chr, s32 phase) {
         }
         if (chr->work[0] & 1) {
             BtlChar_SetFlag(chr, 0x8B);
-            if (level < BtlSuper_GetUnk223(chr, slot)) {
+            if (level < BtlSuper_GetStageFxEndStep(chr, slot)) {
                 BtlChar_SetFxBit(chr, 0x11);
             }
             if (BtlSuper_GetFlagsA(chr, slot) & 0x20000000) {
@@ -2963,7 +2963,7 @@ s32 BtlAct_UltimateStartHandler(ActGChr *chr, s32 phase) {
  * clash A. A technique of kind 1 (BtlSuper_GetHitDirKind, a beam) holds motion 0x16C, anything else the dash loop;
  * both are aimed up / down with BtlAct_SetPitchMotion unless technique flag B 0x1000 is set.
  *
- * The score is chr->clashPower (fighter + 0xE4C, "clashCountA" in btl_char_flag.h): BtlSuper_GetUnk1E(chr, slot) / 20,
+ * The score is chr->clashPower (fighter + 0xE4C, "clashCountA" in btl_char_flag.h): BtlSuper_GetClashPower(chr, slot) / 20,
  * + 10 / + 6 / + 3 for ability 0x14 / 0x13 / 0x12, - 10 / - 6 / - 3 for ability 0x6A / 0x69 / 0x68, and + 1 for
  * every frame from frame 16 on in which input 51 (a direction command) tests true. BtlClash_Update
  * (btl_clash.c) compares the two scores every frame and raises the result flags read here:
@@ -2984,7 +2984,7 @@ void BtlAct_ClashStruggleHandler(ActGChr *chr, s32 phase) {
         BtlChar_ClearFlag(chr, 0xAA);
         BtlChar_ClearFlagRange(chr, 0xBF, 0xC3);
         BtlChar_ClearFlag(chr, 0x11F);
-        chr->clashPower = BtlSuper_GetUnk1E(chr, slot) / 20;
+        chr->clashPower = BtlSuper_GetClashPower(chr, slot) / 20;
         if (BtlMember_HasAbility(chr, 0x14)) {
             chr->clashPower += 10;
         } else if (BtlMember_HasAbility(chr, 0x13)) {

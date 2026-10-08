@@ -156,7 +156,7 @@ extern void EftObj_Nop(s32 objId, s32 a1);
 extern void ColSphere_Set(void *sphere, Vec4 *pos, f32 radius);
 extern void ColCapsule_Set(void *box, Vec4 *a, Vec4 *pos, f32 size);
 
-extern const EftKVec D_002ECB60; /* {0, -1, 0, 1}: a local initialiser of EftShotTech_UpdateTargetBurst */
+extern const EftKVec gEftShotTechUpDir; /* {0, -1, 0, 1}: a local initialiser of EftShotTech_UpdateTargetBurst */
 extern s32 gEftTechEvtTaskClass[6];        /* class of the timeline task */
 
 /* ---- "shots" technique module, second half ---- */
@@ -202,7 +202,7 @@ void EftShotTech_UpdateTargetBurst(EftKTask *task) {
     s32 opp = BtlCharApi_GetOpponentObjId(src->objId);
 
     if ((src->def->flags & 0x400) && EftShot_TestBits(opp, 4)) {
-        dir = D_002ECB60;
+        dir = gEftShotTechUpDir;
         BtlCharApi_GetNodePos(opp, 3, &pos);
         EftGndDust_SpawnLandingScaled(src->objId, &pos, (Vec4 *)&dir, 1.0f, BtlCharApi_GetHeight(opp) * 0.03f);
     }

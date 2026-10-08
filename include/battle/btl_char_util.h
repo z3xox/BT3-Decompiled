@@ -97,7 +97,7 @@ Pad *BtlChar_GetPad(BtlCharGetChr *chr);
 s32 BtlChar_IsFrozen(BtlCharGetChr *chr);
 s32 BtlChar_IsFree(BtlCharGetChr *chr);
 s32 BtlChar_IsDead(BtlCharGetChr *chr);
-s32 BtlChar_TestMemberUnk70(BtlCharGetChr *chr);
+s32 BtlChar_IsBodyChanged(BtlCharGetChr *chr);
 s32 BtlChar_GetFrame(void);
 s32 BtlChar_FrameMod(s32 n);
 s32 BtlChar_Rand(void);

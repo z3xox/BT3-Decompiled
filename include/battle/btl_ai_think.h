@@ -167,14 +167,14 @@ typedef struct AiThActBody {
  * level 0, hi at level 29, BtlAi_ScaleByLevel interpolates. Offsets (m) through the pointers the code forms.
  */
 typedef struct AiThRates {
-    /* 0x000 */ s8 basic[14][8];   /* by class; columns by condition 35..39 through D_002EDC70 */
-    /* 0x070 */ s8 tblA[14][8];    /* weight table 0, columns D_002EDCE0 */
-    /* 0x0E0 */ s8 tblB[14][8];    /* weight table 1, columns D_002EDD50 */
-    /* 0x150 */ u8 act[36];        /* conditions 57..77, index through D_002EDDC0 */
-    /* 0x174 */ s8 tblC[14][4];    /* weight table 2, columns D_002EDDD8 */
-    /* 0x1AC */ s8 tblD[20][8];    /* weight table 3 (by sub), columns D_002EDE10 */
-    /* 0x24C */ s8 tblE[14][4];    /* weight table 4, columns D_002EDEB0 */
-    /* 0x284 */ s8 tblF[4][8];     /* weight table 5 (by sub), columns D_002EDEE8 */
+    /* 0x000 */ s8 basic[14][8];   /* by class; columns by condition 35..39 through gBtlAiRateColsBasic */
+    /* 0x070 */ s8 tblA[14][8];    /* weight table 0, columns gBtlAiRateColsA */
+    /* 0x0E0 */ s8 tblB[14][8];    /* weight table 1, columns gBtlAiRateColsB */
+    /* 0x150 */ u8 act[36];        /* conditions 57..77, index through gBtlAiRateColsAct */
+    /* 0x174 */ s8 tblC[14][4];    /* weight table 2, columns gBtlAiRateColsC */
+    /* 0x1AC */ s8 tblD[20][8];    /* weight table 3 (by sub), columns gBtlAiRateColsD */
+    /* 0x24C */ s8 tblE[14][4];    /* weight table 4, columns gBtlAiRateColsE */
+    /* 0x284 */ s8 tblF[4][8];     /* weight table 5 (by sub), columns gBtlAiRateColsF */
     /* 0x2A4 */ u8 misc[0x1C];     /* single rates */
 } AiThRates; /* size 0x2C0 */
 

@@ -43,7 +43,7 @@ extern void BtlObjAnim_PlayModel(u8 *obj, s32 anim, s32 mode);
 extern void BtlObj_SetPartVisible(u8 *obj, u32 part, s32 on);
 extern void BtlObj_Init(s32 prealloc);
 extern void BtlObj_Term(void);
-extern void BtlObj_SetUnk44FC4(f32 value);
+extern void BtlObj_SetDefaultAnimStep(f32 value);
 extern void BtlObj_UpdateAll(void);
 extern void BtlObj_UpdateVisibility(s32 view);
 extern void BtlObj_FinishVisibility(s32 split);
@@ -358,7 +358,7 @@ void ChrView_Init(void) {
         SList_PushFront(&gChrView->free, &gChrView->slot[i].node);
     }
     BtlObj_Init(0);
-    BtlObj_SetUnk44FC4(1.0f);
+    BtlObj_SetDefaultAnimStep(1.0f);
     OrbitCam_Init();
     Job_Clear();
     job = &ChrView_Get()->job;

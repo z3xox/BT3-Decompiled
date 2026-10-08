@@ -13,7 +13,7 @@
  * Everything this file calls outside itself is another module that is not decompiled. The names used for
  * the task system (BtlTask*), BtlChar_FindByObjId and BtlStage_IsReady are guesses recorded in
  * config/symbols/btl_scene.txt; Battle_GetStage, Battle_IsTimeLimitOff, Battle_GetTimeLimit and
- * Battle_GetRuleUnk10 come from battle/battle_setup.h.
+ * Battle_IsStageChangeEnabled come from battle/battle_setup.h.
  * The callees still called func_XXXXXXXX, from a first read of their code:
  *
  *   next module (blast records, gp 0x2FE9A8; 0x12DD80..0x12EEA0)
@@ -34,7 +34,7 @@
  *     BtlCharApi_GetHeight(i)   BtlObj_Get(i)->0xFF4 as float, 10.0 when there is no object
  *     BtlCharApi_IsFighter(id)  1 when a fighter has this object id
  *     BtlCharApi_GetOpponentObjId(id)  object id of that fighter's opponent
- *     BtlCharApi_GetPlayerObjUnk58(i)   pack pointer of fighter i (0x1DC280 -> +0x58)
+ *     BtlCharApi_GetPlayerCharPack(i)   pack pointer of fighter i (0x1DC280 -> +0x58)
  *     BtlCharApi_IsHidden(id)  bit 1 of object +0xA40, inverted
  *     BtlCharApi_IsFrozen(id)  the fighter is in hit-stop (+0x1320 > 0); BtlCharApi_AnyFrozen() any fighter is
  *     BtlCharApi_IsInRushSequence(id)  action id in 0x12D..0x12F or 0x139..0x13B
@@ -52,9 +52,9 @@
 extern void *memset(void *dst, s32 c, u32 n);
 
 extern BtlTaskClass gBtlSceneRootClass; /* 0x2C3490: {BtlSceneRoot_Update, BtlSceneRoot_Init, BtlSceneRoot_Term} */
-extern BtlTaskClass D_002C3550;         /* layer 0 */
-extern BtlTaskClass D_002C35D0;         /* layer 4 */
-extern BtlTaskClass D_002C36D0;         /* layer 1 */
+extern BtlTaskClass gEftStageClass;         /* layer 0 */
+extern BtlTaskClass gEftBurstLayerClass;         /* layer 4 */
+extern BtlTaskClass gEftShotMgrClass;         /* layer 1 */
 extern BtlTaskClass gEftCharRootClass;         /* layer 2 */
 extern BtlTaskClass gEftLayer3Class;         /* layer 3 */
 
@@ -106,7 +106,7 @@ extern s32 BtlChars_IsTimeStopped(void);
 extern f32 BtlCharApi_GetHeight(s32 objId);
 extern s32 BtlCharApi_IsFighter(s32 objId);
 extern s32 BtlCharApi_GetOpponentObjId(s32 objId);
-extern s32 *BtlCharApi_GetPlayerObjUnk58(s32 side);
+extern s32 *BtlCharApi_GetPlayerCharPack(s32 side);
 extern s32 BtlCharApi_IsHidden(s32 objId);
 extern s32 BtlCharApi_IsFrozen(s32 objId);
 extern s32 BtlCharApi_AnyFrozen(void);
@@ -251,7 +251,7 @@ s32 BtlScene_TestCharPackBit(s32 side, s32 bit) {
 
 /* Returns entry idx of a character's pack (0x2053B0), or NULL when the character has none. */
 s32 *BtlScene_GetCharPackEntry(s32 side, s32 idx) {
-    s32 *base = BtlCharApi_GetPlayerObjUnk58(side);
+    s32 *base = BtlCharApi_GetPlayerCharPack(side);
 
     if (base != NULL) {
         return (s32 *)((u8 *)base + ((u32)base[idx] >> 2 << 2));
@@ -391,7 +391,7 @@ void BtlScene_FreeLayer0(void) {
 /* Creates layer 0 at the head of the group if it does not exist. */
 void BtlScene_CreateLayer0(void) {
     if (gBtlScene->layer[0] == NULL) {
-        gBtlScene->layer[0] = BtlTaskList_AddHead(gBtlScene->group, &D_002C3550, NULL);
+        gBtlScene->layer[0] = BtlTaskList_AddHead(gBtlScene->group, &gEftStageClass, NULL);
     }
 }
 
@@ -582,7 +582,7 @@ void BtlScene_CheckStageChange(void) {
         target = BtlCharApi_GetOpponentObjId(rec->objId);
         attr = EftHit_GetTaskFlags(i);
         if (rec->active != 0) {
-            if (Battle_GetRuleUnk10() && EftHit_HasDefFlag200000(rec) && BtlCharApi_IsTargetBelowHalfHp(rec->objId, target)) {
+            if (Battle_IsStageChangeEnabled() && EftHit_HasDefFlag200000(rec) && BtlCharApi_IsTargetBelowHalfHp(rec->objId, target)) {
                 hit = 1;
             } else if (BtlCharApi_CanTechniqueFinish(rec->objId, target)) {
                 hit = 2;
@@ -724,10 +724,10 @@ void BtlSceneRoot_Update(void) {
 /* Creates the layer tasks enabled in layerMask, in the order 0, 1, 2, 3, 4. */
 void BtlScene_CreateLayers(void *group) {
     if (gBtlScene->layerMask & 8) {
-        gBtlScene->layer[0] = BtlTaskList_AddTail(gBtlScene->group, &D_002C3550, NULL);
+        gBtlScene->layer[0] = BtlTaskList_AddTail(gBtlScene->group, &gEftStageClass, NULL);
     }
     if (gBtlScene->layerMask & 4) {
-        gBtlScene->layer[1] = BtlTaskList_AddTail(gBtlScene->group, &D_002C36D0, NULL);
+        gBtlScene->layer[1] = BtlTaskList_AddTail(gBtlScene->group, &gEftShotMgrClass, NULL);
     }
     if (gBtlScene->layerMask & 2) {
         gBtlScene->layer[2] = BtlTaskList_AddTail(gBtlScene->group, &gEftCharRootClass, NULL);
@@ -736,7 +736,7 @@ void BtlScene_CreateLayers(void *group) {
         gBtlScene->layer[3] = BtlTaskList_AddTail(gBtlScene->group, &gEftLayer3Class, NULL);
     }
     if (gBtlScene->layerMask & 0x10) {
-        gBtlScene->layer[4] = BtlTaskList_AddTail(gBtlScene->group, &D_002C35D0, NULL);
+        gBtlScene->layer[4] = BtlTaskList_AddTail(gBtlScene->group, &gEftBurstLayerClass, NULL);
     }
 }
 

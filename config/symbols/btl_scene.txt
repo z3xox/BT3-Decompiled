@@ -1,6 +1,6 @@
 // Battle facade (src/battle/btl_facade.c = 0x12BD58..0x12C9F0) and battle effect scene (src/battle/btl_scene.c =
 // 0x12C9F0..0x12DD80). Names of other modules that these two files use are not repeated here: BattleSide_*,
-// BattleResult_Set, BtlEvent_*, Battle_GetStage / Battle_IsTimeLimitOff / Battle_GetTimeLimit / Battle_GetRuleUnk10
+// BattleResult_Set, BtlEvent_*, Battle_GetStage / Battle_IsTimeLimitOff / Battle_GetTimeLimit / Battle_IsStageChangeEnabled
 // (battle_setup.txt, battle_work.txt), BtlSeq_* (btl_seq.txt, game.txt), BtlPool_* (rand_pool.txt), BtlObj_Get,
 // BtlChar_Get (game.txt), DemoCam_* (btl_cam.txt).
 

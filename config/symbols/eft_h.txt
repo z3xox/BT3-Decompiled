@@ -16,7 +16,7 @@ EftShot_DestroyChar = 0x0014BB20; // type:func
 EftShot_CreateChar = 0x0014BB98; // type:func
 // 25.5 / 24 / 39 / 21 / 0 frames by technique kind, EftShotParam.unk5 and id; EftShot_Start hands it to 0x158460.
 EftShot_GetLeadTime = 0x0014BC00; // type:func // guess
-// Tail call of BtlCharApi_GetPlayerObjUnk9C(chr, slot): the effect pack of the slot's technique.
+// Tail call of BtlCharApi_GetPlayerEffectPack(chr, slot): the effect pack of the slot's technique.
 EftShot_GetCharPack = 0x0014BC98; // type:func
 
 // --- effect type -1: nothing (classes 0x2C3788 group, 0x2C37A0 instance) ---------------------------------------

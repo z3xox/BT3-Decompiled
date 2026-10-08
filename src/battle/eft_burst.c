@@ -1205,7 +1205,7 @@ typedef struct EftBattleWork {
 } EftBattleWork;
 extern EftBattleWork *Battle_GetWork(void);
 
-extern EftEVec D_002C3630; /* (0, 0, 0, 1) */
+extern EftEVec gEftWaterOrigin; /* (0, 0, 0, 1) */
 
 #define EftBurst_AllocPtcl ((EftTransPart *(*)(void))EftBurst_AllocPtcl)
 #define EftBurst_InitSpark ((void (*)(EftTransPart *part, s32 idx))EftBurst_InitSpark)

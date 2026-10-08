@@ -2,7 +2,7 @@
 #include "battle/eft_tech_modules.h"
 
 /*
- * Speed-line spawners, 0x15EF18..0x15F728: the first two functions of the speed-line module (class D_002C3A18,
+ * Speed-line spawners, 0x15EF18..0x15F728: the first two functions of the speed-line module (class gEftSpdLineClass,
  * state gEftSpdLine; the rest of it is eft_aura.c). Both only create draw segments; positions come from libc rand().
  *
  * .rodata of this file, 0x2ECBA0..0x2ECC20, byte-identical to the original: the node table and the two `up`
@@ -24,7 +24,7 @@ extern f32 Mathf_Sin(f32 angle);
 extern f32 BtlCharApi_GetHeight(s32 objId);
 extern void BtlCharApi_GetDir(s32 objId, Vec4 *out);
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out);
-extern f32 BtlCharApi_GetPartUnk5C(s32 objId, s32 part);
+extern f32 BtlCharApi_GetNodeBoundSize(s32 objId, s32 part);
 
 extern void EftSpdLine_AddTrail(s32 objId, Vec4 *pos, Vec4 *dir);
 extern void EftSpdLine_AddStreak(s32 objId, Vec4 *from, Vec4 *to, Vec4 *dir, f32 width, f32 life, f32 fade);
@@ -130,7 +130,7 @@ s32 EftSpdLine_SpawnPartStreaks(s32 objId, Vec4 *dir, s32 part) {
     if (gEftSpdLine == NULL) {
         return 0;
     }
-    size = BtlCharApi_GetPartUnk5C(objId, part) * 0.4f;
+    size = BtlCharApi_GetNodeBoundSize(objId, part) * 0.4f;
     if (size < 0.8f) {
         size = BtlCharApi_GetHeight(objId) * 0.05f * 0.8f;
     }

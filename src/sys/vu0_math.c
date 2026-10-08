@@ -57,8 +57,8 @@ extern void Vec3_Sub(Vec4 *out, Vec4 *a, Vec4 *b);
 extern void Vec4_Add(Vec4 *out, Vec4 *a, Vec4 *b);
 extern void Vec4_Scale(Vec4 *out, Vec4 *v, f32 s);
 
-extern const Mtx44 D_002EC260; /* the identity matrix */
-extern f32 D_002FC32C;         /* 0.1234141f, the boot seed */
+extern const Mtx44 gMtxIdentity; /* the identity matrix */
+extern f32 gVu0RandSeed;         /* 0.1234141f, the boot seed */
 
 void Vec3_Set(Vec4 *v, f32 x, f32 y, f32 z);
 void Vec3_DirToEuler(Vec4 *out, Vec4 *dir);
@@ -1081,7 +1081,7 @@ __asm__(
 
 /* 0x121DA8: boot-time set-up of the VU0 state and of both random generators. */
 void Vu0_Init(void) {
-    Rand_SeedFloat(D_002FC32C);
+    Rand_SeedFloat(gVu0RandSeed);
     Vu0_InitAxisRegs();
     Vu0Cur_Init();
     Vu0Cur_ResetStack();
@@ -1093,7 +1093,7 @@ void Vu0_CheckState(void) {
     Mtx44 m;
 
     Mtx_StoreIdentity(&m);
-    memcmp(&m, &D_002EC260, sizeof(Mtx44));
+    memcmp(&m, &gMtxIdentity, sizeof(Mtx44));
     Vu0Cur_IsStackUsed();
 }
 
@@ -1516,7 +1516,7 @@ __asm__(
 void Vec4_RotateEuler(Vec4 *out, Vec4 *angles, Vec4 *v) {
     Mtx44 m;
 
-    Mtx_RotateZXY(&m, &D_002EC260, angles);
+    Mtx_RotateZXY(&m, &gMtxIdentity, angles);
     Mtx_MulVec4(out, &m, v);
 }
 

@@ -4,7 +4,7 @@
 // 0x180AD0 EftShotFxMgr_Init; global gEftShotFx = 0x2FF1B0 is in eft_t.txt). The prefix is kept so the module has one
 // name; what it draws is the teleport effect (fighter effect requests 0xC..0xF, object animation event bit 42): black
 // vertical streaks on the body and in a column around it. A better module name would be EftVanish.
-// Callbacks of the task class D_002C3EC0 = {update 0x180CC0, init 0x180AD0, term, post-update, 0, draw}.
+// Callbacks of the task class gEftShotFxClass = {update 0x180CC0, init 0x180AD0, term, post-update, 0, draw}.
 EftShotFx_Term = 0x00180BF8; // type:func
 EftShotFx_Update = 0x00180CC0; // type:func
 EftShotFx_PostUpdate = 0x00180CE0; // type:func

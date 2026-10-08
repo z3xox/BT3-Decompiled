@@ -722,13 +722,13 @@ s32 BtlActSwitch_SetLeaveCut(BtlActHChr *chr) {
         hidden = 1;
     }
     if (onFighter) {
-        ChrCam_SetCut(chr, &D_002EC2A0, &D_002EC2A0, &D_002EC2A0, &D_002EC2A0, &D_002EC2A0, &D_002EC2A0, 3, 0.0f,
+        ChrCam_SetCut(chr, &gVu0ZeroVec, &gVu0ZeroVec, &gVu0ZeroVec, &gVu0ZeroVec, &gVu0ZeroVec, &gVu0ZeroVec, 3, 0.0f,
                       BTL_DEG(90.0f), -0.9f, -0.4f, BtlCharApi_GetHeight(chr->objId) * 1.5f, BtlCharApi_GetHeight(chr->objId) * 0.5f,
                       3, 3, 3, 0x3C, 0xC5);
     } else {
         BtlStage_GetPlace(&pos, &rot);
         pos.y -= 5.0f;
-        ChrCam_SetCut(chr, &pos, &D_002EC2A0, &pos, &D_002EC2A0, &pos, &D_002EC2A0, -1, 0.0f, BTL_DEG(-45.0f), -0.2f,
+        ChrCam_SetCut(chr, &pos, &gVu0ZeroVec, &pos, &gVu0ZeroVec, &pos, &gVu0ZeroVec, -1, 0.0f, BTL_DEG(-45.0f), -0.2f,
                       0.0f, 100.0f, 0.0f, -1, -1, -1, 0x3C, 0xC5);
     }
     return hidden;
@@ -748,7 +748,7 @@ void BtlActSwitch_SetEnterCut(BtlActHChr *chr) {
     b.x = a.x;
     b.y = a.y - BtlCharApi_GetHeight(chr->objId) * 0.5f;
     b.z = a.z;
-    ChrCam_SetCut(chr, &a, &D_002EC2A0, &a, &D_002EC2A0, &b, &D_002EC2A0, -1,
+    ChrCam_SetCut(chr, &a, &gVu0ZeroVec, &a, &gVu0ZeroVec, &b, &gVu0ZeroVec, -1,
                   BtlUtil_WrapAngle(BtlChar_GetPos(chr)->facing + BTL_DEG(180.0f)), 0.0f, 0.0f, 0.0f,
                   BtlCharApi_GetHeight(chr->objId) + 5.0f, 0.0f, -1, -1, 0x11, 0xF, 0xC5);
 }
@@ -1460,7 +1460,7 @@ extern BtlActIRoster *gBtlChars;
 #define BtlChar_GetObj ((BtlActIObj *(*)(BtlActIChr *chr))BtlChar_GetObj)
 extern s32 BtlChar_IsFree(BtlActIChr *chr);
 #define BtlChar_IsDead ((s32 (*)(BtlActIChr *chr))BtlChar_IsDead)
-extern s32 BtlChar_TestMemberUnk70(BtlActIChr *chr);
+extern s32 BtlChar_IsBodyChanged(BtlActIChr *chr);
 extern s32 BtlChar_FrameMod(s32 n);
 #define BtlChar_TestFlag ((s32 (*)(BtlActIChr *chr, s32 n))BtlChar_TestFlag)
 #define BtlChar_TestPrevFlag ((s32 (*)(BtlActIChr *chr, s32 n))BtlChar_TestPrevFlag)
@@ -1554,16 +1554,16 @@ extern void BtlStat_SetKind4(BtlActIChr *chr, s32 stat, s32 slot, s32 val, s32 a
 extern void BtlStat_SetPenalty(BtlActIChr *chr, s32 stat, s32 slot, s32 val);
 
 /* Character parameters (btl_param.c / btl_tech.c). */
-extern s32 BtlParam_GetUnk0(BtlActIChr *chr);
+extern s32 BtlParam_GetCharaFlags(BtlActIChr *chr);
 #define BtlParam_GetFlags ((s32 (*)(BtlActIChr *chr))BtlParam_GetFlags)
 extern s32 BtlParam_GetFlags2(BtlActIChr *chr);
 extern s32 BtlParam_GetFlags3(BtlActIChr *chr);
 extern s32 BtlParam_GetAmountA(BtlActIChr *chr);   /* ki cost: 10000; 5000 with ability 0x23; 0 with ability 0x24 */
 extern s32 BtlParam_GetAmountB(BtlActIChr *chr);   /* ki cost: 20000; 10000; 0 */
-extern s32 BtlParam_GetCount80(BtlActIChr *chr);   /* how many ki blasts can be fired in a row */
-extern s32 BtlParam_GetUnk84(BtlActIChr *chr, s32 n);
-extern s32 BtlParam_GetUnk88(BtlActIChr *chr, s32 n);
-extern s32 BtlParam_GetUnk8A(BtlActIChr *chr, s32 n);
+extern s32 BtlParam_GetBlastLimitA(BtlActIChr *chr);   /* how many ki blasts can be fired in a row */
+extern s32 BtlParam_GetRushFinisher(BtlActIChr *chr, s32 n);
+extern s32 BtlParam_GetChainKind(BtlActIChr *chr, s32 n);
+extern s32 BtlParam_GetFinisherChoice(BtlActIChr *chr, s32 n);
 #define BtlParam_GetDashSound ((s32 (*)(BtlActIChr *chr))BtlParam_GetDashSound)
 extern s32 BtlParam_CanFly(BtlActIChr *chr);
 extern s32 BtlKiBlast_GetKiCostOf(BtlActIChr *chr, s32 kind);
@@ -2391,7 +2391,7 @@ s32 BtlDecide_Main(BtlActIChr *chr, s32 mask) {
         return 1;
     }
     if ((mask & 0x80) && !BtlChar_TestFlag(chr, 6) && !BtlChar_TestFlag(chr, 0x98)) {
-        if (BtlParam_GetUnk0(chr) & 0x80) {
+        if (BtlParam_GetCharaFlags(chr) & 0x80) {
             if (BtlMember_IsKiFull(chr) && BtlMember_HasBlast(chr, 100000) && TEST(0x13)) {
                 BtlAct_SetQueue(chr, 0, 0x37);
                 return 1;
@@ -2577,7 +2577,7 @@ s32 BtlDecide_Attack(BtlActIChr *chr, s32 mask) {
             return 1;
         }
     }
-    if ((mask & 4) && BtlMember_HasKi(chr, BtlKiBlast_GetKiCostOf(chr, 0)) && chr->unkDE0 < BtlParam_GetCount80(chr)
+    if ((mask & 4) && BtlMember_HasKi(chr, BtlKiBlast_GetKiCostOf(chr, 0)) && chr->unkDE0 < BtlParam_GetBlastLimitA(chr)
         && BtlMove_CanFireBlast(chr, 0, NULL)) {
         BtlColl_AddActionBit(chr, 0xAE);
         if (TEST(0x59)) {
@@ -2594,7 +2594,7 @@ s32 BtlDecide_Attack(BtlActIChr *chr, s32 mask) {
             return 1;
         }
     }
-    if ((mask & 8) && BtlMember_HasKi(chr, BtlKiBlast_GetKiCostOf(chr, 3)) && chr->unkDE0 < BtlParam_GetCount80(chr)
+    if ((mask & 8) && BtlMember_HasKi(chr, BtlKiBlast_GetKiCostOf(chr, 3)) && chr->unkDE0 < BtlParam_GetBlastLimitA(chr)
         && BtlMove_CanFireBlast(chr, 1, NULL)) {
         BtlColl_AddActionBit(chr, 0xAF);
         if (TEST(0x5A)) {
@@ -2603,7 +2603,7 @@ s32 BtlDecide_Attack(BtlActIChr *chr, s32 mask) {
         }
     }
     if ((mask & 0x4000) && (BtlParam_GetFlags2(chr) & 0x10) && BtlMember_HasKi(chr, BtlKiBlast_GetKiCostOf(chr, 4))
-        && chr->unkDE0 < BtlParam_GetCount80(chr) && BtlMove_CanFireBlast(chr, 0, NULL)) {
+        && chr->unkDE0 < BtlParam_GetBlastLimitA(chr) && BtlMove_CanFireBlast(chr, 0, NULL)) {
         BtlColl_AddActionBit(chr, 0xB0);
         if (TEST(0x59)) {
             BtlAct_SetQueue(chr, 0, 0xB0);
@@ -2611,7 +2611,7 @@ s32 BtlDecide_Attack(BtlActIChr *chr, s32 mask) {
         }
     }
     if ((mask & 0x8000) && (BtlParam_GetFlags2(chr) & 0x10) && BtlMember_HasKi(chr, BtlKiBlast_GetKiCostOf(chr, 7))
-        && chr->unkDE0 < BtlParam_GetCount80(chr) && BtlMove_CanFireBlast(chr, 1, NULL)) {
+        && chr->unkDE0 < BtlParam_GetBlastLimitA(chr) && BtlMove_CanFireBlast(chr, 1, NULL)) {
         BtlColl_AddActionBit(chr, 0xB1);
         if (TEST(0x5A)) {
             BtlAct_SetQueue(chr, 0, 0xB1);
@@ -2623,7 +2623,7 @@ s32 BtlDecide_Attack(BtlActIChr *chr, s32 mask) {
         return 1;
     }
     if ((mask & 0x20000) && (BtlParam_GetFlags2(chr) & 0x10) && BtlMember_HasKi(chr, BtlKiBlast_GetKiCostOf(chr, 8))
-        && chr->unkDE0 < BtlParam_GetCount80(chr) && BtlMove_CanFireBlast(chr, 0, NULL)) {
+        && chr->unkDE0 < BtlParam_GetBlastLimitA(chr) && BtlMove_CanFireBlast(chr, 0, NULL)) {
         BtlColl_AddActionBit(chr, 0xB2);
         if (TEST(0x59)) {
             BtlAct_SetQueue(chr, 0, 0xB2);
@@ -2631,7 +2631,7 @@ s32 BtlDecide_Attack(BtlActIChr *chr, s32 mask) {
         }
     }
     if ((mask & 0x40000) && (BtlParam_GetFlags2(chr) & 0x10) && BtlMember_HasKi(chr, BtlKiBlast_GetKiCostOf(chr, 0xB))
-        && chr->unkDE0 < BtlParam_GetCount80(chr) && BtlMove_CanFireBlast(chr, 1, NULL)) {
+        && chr->unkDE0 < BtlParam_GetBlastLimitA(chr) && BtlMove_CanFireBlast(chr, 1, NULL)) {
         BtlColl_AddActionBit(chr, 0xB3);
         if (TEST(0x5A)) {
             BtlAct_SetQueue(chr, 0, 0xB3);
@@ -2654,7 +2654,7 @@ s32 BtlDecide_Attack(BtlActIChr *chr, s32 mask) {
 
             memset(list, 0, sizeof(list));
             n = 0;
-            switch (BtlParam_GetUnk8A(chr, 1)) {
+            switch (BtlParam_GetFinisherChoice(chr, 1)) {
             case 0:
                 list[0] = 0x5E;
                 n = 1;
@@ -2689,7 +2689,7 @@ s32 BtlDecide_Attack(BtlActIChr *chr, s32 mask) {
 
             memset(list, 0, sizeof(list));
             n = 0;
-            switch (BtlParam_GetUnk8A(chr, 2)) {
+            switch (BtlParam_GetFinisherChoice(chr, 2)) {
             case 0:
                 list[0] = 0x5F;
                 n = 1;
@@ -2711,7 +2711,7 @@ s32 BtlDecide_Attack(BtlActIChr *chr, s32 mask) {
     if (mask & 0x200000) {
         s32 act = 0;
 
-        switch (BtlParam_GetUnk84(chr, (chr->unkD60 + 4) % 5)) {
+        switch (BtlParam_GetRushFinisher(chr, (chr->unkD60 + 4) % 5)) {
         case 0:
             act = 0x60;
             break;
@@ -2754,12 +2754,12 @@ s32 BtlDecide_Attack(BtlActIChr *chr, s32 mask) {
         } else if (mask & 0x2000000) {
             kind = 3;
             input = 0x42;
-        } else if (BtlParam_GetCount80(chr) <= 0) {
+        } else if (BtlParam_GetBlastLimitA(chr) <= 0) {
             kind = 4;
             input = 0x58;
         }
         if (kind >= 0) {
-            switch (BtlParam_GetUnk8A(chr, kind)) {
+            switch (BtlParam_GetFinisherChoice(chr, kind)) {
             case 1:
                 list[0] = 0x40;
                 n = 1;
@@ -2855,7 +2855,7 @@ s32 BtlDecide_Attack(BtlActIChr *chr, s32 mask) {
                     return 1;
                 }
             }
-        } else if ((BtlParam_GetFlags3(chr) & 0x1000) && !BtlChar_TestMemberUnk70(chr)) {
+        } else if ((BtlParam_GetFlags3(chr) & 0x1000) && !BtlChar_IsBodyChanged(chr)) {
             ret = BtlAct_QueueComboFinish(chr);
             if (ret > 0) {
                 return ret;
@@ -2871,7 +2871,7 @@ s32 BtlDecide_Attack(BtlActIChr *chr, s32 mask) {
         return 1;
     }
     if ((mask & 0x800) && TEST(0x60)) {
-        if (BtlParam_GetUnk88(chr, 1) == 5) {
+        if (BtlParam_GetChainKind(chr, 1) == 5) {
             BtlAct_SetQueue(chr, 0, 0x40);
             return 1;
         }

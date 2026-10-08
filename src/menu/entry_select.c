@@ -338,9 +338,9 @@ void EntrySel_Init(s32 section) {
     gEntrySel->sel->flags |= ESEL_SEL_IMAGE_READY;
     memset(TOUR_PROG->t.entrant, 0, 0x2A8);
     TextBox_Init(&gEntrySel->box[0], gEntrySel->nameText, 1);
-    TextBox_SetUnk80(&gEntrySel->box[0], 1);
+    TextBox_SetNoFlush(&gEntrySel->box[0], 1);
     TextBox_Init(&gEntrySel->box[1], gEntrySel->formText, 3);
-    TextBox_SetUnk80(&gEntrySel->box[1], 1);
+    TextBox_SetNoFlush(&gEntrySel->box[1], 1);
 }
 
 /*

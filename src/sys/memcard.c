@@ -12,13 +12,13 @@
  * written `!= 1` only for "finished".
  *
  * Library functions (Sony libmc, not named yet; identified by their arguments):
- *   func_002A1A48 sceMcInit()                         func_002A1E58 sceMcOpen(port, slot, name, mode)
- *   func_002A1F80 sceMcMkdir(port, slot, name)        func_002A1FB8 sceMcClose(fd)
- *   func_002A2078 sceMcSeek(fd, offset, origin)       func_002A2208 sceMcRead(fd, buf, size)
- *   func_002A2320 sceMcWrite(fd, buf, size)           func_002A2498 sceMcSync(mode, cmd, result)
- *   func_002A25B8 sceMcGetInfo(port, slot, type, free, format)
- *   func_002A27A8 sceMcGetDir(port, slot, name, mode, maxent, table)
- *   func_002A2AC8 sceMcFormat(port, slot)
+ *   sceMcInit sceMcInit()                         sceMcOpen sceMcOpen(port, slot, name, mode)
+ *   sceMcMkdir sceMcMkdir(port, slot, name)        sceMcClose sceMcClose(fd)
+ *   sceMcSeek sceMcSeek(fd, offset, origin)       sceMcRead sceMcRead(fd, buf, size)
+ *   sceMcWrite sceMcWrite(fd, buf, size)           sceMcSync sceMcSync(mode, cmd, result)
+ *   sceMcGetInfo sceMcGetInfo(port, slot, type, free, format)
+ *   sceMcGetDir sceMcGetDir(port, slot, name, mode, maxent, table)
+ *   sceMcFormat sceMcFormat(port, slot)
  */
 #include "common.h"
 #include "sys/heap.h"
@@ -29,29 +29,18 @@ extern void *memcpy(void *dst, const void *src, u32 n);
 extern char *strcpy(char *dst, const char *src);
 extern s32 sprintf(char *dst, const char *fmt, ...);
 
-extern s32 func_002A1A48(void);
-extern s32 func_002A1E58(s32 port, s32 slot, char *name, s32 mode);
-extern s32 func_002A1F80(s32 port, s32 slot, char *name);
-extern s32 func_002A1FB8(s32 fd);
-extern s32 func_002A2078(s32 fd, s32 offset, s32 origin);
-extern s32 func_002A2208(s32 fd, void *buf, s32 size);
-extern s32 func_002A2320(s32 fd, void *buf, s32 size);
-extern s32 func_002A2498(s32 mode, s32 *cmd, s32 *result);
-extern s32 func_002A25B8(s32 port, s32 slot, s32 *type, s32 *free, s32 *format);
-extern s32 func_002A27A8(s32 port, s32 slot, char *name, s32 mode, s32 maxent, void *table);
-extern s32 func_002A2AC8(s32 port, s32 slot);
+extern s32 sceMcInit(void);
+extern s32 sceMcOpen(s32 port, s32 slot, char *name, s32 mode);
+extern s32 sceMcMkdir(s32 port, s32 slot, char *name);
+extern s32 sceMcClose(s32 fd);
+extern s32 sceMcSeek(s32 fd, s32 offset, s32 origin);
+extern s32 sceMcRead(s32 fd, void *buf, s32 size);
+extern s32 sceMcWrite(s32 fd, void *buf, s32 size);
+extern s32 sceMcSync(s32 mode, s32 *cmd, s32 *result);
+extern s32 sceMcGetInfo(s32 port, s32 slot, s32 *type, s32 *free, s32 *format);
+extern s32 sceMcGetDir(s32 port, s32 slot, char *name, s32 mode, s32 maxent, void *table);
+extern s32 sceMcFormat(s32 port, s32 slot);
 
-#define sceMcInit func_002A1A48
-#define sceMcOpen func_002A1E58
-#define sceMcMkdir func_002A1F80
-#define sceMcClose func_002A1FB8
-#define sceMcSeek func_002A2078
-#define sceMcRead func_002A2208
-#define sceMcWrite func_002A2320
-#define sceMcSync func_002A2498
-#define sceMcGetInfo func_002A25B8
-#define sceMcGetDir func_002A27A8
-#define sceMcFormat func_002A2AC8
 
 /* 0x2FE918 / 0x2FE91C: the head of this object's .sdata, in front of its strings. */
 s32 gMcCardStep = 0;

@@ -81,12 +81,12 @@ void ItemPanel_Init(u32 *pack, s32 side) {
     p->text[2] = MPACK_AT(pack, 15);
     p->items = (MItemEntry *)MPACK_AT(gCommonRes->data[2], 2);
     TextBox_Init(&p->name, p->text[0], side ? 2 : 1);
-    TextBox_SetUnk80(&p->name, 1);
+    TextBox_SetNoFlush(&p->name, 1);
     TextBox_Init(&p->form, p->text[1], side ? 4 : 3);
-    TextBox_SetUnk80(&p->form, 1);
+    TextBox_SetNoFlush(&p->form, 1);
     for (i = 0; i < ITEMPANEL_ROWS; i++) {
         TextBox_Init(&p->line[i], p->text[2], 6);
-        TextBox_SetUnk80(&p->line[i], 1);
+        TextBox_SetNoFlush(&p->line[i], 1);
     }
 }
 

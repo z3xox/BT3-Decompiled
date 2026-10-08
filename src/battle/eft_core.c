@@ -69,7 +69,7 @@ extern void BtlCharApi_GetNodePos(s32 objId, s32 node, EftVec *out);
 extern s32 BtlCharApi_TestFlagA4(s32 objId);
 extern s32 BtlStage_HasFeature(s32 kind);                          /* stage query (0..13) */
 extern void *BtlObj_Get(s32 objId);
-extern f32 BtlCharApi_GetChargedUnkC78(s32 objId);
+extern f32 BtlCharApi_GetRushSequenceFrame(s32 objId);
 extern s32 BtlCharApi_IsInTechnique(s32 objId);
 extern void DemoCam_SetAnim(void *anim);
 extern void DemoCam_SetChr(void *chr);
@@ -428,7 +428,7 @@ s32 EftHit_GetMaxHits(EftHitRec *rec) {
 }
 
 /* Returns byte 0xB of the technique definition (0 for a blast). */
-s32 EftHit_GetDefUnkB(EftHitRec *rec) {
+s32 EftHit_GetHitInterval(EftHitRec *rec) {
     if (rec->atk != NULL) {
         return 0;
     }
@@ -981,7 +981,7 @@ void EftCam_Start(EftCamArg *arg) {
     DemoCam_SetAnim(arg->anim);
     if (arg->objId != -1) {
         DemoCam_SetChr(BtlObj_Get(arg->objId));
-        DemoCam_SetTime(BtlCharApi_GetChargedUnkC78(arg->objId));
+        DemoCam_SetTime(BtlCharApi_GetRushSequenceFrame(arg->objId));
     } else {
         DemoCam_SetTime(0.0f);
     }
@@ -1038,7 +1038,7 @@ void EftCam_Update(void) {
         if (!BtlCharApi_IsInTechnique(gEftCam->objId)) {
             return;
         }
-        time = BtlCharApi_GetChargedUnkC78(gEftCam->objId);
+        time = BtlCharApi_GetRushSequenceFrame(gEftCam->objId);
     } else {
         time = DemoCam_GetTime() + 2.0f;
     }

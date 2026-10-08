@@ -46,7 +46,7 @@ HudGauge_SetMaxPower = 0x0021F7F8; // type:func
 HudGauge_SetBlast = 0x0021F810; // type:func
 // (side, mask of shown icons, mask of the "positive" ones): restarts the icon animation on a change.
 HudGauge_SetStatIcons = 0x0021F8B0; // type:func
-// Receives BtlSide_GetParamUnk2C while BtlSide_TestFlagBE, else 0; drawn as a pulsing red layer on the ki bars.
+// Receives BtlSide_GetKiRecoverGoal while BtlSide_TestFlagBE, else 0; drawn as a pulsing red layer on the ki bars.
 HudGauge_SetKiReserve = 0x0021FA20; // type:func // guess
 // (side, frames, amplitude): shake the panel and the health node / the panel and the ki node.
 HudGauge_ShakeHp = 0x0021FA38; // type:func

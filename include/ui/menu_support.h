@@ -45,7 +45,7 @@ typedef struct TextBoxFull {
     /* 0x00 */ s32 flags;      /* TEXTBOX_FLAG_* */
     /* 0x04 */ void *text;     /* text file: line n is at text + (((u32 *)text)[n + 1] & ~3) */
     /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 x;          /* offset added to the position of every line (TextBox_SetUnkC) */
+    /* 0x0C */ s32 x;          /* offset added to the position of every line (TextBox_SetOffset) */
     /* 0x10 */ s32 y;
     /* 0x14 */ s32 lineY[TEXTBOX_LINE_Y_COUNT]; /* extra y for a text of 1..5 rows */
     /* 0x28 */ s32 maxW;
@@ -55,7 +55,7 @@ typedef struct TextBoxFull {
     /* 0x38 */ s32 clip[4];    /* "rect" in reward_window.h */
     /* 0x48 */ s32 spacingX;
     /* 0x4C */ s32 spacingY;
-    /* 0x50 */ TextBoxDraw draw; /* +0x50 align (TextBox_SetUnk50), +0x80 noFlush (TextBox_SetUnk80) */
+    /* 0x50 */ TextBoxDraw draw; /* +0x50 align (TextBox_SetAlign), +0x80 noFlush (TextBox_SetNoFlush) */
 } TextBoxFull; /* size 0x8C */
 
 /* The drawing state a movie clip hands to its "draw over" callback (FlashProp in sys/gfxm_c.h). Local view. */

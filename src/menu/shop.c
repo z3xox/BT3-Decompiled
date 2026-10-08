@@ -321,7 +321,7 @@ void Shop_Init(s32 section) {
 
     for (k = 0; k < SHOP_BOX_NUM; k++) {
         TextBox_Init(&gShop->box[k], gShop->itemText, 6);
-        TextBox_SetUnk80(&gShop->box[k], 1);
+        TextBox_SetNoFlush(&gShop->box[k], 1);
         if (k < 8) {
             TextBox_SetRect(&gShop->box[k], 0, 0x200, 0x86, 0x17F);
         } else if (k < 13) {

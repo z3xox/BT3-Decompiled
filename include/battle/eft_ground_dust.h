@@ -330,13 +330,13 @@ typedef struct EftZView {
 
 extern EftZView *gBtlCamView;
 
-extern void *D_002C40F0[]; /* EftBill item class */
-extern void *D_002C4120[]; /* dust classes, kinds 0..5 */
-extern void *D_002C4138[];
-extern void *D_002C4150[];
-extern void *D_002C4168[];
-extern void *D_002C4180[];
-extern void *D_002C4198[];
+extern void *gEftBillClass[]; /* EftBill item class */
+extern void *gEftGndDustPuffClass[]; /* dust classes, kinds 0..5 */
+extern void *gEftGndDustSlideClass[];
+extern void *gEftGndDustDashClass[];
+extern void *gEftGndDustBurstClass[];
+extern void *gEftGndDustLandClass[];
+extern void *gEftGndDustImpactClass[];
 
 extern s32 rand(void);
 extern void *memset(void *dst, s32 c, u32 n);

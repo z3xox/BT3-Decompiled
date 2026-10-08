@@ -41,7 +41,7 @@ BtlChar_IsFrozen = 0x001DC2C0; // type:func // guess
 BtlChar_IsFree = 0x001DC2D0; // type:func // guess
 // Active member's health (s32 at member +0x40) < 1; active member's +0x70 != 0.
 BtlChar_IsDead = 0x001DC320; // type:func
-BtlChar_TestMemberUnk70 = 0x001DC348; // type:func // guess
+BtlChar_IsBodyChanged = 0x001DC348; // type:func // guess
 // Roster frame counter (+0x14, ticked by func_001C2B30, 30 bits) and counter % max(n, 1).
 BtlChar_GetFrame = 0x001DC370; // type:func
 BtlChar_FrameMod = 0x001DC380; // type:func

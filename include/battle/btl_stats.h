@@ -91,7 +91,7 @@ typedef struct BtlAnimObj {
     /* 0x140 */ f32 step;        /* object + 0xC80: frames added per advance */
     /* 0x144 */ f32 blend;       /* object + 0xC84: blend counter, runs down to 0 */
     /* 0x148 */ f32 blendStep;   /* object + 0xC88 */
-    /* 0x14C */ f32 unk14C;      /* object + 0xC8C: BtlAnim_SetUnkC8C */
+    /* 0x14C */ f32 unk14C;      /* object + 0xC8C: BtlAnim_SetSubMix */
     /* 0x150 */ u8 unk150[0x178 - 0x150];
     /* 0x178 */ f32 rate;        /* object + 0xCB8: BtlAnim_SetObjRate, 1.0 every frame */
 } BtlAnimObj;
@@ -203,7 +203,7 @@ void BtlAnim_FlushRequestKeep(BtlStatChr *chr);
 void BtlAnim_FlushSubToMain(BtlStatChr *chr);
 void BtlAnim_ApplyBlend(BtlStatChr *chr);
 void BtlAnim_PlaySub(BtlStatChr *chr, s32 anim);
-void BtlAnim_SetUnkC8C(BtlStatChr *chr, f32 v);
+void BtlAnim_SetSubMix(BtlStatChr *chr, f32 v);
 void BtlAnim_SetStep(BtlStatChr *chr, f32 step);
 void BtlAnim_SetDuration(BtlStatChr *chr, f32 seconds);
 void BtlAnim_SetObjRate(BtlStatChr *chr, f32 rate);

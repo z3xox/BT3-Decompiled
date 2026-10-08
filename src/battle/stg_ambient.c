@@ -61,7 +61,7 @@ typedef struct StgAmbPath {
     Vec4 p[8];
 } __attribute__((aligned(16))) StgAmbPath;
 
-extern Vec4 D_002C6C10;
+extern Vec4 gStgLastLightDir;
 
 /* Tells whether the stage data has feature `kind` (0..13). */
 s32 BtlStage_HasFeature(u32 kind) {
@@ -431,21 +431,21 @@ s32 BtlStage_GetLightDir(Vec4 *out) {
     Vec4 *dir;
 
     if (gBtlStage == NULL) {
-        Vec4_Copy(out, &D_002C6C10);
+        Vec4_Copy(out, &gStgLastLightDir);
         return -1;
     }
     if (Battle_GetWork()->flags & BATTLE_FLAG_LOADING) {
-        Vec4_Copy(out, &D_002C6C10);
+        Vec4_Copy(out, &gStgLastLightDir);
         return -1;
     }
     d = gBtlStage->data;
     if (d == NULL) {
-        Vec4_Copy(out, &D_002C6C10);
+        Vec4_Copy(out, &gStgLastLightDir);
         return -1;
     }
     dir = d->lightDir;
     Vec4_Copy(out, dir);
-    Vec4_Copy(&D_002C6C10, dir);
+    Vec4_Copy(&gStgLastLightDir, dir);
     return 1;
 }
 

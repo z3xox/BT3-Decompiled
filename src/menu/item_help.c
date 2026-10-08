@@ -39,12 +39,12 @@ void ItemHelp_Init(u32 *pack) {
 
     box = &gItemHelp->name;
     TextBox_Init(box, gItemHelp->nameText, 6);
-    TextBox_SetUnk80(box, 1);
+    TextBox_SetNoFlush(box, 1);
 
     box = &gItemHelp->desc;
     TextBox_Init(box, gItemHelp->descText, 0);
-    TextBox_SetUnk50(box, 0);
-    TextBox_SetUnk80(box, 1);
+    TextBox_SetAlign(box, 0);
+    TextBox_SetNoFlush(box, 1);
 }
 
 /* Frees the page. */

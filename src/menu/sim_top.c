@@ -119,7 +119,7 @@ void SimTop_Init(s32 section) {
     gSimTop->text = MPACK_AT(gSimTop->res, 8);
     gSimTop->subtitles = MPACK_AT(gSimTop->res, 9);
     TextBox_Init(&gSimTop->box, gSimTop->text, 0);
-    TextBox_SetUnk50(&gSimTop->box, 0);
+    TextBox_SetAlign(&gSimTop->box, 0);
     TextBox_SetSpacing(&gSimTop->box, 0, 4);
 
     gSimTop->voiceLine = -1;

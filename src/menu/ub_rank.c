@@ -225,7 +225,7 @@ void UbRank_Init(void) {
     gUbRank->text = MPACK_AT(gUbRank->res, 14);
     for (i = 0; i < UBRANK_BOX_NUM; i++) {
         TextBox_Init(&gUbRank->box[i], gUbRank->text, 0);
-        TextBox_SetUnk50(&gUbRank->box[i], 0);
+        TextBox_SetAlign(&gUbRank->box[i], 0);
     }
     gUbRank->subtitles = MPACK_AT(gUbRank->res, 18);
     gUbRank->voiceLine = -1;

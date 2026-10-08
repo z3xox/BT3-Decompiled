@@ -5,7 +5,7 @@
  * Disc projectile, tail of the module: 0x16C2E0..0x16DCA0 (29 functions, 28 matching; EftDisc_Home is left in
  * assembly). The module starts in the file before
  * this one (its manager, the init callback 0x16B6B8 and the update callback 0x16BAC8 are there); this file has
- * the other four callbacks of the task class D_002C3B38, the helpers the update calls, the list of held discs
+ * the other four callbacks of the task class gEftDiscClass, the helpers the update calls, the list of held discs
  * and the two interfaces that create and steer discs:
  *
  *   - the fighter effect layer (btl_char_fx_1.c): EftDisc_SpawnHeld (request 0x17 with ki blast type 4: a disc
@@ -102,7 +102,7 @@ extern u64 EftVram_AddClut(EftPTexEntry *tex);
 extern void EftTexSet_Keep32(void *set, s32 a, s32 b);
 extern s32 BtlObj_GetNodeSide(s32 node);
 
-extern void *D_002C3B38[];
+extern void *gEftDiscClass[];
 
 
 /* Clamp as the module writes it everywhere (the update callback has four more copies). */
@@ -543,7 +543,7 @@ s32 EftDisc_SpawnHeld(EftDiscHeldArg *a, s32 hand) {
     } else {
         arg.hand = 1;
     }
-    return BtlTaskList_AddTail(gEftDisc->mgr->list, D_002C3B38, &arg) != NULL;
+    return BtlTaskList_AddTail(gEftDisc->mgr->list, gEftDiscClass, &arg) != NULL;
 }
 
 /* Ki blast fire event, type 4: throws the fighter's first held disc that is not thrown yet; without one (or when
@@ -630,7 +630,7 @@ s32 EftDisc_SpawnThrown(EftDiscAtk *a) {
         arg.texB = 0;
         break;
     }
-    task = BtlTaskList_AddTail(gEftDisc->mgr->list, D_002C3B38, &arg);
+    task = BtlTaskList_AddTail(gEftDisc->mgr->list, gEftDiscClass, &arg);
     if (task == NULL) {
         return 0;
     }
@@ -690,7 +690,7 @@ s32 EftDisc_SpawnFromNode(EftDiscAtk *a) {
                         0, 0, a->objId, 3, 0, 0 };
     Vec4_Copy(&arg.dir, a);
     BtlCharApi_GetNodePos(a->objId, a->node, &arg.pos);
-    task = BtlTaskList_AddTail(gEftDisc->mgr->list, D_002C3B38, &arg);
+    task = BtlTaskList_AddTail(gEftDisc->mgr->list, gEftDiscClass, &arg);
     if (task == NULL) {
         return 0;
     }
@@ -709,7 +709,7 @@ EftPTask *EftDisc_Create(EftDiscArg *arg) {
     if (gEftDisc->mgr->list == NULL) {
         return NULL;
     }
-    return BtlTaskList_AddTail(gEftDisc->mgr->list, D_002C3B38, arg);
+    return BtlTaskList_AddTail(gEftDisc->mgr->list, gEftDiscClass, arg);
 }
 
 /* Releases a held disc: a ki blast disc flies along dir, a technique piece along the technique's aim direction. */

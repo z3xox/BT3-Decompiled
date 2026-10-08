@@ -24,7 +24,7 @@ extern void Vec4_Copy(Vec4 *dst, Vec4 *src);
 extern void Vec3_Sub(Vec4 *dst, Vec4 *a, Vec4 *b);
 extern void Mtx_MulVec4(Vec4 *dst, Mtx44 *m, Vec4 *v);
 extern void Bpe_Decode(void *src, void *dst, s32 *size);
-extern f32 BtlObj_GetUnk44FC4(void);
+extern f32 BtlObj_GetDefaultAnimStep(void);
 extern void Res_RelocateOffsets(void *out, void *base);
 
 /* The battle work block: only the 64-bit flag word is read here (0x100 = pause). */
@@ -78,23 +78,23 @@ extern void BtlObj_GetJawRot_a(BobjObj *obj, Quat *out) __asm__("BtlObj_GetJawRo
 #define BtlObj_GetJawRot BtlObj_GetJawRot_a
 
 /* 0, 0, 0, 1: the zero translation and the identity rotation. */
-extern Vec4 D_002EC2C0;
+extern Vec4 gVu0ZeroVecW1;
 /* Reference translation of each node (71 x {x, y, z}) that motions are authored against: the first 0x360 bytes of
    this object's .rodata (0x2F2420..0x2F2780), emitted by the INCLUDE_RODATA below the declarations. */
-extern f32 D_002F2420[BOBJ_NODE_MAX * 3];
+extern f32 gBtlObjRefNodePos[BOBJ_NODE_MAX * 3];
 /* Talk patterns {frame, mouth shape} (7 and 5 steps) and jaw rotation tracks {x, y, z, frame} (4 keys each). */
-extern BobjTalkStep D_002C6C20[];
-extern BobjTalkStep D_002C6C40[];
-extern BobjJawKey D_002C6C58[];
-extern BobjJawKey D_002C6C98[];
-extern BobjJawKey D_002C6CD8[];
-extern BobjJawKey D_002C6D18[];
-extern BobjJawKey D_002C6D58[];
-extern BobjJawKey D_002C6D98[];
-extern BobjJawKey D_002C6DD8[];
-extern BobjJawKey D_002C6E18[];
+extern BobjTalkStep gBtlObjTalkPattern7[];
+extern BobjTalkStep gBtlObjTalkPattern5[];
+extern BobjJawKey gBtlObjJawTrack0[];
+extern BobjJawKey gBtlObjJawTrack1[];
+extern BobjJawKey gBtlObjJawTrack2[];
+extern BobjJawKey gBtlObjJawTrack3[];
+extern BobjJawKey gBtlObjJawTrackAlt0[];
+extern BobjJawKey gBtlObjJawTrackAlt1[];
+extern BobjJawKey gBtlObjJawTrackAlt2[];
+extern BobjJawKey gBtlObjJawTrackAlt3[];
 
-INCLUDE_RODATA("asm/nonmatchings/battle/btl_obj_anim", D_002F2420);
+INCLUDE_RODATA("asm/nonmatchings/battle/btl_obj_anim", gBtlObjRefNodePos);
 
 #define TRACK_AT(anim, off) ((BobjTrack *)((u16 *)(anim) + (off) * 2))
 #define QUAT64(q) ((u64)(q).lo + ((u64)(q).hi << 32))
@@ -132,9 +132,9 @@ void BtlObjAnim_Retarget(BobjAnim *anim, BobjObj *obj, BobjObj *other, s32 useTa
                     n = trk->count;
                     keys = trk->u.key;
                     for (i = 0; i < n; i++) {
-                        keys[i].x -= D_002F2420[id * 3];
-                        keys[i].y -= D_002F2420[id * 3 + 1];
-                        keys[i].z -= D_002F2420[id * 3 + 2];
+                        keys[i].x -= gBtlObjRefNodePos[id * 3];
+                        keys[i].y -= gBtlObjRefNodePos[id * 3 + 1];
+                        keys[i].z -= gBtlObjRefNodePos[id * 3 + 2];
                         keys[i].y *= scale;
                         keys[i].x += bone->rest.x;
                         keys[i].y += bone->rest.y;
@@ -249,7 +249,7 @@ void BtlObjAnim_SampleRot(BobjTrack *trk, Quat *out, u16 *cursor, f32 frame) {
             return;
         }
         if (*cursor == 0) {
-            Vec4_Copy((Vec4 *)out, &D_002EC2C0);
+            Vec4_Copy((Vec4 *)out, &gVu0ZeroVecW1);
             return;
         } else {
             *cursor = 0;
@@ -341,8 +341,8 @@ void BtlObjAnim_SamplePosRot(BobjTrack *trk, Vec4 *pos, Quat *rot, u16 *cursor, 
             return;
         }
         if (*cursor == 0) {
-            Vec4_Copy((Vec4 *)rot, &D_002EC2C0);
-            Vec4_Copy(pos, &D_002EC2C0);
+            Vec4_Copy((Vec4 *)rot, &gVu0ZeroVecW1);
+            Vec4_Copy(pos, &gVu0ZeroVecW1);
             return;
         } else {
             *cursor = 0;
@@ -374,7 +374,7 @@ void BtlObjAnim_Init(BobjObj *obj) {
     BobjHit *hit = &obj->hit;
     BobjAnimPlayer *ap = &obj->anim;
 
-    ap->step = BtlObj_GetUnk44FC4();
+    ap->step = BtlObj_GetDefaultAnimStep();
     Quat_SetIdentity(&obj->look.node2);
     Quat_SetIdentity(&obj->look.node2E);
     Quat_SetIdentity(&obj->look.node2F);
@@ -1321,8 +1321,8 @@ void BtlObjXf_Reset(BobjObj *obj) {
     BobjXf *xf = &obj->xf;
 
     obj->xf.same = 0;
-    Vec4_Copy(&xf->pos, &D_002EC2C0);
-    Vec4_Copy(&obj->xf.rot, &D_002EC2C0);
+    Vec4_Copy(&xf->pos, &gVu0ZeroVecW1);
+    Vec4_Copy(&obj->xf.rot, &gVu0ZeroVecW1);
     xf->scale = 1.0f;
     BtlObjXf_Update(obj);
     Vec4_Copy(&obj->xf.rootPos, &xf->pos);
@@ -1515,7 +1515,7 @@ s32 BtlObjFade_Get(BobjObj *obj, f32 *out) {
 }
 
 /* Stores the byte at object + 0xB30. */
-void BtlObj_SetUnkB30(BobjObj *obj, s32 value) {
+void BtlObj_SetAlphaAdd(BobjObj *obj, s32 value) {
     obj->unkB30 = value;
 }
 
@@ -1579,31 +1579,31 @@ void BtlObjFace_PickJawKeys(BobjObj *obj, BobjFace *face) {
     if (obj->mdl.model->flags & 0x400000) {
         switch (rand() % 4) {
         case 0:
-            face->jawKeys = D_002C6D58;
+            face->jawKeys = gBtlObjJawTrackAlt0;
             break;
         case 1:
-            face->jawKeys = D_002C6D98;
+            face->jawKeys = gBtlObjJawTrackAlt1;
             break;
         case 2:
-            face->jawKeys = D_002C6DD8;
+            face->jawKeys = gBtlObjJawTrackAlt2;
             break;
         default:
-            face->jawKeys = D_002C6E18;
+            face->jawKeys = gBtlObjJawTrackAlt3;
             break;
         }
     } else {
         switch (rand() % 4) {
         case 0:
-            face->jawKeys = D_002C6C58;
+            face->jawKeys = gBtlObjJawTrack0;
             break;
         case 1:
-            face->jawKeys = D_002C6C98;
+            face->jawKeys = gBtlObjJawTrack1;
             break;
         case 2:
-            face->jawKeys = D_002C6CD8;
+            face->jawKeys = gBtlObjJawTrack2;
             break;
         default:
-            face->jawKeys = D_002C6D18;
+            face->jawKeys = gBtlObjJawTrack3;
             break;
         }
     }
@@ -1679,10 +1679,10 @@ void BtlObjFace_Step(BobjObj *obj, BobjFace *face) {
         if (face->talkEnd <= face->talkTime) {
             if (rand() & 1) {
                 face->talkCount = 7;
-                face->talkKeys = D_002C6C20;
+                face->talkKeys = gBtlObjTalkPattern7;
             } else {
                 face->talkCount = 5;
-                face->talkKeys = D_002C6C40;
+                face->talkKeys = gBtlObjTalkPattern5;
             }
             face->talkTime = 0.0f;
             face->shape = face->talkKeys->shape;
@@ -1700,10 +1700,10 @@ void BtlObjFace_Step(BobjObj *obj, BobjFace *face) {
             if (face->talkLoops++ < 3) {
                 if (rand() & 1) {
                     face->talkCount = 7;
-                    face->talkKeys = D_002C6C20;
+                    face->talkKeys = gBtlObjTalkPattern7;
                 } else {
                     face->talkCount = 5;
-                    face->talkKeys = D_002C6C40;
+                    face->talkKeys = gBtlObjTalkPattern5;
                 }
                 face->talkTime = 0.0f;
                 face->shape = face->talkKeys->shape;
@@ -1874,10 +1874,10 @@ extern s32 BtlObjPool70_Free(BObjFace *node);
 #define BtlObjMdl_HasMouth ((s32 (*)(BObjMdl *mdl))BtlObjMdl_HasMouth)
 
 /* Talk patterns {frame, shape}: 7 and 5 records. */
-#define D_002C6C20 (*(s16(*)[])&D_002C6C20)
-#define D_002C6C40 (*(s16(*)[])&D_002C6C40)
+#define gBtlObjTalkPattern7 (*(s16(*)[])&gBtlObjTalkPattern7)
+#define gBtlObjTalkPattern5 (*(s16(*)[])&gBtlObjTalkPattern5)
 /* (0, 0, 0, 1): the identity rotation. */
-extern Vec4 D_002EC2C0;
+extern Vec4 gVu0ZeroVecW1;
 /* Written by BtlObj_InitChains (0.1, 0, 0, 0); no reader found. */
 extern Vec4 D_003337D0;
 
@@ -2077,10 +2077,10 @@ void BtlObj_SetSubState(BObj *obj, s32 mode, s32 arg) {
     case BOBJ_MOUTH_TALK_3:
         if (rand() & 1) {
             face->talkCount = 7;
-            face->talkTable = D_002C6C20;
+            face->talkTable = gBtlObjTalkPattern7;
         } else {
             face->talkCount = 5;
-            face->talkTable = D_002C6C40;
+            face->talkTable = gBtlObjTalkPattern5;
         }
         end = face->talkTable[face->talkCount * 2 - 2];
         face->talkTime = 0.0f;
@@ -2232,7 +2232,7 @@ s32 BtlObj_GetJawRot(BObj *obj, Quat *out) {
     BObjFace *face = obj->face;
 
     if (face == NULL) {
-        Vec4_Copy((Vec4 *)out, &D_002EC2C0);
+        Vec4_Copy((Vec4 *)out, &gVu0ZeroVecW1);
         return 0;
     }
     Quat_FromEuler(out, &face->jaw);

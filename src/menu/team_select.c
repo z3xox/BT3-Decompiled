@@ -19,7 +19,7 @@ TeamSel *gTeamSel = NULL;
 extern s32 ChrTbl_GetCost(s32 chara);
 extern s32 ChrTbl_IsRelated(s32 a, s32 b);
 extern void TextBox_Init(MTextBox *box, void *text, u32 preset);
-extern void TextBox_SetUnk80(MTextBox *box, s32 value);
+extern void TextBox_SetNoFlush(MTextBox *box, s32 value);
 extern void TextBox_AttachLine(MFlash *flash, MFlashRef *ref, s32 x, s32 y, s32 line, MTextBox *box);
 extern void Flash_ClipSetOffset(MFlash *flash, MFlashRef *ref, s32 x, s32 y);
 extern void Num_Draw(MFlash *flash, char *fmt, s32 first, s32 count, s32 value, s32 w, s32 h, s32 mode);
@@ -721,9 +721,9 @@ void TeamSel_Init(s32 section) {
     }
     for (i = 0; i < TEAMSEL_SIDES; i++) {
         TextBox_Init(&gTeamSel->nameBox[i], gTeamSel->nameText, i + 1);
-        TextBox_SetUnk80(&gTeamSel->nameBox[i], 1);
+        TextBox_SetNoFlush(&gTeamSel->nameBox[i], 1);
         TextBox_Init(&gTeamSel->formBox[i], gTeamSel->formText, i + 3);
-        TextBox_SetUnk80(&gTeamSel->formBox[i], 1);
+        TextBox_SetNoFlush(&gTeamSel->formBox[i], 1);
     }
 }
 

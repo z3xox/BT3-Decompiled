@@ -5,8 +5,8 @@
 // --- keyed by battle object id (BtlChar_FindByObjId); callers are the AI (0x1B8xxx..0x1BFxxx) unless noted ---
 // 0x208430: object byte +0xCAD == ~(+0xCAC). 0x208480: action id. 0x2084B8: fighter +0xDE0, compared below with the
 // character's blast limit. 0x2084E0 / 0x208588: min(limit - +0xDE0, class limit - live blasts of class 0 / 1), from
-// BtlMove_CanFireBlast and BtlParam_GetCount80 / GetUnk82. 0x208550: limit > 0. 0x2085F8: fighter flag 0x66.
-BtlCharApi_IsUnkCACPaired = 0x00208430; // type:func // guess
+// BtlMove_CanFireBlast and BtlParam_GetBlastLimitA / GetUnk82. 0x208550: limit > 0. 0x2085F8: fighter flag 0x66.
+BtlCharApi_IsAttackHitsDone = 0x00208430; // type:func // guess
 BtlCharApi_GetAction = 0x00208480; // type:func
 BtlCharApi_GetBlastShots = 0x002084B8; // type:func // guess
 BtlCharApi_GetBlastRoom = 0x002084E0; // type:func // guess
@@ -50,16 +50,16 @@ BtlCharApi_CanFuse = 0x00208E78; // type:func // guess
 BtlCharApi_CanSwitch = 0x00208EF0; // type:func // guess
 BtlCharApi_GetCpuLevel = 0x00208F30; // type:func
 BtlCharApi_GetAiType = 0x00208F68; // type:func
-BtlCharApi_IsUnk1070Set = 0x00208FA0; // type:func
+BtlCharApi_IsCounterWindowBusy = 0x00208FA0; // type:func (guess)
 BtlCharApi_GetTransformCost = 0x00208FD8; // type:func // guess
 BtlCharApi_PickFusionSlot = 0x00209048; // type:func // guess
 BtlCharApi_PickTransformSlot = 0x00209170; // type:func // guess
 BtlCharApi_IsChangingForm = 0x00209328; // type:func
 // Parameter block words +0x14, +0x10, +0x18; member count, active member, switch target; a member's health / ki as
 // a percentage (at least 1 while not empty; no caller).
-BtlCharApi_GetParamUnk14 = 0x00209378; // type:func
+BtlCharApi_GetParamFlags2 = 0x00209378; // type:func
 BtlCharApi_GetParamFlags = 0x002093B0; // type:func
-BtlCharApi_GetParamUnk18 = 0x002093E8; // type:func
+BtlCharApi_GetParamFlags3 = 0x002093E8; // type:func
 BtlCharApi_GetMemberCount = 0x00209420; // type:func
 BtlCharApi_GetActiveMember = 0x00209448; // type:func
 BtlCharApi_GetSwitchTarget = 0x00209480; // type:func // guess
@@ -87,17 +87,17 @@ BtlCharApi_IsMoveSlotActive = 0x00209910; // type:func // guess
 BtlCharApi_IsMoveFlag100 = 0x00209978; // type:func
 BtlCharApi_GetStunTimer = 0x002099C0; // type:func // guess
 BtlCharApi_GetPromptButtons = 0x002099E8; // type:func // guess
-BtlCharApi_GetUnk1290 = 0x00209AC0; // type:func
-BtlCharApi_IsUnk106CLow = 0x00209B08; // type:func
+BtlCharApi_GetStoryAiForce = 0x00209AC0; // type:func (guess)
+BtlCharApi_IsDodgeWindowReady = 0x00209B08; // type:func (guess)
 BtlCharApi_GetArmorBreakLevel = 0x00209B38; // type:func // guess
 BtlCharApi_GetParamByte2 = 0x00209CA8; // type:func
-BtlCharApi_GetUnkE44B = 0x00209CE0; // type:func
-BtlCharApi_GetUnkD74Diff = 0x00209D08; // type:func
+BtlCharApi_GetTechChargeB = 0x00209CE0; // type:func
+BtlCharApi_GetVanishStrikesLeft = 0x00209D08; // type:func (guess)
 BtlCharApi_IsAnimFlag2800 = 0x00209D48; // type:func
 BtlCharApi_TestPoseBit80 = 0x00209D98; // type:func
 BtlCharApi_TestFlag98 = 0x00209DF8; // type:func
 BtlCharApi_TestFlagBE = 0x00209E38; // type:func
-BtlCharApi_GetUnkE40 = 0x00209E78; // type:func
+BtlCharApi_GetTechniqueCooldown = 0x00209E78; // type:func
 BtlCharApi_GetParamByte8F = 0x00209EA0; // type:func
 // --- keyed by player index (BtlChar_Get) ---
 // Sequence poses (callers: btl_seq.c): one-frame flags 0xEF / 0xF0 / 0xF1 / 0xF2 force actions 1 (entrance), its end,
@@ -160,7 +160,7 @@ BtlSide_GetSwitchTarget = 0x0020B628; // type:func // guess
 BtlSide_CountAlive = 0x0020B688; // type:func
 BtlSide_GetSwitchTargetHp = 0x0020B6C8; // type:func // guess
 BtlSide_GetSwitchTargetHpMax = 0x0020B728; // type:func // guess
-BtlSide_GetParamUnk2C = 0x0020B788; // type:func
+BtlSide_GetKiRecoverGoal = 0x0020B788; // type:func
 BtlSide_IsPoweredUp = 0x0020B7C0; // type:func // guess
 BtlSide_TestFlagBE = 0x0020B800; // type:func
 // By player index again (callers btl_script.c, btl_seq.c): active member down; whole team down; flag 7.

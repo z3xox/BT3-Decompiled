@@ -26,7 +26,7 @@ extern void Vec4_Scale(Vec4 *out, Vec4 *in, f32 scale);
 extern void Vec4_SetZero(Vec4 *v); /* zeroes a vector */
 
 extern s32 Battle_GetMode(void);
-extern s32 BattleSide_GetUnk200(s32 side);
+extern s32 BattleSide_GetSwitchEnabled(s32 side);
 
 extern f32 BtlUtil_WrapAngle(f32 a);
 extern s32 BtlUtil_Approach(s32 cur, s32 target, s32 step);
@@ -39,7 +39,7 @@ extern void *BtlChar_GetObj(BtlActChr *chr);
 extern BtlActPose *BtlChar_GetPos(BtlActChr *chr);
 extern s32 BtlChar_IsFree(BtlActChr *chr);
 extern s32 BtlChar_IsDead(BtlActChr *chr);
-extern s32 BtlChar_TestMemberUnk70(BtlActChr *chr);
+extern s32 BtlChar_IsBodyChanged(BtlActChr *chr);
 extern s32 BtlChar_FrameMod(s32 n);
 extern s32 BtlChar_IsStage4Or27(void);
 extern void BtlChar_SetSmallVibration(BtlActChr *chr, f32 seconds);
@@ -61,7 +61,7 @@ extern void BtlAnim_FlushRequest(BtlActChr *chr);
 extern void BtlAnim_FlushRequestKeep(BtlActChr *chr);
 extern void BtlAnim_FlushSubToMain(BtlActChr *chr);
 extern void BtlAnim_PlaySub(BtlActChr *chr, s32 motion);
-extern void BtlAnim_SetUnkC8C(BtlActChr *chr, f32 weight);
+extern void BtlAnim_SetSubMix(BtlActChr *chr, f32 weight);
 extern void BtlAnim_SetObjRate(BtlActChr *chr, f32 v);              /* obj + 0xCB8 = v */
 extern s32 BtlAnim_GetId(BtlActChr *chr);                      /* chr->motion */
 extern s32 BtlAnim_GetPrevId(BtlActChr *chr);                      /* chr + 0x97C */
@@ -127,7 +127,7 @@ extern s32 BtlCharApi_IsInTechnique(s32 objId);
 extern u32 BtlParam_GetFlags(BtlActChr *chr);
 extern u32 BtlParam_GetFlags2(BtlActChr *chr);                       /* obj->unk91C->unk14 */
 extern u32 BtlParam_GetFlags3(BtlActChr *chr);                       /* obj->unk91C->unk18 */
-extern s32 BtlParam_GetUnk2(BtlActChr *chr);
+extern s32 BtlParam_GetSizeClass(BtlActChr *chr);
 extern s32 BtlParam_GetKiRegenLimit(BtlActChr *chr);
 extern s32 BtlParam_GetGaugeB(BtlActChr *chr);
 extern s32 BtlParam_GetKiRegenRate(BtlActChr *chr);
@@ -411,10 +411,10 @@ void BtlAct_SetPitchMotion(BtlActChr *chr, s32 motionUp, s32 motionDown, s32 rec
         t = 1.0f;
     }
     if (t < 0.0f) {
-        BtlAnim_SetUnkC8C(chr, -t);
+        BtlAnim_SetSubMix(chr, -t);
         BtlAnim_PlaySub(chr, motionDown);
     } else {
-        BtlAnim_SetUnkC8C(chr, t);
+        BtlAnim_SetSubMix(chr, t);
         BtlAnim_PlaySub(chr, motionUp);
     }
 }
@@ -478,7 +478,7 @@ void BtlAct_PushDir(BtlActChr *chr, Vec4 *dir, f32 speed, f32 arg) {
 }
 
 /* Forwards two floats to BtlObj_AddSway on the fighter's object. */
-void BtlAct_SetObjUnk(BtlActChr *chr, f32 a, f32 b) {
+void BtlAct_AddSway(BtlActChr *chr, f32 a, f32 b) {
     BtlObj_AddSway(BtlChar_GetObj(chr), a, b);
 }
 
@@ -560,7 +560,7 @@ void BtlAct_PrepareAttack(BtlActChr *chr, s32 id) {
                 chr->nextAttack.cut = BtlChar_FrameMod(2) ? rec->cut : rec->cutAlt;
             }
         }
-        if (BtlChar_TestFlag(chr, 6) && !BtlChar_TestMemberUnk70(chr)) {
+        if (BtlChar_TestFlag(chr, 6) && !BtlChar_IsBodyChanged(chr)) {
             for (i = 0; i < 2; i++) {
                 if (BtlAct_TestAttackSkill(chr, rec->followAlt[i])) {
                     chr->nextAttack.follow[i] = rec->followAlt[i];
@@ -909,7 +909,7 @@ void BtlAct_UpdateGauges(BtlActChr *chr) {
     if (chr->unkD80 < floor) {
         chr->unkD80 = floor;
     }
-    if (BattleSide_GetUnk200(chr->player)) {
+    if (BattleSide_GetSwitchEnabled(chr->player)) {
         chr->unk99C += (s32)(100000.0f / (BtlParam_GetGauge99CTime(chr) * 30.0f));
         if (Battle_GetMode() == 5 || Battle_GetMode() == 6) {
             chr->unk99C += 0x457;
@@ -1080,7 +1080,7 @@ void BtlAct_UpdateTimers(BtlActChr *chr) {
         BtlChar_ClearFlag(chr, 0x1E);
     }
     /* Member switch on the right stick (input bits 25 / 26) with three or more members. */
-    if (BattleSide_GetUnk200(chr->player) && Battle_GetMode() != 1 && !BtlChar_TestFlag(chr, 0x134) &&
+    if (BattleSide_GetSwitchEnabled(chr->player) && Battle_GetMode() != 1 && !BtlChar_TestFlag(chr, 0x134) &&
         BtlMember_CountAlive(chr) >= 3) {
         if (BtlInput_IsPressed(chr, 0x2000000)) {
             BtlMember_PrevSwitchTarget(chr);
@@ -1110,7 +1110,7 @@ void BtlAct_UpdateTimers(BtlActChr *chr) {
     }
     kind = BtlOpp_GetParamByte2(chr);
     if (kind == 4) {
-        if (BtlParam_GetUnk2(chr) == kind) {
+        if (BtlParam_GetSizeClass(chr) == kind) {
             BtlAnim_SetObjRate(chr, BtlAnim_GetObjRate(chr) * 2.0f);
         } else {
             BtlAnim_SetObjRate(chr, BtlAnim_GetObjRate(chr) * 3.0f);

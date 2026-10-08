@@ -9,7 +9,7 @@
  * 0x20D210..0x20DF60 are not decompiled, the offsets were read from their disassembly):
  *   +0x00 u32 flags (BtlAtk_GetFlags)      +0x04 u16 damage (BtlAtk_GetDamage)   +0x06 u16 guard damage (BtlAtk_GetGuardDamage)
  *   +0x08 u16 ki the defender pays on guard result 1 (BtlAtk_GetGuardKiCost)        +0x0A u16 ki gain (BtlAtk_GetKiGain)
- *   +0x10 u16 gain of fighter + 0xD80 (BtlAtk_GetUnk10)
+ *   +0x10 u16 gain of fighter + 0xD80 (BtlAtk_GetChargeGaugeGain)
  *   +0x12 u8 push speed on hit (BtlAtk_GetPushOnHit)    +0x13 u8 push speed on guard (BtlAtk_GetPushOnGuard)
  *   +0x15, +0x16 s8 launch angles (BtlAtk_GetLaunchAngleA, BtlAtk_GetLaunchAngleB)
  *   +0x17, +0x18 u8 shake power / time on hit (BtlAtk_GetShakePower, BtlAtk_GetShakeTime)
@@ -19,7 +19,7 @@
  *   +0x26 s8 priority for trades (BtlAtk_GetPriority)
  *   +0x27..+0x2A s8 guard results (BtlAtk_GetGuardKindB, BtlAtk_GetGuardKindC, BtlAtk_GetGuardKindA, BtlAtk_GetGuardKindE; BtlAtk_GetBestGuardKind mixes)
  *   +0x2B s8 0 / 1 -> defender flag 0x66 / 0x67 on guard (BtlAtk_GetGuardFlagSel)
- *   +0x2C s8 armour levels the attack ignores (BtlAtk_GetUnk2C)
+ *   +0x2C s8 armour levels the attack ignores (BtlAtk_GetArmorIgnore)
  *
  * Attack flags tested here (BtlAtk_GetFlags): 1 first hit can be evaded by level, 2 ignored by animation flag 0x200,
  * 4 can be absorbed by armour, 8 hits without facing the opponent, 0x10 can be timed-guarded, 0x20 BtlMove_AimVerticalAtOpponent,
@@ -43,7 +43,7 @@ extern HitChr *BtlChar_Get(s32 i);
 extern HitPose *BtlChar_GetPos(HitChr *chr);
 extern HitObj *BtlChar_GetObj(HitChr *chr);
 extern s32 BtlChar_IsFree(HitChr *chr);
-extern s32 BtlChar_TestMemberUnk70(HitChr *chr);                 /* active member's gauge + 0x30 != 0 */
+extern s32 BtlChar_IsBodyChanged(HitChr *chr);                 /* active member's gauge + 0x30 != 0 */
 extern s32 BtlChar_TestFlag(HitChr *chr, s32 flag);
 extern void BtlChar_SetFlag(HitChr *chr, s32 flag);
 extern void BtlChar_SetHeldFlag(HitChr *chr, s32 flag);
@@ -92,7 +92,7 @@ extern s32 BtlAtk_GetDamage(HitChr *chr);
 extern s32 BtlAtk_GetGuardDamage(HitChr *chr);
 extern s32 BtlAtk_GetKiGain(HitChr *chr);
 extern s32 BtlAtk_GetGuardKiCost(HitChr *chr);
-extern s32 BtlAtk_GetUnk10(HitChr *chr);
+extern s32 BtlAtk_GetChargeGaugeGain(HitChr *chr);
 extern s32 BtlAtk_GetReaction(HitChr *chr);
 extern s32 BtlAtk_GetReactionB(HitChr *chr);
 extern s32 BtlAtk_GetReactionC(HitChr *chr);
@@ -116,12 +116,12 @@ extern s32 BtlAtk_GetGuardKindC(HitChr *chr);
 extern s32 BtlAtk_GetBestGuardKind(HitChr *chr);
 extern s32 BtlAtk_GetGuardKindE(HitChr *chr);
 extern s32 BtlAtk_GetGuardFlagSel(HitChr *chr);
-extern s32 BtlAtk_GetUnk2C(HitChr *chr);
+extern s32 BtlAtk_GetArmorIgnore(HitChr *chr);
 
 /* The fighter's parameter block (object + 0x91C). */
 extern s32 BtlParam_GetFlags(HitChr *chr);                           /* flags, + 0x10 */
 extern u32 BtlParam_GetFlags2(HitChr *chr);                           /* flags, + 0x14 */
-extern s32 BtlParam_GetUnk2(HitChr *chr);                           /* byte + 2 */
+extern s32 BtlParam_GetSizeClass(HitChr *chr);                           /* byte + 2 */
 extern f32 BtlParam_GetHitReactScale(HitChr *chr);                           /* float + 0x60 */
 extern u32 BtlSuper_GetFlags(HitChr *chr, s32 tech);                 /* technique flags */
 extern s32 BtlSkill_GetFrames(HitChr *chr, s32 dir);
@@ -625,7 +625,7 @@ s32 BtlHit_CheckDodge(HitChr *atk, HitChr *def) {
             return 1;
         }
     }
-    if (BtlChar_TestFlag(def, 0x4E) && (BtlParam_GetFlags2(def) & 0x80) && BtlParam_GetUnk2(atk) != 4 &&
+    if (BtlChar_TestFlag(def, 0x4E) && (BtlParam_GetFlags2(def) & 0x80) && BtlParam_GetSizeClass(atk) != 4 &&
         !BtlHit_IsFromBehind(atk, def) && (u32)BtlAtk_GetId(atk) < 0xB) {
         BtlChar_SetFlag(def, 0x7D);
         BtlChar_SetFlag(atk, 0x7E);
@@ -762,7 +762,7 @@ s32 BtlHit_CheckThrowBreak(HitChr *atk, HitChr *def) {
     if (BtlAtk_GetId(atk) != 0x55) {
         return 0;
     }
-    if (BtlParam_GetUnk2(def) == 4) {
+    if (BtlParam_GetSizeClass(def) == 4) {
         BtlChar_SetFlag(atk, 0x7A);
         BtlCharSnd_PlayCommon(def, 0x44);
         BtlChar_PlayVoice(atk, 0);
@@ -905,7 +905,7 @@ s32 BtlHit_CheckRush(void) {
         if (BtlChar_TestFlag(b, 0x49) && BtlChar_TestFlag(b, 0xA5) && !BtlChar_TestFlag(a, 0xA5)) {
             goto miss;
         }
-        if ((BtlParam_GetUnk2(b) == 4 && !(tf & 0x8000000)) || BtlChar_TestFlag(b, 0x59)) {
+        if ((BtlParam_GetSizeClass(b) == 4 && !(tf & 0x8000000)) || BtlChar_TestFlag(b, 0x59)) {
             BtlChar_SetFlag(a, 0x64);
             BtlChar_SetFlag(a, 0x129);
             continue;
@@ -1183,7 +1183,7 @@ void BtlHit_ApplyHit(HitChr *atk) {
                 lvl--;
             }
         }
-        lvl -= BtlAtk_GetUnk2C(atk);
+        lvl -= BtlAtk_GetArmorIgnore(atk);
         if (lvl > 0 && (af & 4)) {
             react = 2;
             if (BtlParam_GetFlags(def) & 4) {
@@ -1227,7 +1227,7 @@ void BtlHit_ApplyHit(HitChr *atk) {
     def->react.reaction = react;
     if (react != 2) {
         def->react.unk4 = BtlAtk_GetReactionSub(atk);
-        if (BtlChar_TestMemberUnk70(atk)) {
+        if (BtlChar_IsBodyChanged(atk)) {
             def->react.unk4 = 0x13;
         }
         def->react.silent = (af >> 10) & 1;
@@ -1296,7 +1296,7 @@ void BtlHit_ApplyHit(HitChr *atk) {
             f32 lb = BtlAtk_GetLaunchAngleB(atk);
 
             def->react.back = (af >> 12) & 1;
-            if (BtlChar_TestMemberUnk70(atk) && kind == 0x55) {
+            if (BtlChar_IsBodyChanged(atk) && kind == 0x55) {
                 def->react.back = 0;
                 la = 0.0f;
                 lb = -0.78539807f;
@@ -1388,7 +1388,7 @@ void BtlHit_ApplyHit(HitChr *atk) {
     if (!BtlChar_TestFlag(atk, 0x98)) {
         BtlMember_AddKi(atk, BtlAtk_GetKiGain(atk));
     }
-    atk->unkD80 += BtlAtk_GetUnk10(atk);
+    atk->unkD80 += BtlAtk_GetChargeGaugeGain(atk);
     if (atk->unkD80 > 100000) {
         atk->unkD80 = 100000;
     }

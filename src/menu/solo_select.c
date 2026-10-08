@@ -257,9 +257,9 @@ void SoloSel_Init(s32 section) {
     gSoloSel->texA[17] = MTEX(res, 0);
     gSoloSel->sel->flags |= SOLOSEL_SEL_IMAGE_READY;
     TextBox_Init(&gSoloSel->box[0], gSoloSel->nameText, 1);
-    TextBox_SetUnk80(&gSoloSel->box[0], 1);
+    TextBox_SetNoFlush(&gSoloSel->box[0], 1);
     TextBox_Init(&gSoloSel->box[1], gSoloSel->formText, 3);
-    TextBox_SetUnk80(&gSoloSel->box[1], 1);
+    TextBox_SetNoFlush(&gSoloSel->box[1], 1);
 }
 
 /* Frees everything SoloSel_Init made. */

@@ -60,9 +60,9 @@ gChrView = 0x002FF108; // size:0x4 // guess
 // TextBox (view_a_f.c): the head of the text box module that continues at 0x2600B0. TextBox_Init clears 0x8C
 // bytes, stores the text file and applies a preset; the setters are named after the fields they write.
 TextBox_Init = 0x0025FE00; // type:func // guess
-TextBox_SetUnk50 = 0x00260010; // type:func // guess
-TextBox_SetUnk80 = 0x00260018; // type:func // guess
-TextBox_SetUnkC = 0x00260020; // type:func // guess
+TextBox_SetAlign = 0x00260010; // type:func // guess
+TextBox_SetNoFlush = 0x00260018; // type:func // guess
+TextBox_SetOffset = 0x00260020; // type:func // guess
 TextBox_SetRect = 0x00260030; // type:func // guess
 TextBox_SetColor = 0x00260050; // type:func // guess
 TextBox_SetColor2 = 0x00260080; // type:func // guess
