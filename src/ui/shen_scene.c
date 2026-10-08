@@ -68,7 +68,7 @@ extern void StgBlur_SetColor2Rgba(s32 view, u8 r, u8 g, u8 b, u8 a);
 extern void StgBlur_SetColor3Rgba(s32 view, u8 r, u8 g, u8 b, u8 a);
 extern s32 ScrWarp_Spawn(s32 view, Vec4 *pos, f32 seconds, f32 radius, f32 width, f32 speed, f32 jitter);
 extern void ScrXfade_RequestCapture(void);
-extern void ScrXfade_Start(s32 request, f32 seconds); /* stg_ambient.h lists (request, seconds); this order matches the callers here */
+extern void ScrXfade_Start(f32 seconds, s32 request); /* float first: the callers here set $f12 before $a0 (stg_ambient.h lists (request, seconds)) */
 extern void BtlObjDraw_Draw(void);
 extern void Gfx_MarkPass(s32 pass);
 extern void Gfx_AddDefaultEnv(void);
@@ -120,27 +120,33 @@ ShenScene *gShenScene = NULL;
      6  until the fade is done
    Sounds 0x3D..0x40 of bank mask 2 follow the steps.
 
-   NOT MATCHING: kept as INCLUDE_ASM. The attempt below is behaviourally exact and differs from the original in
-   one place only: in step 1 the original converts the constant 0.0f of the third blur layer with the full
-   float-to-unsigned sequence on a scratch register ($f0, loaded right there), while this C keeps the constant
-   in $f20 (set before the glow level is passed on) and the compiler then folds the >= 2^31 arm; about 30
-   instructions around 0x2620D8 are ordered differently because of it, everything else is identical. The
-   read-only data the attempt emits (the two blur centres, the camera poses, the jump table) and its two
-   .lit4 constants (pi 0x2FE7AC, 3.8f 0x2FE7B0) have the original values and order. */
-/* Cleanup 4 (dumps). What the original shows is `lo` NOT living in a saved register: its 0.0 is put in $f0 at
-   the conversion and used three times there (compare, trunc, sub), just as `hi`'s 1.0 is loaded next to its
-   one use (`hi * 128.0f`; a pseudo set once to a constant and used once has its load moved to the use by
-   local-alloc, which is why `hi` already matches). Facts measured:
-   - `lo = 0.0f; hi = 1.0f;` must stand in front of the BtlObj_SetUnkB30 call: that call's own float-to-
-     unsigned conversion has a branch and a join, and behind the join cse no longer knows the constants. Moved
-     behind the call (or into the `if`), cse folds both conversions away (592 instructions).
-   - gcse cannot put a constant into the conversion's instructions (compare / fix), so `lo` keeps its three
-     uses and gets $f20. Any plain copy of it (`f32 a = lo;`) is found by gcse's constant propagation and
-     the conversion is then folded by cse2 (610 instructions); an inline helper with float parameters gives
-     the same code as passing `(u32)lo` (cse forwards the parameter copy).
-   So the source must make ONE use of the 0.0 variable that is neither a foldable copy nor the conversion
-   itself, or leave the pseudo without a hard register (reload then loads the constant once and inherits it).
-   Not found. */
+   NOT MATCHING: kept as INCLUDE_ASM. 618 instructions against 622; the attempt below is behaviourally exact and
+   differs in ONE place, the second float-to-unsigned conversion of step 1 (0x2620D8..0x26211C, 10 lines of an
+   aligned listing): the original keeps the whole sequence for the constant 0.0 (`sub.s / lui / trunc.w.s / mfc1 /
+   or` in the >= 2^31 arm) with 0.0 in $f0 and 2^31 in $f1; here the arm is folded to `lui t0,0x8000` and the two
+   float registers are exchanged (a consequence of the shorter life of the 0.0). Everything else, the jump table,
+   the four tables and the two .lit4 constants (pi 0x2FE7AC, 3.8f 0x2FE7B0) are the original's. */
+/* What the 2026-10-08 round established (build/scratch_shell_burst/s_*.py, dumps in rtl/sv_*):
+   - The blur call of step 1 is `SetBlur((u32)(hi * 64.0f), (u32)lo, (u32)lo, (u32)(hi * 128.0f))` with
+     `lo = 0.0f; hi = 1.0f;` assigned INSIDE the `if`: all four arguments are conversions. cse1 folds the first
+     (it knows hi), which leaves a label behind; cse2 folds the second ((u32)lo, now in the block of the
+     assignment); the third (u32)lo and the multiply of the fourth survive, and `hi`, left with one use, has its
+     load moved to that use. This alone gives the original's order of the four StgBlur_SetColor calls
+     (`li t0,64` and `move t0,zero` first, `li a3` in the delay slot), which literal 0x40 / 0 do not.
+   - ScrXfade_Start takes the float first (`mov.s $f12` in front of the jal, `li a0,1` in the delay slot).
+   - `zero = 0.0f; half = 0.5f;` of step 2 stand behind the BtlObjAnim_PlayModel call (`li a1,1` in front of
+     `mtc1 zero,$f20`).
+   - What is left: gcse's constant propagation knows `lo` in the >= 2^31 arm of the third conversion and leaves
+     a REG_EQUAL note on its `lo - 2^31` (insn `minus`), from which cse2 folds the arm; the compare / trunc in
+     front are kept (as in the original). The original has no such note: at gcse time no constant assignment
+     of the converted value reached that arm, yet the final code loads 0.0 with `mtc1 zero,$f0` right there.
+     `hi * 128.0f` escapes the same propagation only because its note `1.0 * x` simplifies to a register and is
+     dropped. Tried without effect (all give this same code or fold more): the assignments in either order, in
+     front of / behind `center = c`, as block-scope initialisers, an inline `(u32)` helper per argument, a copy
+     of `lo` for the third argument, `(u32)(lo * hi)`, `(u32)(hi * 0.0f)` for the second, statement-wise u8
+     locals, the variable shared with `shake` of step 3. Reading the two values from the constant table
+     (`c.x`, `c.z * 128.0f`) gives the original's instructions and length (622) with `lwc1` in place of the
+     two immediate loads, i.e. the original compiler did not know the value in that arm. */
 #if 0
 /* A sound of bank mask 2, queued twice. */
 static inline void ShenScene_PlaySe(s32 id, s32 volume) {
@@ -207,14 +213,14 @@ s32 ShenScene_StepSeq(ShenSeq *seq) {
                 Ramp_Start(ramp, 0.5f, 127.0f, 0.0f);
             }
         }
-        lo = 0.0f;
-        hi = 1.0f;
         BtlObj_SetUnkB30(actor->obj, (u8)(u32)SHEN_RAMP(actor)->value);
         if (DemoCam_GetTime() >= 354.0f) {
             static const ShenVec c = {0.0f, 0.0f, 1.0f, 1.0f};
 
+            lo = 0.0f;
+            hi = 1.0f;
             center = c;
-            ShenScene_SetBlur(0x40, 0, (u32)lo, (u32)(hi * 128.0f));
+            ShenScene_SetBlur((u32)(hi * 64.0f), (u32)lo, (u32)lo, (u32)(hi * 128.0f));
             StgBlur_SetCenter(0, &center, 0);
         }
         if (!ShenScene_IsCamEnd()) {
@@ -224,9 +230,9 @@ s32 ShenScene_StepSeq(ShenSeq *seq) {
         /* fall through */
     case 2: {
         work = gShenScene;
+        BtlObjAnim_PlayModel(work->actor[SHENSCENE_ACTOR_DRAGON].obj, 1, 2);
         zero = 0.0f;
         half = 0.5f;
-        BtlObjAnim_PlayModel(work->actor[SHENSCENE_ACTOR_DRAGON].obj, 1, 2);
         Ramp_Start(SHEN_RAMP(&work->actor[SHENSCENE_ACTOR_DRAGON]), 2.0f, 64.0f, zero);
         SHEN_OBJ_FLAGS(gShenScene->actor[SHENSCENE_ACTOR_BALLS].obj) &= ~2;
         {
@@ -252,7 +258,7 @@ s32 ShenScene_StepSeq(ShenSeq *seq) {
             ScrWarp_Spawn(0, &p[dragon], 3.8f, 10.0f, 50.0f, 10.0f, half);
         }
         ScrXfade_RequestCapture();
-        ScrXfade_Start(1, half);
+        ScrXfade_Start(half, 1);
         ShenScene_SetState(SHENSCENE_STATE_READY);
         seq->step++;
     }
@@ -281,7 +287,7 @@ s32 ShenScene_StepSeq(ShenSeq *seq) {
         }
         ShenScene_SetState(SHENSCENE_STATE_INTRO);
         ScrXfade_RequestCapture();
-        ScrXfade_Start(1, 1.0f);
+        ScrXfade_Start(1.0f, 1);
         seq->step++;
         break;
     case 4:

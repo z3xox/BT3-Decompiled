@@ -48,7 +48,8 @@ extern void IVec4_ToFloat(f32 *out, s32 *in); /* integer vector to float vector 
 extern void Vec4_ToInt(s32 *dst, Vec4 *src); /* float vector to integer vector */
 extern void Vec4_Clamp(f32 *out, f32 *in, f32 min, f32 max); /* clamps a vector */
 extern s32 Mtx_ProjectPoint(EftScrPos *out, Mtx44 *m, Vec4 *v); /* projects one point */
-extern void Mtx_ProjectPointStq(s32 *scr, f32 *st, Mtx44 *m, f32 *pos, f32 *nrm); /* projects, makes env-map st */
+extern s32 Mtx_ProjectPointStq(s32 *scr, f32 *st, Mtx44 *m, f32 *pos, f32 *nrm); /* projects, makes env-map st; RETURNS a value
+   (unused here): declared void, EftBurst_DrawModel's colour unpack and argument moves come out differently */
 
 /* Local vectors as plain arrays (sceVu0FVECTOR / sceVu0IVECTOR style): 16-byte aligned, so the compiler
    copies them with 64-bit loads. */
@@ -491,23 +492,23 @@ void EftBurst_ClearAlphaPlane(void) {
     Dma_EndDirect(p);
 }
 
-#if 0 /* ATTEMPT: not matching: 597 instructions against 599, 44 differ in an aligned listing, all of them register
-   choice and instruction order in three places of the vertex loop; the control flow, the frame (0x240), every stack
-   slot, every call and every packet word are the original's. What differs:
-   - the colour unpack: the original reads rgba[0] and rgba[2] into $v1 and the two high bytes into $v0, and
-     takes the three low parts of the first RGBAQ word from those registers (`move a1,v1`, `move a2,v0 /
-     dsll a2,a2,8`, `move a0,v1 / dsll a0,a0,16`), reloading only rgba[3] from the stack; here the registers
-     alternate the other way round and rgba[2] is reloaded too (2 instructions short). The moves are sign
-     extending loads of rgba[i] that the post-reload CSE turned into copies, so the first scheduling pass of the
-     original must have put the reads of rgba[0] and rgba[1] behind the store of rgba[1] and in front of the load
-     of the third byte, not into the load-delay gaps where they land here. Reading / storing through a pointer
-     that the compiler cannot resolve (`c = rgba;` set outside the vertex loop) gives the original's register
-     pattern but costs two instructions elsewhere; a `do { } while (0)` around the four stores does too but breaks
-     the loop's induction pointers.
-   - the copies of the two constant vectors: the original loads the address of D_002EC8D0 into $v1 and copies it
-     to $t0 for the second half (`move t0,v1 ... ld v0,0(v1) / ld v1,8(t0)`), with the halves in $a3/$a2 and
-     $v0/$v1; here both addresses go through $t0 and the halves sit in $a2/$a3 and $v1/$v0.
-   - the last two argument moves in front of Mtx_ProjectPointStq are swapped (`move t0,s0 / move a3,v0`).
+#if 0 /* ATTEMPT: not matching: 599 instructions, the original's count; 16 differ, all in ONE place, the copies of
+   the two constant vectors behind the memset of `light` (0x13D620..0x13D660). The control flow, the frame (0x240),
+   every stack slot, every call and every packet word are the original's.
+   What differs: the original has the halves of `lightDir` in $a3 / $a2 and those of `ambient` in $v0 / $v1, and
+   loads both table addresses up front (`lui t0 / lui v1 / addiu t0 / addiu v1 / ld a3,0(t0) / ld a2,8(t0) /
+   move t0,v1 / ... / ld v0,0(v1) / ld v1,8(t0)`); here the halves sit in $a2 / $a3 and $v1 / $v0 and both
+   addresses go through $t0, one instruction less (a nop for the loop alignment replaces it further down).
+   Measured (build/scratch_shell_burst/, rtl/bv_g1): the four halves are block-local pseudos allocated by length of
+   life, and the original's registers need the first scheduling pass to emit `ld / $a0 = d / ld / $a1 = d / ld /
+   ld` behind the memset where it emits `ld / ld / $a0 = d / ld / $a1 = d / ld` here: one instruction more has to
+   be issued in the cycle of the memset call (in front of the first `ld`). The address of `d` computed in that
+   block instead of being hoisted by gcse would do it; no source form that keeps it there was found (pointer
+   locals, an inline length helper, the order of the three initialisers, `len` as an initialiser, a separate
+   dot-product variable, const / pure on Vec3_Dot: all give this code).
+   FIXED on 2026-10-08, and what the two other differences of the earlier note were: Mtx_ProjectPointStq is NOT
+   void. With `extern s32` the colour unpack (registers alternating $v1 / $v0, `move a2,v0 / dsll a2,a2,8`, no
+   reload of rgba[2]) and the order of the argument moves in front of the call match as written below.
    Ruled out (about 250 variants): every element type / alignment for the vectors, `static const` tables copied by
    struct assignment, memcpy, u64 pairs (u128 gives lq / sq and is the only form that keeps the lui / addiu in the
    block), colour bytes as u8, bit fields, temporaries, one u32, casts, statement permutations, the position of

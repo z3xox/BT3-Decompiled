@@ -113,6 +113,22 @@ void SimPopo_CursorOff(USimDay *day) {
  * original (a2 / a3 / a1, in that order) but the store of the target then follows the two zero stores (10
  * instructions, two of them in case 16); chained zero stores and a pointer to the table row change nothing.
  * The original has the target's `lui` last and its store first.
+ *
+ * 2026-10-08 (build/scratch_shell_burst/try34*.py, viz.sh; scheduler traces in rtl/): what the original's order
+ * requires, measured on the first scheduling pass. The statement order is Count, Speed, Won with the Rand_Range
+ * result held in a temporary (then rank is in $a0, the index in $v1, the three other `lui` in $a2 / $a3 / $a1 as
+ * in the original), and the store of the target has to be issued between the `addu` of the index and the load of
+ * the speed, so that reload gives its `lui` the register rank has just left ($a0) and the speed gets $v0. It
+ * cannot be, in any form tried: gcse's shared register for `%hi(gSimPopoTarget)` (r580, set in every case) has
+ * no known base address, so the scheduler makes the store conflict with the load of gSimTrain2[].speed; written
+ * in front of that load the store gets the block's highest priority and is issued at once (this attempt, 15
+ * instructions), written behind it the store follows the load (10 instructions). With an address the
+ * scheduler can resolve the store has the priority of the two zero stores and lands exactly where the original
+ * has it (probe: the same store through `extern s32 gT6 __asm__("gSimPopoTarget")`, which gcse treats as another
+ * symbol), but its `lui` is then an ordinary block-local register that overlaps rank ($a0 / $a1 exchanged, 10 and
+ * 7 instructions). So the original needs both: the shared, rematerialised high part AND no conflict with the
+ * table load. Not found; temporaries of every integer type, pointers to the global and all 24 statement orders
+ * give one of the three results above.
  */
 #if 0
 s32 SimEv34(USimDay *day) {
