@@ -136,7 +136,7 @@ void BtlChar_ApplyRootYaw(BtlCtlChr *chr) {
         f32 yaw = pose->rootRot.y;
 
         pose->heading = pose->rot.y = BtlUtil_WrapAngle(yaw + pose->rot.y);
-        pose->speed *= Mathf_Cos(yaw);
+        pose->pitch *= Mathf_Cos(yaw);
     }
 }
 
@@ -160,7 +160,7 @@ void BtlChar_Place(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, s32 area) {
     Vec4_Copy(&pose->vel, &gVu0ZeroVec);
     Vec4_Copy(&pose->moved, &gVu0ZeroVec);
     pose->heading = rot->y;
-    pose->speed = 0.0f;
+    pose->pitch = 0.0f;
     pose->unk98 = 0.0f;
     pose->fallSpeed = 0.0f;
     Vec4_Copy(&obj->pos, pos);

@@ -99,7 +99,7 @@ typedef struct BtlCtlPose {
     /* 0x60 [0x70] */ Vec4 rootRot; /* rotation of model node 0 as euler angles */
     /* 0x70 [0x80] */ Vec4 impulse;
     /* 0x80 [0x90] */ Vec4 dir;     /* (sin yaw, 0, cos yaw, 0) at placement */
-    /* 0x90 [0xA0] */ f32 speed;    /* 0 at placement; scaled by cos(rootRot.y) in BtlChar_ApplyRootYaw */
+    /* 0x90 [0xA0] */ f32 pitch;    /* 0 at placement; scaled by cos(rootRot.y) in BtlChar_ApplyRootYaw */
     /* 0x94 [0xA4] */ f32 heading;  /* yaw; rot.y at placement */
     /* 0x98 [0xA8] */ f32 unk98;    /* 0 at placement */
     /* 0x9C [0xAC] */ f32 fallSpeed;    /* 0 at placement */

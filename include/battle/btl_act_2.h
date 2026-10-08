@@ -15,11 +15,11 @@ typedef struct BtlActCPose {
     /* 0x00 */ Vec4 pos;
     /* 0x10 */ Vec4 rot;
     /* 0x20 */ u8 unk20[0x40 - 0x20];
-    /* 0x40 */ Vec4 move;      /* y = fall speed */
+    /* 0x40 */ Vec4 move;      /* y = fall pitch */
     /* 0x50 */ u8 unk50[0x70 - 0x50];
     /* 0x70 */ Vec4 impulse;
     /* 0x80 */ Vec4 vel;
-    /* 0x90 */ f32 speed;
+    /* 0x90 */ f32 pitch;
     /* 0x94 */ f32 facing;
     /* 0x98 */ f32 unk98;
     /* 0x9C */ f32 fallSpeed;
@@ -257,13 +257,13 @@ typedef struct BtlActEPose {
     /* 0x00 */ Vec4 pos;
     /* 0x10 */ Vec4 rot;
     /* 0x20 */ u8 unk20[0x40 - 0x20];
-    /* 0x40 */ Vec4 moved;     /* its length is compared with a speed: the movement of this frame */
+    /* 0x40 */ Vec4 moved;     /* its length is compared with a pitch: the movement of this frame */
     /* 0x50 */ u8 unk50[0x80 - 0x50];
     /* 0x80 */ Vec4 vel;       /* direction of travel */
-    /* 0x90 */ f32 speed;
+    /* 0x90 */ f32 pitch;
     /* 0x94 */ f32 facing;
-    /* 0x98 */ f32 unk98;      /* forward speed */
-    /* 0x9C */ f32 fallSpeed;      /* vertical speed */
+    /* 0x98 */ f32 unk98;      /* forward pitch */
+    /* 0x9C */ f32 fallSpeed;      /* vertical pitch */
 } BtlActEPose;
 
 /* Active member's gauge block (BtlMember_GetActiveGauge). */

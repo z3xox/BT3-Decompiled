@@ -1092,7 +1092,7 @@ s32 BtlAct_Action3E(Chr *chr, s32 phase) {
         }
         c = Mathf_Cos(BtlOpp_GetYawFromFacing(chr));
         if (0.0f < c) {
-            BtlMove_SetLeanX(chr, BtlChar_GetPos(chr)->speed * c);
+            BtlMove_SetLeanX(chr, BtlChar_GetPos(chr)->pitch * c);
         }
         BtlChar_SetFlag(chr, 0xCA);
         BtlMove_RequestOrbit(chr, 50.0f, 100.0f);
@@ -1539,7 +1539,7 @@ s32 BtlAct_DashKiBlastHandler(Chr *chr, s32 phase) {
             BtlChar_SetHeldFlag(chr, 0xE);
         }
         if (BtlChar_TestFlag(chr, 5) && (chr->work[0] & 1)) {
-            BtlMove_SetLeanX(chr, BtlChar_GetPos(chr)->speed);
+            BtlMove_SetLeanX(chr, BtlChar_GetPos(chr)->pitch);
         }
     }
     if (phase == 2) {
@@ -1667,7 +1667,7 @@ s32 BtlAct_DashChargedKiBlastHandler(Chr *chr, s32 phase) {
             BtlChar_SetHeldFlag(chr, 0xE);
         }
         if (BtlChar_TestFlag(chr, 5) && (chr->work[0] & 1)) {
-            BtlMove_SetLeanX(chr, BtlChar_GetPos(chr)->speed);
+            BtlMove_SetLeanX(chr, BtlChar_GetPos(chr)->pitch);
         }
     }
     if (phase == 2) {
@@ -4378,7 +4378,7 @@ s32 BtlAct_CircleDashHandler(BtlActEChr *chr, s32 phase) {
             BtlMove_Step(chr, (chr->work[0] & 2) ? 2 : 6, 6, 7, 0.0f, BTL_KMH(100.0f));
             BtlMove_ApplyGravity(chr);
         }
-        BtlMove_SetLeanX(chr, BtlChar_GetPos(chr)->speed * lean);
+        BtlMove_SetLeanX(chr, BtlChar_GetPos(chr)->pitch * lean);
         BtlChar_SetFlag(chr, 0x89);
     }
     if (phase == 2) {
