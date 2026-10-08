@@ -1,0 +1,7 @@
+include/battle/battle.h	16 unknown fields
+include/battle/battle_setup.h	2 unknown fields
+include/battle/battle_work.h	5 unknown fields
+include/battle/btl_act_1.h	34 unknown fields
+include/battle/btl_act_2.h	66 unknown fields
+include/battle/btl_act_change.h	21 unknown fields
+include/battle/btl_act_decide.h	13 unknown fields

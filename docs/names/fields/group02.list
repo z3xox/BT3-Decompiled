@@ -1,0 +1,7 @@
+include/battle/btl_act_super.h	55 unknown fields
+include/battle/btl_ai.h	23 unknown fields
+include/battle/btl_ai_int.h	1 unknown fields
+include/battle/btl_ai_sense.h	3 unknown fields
+include/battle/btl_ai_seq.h	4 unknown fields
+include/battle/btl_ai_think.h	16 unknown fields
+include/battle/btl_cam.h	5 unknown fields
