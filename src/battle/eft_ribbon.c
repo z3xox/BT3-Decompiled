@@ -1852,21 +1852,9 @@ void EftZap_SpawnLine(EftZapWork *w) {
    (C, B, D = angle step, A = width), its start angle, tilt and colours from the definition's base + range pairs,
    places its axis and takes its points from the pool. Returns 0 (after giving the points back) when the life or
    the point count comes out as 0 or the pool runs dry. */
-#if 0
-/* NON-MATCHING: 7 of 567 instructions differ, registers only: in the width block def->split (both loads) is in
-   f2 and the constant 1.0f in f3, the original has them the other way round; the rise and radius blocks, written
-   the same way, match. The block differs from those by the four argument instructions of the colEnd memset.
-   What the allocator does there (local-alloc quantities, checked against every variant tried): the quantity of
-   1.0f (the constant and `1.0f - split`, 4 references) has to be allocated before the second def->split load
-   (2 references over 2 instructions) and after `key[1] - key[0]` and key[2], which take f0 and f1. With this C
-   the 1.0f quantity spans 10 instructions (priority 0.8 against 1.0); the original needs it to span at most 8,
-   or one more instruction between the second split load and the subtraction, at the first scheduling pass.
-   Without the block-local `life` the key[1] - key[0] / key[2] pair swaps f0 / f1 as well (13).
-   Tried without effect (7 or worse): statement orders; locals for the keys, the differences and the
-   denominators in every declaration order; a variable for 1.0f or for the split; colEnd cleared by an explicit
-   memset, through a pointer variable, or in an inline function (that one loses the shared address register);
-   empty statements, `do { } while (0)` and empty asm statements in every position (a tied asm copy of the 1.0f
-   gives it too many references: it then takes f0 or f1); the permuter from both forms (best score 40 / 50). */
+/* The end colour is a union vector (as the vector types of the neighbouring effect modules are): the initialiser of
+   a union emits a clobber of the whole variable in front of the memset, and that non-emitting instruction is what
+   puts the width block's 1.0f in f2 and def->split in f3 (with a plain struct they come out swapped). */
 s32 EftZap_InitLine(EftZapStrand *line, EftZapWork *w) {
     EftZapDef *def = w->arg.def;
     f32 fps = 30.0f;
@@ -1935,30 +1923,26 @@ s32 EftZap_InitLine(EftZapStrand *line, EftZapWork *w) {
     if (def->flags & 2) {
         key[1] = (key[0] + key[2]) * 0.5f;
     }
+    line->widthStep[0] = (key[1] - key[0]) / (line->life * def->split);
+    line->widthStep[1] = (key[2] - key[1]) / (line->life * (1.0f - def->split));
+    line->width = key[0];
     {
-        f32 life = line->life;
-
-        line->widthStep[0] = (key[1] - key[0]) / (life * def->split);
-        line->widthStep[1] = (key[2] - key[1]) / (life * (1.0f - def->split));
-        line->width = key[0];
-    }
-    {
-        EftAcVec colEnd = { 0.0f, 0.0f, 0.0f, 0.0f };
+        union { EftAcVec v; f32 f[4]; } colEnd = { { 0.0f, 0.0f, 0.0f, 0.0f } };
 
         ZAP_MODE(def->modeColor, 0x100);
         line->color0.x = Rand_FloatRange(w->curA.x, w->curA.x + w->curB.x);
         line->color0.y = Rand_FloatRange(w->curA.y, w->curA.y + w->curB.y);
         line->color0.z = Rand_FloatRange(w->curA.z, w->curA.z + w->curB.z);
         line->color0.w = Rand_FloatRange(w->curA.w, w->curA.w + w->curB.w);
-        colEnd.x = Rand_FloatRange(w->curC.x, w->curC.x + w->curD.x);
-        colEnd.y = Rand_FloatRange(w->curC.y, w->curC.y + w->curD.y);
-        colEnd.z = Rand_FloatRange(w->curC.z, w->curC.z + w->curD.z);
-        colEnd.w = 0.0f;
+        colEnd.v.x = Rand_FloatRange(w->curC.x, w->curC.x + w->curD.x);
+        colEnd.v.y = Rand_FloatRange(w->curC.y, w->curC.y + w->curD.y);
+        colEnd.v.z = Rand_FloatRange(w->curC.z, w->curC.z + w->curD.z);
+        colEnd.v.w = 0.0f;
         Vec4_Clamp(V(&line->color0), V(&line->color0), 0.0f, 255.0f);
-        Vec4_Clamp(V(&colEnd), V(&colEnd), 0.0f, 255.0f);
+        Vec4_Clamp(V(&colEnd.v), V(&colEnd.v), 0.0f, 255.0f);
         Vec4_Copy(V(&line->color), V(&line->color0));
         line->color.w = 0.0f;
-        Vec3_Sub(V(&line->colorStep), V(&colEnd), V(&line->color));
+        Vec3_Sub(V(&line->colorStep), V(&colEnd.v), V(&line->color));
     }
     if (def->flags & 0x20) {
         line->tintTime = w->tintTime.cur * 30.0f;
@@ -2002,12 +1986,6 @@ s32 EftZap_InitLine(EftZapStrand *line, EftZapWork *w) {
     }
     return 1;
 }
-#else
-LIT4_WORD(D_002FCED0, 0x40490FDA); /* 3.14159265f */
-LIT4_WORD(D_002FCED4, 0x40C90FDA); /* 6.2831853f */
-LIT4_WORD(D_002FCED8, 0x40490FDA); /* 3.14159265f */
-INCLUDE_ASM("asm/nonmatchings/battle/eft_ribbon", EftZap_InitLine);
-#endif
 
 /* Steps every line of the emitter: start delay, the four animated values by key segment, the angle, the axis
    point (radius * cos / sin of the angle, scaled by the emitter's size), the line's matrix (pitch and yaw of the

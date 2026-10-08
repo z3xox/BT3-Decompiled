@@ -5,8 +5,7 @@
  * Technique effects, second part: 0x14B108..0x14F230. See include/battle/eft_emit.h for the layouts.
  * Everything called outside the file is declared here with this file's own view types.
  *
- * One function (EftShot_BuildParam) is INCLUDE_ASM with the C attempt in `#if 0` above it and a note on what differs; turning
- * the `#if 0` into `#if 1` and dropping the INCLUDE_ASM line gives a file that fdiff can compile.
+ * Every function of the file is matching C.
  */
 
 extern void *memset(void *dst, s32 c, u32 n);
@@ -128,9 +127,14 @@ static inline s32 EftShot_TypeRow(s32 type) {
 
 /* Fills the parameter block of technique slot `slot` of character `chr`: defaults when `blank`, otherwise a
    flat copy of the fields the effects use out of the character's skill (slots 0, 1) or technique data. */
-#if 0 /* not matched (499 instructions against 502). The defaults branch is identical except for the order of six stores; the skill and technique branches read the same fields into the same places, but the original keeps a copy of the slot index (move t8,t9 / addiu t8,t9,-2) and shares the address arithmetic of the structure-of-arrays fields differently (it spills 34 intermediate addresses to the stack, this C 30). Behaviour verified: both versions were run in an interpreter for every slot 0..4, blank 0 / 1 and 40 random source tables; the parameter block and the memory around it come out byte-identical (build/scratch_cleanup_eft/emu_buildparam.py; a deliberately wrong field is caught). Cleanup X2: making the slot index ONE function-scope variable set in both branches (`n = slot;` / `n = slot - 2;`, in front of or behind the data call), or reusing `i` for it, does not give the original's `move t8,t9` and is worse (355 to 384 instructions differ after alignment, against 317 for this form). Not tried: the element-alignment lesson (the original computes `d + n` once per access and spills each copy, the pattern that f32 [16][4] solved in EftOrbTail_DrawStreaks); the views of EftSkillSrc / EftSuperSrc are the place to look. Round 2026-10-08 (no progress on the count): in the technique branch the original addresses every BYTE array from `slot` with the -2 folded into the constant (`addiu t1,t9,0x12E` for +0x130) and only the 2- and 4-byte arrays from `slot - 2` (t8, `sll s7,t8,2`), i.e. the index was written `slot - 2` at each access there, while the skill branch goes through a copy (`move t8,t9`); writing `[slot - 2]` at every access of this attempt gives 497 instructions, 421 differing, so it is not sufficient alone. In the defaults branch the original keeps the last seven stores in source order (volley, unk50, unk14, unk48, unk4A, unk4C, unk54) where this C moves unk14 and unk54 up: there the -1 and 1.0 registers do not die at those stores. */
+/* The slot index is one function-scope variable set in both data branches (`n = slot;` / `n = slot - 2;`): in the
+   technique branch the first cse pass folds `n + K` into `slot + (K - 2)` for the byte arrays, which works only
+   while the block is not split, so the kind goes through a local (conditional move) instead of a store in each
+   arm. The order of the trailing stores (unk54, unk50, unk14) is the source order in all three branches: the
+   first scheduling pass moves the stores that end a register's life to the front. */
 void EftShot_BuildParam(s32 chr, s32 slot, EftShotParam *p, s32 blank) {
     s32 i;
+    s32 n;
 
     memset(p, 0, sizeof(EftShotParam));
     if (blank) {
@@ -169,12 +173,12 @@ void EftShot_BuildParam(s32 chr, s32 slot, EftShotParam *p, s32 blank) {
         p->unk40 = 0;
         p->unk42 = 0;
         p->volley = 1;
-        p->unk50 = 1.0f;
-        p->unk14 = -1;
         p->unk48 = 0;
         p->unk4A = 0;
         p->unk4C = 0.0f;
         p->unk54 = 1.0f;
+        p->unk50 = 1.0f;
+        p->unk14 = -1;
         for (i = 0; i < 8; i++) {
             p->unk58[i] = -1;
             p->unk60[i] = 0.0f;
@@ -184,7 +188,8 @@ void EftShot_BuildParam(s32 chr, s32 slot, EftShotParam *p, s32 blank) {
         p->unk80 = 0;
     } else if (slot < 2) {
         EftSkillSrc *d = BtlCharApi_GetPlayerSkillData(chr);
-        s32 n = slot;
+
+        n = slot;
 
         p->id = d->id[n];
         p->unk2 = d->unk14[n];
@@ -224,9 +229,9 @@ void EftShot_BuildParam(s32 chr, s32 slot, EftShotParam *p, s32 blank) {
         p->unk4C = 0.0f;
         p->unk48 = (s8)d->unk6E[n];
         p->unk4A = (s8)d->unk70[n];
+        p->unk54 = 1.0f;
         p->unk50 = 1.0f;
         p->unk14 = -1;
-        p->unk54 = 1.0f;
         for (i = 0; i < 8; i++) {
             p->unk58[i] = -1;
             p->unk60[i] = 0.0f;
@@ -236,11 +241,14 @@ void EftShot_BuildParam(s32 chr, s32 slot, EftShotParam *p, s32 blank) {
         p->unk80 = 0;
     } else {
         EftSuperSrc *d = BtlCharApi_GetPlayerSuperData(chr);
-        s32 n = slot - 2;
+        s32 kind;
+
+        n = slot - 2;
 
         p->id = d->id[n];
         p->unk2 = d->unk1E[n];
-        p->kind = slot == 4 ? 2 : 1;
+        kind = slot == 4 ? 2 : 1;
+        p->kind = kind;
         p->unk5 = d->unk13B[n];
         p->unk6 = d->unk90[n];
         p->unk7 = 0;
@@ -257,11 +265,11 @@ void EftShot_BuildParam(s32 chr, s32 slot, EftShotParam *p, s32 blank) {
         p->unkE[4] = d->unkA8[4][n];
         p->unkE[5] = d->unkA8[5][n];
         p->unk16[0] = -1;
-        p->unk16[5] = -1;
         p->unk16[1] = -1;
         p->unk16[2] = -1;
         p->unk16[3] = -1;
         p->unk16[4] = -1;
+        p->unk16[5] = -1;
         p->unk22 = 0;
         p->unk24 = 0;
         p->life = d->time[n] * 30.0f;
@@ -288,8 +296,6 @@ void EftShot_BuildParam(s32 chr, s32 slot, EftShotParam *p, s32 blank) {
         p->unk88 = d->unk3C[n];
     }
 }
-#endif
-INCLUDE_ASM("asm/nonmatchings/battle/eft_emit", EftShot_BuildParam);
 
 /* The slot record of one technique of one character. */
 EftHSlot *EftShot_GetSlot(s32 chr, s32 slot) {
