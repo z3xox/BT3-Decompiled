@@ -897,13 +897,13 @@ void ChrCam_UpdateDemo(ChrCamChr *chr) {
         DemoCam_Stop();
     }
     if (BtlChar_TestFlag(chr, 0xD7)) {
-        DemoCam_PlayCharAnim0(chr->side);
+        DemoCam_PlayCharAnim0(chr->player);
     }
     if (BtlChar_TestFlag(chr, 0xD8)) {
-        DemoCam_PlayCharAnim1(chr->side);
+        DemoCam_PlayCharAnim1(chr->player);
     }
     if (BtlChar_TestFlag(chr, 0xD9)) {
-        DemoCam_PlayCharAnim2(chr->side);
+        DemoCam_PlayCharAnim2(chr->player);
     }
 }
 

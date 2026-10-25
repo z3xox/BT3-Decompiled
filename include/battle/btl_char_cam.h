@@ -102,26 +102,10 @@ typedef struct ChrCamMgr {
 } ChrCamMgr;
 
 /* The fighter's body block, fighter + 0x10 (BtlChar_GetPos returns it): only what this file reads. */
-typedef struct ChrCamBody {
-    /* 0x00 [0x10] */ Vec4 pos;      /* world position */
-    /* 0x10 [0x20] */ u8 unk10[0x84]; /* +0x14 [0x24]: rotation y; +0x80 / +0x88 [0x90 / 0x98]: x / z of a direction (0x1E06D0) */
-    /* 0x94 [0xA4] */ f32 yaw;       /* facing */
-} ChrCamBody;
+typedef BtlFighterPose ChrCamBody;
 
 /* Partial view of a fighter (0x1600 bytes, BtlChar_Get): only what this file touches. */
-typedef struct ChrCamChr {
-    /* 0x000 */ s32 side;      /* 0 / 1 (btl_input.h: player); the opponent is BtlChar_Get(side == 0); passed to DemoCam_PlayCharAnim0..2 */
-    /* 0x004 */ s32 pad;
-    /* 0x008 */ s32 index;
-    /* 0x00C */ s32 objId;     /* BtlObj_Get index of the model object */
-    /* 0x010 */ ChrCamBody body;
-    /* 0x0A8 */ u8 unkA8[0x420 - 0xA8];
-    /* 0x420 */ ChrCam cam;
-    /* 0x4C0 */ ChrCamCut cut;
-    /* 0x570 */ u8 unk570[0x974 - 0x570];
-    /* 0x974 */ s32 motion;    /* BtlAnim_GetId */
-    /* 0x978 */ u8 unk978[0x1600 - 0x978];
-} ChrCamChr; /* size 0x1600 */
+typedef BtlFighter ChrCamChr;
 
 f32 ChrCam_GetOffset(ChrCamChr *chr, Vec4 *out, s32 mode);
 f32 ChrCam_CalcRate(ChrCamChr *chr, Vec4 *eye, Vec4 *target);
