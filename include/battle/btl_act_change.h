@@ -2,6 +2,7 @@
 #define BATTLE_BTL_ACT_H_H
 
 #include "types.h"
+#include "battle/btl_fighter.h"
 #include "sys/math3d.h"
 
 /*
@@ -30,67 +31,13 @@ typedef struct BtlActHPose {
 } BtlActHPose;
 
 /* What the last hit does to this fighter (fighter + 0xFB0; HitReact in btl_char_hit.h). */
-typedef struct BtlActHReact {
-    /* 0x00 [0xFB0] */ s32 reaction;
-    /* 0x04 [0xFB4] */ s32 reactSub;      /* passed to BtlAct_QueueReaction when the thrown fighter is released */
-    /* 0x08 [0xFB8] */ s32 animCycle;
-    /* 0x0C [0xFBC] */ s32 back;      /* hit from behind */
-    /* 0x10 [0xFC0] */ s32 noBlend;     /* non-zero: the throw animations start without blending */
-    /* 0x14 [0xFC4] */ s32 silent;    /* no hurt voice */
-    /* 0x18 [0xFC8] */ u8 unk18[0x28 - 0x18];
-    /* 0x28 [0xFD8] */ f32 launchA;   /* yaw offset of the release direction */
-    /* 0x2C [0xFDC] */ f32 launchB;   /* pitch of the release direction */
-} BtlActHReact; /* 0x30 */
+typedef BtlFighterReact BtlActHReact;
 
 /* Form-change request (fighter + 0x12CC; BtlActForm in btl_char_action.h, BtlActJForm in btl_act_decide.h). */
-typedef struct BtlActHForm {
-    /* 0x00 [0x12CC] */ s32 index;
-    /* 0x04 [0x12D0] */ s32 chara;       /* BtlChange_RequestChara arguments */
-    /* 0x08 [0x12D4] */ s32 costume;
-    /* 0x0C [0x12D8] */ s32 cost;        /* blast gauge taken when the model is in memory */
-    /* 0x10 [0x12DC] */ s32 kind;        /* 3 / 4 select flag 0x133 / 0x132 in action 0xEE */
-    /* 0x14 [0x12E0] */ s32 variant;
-    /* 0x18 [0x12E4] */ s32 animChara;
-    /* 0x1C [0x12E8] */ s32 anim1Chara;
-    /* 0x20 [0x12EC] */ s32 voiceChara;
-    /* 0x24 [0x12F0] */ s32 objId;       /* extra object (BtlChange_RequestObject): the partner / the prop */
-    /* 0x28 [0x12F4] */ s32 objCostume;
-    /* 0x2C [0x12F8] */ s32 partner;     /* fusion: member index of the partner */
-    /* 0x30 [0x12FC] */ s32 objVariant;  /* fusion only */
-} BtlActHForm; /* 0x34 */
+typedef BtlFighterForm BtlActHForm;
 
 /* Fighter (0x1600 bytes). */
-typedef struct BtlActHChr {
-    /* 0x0000 */ s32 player;
-    /* 0x0004 */ s32 pad;
-    /* 0x0008 */ s32 side;
-    /* 0x000C */ s32 objId;
-    /* 0x0010 */ u8 unk10[0x3D0 - 0x10];
-    /* 0x03D0 */ s32 work[0x14];     /* per-action scratch, zeroed on every action switch */
-    /* 0x0420 */ u8 unk420[0x4A8 - 0x420];
-    /* 0x04A8 */ f32 camSide;        /* fighter camera: sign = side of the fighter the camera sits on */
-    /* 0x04AC */ u8 unk4AC[0x964 - 0x4AC];
-    /* 0x0964 */ s32 actionFrame;    /* frames spent in the current action; does not advance while time is stopped */
-    /* 0x0968 */ u8 unk968[0x970 - 0x968];
-    /* 0x0970 */ s32 holdAction;     /* 1 = skip next frame's forced-action check */
-    /* 0x0974 */ u8 unk974[0xCDC - 0x974];
-    /* 0x0CDC */ s32 switchChara;    /* member switch target: the arguments of BtlChange_RequestChara */
-    /* 0x0CE0 */ s32 switchCostume;
-    /* 0x0CE4 */ s32 switchVariant;
-    /* 0x0CE8 */ s32 switchAnimChara;
-    /* 0x0CEC */ s32 switchUnk18;
-    /* 0x0CF0 */ s32 switchVoiceChara;
-    /* 0x0CF4 */ u8 unkCF4[0xDC0 - 0xCF4];
-    /* 0x0DC0 */ s32 drainFrom;      /* first animation frame of the throw's drain window, < 0 = none */
-    /* 0x0DC4 */ s32 drainTo;        /* last frame of it */
-    /* 0x0DC8 */ u8 unkDC8[0xE60 - 0xDC8];
-    /* 0x0E60 */ s32 boostStock;         /* counter 0..10: +1 per throw by character 0x6E here, +5 per technique 0x2EF and zeroed when technique 0x2CD ends (btl_act_super.c) */
-    /* 0x0E64 */ u8 unkE64[0xFB0 - 0xE64];
-    /* 0x0FB0 */ BtlActHReact react;
-    /* 0x0FE0 */ u8 unkFE0[0x12CC - 0xFE0];
-    /* 0x12CC */ BtlActHForm form;
-    /* 0x1300 */ u8 unk1300[0x1600 - 0x1300];
-} BtlActHChr; /* 0x1600 */
+typedef BtlFighter BtlActHChr;
 
 /* Animation data of a battle object (object + 0xB40 points at it). */
 typedef struct BtlActHTrack {

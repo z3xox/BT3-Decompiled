@@ -188,12 +188,12 @@ s32 BtlAct_Throw(BtlActHChr *chr, s32 phase) {
         if (BtlAtk_GetFlags(chr) & 0x400) {
             BtlChar_SetFlag(chr, 0x13B);
         }
-        if (chr->drainFrom >= 0 && chr->drainTo >= 0) {
-            if (BtlAnim_InFrameRange(chr, chr->drainFrom, chr->drainTo)) {
+        if (chr->queue.drainFrom >= 0 && chr->queue.drainTo >= 0) {
+            if (BtlAnim_InFrameRange(chr, chr->queue.drainFrom, chr->queue.drainTo)) {
                 BtlCharSnd_PlayCommon(chr, 0x51);
                 BtlChar_SetFxBit(chr, 0x38);
             }
-            if (BtlAnim_PassedFrame(chr, chr->drainTo)) {
+            if (BtlAnim_PassedFrame(chr, chr->queue.drainTo)) {
                 BtlCharSnd_PlayCommon(chr, 0x52);
             }
             if (BtlAtk_GetFlags(chr) & 0x20000000) {
@@ -483,7 +483,7 @@ s32 BtlAct_DragDown(BtlActHChr *chr, s32 phase) {
 
     if (phase == 0) {
         BtlAnim_Play(chr, 0x197, 0.0f);
-        ChrCam_RequestCut(chr, 1, chr->camSide < 0.0f ? 0x18 : 0x19);
+        ChrCam_RequestCut(chr, 1, chr->cam.side < 0.0f ? 0x18 : 0x19);
     }
     if (phase == 1) {
         lean = 0.0f;
@@ -1378,7 +1378,7 @@ s32 BtlAct_SwitchLeave(BtlActHChr *chr, s32 phase) {
         if (chr->actionFrame == 1) {
             BtlChar_PlayVoice(chr, 0x10);
             BtlChange_RequestChara(chr->player, chr->switchChara, chr->switchCostume, chr->switchVariant,
-                                   chr->switchAnimChara, chr->switchUnk18, chr->switchVoiceChara);
+                                   chr->switchAnimChara, chr->switchAnim1Chara, chr->switchVoiceChara);
         }
         switch (BtlAnim_GetId(chr)) {
         case 0xEE:
