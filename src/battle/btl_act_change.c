@@ -125,7 +125,7 @@ s32 BtlAct_GrabDash(BtlFighter *chr, s32 phase) {
 /*
  * Fighter action handlers, second file: 0x1FC598..0x203168 (see btl_act_change.c for the overview and for how a
  * character change runs). Two parts: to 0x1FFAC0, and from there the member switch tail, the skills and the
- * decision functions (formerly btl_act_i.c, with its own header comment below and its own view of the fighter,
+ * decision functions (formerly btl_act_i.c, with its own header comment below and its own partial views,
  * include/battle/btl_act_change_part2.h). They are one file because two handlers of the second part match only with
  * BtlActChange_SetFlags and BtlActChange_Finish of the first part defined above them.
  */
@@ -1423,8 +1423,8 @@ s32 BtlAct_SwitchLeave(BtlFighter *chr, s32 phase) {
 }
 
 /* ------------------------------------------------------------------------------------------------------------
- * Second part (formerly btl_act_i.c), written against its own view of the fighter. Functions already declared above with
- * the first part's types are reached through cast macros.
+ * Second part (formerly btl_act_i.c), written against its own views (the fighter is BtlFighter in both parts).
+ * Functions already declared above with the first part's object or parameter types are reached through cast macros.
  * ------------------------------------------------------------------------------------------------------------ */
 
 /*
@@ -1456,7 +1456,6 @@ extern void *memset(void *dst, s32 c, s32 n);
 extern BtlActIRoster *gBtlChars;
 
 /* Fighter accessors, flags, effects, sound. */
-#define BtlChar_GetPos ((BtlFighterPose *(*)(BtlFighter *chr))BtlChar_GetPos)
 #define BtlChar_GetObj ((BtlActIObj *(*)(BtlFighter *chr))BtlChar_GetObj)
 extern s32 BtlChar_IsFree(BtlFighter *chr);
 #define BtlChar_IsDead ((s32 (*)(BtlFighter *chr))BtlChar_IsDead)

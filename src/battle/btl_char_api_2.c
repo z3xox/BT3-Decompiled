@@ -49,7 +49,7 @@ extern s32 BtlCharSnd_GetBankMask(s32 idx);                       /* table of wo
 extern s32 BtlOpp_GetObjId(BtlFighter *chr);            /* object id of the other side's fighter */
 extern f32 BtlUtil_ClampF(f32 v, f32 lo, f32 hi);         /* clamp */
 extern BtlCharApiObj *BtlChar_GetObj(BtlFighter *chr); /* BtlObj_Get(chr->objId) */
-extern Vec4 *BtlChar_GetPos(BtlFighter *chr);          /* &chr->pos */
+extern BtlFighterPose *BtlChar_GetPos(BtlFighter *chr);
 extern s32 BtlChar_IsFrozen(BtlFighter *chr);            /* chr->freeze > 0 */
 extern s32 BtlChar_IsDead(BtlFighter *chr);            /* vitals->hp < 1 */
 extern s32 BtlChar_IsBodyChanged(BtlFighter *chr);            /* vitals->bodyChanged != 0 */
@@ -443,7 +443,7 @@ void BtlCharApi_RumbleNear(Vec4 *pos, f32 near, f32 far, f32 power, f32 time) {
     }
     for (i = 0; i < BtlChar_GetCount(); i++) {
         chr = BtlChar_Get(i);
-        Vec4_Sub(&diff, BtlChar_GetPos(chr), pos);
+        Vec4_Sub(&diff, &BtlChar_GetPos(chr)->pos, pos);
         rate = 1.0f - (Vec3_Length(&diff) - near) / (far - near);
         if (rate < 0.0f) {
             continue;
@@ -832,31 +832,20 @@ s32 BtlCharApi_TestFlag60(s32 objId) {
 
 #define gBtlChars (*(BtlCapiBMgr* *)&gBtlChars)
 
-#define BtlChar_Get ((BtlFighter *(*)(s32 player))BtlChar_Get)
-#define BtlChar_FindByObjId ((BtlFighter *(*)(s32 objId))BtlChar_FindByObjId)
 extern BtlFighter *BtlChar_FindBySide(s32 side);
 #define BtlChar_GetObj ((BtlCapiBObj *(*)(BtlFighter *chr))BtlChar_GetObj)
-#define BtlChar_GetPos ((BtlFighterPose *(*)(BtlFighter *chr))BtlChar_GetPos)
-#define BtlChar_TestFlag ((s32 (*)(BtlFighter *chr, s32 flag))BtlChar_TestFlag)
 extern void BtlChar_SetFlag(BtlFighter *chr, s32 flag);
-#define BtlChar_SetHeldFlag ((void (*)(BtlFighter *chr, s32 flag))BtlChar_SetHeldFlag)
 extern void BtlChar_ClearFlag(BtlFighter *chr, s32 flag);
-#define BtlChar_IsDead ((s32 (*)(BtlFighter *chr))BtlChar_IsDead)
-#define BtlChar_IsFrozen ((s32 (*)(BtlFighter *chr))BtlChar_IsFrozen)
 extern s32 BtlChar_IsStage4Or27(void);
 extern s32 BtlUtil_Clamp(s32 v, s32 lo, s32 hi);
 extern s32 BtlOpp_GetPlayer(BtlFighter *chr);             /* player index of the opponent */
 
-#define BtlAct_GetCurrent ((s32 (*)(BtlFighter *chr))BtlAct_GetCurrent)            /* action id (+0x948) */
 extern s32 BtlAct_IsTechniqueId(s32 action);                  /* action in 0x105..0x132: a technique */
-#define BtlAct_GetCurrentClass ((s32 (*)(BtlFighter *chr))BtlAct_GetCurrentClass)       /* technique class of the current action, 0..4 */
 extern s32 BtlAct_TestPoweredSkill(BtlFighter *chr, u32 mask);
-#define BtlAnim_GetId ((s32 (*)(BtlFighter *chr))BtlAnim_GetId)
 #define BtlAnim_GetFlags ((s32 (*)(s32 anim))BtlAnim_GetFlags)
 
 extern BtlMember *BtlMember_GetActive(BtlFighter *chr);
 extern BtlMemberGauge *BtlMember_GetGauge(BtlFighter *chr, s32 member);
-#define BtlMember_GetActiveGauge ((BtlMemberGauge *(*)(BtlFighter *chr))BtlMember_GetActiveGauge)
 extern s32 BtlMember_CountAlive(BtlFighter *chr);
 extern s32 BtlMember_GetActiveIndex(BtlFighter *chr);
 extern s32 BtlMember_GetSwitchTarget(BtlFighter *chr);
@@ -908,7 +897,6 @@ extern s32 BtlParam_GetBlastLimitB(BtlFighter *chr);                /* param->bl
 extern s32 BtlParam_GetGaugeB(BtlFighter *chr);                /* param word +0x2C */
 extern s32 BtlParam_GetComboFinish(BtlFighter *chr, s32 n);         /* param->comboFinish[n] */
 extern s32 BtlKiBlast_GetFlagsOfHit(BtlCapiBBlastRec *rec);           /* flag word of the blast's definition */
-#define BtlSuper_GetFlags ((s32 (*)(BtlFighter *chr, s32 cls))BtlSuper_GetFlags)       /* skills->flags[cls - 2] */
 extern s32 BtlSuper_GetType(BtlFighter *chr, s32 cls);       /* skills->type[cls] */
 extern s32 BtlSuper_GetKiCost(BtlFighter *chr, s32 cls);       /* skills->cost[cls], halved with ability 0x2B */
 extern s32 BtlSuper_GetPromptRowIndex(BtlFighter *chr, s32 n);         /* skills->promptRow[n] */

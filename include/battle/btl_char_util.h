@@ -49,7 +49,7 @@ BtlFighter *BtlChar_Get(s32 i);
 BtlFighter *BtlChar_FindByObjId(s32 objId);
 BtlFighter *BtlChar_FindBySide(s32 side);
 void *BtlChar_GetObj(BtlFighter *chr);
-Vec4 *BtlChar_GetPos(BtlFighter *chr);
+BtlFighterPose *BtlChar_GetPos(BtlFighter *chr);
 Pad *BtlChar_GetPad(BtlFighter *chr);
 s32 BtlChar_IsFrozen(BtlFighter *chr);
 s32 BtlChar_IsFree(BtlFighter *chr);

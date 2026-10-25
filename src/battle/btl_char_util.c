@@ -202,9 +202,9 @@ void *BtlChar_GetObj(BtlFighter *chr) {
     return BtlObj_Get(chr->objId);
 }
 
-/* Address of the fighter's position. */
-Vec4 *BtlChar_GetPos(BtlFighter *chr) {
-    return &chr->pose.pos;
+/* The fighter's pose block; its first member is the position. */
+BtlFighterPose *BtlChar_GetPos(BtlFighter *chr) {
+    return &chr->pose;
 }
 
 /* The fighter's controller. */

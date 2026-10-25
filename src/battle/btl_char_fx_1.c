@@ -497,7 +497,6 @@ extern void Vec4_Copy(Vec4 *dst, Vec4 *src);
 extern f32 Vec3_Length(Vec4 *v);
 extern f32 BtlUtil_WrapAngle(f32 a);
 #define BtlChar_GetObj ((FxObj *(*)(BtlFighter *chr))BtlChar_GetObj)
-#define BtlChar_GetPos ((BtlFighterPose *(*)(BtlFighter *chr))BtlChar_GetPos)
 extern s32 BtlChar_IsBodyChanged(BtlFighter *chr);
 #define BtlMember_GetActiveGauge ((BtlMemberGauge *(*)(BtlFighter *chr))BtlMember_GetActiveGauge)
 #define BtlMember_HasAnyListedAbility ((s32 (*)(BtlFighter *chr))BtlMember_HasAnyListedAbility)
@@ -505,7 +504,6 @@ extern s32 BtlChar_IsBodyChanged(BtlFighter *chr);
 #define BtlChar_IsFxBitNew ((s32 (*)(BtlFighter *chr, s32 bit))BtlChar_IsFxBitNew)           /* set now, clear last frame */
 #define BtlChar_IsFxBitEnded ((s32 (*)(BtlFighter *chr, s32 bit))BtlChar_IsFxBitEnded)           /* clear now, set last frame */
 extern void BtlCharApi_GetNodePos(s32 objId, s32 part, Vec4 *out); /* world position of a model part */
-#define BtlCharSnd_PlayCommon ((void (*)(BtlFighter *chr, s32 sound))BtlCharSnd_PlayCommon)
 extern void BtlOpp_GetDelta(BtlFighter *chr, Vec4 *out);
 extern s32 BtlParam_GetFlags(BtlFighter *chr);
 extern void BtlParam_GetCharaFlags(BtlFighter *chr);
@@ -812,8 +810,6 @@ extern f32 Mathf_Sin(f32 a);
 extern f32 Mathf_Cos(f32 a);
 extern f32 BtlUtil_WrapAngle(f32 a);
 #define BtlChar_GetObj ((FxObj *(*)(BtlFighter *chr))BtlChar_GetObj)
-#define BtlChar_GetPos ((BtlFighterPose *(*)(BtlFighter *chr))BtlChar_GetPos)
-#define BtlChar_TestFlag ((s32 (*)(BtlFighter *chr, s32 flag))BtlChar_TestFlag)
 extern s32 BtlChar_IsBodyChanged(BtlFighter *chr);
 #define BtlChar_SetFxBit ((void (*)(BtlFighter *chr, s32 bit))BtlChar_SetFxBit)          /* set */
 #define BtlChar_ClearFxBit ((void (*)(BtlFighter *chr, s32 bit))BtlChar_ClearFxBit)          /* clear */
@@ -821,7 +817,6 @@ extern s32 BtlChar_IsBodyChanged(BtlFighter *chr);
 #define BtlChar_IsFxBitNew ((s32 (*)(BtlFighter *chr, s32 bit))BtlChar_IsFxBitNew)           /* set now, clear last frame */
 #define BtlChar_IsFxBitEnded ((s32 (*)(BtlFighter *chr, s32 bit))BtlChar_IsFxBitEnded)           /* clear now, set last frame */
 extern void BtlCharApi_GetNodePos(s32 objId, s32 part, Vec4 *out); /* world position of a model part */
-#define BtlCharSnd_PlayCommon ((void (*)(BtlFighter *chr, s32 sound))BtlCharSnd_PlayCommon)
 extern s32 BtlChar_TestPrevFlag(BtlFighter *chr, s32 flag);            /* fighter flag, last frame */
 extern s32 BtlParam_GetFlags(BtlFighter *chr);
 extern f32 BtlAtk_GetLaunchAngleAOf(BtlFighter *chr, s32 param);
@@ -863,7 +858,6 @@ extern void BtlObj_SetEyeFrame(FxObj *obj, s32 frame);
 extern s32 BtlObj_GetMouthMode(FxObj *obj);
 extern s32 BtlObj_GetEyeFrame(FxObj *obj);
 extern void BtlObj_SetSubState(FxObj *obj, s32 state, s32 arg);
-#define BtlAnim_TestAttr ((s32 (*)(BtlFighter *chr, u64 mask))BtlAnim_TestAttr)           /* animation event bits raised this frame */
 extern f32 BtlOpp_GetDistance(BtlFighter *chr);
 extern void BtlChar_ToggleHeldFlag(BtlFighter *chr, s32 flag);
 extern f32 BtlAct_GetHeight(BtlFighter *chr);
