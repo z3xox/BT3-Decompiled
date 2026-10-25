@@ -310,7 +310,7 @@ typedef struct EftPart10 {
     /* 0x290 */ f32 twist;
     /* 0x294 */ f32 yaw;
     /* 0x298 */ f32 pitch;
-    /* 0x29C */ u8 unk29C[0x100];               /* texture grid cells (see the init at 0x18C238) */
+    /* 0x29C */ f32 uv[16][4];               /* texture grid cells (see the init at 0x18C238) */
     /* 0x39C */ f32 texFrames;
     /* 0x3A0 */ f32 age;                        /* frames */
     /* 0x3A4 */ f32 delay;                      /* frames before the emitter starts */
@@ -404,7 +404,7 @@ typedef struct EftPart9Ptcl {
     /* 0x050 */ Vec4 colorStep;
     /* 0x060 */ Vec4 color;
     /* 0x070 */ Vec4 rot;
-    /* 0x080 */ u8 unk80[0x40];
+    /* 0x080 */ Vec4 corner[4];
     /* 0x0C0 */ f32 uv[8];
     /* 0x0E0 */ f32 rotVel[3];
     /* 0x0EC */ f32 fadeIn;
@@ -446,7 +446,9 @@ typedef struct EftPart9 {
     /* 0x000 */ EftPart9Def *def;
     /* 0x004 */ void *def2;
     /* 0x008 */ EftXTexSet *tex;
-    /* 0x00C */ u8 unkC[0x24];
+    /* 0x00C */ s32 unkC;
+    /* 0x010 */ EftXTexEntry texA;
+    /* 0x020 */ EftXTexEntry texB;
     /* 0x030 */ EftXVec pos;
     /* 0x040 */ EftXVec dir;
     /* 0x050 */ f32 rot[3];
@@ -457,9 +459,10 @@ typedef struct EftPart9 {
     /* 0x06C */ f32 hold;
     /* 0x070 */ f32 fadeTime;
     /* 0x074 */ f32 fade;
-    /* 0x078 */ u8 unk78[0x21C];
+    /* 0x078 */ f32 uv[16][4];
+    /* 0x178 */ u8 delta[0x11C];
     /* 0x294 */ f32 keyTime;                    /* frames the key-frame animation lasts */
-    /* 0x298 */ u8 unk298[4];
+    /* 0x298 */ f32 animSplit;
     /* 0x29C */ f32 size0[3];
     /* 0x2A8 */ f32 size0Range[3];
     /* 0x2B4 */ f32 size1[3];

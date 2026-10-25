@@ -73,7 +73,9 @@ typedef struct EftTransWork {
     /* 0x0010 */ f32 sway;           /* mean of the sines of 1..6 times the phase, -1..1 (added to a spark's scale) */
     /* 0x0014 */ s32 phase;          /* degrees, + (rand() & 7) + 3 per frame, wraps at 360 */
     /* 0x0018 */ s32 camArg[3];      /* {transition file entry 1, -1, -1}: camera animation given to EftCam_Start */
-    /* 0x0024 */ u8 unk24[0x21C];
+    /* 0x0024 */ u8 unk24[0x20C];
+    /* 0x0230 */ void *curTex;
+    /* 0x0234 */ u8 unk234[0xC];
     /* 0x0240 */ EftTransPart part[EFT_TRANS_PART_COUNT];
     /* 0x9B60 */ s32 seWait;         /* frames until the next rumble: 60, then rand() % 80 + 60 */
     /* 0x9B64 */ u8 unk9B64[0xC];
@@ -210,7 +212,13 @@ typedef struct EftWater {
     /* 0x14 */ void *sprayPool;         /* 30 * 0x90 = 0x10E0 bytes */
     /* 0x18 */ void *mistPool;          /* 30 * 0xB0 = 0x14A0 bytes */
     /* 0x1C */ s32 splashCount;         /* +1 for every splash created (the list code of eft_f.c counts it down) */
-    /* 0x20 */ u8 unk20[0x1C];
+    /* 0x20 */ s32 trailCount;
+    /* 0x24 */ s32 unk24;
+    /* 0x28 */ s32 trailFading;
+    /* 0x2C */ s32 dropCount;
+    /* 0x30 */ s32 ringCount;
+    /* 0x34 */ s32 sprayCount;
+    /* 0x38 */ s32 mistCount;
     /* 0x3C */ EftWaterSplash *splashList[2]; /* head / tail of the splashes in use */
     /* 0x44 */ void *trailList[2];      /* spray trails of techniques */
     /* 0x4C */ void *ringList[2];       /* rings that belong to no splash (wakes, bursts) */

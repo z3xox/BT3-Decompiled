@@ -302,7 +302,9 @@ typedef struct EftRArg {
     /* 0x34 */ s32 unk34;
     /* 0x38 */ s32 canHit;            /* 1; 0 would keep the blast from publishing hit records */
     /* 0x3C */ s32 unk3C;             /* bit 0x20 of the ki blast record's flags */
-    /* 0x40 */ u8 unk40[0x10];
+    /* 0x40 */ u8 unk40;
+    /* 0x41 */ u8 hits;
+    /* 0x42 */ u8 unk42[0xE];
 } EftRArg; /* size 0x50 */
 
 #define EFT_KIBLAST_STARTED   0x0001 /* the first update is over (the blast does not move on its first frame) */

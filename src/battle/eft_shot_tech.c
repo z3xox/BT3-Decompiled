@@ -501,7 +501,7 @@ void EftMulti_Update(EftJTask *task) {
         switch (task->state) {
         case 0:
             if (EftShot_TestBits(src->objId, 2)) {
-                EftAim_GetDir(&w->dir, w->unk390, src->objId);
+                EftAim_GetDir(&w->dir, &w->hand, src->objId);
                 task->state = 1;
             }
             break;

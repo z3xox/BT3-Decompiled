@@ -430,7 +430,10 @@ typedef struct EftYStripPkt {
 typedef struct EftLineDef {
     /* 0x00 */ s32 flags;        /* 1: key-framed (else the last key is used) */
     /* 0x04 */ u8 layer;         /* order table layer; 2 and 3 are layers 0 and 1 of GS context 2 */
-    /* 0x05 */ u8 unk5[7];
+    /* 0x05 */ u8 shape;
+    /* 0x06 */ u8 cols;
+    /* 0x07 */ u8 rows;
+    /* 0x08 */ f32 frameTime;
     /* 0x0C */ f32 fadeIn;         /* seconds */
     /* 0x10 */ f32 fadeOut;        /* seconds */
     /* 0x14 */ f32 time;         /* seconds of the whole key animation */
@@ -503,17 +506,33 @@ typedef struct EftLineWork {
     /* 0x0A8 */ f32 v0;
     /* 0x0AC */ f32 v1;
     /* 0x0B0 */ s32 flags;        /* 1 alive, 0x20 drawn in front of everything (z forced to the nearest) */
-    /* 0x0B4 */ u8 unkB4[8];
+    /* 0x0B4 */ u8 type;
+    /* 0x0B5 */ u8 unkB5[2];
+    /* 0x0B7 */ u8 frame;
+    /* 0x0B8 */ s32 frameCount;
     /* 0x0BC */ f32 du;
     /* 0x0C0 */ f32 dv;
-    /* 0x0C4 */ u8 unkC4[0x18];
+    /* 0x0C4 */ f32 frameTimer;
+    /* 0x0C8 */ f32 frameTime;
+    /* 0x0CC */ f32 life;
+    /* 0x0D0 */ f32 delay;
+    /* 0x0D4 */ f32 endDelay;
+    /* 0x0D8 */ f32 unkD8;
     /* 0x0DC */ f32 time;         /* frames since the key animation started */
     /* 0x0E0 */ f32 animEnd;      /* frames */
     /* 0x0E4 */ f32 animSplit;    /* frames */
-    /* 0x0E8 */ f32 unkE8[2];
+    /* 0x0E8 */ f32 angle;
+    /* 0x0EC */ f32 spin;
     /* 0x0F0 */ f32 width;        /* half width */
     /* 0x0F4 */ f32 length;
-    /* 0x0F8 */ u8 unkF8[0x20];
+    /* 0x0F8 */ f32 pulseWTimer;
+    /* 0x0FC */ f32 pulseHTimer;
+    /* 0x100 */ f32 pulseColTimer;
+    /* 0x104 */ f32 fadeIn;
+    /* 0x108 */ f32 fadeOut;
+    /* 0x10C */ f32 fadeInLen;
+    /* 0x110 */ f32 fadeOutLen;
+    /* 0x114 */ u8 unk114[4];
     /* 0x118 */ EftYTex tex0;     /* copies of tex->e[image] and tex->e[palette] (EftLine_SetTex) */
     /* 0x128 */ EftYTex tex1;
     /* 0x138 */ u64 gsTex0;       /* the TEX0 value drawn with */

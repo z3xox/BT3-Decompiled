@@ -263,14 +263,25 @@ typedef struct EftAbPartDef {
 
 typedef struct EftAbPart {
     /* 0x0 */ EftAbPartDef *def;
-    /* 0x4 */ s32 unk4[3];
+    /* 0x4 */ s32 parts;
+    /* 0x8 */ u8 firstPart;
+    /* 0x9 */ u8 firstPair;
+    /* 0xA */ u8 firstRes;
+    /* 0xB */ u8 cat;
+    /* 0xC */ u8 catFirst;
+    /* 0xD */ u8 unkD[3];
 } EftAbPart; /* 0x10 */
 
 typedef struct EftAbSet {
     /* 0x000 */ u32 *mask;         /* bit n: group n exists */
-    /* 0x004 */ s32 unk4[2];
+    /* 0x004 */ s32 entries;
+    /* 0x008 */ s32 parts;
     /* 0x00C */ EftAbPart part[0x13];
-    /* 0x13C */ u8 unk13C[0x320 - 0x13C];
+    /* 0x13C */ s32 *res[32];
+    /* 0x1BC */ s32 *pair[40][2];
+    /* 0x2FC */ u8 *array[4];
+    /* 0x30C */ s32 count[4];
+    /* 0x31C */ void *owner;
 } EftAbSet; /* 0x320 */
 
 /* The request the fighter effect layer passes (btl_char_member.h BtlMemberFx0Req). */
@@ -435,16 +446,22 @@ typedef struct EftRbn {
     /* 0x0B0 */ EftRbnVec color;   /* w is cleared and compared as a zero at init */
     /* 0x0C0 */ EftRbnVec color2;
     /* 0x0D0 */ s32 flags;         /* 0x20 scroll layer, 0x40 mirrored, 0x80 faded in, 0x100 no fade out */
-    /* 0x0D4 */ s32 unkD4[2];
+    /* 0x0D4 */ s32 kind;
+    /* 0x0D8 */ s32 unkD8;
     /* 0x0DC */ s32 maxNodes;
     /* 0x0E0 */ s32 wantNodes;
     /* 0x0E4 */ s32 numNodes;
-    /* 0x0E8 */ f32 unkE8[4];
+    /* 0x0E8 */ f32 life;
+    /* 0x0EC */ f32 delay;
+    /* 0x0F0 */ f32 fadeDelay;
+    /* 0x0F4 */ f32 fadeTime;
     /* 0x0F8 */ f32 animFrame;
     /* 0x0FC */ f32 animTime;
     /* 0x100 */ f32 animSplit;     /* frame of the middle key */
     /* 0x104 */ f32 width;
-    /* 0x108 */ f32 unk108[3];
+    /* 0x108 */ f32 widthFrame;
+    /* 0x10C */ f32 pulseFrame;
+    /* 0x110 */ f32 fadeInFrame;
     /* 0x114 */ f32 fadeOutFrame;
     /* 0x118 */ f32 fadeInTime;
     /* 0x11C */ f32 fadeOutTime;

@@ -87,14 +87,44 @@ typedef struct EftOBoltPool {
 } EftOBoltPool; /* size 0x478 */
 
 typedef struct EftOBolt {
-    /* 0x00 */ u8 unk0[0xC];
+    /* 0x00 */ void *head;
+    /* 0x04 */ s32 shown;
+    /* 0x08 */ s32 count;
     /* 0x0C */ s32 active;
-    /* 0x10 */ u8 unk10[0x80];
+    /* 0x10 */ s32 kind;
+    /* 0x14 */ s32 nodeA;
+    /* 0x18 */ s32 nodeB;
+    /* 0x1C */ f32 life;
+    /* 0x20 */ f32 follow;
+    /* 0x24 */ u8 unk24[0xC];
+    /* 0x30 */ Vec4 pos;
+    /* 0x40 */ Vec4 unk40;
+    /* 0x50 */ Vec4 start;
+    /* 0x60 */ Vec4 end;
+    /* 0x70 */ Vec4 dir;
+    /* 0x80 */ Vec4 normal;
 } EftOBolt; /* size 0x90 */
 
 typedef struct EftOBoltFlash {
     /* 0x00 */ s32 active;
-    /* 0x04 */ u8 unk4[0x6C];
+    /* 0x04 */ s32 nodeA;
+    /* 0x08 */ s32 nodeB;
+    /* 0x0C */ s32 frame;
+    /* 0x10 */ s32 kind;
+    /* 0x14 */ f32 life;
+    /* 0x18 */ f32 size;
+    /* 0x1C */ f32 sizeRate;
+    /* 0x20 */ f32 alphaRate;
+    /* 0x24 */ f32 follow;
+    /* 0x28 */ f32 rot;
+    /* 0x2C */ f32 unk2C;
+    /* 0x30 */ Vec4 pos;
+    /* 0x40 */ Vec4 vel;
+    /* 0x50 */ f32 r;
+    /* 0x54 */ f32 g;
+    /* 0x58 */ f32 b;
+    /* 0x5C */ f32 a;
+    /* 0x60 */ Vec4 uv;
 } EftOBoltFlash; /* size 0x70 */
 
 /* Work of the per-fighter task (class 0x2C3A78). */
@@ -105,7 +135,11 @@ typedef struct EftOBoltWork {
     /* 0x010 */ EftOBolt a[10];
     /* 0x5B0 */ EftOBoltFlash b[20];
     /* 0xE70 */ s32 paramFlags; /* BtlCharApi_ObjGetParamFlags0 */
-    /* 0xE74 */ u8 unkE74[0x24];
+    /* 0xE74 */ s32 side;
+    /* 0xE78 */ s32 boltCount;
+    /* 0xE7C */ s32 orderPos;
+    /* 0xE80 */ s32 order[4];
+    /* 0xE90 */ f32 angle[2];
     /* 0xE98 */ u64 tex0;
     /* 0xEA0 */ f32 scale;      /* fighter height / 19.35 */
     /* 0xEA4 */ u8 unkEA4[0xC];
@@ -290,7 +324,11 @@ typedef struct EftOGroup {
     /* 0x00 */ EftOGroupDef *def;
     /* 0x04 */ s32 parts;
     /* 0x08 */ u8 first;
-    /* 0x09 */ u8 unk9[7];
+    /* 0x09 */ u8 firstPair;
+    /* 0x0A */ u8 firstRes;
+    /* 0x0B */ u8 cat;
+    /* 0x0C */ u8 catFirst;
+    /* 0x0D */ u8 unkD[3];
 } EftOGroup; /* size 0x10 */
 
 /* Effect pack (EftEmitSet in eft_sweep.h). */
@@ -299,7 +337,11 @@ typedef struct EftOSet {
     /* 0x004 */ s32 entries;
     /* 0x008 */ EftOPart *parts;
     /* 0x00C */ EftOGroup grp[19];
-    /* 0x13C */ u8 unk13C[0x1E4];
+    /* 0x13C */ s32 *res[32];
+    /* 0x1BC */ s32 *pair[40][2];
+    /* 0x2FC */ u8 *array[4];
+    /* 0x30C */ s32 count[4];
+    /* 0x31C */ void *owner;
 } EftOSet; /* size 0x320 */
 
 /* The pair a part must match to be driven by this blast object: part kind and node slot. */
@@ -493,7 +535,11 @@ typedef struct EftODiscArg {
 
 /* Work of a disc (class 0x2C3B38; EftDisc in eft_disc.h), 0x4C0 bytes. */
 typedef struct EftODisc {
-    /* 0x000 */ u8 unk0[0x30];
+    /* 0x000 */ void *texSet;
+    /* 0x004 */ s32 pad4;
+    /* 0x008 */ EftOTexEntry texA;
+    /* 0x018 */ EftOTexEntry texB;
+    /* 0x028 */ u8 unk28[8];
     /* 0x030 */ EftODiscArg arg;
     /* 0x090 */ u8 atk[0x50];     /* ki blast parameters */
     /* 0x0E0 */ u8 state[0x2CC];  /* EftEmitState of a technique piece */

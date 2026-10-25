@@ -141,7 +141,8 @@ typedef struct EftPtclDef {
     /* 0x005 */ u8 shape;      /* 0 quad along the particle's axis facing the camera, 1 square sprite, 2 sprite */
     /* 0x006 */ u8 flip;       /* 0: flag 0x200, 1: flag 0x200 at random, 2: never */
     /* 0x007 */ u8 centred;    /* kind 0: the quad extends both ways along the axis */
-    /* 0x008 */ u8 unk8[2];
+    /* 0x008 */ u8 originKind;
+    /* 0x009 */ u8 accelKind;
     /* 0x00A */ u8 layer;      /* ordering table layer; 2 and 3 select the second packet form */
     /* 0x00B */ u8 unkB[3];
     /* 0x00E */ u8 cols;
@@ -149,7 +150,46 @@ typedef struct EftPtclDef {
     /* 0x010 */ f32 animTime;  /* seconds per sheet frame */
     /* 0x014 */ f32 keyTime;   /* seconds the key animation lasts */
     /* 0x018 */ f32 keySplit;  /* fraction of keyTime at which the second key is reached */
-    /* 0x01C */ u8 unk1C[0x264];
+    /* 0x01C */ s16 count[3];
+    /* 0x022 */ s16 countRange[3];
+    /* 0x028 */ f32 interval[3];
+    /* 0x034 */ f32 life[3];
+    /* 0x040 */ f32 lifeRange[3];
+    /* 0x04C */ f32 split[3];
+    /* 0x058 */ f32 speed[3][3];
+    /* 0x07C */ f32 speedRange[3][3];
+    /* 0x0A0 */ f32 width[3][3];
+    /* 0x0C4 */ f32 widthRange[3][3];
+    /* 0x0E8 */ f32 height[3][3];
+    /* 0x10C */ f32 heightRange[3][3];
+    /* 0x130 */ f32 widthPulseLo[3];
+    /* 0x13C */ f32 widthPulseHi[3];
+    /* 0x148 */ f32 widthPulseTime[3];
+    /* 0x154 */ f32 heightPulseLo[3];
+    /* 0x160 */ f32 heightPulseHi[3];
+    /* 0x16C */ f32 heightPulseTime[3];
+    /* 0x178 */ f32 drift[3];
+    /* 0x184 */ f32 gravity[3];
+    /* 0x190 */ f32 radius[3];
+    /* 0x19C */ f32 radiusRange[3];
+    /* 0x1A8 */ f32 ring[3];
+    /* 0x1B4 */ f32 ringRange[3];
+    /* 0x1C0 */ f32 along[3];
+    /* 0x1CC */ f32 coneA[3];
+    /* 0x1D8 */ f32 coneB[3];
+    /* 0x1E4 */ f32 roll[3];
+    /* 0x1F0 */ f32 rollRange[3];
+    /* 0x1FC */ f32 startDist[3];
+    /* 0x208 */ f32 startDistRange[3];
+    /* 0x214 */ f32 flatten[3];
+    /* 0x220 */ f32 fadeIn[3];
+    /* 0x22C */ f32 fadeOut[3];
+    /* 0x238 */ f32 rot[3];
+    /* 0x244 */ f32 rotRange[3];
+    /* 0x250 */ f32 spin[3];
+    /* 0x25C */ f32 spinRange[3];
+    /* 0x268 */ f32 spin2[3];
+    /* 0x274 */ f32 spin2Range[3];
     /* 0x280 */ f32 angX, angXRange;   /* half turns: base, random range */
     /* 0x288 */ f32 spinX, spinXRange;
     /* 0x290 */ f32 angY, angYRange;
@@ -174,14 +214,54 @@ typedef struct EftPtclArg {
 
 /* The emitter's current (key-interpolated) values, written by EftPtcl_SetKey / EftPtcl_BlendKeys. */
 typedef struct EftPtclCur {
-    /* 0x00 */ u8 unk0[0x5C];
+    /* 0x00 */ EftVVec color;
+    /* 0x10 */ EftVVec colorRange;
+    /* 0x20 */ EftVVec colorEnd;
+    /* 0x30 */ EftVVec colorEndRange;
+    /* 0x40 */ f32 pulseLo[3];
+    /* 0x4C */ f32 pulseRange[3];
+    /* 0x58 */ f32 pulseTime;
     /* 0x5C */ f32 count;      /* particles per emission */
     /* 0x60 */ f32 countRange; /* random addition */
     /* 0x64 */ f32 interval;   /* frames between emissions */
-    /* 0x68 */ u8 unk68[0x90];
+    /* 0x68 */ f32 life;
+    /* 0x6C */ f32 lifeRange;
+    /* 0x70 */ f32 split;
+    /* 0x74 */ f32 speed[3];
+    /* 0x80 */ f32 speedRange[3];
+    /* 0x8C */ f32 width[3];
+    /* 0x98 */ f32 widthRange[3];
+    /* 0xA4 */ f32 height[3];
+    /* 0xB0 */ f32 heightRange[3];
+    /* 0xBC */ f32 widthPulseLo;
+    /* 0xC0 */ f32 widthPulseRange;
+    /* 0xC4 */ f32 widthPulseTime;
+    /* 0xC8 */ f32 heightPulseLo;
+    /* 0xCC */ f32 heightPulseRange;
+    /* 0xD0 */ f32 heightPulseTime;
+    /* 0xD4 */ f32 drift;
+    /* 0xD8 */ f32 gravity;
+    /* 0xDC */ f32 radius;
+    /* 0xE0 */ f32 radiusRange;
+    /* 0xE4 */ f32 ring;
+    /* 0xE8 */ f32 ringRange;
+    /* 0xEC */ f32 along;
+    /* 0xF0 */ f32 coneA;
+    /* 0xF4 */ f32 coneB;
     /* 0xF8 */ f32 roll;
     /* 0xFC */ f32 rollRange;
-    /* 0x100 */ u8 unk100[0x30];
+    /* 0x100 */ f32 startDist;
+    /* 0x104 */ f32 startDistRange;
+    /* 0x108 */ f32 flatten;
+    /* 0x10C */ f32 fadeIn;
+    /* 0x110 */ f32 fadeOut;
+    /* 0x114 */ f32 rot;
+    /* 0x118 */ f32 rotRange;
+    /* 0x11C */ f32 spin;
+    /* 0x120 */ f32 spinRange;
+    /* 0x124 */ f32 spin2;
+    /* 0x128 */ f32 spin2Range;
+    /* 0x12C */ f32 pad12C;
 } EftPtclCur; /* size 0x130 */
 
 /* One particle (0x130 bytes, 500 in the pool). */
@@ -191,23 +271,42 @@ typedef struct EftPtcl {
     /* 0x020 */ EftVVec rel;
     /* 0x030 */ EftVVec pos;
     /* 0x040 */ EftVVec axis;
-    /* 0x050 */ u8 unk50[0x10];
+    /* 0x050 */ EftVVec accel;
     /* 0x060 */ f32 u0;
     /* 0x064 */ f32 u1;
     /* 0x068 */ f32 v0;
     /* 0x06C */ f32 v1;
     /* 0x070 */ EftVVec color;
-    /* 0x080 */ u8 unk80[0x20];
+    /* 0x080 */ EftVVec colorStart;
+    /* 0x090 */ EftVVec colorDelta;
     /* 0x0A0 */ s32 flags;     /* 0x100: free of the emitter, 0x400: drawn */
-    /* 0x0A4 */ u8 unkA4[0x34];
+    /* 0x0A4 */ f32 animT;
+    /* 0x0A8 */ f32 age;
+    /* 0x0AC */ f32 life;
+    /* 0x0B0 */ f32 split;
+    /* 0x0B4 */ f32 fadeOutAt;
+    /* 0x0B8 */ f32 fadeInT;
+    /* 0x0BC */ f32 fadeOutT;
+    /* 0x0C0 */ f32 fadeIn;
+    /* 0x0C4 */ f32 fadeOut;
+    /* 0x0C8 */ f32 speed;
+    /* 0x0CC */ f32 speedKey[3];
     /* 0x0D8 */ f32 width;
-    /* 0x0DC */ u8 unkDC[0xC];
+    /* 0x0DC */ f32 widthKey[3];
     /* 0x0E8 */ f32 height;
-    /* 0x0EC */ u8 unkEC[0xC];
+    /* 0x0EC */ f32 heightKey[3];
     /* 0x0F8 */ f32 rot;
-    /* 0x0FC */ u8 unkFC[0x20];
+    /* 0x0FC */ f32 spin;
+    /* 0x100 */ f32 widthPulseT;
+    /* 0x104 */ f32 widthPulseRange;
+    /* 0x108 */ f32 widthPulseTime;
+    /* 0x10C */ f32 heightPulseT;
+    /* 0x110 */ f32 heightPulseRange;
+    /* 0x114 */ f32 heightPulseTime;
+    /* 0x118 */ f32 colorPulseT;
     /* 0x11C */ struct EftPtcl *next;
-    /* 0x120 */ u8 unk120[0x10];
+    /* 0x120 */ struct EftPtcl *prev;
+    /* 0x124 */ s32 unk124[3];
 } EftPtcl; /* size 0x130 */
 
 #define EFT_PTCL_MAX 500
@@ -255,7 +354,8 @@ typedef struct EftPtclWork {
     /* 0x21C */ f32 pitch;
     /* 0x220 */ f32 yaw;
     /* 0x224 */ f32 roll;
-    /* 0x228 */ u8 unk228[0x20];
+    /* 0x228 */ EftVTex texA;
+    /* 0x238 */ EftVTex texB;
     /* 0x248 */ u64 tex0;
 } EftPtclWork; /* size 0x250 */
 
@@ -278,14 +378,25 @@ typedef struct EftVGroupDef {
 
 typedef struct EftVGroup {
     /* 0x00 */ EftVGroupDef *def;
-    /* 0x04 */ u8 unk4[0xC];
+    /* 0x04 */ s32 parts;
+    /* 0x08 */ u8 firstPart;
+    /* 0x09 */ u8 firstPair;
+    /* 0x0A */ u8 firstRes;
+    /* 0x0B */ u8 cat;
+    /* 0x0C */ u8 catFirst;
+    /* 0x0D */ u8 unkD[3];
 } EftVGroup; /* size 0x10 */
 
 typedef struct EftVSet {
     /* 0x000 */ u32 *mask;         /* header; its first word has a bit per part kind */
-    /* 0x004 */ s32 unk4[2];
+    /* 0x004 */ s32 entries;
+    /* 0x008 */ s32 parts;
     /* 0x00C */ EftVGroup grp[19];
-    /* 0x13C */ u8 unk13C[0x1E4];
+    /* 0x13C */ s32 *res[32];
+    /* 0x1BC */ s32 *pair[40][2];
+    /* 0x2FC */ u8 *array[4];
+    /* 0x30C */ s32 count[4];
+    /* 0x31C */ void *owner;
 } EftVSet; /* size 0x320 */
 
 typedef struct EftVState {
@@ -430,13 +541,14 @@ typedef struct EftLinkArg {
 
 /* One sprite of a chain (0x150 bytes, 200 in the pool). */
 typedef struct EftLinkNode {
-    /* 0x000 */ u8 unk0[0x40];
+    /* 0x000 */ EftVVec corner[4];
     /* 0x040 */ EftVVec ofs;
     /* 0x050 */ EftVVec offset;
     /* 0x060 */ EftVVec pos;
     /* 0x070 */ u8 unk70[0x10];
     /* 0x080 */ EftVVec color;
-    /* 0x090 */ u8 unk90[0x20];
+    /* 0x090 */ EftVVec col0;
+    /* 0x0A0 */ EftVVec colDelta;
     /* 0x0B0 */ EftVVec uv0;
     /* 0x0C0 */ EftVVec uv1;
     /* 0x0D0 */ f32 rotX;
@@ -444,12 +556,29 @@ typedef struct EftLinkNode {
     /* 0x0D8 */ f32 twist;
     /* 0x0DC */ f32 spin;
     /* 0x0E0 */ f32 size;
-    /* 0x0E4 */ u8 unkE4[0x18];
+    /* 0x0E4 */ f32 sizeVel0;
+    /* 0x0E8 */ f32 sizeVel1;
+    /* 0x0EC */ f32 fadeIn;
+    /* 0x0F0 */ f32 fadeOut;
+    /* 0x0F4 */ f32 age;
+    /* 0x0F8 */ f32 life;
     /* 0x0FC */ f32 scale;
-    /* 0x100 */ u8 unk100[0x40];
+    /* 0x100 */ f32 pulseT;
+    /* 0x104 */ f32 pulseTime;
+    /* 0x108 */ f32 pulse0;
+    /* 0x10C */ f32 pulseD;
+    /* 0x110 */ f32 mulTime;
+    /* 0x114 */ f32 mulT;
+    /* 0x118 */ f32 mulD[3];
+    /* 0x124 */ f32 mul0[3];
+    /* 0x130 */ f32 fadeT;
+    /* 0x134 */ f32 fadeTime;
+    /* 0x138 */ f32 texFrame;
+    /* 0x13C */ f32 delay;
     /* 0x140 */ s32 flags;         /* 1 placed, 0x40 drawn, 0x400 still on the chain this frame */
     /* 0x144 */ struct EftLinkNode *next;
-    /* 0x148 */ u8 unk148[8];
+    /* 0x148 */ struct EftLinkNode *prev;
+    /* 0x14C */ s32 pad14C;
 } EftLinkNode; /* size 0x150 */
 
 /* A value with its per-unit change between two keys. */
@@ -472,7 +601,10 @@ typedef struct EftLinkAnim {
 
 /* Work block of a chain task (class gEftLinkClass). */
 typedef struct EftLinkWork {
-    /* 0x000 */ u8 unk0[0x30];
+    /* 0x000 */ u8 unk0[8];
+    /* 0x008 */ EftVTex tex;
+    /* 0x018 */ EftVTex clut;
+    /* 0x028 */ u8 unk28[8];
     /* 0x030 */ EftLinkArg arg;
     /* 0x080 */ EftVVec vec[4][2];     /* [n][0] current, [n][1] change between the two keys */
     /* 0x100 */ EftLinkPair pair[3][2];

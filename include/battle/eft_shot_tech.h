@@ -53,7 +53,8 @@ typedef struct EftJDef {
     /* 0x38 */ f32 homing;
     /* 0x3C */ s32 flags;   /* 1 adds hit records, 2 does not move, 0x20 keeps moving after END, 0x200 stage blur,
                                0x8000 multi: pieces are released one by one, 0x10000, 0x400000 no flash */
-    /* 0x40 */ s32 unk40;
+    /* 0x40 */ s16 impactFx;
+    /* 0x42 */ s16 groundFx;
     /* 0x44 */ s16 burst;   /* "shots" module: blast objects fired on the FIRE event (at least 1) */
     /* 0x46 */ s16 unk46;
     /* 0x48 */ s16 blurOn;  /* index into the event-bit table: tint starts */
@@ -159,7 +160,8 @@ typedef struct EftMulti {
     /* 0x0A0 */ EftJSrc *src;
     /* 0x0A4 */ u8 emit[0x2CC];  /* emitter state (EftEmit_InitState) */
     /* 0x370 */ Vec4 node[2];
-    /* 0x390 */ Vec4 unk390[4];
+    /* 0x390 */ Vec4 hand;
+    /* 0x3A0 */ Vec4 unk3A0[3];
     /* 0x3D0 */ Vec4 muzzle;
     /* 0x3E0 */ u8 unk3E0[0x1E0];
     /* 0x5C0 */ EftJSet *set;

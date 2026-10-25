@@ -123,7 +123,8 @@ typedef struct EftHSlot {
     /* 0x20 */ s32 chr;
     /* 0x24 */ EftShotParam *param;
     /* 0x28 */ EftHTask *task;       /* group task */
-    /* 0x2C */ u8 unk2C[0x14];
+    /* 0x2C */ u8 unk2C[4];
+    /* 0x30 */ f32 aimDir[4];
     /* 0x40 */ s32 aimFlags;           /* zeroed by EftShot_Start */
     /* 0x44 */ u8 unk44[0xC];
 } EftHSlot; /* size 0x50 */
@@ -229,7 +230,8 @@ typedef struct EftSetHead {
     /* 0x06 */ u8 aimKind;     /* EftEmit_GetAimKind: 7 = straight up, 8 = lifted 45 degrees */
     /* 0x07 */ u8 unk7;
     /* 0x08 */ f32 width0;
-    /* 0x0C */ f32 unkC[2];
+    /* 0x0C */ f32 width1;
+    /* 0x10 */ f32 width2;
     /* 0x14 */ f32 widthTime;   /* seconds */
     /* 0x18 */ f32 widthSplit;
     /* 0x1C */ f32 widthStep;
@@ -242,7 +244,8 @@ typedef struct EftSetHead {
     /* 0x27 */ u8 phaseMask; /* bit per phase (EftSetDef.phase) the pack has parts for */
     /* 0x28 */ f32 holdDist;
     /* 0x2C */ f32 b0;
-    /* 0x30 */ f32 unk30[2];
+    /* 0x30 */ f32 b1;
+    /* 0x34 */ f32 b2;
     /* 0x38 */ f32 bTime;   /* seconds */
     /* 0x3C */ f32 bSplit;
 } EftSetHead; /* size 0x40 */
@@ -268,16 +271,22 @@ typedef struct EftSetDef {
     /* 0x08 */ u8 phase;    /* phase that starts the part: 0, 1, 3, 4, 5 by event; 2 at the end; 6 never stopped */
     /* 0x09 */ u8 endPhase; /* event that stops it: 1, 2, 4, 5, 6 */
     /* 0x0A */ u8 node;
-    /* 0x0B */ u8 unkB[5];
+    /* 0x0B */ u8 dirMode;
+    /* 0x0C */ f32 spread;
     /* 0x10 */ f32 offset;
     /* 0x14 */ f32 offset2;
     /* 0x18 */ f32 rate;
     /* 0x1C */ f32 scale0;
-    /* 0x20 */ u8 unk20[0x14];
+    /* 0x20 */ f32 scale1;
+    /* 0x24 */ f32 scale2;
+    /* 0x28 */ f32 scaleTime;
+    /* 0x2C */ f32 scaleSplit;
+    /* 0x30 */ f32 scaleStep;
     /* 0x34 */ u8 flags2;
     /* 0x35 */ u8 cond;
     /* 0x36 */ u8 altNode;
-    /* 0x37 */ u8 unk37[9];
+    /* 0x37 */ u8 scaleMode;
+    /* 0x38 */ u8 unk38[8];
 } EftSetDef; /* size 0x40 */
 
 typedef struct EftSetGroup {
@@ -328,7 +337,7 @@ typedef struct EftSetState {
     /* 0x000 */ void *handle[2][40]; /* task of each part, by part index */
     /* 0x140 */ u8 flag[40];         /* 2 started, 4 stopped, 0x20, 0x40, 0x80 */
     /* 0x168 */ f32 scale[40];      /* EftSetDef.scale0 */
-    /* 0x208 */ u8 unk208[0xA0];
+    /* 0x208 */ f32 time[40];
     /* 0x2A8 */ f32 trailWidth;
     /* 0x2AC */ f32 trailSplitFrames;
     /* 0x2B0 */ f32 trailFrames;
