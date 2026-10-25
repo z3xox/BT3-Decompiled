@@ -4,6 +4,7 @@
 #include "types.h"
 #include "sys/math3d.h"
 #include "battle/btl_cam.h"
+#include "battle/btl_fighter.h"
 
 /* The fighter's own camera, src/battle/btl_char_cam.c = 0x1C4BF8..0x1C7B30. All names are guesses.
  *
@@ -46,28 +47,6 @@
 /* Distance presets cycled with SELECT (ChrCam_GetOffset). */
 #define CHRCAM_DIST_COUNT 3
 
-/* The camera of one fighter, fighter + 0x420. Offsets in brackets are fighter offsets. */
-typedef struct ChrCam {
-    /* 0x00 [0x420] */ Vec4 eye;      /* wanted camera position, smoothed, before the stage collision test */
-    /* 0x10 [0x430] */ Vec4 pos;      /* camera position after BtlCam_TraceStage: what the views get */
-    /* 0x20 [0x440] */ Vec4 rot;      /* Euler angles (pitch, yaw, roll), each wrapped to -pi..pi; w forced to 0 */
-    /* 0x30 [0x450] */ Vec4 target;   /* point looked at (the trace starts here) */
-    /* 0x40 [0x460] */ Vec4 bodyPos;    /* copy of *(Vec4 *)(obj + 0xFA0), refreshed by ChrCam_UpdateInput; read by BtlCharApi_GetCamBodyPos */
-    /* 0x50 [0x470] */ CamShake shake;
-    /* 0x70 [0x490] */ s32 hitZone;    /* BtlCam_TraceStage: the stage zone that was traced (the one hit, else the last one tried); not an object */
-    /* 0x74 [0x494] */ s32 hit;       /* BtlCam_TraceStage result (1 = the stage is between target and eye); returned by BtlCharApi_GetCamPose, read by 0x1D16F8 */
-    /* 0x78 [0x498] */ f32 hitFrac;   /* BtlCam_TraceStage: fraction of the segment at the hit */
-    /* 0x7C [0x49C] */ s32 distMode;  /* 0..2, ChrCam_GetOffset preset; BtlChar_Reset: BattleSide_GetOptionA(side); SELECT steps it */
-    /* 0x80 [0x4A0] */ f32 yaw;       /* yaw of the follow camera: the reference direction of stick movement */
-    /* 0x84 [0x4A4] */ f32 yawStep;   /* last yaw change made by ChrCam_UpdateLockOnYaw */
-    /* 0x88 [0x4A8] */ f32 side;      /* lock-on camera: signed angle of the camera around the fighter, relative to the line to the opponent */
-    /* 0x8C [0x4AC] */ f32 yawOfs;    /* what ChrCam_CalcFixed / ChrCam_CalcLockOn took off the yaw for rot.y; no reader found */
-    /* 0x90 [0x4B0] */ f32 bob;       /* phase of the vertical swing added by ChrCam_GetBob */
-    /* 0x94 [0x4B4] */ f32 rate;      /* interpolation factor eye/rot -> wanted pose (ChrCam_GetRate) */
-    /* 0x98 [0x4B8] */ s32 shakeOn;     /* non-zero enables shake requests and the swing; BtlChar_Reset: BattleSide_GetOptionB(side) == 0 */
-    /* 0x9C [0x4BC] */ s32 unk9C;
-} ChrCam; /* size 0xA0 */
-
 /* ChrCamCut.flags */
 #define CHRCUT_F_SNAP      0x001 /* ChrCam_SetCut raises fighter flag 0xCD (no smoothing this frame) */
 #define CHRCUT_F_SNAP_RUN  0x002 /* ChrCam_CalcCut raises flag 0xCD every frame of the cut */
@@ -78,34 +57,6 @@ typedef struct ChrCam {
 #define CHRCUT_F_PRIORITY  0x040 /* ChrCam_CalcCut raises flag 0xD3: this camera takes the whole screen (BtlCam_GetPriorityView) */
 #define CHRCUT_F_HOLD      0x080 /* the cut stays active after its timer has run out */
 #define CHRCUT_F_SET_SIDE  0x100 /* ChrCam_CalcCut sets cam->side from where the camera is relative to the fighter's facing */
-
-/* A camera cut: six vectors and six scalars as (start, delta) pairs, blended over `total` frames.
-   Fighter + 0x4C0. */
-typedef struct ChrCamCut {
-    /* 0x00 [0x4C0] */ s32 reqTable;       /* the two arguments of ChrCam_RequestCut */
-    /* 0x04 [0x4C4] */ s32 reqIndex;
-    /* 0x08 [0x4C8] */ u8 unk8[8];
-    /* 0x10 [0x4D0] */ Vec4 vecA;      /* start values ... */
-    /* 0x20 [0x4E0] */ Vec4 vecADelta; /* ... and what is added over the cut */
-    /* 0x30 [0x4F0] */ Vec4 vecB;
-    /* 0x40 [0x500] */ Vec4 vecBDelta;
-    /* 0x50 [0x510] */ Vec4 vecC;
-    /* 0x60 [0x520] */ Vec4 vecCDelta;
-    /* 0x70 [0x530] */ f32 valA;
-    /* 0x74 [0x534] */ f32 valADelta;
-    /* 0x78 [0x538] */ f32 valB;
-    /* 0x7C [0x53C] */ f32 valBDelta;
-    /* 0x80 [0x540] */ f32 valC;
-    /* 0x84 [0x544] */ f32 valCDelta;
-    /* 0x88 [0x548] */ s32 nodeA;
-    /* 0x8C [0x54C] */ s32 nodeA2;
-    /* 0x90 [0x550] */ s32 nodeC;
-    /* 0x94 [0x554] */ s32 nodeC2;
-    /* 0x98 [0x558] */ s32 timer;      /* frames left; > 0 means a cut is running */
-    /* 0x9C [0x55C] */ s32 total;      /* length in frames */
-    /* 0xA0 [0x560] */ s32 flags;      /* CHRCUT_F_* */
-    /* 0xA4 [0x564] */ u8 unkA4[0xC];
-} ChrCamCut; /* size 0xB0 */
 
 /* Node ids in ChrCamCut.unk88..unk94: a model node index of the fighter, or with one of these bits; -1 = none. */
 #define CHRCUT_NODE_OPP 0x40000000 /* node of the opponent's model */

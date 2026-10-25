@@ -154,7 +154,6 @@ typedef struct BtlCtlObj {
     /* 0xFA0 */ Vec4 *bodyPos;
 } BtlCtlObj;
 
-#define BTL_SNAP_COUNT 6
 #define BTL_SNAP_LAST 6 /* slot written by every snapshot */
 
 /* Head tracking state (fighter + 0x15A0). */

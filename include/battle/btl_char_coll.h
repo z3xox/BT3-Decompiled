@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "sys/math3d.h"
+#include "battle/btl_fighter.h"
 
 /*
  * Fighter side of hit resolution (0x1CA520..0x1CA6D0, the tail of src/battle/btl_char_hit.c, and
@@ -62,11 +63,6 @@ typedef struct BtlCollGauge {
     /* 0x20 */ s32 variant;
 } BtlCollGauge;
 
-/* Pose block of the fighter (chr + 0x10, BtlChar_GetPos). */
-typedef struct BtlCollVec {
-    f32 x, y, z, w;
-} __attribute__((aligned(8))) BtlCollVec;
-
 typedef struct BtlCollPose {
     /* 0x00 */ Vec4 pos;
     /* 0x10 */ Vec4 rot;        /* rot.y: yaw the hit direction is compared with */
@@ -78,15 +74,15 @@ typedef struct BtlCollPose {
     /* 0x98 */ f32 speed;
     /* 0x9C */ f32 velY;        /* vertical speed: zeroed on landing, halved when flag 0x11 rises */
     /* 0xA0 */ u8 unkA0[0x10];
-    /* 0xB0 */ BtlCollVec groundPos;  /* copy of the ground query below the fighter */
-    /* 0xC0 */ BtlCollVec groundNrm;
+    /* 0xB0 */ BtlGroundVec groundPos;  /* copy of the ground query below the fighter */
+    /* 0xC0 */ BtlGroundVec groundNrm;
     /* 0xD0 */ s32 groundFlags;
 } BtlCollPose;
 
 /* Result of the stage query under the fighter, inside the object's work buffer. */
 typedef struct BtlCollGround {
-    /* 0x00 */ BtlCollVec pos;
-    /* 0x10 */ BtlCollVec nrm;
+    /* 0x00 */ BtlGroundVec pos;
+    /* 0x10 */ BtlGroundVec nrm;
     /* 0x20 */ s32 flags;
 } BtlCollGround;
 

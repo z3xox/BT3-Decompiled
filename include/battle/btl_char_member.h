@@ -3,13 +3,12 @@
 
 #include "types.h"
 #include "sys/math3d.h"
+#include "battle/btl_fighter.h"
 
 /*
  * Team members, parameters and gauges of a fighter (src/battle/btl_char_member.c, 0x1CDCA8..0x1D00D8).
  * The structures are this module's own partial views of shared objects (fighter, roster, battle setup).
  */
-
-#define BTL_MEMBER_SLOTS 5
 
 /* Units. */
 #define BTL_HEALTH_BAR      10000  /* one health bar */
@@ -35,47 +34,6 @@
 #define BTL_DMG_KO_EV52_B    0x1000000
 #define BTL_DMG_KO_EV51      0x2000000 /* on a KO raise event 0x51 */
 #define BTL_DMG_GUARD_MASK   0x3800000 /* with fighter state 0x4C the second defense multiplier is skipped */
-
-/* Gauges of one member: entry + 0x40. */
-typedef struct BtlMemberGauge {
-    /* 0x00 */ s32 health;     /* 10000 = one bar */
-    /* 0x04 */ s32 healthMax;  /* table value +/- 10000..30000 by ability, at least 10000 */
-    /* 0x08 */ s32 unk8;       /* not touched by this module */
-    /* 0x0C */ s32 ki;         /* 0..kiMax */
-    /* 0x10 */ s32 kiMax;      /* always 100000 */
-    /* 0x14 */ s32 blast;      /* 0..blastMax */
-    /* 0x18 */ s32 blastMax;   /* table stock count * 100000 */
-    /* 0x1C */ s32 maxPower;   /* 0..30000; zeroed whenever ki is spent or drained */
-    /* 0x20 */ s32 variant;    /* BattleMember.variant, the model variant */
-    /* 0x24 */ s32 lowHealth;      /* not touched by this module (low-health flags, see btl_char_mgr.h) */
-    /* 0x28 */ s32 lowHealthIdle;
-    /* 0x2C */ s32 unk2C;
-    /* 0x30 */ s32 bodyChanged;      /* cleared by a full parameter load */
-    /* 0x34 */ s32 fused;      /* non-zero: healthMax is kept as it is by a parameter load */
-} BtlMemberGauge; /* size 0x38 */
-
-/* One team member: fighter + 0x9A4 + n * 0xA4. */
-typedef struct BtlMember {
-    /* 0x00 */ s32 chara;
-    /* 0x04 */ s32 costume;
-    /* 0x08 */ s32 present;    /* 1 when the slot holds a member */
-    /* 0x0C */ s32 bonus[7];   /* BattleMember.bonus[1..7] */
-    /* 0x28 */ s32 ability[4]; /* 128 ability bits */
-    /* 0x38 */ s32 cpuLevel;
-    /* 0x3C */ s32 aiType;
-    /* 0x40 */ BtlMemberGauge gauge;
-    /* 0x78 */ u8 unk78[0xA4 - 0x78];
-} BtlMember; /* size 0xA4 */
-
-/* Combo / damage counters of the fighter being hit: fighter + 0xD40. */
-typedef struct BtlMemberCombo {
-    /* 0x00 */ s32 damage;     /* health lost in the current combo */
-    /* 0x04 */ s32 hits;       /* hits in the current combo; from the 5th on damage is scaled down */
-    /* 0x08 */ s32 timer;      /* 30 + damage * 0.003 frames, at most 90 */
-    /* 0x0C */ s32 newHit;     /* 1 when a counted hit landed */
-    /* 0x10 */ s32 changed;    /* 1 when the total changed */
-    /* 0x14 */ s32 drain;      /* the last damage had BTL_DMG_DRAIN */
-} BtlMemberCombo;
 
 /* Damage a fighter has queued against its opponent: fighter + 0xD94. */
 typedef struct BtlMemberQueue {

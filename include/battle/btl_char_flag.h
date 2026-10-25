@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "sys/math3d.h"
+#include "battle/btl_fighter.h"
 
 /*
  * Fighter clash sequences, fighter sound, fighter flags and opponent helpers, 0x1D8750..0x1DBF20:
@@ -38,8 +39,6 @@
  * (4, 5) are never promoted.
  */
 
-#define BTL_FLAG_COUNT 0x13D
-#define BTL_FLAG_BYTES 0x28
 
 /* One playing sound of a side (roster +0x8 / +0xC point at one BtlFlagSoundSet per side). */
 typedef struct BtlFlagSound {
@@ -105,12 +104,6 @@ typedef struct BtlClashPath {
     /* 0x4 */ f32 *points;  /* 0x30 bytes each: x y z ? rx ry ... */
     /* 0x8 */ s32 first;    /* first usable point */
 } BtlClashPath;
-
-/* Two more bit sets (fighter +0x1538). That they form one structure is what makes BtlChar_SetOnceBit match. */
-typedef struct BtlFlagBits {
-    /* 0x0 [0x1538] */ u64 frame;  /* per-frame bits, cleared each frame by the manager */
-    /* 0x8 [0x1540] */ u8 once[8]; /* never cleared here; bit 0 = "first clash event raised"; length unknown */
-} BtlFlagBits;
 
 /* What BtlChar_GetPos returns: the fighter's pose block (fighter +0x10). */
 typedef struct BtlFlagPose {

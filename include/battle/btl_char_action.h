@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "sys/math3d.h"
+#include "battle/btl_fighter.h"
 
 /*
  * Fighter action state machine, core part (src/battle/btl_char_action.c, 0x1E0290..0x1E3158).
@@ -121,14 +122,6 @@ typedef struct BtlActForm {
     /* 0x28 */ s32 objCostume;
     /* 0x2C */ s32 partner;
 } BtlActForm;
-
-/* Action bookkeeping (chr + 0x948). The nesting is needed for BtlAct_SetQueue to match. */
-typedef struct BtlActState {
-    /* 0x00 */ s32 current;   /* current action id */
-    /* 0x04 */ s32 request;   /* action to switch to at the next dispatch, -1 = none */
-    /* 0x08 */ s32 prev;      /* read by BtlAct_GetPrev; nothing stores it */
-    /* 0x0C */ s32 queue[4];  /* follow-up actions, -1 = empty */
-} BtlActState; /* size 0x1C */
 
 /* Fighter (0x1600 bytes). */
 typedef struct BtlActChr {

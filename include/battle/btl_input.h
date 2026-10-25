@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "battle/battle.h"
+#include "battle/btl_fighter.h"
 
 /*
  * Per-fighter battle input (src/battle/btl_input.c, 0x1D3B40..0x1D4F30).
@@ -71,7 +72,6 @@
 #define BTLB_TRIANGLE     0x20000000
 #define BTLB_SQUARE       0x40000000
 #define BTLB_DIR_MASK     0x000000F0
-#define BTL_BUTTON_BITS   31 /* entries of BtlCharInput.mask; bit 31 is never set */
 
 /* BattleWork.flags bits tested by BtlInput_Fetch (battle/battle.h). */
 #define BTL_INPUT_FLAG_BLOCK  BATTLE_FLAG_DEMO  /* every fighter's fetched input is neutral */
@@ -121,70 +121,7 @@
 #define BTL_STICK_CENTER 0x7F /* quantised stick: 0 = -1 (left / up), 0x7F = 0, 0xFE = +1 (right / down) */
 #define BTL_TAP_FRAMES 7      /* window of the double taps and of RUSH_TAP */
 #define BTL_COUNT_MAX 100     /* the frame counters saturate here */
-#define BTL_INPUT_RING 8
 
-/* The per-frame input of one fighter: 16 bytes at chr+0x938. This is everything the simulation reads from
-   the controller (after BtlInput_Fetch's gating), and the replay recorder stores exactly
-   {buttons, stickX, stickY} of it and rebuilds commands on playback. */
-typedef struct BtlInputRecord {
-    /* 0x00 */ u8 tag[4];    /* 'O', 'P', 'R', 'T' */
-    /* 0x04 */ u8 player;    /* low byte of chr->player */
-    /* 0x05 */ u8 unk5;      /* always 0 */
-    /* 0x06 */ u8 stickX;    /* quantised left stick, BTL_STICK_CENTER = neutral; 0 / 0xFF when a d-pad bit is down */
-    /* 0x07 */ u8 stickY;
-    /* 0x08 */ u32 buttons;  /* BTLB_* */
-    /* 0x0C */ u32 commands; /* BTLC_* */
-} BtlInputRecord; /* 0x10 */
-
-/* Five saturating (0..BTL_COUNT_MAX) frame counters for each of the 32 bits of a word (BtlInput_TickCounters). */
-typedef struct BtlInputCountRow {
-    s8 n[32];
-} BtlInputCountRow;
-
-typedef struct BtlInputCounters {
-    /* 0x00 */ BtlInputCountRow held;           /* frames the bit has been set (0 while clear) */
-    /* 0x20 */ BtlInputCountRow notHeld;        /* frames the bit has been clear (0 while set) */
-    /* 0x40 */ BtlInputCountRow sincePress;     /* frames since the bit last went 0 -> 1 (0 on that frame) */
-    /* 0x60 */ BtlInputCountRow sinceRelease;   /* frames since the bit last went 1 -> 0 */
-    /* 0x80 */ BtlInputCountRow prevSincePress; /* sincePress as it was before this frame's update: on a press
-                                                   frame, the distance to the previous press (double taps) */
-} BtlInputCounters; /* 0xA0 */
-
-/* The input block of a fighter, chr+0x570..0x948. Offsets in brackets are fighter offsets. */
-typedef struct BtlCharInput {
-    /* 0x000 [0x570] */ u32 rawHeld;       /* gPad[chr->pad].held (PAD_* bits) sampled by BtlInput_Sample */
-    /* 0x004 [0x574] */ u8 rawStickX;      /* gPad left stick, quantised */
-    /* 0x005 [0x575] */ u8 rawStickY;
-    /* 0x008 [0x578] */ u32 mask[BTL_BUTTON_BITS]; /* PAD_* mask of each battle button bit */
-    /* 0x084 [0x5F4] */ s32 padStatus;     /* Pad.status; double taps are only made when it is 0 or 1 */
-    /* 0x088 [0x5F8] */ s32 padLastStatus; /* Pad.lastStatus */
-    /* 0x08C [0x5FC] */ BtlInputCounters recCount;    /* counters of the record's buttons (before the ring) */
-    /* 0x12C [0x69C] */ BtlInputCounters recCmdCount; /* counters of the record's commands */
-    /* 0x1CC [0x73C] */ u32 held;          /* buttons fetched this frame (after ring and gating) */
-    /* 0x1D0 [0x740] */ u32 prev;          /* held of the previous frame */
-    /* 0x1D4 [0x744] */ u32 pressed;       /* held & ~prev */
-    /* 0x1D8 [0x748] */ u32 released;      /* prev & ~held */
-    /* 0x1DC [0x74C] */ u32 cmdHeld;       /* the same four for the command word */
-    /* 0x1E0 [0x750] */ u32 cmdPrev;
-    /* 0x1E4 [0x754] */ u32 cmdPressed;
-    /* 0x1E8 [0x758] */ u32 cmdReleased;
-    /* 0x1EC [0x75C] */ f32 stick[2];      /* smoothed stick x, y (-1..1, clamped to the unit circle) */
-    /* 0x1F4 [0x764] */ f32 stickPrev[2];  /* stick of the previous frame */
-    /* 0x1FC [0x76C] */ f32 stickRaw[2];   /* the fetched stick bytes as floats */
-    /* 0x204 [0x774] */ f32 stickRawPrev[2];
-    /* 0x20C [0x77C] */ f32 stickTurn;     /* angle between stickRaw and stickRawPrev, wrapped by BtlUtil_WrapAngle; 0 when either is neutral */
-    /* 0x210 [0x780] */ BtlInputCounters count;    /* counters of held */
-    /* 0x2B0 [0x820] */ BtlInputCounters cmdCount; /* counters of cmdHeld */
-    /* 0x350 [0x8C0] */ u32 ringButtons[BTL_INPUT_RING];
-    /* 0x370 [0x8E0] */ u32 ringCommands[BTL_INPUT_RING];
-    /* 0x390 [0x900] */ u8 ringStick[BTL_INPUT_RING][2];
-    /* 0x3A0 [0x910] */ s32 ringWrite;     /* next slot to write; the ring is full when (write + 1) % 8 == read */
-    /* 0x3A4 [0x914] */ s32 ringRead;      /* next slot to read */
-    /* 0x3A8 [0x918] */ u8 frameBits[30];  /* two interleaved 120-bit sets (byte = (bit / 8) * 2 + set), cleared at the end of
-                                              every BtlInput_Update; BtlInput_TestAction(chr, id, arg) sets bit id of set (arg != 0) */
-    /* 0x3C6 [0x936] */ u8 unk3C6[2];
-    /* 0x3C8 [0x938] */ BtlInputRecord rec; /* this frame's record */
-} BtlCharInput; /* 0x3D8 */
 
 /* Partial view of a fighter (0x1600 bytes, BtlChar_Get): only what this file touches. */
 typedef struct BtlInputChr {

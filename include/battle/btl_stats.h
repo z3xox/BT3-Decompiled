@@ -2,6 +2,7 @@
 #define BATTLE_BTL_CHAR_STATUS_H
 
 #include "types.h"
+#include "battle/btl_fighter.h"
 
 /*
  * Fighter stat modifiers and fighter animation control:
@@ -17,10 +18,6 @@
 #define BTL_STAT_1     1 /* with bonus[2]: row 7 (multiplier 1.1875..1..0.25: lower is better, damage taken) */
 #define BTL_STAT_2     2 /* with bonus[0] and bonus[3]: rows 0..2, 8, 11, 12 */
 #define BTL_STAT_3     3 /* with bonus[4..6]: rows 3, 9, 10 */
-#define BTL_STAT_COUNT 4
-
-/* A character has two skill slots; every modifier is kept per slot. */
-#define BTL_STAT_SLOTS 2
 
 /* How long a skill's modifier lasts: the byte at (object +0x930) + 0x66 + slot (BtlSkill_GetStatKind). */
 #define BTL_STAT_KIND_KEEP   0 /* base[]: never removed */
@@ -28,19 +25,6 @@
 #define BTL_STAT_KIND_ACTION 2 /* untilA[]: removed when the action leaves 0x105..0x132 (BtlStat_Update) */
 #define BTL_STAT_KIND_3      3 /* untilB[]: removed by BtlStat_EndKind3 (caller 0x1E16C0) */
 #define BTL_STAT_KIND_4      4 /* untilC[]: removed by BtlStat_EndKind4 (caller 0x1E1208) */
-
-/* Modifiers of one stat: fighter + 0xF50 + stat * 0x18. All values are levels, added up by BtlStat_GetMod. */
-typedef struct BtlStatMod {
-    /* 0x00 */ s8 base[BTL_STAT_SLOTS];    /* BtlStat_SetBase */
-    /* 0x02 */ s8 timed[BTL_STAT_SLOTS];   /* BtlStat_SetTimed */
-    /* 0x04 */ s8 untilA[BTL_STAT_SLOTS];  /* BtlStat_SetKind2 */
-    /* 0x06 */ s8 untilB[BTL_STAT_SLOTS];  /* BtlStat_SetKind3 */
-    /* 0x08 */ s8 untilC[BTL_STAT_SLOTS];  /* BtlStat_SetKind4 */
-    /* 0x0A */ s8 penalty[BTL_STAT_SLOTS]; /* BtlStat_SetPenalty; not counted while the fighter has flag 6 */
-    /* 0x0C */ s8 frame;                   /* BtlStat_SetFrameMod; cleared every frame by BtlStat_ClearFrameMods */
-    /* 0x0D */ u8 unkD[3];
-    /* 0x10 */ s32 timer[BTL_STAT_SLOTS];  /* frames left for timed[] */
-} BtlStatMod; /* size 0x18 */
 
 /* gBtlStatCurve[row][...]: the value of a derived quantity at level 80, 0 and -20 (f32[13][3] at 0x2EE7C0). */
 #define BTL_CURVE_MAX  0 /* at level 80 */
@@ -70,14 +54,6 @@ typedef struct BtlStatMod {
 #define BTL_ANIM_FLAG_BLEND_REQ  0x32 /* held: fighter +0x984 holds a blend time to apply */
 #define BTL_ANIM_FLAG_BLENDING   0x34 /* held: the blend counter of the object is still running */
 #define BTL_ANIM_FLAG_NO_BLEND   0x37 /* tested: forces the blend time to 0 */
-
-/* The animation ids of a fighter: fighter + 0x974. */
-typedef struct BtlAnimIds {
-    /* 0x0 */ s32 cur;  /* animation playing on the main layer: index into the roster's flag table */
-    /* 0x4 */ s32 next; /* requested animation, started by BtlAnim_FlushRequest; -1 once started */
-    /* 0x8 */ s32 prev; /* last frame's cur (written by the manager) */
-    /* 0xC */ s32 sub;  /* animation on the second layer; -1 when the object is bound */
-} BtlAnimIds; /* size 0x10 */
 
 /* Animation player inside the battle object: object + 0xB40. Layer handles are 0x98 bytes apart. */
 typedef struct BtlAnimObj {

@@ -4,29 +4,12 @@
 #include "types.h"
 #include "sys/math3d.h"
 #include "sys/pad.h"
+#include "battle/btl_fighter.h"
 
 /*
  * Small battle helpers and fighter accessors (src/battle/btl_char_util.c, 0x1DBF20..0x1DC9A0).
  * The structures are partial views local to this module: only the fields this file touches.
  */
-
-#define BTL_VOICE_KINDS 57
-
-/* Pad vibration request of a fighter (chr + 0x15D0). */
-typedef struct BtlCharVib {
-    /* 0x00 */ s32 enabled;   /* set at fighter reset from gSaveData->flags & (2 << chr->pad) */
-    /* 0x04 */ f32 power;     /* 0..1, big motor */
-    /* 0x08 */ s32 time;      /* frames left for the big motor */
-    /* 0x0C */ s32 smallTime; /* frames left for the small motor */
-    /* 0x10 */ s32 phase;     /* frames the big motor has run (modulates the power) */
-    /* 0x14 */ s32 toggle;    /* small motor is on every other frame */
-} BtlCharVib; /* size 0x18 */
-
-/* Voice cooldowns of a fighter (chr + 0x1370). */
-typedef struct BtlCharVoice {
-    /* 0x00 */ s32 last[BTL_VOICE_KINDS];  /* line played last for each kind */
-    /* 0xE4 */ s32 timer[BTL_VOICE_KINDS]; /* frames until the kind may play again */
-} BtlCharVoice; /* size 0x1C8 */
 
 /* Entry of the voice table (roster + 0x28). */
 typedef struct BtlVoiceEntry {
