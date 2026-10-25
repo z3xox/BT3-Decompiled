@@ -244,18 +244,18 @@ void BtlChar_BindObject(BtlMgrChr *chr) {
     BtlMgrObj *obj;
     s32 i;
 
-    chr->objId = BattleSide_GetObjId(chr->side);
+    chr->objId = BattleSide_GetObjId(chr->player);
     obj = BtlChar_GetObj(chr);
-    chr->motionSub = -1;
+    chr->anim.sub = -1;
     for (i = 0; i < 3; i++) {
         if (obj->file[i] != NULL) {
-            chr->objTbl[i] = FILE_TABLE(obj->file[i], 3);
+            chr->place[i] = (struct BtlTechPlaceTbl *)FILE_TABLE(obj->file[i], 3);
         }
     }
     BtlChar_ClearFlag(chr, 0xBE);
     BtlChar_ClearFlagRange(chr, 0x98, 0x99);
     BtlObj_InitChains(obj);
-    memset(chr->unkE00, 0, 0x40);
+    memset(&chr->dodges, 0, 0x40); /* 0xE00..0xE40 */
     BtlStat_Reset(chr);
     OBJ_WORD_18028(obj) = 0;
 }
@@ -263,7 +263,7 @@ void BtlChar_BindObject(BtlMgrChr *chr) {
 /* Copies one member's seven bonus levels from the battle setup. */
 void BtlChar_CopyMemberBonus(BtlMgrChr *chr, s32 idx) {
     BtlMgrMember *dst = &chr->members[idx];
-    BattleMember *src = BattleSide_GetMember(chr->side, idx);
+    BattleMember *src = BattleSide_GetMember(chr->player, idx);
 
     dst->bonus[0] = src->bonus[1];
     dst->bonus[1] = src->bonus[2];
@@ -286,7 +286,7 @@ void BtlChar_CopyAllBonus(BtlMgrChr *chr) {
 /* Copies one member's four ability words from the battle setup. */
 void BtlChar_CopyMemberAbility(BtlMgrChr *chr, s32 idx) {
     BtlMgrMember *dst = &chr->members[idx];
-    BattleMember *src = BattleSide_GetMember(chr->side, idx);
+    BattleMember *src = BattleSide_GetMember(chr->player, idx);
     s32 i;
 
     for (i = 0; i < 4; i++) {
@@ -305,7 +305,7 @@ void BtlChar_CopyAllAbility(BtlMgrChr *chr) {
 
 /* Resets one fighter from its side of the battle setup. */
 void BtlChar_Reset(BtlMgrChr *chr) {
-    s32 side = chr->side;
+    s32 side = chr->player;
     s32 i;
     BtlMgrObj *obj;
     BattleMember *m;
@@ -313,9 +313,9 @@ void BtlChar_Reset(BtlMgrChr *chr) {
     BattleResult *res;
 
     BtlChar_SetStage(chr, BTL_CHR_STAGE_RESET);
-    chr->optA = BattleSide_GetOptionA(side);
-    chr->optBOff = BattleSide_GetOptionB(side) == 0;
-    chr->vibEnabled = (gSaveData->flags & (2 << chr->pad)) != 0;
+    chr->cam.distMode = BattleSide_GetOptionA(side);
+    chr->cam.shakeOn = BattleSide_GetOptionB(side) == 0;
+    chr->vib.enabled = (gSaveData->flags & (2 << chr->pad)) != 0;
     chr->dirHeld = -1;
     chr->techClass = -1;
     BtlInput_Init(chr);
@@ -331,7 +331,7 @@ void BtlChar_Reset(BtlMgrChr *chr) {
     BtlObjAnim_SamplePose(obj);
     BtlObjPose_CalcMatrices(obj);
     chr->memberCount = BattleSide_GetMemberCount(side);
-    chr->changeAllowed = BattleSide_GetChangeAllowed(side);
+    chr->form.allowed = BattleSide_GetChangeAllowed(side);
     chr->switchEnabled = BattleSide_GetSwitchEnabled(side);
     BtlChar_CopyAllBonus(chr);
     BtlChar_CopyAllAbility(chr);
@@ -350,8 +350,8 @@ void BtlChar_Reset(BtlMgrChr *chr) {
         chr->switchGauge = 100000;
     }
     res = BattleResult_GetPtr();
-    res->maxComboDamage[chr->side] = 0;
-    res->maxComboHits[chr->side] = 0;
+    res->maxComboDamage[chr->player] = 0;
+    res->maxComboHits[chr->player] = 0;
     if (BtlMember_GetActiveGauge(chr)->variant != 0) {
         BtlChar_GetObj(chr)->flags |= 0x40000000;
     }
@@ -382,10 +382,10 @@ void BtlChar_OnModelLoaded(BtlMgrChr *chr) {
     case 0xF0:
         /* transformation: keep the health ratio */
         m = BtlMember_GetActive(chr);
-        m->chara = chr->newChara;
+        m->chara = chr->form.chara;
         g = &m->gauge;
-        m->costume = chr->newCostume;
-        g->variant = chr->new20;
+        m->costume = chr->form.costume;
+        g->variant = chr->form.variant;
         ratio = BtlMember_GetHealthRatio(chr);
         BtlMember_LoadParams(chr, BtlMember_GetActiveIndex(chr), 0, 0.0f, 0);
         g->health = (f32)g->healthMax * ratio + 0.5f;
@@ -408,7 +408,7 @@ void BtlChar_OnModelLoaded(BtlMgrChr *chr) {
     case 0xF7:
     case 0xF8:
         /* switch to another team member */
-        BtlMember_SetActiveIndex(chr, chr->nextMember);
+        BtlMember_SetActiveIndex(chr, chr->switchMember);
         BtlMember_GetSwitchTarget(chr);
         chr->switchGauge = 0;
         g = &BtlMember_GetActive(chr)->gauge;
@@ -432,7 +432,7 @@ void BtlChar_OnModelLoaded(BtlMgrChr *chr) {
         /* fusion: merge the partner member into the current one */
         m = BtlMember_GetActive(chr);
         g = &m->gauge;
-        other = BtlMember_Get(chr, chr->fusionMember);
+        other = BtlMember_Get(chr, chr->form.partner);
         if (other != NULL) {
             og = &other->gauge;
             m->bonus[0] = BtlUtil_Clamp(m->bonus[0] + other->bonus[0], -20, 40);
@@ -468,9 +468,9 @@ void BtlChar_OnModelLoaded(BtlMgrChr *chr) {
             og->health = 0;
         }
         g->fused = 1;
-        m->chara = chr->newChara;
-        m->costume = chr->newCostume;
-        g->variant = chr->new20;
+        m->chara = chr->form.chara;
+        m->costume = chr->form.costume;
+        g->variant = chr->form.variant;
         break;
     case 0x104:
     case 0x106:
@@ -483,10 +483,10 @@ void BtlChar_OnModelLoaded(BtlMgrChr *chr) {
     case 0x13A:
     case 0x13B:
         m = BtlMember_GetActive(chr);
-        m->chara = chr->newChara;
+        m->chara = chr->form.chara;
         g = &m->gauge;
-        m->costume = chr->newCostume;
-        g->variant = chr->new20;
+        m->costume = chr->form.costume;
+        g->variant = chr->form.variant;
         if (BtlChar_TestFlag(chr, 0xA6)) {
             g->bodyChanged = 1;
             BtlObj_BindCommonTables(obj);
@@ -511,19 +511,19 @@ void BtlChar_OnStageLoaded(BtlMgrChr *chr) {
     BtlChar_PlaceAtStart(chr);
     BtlChar_ClearFlag(chr, 0xE);
     BtlChar_SetHeldFlag(chr, 0xF);
-    chr->vibState[0] = 0;
-    chr->vibState[1] = 0;
-    chr->vibState[2] = 0;
-    chr->vibState[3] = 0;
-    chr->vibState[4] = 0;
+    chr->vib.power = 0;
+    chr->vib.time = 0;
+    chr->vib.smallTime = 0;
+    chr->vib.phase = 0;
+    chr->vib.toggle = 0;
     BtlChar_ResetLook(chr);
     BtlChar_PoseToObj(chr, 1);
-    if ((BtlAnim_GetFlags(BtlAnim_GetId(chr)) & 0x10) || chr->reaction >= 3) {
+    if ((BtlAnim_GetFlags(BtlAnim_GetId(chr)) & 0x10) || chr->react.reaction >= 3) {
         BtlChar_SetHeldFlag(chr, 0x13A);
     } else {
         BtlChar_SetHeldFlag(chr, 0x139);
     }
-    chr->reaction = 1;
+    chr->react.reaction = 1;
     BtlAnim_Play(chr, 0, 0.0f);
     BtlObjAnim_SamplePose(obj);
     BtlObjPose_CalcMatrices(obj);
@@ -533,7 +533,7 @@ void BtlChar_OnStageLoaded(BtlMgrChr *chr) {
 void BtlChar_ResetRound(BtlMgrChr *chr) {
     s32 prev;
 
-    if (chr->partnerOn != 0) {
+    if (chr->partner.active != 0) {
         BtlPartner_Release(chr);
     }
     BtlChar_ClearFlag(chr, 0xE);
@@ -541,18 +541,18 @@ void BtlChar_ResetRound(BtlMgrChr *chr) {
     BtlChar_SetHeldFlag(chr, 5);
     BtlChar_ClearFlag(chr, 0x125);
     BtlChar_PlaceAtStart(chr);
-    chr->prevAction = chr->action;
-    chr->action = 0xF9;
-    chr->request = -1;
+    chr->act.prev = chr->act.current;
+    chr->act.current = 0xF9;
+    chr->act.request = -1;
     BtlAct_ClearQueue(chr);
-    chr->reaction = 1;
+    chr->react.reaction = 1;
     chr->searchAngle = 0.5f;
     chr->searchRange = 500.0f;
     chr->freezeNext = 0;
     chr->freezeDelay = 0;
     chr->freeze = 0;
     BtlChar_ResetLook(chr);
-    if (Battle_GetMode() == 3 && chr->side == 0) {
+    if (Battle_GetMode() == 3 && chr->player == 0) {
         BtlMember_AddHealth(chr, 10000);
     }
 }
@@ -702,49 +702,49 @@ void BtlChar_RaiseEvents(BtlMgrChr *chr) {
     s32 tech;
 
     if (lost >= 70000) {
-        BtlEvent_Raise(chr->side, 0x1C);
+        BtlEvent_Raise(chr->player, 0x1C);
     } else if (lost >= 60000) {
-        BtlEvent_Raise(chr->side, 0x1B);
+        BtlEvent_Raise(chr->player, 0x1B);
     } else if (lost >= 50000) {
-        BtlEvent_Raise(chr->side, 0x1A);
+        BtlEvent_Raise(chr->player, 0x1A);
     } else if (lost >= 40000) {
-        BtlEvent_Raise(chr->side, 0x19);
+        BtlEvent_Raise(chr->player, 0x19);
     } else if (lost >= 30000) {
-        BtlEvent_Raise(chr->side, 0x18);
+        BtlEvent_Raise(chr->player, 0x18);
     } else if (lost >= 20000) {
-        BtlEvent_Raise(chr->side, 0x17);
+        BtlEvent_Raise(chr->player, 0x17);
     } else if (lost >= 10000) {
-        BtlEvent_Raise(chr->side, 0x16);
+        BtlEvent_Raise(chr->player, 0x16);
     }
     if (g->ki == g->kiMax) {
-        BtlEvent_Raise(chr->side, 0x1D);
+        BtlEvent_Raise(chr->player, 0x1D);
     }
     if (g->blast == g->blastMax) {
-        BtlEvent_Raise(chr->side, 0x1E);
+        BtlEvent_Raise(chr->player, 0x1E);
     }
     if (BtlChar_IsFlagRaised(chr, 6)) {
-        BtlEvent_Raise(chr->side, 0x1F);
+        BtlEvent_Raise(chr->player, 0x1F);
     }
     if (BtlCharApi_EnteredTechnique(chr->objId)) {
         switch (BtlAct_GetCurrentClass(chr)) {
         case 2:
-            BtlEvent_Raise(chr->side, 0x26);
+            BtlEvent_Raise(chr->player, 0x26);
             break;
         case 3:
-            BtlEvent_Raise(chr->side, 0x27);
+            BtlEvent_Raise(chr->player, 0x27);
             break;
         case 4:
-            BtlEvent_Raise(chr->side, 0x28);
+            BtlEvent_Raise(chr->player, 0x28);
             break;
         }
     }
     if (BtlCharApi_IsSkillStart(chr->objId)) {
         switch (BtlAct_GetCurrentClass(chr)) {
         case 0:
-            BtlEvent_Raise(chr->side, 0x24);
+            BtlEvent_Raise(chr->player, 0x24);
             break;
         case 1:
-            BtlEvent_Raise(chr->side, 0x25);
+            BtlEvent_Raise(chr->player, 0x25);
             break;
         }
     }
@@ -753,31 +753,31 @@ void BtlChar_RaiseEvents(BtlMgrChr *chr) {
         case 0x130:
         case 0x131:
         case 0x132:
-            BtlEvent_Raise(chr->side, 0x14);
+            BtlEvent_Raise(chr->player, 0x14);
             break;
         case 0x89:
         case 0x8A:
         case 0x8B:
         case 0x8C:
-            BtlEvent_Raise(chr->side, 0x42);
+            BtlEvent_Raise(chr->player, 0x42);
             break;
         case 0x41:
-            BtlEvent_Raise(chr->side, 0x44);
+            BtlEvent_Raise(chr->player, 0x44);
             break;
         case 0x42:
-            BtlEvent_Raise(chr->side, 0x45);
+            BtlEvent_Raise(chr->player, 0x45);
             break;
         case 0x19:
             if (chr->dashCount > 0) {
-                BtlEvent_Raise(chr->side, 0x31);
+                BtlEvent_Raise(chr->player, 0x31);
             }
             break;
         case 0xFA:
         case 0xFC:
-            BtlEvent_Raise(chr->side, 0x15);
+            BtlEvent_Raise(chr->player, 0x15);
             break;
         case 0x43:
-            BtlEvent_Raise(chr->side, 0x21);
+            BtlEvent_Raise(chr->player, 0x21);
             break;
         }
     }
@@ -795,21 +795,21 @@ void BtlChar_RaiseEvents(BtlMgrChr *chr) {
         case 0x08:
         case 0x09:
         case 0x0A:
-            BtlEvent_Raise(chr->side, 0x3D);
+            BtlEvent_Raise(chr->player, 0x3D);
             break;
         case 0x67:
         case 0x68:
         case 0x69:
         case 0x6A:
         case 0x6B:
-            BtlEvent_Raise(chr->side, 0x34);
+            BtlEvent_Raise(chr->player, 0x34);
             break;
         case 0x3E:
         case 0x3F:
         case 0x40:
         case 0x41:
         case 0x42:
-            BtlEvent_Raise(chr->side, 0x3E);
+            BtlEvent_Raise(chr->player, 0x3E);
             BtlChar_SetFrameBits(chr, 0x20);
             if (chr->vanishCount > 0) {
                 BtlChar_SetFrameBits(chr, 0x100000);
@@ -819,30 +819,30 @@ void BtlChar_RaiseEvents(BtlMgrChr *chr) {
         case 0x44:
         case 0x45:
         case 0x46:
-            BtlEvent_Raise(chr->side, 0x32);
+            BtlEvent_Raise(chr->player, 0x32);
             BtlChar_SetFrameBits(chr, 0x20);
             if (chr->dashCount > 0) {
                 BtlChar_SetFrameBits(chr, 0x100000);
             }
             break;
         case 0x55:
-            BtlEvent_Raise(chr->side, 0x33);
+            BtlEvent_Raise(chr->player, 0x33);
             break;
         case 0x23:
         case 0x25:
         case 0x27:
-            BtlEvent_Raise(chr->side, 0x40);
+            BtlEvent_Raise(chr->player, 0x40);
             break;
         case 0x29:
         case 0x2B:
         case 0x2D:
-            BtlEvent_Raise(chr->side, 0x56);
+            BtlEvent_Raise(chr->player, 0x56);
             break;
         case 0x8A:
-            BtlEvent_Raise(chr->side, 0x3F);
+            BtlEvent_Raise(chr->player, 0x3F);
             break;
         case 0x53:
-            BtlEvent_Raise(chr->side, 0x4B);
+            BtlEvent_Raise(chr->player, 0x4B);
             BtlChar_SetFrameBits(chr, 0x80000);
             break;
         case 0x10:
@@ -857,7 +857,7 @@ void BtlChar_RaiseEvents(BtlMgrChr *chr) {
         case 0x7D:
         case 0x90:
         case 0x92:
-            BtlEvent_Raise(chr->side, 0x4B);
+            BtlEvent_Raise(chr->player, 0x4B);
             break;
         case 0x75:
         case 0x76:
@@ -870,68 +870,68 @@ void BtlChar_RaiseEvents(BtlMgrChr *chr) {
         case 0x1D:
         case 0x3E:
         case 0x67:
-            BtlEvent_Raise(chr->side, 0x37);
+            BtlEvent_Raise(chr->player, 0x37);
             break;
         case 0x1E:
         case 0x3F:
         case 0x68:
-            BtlEvent_Raise(chr->side, 0x38);
+            BtlEvent_Raise(chr->player, 0x38);
             break;
         case 0x1F:
         case 0x40:
         case 0x69:
-            BtlEvent_Raise(chr->side, 0x39);
+            BtlEvent_Raise(chr->player, 0x39);
             break;
         case 0x20:
         case 0x41:
         case 0x6A:
-            BtlEvent_Raise(chr->side, 0x3A);
+            BtlEvent_Raise(chr->player, 0x3A);
             break;
         case 0x21:
         case 0x42:
         case 0x6B:
-            BtlEvent_Raise(chr->side, 0x3B);
+            BtlEvent_Raise(chr->player, 0x3B);
             break;
         }
     }
     if (BtlChar_TestFlag(chr, 0x70)) {
-        BtlEvent_Raise(chr->side, 0x43);
+        BtlEvent_Raise(chr->player, 0x43);
     }
     if (BtlChar_IsFlagRaised(chr, 0xBE)) {
-        BtlEvent_Raise(chr->side, 0x23);
+        BtlEvent_Raise(chr->player, 0x23);
     }
     if (BtlChar_TestFlag(chr, 0xBF)) {
-        BtlEvent_Raise(chr->side, 0x47);
+        BtlEvent_Raise(chr->player, 0x47);
     }
     if (BtlChar_TestFlag(chr, 0xC1)) {
-        BtlEvent_Raise(chr->side, 0x46);
+        BtlEvent_Raise(chr->player, 0x46);
         BtlChar_SetFrameBits(chr, 0x800000);
     }
     if (BtlChar_TestFlag(chr, 0x6C)) {
-        BtlEvent_Raise(chr->side, 0x57);
+        BtlEvent_Raise(chr->player, 0x57);
     }
     if (BtlChar_TestFlag(chr, 3)) {
         BattleResult *res = BattleResult_GetPtr();
         s32 opp = BtlOpp_GetPlayer(chr);
 
-        if (res->maxComboDamage[opp] < chr->comboDamage) {
-            res->maxComboDamage[opp] = chr->comboDamage;
+        if (res->maxComboDamage[opp] < chr->combo.damage) {
+            res->maxComboDamage[opp] = chr->combo.damage;
         }
-        if (res->maxComboHits[opp] < chr->comboHits) {
-            res->maxComboHits[opp] = chr->comboHits;
+        if (res->maxComboHits[opp] < chr->combo.hits) {
+            res->maxComboHits[opp] = chr->combo.hits;
         }
-        res->health[chr->side] = BtlMember_GetTeamHealthRatio(chr) * 100.0f;
+        res->health[chr->player] = BtlMember_GetTeamHealthRatio(chr) * 100.0f;
         if (BtlMember_GetActiveGauge(chr)->health == 1) {
             if (BtlMember_CountAlive(BtlChar_Get(BtlOpp_GetPlayer(chr))) <= 0) {
-                BtlEvent_Raise(chr->side, 0x54);
+                BtlEvent_Raise(chr->player, 0x54);
             }
         }
     }
-    if (BtlInput_IsPressed(chr, 0x2000) && BtlCtrl_CanAct(chr->side)) {
-        BtlEvent_Raise(chr->side, 0x50);
+    if (BtlInput_IsPressed(chr, 0x2000) && BtlCtrl_CanAct(chr->player)) {
+        BtlEvent_Raise(chr->player, 0x50);
     }
     if (BtlChar_TestFlag(chr, 7)) {
-        BtlEvent_Raise(chr->side, 0x49);
+        BtlEvent_Raise(chr->player, 0x49);
     }
     if (BtlChar_IsFlagRaised(chr, 0x84)) {
         BtlChar_SetFrameBits(chr, 0x4000000);
@@ -1004,17 +1004,17 @@ void BtlChar_BeginFrame(BtlMgrChr *chr) {
     BtlChar_GetPos(chr)->leanX = 0;
     BtlChar_GetPos(chr)->leanZ = 0;
     BtlChar_ClearSnapshots(chr);
-    chr->prevAction = chr->action;
-    chr->prev964 = chr->actionFrame;
-    chr->prev974 = chr->motion;
+    chr->act.prev = chr->act.current;
+    chr->prevActionFrame = chr->actionFrame;
+    chr->anim.prev = chr->anim.cur;
     BtlAnim_SetObjRate(chr, 1.0f);
     BtlAnim_SetRate(chr, 1.0f);
-    chr->comboNewHit = 0;
-    chr->comboChanged = 0;
+    chr->combo.newHit = 0;
+    chr->combo.changed = 0;
     BtlChar_SetLookEnabled(chr, 0);
     BtlChar_TickVoiceTimers(chr);
     BtlColl_ClearActionBits(chr);
-    chr->prev1262 = chr->fxBits;
+    chr->prevFxBits = chr->fxBits;
     memset(&chr->fxBits, 0, sizeof(chr->fxBits));
     if (BtlChar_TestFlag(chr, 6)) {
         chr->dashLimit = BtlParam_GetPoweredDashLimit(chr);
@@ -1033,7 +1033,7 @@ void BtlChar_BeginFrame(BtlMgrChr *chr) {
     } else if (BtlMember_HasAbility(chr, 2)) {
         chr->vanishLimit += 1;
     }
-    chr->frameBits = 0;
+    chr->bits.frame = 0;
     chr->dirHeld = -1;
     chr->techClass = -1;
     BtlInput_Update(chr);
@@ -1149,7 +1149,7 @@ void BtlChar_UpdateStage8(BtlMgrChr *chr) {
     BtlChar_PoseToObj(chr, 0);
     BtlObjPose_CalcMatrices(obj);
     if (BtlChar_TestFlag(chr, 0x55)) {
-        BtlObjBody_Warp(obj, chr->bodyWarpPos);
+        BtlObjBody_Warp(obj, &chr->bodyWarpPos);
         keepSphere = 0;
     }
     started = 0;
@@ -1184,7 +1184,7 @@ void BtlChar_UpdateCamera(BtlMgrChr *chr) {
         ChrCam_StartCut(chr);
         ChrCam_UpdateDemo(chr);
         ChrCam_UpdateInput(chr);
-        BtlObj_SetMoveVec(obj, BtlChar_GetPos(chr)->vel);
+        BtlObj_SetMoveVec(obj, &BtlChar_GetPos(chr)->vel);
         BtlObj_UpdateChains(obj);
         BtlChar_UpdateHead(chr);
         BtlObjPose_CalcMatrices(obj);
@@ -1214,7 +1214,7 @@ void BtlChar_PostScene(BtlMgrChr *chr) {
     BtlFx_UpdatePostScene(chr);
     if (BtlMember_GetActiveGauge(chr)->health < 10000) {
         BtlMember_GetActiveGauge(chr)->lowHealth = 1;
-        if (!(BtlParam_GetCharaFlags(chr) & 0x80) && chr->skillTimerC <= 0 && chr->skillTimerD <= 0 && !BtlChar_TestFlag(chr, 6)) {
+        if (!(BtlParam_GetCharaFlags(chr) & 0x80) && chr->skillTimerC <= 0 && chr->noFlinch <= 0 && !BtlChar_TestFlag(chr, 6)) {
             BtlMember_GetActiveGauge(chr)->lowHealthIdle = 1;
         } else {
             BtlMember_GetActiveGauge(chr)->lowHealthIdle = 0;
@@ -1226,12 +1226,12 @@ void BtlChar_PostScene(BtlMgrChr *chr) {
     opp = BtlChar_Get(BtlOpp_GetPlayer(chr));
     if (BtlChar_TestFlag(chr, 0x97)) {
         if (!BtlChar_TestFlag(chr, 0x30)) {
-            BtlChar_GetSnapDelta(chr, opp->carryMove, 1, 4);
+            BtlChar_GetSnapDelta(chr, &opp->status.carryMove, 1, 4);
         } else {
-            Vec4_SetZero(opp->carryMove);
+            Vec4_SetZero(&opp->status.carryMove);
         }
     } else {
-        Vec4_SetZero(opp->carryMove);
+        Vec4_SetZero(&opp->status.carryMove);
     }
 }
 
@@ -1267,11 +1267,11 @@ void BtlChar_EndFrame(BtlMgrChr *chr) {
     }
     BtlChar_SetStage(chr, BTL_CHR_STAGE_EVENTS);
     if (!BtlChar_TestFlag(chr, 0x24)) {
-        BtlChar_GetSnapDelta(chr, pose->vel, 0, 1);
-        BtlChar_GetMoveSince(chr, pose->move, 0);
+        BtlChar_GetSnapDelta(chr, &pose->vel, 0, 1);
+        BtlChar_GetMoveSince(chr, &pose->move, 0);
     } else {
-        Vec4_SetZero(pose->vel);
-        Vec4_SetZero(pose->move);
+        Vec4_SetZero(&pose->vel);
+        Vec4_SetZero(&pose->move);
     }
     BtlChar_RaiseEvents(chr);
     BtlChar_UpdateVibration(chr);
@@ -1330,9 +1330,9 @@ void BtlChar_ResetAll(void) {
     BtlReplay_ResetViewer();
     for (i = 0; i < BtlChar_GetCount(); i++) {
         chr = BtlChar_Get(i);
-        chr->side = i;
+        chr->player = i;
         pad = BattleSide_GetPad(i);
-        chr->index = i;
+        chr->side = i;
         chr->pad = pad;
         BtlChar_BindObject(chr);
         BtlChar_Reset(chr);
