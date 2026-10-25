@@ -787,7 +787,7 @@ void BtlFx_SpawnSpeedLines(FxChr *chr) {
         eps = 0.001f;
         angle = 0.0f;
         if (__builtin_fabsf(d.x) > eps || __builtin_fabsf(d.z) > eps) {
-            angle = BtlUtil_WrapAngle(atan2f(d.x, d.z) - chr->camYaw);
+            angle = BtlUtil_WrapAngle(atan2f(d.x, d.z) - chr->cam.yaw);
         }
         arg.life = __builtin_fabsf(angle) / 3.14159265f * 0.5f + 0.3f;
         arg.inner = -20.0f - Vec3_Length(&d) * 0.1f;
@@ -1221,7 +1221,7 @@ void BtlFx_UpdateOccludedFlag(FxChr *chr) {
     FxObj *obj = BtlChar_GetObj(chr);
     s32 on = 0;
 
-    if (chr->camTrace != 0) {
+    if (chr->cam.hit != 0) {
         on = !BtlChar_TestFlag(chr, 0x12D);
     }
     if (on) {

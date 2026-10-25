@@ -2,6 +2,7 @@
 #define BATTLE_BTL_CHAR_FX_H
 
 #include "types.h"
+#include "battle/btl_fighter.h"
 #include "sys/math3d.h"
 
 /*
@@ -92,38 +93,10 @@ typedef struct FxObj {
 } FxObj;
 
 /* A second character model attached to a fighter: fighter + 0x1330. */
-typedef struct FxPartner {
-    /* 0x0 */ s32 active;   /* 1 once the object load job has attached it */
-    /* 0x4 */ s32 res;      /* resource slot, released with BtlRes_Free */
-    /* 0x8 */ s32 objId;    /* battle object, released with BtlObj_Destroy */
-} FxPartner;
+typedef BtlFighterPartner FxPartner;
 
 /* Partial view of a fighter (0x1600 bytes). */
-typedef struct FxChr {
-    /* 0x0000 */ s32 player;
-    /* 0x0004 */ s32 pad;
-    /* 0x0008 */ s32 side;       /* the view whose screen filter BtlFx_UpdateScreenFilter drives */
-    /* 0x000C */ s32 objId;
-    /* 0x0010 */ u8 unk10[0x494 - 0x10];
-    /* 0x0494 */ s32 camTrace;   /* fighter camera: the stage trace hit something */
-    /* 0x0498 */ u8 unk498[0x4A0 - 0x498];
-    /* 0x04A0 */ f32 camYaw;     /* fighter camera yaw */
-    /* 0x04A4 */ u8 unk4A4[0xDD0 - 0x4A4];
-    /* 0x0DD0 */ Vec4 aimDir;    /* the ki blast aim direction (aimDir in btl_act_2.h, written by the ki blast actions with BtlCharApi_CalcAimDir); not a hit position */
-    /* 0x0DE0 */ u8 unkDE0[0xDF0 - 0xDE0];
-    /* 0x0DF0 */ s32 blastNode;    /* model node the ki blast leaves from (blastNode in btl_act_2.h); request 0x17 passes it on as the effect's node */
-    /* 0x0DF4 */ u8 unkDF4[0x1330 - 0xDF4];
-    /* 0x1330 */ FxPartner partner;
-    /* 0x133C */ s32 unk133C;
-    /* 0x1340 */ f32 filter;     /* screen filter strength 0..1 */
-    /* 0x1344 */ s32 unk1344;
-    /* 0x1348 */ s32 charaFxOn;  /* BtlFx_UpdateCharaFx: its effect is running */
-    /* 0x134C */ s32 trigger1E;  /* frame counter 0..3 of request 0x1E */
-    /* 0x1350 */ s32 trigger1F;  /* frame counter 0..3 of request 0x1F */
-    /* 0x1354 */ s32 burstNode;    /* passed to the effect of request 0x28 */
-    /* 0x1358 */ u8 unk1358[0x1360 - 0x1358];
-    /* 0x1360 */ Vec4 deflectDir;   /* second vector of the flash of request 0x2E */
-} FxChr;
+typedef BtlFighter FxChr;
 
 /* Argument of EftImpact_SpawnHit / EftImpact_SpawnHitScaled (the "flash" effects). */
 typedef struct FxPosArg {
