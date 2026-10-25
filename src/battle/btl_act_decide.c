@@ -649,22 +649,22 @@ s32 BtlAct_CanUseSkill(BtlActJChr *chr, u32 slot) {
         case 0xC:
         case 0x32:
             if (stack) {
-                if (chr->skillStackA >= 3) {
+                if (chr->dodges >= 3) {
                     return 0;
                 }
             } else {
-                if (chr->skillStackA > 0) {
+                if (chr->dodges > 0) {
                     return 0;
                 }
             }
             break;
         case 0x37:
             if (stack) {
-                if (chr->skillStackB >= 3) {
+                if (chr->dodgesB >= 3) {
                     return 0;
                 }
             } else {
-                if (chr->skillStackB > 0) {
+                if (chr->dodgesB > 0) {
                     return 0;
                 }
             }
@@ -765,12 +765,12 @@ s32 BtlAct_QueueReaction(BtlActJChr *chr, u32 reaction) {
             if (chr->reactCount[reaction] >= 2) {
                 BtlChar_SetFlag(chr, 0x94);
                 reaction = 0x10;
-                if (chr->hitBack != 0) {
-                    chr->turnYaw = chr->hitYaw;
-                    chr->turnPitch = 0;
+                if (chr->react.back != 0) {
+                    chr->react.turnYaw = chr->react.yaw;
+                    chr->react.turnPitch = 0;
                 } else {
-                    chr->turnYaw = BtlUtil_WrapAngle(chr->hitYaw + 3.14159265f);
-                    chr->turnPitch = 0;
+                    chr->react.turnYaw = BtlUtil_WrapAngle(chr->react.yaw + 3.14159265f);
+                    chr->react.turnPitch = 0;
                 }
             }
             break;
@@ -797,12 +797,12 @@ s32 BtlAct_QueueReaction(BtlActJChr *chr, u32 reaction) {
             case 48:
                 BtlChar_SetFlag(chr, 0x94);
                 reaction = 0xF;
-                if (chr->hitBack != 0) {
-                    chr->turnYaw = chr->hitYaw;
-                    chr->turnPitch = 0;
+                if (chr->react.back != 0) {
+                    chr->react.turnYaw = chr->react.yaw;
+                    chr->react.turnPitch = 0;
                 } else {
-                    chr->turnYaw = BtlUtil_WrapAngle(chr->hitYaw + 3.14159265f);
-                    chr->turnPitch = 0;
+                    chr->react.turnYaw = BtlUtil_WrapAngle(chr->react.yaw + 3.14159265f);
+                    chr->react.turnPitch = 0;
                 }
                 break;
         }
@@ -900,49 +900,49 @@ s32 BtlAct_QueueReaction(BtlActJChr *chr, u32 reaction) {
             break;
         case 23:
             action = 0xD3;
-            if (chr->stunTime <= 0) {
-                chr->stunTime = 15;
+            if (chr->react.stunTimer <= 0) {
+                chr->react.stunTimer = 15;
             }
             break;
         case 24:
             action = 0xD3;
-            if (chr->stunTime <= 0) {
-                chr->stunTime = 30;
+            if (chr->react.stunTimer <= 0) {
+                chr->react.stunTimer = 30;
             }
             break;
         case 25:
             action = 0xD3;
-            if (chr->stunTime <= 0) {
-                chr->stunTime = 45;
+            if (chr->react.stunTimer <= 0) {
+                chr->react.stunTimer = 45;
             }
             break;
         case 26:
             action = 0xE0;
-            if (chr->stunTime <= 0) {
-                chr->stunTime = 15;
+            if (chr->react.stunTimer <= 0) {
+                chr->react.stunTimer = 15;
             }
             break;
         case 27:
             action = 0xE0;
-            if (chr->stunTime <= 0) {
-                chr->stunTime = 30;
+            if (chr->react.stunTimer <= 0) {
+                chr->react.stunTimer = 30;
             }
             break;
         case 28:
             action = 0xE0;
-            if (chr->stunTime <= 0) {
-                chr->stunTime = 45;
+            if (chr->react.stunTimer <= 0) {
+                chr->react.stunTimer = 45;
             }
             break;
         case 34:
-            action = chr->thrSlot + 0x137;
+            action = chr->thr.slot + 0x137;
             break;
         case 29:
         case 30:
-            action = chr->thrSlot + 0x131;
+            action = chr->thr.slot + 0x131;
             break;
         case 41:
-            action = chr->unkFF4 + 0x134;
+            action = chr->react.slot + 0x134;
             break;
         case 3:
         default:
@@ -1069,7 +1069,7 @@ s32 BtlAct_CheckRecoveryInput(BtlActJChr *chr, s32 held) {
         if (button) {
             test = BtlInput_IsHeld;
         }
-        if (__builtin_fabsf(BtlUtil_WrapAngle(pose->rot.y - chr->camYaw)) < 1.5707963f) {
+        if (__builtin_fabsf(BtlUtil_WrapAngle(pose->rot.y - chr->cam.yaw)) < 1.5707963f) {
             front = 1;
         }
         if (test(chr, 0x40)) {
@@ -1186,7 +1186,7 @@ s32 BtlAct_CheckStoryForced(BtlActJChr *chr) {
 
 /* Action a fighter on the ground goes to: 0xE0 while the stun countdown runs, else 0xD8. */
 s32 BtlAct_GetDownAction(BtlActJChr *chr) {
-    return chr->stunTime > 0 ? 0xE0 : 0xD8;
+    return chr->react.stunTimer > 0 ? 0xE0 : 0xD8;
 }
 
 /*
