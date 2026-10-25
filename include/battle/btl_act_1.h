@@ -2,6 +2,7 @@
 #define BATTLE_BTL_ACT_A_H
 
 #include "types.h"
+#include "battle/btl_fighter.h"
 #include "sys/math3d.h"
 
 /*
@@ -22,21 +23,7 @@ typedef struct BtlActAPose {
 } BtlActAPose;
 
 /* Latched attack parameters (chr + 0xCF8); same layout as BtlActAttack in btl_char_action.h. */
-typedef struct BtlActAAttack {
-    /* 0x00 */ s32 flags;
-    /* 0x04 */ s16 motion;
-    /* 0x06 */ s16 motion2;
-    /* 0x08 */ s8 parts;
-    /* 0x09 */ u8 level;
-    /* 0x0A */ s8 cut;
-    /* 0x0B */ s8 follow[2];
-    /* 0x0D */ u8 padD[3];
-    /* 0x10 */ f32 rate;
-    /* 0x14 */ f32 cancelAt;   /* animation progress after which the queued follow-up starts */
-    /* 0x18 */ f32 leadTime;
-    /* 0x1C */ f32 speed;
-    /* 0x20 */ s32 chained;    /* a follow-up attack (not a generic cancel) is queued */
-} BtlActAAttack; /* size 0x24 */
+typedef BtlFighterAttack BtlActAAttack;
 
 /* Battle object (what BtlChar_GetObj returns). */
 typedef struct BtlActAObj {
@@ -48,38 +35,7 @@ typedef struct BtlActAObj {
 } BtlActAObj;
 
 /* Fighter (0x1600 bytes). */
-typedef struct BtlActAChr {
-    /* 0x0000 */ s32 player;
-    /* 0x0004 */ s32 pad;
-    /* 0x0008 */ s32 side;
-    /* 0x000C */ s32 objId;
-    /* 0x0010 */ u8 unk10[0x3D0 - 0x10];
-    /* 0x03D0 */ s32 work[6];       /* per-action scratch, zeroed when an action starts: [0] bit flags, [2] step, [3] frame count, [4] animation */
-    /* 0x03E8 */ f32 workF[14];     /* [0] animation progress after which the queued action starts */
-    /* 0x0420 */ u8 unk420[0x4A8 - 0x420];
-    /* 0x04A8 */ f32 camSide;       /* ChrCam side: sign picks the left / right camera cut */
-    /* 0x04AC */ u8 unk4AC[0x964 - 0x4AC];
-    /* 0x0964 */ s32 actionFrame;   /* frames spent in the current action */
-    /* 0x0968 */ u8 unk968[0xCF8 - 0x968];
-    /* 0x0CF8 */ BtlActAAttack attack;
-    /* 0x0D1C */ u8 unkD1C[0xD60 - 0xD1C];
-    /* 0x0D60 */ s32 rushStep;        /* rush chain step 0..9 (animation 0x37 + step) */
-    /* 0x0D64 */ s32 rushRapidStep;        /* rapid rush step 0..4 (animation 0x3C + step) */
-    /* 0x0D68 */ s32 dashCount;        /* > 0: the dash smash shows the charge effect at once */
-    /* 0x0D6C */ s32 dashLimit;
-    /* 0x0D70 */ s32 vanishCount;        /* counts vanishing attacks */
-    /* 0x0D74 */ s32 vanishLimit;
-    /* 0x0D78 */ f32 charge;        /* attack charge level 0..1 */
-    /* 0x0D7C */ f32 chargeTimer;        /* attack charge timer 0..1 */
-    /* 0x0D80 */ s32 chargeGauge;        /* gauge 0..100000 that blends the two charge rates */
-    /* 0x0D84 */ s32 chargeFullFrames;        /* frames the charge has been full */
-    /* 0x0D88 */ s32 evasionCount;
-    /* 0x0D8C */ s32 unkD8C;
-    /* 0x0D90 */ s32 attackId;      /* set to the action id by the vanishing attack */
-    /* 0x0D94 */ u8 unkD94[0x1354 - 0xD94];
-    /* 0x1354 */ s32 burstNode;       /* model node for the effect of action 0x66 */
-    /* 0x1358 */ u8 unk1358[0x1600 - 0x1358];
-} BtlActAChr; /* size 0x1600 */
+typedef BtlFighter BtlActAChr;
 
 s32 BtlAct_WaitHandler(BtlActAChr *chr, s32 phase);
 f32 BtlAct_GetChargeRate(BtlActAChr *chr);

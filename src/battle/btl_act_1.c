@@ -321,7 +321,7 @@ void BtlAct_RequestAttackEnd(BtlActAChr *chr, BtlActAAttack *atk) {
 
 /* Action 0x44: rush combo step. */
 s32 BtlAct_RushHandler(BtlActAChr *chr, s32 phase) {
-    f32 *cancelAt = &chr->workF[0];
+    f32 *cancelAt = &chr->workF[6];
     BtlActAPose *pose;
     s32 next;
     s32 mode;
@@ -446,7 +446,7 @@ s32 BtlAct_RushAutoHandler(BtlActAChr *chr, s32 phase) {
         if (BtlAct_GetPrev(chr) != 0x45) {
             BtlAnim_Play(chr, 0x37, 0.1f);
         }
-        ChrCam_RequestCut(chr, 1, chr->camSide < 0.0f ? 0x11 : 0x12);
+        ChrCam_RequestCut(chr, 1, chr->cam.side < 0.0f ? 0x11 : 0x12);
     }
     if (phase == 1) {
         switch (BtlAnim_GetId(chr)) {
@@ -508,7 +508,7 @@ s32 BtlAct_RushRapidHandler(BtlActAChr *chr, s32 phase) {
         pose = BtlChar_GetPos(chr);
         pose->speed = BtlAtk_GetLaunchSpeed(chr);
         if (BtlChar_TestFlag(chr, 0x13)) {
-            ChrCam_RequestCut(chr, 1, chr->camSide < 0.0f ? 0x1A : 0x1B);
+            ChrCam_RequestCut(chr, 1, chr->cam.side < 0.0f ? 0x1A : 0x1B);
         }
     }
     if (phase == 1) {
@@ -589,7 +589,7 @@ s32 BtlAct_RushRapidHandler(BtlActAChr *chr, s32 phase) {
 /* Actions 0x47..0x4C: charged smash attack (wind-up, hold, release animations). */
 s32 BtlAct_SmashChargeHandler(BtlActAChr *chr, s32 phase) {
     s32 *frames = &chr->work[2];
-    f32 *cancelAt = &chr->workF[0];
+    f32 *cancelAt = &chr->workF[6];
     BtlActAPose *pose;
     s32 anim;
     s32 yawMode;
@@ -842,7 +842,7 @@ s32 BtlAct_SmashChargeHandler(BtlActAChr *chr, s32 phase) {
 
 /* Actions 0x4D..0x52: fully charged smash attack with a camera cut (hit-stop flag 0x125 during the wind-up). */
 s32 BtlAct_SmashFullHandler(BtlActAChr *chr, s32 phase) {
-    f32 *cancelAt = &chr->workF[0];
+    f32 *cancelAt = &chr->workF[6];
     BtlActAPose *pose;
     s32 cut;
     s32 anim;
@@ -1171,7 +1171,7 @@ s32 BtlAct_DashSmashHandler(BtlActAChr *chr, s32 phase) {
 
 /* Action 0x58: flying kick out of a dash (animations 0x6B wind-up, 0x6C hold, 0x6D strike). */
 s32 BtlAct_FlyingKickHandler(BtlActAChr *chr, s32 phase) {
-    f32 *cancelAt = &chr->workF[0];
+    f32 *cancelAt = &chr->workF[6];
     s32 steer;
     s32 i;
     f32 lean;
@@ -1289,7 +1289,7 @@ s32 BtlAct_FlyingKickHandler(BtlActAChr *chr, s32 phase) {
 
 /* Action 0x59: rising attack that leaves flight (animations 0x6E wind-up, 0x6F hold, 0x70 strike). */
 s32 BtlAct_LiftStrikeHandler(BtlActAChr *chr, s32 phase) {
-    f32 *cancelAt = &chr->workF[0];
+    f32 *cancelAt = &chr->workF[6];
     BtlActAPose *pose;
     s32 falling;
     s32 steer;
@@ -1395,7 +1395,7 @@ s32 BtlAct_LiftStrikeHandler(BtlActAChr *chr, s32 phase) {
 s32 BtlAct_SmashVanishHandler(BtlActAChr *chr, s32 phase) {
     s32 *anim = &chr->work[4];
     s32 *step = &chr->work[2];
-    f32 *lead = &chr->workF[0];
+    f32 *lead = &chr->workF[6];
     s32 *count = &chr->work[3];
     BtlActAObj *obj;
     s32 move;
@@ -1559,7 +1559,7 @@ s32 BtlAct_SmashVanishHandler(BtlActAChr *chr, s32 phase) {
 
 /* Actions 0x5E..0x66 (not 0x63): chargeable rush finishers (wind-up, hold, release animation triples). */
 s32 BtlAct_RushFinishHandler(BtlActAChr *chr, s32 phase) {
-    f32 *cancelAt = &chr->workF[0];
+    f32 *cancelAt = &chr->workF[6];
     BtlActAObj *obj = BtlChar_GetObj(chr);
     BtlActAPose *pose;
     s32 follow[8];
