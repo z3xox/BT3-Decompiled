@@ -6,9 +6,12 @@ Sources: `src/battle/btl_char_mgr.c` (roster, reset, per-frame phases), `btl_cha
 `btl_char_cam.c`, `btl_char_cam_cut.c` and `btl_char_cam_modes.c` (one module, three files
 because the unmatched cut evaluator owns constants in the middle of the float pool).
 
-Each file declares its own partial view of the fighter object (`BtlMgrChr`, `BtlCharGetChr`,
-`BtlCharApiChr`, `BtlInputChr`, `ChrCamChr`, ...). A single unified header does not exist yet;
-the table below is the merged picture.
+The fighter object is one structure, `BtlFighter` in `include/battle/btl_fighter.h`, with its
+parts (`BtlFighterPose`, `BtlFighterReact`, `BtlFighterThrow`, `BtlFighterForm`, `BtlMember`, ...).
+Until 2026-10 every module declared its own partial view of it (`BtlMgrChr`, `HitChr`, `BtlCtlPose`,
+... 30 fighter views and some 60 views of its parts); they were merged into that header without
+changing the compiled code. `docs/names/fighter/canonical.tsv` lists every field with the names the
+views gave it and the reason for the name kept. The table below is a summary.
 
 The action state machine, movement, hit detection, gauges and effects are NOT decompiled: the
 phase order below is verified, but what each still-unnamed callee does is inferred.
@@ -35,42 +38,55 @@ phase order below is verified, but what each still-unnamed callee does is inferr
 
 Offsets verified by matching code in at least one file; meanings as marked.
 
-| Offset | Type | Meaning | Status |
-|---|---|---|---|
-| 0x0000 | s32 | player: roster index, replay track index, key-config index | verified |
-| 0x0004 | s32 | pad index | verified |
-| 0x0008 | s32 | side | verified |
-| 0x000C | s32 | battle object id | verified |
-| 0x0010 | 0xF0 bytes | pose block; world position at +0x10, facing yaw at +0xA4 | verified |
-| 0x0100 | 0xF0 bytes | last frame's pose | verified |
-| 0x0420 | 0xA0 bytes | fighter camera (`ChrCam`): eye, pos +0x430, rot +0x440, target, shake +0x470, trace result, distMode +0x49C, **yaw +0x4A0**, side +0x4A8 | verified offsets |
-| 0x04C0 | 0xB0 bytes | camera cut state | verified offsets |
-| 0x0570 | 0x3D8 bytes | input block (`BtlCharInput`): raw sample, mask table +0x578, held/pressed/released +0x73C, ring +0x8C0, record +0x938 | verified |
-| 0x0948 / 0x0950 | s32 | action id / previous action | verified |
-| 0x0974 | s32 | state id indexing roster `tbl[0]` | verified use, meaning unknown |
-| 0x0994 / 0x0998 | s32 | active member index / member count | verified |
-| 0x09A4 | 5 x 0xA4 | member entries (below) | verified |
-| 0x0D40, 0x0D44 | s32 | running maxima copied to the result block | verified |
-| 0x0E5C, 0x0E60 | s32 | counters, full at 3 and 5 | verified |
-| 0x0F30 | Vec4 | written by the opponent's post-scene pass | verified |
-| 0x0F50 | 4 x 0x18 | status table owned by the next module | inferred |
-| 0x1084 | u8 | per-frame stage number (1..12) | inferred |
-| 0x1278 | s32 | input is injected (CPU) | verified |
-| 0x127C..0x1284 | u32, f32, f32 | injected buttons, stick x, y | verified |
-| 0x12D0.. | s32 | chara / costume of the form being changed into | verified |
-| 0x1320..0x1328 | s32 | hit-stop: freeze counter, pending length, delay | verified |
-| 0x1330 | s32 | a loaded resource to release | verified |
-| 0x1370 / 0x1454 | s32[57] | last voice line / voice cooldown per kind | verified |
-| 0x1538 | u64 | per-frame bit set | verified |
-| 0x15D0..0x15E4 | | vibration: enabled, power, frames, small-motor frames, phase | verified |
-| 0x15E8 | 3 pointers | tables inside the object's three files | verified |
+| Offset | Field (`BtlFighter`) | Type | Meaning | Status |
+|---|---|---|---|---|
+| 0x0000 | player | s32 | roster index = battle side: replay track, key-config index, sound channel | verified |
+| 0x0004 | pad | s32 | pad index | verified |
+| 0x0008 | side | s32 | the roster index again; what `BtlChar_FindBySide` compares | verified |
+| 0x000C | objId | s32 | battle object id | verified |
+| 0x0010 | pose | `BtlFighterPose` (0xF0) | position, rotation, display offset, velocities, heading (pitch +0xA0, yaw +0xA4), speeds, ground point / normal / flags | verified |
+| 0x0100 | prevPose | `BtlFighterPose` | the pose at the start of the frame | verified |
+| 0x02E0 | snapPos / snapRot / snapMask | Vec4[7] x 2, u32 | per-frame position snapshots | verified |
+| 0x03D0 | work | s32[0x14] | per-action scratch | verified |
+| 0x0420 | cam | `ChrCam` (0xA0) | fighter camera: eye, pos +0x430, rot +0x440, target, shake +0x470, trace result, distMode +0x49C, **yaw +0x4A0**, side +0x4A8 | verified offsets |
+| 0x04C0 | cut | `ChrCamCut` (0xB0) | camera cut state | verified offsets |
+| 0x0570 | input | `BtlCharInput` (0x3D8) | raw sample, mask table +0x578, held/pressed/released +0x73C, ring +0x8C0, record +0x938 | verified |
+| 0x0948 | act | `BtlActState` | current / requested / previous action, follow-up queue | verified |
+| 0x0964 | actionFrame | s32 | frames in the current action | verified |
+| 0x0974 | anim | `BtlAnimIds` | animation ids; `anim.cur` indexes roster `tbl[0]` | verified |
+| 0x0988 | scale | f32 | model scale, copied to the object transform | verified |
+| 0x0994 / 0x0998 | curMember / memberCount | s32 | active member index / member count | verified |
+| 0x09A4 | members | `BtlMember`[5] (0xA4 each) | member entries (below) | verified |
+| 0x0CF8 / 0x0D1C | attack / nextAttack | `BtlFighterAttack` | running and queued attack parameters | verified |
+| 0x0D40 | combo | `BtlMemberCombo` | the combo being received; maxima copied to the result block | verified |
+| 0x0D94 | queue | `BtlFighterQueue` | damage and drain queue against the opponent | verified |
+| 0x0E00..0x0E3C | dodges .. slotOn | s32 | skill timers and counters | verified |
+| 0x0E40..0x0E60 | techDelay .. boostStock | s32 / f32 | technique delay, charge, clash counters, counters full at 3 and 10 | verified |
+| 0x0E90 | thr | `BtlFighterThrow` (0x68) | rush / throw description shared by both fighters | verified |
+| 0x0F30 | status | `BtlFighterHitStatus` | carryMove (written by the opponent's post-scene pass), hit target | verified |
+| 0x0F50 | stat | `BtlStatMod`[4] | stat modifiers | verified |
+| 0x0FB0 | react | `BtlFighterReact` (0x4C) | pending hit reaction, with the stun / shake / blind timers | verified |
+| 0x1068..0x1080 | dodgeWindow .. | s32 | defence windows | verified |
+| 0x1084 | stage, held, pulse, ... | u8 | per-frame stage number and the flag bit sets | verified |
+| 0x1262 / 0x126B | fxBits / prevFxBits | u8[9] | effect request bits | verified |
+| 0x1278 | injectOn | s32 | input is injected (CPU) | verified |
+| 0x127C..0x1284 | injectButtons, injectStickX / Y | u32, f32, f32 | injected buttons, stick x, y | verified |
+| 0x12CC | form | `BtlFighterForm` (0x38) | form-change request: chara / costume / variant of the form being changed into | verified |
+| 0x1320..0x1328 | freeze, freezeNext, freezeDelay | s32 | hit-stop: freeze counter, pending length, delay | verified |
+| 0x1330 | partner | `BtlFighterPartner` | partner object (a loaded resource to release) | verified |
+| 0x1370 | voice | `BtlCharVoice` | last voice line / voice cooldown per kind | verified |
+| 0x1538 | bits | `BtlFlagBits` | per-frame bit set and "once" bits | verified |
+| 0x15A0 | look | `BtlFighterLook` | head tracking | verified |
+| 0x15D0 | vib | `BtlCharVib` | vibration: enabled, power, frames, small-motor frames, phase, toggle | verified |
+| 0x15E8 | place | 3 pointers | placement tables inside the object's three files | verified |
 
-Member entry (0xA4): chara, costume, present, `bonus[7]`, `ability[4]`, cpuLevel +0x38,
-aiType +0x3C, gauge block at +0x40.
+Member entry (`BtlMember`, 0xA4): chara, costume, present, `bonus[7]`, `ability[4]`, cpuLevel
++0x38, aiType +0x3C, gauge block at +0x40 to the end of the entry.
 
-Gauge block: health / health max at +0 / +4 (10000 units per bar), two more gauges with maxima
-at +0xC / +0x10 and +0x14 / +0x18 ("ki" and "blast" are guesses), +0x1C = 30000 together with
-flag 6, low-health flags, a mode flag at +0x30.
+Gauge block (`BtlMemberGauge`, 0x64): health / healthMax at +0 / +4 (10000 units per bar), ki /
+kiMax at +0xC / +0x10, blast / blastMax at +0x14 / +0x18, maxPower +0x1C (30000 together with flag
+6), variant +0x20, low-health flags +0x24 / +0x28, bodyChanged +0x30, fused +0x34, use counters by
+move slot `used[5]` +0x38 and `fired[5]` +0x4C, idleTalkCount +0x60.
 
 ## Lifecycle (verified)
 

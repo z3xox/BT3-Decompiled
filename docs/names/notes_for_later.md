@@ -1,5 +1,19 @@
 # Wrong or stale names and comments found while naming placeholders (2026-10-08)
 
+## Resolved by the fighter merge (2026-10-25)
+
+The fighter is one structure now (include/battle/btl_fighter.h; every field with the old names in
+docs/names/fighter/canonical.tsv). Items of this file that it settled and that are removed below: the
+names of +0xD4C / +0xD50 (combo.newHit / combo.changed), +0xE60 (boostStock, 0..10), +0x964 / +0x968
+(actionFrame / prevActionFrame), +0xE44 (techCharge), +0xEFC (stepFrame[5]), +0x1288 (actBits),
++0x1294 (framesLeftOverride), +0x1310 (bodyWarpPos), camera +0x460 (cam.bodyPos), the throw block
+(ActGThrow / BtlCollThrow / the thr* fields: one BtlFighterThrow, unkEC4 / unkEE8 = thr.failed /
+thr.halfDamage, unkE9C = thr.slot, unk5C = raiseAtEnd, its comment fixed), the reaction block and the
+timers it overlaps (they are one BtlFighterReact), the pose views (velY, speed / facing at +0x90 /
++0x94, vel / dir, move / moved: one BtlFighterPose), FxChr hitPos / hitKind (aimDir / blastNode),
++0xE00 / +0xE04 (dodges / dodgesB), unkD88 (evasionCount), unkD44 (combo.hits), BtlActJForm.unk24..30,
+the member gauge word +0x20 (gauge.variant) and the damage queue words (BtlFighterQueue).
+
 Reported by the five agents that proposed the names of docs/names/renamed_2026_10_08.tsv. Not acted on yet,
 except where a rename of that list covers it. For the pass over fields and local variables.
 
@@ -10,17 +24,13 @@ CPU opponent:
   high health; the comment on handler 18 says "by level and distance": it is by level and own health. The same in btl_ai_think.c near line 1199.
 - btl_ai_seq.c, steps 15 and 23: the local `busy = BtlAiStep_ReachClass(ai)` is inverted (1 = class reached).
 - AI locals named `state` that hold the animation id; the AI data's stateClass / stateFlags tables are indexed by animation id.
-- btl_char_api_2.h param view: unk14 / unk18 are flags2 / flags3 (btl_param.h); unk1288 is actBits (btl_char_coll.h); unkCAD is hitNo.
+- btl_char_api_2.h param view: unk14 / unk18 are flags2 / flags3 (btl_param.h); unkCAD is hitNo.
 - Two AI functions were left as Unk (step 23, condition 11): both hinge on "stage 4 or 27" and pose bit 0x80, whose meaning is not known.
 - docs/systems/ai.md: old file names, "still assembly" statements.
 
 Effects, stage, objects:
-- btl_char_api_2.h:59 `f32 unkEFC[4]; /* length not known */` is `f32 stepFrame[5]` in btl_act_super.h:305.
 - The comment above the rush-sequence frame getter (btl_char_api_2.c, about line 503) is wrong: animation frame plus the lengths of the earlier steps.
-- Fighter +0xD50: unkD50 in btl_param.h:191 and btl_char_mgr.h:130 is BtlMemberCombo.changed (btl_char_member.h); +0xD4C unkD4C is comboNewHit.
-- Fighter +0xE60: contradictory comments across headers; the code adds 1 (btl_act_change.c:160) and 5 (btl_act_super.c:557), clamped to 0..10.
 - BtlParam_GetGaugeB returns kiRecoverGoal: a weak name.
-- The member gauge word +0x20 is described as "member +0x60" in btl_char_api_2.h:22; BtlMemberQueue.unk20 (btl_char_member.h:90) is another thing.
 - eft_quad_2.h:16 and :495 call the class at 0x2C40F0 the "EftLine" / "line task" class; its callbacks are EftBill_*.
 - The class at 0x2C3EC0 has EftShotFxMgr_Init as its init among EftShotFx_* callbacks: one prefix is probably wrong.
 - eft_trail.c:728 declares the class at 0x2C3E00 as u8[0x18]; the other class tables are void *[6].
@@ -28,20 +38,22 @@ Effects, stage, objects:
 - Setters of fields nothing reads were left as Unk: EftRibbon_SetUnkD8, EftZap_SetUnk40, HudNode_SetUnk8, EftBill_SetUnkD8.
 
 Fighter:
+- BtlAnim_SetRate (btl_anim.c) writes fighter +0x988, the model scale that BtlChar_PoseToObj copies into the object transform
+  (the uniform scale of its matrix): a scale setter, misnamed (found by the fighter merge, 2026-10-25).
+- btl_act_1.c, btl_act_2.c, btl_act_super.c, btl_act_change.c, btl_char_fx_1.c, btl_char_api_2.c still re-declare some fighter
+  functions with cast macros that change an object or parameter type (79 left after the merge removed the 218 identical ones).
 - BtlCharApi_GetTechniqueProgress (btl_char_api_2.c, about line 1151) is misnamed: (event frame - current frame) / step = updates left until an animation event.
 - btl_char_api_1.c:335 "No caller" for the character pack getter: BtlScene_GetCharPackEntry (btl_scene.c:254) calls it; the prototypes disagree (s32 / s32 *).
 - btl_obj_anim.c, above BtlObjFace_PickJawKeys: "eye direction tracks" are jaw rotation tracks (node 0x31).
 - btl_act_super.c:2097: technique 0x280 "a random character": the character comes from the technique table.
 - btl_scene.c:548 "rule word 0x18" is rule word 0x10 (setup + 0x18).
 - The two zero vectors at 0x2EC2A0 / 0x2EC2C0 each cover 0x20 bytes: a second unreferenced vector follows each ((1,1,1,1) and (1,0,0,1)).
-- Fields to follow the renamed accessors: unk1310 (body warp), camUnk460 / cam.unk40 (camera body position), unk1294, thr.unk14 / 18 / 2C,
-  unk44FC4 (default animation step, btl_obj.h; its comment "getter / setter only" is out of date), unkB30 (alphaAdd), rule.unk10,
+- Fields to follow the renamed accessors: unk44FC4 (default animation step, btl_obj.h; its comment "getter / setter only" is out of date), unkB30 (alphaAdd), rule.unk10,
   BattleSide.unk1FC / unk200 and the parameters of BattleSetup_SetSide in the menu files (team_select.c calls the first `handicap[]`).
 - btl_char_fx_1.c, BtlFx_FireKiBlast: the local `react` holds ki blast record +0x31, the volley spread mode.
 - BtlCharApi_GetOppSkillKind reads the technique table (slots 2..4) and BtlCharApi_GetOppMoveKind the skill table (slots 0..1): the names are
   crossed relative to the module prefixes; the extern comments at btl_char_api_2.c:912 / 914 have the same mix-up.
-- Fighter +0x964 is unk964 / unk968 / prev964 in btl_char_flag.h and btl_char_mgr.h, actionFrame in btl_act_1.h and btl_act_2.h.
-- Several headers have unkE44 where btl_act_super.h and btl_tech.h have charge / techCharge; btl_stats.h has unk14C where btl_obj_anim.h has mix.
+- btl_stats.h has unk14C where btl_obj_anim.h has mix.
 - Accessors still named by offset that have named fields: BtlParam_GetSlotA0 / A4 (transSeq / transKind), BtlParam_GetCostAE (fusionCost),
   BtlOpp_GetParamByte2, BtlOpp_GetParamWord0, BtlCharApi_GetParamByte84 / 8A / 8D, BtlCharApi_HasParamBit80.
 - "Body changed" (the member flag at +0x70, technique 0x280, character 0x56) is a reading, not a confirmed name.
@@ -64,16 +76,8 @@ Group 02 (btl_act_super.h .. btl_cam.h):
   BtlAiSeqA.unk6C[2], unk8C[3]; AiActSeq.unk0C[2]. BtlAiWork.unk10[2] is costMin / costMax in AiThWork.
 - BtlAiPlan has two unk4: the plan's own (+0x04, `next`) and the one inside the anonymous rolls[] struct (`acc`): the second by hand.
 - Types differ between views: BtlAiOutput +0x48 / +0x4C (accX / accY) s32 here, f32 in AiActPad; status +0x24 (act10Dist) s32 / f32.
-- ActGThrow is the same block as BtlCollThrow (btl_char_coll.h): names for +0x10..+0x64 to be reconciled; also btl_char_api_1.h thrUnk10 / 1C /
-  48 / 4C, btl_stats.h unkEE4, BtlMemberQueue unk0 / unk14 / unk20 (totalStart, drainHealthStart, drainKiStart).
-- btl_act_super.h:84 / :86: unkEC4 and unkEE8 are words +0x34 / +0x58 of the throw block at +0xE90, filled in BtlColl_StartThrow.
-- btl_act_super.h:25-26: BtlSuperPose calls +0x9C velY; every other pose view has +0x98 speed, +0x9C fallSpeed (positive = down).
-- btl_act_super.c:2108: comment says unk5C puts the attacker "on the ground when the action ends"; the code at :2437 raises the fighter.
 - btl_ai_sense.h AiActStatus.downTimer (+0x08): set to 4 while an attack hit is pending, then counted down: nothing about being down.
-- btl_act_decide.h:83 unkE9C sits at throw block +0x0C, which BtlCollThrow names `slot`: not checked whether the descriptions agree.
 - btl_char_ctl.h:78: the sixth parameter of BtlChange_RequestChara is named unk18 but receives form +0x1C.
-- btl_char_hit.h HitReact: the comments for unk38 and unk48 describe fighter +0xFE8 / +0xFF8, which other headers describe as countdowns:
-  the react block and those timers overlap, one of the two layouts needs a look.
 
 Group 09 (eft_rays.h .. eft_stage_1.h):
 - Technique definition +0x04 / +0x05: eft_core.h and eft_shot.h have cls@4, kind@5; eft_emit.h and eft_obj_tech.h have kind@4, unk5 / sub@5.
@@ -92,20 +96,10 @@ Group 09 (eft_rays.h .. eft_stage_1.h):
 - eft_zap.h:124 against eft_ribbon.h:291: the zap argument's +0x40 byte is unk40 in one and `type` in the other.
 
 Group 01 (battle.h .. btl_act_decide.h):
-- btl_act_2.h:22-23 (BtlActCPose) and :263-264 (BtlActEPose): +0x90 `speed` and +0x94 `facing` are the heading pitch and yaw (BtlMovePose,
-  BtlActBPose, BtlActDPose, BtlActHPose: pitch@0x90, yaw@0x94, speed@0x98); `vel` at +0x80 is the unit travel direction (`dir` elsewhere).
-  Their unk98 is the pose's speed and could not take the name while +0x90 has it.
-- btl_act_2.h:18: BtlActCPose.move "y = fall speed": +0x40 is the whole movement of the previous frame (`moved` in BtlActBPose).
-- btl_act_change.h:27: the comment on BtlActHPose.pitch cites "btl_char_ctl.h: speed", the same wrong name for +0x90.
-- btl_char_fx_1.h FxChr: +0xDD0 hitPos / +0xDF0 hitKind conflict with the action code (the ki blast aim direction and the firing hand's node).
-- btl_act_decide.h:76-77 against btl_act_change.h:468-469: +0xE00 / +0xE04 are dodges / dodgesB in four views, skillStackA / B in BtlActIChr.
-- btl_char_action.h:185: unkD88 "frames with flag 8 in actions 0x89..0x8C": read through BtlOpp_GetEvasionCount, used modulo 3: a count.
-- btl_act_2.h:70: BtlActCChr.unkD44 is the combo hit count (comboHits, BtlMemberCombo.hits).
-- btl_act_decide.h:54-57: BtlActJForm.unk24 / 28 / 30 are objId / objCostume / objVariant of BtlActHForm.
 - Found: BattleRule.unk18 and BattleResult.unk44 are the Dragon Ball drop (1 + the first unset of the seven dragon-ball bits; stg_parts.c
   moves it to the result with a 1-in-8 chance when a stage object breaks; history_result.c sets the bit). BattleRes.unk8 is the HUD sprite file.
-- The +0x1C word of the form request / BtlJob (switchUnk18, form1C, the unk18 argument of BtlChange_RequestChara) is the character for the
-  second resource file (0x599 + n * 10): `anim1Chara` proposed; the other spellings should follow.
+- The +0x1C word of BtlJob and the unk18 argument of BtlChange_RequestChara are the character for the second resource file
+  (0x599 + n * 10), as the fighter's form.anim1Chara / switchAnim1Chara now say: the other spellings should follow.
 
 Group 06 (btl_script_cmd.h .. eft_disc.h):
 - eft_aura.h, EftAuraCfgSpark against EftAuraDataSpark: two views of one table shifted by 4 bytes; EftAuraCfgSpark.kind is the emitter node.

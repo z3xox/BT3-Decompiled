@@ -1,0 +1,408 @@
+offset	canonical	type	view names (view.field)	evidence
+0x0000	player	s32	ActGChr.player; BtlActAChr.player; BtlActBChr.player; BtlActCChr.player; BtlActChr.player; BtlActDChr.player; BtlActEChr.player; BtlActHChr.player; BtlActIChr.player; BtlActJChr.player; BtlCapiBChr.player; BtlCapiChr.player; BtlCharApiChr.side; BtlCharGetChr.player; BtlCollChr.side; BtlCtlChr.player; BtlFlagChr.player; BtlInputChr.player; BtlInputRecord.player; BtlMemberChr.side; BtlMgrChr.side; BtlMoveChr.player; BtlReplayChr.player; BtlSuperChr.player; ChrCamChr.side; FxChr.player; HitChr.player	Contradiction +0x0 player / side: the roster index (BtlChars_Reset sets +0x0 and +0x8 to the same index); 21 views call +0x0 player, used for pads, key config, replay tracks, voices; BtlMgrChr / BtlCollChr / BtlMemberChr / BtlCharApiChr / ChrCamChr called it side
+0x0004	pad	s32	ActGChr.pad; BtlActAChr.pad; BtlActBChr.pad; BtlActCChr.pad; BtlActChr.pad; BtlActDChr.pad; BtlActEChr.pad; BtlActHChr.pad; BtlActJChr.pad; BtlCapiBChr.pad; BtlCapiChr.pad; BtlCharApiChr.pad; BtlCharGetChr.pad; BtlCollChr.pad; BtlCtlChr.pad; BtlFlagChr.pad; BtlInputChr.pad; BtlMemberChr.pad; BtlMgrChr.pad; BtlMoveChr.pad; ChrCamChr.pad; FxChr.pad; HitChr.pad	same name in every view that names it
+0x0008	side	s32	ActGChr.side; BtlActAChr.side; BtlActBChr.side; BtlActCChr.side; BtlActChr.side; BtlActDChr.side; BtlActEChr.side; BtlActHChr.side; BtlActJChr.side; BtlCapiBChr.side; BtlCapiChr.side; BtlCharGetChr.side; BtlCollChr.index; BtlCtlChr.side; BtlFlagChr.side; BtlMemberChr.index; BtlMgrChr.index; BtlMoveChr.side; ChrCamChr.index; FxChr.side; HitChr.side	Contradiction +0x8 side / index: BtlChar_FindBySide compares this word; 17 views call it side
+0x000C	objId	s32	ActGChr.objId; BtlActAChr.objId; BtlActBChr.objId; BtlActCChr.objId; BtlActChr.objId; BtlActDChr.objId; BtlActEChr.objId; BtlActHChr.objId; BtlActJChr.objId; BtlCapiBChr.objId; BtlCapiChr.objId; BtlCharApiChr.objId; BtlCharGetChr.objId; BtlCollChr.objId; BtlCtlChr.objId; BtlFlagChr.objId; BtlMemberChr.objId; BtlMgrChr.objId; BtlMoveChr.objId; BtlStatChr.objId; ChrCamChr.objId; FxChr.objId; HitChr.objId	same name in every view that names it
+0x0010	pose	BtlFighterPose	BtlCapiBChr.pose; BtlCapiChr.pose; BtlCollChr.pose; BtlCtlChr.pose; BtlMgrChr.pose; BtlMoveChr.pose; ChrCamChr.body; HitChr.pose	Nine embedded pose types and fifteen BtlChar_GetPos return types merged into BtlFighterPose
+0x0010	pose.pos	Vec4	ActGPose.pos; BtlActAPose.pos; BtlActBPose.pos; BtlActCPose.pos; BtlActDPose.pos; BtlActEPose.pos; BtlActHPose.pos; BtlActIPose.pos; BtlActJPose.pos; BtlActPose.pos; BtlCapiBPose.pos; BtlCapiPose.pos; BtlCharApiChr.pos; BtlCharGetChr.pos; BtlCollPose.pos; BtlCtlPose.pos; BtlFlagPose.pos; BtlMemberPose.pos; BtlMovePose.pos; BtlSuperPose.pos; ChrCamBody.pos; FxPose.pos; HitPose.pos	same name in every view that names it
+0x0020	pose.rot	Vec4	ActGPose.rot; BtlActAPose.rot; BtlActBPose.rot; BtlActCPose.rot; BtlActDPose.rot; BtlActEPose.rot; BtlActHPose.rot; BtlActJPose.rot; BtlActPose.rot; BtlCapiBPose.rot; BtlCapiPose.rot; BtlCollPose.rot; BtlCtlPose.rot; BtlFlagPose.rot; BtlMovePose.rot; BtlSuperPose.rot; FxPose.rot; HitPose.rot; BtlMemberPose.rotX (= x); BtlMemberPose.rotY (= y)	same bytes and type in every view; the name is the one the most precise view gives
+0x0030	pose.dispOfs	Vec4	ActGPose.dispOfs; BtlActBPose.dispOffset; BtlCapiPose.dispOfs; BtlCollPose.dispOfs; BtlCtlPose.move; BtlFlagPose.dispOfs; BtlMovePose.dispOfs	BtlCtlPose called it move (added to pos on the way to the object, subtracted back); three views dispOfs
+0x0040	pose.vel	Vec4	ActGPose.vel; BtlActBPose.velocity; BtlCapiPose.vel; BtlCtlPose.vel; BtlFlagPose.unk30; BtlMgrPose.vel; BtlMovePose.vel	same bytes; view types: Vec4, u64[2]
+0x0050	pose.move	Vec4	ActGPose.moved; BtlActBPose.moved; BtlActCPose.move; BtlActDPose.moved; BtlActEPose.moved; BtlCapiPose.move; BtlCtlPose.moved; BtlFlagPose.vel; BtlMgrPose.move; BtlMovePose.move; FxPose.vel; BtlActPose.moveY (= y)	BtlCtlPose moved, BtlActBPose/ActGPose/BtlActDPose/BtlActEPose moved, FxPose/BtlFlagPose vel: the whole movement of the previous frame (BtlChar_GetMoveSince)
+0x0060	pose.rootPos	Vec4	ActGPose.rootPos; BtlCapiPose.rootPos; BtlCtlPose.rootPos; BtlMovePose.rootPos	same name in every view that names it
+0x0070	pose.rootRot	Vec4	ActGPose.rootRot; BtlActHPose.rootRot; BtlCapiPose.rootRot; BtlCtlPose.rootRot; BtlMovePose.rootRot; BtlFlagPose.rootYaw (= y); HitPose.rootYaw (= y)	same bytes and type in every view; the name is the one the most precise view gives
+0x0080	pose.impulse	Vec4	ActGPose.impulse; BtlActBPose.impulse; BtlActCPose.impulse; BtlActPose.impulse; BtlCapiPose.impulse; BtlCtlPose.impulse; BtlMovePose.impulse	same name in every view that names it
+0x0090	pose.dir	Vec4	ActGPose.dir; BtlActAPose.dir; BtlActBPose.dir; BtlActCPose.dir; BtlActDPose.dir; BtlActEPose.vel; BtlActPose.vel; BtlCapiPose.dir; BtlCollPose.dir; BtlCtlPose.dir; BtlMovePose.dir; FxPose.dir	BtlActEPose and BtlActPose called +0x80 vel; every other view dir (unit travel direction)
+0x00A0	pose.pitch	f32	ActGPose.pitch; BtlActAPose.pitch; BtlActBPose.pitch; BtlActCPose.pitch; BtlActDPose.pitch; BtlActEPose.pitch; BtlActHPose.pitch; BtlActPose.pitch; BtlCapiPose.pitch; BtlCollPose.pitch; BtlCtlPose.pitch; BtlMovePose.pitch; FxPose.pitch; HitPose.pitch	same name in every view that names it
+0x00A4	pose.yaw	f32	ActGPose.yaw; BtlActAPose.yaw; BtlActBPose.yaw; BtlActCPose.yaw; BtlActDPose.yaw; BtlActEPose.facing; BtlActHPose.yaw; BtlActPose.facing; BtlCapiPose.yaw; BtlCollPose.yaw; BtlCtlPose.heading; BtlFlagPose.yaw; BtlMemberPose.yaw; BtlMovePose.yaw; ChrCamBody.yaw; FxPose.yaw; HitPose.yaw	heading / facing in three views; yaw in the rest
+0x00A8	pose.speed	f32	ActGPose.speed; BtlActAPose.speed; BtlActBPose.speed; BtlActCPose.speed; BtlActDPose.speed; BtlActEPose.speed; BtlActHPose.speed; BtlActIPose.speed; BtlActPose.speed; BtlCapiPose.speed; BtlCollPose.speed; BtlCtlPose.speed; BtlMovePose.speed; BtlSuperPose.speed; FxPose.speed; BtlActAttack.speed; BtlActEAttack.speed	same name in every view that names it
+0x00AC	pose.fallSpeed	f32	ActGPose.fallSpeed; BtlActAPose.vspeed; BtlActBPose.fallSpeed; BtlActCPose.fallSpeed; BtlActDPose.fallSpeed; BtlActEPose.fallSpeed; BtlActHPose.fallSpeed; BtlActIPose.fallSpeed; BtlActPose.fallSpeed; BtlCapiPose.fallSpeed; BtlCollPose.velY; BtlCtlPose.fallSpeed; BtlMovePose.fallSpeed; BtlSuperPose.fallSpeed	velY (BtlCollPose), vspeed (BtlActAPose); positive = down in every view
+0x00B0	pose.leanX	f32	BtlActBPose.leanX; BtlActCPose.leanX; BtlActDPose.leanX; BtlCtlPose.leanX; BtlMgrPose.leanX; BtlMovePose.leanX	s32 in BtlMgrPose (only cleared: same code as the f32)
+0x00B4	pose.leanZ	f32	BtlActBPose.leanZ; BtlActCPose.leanZ; BtlActDPose.leanZ; BtlCtlPose.leanZ; BtlMgrPose.leanZ; BtlMovePose.leanZ	same name in every view that names it
+0x00B8	pose.bobPhase	f32	BtlActCPose.bobPhase; BtlActDPose.bobPhase; BtlMovePose.hoverPhase	hoverPhase (BtlMovePose) / bobPhase (BtlActC/DPose)
+0x00BC	pose.dashBoost	f32	BtlActCPose.unkAC; BtlActDPose.unkAC; BtlActPose.dashBoost; BtlMovePose.unkAC; BtlTechBPose.unkAC	BtlActPose names it; unkAC in the others
+0x00C0	pose.groundPos	BtlGroundVec	BtlActBPose.ground; BtlCapiPose.ground; BtlCollPose.groundPos; BtlMovePose.groundPos; FxPose.ground; BtlActCPose.groundX (= x); BtlActDPose.groundX (= x); BtlActPose.groundX (= x); BtlActCPose.groundY (= y); BtlActDPose.groundY (= y); BtlActPose.groundY (= y)	BtlGroundVec (8-aligned) because btl_hit_reaction.c copies it as such; other views Vec4 (two pointer uses take a cast)
+0x00D0	pose.groundNrm	BtlGroundVec	BtlActBPose.groundNormal; BtlCollPose.groundNrm; BtlMovePose.groundNrm; FxPose.groundNormal	same bytes; view types: BtlGroundVec, Vec4
+0x00E0	pose.groundFlags	s32	BtlActBPose.groundFlags; BtlActDPose.groundFlags; BtlCollPose.groundFlags; BtlMovePose.groundFlags; FxPose.groundFlags; BtlCapiBPose.unkD0_7 (bit 7)	s32 (BtlCollPose, BtlActB/DPose), u32 (FxPose, compiles the same), f32 (BtlMovePose, unused); bit 0x80 read through BtlGroundFlagBits
+0x00E4	pose.steerYaw	f32	BtlMovePose.steerYaw	one view
+0x00E8	pose.steerPitch	f32	BtlMovePose.steerPitch	one view
+0x00EC	pose.orbitNear	f32	BtlMovePose.orbitNear	one view
+0x00F0	pose.orbitFar	f32	BtlMovePose.orbitFar	one view
+0x00F4	pose.unkE4	u8 [0xF0 - 0xE4]	BtlMovePose.unkE4	one view
+0x0100	prevPose	BtlFighterPose	BtlMgrChr.prevPose; BtlMoveChr.prev	BtlMgrChr prevPose / BtlMoveChr prev; same type as pose, whose rows list the names
+0x01F0	unk1F0	u8 [0x2E0 - 0x1F0]	BtlMgrChr.unk1F0	one view
+0x02E0	snapPos	Vec4 [BTL_SNAP_COUNT + 1]	BtlCtlChr.snapPos	one view
+0x0350	snapRot	Vec4 [BTL_SNAP_COUNT + 1]	BtlCtlChr.snapRot	one view
+0x03C0	snapMask	u32	BtlCtlChr.snapMask	one view
+0x03D0	work	s32 [0x14]	ActGChr.work; BtlActAChr.work; BtlActBChr.work; BtlActCChr.work; BtlActChr.work; BtlActDChr.work; BtlActEChr.work; BtlActHChr.work; BtlActIChr.work; BtlSuperChr.work; BtlActAChr.workF[14] (= work[6..19] as f32)	s32[0x14]; BtlActAChr had s32 work[6] + f32 workF[14]: an f32 union member changed BtlAct_DragonDashHandler, so btl_act_1.c takes (f32 *)&work[6]
+0x0420	cam	ChrCam	ChrCamChr.cam	ChrCam; flattened cam* in seven views (BtlMgrChr optA = distMode, optBOff = shakeOn; FxChr camTrace = hit)
+0x0420	cam.eye	Vec4	BtlCharApiChr.camEye; ChrCam.eye; BtlCtlChr.camEye[3] (= x, y, z)	same bytes and type in every view; the name is the one the most precise view gives
+0x0430	cam.pos	Vec4	BtlCharApiChr.camPos; ChrCam.pos	same bytes and type in every view; the name is the one the most precise view gives
+0x0440	cam.rot	Vec4	BtlCharApiChr.camRot; ChrCam.rot; BtlAiMgrChr.yaw (= y)	same bytes and type in every view; the name is the one the most precise view gives
+0x0450	cam.target	Vec4	ChrCam.target	one view
+0x0460	cam.bodyPos	Vec4	BtlCharApiChr.camBodyPos; ChrCam.bodyPos	same bytes and type in every view; the name is the one the most precise view gives
+0x0470	cam.shake	CamShake	BtlCharApiChr.camShake; ChrCam.shake	same bytes; view types: CamShake, u8[0x494-0x470]
+0x0490	cam.hitZone	s32	ChrCam.hitZone	one view
+0x0494	cam.hit	s32	BtlCharApiChr.camHit; ChrCam.hit; FxChr.camTrace	same bytes and type in every view; the name is the one the most precise view gives
+0x0498	cam.hitFrac	f32	ChrCam.hitFrac	one view
+0x049C	cam.distMode	s32	BtlMgrChr.optA; ChrCam.distMode	same bytes and type in every view; the name is the one the most precise view gives
+0x04A0	cam.yaw	f32	BtlActChr.camYaw; BtlActJChr.camYaw; BtlCharApiChr.camYaw; BtlCtlChr.camYaw; BtlMoveChr.camYaw; ChrCam.yaw; FxChr.camYaw	same bytes and type in every view; the name is the one the most precise view gives
+0x04A4	cam.yawStep	f32	BtlActChr.camYawStep; ChrCam.yawStep	same bytes and type in every view; the name is the one the most precise view gives
+0x04A8	cam.side	f32	BtlActAChr.camSide; BtlActCChr.camSide; BtlActChr.camSide; BtlActHChr.camSide; ChrCam.side	same bytes and type in every view; the name is the one the most precise view gives
+0x04AC	cam.yawOfs	f32	ChrCam.yawOfs	one view
+0x04B0	cam.bob	f32	ChrCam.bob	one view
+0x04B4	cam.rate	f32	ChrCam.rate	one view
+0x04B8	cam.shakeOn	s32	BtlCharApiChr.camShakeOn; BtlMgrChr.optBOff; ChrCam.shakeOn	same bytes and type in every view; the name is the one the most precise view gives
+0x04BC	cam.unk9C	s32	ChrCam.unk9C	one view
+0x04C0	cut	ChrCamCut	BtlActAttack.cut; ChrCamChr.cut	same name in every view that names it
+0x04C0	cut.reqTable	s32	ChrCamCut.reqTable	one view
+0x04C4	cut.reqIndex	s32	ChrCamCut.reqIndex	one view
+0x04C8	cut.unk8	u8 [8]	ChrCamCut.unk8	one view
+0x04D0	cut.vecA	Vec4	ChrCamCut.vecA	one view
+0x04E0	cut.vecADelta	Vec4	ChrCamCut.vecADelta	one view
+0x04F0	cut.vecB	Vec4	ChrCamCut.vecB	one view
+0x0500	cut.vecBDelta	Vec4	ChrCamCut.vecBDelta	one view
+0x0510	cut.vecC	Vec4	ChrCamCut.vecC	one view
+0x0520	cut.vecCDelta	Vec4	ChrCamCut.vecCDelta	one view
+0x0530	cut.valA	f32	ChrCamCut.valA	one view
+0x0534	cut.valADelta	f32	ChrCamCut.valADelta	one view
+0x0538	cut.valB	f32	ChrCamCut.valB	one view
+0x053C	cut.valBDelta	f32	ChrCamCut.valBDelta	one view
+0x0540	cut.valC	f32	ChrCamCut.valC	one view
+0x0544	cut.valCDelta	f32	ChrCamCut.valCDelta	one view
+0x0548	cut.nodeA	s32	ChrCamCut.nodeA	one view
+0x054C	cut.nodeA2	s32	ChrCamCut.nodeA2	one view
+0x0550	cut.nodeC	s32	ChrCamCut.nodeC	one view
+0x0554	cut.nodeC2	s32	ChrCamCut.nodeC2	one view
+0x0558	cut.timer	s32	ChrCamCut.timer; BtlCharVoice.timer	same name in every view that names it
+0x055C	cut.total	s32	ChrCamCut.total	one view
+0x0560	cut.flags	s32	ChrCamCut.flags	one view
+0x0564	cut.unkA4	u8 [0xC]	ChrCamCut.unkA4	one view
+0x0570	input	BtlCharInput	BtlInputChr.input	one view
+0x0570	input.rawHeld	u32	BtlCharInput.rawHeld	one view
+0x0574	input.rawStickX	u8	BtlCharInput.rawStickX	one view
+0x0575	input.rawStickY	u8	BtlCharInput.rawStickY	one view
+0x0578	input.mask	u32 [BTL_BUTTON_BITS]	BtlCapiBChr.keyMask; BtlCharInput.mask	BtlCapiBChr keyMask[8] is the first eight entries
+0x05F4	input.padStatus	s32	BtlCharInput.padStatus	one view
+0x05F8	input.padLastStatus	s32	BtlCharInput.padLastStatus	one view
+0x05FC	input.recCount	BtlInputCounters	BtlCharInput.recCount	one view
+0x069C	input.recCmdCount	BtlInputCounters	BtlCharInput.recCmdCount	one view
+0x073C	input.held	u32	BtlCharInput.held	one view
+0x0740	input.prev	u32	BtlCharInput.prev	one view
+0x0744	input.pressed	u32	BtlCharInput.pressed	one view
+0x0748	input.released	u32	BtlCharInput.released	one view
+0x074C	input.cmdHeld	u32	BtlCharInput.cmdHeld	one view
+0x0750	input.cmdPrev	u32	BtlCharInput.cmdPrev	one view
+0x0754	input.cmdPressed	u32	BtlCharInput.cmdPressed	one view
+0x0758	input.cmdReleased	u32	BtlCharInput.cmdReleased	one view
+0x075C	input.stick	f32 [2]	BtlCharInput.stick	one view
+0x0764	input.stickPrev	f32 [2]	BtlCharInput.stickPrev	one view
+0x076C	input.stickRaw	f32 [2]	BtlCharInput.stickRaw	one view
+0x0774	input.stickRawPrev	f32 [2]	BtlCharInput.stickRawPrev	one view
+0x077C	input.stickTurn	f32	BtlCharInput.stickTurn	one view
+0x0780	input.count	BtlInputCounters	BtlCharInput.count	one view
+0x0820	input.cmdCount	BtlInputCounters	BtlCharInput.cmdCount	one view
+0x08C0	input.ringButtons	u32 [BTL_INPUT_RING]	BtlCharInput.ringButtons	one view
+0x08E0	input.ringCommands	u32 [BTL_INPUT_RING]	BtlCharInput.ringCommands	one view
+0x0900	input.ringStick	u8 [BTL_INPUT_RING][2]	BtlCharInput.ringStick	one view
+0x0910	input.ringWrite	s32	BtlCharInput.ringWrite	one view
+0x0914	input.ringRead	s32	BtlCharInput.ringRead	one view
+0x0918	input.frameBits	u8 [30]	BtlCharInput.frameBits	one view
+0x0936	input.unk3C6	u8 [2]	BtlCharInput.unk3C6	one view
+0x0938	input.rec	BtlInputRecord	BtlCharInput.rec	one view
+0x0948	act	BtlActState	BtlActChr.act	BtlActState; action / request / prev(Action) / queue flattened in BtlActDChr, BtlMgrChr, BtlCharApiChr, BtlFlagChr
+0x0948	act.current	s32	BtlActState.current; BtlActDChr.action; BtlCharApiChr.action; BtlMgrChr.action	same bytes and type in every view; the name is the one the most precise view gives
+0x094C	act.request	s32	BtlActState.request; BtlActDChr.request; BtlMgrChr.request	same name in every view that names it
+0x0950	act.prev	s32	BtlActState.prev; BtlActDChr.prev; BtlFlagChr.prevAction; BtlMgrChr.prevAction	same bytes and type in every view; the name is the one the most precise view gives
+0x0954	act.queue	s32 [4]	BtlActState.queue; BtlActDChr.queue	same name in every view that names it
+0x0964	actionFrame	s32	ActGChr.actionFrame; BtlActAChr.actionFrame; BtlActBChr.actionFrame; BtlActCChr.actionFrame; BtlActChr.actionFrame; BtlActDChr.actionFrame; BtlActEChr.actionFrame; BtlActHChr.actionFrame; BtlActIChr.actionFrame; BtlFlagChr.actionFrame; BtlMgrChr.actionFrame; BtlSuperChr.actionFrame	same name in every view that names it
+0x0968	prevActionFrame	s32	BtlActChr.prevActionFrame; BtlFlagChr.prevActionFrame; BtlMgrChr.prev964	prevActionFrame / prev964
+0x096C	pitch	f32	BtlActChr.pitch; BtlMovePose.pitch	same name in every view that names it
+0x0970	holdAction	s32	ActGChr.holdAction; BtlActChr.holdAction; BtlActHChr.holdAction	same name in every view that names it
+0x0974	anim	BtlAnimIds	BtlStatChr.anim	BtlAnimIds (btl_stats.h); motion / motionNext / prev974 / motionSub flattened in four views
+0x0974	anim.cur	s32	BtlActChr.motion; BtlCharApiChr.motion; BtlMgrChr.motion; BtlAnimIds.cur; ChrCamChr.motion	same bytes and type in every view; the name is the one the most precise view gives
+0x0978	anim.next	s32	BtlMgrChr.motionNext; BtlAnimIds.next	same bytes and type in every view; the name is the one the most precise view gives
+0x097C	anim.prev	s32	BtlMgrChr.prev974; BtlAnimIds.prev	same bytes and type in every view; the name is the one the most precise view gives
+0x0980	anim.sub	s32	BtlMgrChr.motionSub; BtlAnimIds.sub	same bytes and type in every view; the name is the one the most precise view gives
+0x0984	blendTime	f32	BtlStatChr.blendTime	one view
+0x0988	scale	f32	BtlCtlChr.scale; BtlStatChr.animRate	Contradiction animRate (BtlStatChr) / scale (BtlCtlChr): BtlChar_PoseToObj copies it to the object transform scale, the uniform scale of its matrix; BtlAnim_SetRate is its only writer besides the manager
+0x098C	stall	s32	BtlStatChr.stall	one view
+0x0990	prevStall	s32	BtlCharApiChr.prevStall; BtlStatChr.prevStall	same name in every view that names it
+0x0994	curMember	s32	BtlActChr.active; BtlCharApiChr.member; BtlMemberChr.active; BtlMgrChr.curMember	active / member / curMember: index of the fighting member (BtlMember_GetActive)
+0x0998	memberCount	s32	BtlActChr.memberCount; BtlCapiBChr.memberCount; BtlMemberChr.memberCount; BtlMgrChr.memberCount; BtlTechChr.memberCount	same name in every view that names it
+0x099C	switchGauge	s32	BtlActChr.switchGauge; BtlActJChr.switchGauge; BtlCapiBChr.switchGauge; BtlMemberChr.switchGauge; BtlMgrChr.switchGauge	same name in every view that names it
+0x09A0	switchTarget	s32	BtlActChr.switchTarget; BtlMemberChr.switchTarget; BtlMgrChr.switchTarget	same name in every view that names it
+0x09A4	members	BtlMember [BTL_MEMBER_SLOTS]	BtlMemberChr.members; BtlMgrChr.members	same name in every view that names it
+0x09A4	members[n].chara	s32	BtlActHMember.chara; BtlActJMember.chara; BtlActMember.chara; BtlTechBMember.chara; BtlTechMember.chara; HitMember.chara	same name in every view that names it
+0x09A8	members[n].costume	s32	BtlActJMember.costume; BtlActMember.costume; BtlTechBMember.costume; BtlTechMember.costume; HitMember.costume	same name in every view that names it
+0x09AC	members[n].present	s32	BtlActMember.present	one view
+0x09B0	members[n].bonus	s32 [7]	BtlStatMember.bonus	one view
+0x09CC	members[n].ability	s32 [4]		named in btl_fighter.h only (single-view type moved there)
+0x09DC	members[n].cpuLevel	s32	BtlCapiBMember.cpuLevel; BtlTechMember.cpuLevel	same name in every view that names it
+0x09E0	members[n].aiType	s32	BtlCapiBMember.aiType	one view
+0x09E4	members[n].gauge	BtlMemberGauge	BtlActMember.vitals; BtlCapiBMember.gauge	BtlMemberGauge runs to the end of the entry (0x64): the gauge views of btl_act_super.c, btl_act_change.c and btl_act_decide.c read +0x38..+0x60
+0x09E4	members[n].gauge.health	s32	ActGGauge.health; BtlActCGauge.hp; BtlActDGauge.hp; BtlActEGauge.hp; BtlActIGauge.health; BtlActJGauge.health; BtlActVitals.hp; BtlCapiBGauge.hp; BtlCharApiVitals.hp; BtlCharGetVitals.hp; BtlCollGauge.health; BtlStatGauge.health; BtlSuperGauge.health; BtlTechBGauge.health; FxGauge.health; HitGauge.health	health / hp
+0x09E8	members[n].gauge.healthMax	s32	ActGGauge.healthMax; BtlActCGauge.hpMax; BtlActDGauge.hpMax; BtlActEGauge.hpMax; BtlActIGauge.healthMax; BtlActVitals.hpMax; BtlCapiBGauge.hpMax; BtlCharApiVitals.hpMax; BtlStatGauge.healthMax; BtlTechBGauge.healthMax; FxGauge.healthMax; HitGauge.healthMax	same bytes and type in every view; the name is the one the most precise view gives
+0x09EC	members[n].gauge.unk8	s32	ActGGauge.unk8; BtlActCGauge.unk8; BtlActDGauge.unk8; BtlActEGauge.unk8; BtlActIGauge.unk8; BtlActVitals.unk8; BtlCapiBGauge.unk8; FxGauge.unk8; HitGauge.unk8	same name in every view that names it
+0x09F0	members[n].gauge.ki	s32	ActGGauge.ki; BtlActCGauge.ki; BtlActDGauge.ki; BtlActEGauge.ki; BtlActIGauge.ki; BtlActVitals.ki; BtlCapiBGauge.ki; FxGauge.ki; HitGauge.ki	same name in every view that names it
+0x09F4	members[n].gauge.kiMax	s32	ActGGauge.kiMax; BtlActCGauge.kiMax; BtlActDGauge.kiMax; BtlActEGauge.kiMax; BtlActIGauge.kiMax; BtlActVitals.kiMax; BtlCapiBGauge.kiMax; FxGauge.kiMax; HitGauge.kiMax	same name in every view that names it
+0x09F8	members[n].gauge.blast	s32	ActGGauge.blast; BtlActCGauge.blast; BtlCapiBGauge.blast; HitGauge.blast	same name in every view that names it
+0x09FC	members[n].gauge.blastMax	s32	ActGGauge.blastMax; BtlActCGauge.blastMax; BtlCapiBGauge.blastMax; HitGauge.blastMax	same name in every view that names it
+0x0A00	members[n].gauge.maxPower	s32	ActGGauge.maxPower; BtlActCGauge.maxPower; BtlCapiBGauge.maxPower; HitGauge.maxPower	same name in every view that names it
+0x0A04	members[n].gauge.variant	s32	ActGGauge.variant; BtlActCGauge.variant; BtlActJGauge.variant; BtlActVitals.variant; BtlCharApiVitals.variant; BtlCollGauge.variant; BtlSuperGauge.variant; BtlTechBGauge.variant; BtlTechGauge.variant; HitGauge.variant	same name in every view that names it
+0x0A08	members[n].gauge.lowHealth	s32	BtlActCGauge.lowHealth; BtlActVitals.lowHealth	same name in every view that names it
+0x0A0C	members[n].gauge.lowHealthIdle	s32	BtlActBGauge.lowHealthIdle; BtlActCGauge.lowHealthIdle; BtlActDGauge.lowHealthIdle; BtlActEGauge.lowHealthIdle; BtlActVitals.lowHealthIdle	same name in every view that names it
+0x0A10	members[n].gauge.variantVoiced	s32	BtlActCGauge.variantVoiced; BtlActDGauge.variantVoiced; BtlActVitals.unk2C	BtlActC/DGauge variantVoiced; unk2C elsewhere
+0x0A14	members[n].gauge.bodyChanged	s32	BtlActCGauge.bodyChanged; BtlActDGauge.bodyChanged; BtlActJGauge.bodyChanged; BtlActVitals.bodyChanged; BtlCharApiVitals.bodyChanged; BtlCharGetVitals.bodyChanged	same name in every view that names it
+0x0A18	members[n].gauge.fused	s32	BtlActJGauge.fused	one view
+0x0A1C	members[n].gauge.used	s32 [5]	BtlActIGauge.skillUses; BtlActJGauge.skillLock; BtlSuperGauge.used	used (BtlSuperGauge) / skillUses (BtlActIGauge) / skillLock (BtlActJGauge): one counter per move slot
+0x0A30	members[n].gauge.fired	s32 [5]	ActGGauge.fired; BtlActJGauge.techLock; BtlSuperGauge.fired	fired (ActGGauge, BtlSuperGauge) / techLock (BtlActJGauge)
+0x0A44	members[n].gauge.idleTalkCount	s32	BtlActCMember.idleTalkCount; BtlActDMember.idleTalkCount	idleTalkCount at member + 0xA0 (BtlActC/DMember)
+0x0CD8	switchMember	s32	BtlActChr.switchMember; BtlMgrChr.nextMember	nextMember (BtlMgrChr) / switchMember (BtlActChr)
+0x0CDC	switchChara	s32	BtlActChr.switchChara; BtlActHChr.switchChara; BtlActIChr.switchChara	same name in every view that names it
+0x0CE0	switchCostume	s32	BtlActChr.switchCostume; BtlActHChr.switchCostume; BtlActIChr.switchCostume	same name in every view that names it
+0x0CE4	switchVariant	s32	BtlActChr.switchVariant; BtlActHChr.switchVariant; BtlActIChr.switchVariant	same name in every view that names it
+0x0CE8	switchAnimChara	s32	BtlActChr.switchAnimChara; BtlActHChr.switchAnimChara; BtlActIChr.switchAnimChara	same name in every view that names it
+0x0CEC	switchAnim1Chara	s32	BtlActChr.unkCEC; BtlActHChr.switchUnk18; BtlActIChr.switchUnk18	switchUnk18 / unkCEC: the +0x18 argument of BtlChange_RequestChara, the character of the second animation file (form.anim1Chara)
+0x0CF0	switchVoiceChara	s32	BtlActChr.switchVoiceChara; BtlActHChr.switchVoiceChara; BtlActIChr.switchVoiceChara	same name in every view that names it
+0x0CF4	switchEnabled	s32	BtlActChr.switchEnabled; BtlMgrChr.switchEnabled	same name in every view that names it
+0x0CF8	attack	BtlFighterAttack	BtlActAChr.attack; BtlActBChr.attack; BtlActChr.attack; BtlActDChr.attack; BtlActEChr.attack	BtlActAttack (btl_char_action.h) and its copies BtlActAAttack, BtlActBAttack, BtlActDAttack, BtlActEAttack
+0x0CF8	attack.flags	s32	BtlActAAttack.flags; BtlActBAttack.flags; BtlActAttack.flags; BtlActDAttack.flags; BtlActEAttack.flags	same name in every view that names it
+0x0CFC	attack.motion	s16 [2]	BtlActBAttack.motion; BtlActEAttack.motion; BtlActAAttack.motion (= [0]); BtlActAttack.motion (= [0]); BtlActDAttack.motion (= [0]); BtlActAAttack.motion2 (= [1]); BtlActAttack.motion2 (= [1]); BtlActDAttack.motion2 (= [1])	s16 motion[2] (BtlActB/EAttack index it by part); motion / motion2 of the other copies are motion[0] / [1]
+0x0D00	attack.parts	s8	BtlActAAttack.parts; BtlActBAttack.parts; BtlActAttack.parts; BtlActDAttack.parts; BtlActEAttack.parts	same name in every view that names it
+0x0D01	attack.level	s8	BtlActAAttack.level; BtlActBAttack.level; BtlActAttack.leadIn; BtlActDAttack.level	level (A, B, D) / leadIn (BtlActAttack): the same attack record byte; s8 as btl_act_1.c and btl_act_2.c read it (the u8 views only store it)
+0x0D02	attack.cut	s8	BtlActAAttack.cut; BtlActBAttack.cut; BtlActAttack.cut; BtlActDAttack.cut	same name in every view that names it
+0x0D03	attack.follow	s8 [2]	BtlActAAttack.follow; BtlActBAttack.follow; BtlActAttack.follow; BtlActDAttack.follow	same name in every view that names it
+0x0D05	attack.padD	u8 [3]	BtlActAAttack.padD; BtlActBAttack.padD; BtlActAttack.padD; BtlActDAttack.padD	same name in every view that names it
+0x0D08	attack.rate	f32	BtlActAAttack.rate; BtlActBAttack.rate; BtlActAttack.rate; BtlActDAttack.rate; BtlActEAttack.rate	same name in every view that names it
+0x0D0C	attack.cancelAt	f32	BtlActAAttack.cancelAt; BtlActBAttack.cancelAt; BtlActAttack.cancelAt; BtlActDAttack.cancelAt; BtlActEAttack.cancelAt	same name in every view that names it
+0x0D10	attack.leadTime	f32	BtlActAAttack.leadTime; BtlActBAttack.leadTime; BtlActAttack.leadFrames; BtlActDAttack.leadTime; BtlActEAttack.leadTime	leadTime / leadFrames
+0x0D14	attack.speed	f32	BtlActAAttack.speed; BtlActBAttack.speed; BtlActAttack.speed; BtlActDAttack.speed; BtlActEAttack.speed	same name in every view that names it
+0x0D18	attack.chained	s32	BtlActAAttack.chained; BtlActBAttack.chained; BtlActAttack.chained; BtlActDAttack.chained; BtlActEAttack.chained	same name in every view that names it
+0x0D1C	nextAttack	BtlFighterAttack	BtlActChr.nextAttack; BtlActEChr.nextAttack	same type as attack, whose rows list the names
+0x0D40	combo	BtlMemberCombo	BtlMemberChr.combo	BtlMemberCombo in btl_char_member.h; flattened as comboDamage..comboDrain in four views
+0x0D40	combo.damage	s32	BtlActChr.comboDamage; BtlCapiBChr.comboDamage; BtlMemberCombo.damage; BtlMgrChr.comboDamage	same bytes and type in every view; the name is the one the most precise view gives
+0x0D44	combo.hits	s32	BtlActCChr.comboHits; BtlActChr.comboHits; BtlCapiBChr.comboHits; BtlMemberCombo.hits; BtlMgrChr.comboHits	same bytes and type in every view; the name is the one the most precise view gives
+0x0D48	combo.timer	s32	BtlActChr.comboTimer; BtlActEChr.comboTimer; BtlCapiBChr.comboTimer; BtlMemberCombo.timer; BtlMgrChr.comboTimer	same bytes and type in every view; the name is the one the most precise view gives
+0x0D4C	combo.newHit	s32	BtlActChr.comboNewHit; BtlCapiBChr.comboNewHit; BtlMemberCombo.newHit; BtlMgrChr.comboNewHit	same bytes and type in every view; the name is the one the most precise view gives
+0x0D50	combo.changed	s32	BtlMemberCombo.changed; BtlMgrChr.comboChanged; BtlTechChr.comboChanged	same bytes and type in every view; the name is the one the most precise view gives
+0x0D54	combo.drain	s32	BtlMemberCombo.drain; BtlMgrChr.comboDrain	same bytes and type in every view; the name is the one the most precise view gives
+0x0D58	searchAngle	f32	BtlActCChr.searchAngle; BtlMgrChr.searchAngle	same name in every view that names it
+0x0D5C	searchRange	f32	BtlActCChr.searchRange; BtlMgrChr.searchRange	same name in every view that names it
+0x0D60	rushStep	s32	BtlActAChr.rushStep; BtlActChr.rushStep; BtlActIChr.rushStep	same name in every view that names it
+0x0D64	rushRapidStep	s32	BtlActAChr.rushRapidStep; BtlActChr.rapidRushStep; BtlActIChr.rushRapidStep	rapidRushStep / rushRapidStep
+0x0D68	dashCount	s32	BtlActAChr.dashCount; BtlActBChr.dashCount; BtlActChr.dashCount; BtlActDChr.dashCount; BtlActIChr.dashCount; BtlMgrChr.dashCount; BtlTechChr.dashCount	same name in every view that names it
+0x0D6C	dashLimit	s32	BtlActAChr.dashLimit; BtlActChr.dashLimit; BtlActIChr.dashLimit; BtlMgrChr.dashLimit	same name in every view that names it
+0x0D70	vanishCount	s32	BtlActAChr.vanishCount; BtlActChr.vanishCount; BtlActIChr.vanishCount; BtlCapiBChr.vanishCount; BtlMgrChr.vanishCount	same name in every view that names it
+0x0D74	vanishLimit	s32	BtlActAChr.vanishLimit; BtlActChr.vanishLimit; BtlActIChr.vanishLimit; BtlCapiBChr.vanishLimit; BtlMgrChr.vanishLimit	same name in every view that names it
+0x0D78	charge	f32	BtlActAChr.charge; BtlActBChr.charge; BtlActChr.charge; BtlCapiChr.charge; BtlTechChr.charge; HitChr.charge	f32 in five views; s32 in BtlActChr (only cleared: same code)
+0x0D7C	chargeTimer	f32	BtlActAChr.chargeTimer; BtlActChr.chargeTimer; HitChr.chargeTimer	f32 in BtlActAChr; s32 in BtlActChr / HitChr (cleared / unused)
+0x0D80	chargeGauge	s32	BtlActAChr.chargeGauge; BtlActChr.chargeGauge; HitChr.chargeGauge	same name in every view that names it
+0x0D84	chargeFullFrames	s32	BtlActAChr.chargeFullFrames; BtlActChr.chargeFullFrames; HitChr.chargeFullFrames	same name in every view that names it
+0x0D88	evasionCount	s32	BtlActAChr.evasionCount; BtlActChr.evasionCount; BtlActJChr.evasionCount; BtlFlagChr.evasionCount; HitChr.evasionCount	same name in every view that names it
+0x0D8C	unkD8C	s32	BtlActAChr.unkD8C; BtlActCChr.unkD8C; BtlActChr.unkD8C; BtlActJChr.unkD8C	same name in every view that names it
+0x0D90	attackId	s32	BtlActAChr.attackId; BtlActChr.attackId; BtlActJChr.attackId	same name in every view that names it
+0x0D94	queue	BtlFighterQueue	ActGChr.queue; BtlMemberChr.queue	BtlMemberQueue (0x30) + drainTo: ActGQueue (0x34); flattened dmg* in BtlSuperChr
+0x0D94	queue.totalStart	s32	ActGQueue.totalStart; BtlMemberQueue.totalStart; BtlSuperChr.dmgTotalStart	same bytes and type in every view; the name is the one the most precise view gives
+0x0D98	queue.total	s32	ActGQueue.total; BtlMemberQueue.total; BtlSuperChr.dmgTotal	same bytes and type in every view; the name is the one the most precise view gives
+0x0D9C	queue.perHit	s32	ActGQueue.perHit; BtlMemberQueue.perHit; BtlSuperChr.dmgPerHit	same bytes and type in every view; the name is the one the most precise view gives
+0x0DA0	queue.hits	s32	ActGQueue.hits; BtlMemberQueue.hits; BtlSuperChr.dmgHits	same bytes and type in every view; the name is the one the most precise view gives
+0x0DA4	queue.flags	s32	ActGQueue.flags; BtlMemberQueue.flags; BtlSuperChr.dmgFlags	same bytes and type in every view; the name is the one the most precise view gives
+0x0DA8	queue.drainHealthStart	s32	ActGQueue.drainHealthStart; BtlMemberQueue.drainHealthStart; BtlSuperChr.dmgDrainHealthStart	same bytes and type in every view; the name is the one the most precise view gives
+0x0DAC	queue.drainHealth	s32	ActGQueue.drainHealth; BtlMemberQueue.drainHealth; BtlSuperChr.drainHealth	same name in every view that names it
+0x0DB0	queue.drainHealthStep	s32	ActGQueue.drainHealthStep; BtlMemberQueue.drainHealthStep; BtlSuperChr.drainHealthStep	same name in every view that names it
+0x0DB4	queue.drainKiStart	s32	ActGQueue.drainKiStart; BtlMemberQueue.drainKiStart; BtlSuperChr.dmgDrainKiStart	same bytes and type in every view; the name is the one the most precise view gives
+0x0DB8	queue.drainKi	s32	ActGQueue.drainKi; BtlMemberQueue.drainKi; BtlSuperChr.drainKi	same name in every view that names it
+0x0DBC	queue.drainKiStep	s32	ActGQueue.drainKiStep; BtlMemberQueue.drainKiStep; BtlSuperChr.drainKiStep	same name in every view that names it
+0x0DC0	queue.drainFrom	s32	ActGQueue.drainFrom; BtlActHChr.drainFrom; BtlMemberQueue.drainFrom; BtlSuperChr.drainFrom	same name in every view that names it
+0x0DC4	queue.drainTo	s32	ActGQueue.drainTo; BtlActHChr.drainTo; BtlSuperChr.drainTo	same name in every view that names it
+0x0DD0	aimDir	Vec4	BtlActCChr.aimDir; BtlActDChr.aimDir; FxChr.aimDir	same name in every view that names it
+0x0DE0	blastShots	s32	BtlActCChr.blastShots; BtlActChr.blastShots; BtlActDChr.blastShots; BtlActIChr.blastShots; BtlCapiBChr.blastShots	same name in every view that names it
+0x0DE4	blastResetTimer	s32	BtlActCChr.blastResetTimer; BtlActChr.blastShotsTimer; BtlActDChr.blastResetTimer	blastResetTimer (two views) / blastShotsTimer
+0x0DE8	blastAltHand	s32	BtlActCChr.blastAltHand; BtlActChr.blastHand; BtlActDChr.blastAltHand	blastAltHand / blastHand: 1 = the next blast uses the other hand
+0x0DEC	blastCharge	f32	BtlActCChr.blastCharge; BtlActChr.blastCharge; BtlActDChr.blastCharge; BtlCapiChr.blastCharge; BtlTechBChr.kiBlastCharge	kiBlastCharge (BtlTechBChr), s32 in BtlActChr (only cleared)
+0x0DF0	blastNode	s32	BtlActCChr.blastNode; BtlActDChr.blastNode; FxChr.blastNode	same name in every view that names it
+0x0E00	dodges	s32	BtlActIChr.skillStackA; BtlActJChr.skillStackA; BtlCapiBChr.dodges; BtlCollChr.dodgeA; HitChr.dodges	Contradiction dodges / dodgeA / skillStackA: the stack count set by skills 0x0C / 0x32 is the number of automatic evasions that btl_char_hit.c and btl_hit_reaction.c consume
+0x0E04	dodgesB	s32	BtlActIChr.skillStackB; BtlActJChr.skillStackB; BtlCapiBChr.dodgesB; BtlCollChr.dodgeB; HitChr.dodgesB	dodgesB / dodgeB / skillStackB (skill 0x37)
+0x0E08	skillTimer	s32	BtlActIChr.skillTimer; BtlCapiBChr.skillTimer; BtlCollChr.skillTimer; HitChr.skillTimer	same name in every view that names it
+0x0E0C	skillSlot	s32	BtlActIChr.skillSlot; BtlCapiBChr.dodgeKind; BtlCollChr.skillSlot; HitChr.skillSlot	skillSlot / dodgeKind
+0x0E10	skillKiRate	s32	BtlActChr.skillKiRate; BtlActIChr.skillKiRate; BtlCapiBChr.skillKiRate; BtlCollChr.skillKiRate; HitChr.skillKiRate	same name in every view that names it
+0x0E14	skillTimerC	s32	BtlActIChr.skillTimerC; BtlCapiBChr.skillTimerC; BtlCollChr.skillTimerC; BtlMgrChr.skillTimerC; HitChr.skillTimerC	same name in every view that names it
+0x0E18	noFlinch	s32	BtlActIChr.skillTimerD; BtlCollChr.noFlinch; BtlMgrChr.skillTimerD; HitChr.noFlinch	noFlinch (BtlCollChr, HitChr) / skillTimerD (BtlActIChr, BtlMgrChr): the attribute 0x400 skill timer under which hits get reaction 2
+0x0E1C	skillTimerE	s32	BtlActIChr.skillTimerE	one view
+0x0E20	skillValE	s32	BtlActChr.skillValE; BtlActIChr.skillValE	same name in every view that names it
+0x0E24	skillTimerF	s32	BtlActIChr.skillTimerF	one view
+0x0E28	rateBonus	s32	BtlActIChr.skillValF; BtlTechChr.rateBonus	rateBonus (BtlTechChr) / skillValF (BtlActIChr): BtlSkill_GetValF, added to the ki charge rate
+0x0E2C	unkE2C	s32	BtlActIChr.unkE2C	one view
+0x0E30	kind2On	s32	BtlActIChr.kind2On; BtlStatChr.kind2On	same name in every view that names it
+0x0E34	kind3On	s32	BtlActIChr.kind3On; BtlStatChr.kind3On	same name in every view that names it
+0x0E38	slotOn	s32 [BTL_STAT_SLOTS]	BtlActIChr.slotOn; BtlCapiBChr.slotOn; BtlStatChr.slotOn	same name in every view that names it
+0x0E40	techDelay	s32	BtlActChr.techDelay; BtlActJChr.techDelay; BtlCapiBChr.techDelay; BtlSuperChr.cooldown; BtlTechChr.techDelay	techDelay (four views) / cooldown (BtlSuperChr)
+0x0E44	techCharge	f32	BtlCapiBChr.techCharge; BtlCharApiChr.techCharge; BtlCollChr.techCharge; BtlSuperChr.charge; BtlTechBChr.techCharge	techCharge / charge (BtlSuperChr); renamed apart from the attack charge at +0xD78
+0x0E48	techChargeFull	s32	BtlCapiBChr.chargeFull; BtlSuperChr.chargeFull	chargeFull in two views; renamed after techCharge
+0x0E4C	clashCountA	s32	ActGChr.clashPower; BtlCapiBChr.clashCountA; BtlFlagChr.clashCountA	clashCountA / clashPower (ActGChr)
+0x0E50	clashCountB	s32	BtlActChr.clashCountB; BtlActEChr.clashCountB; BtlCapiBChr.clashCountB; BtlFlagChr.clashCountB; BtlTechChr.clashCount	clashCountB / clashCount (BtlTechChr)
+0x0E54	clashExchanges	s32	BtlActEChr.clashExchanges	one view
+0x0E58	clashAnswerFrame	s32	BtlActEChr.clashAnswerFrame; BtlFlagChr.clashAnswer	clashAnswerFrame / clashAnswer
+0x0E5C	skillCount3	s32	BtlActIChr.skillCount3; BtlActJChr.skillCount3; BtlCharApiChr.skillCount3; BtlSuperChr.skillCount3; BtlTechBChr.skillCount3	same name in every view that names it
+0x0E60	boostStock	s32	BtlActHChr.boostStock; BtlCharApiChr.unkE60; BtlSuperChr.boostStock; BtlTechBChr.unkE60	boostStock (BtlActHChr, BtlSuperChr) / unkE60; 0..10 (+1 per throw by character 0x6E, +5 per technique 0x2EF)
+0x0E70	relPos	Vec4	BtlCtlChr.relPos	one view
+0x0E80	relRot	Vec4	BtlCtlChr.relRot	one view
+0x0E90	thr	BtlFighterThrow	ActGChr.thr; BtlCollChr.thr	ActGThrow / BtlCollThrow merged; flattened thr* fields in BtlCapiChr, BtlSuperChr, BtlActJChr, BtlStatChr
+0x0E90	thr.tech	s32	ActGThrow.tech; BtlCapiChr.thrTech; BtlCollThrow.tech	same bytes and type in every view; the name is the one the most precise view gives
+0x0E94	thr.atkSide	s32	ActGThrow.atkSide; BtlCapiChr.thrAtkSide; BtlCollThrow.atkSide	same bytes and type in every view; the name is the one the most precise view gives
+0x0E98	thr.defSide	s32	ActGThrow.defSide; BtlCollThrow.defSide	same name in every view that names it
+0x0E9C	thr.slot	s32	ActGThrow.slot; BtlActJChr.thrSlot; BtlCollThrow.slot	same bytes and type in every view; the name is the one the most precise view gives
+0x0EA0	thr.stepCount	s32	ActGThrow.stepCount; BtlCapiChr.thrUnk10; BtlCollThrow.stepCount	same bytes and type in every view; the name is the one the most precise view gives
+0x0EA4	thr.landingKind	s32	ActGThrow.landingKind; BtlCollThrow.landingKind	same name in every view that names it
+0x0EA8	thr.partnerStep	s32	ActGThrow.partnerStep; BtlCollThrow.partnerStep	same name in every view that names it
+0x0EAC	thr.defFormStep	s32	ActGThrow.lastStep; BtlCapiChr.thrUnk1C; BtlCollThrow.defFormStep	lastStep (ActGThrow) / defFormStep (BtlCollThrow) / thrUnk1C: btl_act_super.c changes the victim form in this step
+0x0EB0	thr.partnerChara	s32	ActGThrow.partnerChara; BtlCollThrow.partnerChara	same name in every view that names it
+0x0EB4	thr.partnerCostume	s32	ActGThrow.partnerCostume; BtlCollThrow.partnerCostume	same name in every view that names it
+0x0EB8	thr.partnerVariant	s32	ActGThrow.partnerVariant; BtlCollThrow.partnerVariant	same name in every view that names it
+0x0EBC	thr.partnerSlot	s32	ActGThrow.partnerSlot; BtlCollThrow.partnerSlot	same name in every view that names it
+0x0EC0	thr.useAngles	s32	ActGThrow.turnVictim; BtlCollThrow.useAngles	turnVictim (ActGThrow) / useAngles (BtlCollThrow): technique bit 0x400000, gates angleYaw / anglePitch
+0x0EC4	thr.failed	s32	ActGThrow.failed; BtlCollThrow.endNeutral; BtlSuperChr.thrFailed	failed (ActGThrow, BtlSuperChr) / endNeutral (BtlCollThrow): technique bit 0x400 and FrameMod(2)
+0x0EC8	thr.holdVictim	s32	ActGThrow.unk38; BtlCollThrow.holdVictim	holdVictim (BtlCollThrow) / unk38 (ActGThrow)
+0x0ECC	thr.faceAttacker	s32	ActGThrow.faceAttacker; BtlCollThrow.turnBack	faceAttacker (ActGThrow) / turnBack (BtlCollThrow)
+0x0ED0	thr.koSkipLanding	s32	ActGThrow.koSkipLanding; BtlCollThrow.koSwitch	koSkipLanding (ActGThrow) / koSwitch (BtlCollThrow): a dead victim goes to action 0xEB
+0x0ED4	thr.caughtLoop	s32	ActGThrow.caughtLoop; BtlCollThrow.caughtLoop	same name in every view that names it
+0x0ED8	thr.atkFormChange	s32	ActGThrow.atkReload; BtlCapiChr.thrUnk48; BtlCollThrow.atkFormChange	atkReload (ActGThrow) / atkFormChange (BtlCollThrow) / thrUnk48
+0x0EDC	thr.defFormChange	s32	ActGThrow.defReload; BtlCapiChr.thrUnk4C; BtlCollThrow.defFormChange	defReload / defFormChange / thrUnk4C
+0x0EE0	thr.placeFirstStep	s32	ActGThrow.placeFirstStep; BtlCollThrow.placeAtStart	placeFirstStep (ActGThrow) / placeAtStart (BtlCollThrow)
+0x0EE4	thr.unk54	s32	ActGThrow.unk54; BtlCollThrow.unk54; BtlStatChr.unkEE4	same bytes and type in every view; the name is the one the most precise view gives
+0x0EE8	thr.halfDamage	s32	ActGThrow.halfDamage; BtlCollThrow.unk58; BtlSuperChr.thrHalfDamage	halfDamage (ActGThrow, BtlSuperChr) / unk58 (BtlCollThrow)
+0x0EEC	thr.raiseAtEnd	s32	ActGThrow.raiseAtEnd; BtlCollThrow.unk5C	raiseAtEnd (ActGThrow) / unk5C (BtlCollThrow)
+0x0EF0	thr.angleYaw	f32	ActGThrow.turnYaw; BtlCollThrow.angleYaw	turnYaw (ActGThrow) / angleYaw (BtlCollThrow): BtlSuper_GetThrowAngleA
+0x0EF4	thr.anglePitch	f32	ActGThrow.turnPitch; BtlCollThrow.anglePitch	same bytes and type in every view; the name is the one the most precise view gives
+0x0EF8	rushHits	s32	ActGChr.rushHits; BtlSuperChr.rushHits	same name in every view that names it
+0x0EFC	stepFrame	f32 [5]	ActGChr.stepFrame; BtlCharApiChr.stepFrame	same name in every view that names it
+0x0F10	rushFrames	s32	BtlSuperChr.rushFrames	one view
+0x0F14	rushFrameA	s32	BtlSuperChr.rushFrameA	one view
+0x0F18	rushFrameB	s32	BtlSuperChr.rushFrameB	one view
+0x0F1C	rushStepA	s32	BtlSuperChr.rushStepA	one view
+0x0F20	rushStepB	s32	BtlSuperChr.rushStepB	one view
+0x0F30	status	BtlFighterHitStatus	HitChr.status	HitStatus (btl_char_hit.c takes its address, so it stays a block starting at +0xF30)
+0x0F30	status.carryMove	Vec4	BtlActChr.holdDelta; BtlMgrChr.carryMove; HitStatus.unk0	Contradiction holdDelta (BtlActChr) / carryMove (BtlMgrChr, u64[2]) / HitStatus.unk0: the manager writes the holder's snapshot delta, the action code adds it under flag 0x8B
+0x0F40	status.target	s32	BtlCollChr.hitTarget; HitStatus.target	same bytes and type in every view; the name is the one the most precise view gives
+0x0F44	status.lastHitNo	s32	HitStatus.lastHitNo	one view
+0x0F48	status.contact	s32	BtlActChr.hitContact; HitStatus.contact	same bytes and type in every view; the name is the one the most precise view gives
+0x0F50	stat	BtlStatMod [BTL_STAT_COUNT]	BtlStatChr.stat	one view
+0x0FB0	react	BtlFighterReact	ActGChr.react; BtlActHChr.react; BtlCollChr.react; HitChr.react	ActGReact / HitReact / BtlCollReact / BtlActHReact merged; flattened in eight views. The timers at +0xFE0..+0xFF8 are inside it, as ActGReact and HitReact have them
+0x0FB0	react.reaction	s32	ActGReact.reaction; BtlActChr.reaction; BtlActHReact.reaction; BtlActJChr.reaction; BtlCapiBChr.reactId; BtlCollReact.reaction; BtlFlagChr.reaction; BtlMgrChr.reaction; BtlMoveChr.reaction; HitReact.reaction	same bytes and type in every view; the name is the one the most precise view gives
+0x0FB4	react.reactSub	s32	ActGReact.unk4; BtlActHReact.reactSub; BtlActJChr.reactSub; HitReact.reactionSub	reactSub / reactionSub / unk4
+0x0FB8	react.animCycle	s32	ActGReact.animCycle; BtlActBChr.animCycle; BtlActHReact.animCycle; BtlActJChr.animCycle; HitReact.unk8	same bytes and type in every view; the name is the one the most precise view gives
+0x0FBC	react.back	s32	ActGReact.back; BtlActChr.hitBack; BtlActHReact.back; BtlActJChr.hitBack; BtlCollReact.back; HitReact.back	same bytes and type in every view; the name is the one the most precise view gives
+0x0FC0	react.noBlend	s32	ActGReact.noBlend; BtlActHReact.noBlend; HitReact.noBlend	same name in every view that names it
+0x0FC4	react.silent	s32	ActGReact.silent; BtlActHReact.silent; HitReact.silent	same name in every view that names it
+0x0FC8	react.scale	f32	ActGReact.scale; BtlActBChr.reactScale; BtlCollReact.scale; HitReact.scale	f32; s32 in BtlCollReact (only cleared)
+0x0FCC	react.yaw	f32	ActGReact.yaw; BtlActJChr.hitYaw; BtlCollReact.yaw; HitReact.yaw	same bytes and type in every view; the name is the one the most precise view gives
+0x0FD0	react.turnYaw	f32	ActGReact.turnYaw; BtlActChr.turnYaw; BtlActJChr.turnYaw; BtlCollReact.turnYaw; HitReact.turnYaw	same name in every view that names it
+0x0FD4	react.turnPitch	f32	ActGReact.turnPitch; BtlActChr.turnPitch; BtlActJChr.turnPitch; BtlCollReact.turnPitch; HitReact.turnPitch	f32; s32 in BtlActJChr (only cleared)
+0x0FD8	react.launchA	f32	ActGReact.launchA; BtlActHReact.launchA; HitReact.launchA	same name in every view that names it
+0x0FDC	react.launchB	f32	ActGReact.launchB; BtlActHReact.launchB; HitReact.launchB	same name in every view that names it
+0x0FE0	react.stunTimer	s32	ActGReact.stun; BtlActBChr.stunTimer; BtlActCChr.stunTimer; BtlActChr.stunTimer; BtlActIChr.stunTimer; BtlActJChr.stunTime; BtlCapiBChr.stunTimer; BtlCharGetChr.stunTimer; BtlCollReact.stun; BtlMemberChr.stunTimer	stun (ActGReact, BtlCollReact) / stunTimer (seven views) / stunTime (BtlActJChr)
+0x0FE4	react.unk34	s32	ActGReact.unk34; BtlActChr.unkFE4; BtlCollReact.unk34; BtlMemberChr.unkFE4	same bytes and type in every view; the name is the one the most precise view gives
+0x0FE8	react.shakeTimer	s32	ActGReact.shakeTimer; BtlActChr.shakeTimer; BtlCollReact.unk38; BtlMoveChr.shakeTimer; HitReact.shakeTimer	same bytes and type in every view; the name is the one the most precise view gives
+0x0FEC	react.damage	s32	ActGReact.damage; BtlActChr.hitDamage; HitReact.damage	same bytes and type in every view; the name is the one the most precise view gives
+0x0FF0	react.unk40	s32	ActGReact.unk40; BtlActBChr.unkFF0; BtlActChr.unkFF0; BtlActDChr.unkFF0; BtlActEChr.unkFF0	same bytes and type in every view; the name is the one the most precise view gives
+0x0FF4	react.slot	s32	ActGReact.slot; BtlActChr.unkFF4; BtlActJChr.unkFF4; BtlCollReact.slot	slot (ActGReact, BtlCollReact) / unkFF4
+0x0FF8	react.blindTimer	s32	ActGReact.unk48; BtlActChr.blindTimer; HitReact.blindTimer	same bytes and type in every view; the name is the one the most precise view gives
+0x0FFC	blindLevel	s32	BtlActChr.blindLevel; BtlCapiChr.blindLevel	same name in every view that names it
+0x1000	mashLeft	s32	BtlActBChr.mashLeft; BtlActCChr.mashLeft; BtlActChr.recoverPresses	mashLeft (two views) / recoverPresses
+0x1004	reactCount	s8 [0x32]	BtlActChr.reactCount; BtlActJChr.reactCount	s8 (BtlActJChr reads it) / u8 (BtlActChr only clears it)
+0x1036	reactTimer	s8 [0x32]	BtlActChr.reactTimer; BtlActJChr.reactTimer	same name in every view that names it
+0x1068	dodgeWindow	s32	BtlMoveChr.unk1068; HitChr.dodgeWindow	HitChr dodgeWindow; unk1068 in BtlMoveChr
+0x106C	blastDodgeWindow	s32	BtlCapiBChr.dodgeWindow; BtlCollChr.blastDodgeWindow; BtlMoveChr.dodgeWindow; HitChr.blastDodgeWindow	Contradiction: HitChr / BtlCollChr blastDodgeWindow, BtlMoveChr / BtlCapiBChr dodgeWindow; the hit code (the readers) wins
+0x1070	counterWindow	s32	BtlCapiBChr.counterWindow; BtlCollChr.counterWindow; BtlMoveChr.counterWindow; HitChr.counterWindow	same name in every view that names it
+0x1074	deflectWindow	s32	BtlCollChr.deflectWindow; BtlMoveChr.unk1074; HitChr.deflectWindow	same bytes and type in every view; the name is the one the most precise view gives
+0x1078	throwBreakWindow	s32	BtlMoveChr.throwBreakWindow; HitChr.throwBreakWindow	same name in every view that names it
+0x107C	rushBreakWindow	s32	BtlMoveChr.rushBreakWindow; HitChr.rushBreakWindow	same name in every view that names it
+0x1080	unk1080	s32	BtlActIChr.unk1080; BtlMoveChr.unk1080	same name in every view that names it
+0x1084	stage	u8	BtlFlagChr.stage	one view
+0x1085	held	u8 [BTL_FLAG_BYTES]	BtlFlagChr.held; BtlInputCounters.held	same name in every view that names it
+0x10AD	pulse	u8 [BTL_FLAG_BYTES]	BtlFlagChr.pulse	one view
+0x10D5	prevHeld	u8 [BTL_FLAG_BYTES]	BtlFlagChr.prevHeld	one view
+0x10FD	prevPulse	u8 [BTL_FLAG_BYTES]	BtlFlagChr.prevPulse	one view
+0x1125	stamp	u8 [BTL_FLAG_COUNT]	BtlFlagChr.stamp	one view
+0x1262	fxBits	BtlFighterFxBits	BtlMgrChr.fxBits	u8[9] (BtlMemberChr bit ops) / BtlMgrBytes9 s8[9] (copied and cleared whole): one struct of u8[9]
+0x1262	fxBits.bits	u8 [9]	BtlMemberChr.fxBits; BtlMgrBytes9.b	same bytes; view types: s8[9], u8[9]
+0x126B	prevFxBits	BtlFighterFxBits	BtlMgrChr.prev1262	same bytes; view types: BtlMgrBytes9
+0x126B	prevFxBits.bits	u8 [9]	BtlMemberChr.prevFxBits; BtlMgrBytes9.b	same bytes; view types: s8[9], u8[9]
+0x1274	unk1274	u8 [0x1278 - 0x1274]	BtlMgrChr.unk1274	one view
+0x1278	injectOn	s32	BtlActEChr.injected; BtlCharApiChr.injectOn; BtlCharGetChr.injectOn; BtlInputChr.injectOn; BtlMgrChr.injectOn; BtlTechChr.injectOn	injectOn / injected
+0x127C	injectButtons	u32	BtlCharApiChr.injectButtons; BtlInputChr.injectButtons	same name in every view that names it
+0x1280	injectStickX	f32	BtlCharApiChr.injectStickX; BtlInputChr.injectStickX	same name in every view that names it
+0x1284	injectStickY	f32	BtlCharApiChr.injectStickY; BtlInputChr.injectStickY	same name in every view that names it
+0x1288	actBits	u64	BtlCharApiChr.actBits; BtlCollChr.actBits	same name in every view that names it
+0x1290	storyAiForce	s32	BtlCapiBChr.storyAiForce; BtlCollChr.unk1290	storyAiForce / unk1290
+0x1294	framesLeftOverride	s32	BtlCapiBChr.framesLeftOverride; BtlCollChr.framesLeftOverride	same name in every view that names it
+0x12A0	savedPos	Vec4	BtlCtlChr.savedPos	one view
+0x12B0	savedRot	Vec4	BtlCtlChr.savedRot	one view
+0x12C0	savedArea	s32	BtlCtlChr.savedArea	one view
+0x12C4	savedFlagF	s32	BtlCtlChr.savedFlagF	one view
+0x12C8	savedFlagE	s32	BtlCtlChr.savedFlagE	one view
+0x12CC	form	BtlFighterForm	ActGChr.form; BtlActChr.form; BtlActHChr.form; BtlActJChr.form	ActGForm / BtlActForm / BtlActHForm / BtlActJForm merged; flattened new*/form* in BtlMgrChr, BtlSuperChr, BtlMemberChr
+0x12CC	form.index	s32	ActGForm.index; BtlActForm.index; BtlActHForm.index; BtlActJForm.index	same name in every view that names it
+0x12D0	form.chara	s32	ActGForm.chara; BtlActForm.chara; BtlActHForm.chara; BtlActJForm.chara; BtlMgrChr.newChara; BtlSuperChr.formChara	same bytes and type in every view; the name is the one the most precise view gives
+0x12D4	form.costume	s32	ActGForm.costume; BtlActForm.costume; BtlActHForm.costume; BtlActJForm.costume; BtlMgrChr.newCostume; BtlSuperChr.formCostume	same bytes and type in every view; the name is the one the most precise view gives
+0x12D8	form.cost	s32	ActGForm.cost; BtlActForm.cost; BtlActHForm.cost; BtlActJForm.cost	same name in every view that names it
+0x12DC	form.kind	s32	ActGForm.kind; BtlActForm.kind; BtlActHForm.kind; BtlActJForm.kind; BtlMemberChr.formKind	same bytes and type in every view; the name is the one the most precise view gives
+0x12E0	form.variant	s32	ActGForm.variant; BtlActForm.variant; BtlActHForm.variant; BtlActJForm.variant; BtlMgrChr.new20; BtlSuperChr.formVariant	same bytes and type in every view; the name is the one the most precise view gives
+0x12E4	form.animChara	s32	ActGForm.animChara; BtlActForm.animChara; BtlActHForm.animChara; BtlActJForm.animChara; BtlSuperChr.formAnimChara	same bytes and type in every view; the name is the one the most precise view gives
+0x12E8	form.anim1Chara	s32	ActGForm.unk1C; BtlActForm.unk1C; BtlActHForm.anim1Chara; BtlActJForm.anim1Chara; BtlSuperChr.form1C	unk1C / anim1Chara / form1C (notes_for_later: the character of the second resource file)
+0x12EC	form.voiceChara	s32	ActGForm.voiceChara; BtlActForm.voiceChara; BtlActHForm.voiceChara; BtlActJForm.voiceChara; BtlSuperChr.formVoiceChara	same bytes and type in every view; the name is the one the most precise view gives
+0x12F0	form.objId	s32	ActGForm.objId; BtlActForm.objId; BtlActHForm.objId; BtlActJForm.objId	same name in every view that names it
+0x12F4	form.objCostume	s32	ActGForm.objCostume; BtlActForm.objCostume; BtlActHForm.objCostume; BtlActJForm.objCostume	same name in every view that names it
+0x12F8	form.partner	s32	ActGForm.partner; BtlActForm.partner; BtlActHForm.partner; BtlActJForm.partner; BtlMgrChr.fusionMember	same bytes and type in every view; the name is the one the most precise view gives
+0x12FC	form.objVariant	s32	BtlActHForm.objVariant; BtlActJForm.objVariant; BtlMgrChr.newObjVariant	same bytes and type in every view; the name is the one the most precise view gives
+0x1300	form.allowed	s32	BtlActJForm.allowed; BtlMgrChr.changeAllowed	same bytes and type in every view; the name is the one the most precise view gives
+0x1304	unk1304	u8 [0x1310 - 0x1304]	BtlMgrChr.unk1304	one view
+0x1310	bodyWarpPos	Vec4	BtlCtlChr.bodyWarpPos; BtlMgrChr.bodyWarpPos	Vec4; u64[2] in BtlMgrChr (passed by address)
+0x1320	freeze	s32	BtlCharApiChr.freeze; BtlCharGetChr.freeze; BtlMgrChr.freeze	same name in every view that names it
+0x1324	freezeNext	s32	BtlMgrChr.freezeNext; HitChr.stopLen	freezeNext (BtlMgrChr) / stopLen (HitChr): the pending hit-stop
+0x1328	freezeDelay	s32	BtlMgrChr.freezeDelay; HitChr.stopDelay	freezeDelay / stopDelay
+0x132C	secTimer	s32	BtlActChr.secTimer; BtlMgrChr.secTimer	same name in every view that names it
+0x1330	partner	BtlFighterPartner	FxChr.partner	FxPartner; partnerOn / partnerObjId flattened in BtlCapiChr, BtlMgrChr
+0x1330	partner.active	s32	BtlCapiChr.partnerOn; BtlMgrChr.partnerOn; FxPartner.active	same bytes and type in every view; the name is the one the most precise view gives
+0x1334	partner.res	s32	FxPartner.res	one view
+0x1338	partner.objId	s32	BtlCapiChr.partnerObjId; FxPartner.objId	same bytes and type in every view; the name is the one the most precise view gives
+0x133C	unk133C	s32	FxChr.unk133C	one view
+0x1340	filter	f32	FxChr.filter	one view
+0x1344	unk1344	s32	FxChr.unk1344	one view
+0x1348	charaFxOn	s32	FxChr.charaFxOn	one view
+0x134C	trigger1E	s32	FxChr.trigger1E	one view
+0x1350	trigger1F	s32	FxChr.trigger1F	one view
+0x1354	burstNode	s32	BtlActAChr.burstNode; FxChr.burstNode	same name in every view that names it
+0x1358	unk1358	u8 [0x1360 - 0x1358]	FxChr.unk1358	one view
+0x1360	deflectDir	Vec4	BtlCollChr.deflectDir; FxChr.deflectDir	same name in every view that names it
+0x1370	voice	BtlCharVoice	BtlCharGetChr.voice	one view
+0x1538	bits	BtlFlagBits	BtlFlagChr.bits	BtlFlagBits (one struct, which BtlChar_SetOnceBit needs to match); frameBits in BtlMgrChr / BtlTechChr
+0x1538	bits.frame	u64	BtlFlagBits.frame; BtlMgrChr.frameBits; BtlTechChr.frameBits	same bytes and type in every view; the name is the one the most precise view gives
+0x1540	bits.once	u8 [8]	BtlFlagBits.once	one view
+0x1550	scriptMotion	s32	BtlActChr.scriptMotion; BtlCapiBChr.motion	scriptMotion (BtlActChr) / motion (BtlCapiBChr): the animation of action 4
+0x1554	scriptMotionBlend	f32	BtlActChr.scriptMotionBlend; BtlCapiBChr.motionBlend	same bytes and type in every view; the name is the one the most precise view gives
+0x1558	scriptMotionLoop	s32	BtlActChr.scriptMotionLoop; BtlCapiBChr.motionLoop	same bytes and type in every view; the name is the one the most precise view gives
+0x155C	unk155C	s32	BtlCapiBChr.unk155C	one view
+0x1560	warpPos	Vec4	BtlCapiBChr.warpPos; BtlCtlChr.warpPos	same name in every view that names it
+0x1570	warpRot	Vec4	BtlCapiBChr.warpRot; BtlCtlChr.warpRot	same name in every view that names it
+0x1580	inputOffTimer	s32	BtlActChr.inputOffTimer	one view
+0x1584	unk1584	u8 [0x1590 - 0x1584]	BtlActChr.unk1584	one view
+0x1590	dirHeld	s32	BtlActChr.dirHeld; BtlMgrChr.dirHeld; BtlTechChr.dirHeld	same name in every view that names it
+0x1594	techClass	s32	BtlCapiBChr.techClass; BtlInputChr.techClass; BtlMgrChr.techClass; BtlSuperChr.inputClass; BtlTechChr.techClass	techClass (four views) / inputClass (BtlSuperChr)
+0x15A0	look	BtlFighterLook	BtlCtlChr.look	BtlCtlLook; lookOffset in BtlFlagChr
+0x15A0	look.offset	Vec4	BtlCtlLook.offset; BtlFlagChr.lookOffset	same bytes and type in every view; the name is the one the most precise view gives
+0x15B0	look.dir	Vec4	BtlCtlLook.dir	one view
+0x15C0	look.height	f32	BtlCtlLook.height	one view
+0x15C4	look.enabled	s32	BtlCtlLook.enabled	one view
+0x15C8	look.tracking	s32	BtlCtlLook.tracking	one view
+0x15CC	look.snap	s32	BtlCtlLook.snap	one view
+0x15D0	vib	BtlCharVib	BtlCharGetChr.vib	BtlCharVib; rumble* in BtlCharApiChr, vibEnabled / vibState[5] in BtlMgrChr
+0x15D0	vib.enabled	s32	BtlCharApiChr.rumbleOn; BtlCharVib.enabled; BtlMgrChr.vibEnabled	same bytes and type in every view; the name is the one the most precise view gives
+0x15D4	vib.power	f32	BtlCharApiChr.rumblePower; BtlCharVib.power; BtlMgrChr.vibState; BtlMgrChr.vibState[0]	same bytes; view types: f32, s32[5]
+0x15D8	vib.time	s32	BtlCharApiChr.rumbleFrames; BtlCharVib.time; BtlMgrChr.vibState[1]	same bytes and type in every view; the name is the one the most precise view gives
+0x15DC	vib.smallTime	s32	BtlCharApiChr.rumbleFrames2; BtlCharVib.smallTime; BtlMgrChr.vibState[2]	same bytes and type in every view; the name is the one the most precise view gives
+0x15E0	vib.phase	s32	BtlCharVib.phase; BtlMgrChr.vibState[3]	same bytes and type in every view; the name is the one the most precise view gives
+0x15E4	vib.toggle	s32	BtlCharVib.toggle; BtlMgrChr.vibState[4]	same bytes and type in every view; the name is the one the most precise view gives
+0x15E8	place	struct BtlTechPlaceTbl * [3]	BtlMgrChr.objTbl; BtlTechBChr.place	BtlTechPlaceTbl *[3] (BtlTechBChr) / u32 *[3] (BtlMgrChr: the store takes a cast)
+0x15F4	unk15F4	u8 [0x1600 - 0x15F4]	BtlMgrChr.unk15F4; BtlTechBChr.unk15F4	same name in every view that names it
