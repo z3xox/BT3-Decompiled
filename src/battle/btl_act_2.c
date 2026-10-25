@@ -255,7 +255,7 @@ s32 BtlAct_DownHandler(Chr *chr, s32 phase) {
     if (phase == 2) {
         if (BtlChar_IsFree(chr)) {
             if (BtlMember_GetActiveGauge(chr)->lowHealthIdle == 0 || chr->mashLeft <= 0) {
-                if (chr->comboHits >= 10) {
+                if (chr->combo.hits >= 10) {
                     if (BtlAct_CheckRecoveryInput(chr, 0)) {
                         BtlAct_Request(chr, BtlAct_GetQueued(chr));
                     }
@@ -483,7 +483,7 @@ s32 BtlAct_StunHandler(Chr *chr, s32 phase) {
         BtlActB_SetReactionFlags(chr);
     }
     if (phase == 2) {
-        if (chr->stunTimer <= 0) {
+        if (chr->react.stunTimer <= 0) {
             BtlAct_Request(chr, BtlAct_GetIdleFollowUp(chr));
         }
     }
@@ -509,7 +509,7 @@ s32 BtlAct_AirStunHandler(Chr *chr, s32 phase) {
         BtlChar_SetFlag(chr, 0x2A);
     }
     if (phase == 2) {
-        if (chr->stunTimer <= 0) {
+        if (chr->react.stunTimer <= 0) {
             BtlAct_Request(chr, BtlAct_GetDownAction(chr));
         }
     }
@@ -1202,7 +1202,7 @@ s32 BtlAct_Action41(Chr *chr, s32 phase) {
         chr->unkD8C++;
         chr->unkD8C %= 3;
         BtlCharSnd_PlayCommon(chr, 0x1F);
-        ChrCam_RequestCut(chr, 1, chr->camSide < 0.0f ? 0x11 : 0x12);
+        ChrCam_RequestCut(chr, 1, chr->cam.side < 0.0f ? 0x11 : 0x12);
     }
     if (phase == 1) {
         idle = BtlChar_TestFlag(chr, 0xE) ? 0x26 : 0;

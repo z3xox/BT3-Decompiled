@@ -2,6 +2,7 @@
 #define BATTLE_BTL_ACT_C_H
 
 #include "types.h"
+#include "battle/btl_fighter.h"
 #include "sys/math3d.h"
 
 /*
@@ -55,37 +56,7 @@ typedef struct BtlActCMember {
 } BtlActCMember;
 
 /* Fighter (0x1600 bytes). */
-typedef struct BtlActCChr {
-    /* 0x0000 */ s32 player;
-    /* 0x0004 */ s32 pad;
-    /* 0x0008 */ s32 side;
-    /* 0x000C */ s32 objId;
-    /* 0x0010 */ u8 unk10[0x3D0 - 0x10];
-    /* 0x03D0 */ s32 work[0x14];   /* per-action scratch: [0] bit 0 = dash blast steers at the opponent; [2] = counters of 0x38 / 0x3B, block of 0xEB */
-    /* 0x0420 */ u8 unk420[0x4A8 - 0x420];
-    /* 0x04A8 */ f32 camSide;       /* ChrCam side: its sign picks the camera cut of action 0x41 */
-    /* 0x04AC */ u8 unk4AC[0x964 - 0x4AC];
-    /* 0x0964 */ s32 actionFrame;   /* frames in the current action */
-    /* 0x0968 */ u8 unk968[0xD44 - 0x968];
-    /* 0x0D44 */ s32 comboHits;        /* must reach 10 before a downed fighter may recover */
-    /* 0x0D48 */ u8 unkD48[0xD58 - 0xD48];
-    /* 0x0D58 */ f32 searchAngle;        /* search window half angle (0.5 .. pi) */
-    /* 0x0D5C */ f32 searchRange;        /* search window range (500 .. 1000000) */
-    /* 0x0D60 */ u8 unkD60[0xD8C - 0xD60];
-    /* 0x0D8C */ s32 unkD8C;        /* action 0x41: which of the three animations is next */
-    /* 0x0D90 */ u8 unkD90[0xDD0 - 0xD90];
-    /* 0x0DD0 */ Vec4 aimDir;       /* ki blast aim direction */
-    /* 0x0DE0 */ s32 blastShots;        /* ki blast counter */
-    /* 0x0DE4 */ s32 blastResetTimer;        /* set to 30 by every ki blast (a countdown, see btl_char_action.h) */
-    /* 0x0DE8 */ s32 blastAltHand;        /* ki blast: 1 = the next one uses the other hand */
-    /* 0x0DEC */ f32 blastCharge;        /* charged ki blast: progress of the hold animation */
-    /* 0x0DF0 */ s32 blastNode;        /* charged ki blast: model node it leaves from */
-    /* 0x0DF4 */ u8 unkDF4[0xFE0 - 0xDF4];
-    /* 0x0FE0 */ s32 stunTimer;        /* stun countdown */
-    /* 0x0FE4 */ u8 unkFE4[0x1000 - 0xFE4];
-    /* 0x1000 */ s32 mashLeft;       /* downed: button presses still needed before recovering */
-    /* 0x1004 */ u8 unk1004[0x1600 - 0x1004];
-} BtlActCChr; /* size 0x1600 */
+typedef BtlFighter BtlActCChr;
 
 s32 BtlAct_DownHandler(BtlActCChr *chr, s32 phase);
 s32 BtlAct_GetUpHandler(BtlActCChr *chr, s32 phase);
