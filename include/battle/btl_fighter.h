@@ -229,6 +229,16 @@ typedef struct BtlCharVib {
     /* 0x14 */ s32 toggle;    /* small motor is on every other frame */
 } BtlCharVib; /* size 0x18 */
 
+/* pose.groundFlags as BtlCharApi_TestPoseBit80 reads bit 0x80: a byte bit-field through a 4-aligned view. Read
+   straight from the 8-aligned pose, the bit-field would be loaded as a doubleword. */
+typedef union BtlGroundFlagBits {
+    s32 flags;
+    struct {
+        u8 low : 7;
+        u8 bit80 : 1;
+    };
+} BtlGroundFlagBits;
+
 /* The pose block, fighter + 0x10 (BtlChar_GetPos returns it); fighter + 0x100 holds last frame's copy. Offsets in
    brackets are fighter offsets. The ground vectors make it 8-aligned: the manager copies it whole with doublewords. */
 typedef struct BtlFighterPose {
@@ -258,16 +268,10 @@ typedef struct BtlFighterPose {
                                            multiplies technique speeds 4 and 5 and turn rate 0 */
     /* 0xB0 [0xC0] */ BtlGroundVec groundPos; /* ground point below the fighter: copy of the stage ground query */
     /* 0xC0 [0xD0] */ BtlGroundVec groundNrm; /* ground normal, valid with flag 0xF */
-    /* 0xD0 [0xE0] */ union {
-        s32 groundFlags;                /* ground query bits: 0x40 = landed out of the arena below BtlStage_GetBottom()
+    /* 0xD0 [0xE0] */ s32 groundFlags;  /* ground query bits: 0x40 = landed out of the arena below BtlStage_GetBottom()
                                            (action 0xD9) and blocks the landing of action 0x15; 0x40000000 without
-                                           0x01000000 keeps the fast descend going near the ground; any of
-                                           0x30000065 cancels the ground effects */
-        struct {
-            u8 groundFlagsLow : 7;
-            u8 groundBit80 : 1;         /* bit 0x80, read on its own by BtlCharApi_TestPoseBit80 */
-        };
-    };
+                                           0x01000000 keeps the fast descend going near the ground; any of 0x30000065
+                                           cancels the ground effects; bit 0x80: see BtlGroundFlagBits */
     /* 0xD4 [0xE4] */ f32 steerYaw;     /* yaw steering offset of the homing dash */
     /* 0xD8 [0xE8] */ f32 steerPitch;   /* pitch steering offset of the homing dash */
     /* 0xDC [0xEC] */ f32 orbitNear;    /* BtlMove_RequestOrbit */

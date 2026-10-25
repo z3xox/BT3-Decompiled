@@ -172,71 +172,10 @@ typedef struct BtlCapiBMember {
 } BtlCapiBMember;
 
 /* Pose block (fighter +0x10, BtlChar_GetPos). */
-typedef struct BtlCapiBPose {
-    /* 0x00 */ Vec4 pos;
-    /* 0x10 */ Vec4 rot;
-    /* 0x20 */ u8 unk20[0xD0 - 0x20];
-    /* 0xD0 */ u8 unkD0_0 : 7;
-    /* 0xD0 */ u8 unkD0_7 : 1; /* bit 0x80: read by BtlCharApi_TestPoseBit80 */
-} BtlCapiBPose;
+typedef BtlFighterPose BtlCapiBPose;
 
 /* Fighter (0x1600 bytes). */
-typedef struct BtlCapiBChr {
-    /* 0x0000 */ s32 player;
-    /* 0x0004 */ s32 pad;
-    /* 0x0008 */ s32 side;
-    /* 0x000C */ s32 objId;
-    /* 0x0010 */ BtlCapiBPose pose;
-    /* 0x00E4 */ u8 unkE4[0x578 - 0xE4];
-    /* 0x0578 */ u32 keyMask[8];    /* pad button of bits 0..3 of the button word (btl_input.h: the mask table) */
-    /* 0x0598 */ u8 unk598[0x998 - 0x598];
-    /* 0x0998 */ s32 memberCount;
-    /* 0x099C */ s32 switchGauge;   /* 0..100000; full = a member switch is allowed */
-    /* 0x09A0 */ u8 unk9A0[0xD40 - 0x9A0];
-    /* 0x0D40 */ s32 comboDamage;   /* health this fighter lost in the combo it is receiving (BtlMemberCombo) */
-    /* 0x0D44 */ s32 comboHits;     /* hits of that combo */
-    /* 0x0D48 */ s32 comboTimer;    /* countdown; > 0 = the combo display is on */
-    /* 0x0D4C */ s32 comboNewHit;   /* 1 on the frame a counted hit landed */
-    /* 0x0D50 */ u8 unkD50[0xD70 - 0xD50];
-    /* 0x0D70 */ s32 vanishCount;
-    /* 0x0D74 */ s32 vanishLimit;
-    /* 0x0D78 */ u8 unkD78[0xDE0 - 0xD78];
-    /* 0x0DE0 */ s32 blastShots;    /* compared with the character's limit of class-0 blasts */
-    /* 0x0DE4 */ u8 unkDE4[0xE00 - 0xDE4];
-    /* 0x0E00 */ s32 dodges;        /* automatic evasions left */
-    /* 0x0E04 */ s32 dodgesB;
-    /* 0x0E08 */ s32 skillTimer;
-    /* 0x0E0C */ s32 dodgeKind;     /* 0 / 1 */
-    /* 0x0E10 */ s32 skillKiRate;
-    /* 0x0E14 */ s32 skillTimerC;        /* timer; > 0 adds one armour level */
-    /* 0x0E18 */ u8 unkE18[0xE38 - 0xE18];
-    /* 0x0E38 */ s32 slotOn[2];     /* 1 while move slot n's effect is active */
-    /* 0x0E40 */ s32 techDelay;        /* countdown, cleared by BtlCtrl_UseTechnique */
-    /* 0x0E44 */ f32 techCharge;
-    /* 0x0E48 */ s32 chargeFull;
-    /* 0x0E4C */ s32 clashCountA;
-    /* 0x0E50 */ s32 clashCountB;
-    /* 0x0E54 */ u8 unkE54[0xFB0 - 0xE54];
-    /* 0x0FB0 */ s32 reactId;       /* pending hit reaction; >= 3 = cannot act */
-    /* 0x0FB4 */ u8 unkFB4[0xFE0 - 0xFB4];
-    /* 0x0FE0 */ s32 stunTimer;     /* countdown; > 0 = not free */
-    /* 0x0FE4 */ u8 unkFE4[0x106C - 0xFE4];
-    /* 0x106C */ s32 dodgeWindow;
-    /* 0x1070 */ s32 counterWindow;
-    /* 0x1074 */ u8 unk1074[0x1290 - 0x1074];
-    /* 0x1290 */ s32 storyAiForce;
-    /* 0x1294 */ s32 framesLeftOverride;       /* >= 0: overrides the technique progress the AI sees */
-    /* 0x1298 */ u8 unk1298[0x1550 - 0x1298];
-    /* 0x1550 */ s32 motion;        /* animation of action 4 (scripted motion) */
-    /* 0x1554 */ f32 motionBlend;   /* its blend time */
-    /* 0x1558 */ s32 motionLoop;    /* 0 play once, 1 loop */
-    /* 0x155C */ s32 unk155C;
-    /* 0x1560 */ Vec4 warpPos;      /* taken when held flag 0xFC is seen */
-    /* 0x1570 */ Vec4 warpRot;      /* taken when held flag 0xFD is seen */
-    /* 0x1580 */ u8 unk1580[0x1594 - 0x1580];
-    /* 0x1594 */ s32 techClass;  /* techClass in btl_param.h / btl_input.h: the technique class 2..4 whose button command is watched this frame; -1 each frame */
-    /* 0x1598 */ u8 unk1598[0x1600 - 0x1598];
-} BtlCapiBChr; /* size 0x1600 */
+typedef BtlFighter BtlCapiBChr;
 
 /* Character parameter block (battle object +0x91C); read here only through BtlCharApi_GetParamByte2 / Flags /
    Unk14 / Unk18. The rest is what the callees of this file read (0x20DF80..0x20F3C8). */

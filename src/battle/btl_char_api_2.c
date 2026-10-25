@@ -1756,7 +1756,7 @@ s32 BtlCharApi_IsMoveSlotActive(s32 objId, u32 slot) {
         return 0;
     }
     n = slot != 0;
-    if (chr->dodgeKind == slot) {
+    if (chr->skillSlot == slot) {
         if (chr->dodges > 0) {
             return 1;
         }
@@ -1785,7 +1785,7 @@ s32 BtlCharApi_GetStunTimer(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return chr->stunTimer;
+        return chr->react.stunTimer;
     }
     return 0;
 }
@@ -1840,7 +1840,7 @@ s32 BtlCharApi_IsDodgeWindowReady(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return chr->dodgeWindow < -29;
+        return chr->blastDodgeWindow < -29;
     }
     return 0;
 }
@@ -1961,7 +1961,7 @@ s32 BtlCharApi_TestPoseBit80(s32 objId, s32 always) {
     if (always == 0 && !BtlChar_IsStage4Or27()) {
         return 0;
     }
-    return BtlChar_GetPos(chr)->unkD0_7;
+    return ((BtlGroundFlagBits *)&BtlChar_GetPos(chr)->groundFlags)->bit80;
 }
 
 /* Fighter flag 0x98. */
@@ -2066,9 +2066,9 @@ void BtlCtrl_PlayMotion(s32 player, s32 motion, s32 loop, f32 blend) {
     BtlCapiBChr *chr = BtlChar_Get(player);
 
     if (chr != NULL) {
-        chr->motion = motion;
-        chr->motionBlend = blend;
-        chr->motionLoop = loop;
+        chr->scriptMotion = motion;
+        chr->scriptMotionBlend = blend;
+        chr->scriptMotionLoop = loop;
         BtlChar_SetHeldFlag(chr, 0xFA);
     }
 }
@@ -2136,7 +2136,7 @@ s32 BtlCtrl_IsMotionPlaying(s32 player) {
     BtlCapiBChr *chr = BtlChar_Get(player);
 
     if (chr != NULL) {
-        if (chr->motionLoop == 1) {
+        if (chr->scriptMotionLoop == 1) {
             return 1;
         }
         return BtlChar_TestFlag(chr, 0x31) == 0;
@@ -2437,7 +2437,7 @@ s32 BtlCtrl_Transform(s32 player, s32 id) {
         g->blast = BtlUtil_Clamp(BtlParam_GetSlotCost(chr, slot), g->blast, g->blastMax);
         BtlChar_SetHeldFlag(chr, slot + 0x116);
         BtlChar_ClearFlag(chr, 0xBE);
-        chr->stunTimer = 0;
+        chr->react.stunTimer = 0;
         return 1;
     }
     return 0;
@@ -2470,7 +2470,7 @@ s32 BtlCtrl_Fuse(s32 player, s32 id) {
         g->blast = BtlUtil_Clamp(BtlParam_GetCostAE(chr, slot), g->blast, g->blastMax);
         BtlChar_SetHeldFlag(chr, slot + 0x11A);
         BtlChar_ClearFlag(chr, 0xBE);
-        chr->stunTimer = 0;
+        chr->react.stunTimer = 0;
         g->hp = g->hpMax;
         BtlMember_GetGauge(chr, partner)->hp = BtlMember_GetGauge(chr, partner)->hpMax;
         return 1;
@@ -2501,7 +2501,7 @@ s32 BtlCtrl_ChangeMember(s32 player, s32 member) {
         chr->switchGauge = 100000;
         BtlChar_SetHeldFlag(chr, 0x11D);
         BtlChar_ClearFlag(chr, 0xBE);
-        chr->stunTimer = 0;
+        chr->react.stunTimer = 0;
     } else {
         BtlChar_SetHeldFlag(chr, 0x10E);
     }
@@ -2527,7 +2527,7 @@ s32 BtlCtrl_ForceFlag11x(s32 player, s32 kind) {
         }
         BtlChar_SetHeldFlag(chr, flag);
         BtlChar_ClearFlag(chr, 0xBE);
-        chr->stunTimer = 0;
+        chr->react.stunTimer = 0;
         return 1;
     }
     return 0;
@@ -2570,7 +2570,7 @@ s32 BtlCtrl_UseTechnique(s32 player, s32 kind) {
     BtlChar_SetHeldFlag(chr, kind + 0x120);
     BtlChar_SetHeldFlag(chr, 0x11E);
     BtlChar_ClearFlag(chr, 0xBE);
-    chr->stunTimer = 0;
+    chr->react.stunTimer = 0;
     chr->techDelay = 0;
     return 1;
 }
@@ -2587,7 +2587,7 @@ s32 BtlCtrl_ForceReaction(s32 player, u32 kind) {
     }
     BtlChar_SetHeldFlag(chr, kind + 0x112);
     BtlChar_ClearFlag(chr, 0xBE);
-    chr->stunTimer = 0;
+    chr->react.stunTimer = 0;
     return 1;
 }
 
@@ -2644,10 +2644,10 @@ s32 BtlCtrl_CanAct(s32 player) {
     if (BtlChar_IsFrozen(chr)) {
         return 0;
     }
-    if (chr->stunTimer > 0) {
+    if (chr->react.stunTimer > 0) {
         return 0;
     }
-    if (chr->reactId >= 3) {
+    if (chr->react.reaction >= 3) {
         return 0;
     }
     if (BtlChar_TestFlag(chr, 0xAF)) {
@@ -2797,7 +2797,7 @@ s32 BtlCharApi_GetButtonIcon(BtlCapiBChr *chr, u32 bit) {
     case 7:
         return 0x13;
     }
-    mask = chr->keyMask;
+    mask = chr->input.mask;
     mask += bit;
     switch (*mask) {
     case 0x1000:
@@ -3004,7 +3004,7 @@ s32 BtlSide_GetComboHits(s32 side) {
     BtlCapiBChr *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
-        return BtlChar_Get(BtlOpp_GetPlayer(chr))->comboHits;
+        return BtlChar_Get(BtlOpp_GetPlayer(chr))->combo.hits;
     }
     return 0;
 }
@@ -3019,7 +3019,7 @@ s32 BtlSide_GetComboDamage(s32 side) {
         if (BtlChar_TestFlag(opp, 0xED)) {
             return -1;
         }
-        return opp->comboDamage;
+        return opp->combo.damage;
     }
     return 0;
 }
@@ -3029,7 +3029,7 @@ s32 BtlSide_IsComboShown(s32 side) {
     BtlCapiBChr *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
-        return BtlChar_Get(BtlOpp_GetPlayer(chr))->comboTimer > 0;
+        return BtlChar_Get(BtlOpp_GetPlayer(chr))->combo.timer > 0;
     }
     return 0;
 }
@@ -3047,7 +3047,7 @@ s32 BtlSide_IsComboHitNew(s32 side) {
         if (Battle_GetWork()->flags & 0x2000) {
             return 0;
         }
-        return opp->comboNewHit;
+        return opp->combo.newHit;
     }
     return 0;
 }
