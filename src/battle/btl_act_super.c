@@ -216,7 +216,7 @@ void BtlSuper_SetFiringFlags(BtlSuperChr *chr) {
 /* Enables the technique's button command for the next input frame: fighter + 0x1594 = class (BtlInput_TestSwitch
    then sets command bit 0x1000, which input condition 0x6F reads). */
 void BtlSuper_SetClass(BtlSuperChr *chr, s32 cls) {
-    chr->inputClass = cls;
+    chr->techClass = cls;
 }
 
 /* Per-frame flags of the cinematic part of a technique. */
@@ -400,8 +400,8 @@ void BtlSuper_Begin(BtlSuperChr *chr, s32 cls, s32 force) {
     BtlChar_ClearFlagRange(chr, 0x9B, 0xA0);
     BtlChar_ClearFlagRange(chr, 0xA7, 0xAA);
     BtlChar_SetFlag(chr, 0x29);
-    chr->charge = 0.0f;
-    chr->chargeFull = 0;
+    chr->techCharge = 0.0f;
+    chr->techChargeFull = 0;
     BtlMember_GetActiveGauge(chr)->used[cls]++;
     if (!BtlChar_TestFlag(chr, 0xF)) {
         BtlChar_SetHeldFlag(chr, 0xE);
@@ -427,7 +427,7 @@ void BtlSuper_Leave(BtlSuperChr *chr, s32 cls) {
     if (BtlAct_IsTechniqueId(BtlAct_GetRequested(chr))) {
         return;
     }
-    chr->cooldown = BtlSuper_GetCooldownFrames(chr, cls);
+    chr->techDelay = BtlSuper_GetCooldownFrames(chr, cls);
     BtlChar_ClearFlagRange(chr, 0xA7, 0xAA);
     BtlChar_ClearFlag(chr, 0x11F);
     if ((BtlSuper_GetFlags(chr, cls) & 0x8000) && !BtlChar_TestFlag(chr, 0x98)) {
@@ -460,19 +460,19 @@ void BtlSuper_SetupRushDamage(BtlSuperChr *chr, s32 cls, s32 fromAnim) {
     s32 immune;
 
     BtlChar_SetFlag(chr, 0xA1);
-    chr->dmgHits = 0;
-    chr->dmgTotalStart = 0;
-    chr->dmgTotal = 0;
-    chr->dmgPerHit = 0;
-    chr->dmgFlags = 0;
-    chr->dmgDrainHealthStart = 0;
-    chr->drainHealth = 0;
-    chr->drainHealthStep = 0;
-    chr->dmgDrainKiStart = 0;
-    chr->drainKi = 0;
-    chr->drainKiStep = 0;
-    chr->drainFrom = -1;
-    chr->drainTo = -1;
+    chr->queue.hits = 0;
+    chr->queue.totalStart = 0;
+    chr->queue.total = 0;
+    chr->queue.perHit = 0;
+    chr->queue.flags = 0;
+    chr->queue.drainHealthStart = 0;
+    chr->queue.drainHealth = 0;
+    chr->queue.drainHealthStep = 0;
+    chr->queue.drainKiStart = 0;
+    chr->queue.drainKi = 0;
+    chr->queue.drainKiStep = 0;
+    chr->queue.drainFrom = -1;
+    chr->queue.drainTo = -1;
     if (!(BtlSuper_GetFlags(chr, cls) & 0x1000000)) {
         damage = BtlSuper_GetDamage(chr, cls, 0, 1);
         rem = damage % 10;
@@ -482,33 +482,33 @@ void BtlSuper_SetupRushDamage(BtlSuperChr *chr, s32 cls, s32 fromAnim) {
         if (BtlChar_TestFlag(chr, 0xA0)) {
             damage += damage / 2;
         }
-        if (chr->thrHalfDamage) {
+        if (chr->thr.halfDamage) {
             damage /= 2;
         }
         if (fromAnim) {
-            chr->dmgHits = BtlObjAnim_QueryEvent(BtlChar_GetObj(chr), 0x200000000, 0, 3);
+            chr->queue.hits = BtlObjAnim_QueryEvent(BtlChar_GetObj(chr), 0x200000000, 0, 3);
         } else {
-            chr->dmgHits = chr->rushHits;
+            chr->queue.hits = chr->rushHits;
         }
-        chr->dmgTotalStart = damage;
-        chr->dmgTotal = damage;
-        chr->dmgPerHit = damage / (chr->dmgHits + 5);
-        chr->dmgFlags = 0x180;
+        chr->queue.totalStart = damage;
+        chr->queue.total = damage;
+        chr->queue.perHit = damage / (chr->queue.hits + 5);
+        chr->queue.flags = 0x180;
         switch (cls) {
         case 2:
-            chr->dmgFlags = 0x800180;
+            chr->queue.flags = 0x800180;
             break;
         case 3:
-            chr->dmgFlags = 0x1000180;
+            chr->queue.flags = 0x1000180;
             break;
         case 4:
-            chr->dmgFlags = 0x2000180;
+            chr->queue.flags = 0x2000180;
             break;
         }
-        chr->dmgPerHit = BtlUtil_Min(chr->dmgPerHit, 15000);
-        rem = chr->dmgPerHit % 10;
+        chr->queue.perHit = BtlUtil_Min(chr->queue.perHit, 15000);
+        rem = chr->queue.perHit % 10;
         if (rem) {
-            chr->dmgPerHit = chr->dmgPerHit - rem + 10;
+            chr->queue.perHit = chr->queue.perHit - rem + 10;
         }
         immune = BtlOpp_GetParamWord0(chr) & 0x80;
         if (!immune) {
@@ -524,24 +524,24 @@ void BtlSuper_SetupRushDamage(BtlSuperChr *chr, s32 cls, s32 fromAnim) {
                     from = to;
                     to = swap;
                 }
-                chr->dmgDrainHealthStart = drain;
-                chr->drainHealth = drain;
+                chr->queue.drainHealthStart = drain;
+                chr->queue.drainHealth = drain;
                 halfSpan = (to - from) / 2;
                 if (halfSpan <= immune) {
                     halfSpan = 1;
                 }
-                chr->drainHealthStep = drain / halfSpan + 1;
-                chr->drainFrom = from;
-                chr->drainTo = to;
+                chr->queue.drainHealthStep = drain / halfSpan + 1;
+                chr->queue.drainFrom = from;
+                chr->queue.drainTo = to;
             }
         }
         if (BtlSuper_GetFlags(chr, cls) & 0x400) {
-            chr->dmgPerHit = 0;
-            chr->dmgFlags |= 0x200;
-            if (chr->thrFailed) {
-                chr->dmgTotalStart = 1;
-                chr->dmgTotal = 1;
-                chr->dmgFlags |= 3;
+            chr->queue.perHit = 0;
+            chr->queue.flags |= 0x200;
+            if (chr->thr.failed) {
+                chr->queue.totalStart = 1;
+                chr->queue.total = 1;
+                chr->queue.flags |= 3;
             }
         }
     }
@@ -609,8 +609,8 @@ void BtlAct_SuperBeamHandler(BtlSuperChr *chr, s32 phase) {
         if (chr->actionFrame == 1 && (chr->work[0] & 1)) {
             BtlChar_SavePlacement(chr);
             BtlAct_SetFormCurrent(chr);
-            BtlChange_RequestChara(chr->player, chr->formChara, chr->formCostume, chr->formVariant, chr->formAnimChara,
-                                   chr->form1C, chr->formVoiceChara);
+            BtlChange_RequestChara(chr->player, chr->form.chara, chr->form.costume, chr->form.variant, chr->form.animChara,
+                                   chr->form.anim1Chara, chr->form.voiceChara);
         }
         switch (BtlAnim_GetId(chr)) {
         case 0x105:
@@ -1105,19 +1105,19 @@ void BtlAct_SuperChargeHandler(BtlSuperChr *chr, s32 phase) {
             if (++*timer >= limit) {
                 chr->work[0] |= 1;
             }
-            chr->charge = *timer * 2.0f / limit;
+            chr->techCharge = *timer * 2.0f / limit;
             if (BtlMember_HasAbility(chr, 0x4A)) {
-                chr->charge *= 1.5f;
+                chr->techCharge *= 1.5f;
             }
-            if (chr->charge >= 1.0f) {
-                chr->charge = 1.0f;
+            if (chr->techCharge >= 1.0f) {
+                chr->techCharge = 1.0f;
                 BtlChar_SetFxBit(chr, 0x1E);
-                if (chr->chargeFull == 0) {
+                if (chr->techChargeFull == 0) {
                     BtlCharSnd_PlayCommon(chr, 0x14);
                     BtlCharSnd_PlayCommon(chr, 0x15);
                     BtlCharSnd_PlayCommon(chr, 0x1C);
                 }
-                chr->chargeFull++;
+                chr->techChargeFull++;
             }
             if (chr->work[0] & 1) {
                 BtlAnim_Request(chr, SUPER_ANIM(cls, 2), 0.0f);
@@ -1184,7 +1184,7 @@ void BtlAct_SuperChargeHandler(BtlSuperChr *chr, s32 phase) {
                 BtlChar_SetHeldFlag(chr, 0x9E);
                 BtlChar_SetHeldFlag(chr, 0x9D);
                 chr->work[0] |= 1;
-                if (chr->charge >= 1.0f) {
+                if (chr->techCharge >= 1.0f) {
                     BtlChar_SetHeldFlag(chr, 0x9C);
                 }
             }
@@ -1438,7 +1438,7 @@ void BtlAct_SuperQuickBeamHandler(BtlSuperChr *chr, s32 phase) {
             BtlAnim_SetDuration(chr, 0.1f);
             aim = 1;
             BtlAnim_AdvanceThen(chr, SUPER_ANIM(cls, 2), 0.0f, 0);
-            chr->charge = 0.0f;
+            chr->techCharge = 0.0f;
             break;
         case 0x107:
         case 0x129:
@@ -1527,7 +1527,7 @@ void BtlAct_SuperQuickLongBeamHandler(BtlSuperChr *chr, s32 phase) {
             BtlAnim_SetDuration(chr, 0.1f);
             aim = 1;
             BtlAnim_AdvanceThen(chr, SUPER_ANIM(cls, 2), 0.0f, 0);
-            chr->charge = 0.0f;
+            chr->techCharge = 0.0f;
             break;
         case 0x107:
         case 0x129:
