@@ -26,24 +26,7 @@ typedef struct BtlCharGetVitals {
 } BtlCharGetVitals;
 
 /* Fighter (0x1600 bytes). */
-typedef struct BtlCharGetChr {
-    /* 0x0000 */ s32 player;  /* roster index; sound channel base, voice handle, replay track */
-    /* 0x0004 */ s32 pad;     /* index into gPad */
-    /* 0x0008 */ s32 side;    /* roster index again (BtlChar_FindBySide) */
-    /* 0x000C */ s32 objId;   /* BtlObj_Get index */
-    /* 0x0010 */ Vec4 pos;
-    /* 0x0020 */ u8 unk20[0xFE0 - 0x20];
-    /* 0x0FE0 */ s32 stunTimer;  /* > 0: not free */
-    /* 0x0FE4 */ u8 unkFE4[0x1278 - 0xFE4];
-    /* 0x1278 */ s32 injectOn; /* CPU-controlled: no vibration */
-    /* 0x127C */ u8 unk127C[0x1320 - 0x127C];
-    /* 0x1320 */ s32 freeze;  /* > 0: BtlChar_IsFrozen */
-    /* 0x1324 */ u8 unk1324[0x1370 - 0x1324];
-    /* 0x1370 */ BtlCharVoice voice;
-    /* 0x1538 */ u8 unk1538[0x15D0 - 0x1538];
-    /* 0x15D0 */ BtlCharVib vib;
-    /* 0x15E8 */ u8 unk15E8[0x1600 - 0x15E8];
-} BtlCharGetChr; /* size 0x1600 */
+typedef BtlFighter BtlCharGetChr;
 
 /* Fighter roster (gBtlChars, 0x280 bytes). */
 typedef struct BtlCharGetRoster {

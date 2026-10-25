@@ -204,7 +204,7 @@ void *BtlChar_GetObj(BtlCharGetChr *chr) {
 
 /* Address of the fighter's position. */
 Vec4 *BtlChar_GetPos(BtlCharGetChr *chr) {
-    return &chr->pos;
+    return &chr->pose.pos;
 }
 
 /* The fighter's controller. */
@@ -222,7 +222,7 @@ s32 BtlChar_IsFree(BtlCharGetChr *chr) {
     if (BtlChar_IsDead(chr) || BtlChar_TestFlag(chr, 0xBE)) {
         return 0;
     }
-    return chr->stunTimer <= 0;
+    return chr->react.stunTimer <= 0;
 }
 
 /* 1 when the active member has no health left. */
