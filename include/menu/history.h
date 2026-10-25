@@ -31,9 +31,9 @@ typedef struct HistReward {
 } HistReward; /* 0x3C */
 
 typedef struct HistProgress {
-    /* 0x00 */ s32 unk0;
+    /* 0x00 */ s32 language;
     /* 0x04 */ s32 baseFile;
-    /* 0x08 */ void *unk8[3];
+    /* 0x08 */ void *loadBuf[3];
     /* 0x14 */ s32 flags;
     /* 0x18 */ s32 mode;
     /* 0x1C */ s32 prevMode;

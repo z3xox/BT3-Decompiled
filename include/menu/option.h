@@ -51,7 +51,7 @@ typedef struct Option {
     /* 0x188 */ s32 mcBusy;         /* a memory card flow is running: Option_Run skips Option_Input */
     /* 0x18C */ s32 started;
     /* 0x190 */ s32 greeted;        /* the second greeting line was started */
-    /* 0x194 */ s32 unk194;
+    /* 0x194 */ s32 exitSaving;
     /* 0x198 */ s32 dirty;          /* a setting was changed: save on leaving */
     /* 0x19C */ s32 *bgmIds;        /* section 37 + 0x10: music ids of the sound test */
     /* 0x1A0 */ s32 bgmCount;

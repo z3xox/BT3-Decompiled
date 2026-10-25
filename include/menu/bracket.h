@@ -126,9 +126,9 @@ typedef struct TourMatches {
 } TourMatches; /* 0x100 */
 
 typedef struct TourProgress2 {
-    /* 0x000 */ s32 unk0;
+    /* 0x000 */ s32 language;
     /* 0x004 */ s32 baseFile;
-    /* 0x008 */ void *unk8[3];
+    /* 0x008 */ void *loadBuf[3];
     /* 0x014 */ s32 flags;       /* MPROG_; 0x10 = a tournament is running, 0x20 = its opening speech was heard */
     /* 0x018 */ s32 mode;
     /* 0x01C */ u8 unk1C[0x64];

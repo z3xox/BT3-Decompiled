@@ -98,9 +98,9 @@ extern void ItemSet_GetBonus(u16 *items, ZItemEntry *table, s32 *out);
 
 /* gProgress as this mode uses it (overlay_common.h's MenuProgress has no names here). */
 typedef struct ZProgress {
-    /* 0x000 */ s32 unk0;
+    /* 0x000 */ s32 language;
     /* 0x004 */ s32 baseFile;
-    /* 0x008 */ void *unk8[3];
+    /* 0x008 */ void *loadBuf[3];
     /* 0x014 */ s32 flags;         /* ZPROG_ */
     /* 0x018 */ s32 mode;
     /* 0x01C */ u8 unk1C[0x690 - 0x1C];

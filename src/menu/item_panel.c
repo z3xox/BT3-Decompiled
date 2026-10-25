@@ -282,7 +282,7 @@ typedef struct ItemPanelSave {
     /* 0x0000 */ u8 unk0[0x1808];
     /* 0x1808 */ struct {
         MItemSet set[3];
-        s32 unk30;
+        s32 exp;
         u16 level;
         u16 unk36;
     } custom[97];

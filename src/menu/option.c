@@ -319,7 +319,7 @@ s32 Option_Input(void) {
         } else if (gPad[0].gamePressed & PADG_TRIANGLE) {
             if (gOption->cursor == OPT_ITEM_EXIT) {
                 if (gOption->dirty != 0) {
-                    gOption->unk194 = 1;
+                    gOption->exitSaving = 1;
                     gOption->state = OPT_ST_SAVED;
                     McFlow_Start(4); /* save, with the prompt used on leaving */
                     gOption->mcBusy = 1;
@@ -2222,7 +2222,7 @@ void Option_ResetScissor(void) {
 
 /* McFlow "done" callback: the settings are saved. */
 void Option_OnSaved(void) {
-    gOption->unk194 = 0;
+    gOption->exitSaving = 0;
     gOption->dirty = 0;
 }
 
