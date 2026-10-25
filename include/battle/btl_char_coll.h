@@ -63,21 +63,7 @@ typedef struct BtlCollGauge {
     /* 0x20 */ s32 variant;
 } BtlCollGauge;
 
-typedef struct BtlCollPose {
-    /* 0x00 */ Vec4 pos;
-    /* 0x10 */ Vec4 rot;        /* rot.y: yaw the hit direction is compared with */
-    /* 0x20 */ Vec4 dispOfs;      /* dispOfs.y: distance from the origin to the feet */
-    /* 0x30 */ u8 unk30[0x50];
-    /* 0x80 */ Vec4 dir;      /* forward vector (used as the deflect direction for a motionless blast) */
-    /* 0x90 */ f32 pitch;
-    /* 0x94 */ f32 yaw;         /* facing yaw (fighter + 0xA4) */
-    /* 0x98 */ f32 speed;
-    /* 0x9C */ f32 velY;        /* vertical speed: zeroed on landing, halved when flag 0x11 rises */
-    /* 0xA0 */ u8 unkA0[0x10];
-    /* 0xB0 */ BtlGroundVec groundPos;  /* copy of the ground query below the fighter */
-    /* 0xC0 */ BtlGroundVec groundNrm;
-    /* 0xD0 */ s32 groundFlags;
-} BtlCollPose;
+typedef BtlFighterPose BtlCollPose;
 
 /* Result of the stage query under the fighter, inside the object's work buffer. */
 typedef struct BtlCollGround {
@@ -107,90 +93,13 @@ typedef struct BtlCollObj {
 
 /* Throw / catch description shared by the two fighters of a throw (fighter + 0xE90). The attacker fills its own
    copy and the fields are then copied into the victim's. */
-typedef struct BtlCollThrow {
-    /* 0x00 */ s32 tech;      /* BtlSuper_GetId(attacker, slot) */
-    /* 0x04 */ s32 atkSide;
-    /* 0x08 */ s32 defSide;
-    /* 0x0C */ s32 slot;
-    /* 0x10 */ s32 stepCount;     /* BtlSuper_GetStepCount */
-    /* 0x14 */ s32 landingKind;     /* BtlSuper_GetLandingKind */
-    /* 0x18 */ s32 partnerStep;     /* BtlSuper_GetThrowPartnerStep, or -1 */
-    /* 0x1C */ s32 defFormStep;     /* BtlSuper_GetLastStep, or -1 */
-    /* 0x20 */ s32 partnerChara;     /* BtlSuper_GetThrowChara; -1 in the victim */
-    /* 0x24 */ s32 partnerCostume;     /* BtlSuper_GetThrowCostume; 0 in the victim */
-    /* 0x28 */ s32 partnerVariant;     /* BtlSuper_GetThrowGauge20; 0 in the victim */
-    /* 0x2C */ s32 partnerSlot;     /* BtlSuper_GetThrowObjectSlot; 1 in the victim */
-    /* 0x30 */ s32 useAngles;     /* technique bit 0x400000 */
-    /* 0x34 */ s32 endNeutral;     /* technique bit 0x400: BtlChar_FrameMod(2) != 0 */
-    /* 0x38 */ s32 holdVictim;     /* technique bit 0x100000 */
-    /* 0x3C */ s32 turnBack;     /* technique bit 0x800000 */
-    /* 0x40 */ s32 koSwitch;     /* BtlSuper_GetFlagsA bit 0x2000000 */
-    /* 0x44 */ s32 caughtLoop;     /* 1 when the catch reaction is 0x1E */
-    /* 0x48 */ s32 atkFormChange;     /* technique bit 0x2000 and attacker gauge partnerChara == 0 */
-    /* 0x4C */ s32 defFormChange;     /* technique bit 0x80000 and victim gauge partnerChara == 0 */
-    /* 0x50 */ s32 placeAtStart;     /* technique bit 0x800 */
-    /* 0x54 */ s32 unk54;     /* technique bit 0x10000 */
-    /* 0x58 */ s32 unk58;     /* victim's state has table bit 0x800 */
-    /* 0x5C */ s32 unk5C;     /* technique bit 0x4000000 */
-    /* 0x60 */ f32 angleYaw;     /* BtlSuper_GetThrowAngleA */
-    /* 0x64 */ f32 anglePitch;     /* BtlSuper_GetThrowAngleB */
-} BtlCollThrow; /* size 0x68 */
+typedef BtlFighterThrow BtlCollThrow;
 
 /* Pending hit reaction of a fighter (fighter + 0xFB0). */
-typedef struct BtlCollReact {
-    /* 0x00 */ s32 reaction;        /* reaction to start; 0 = none, 2 = no flinch, 0x22 = caught; a throw needs the
-                                 attacker's id < 3 */
-    /* 0x04 */ s32 unk4[2];
-    /* 0x0C */ s32 back;      /* BtlColl_IsFacing(chr, dirYaw): the hit travels the way the fighter faces, i.e. it
-                                 comes from behind; for a throw: technique bit 0x10000000 */
-    /* 0x10 */ s32 unk10[2];
-    /* 0x18 */ s32 scale;
-    /* 0x1C */ f32 yaw;    /* yaw of the hit direction */
-    /* 0x20 */ f32 turnYaw;   /* yaw to turn to (with flag 0x94) */
-    /* 0x24 */ f32 turnPitch;
-    /* 0x28 */ s32 unk28[2];
-    /* 0x30 */ s32 stun;      /* > 0: not free (BtlChar_IsFree); set from BtlSkill_GetFrames for reactions 0x17..0x1C */
-    /* 0x34 */ s32 unk34;
-    /* 0x38 */ s32 unk38;
-    /* 0x3C */ s32 unk3C[2];
-    /* 0x44 */ s32 slot;      /* slot of the rush attack that hit */
-} BtlCollReact;
+typedef BtlFighterReact BtlCollReact;
 
 /* Fighter (0x1600 bytes). */
-typedef struct BtlCollChr {
-    /* 0x0000 */ s32 side;
-    /* 0x0004 */ s32 pad;
-    /* 0x0008 */ s32 index;
-    /* 0x000C */ s32 objId;
-    /* 0x0010 */ BtlCollPose pose;
-    /* 0x00E8 */ u8 unkE8[0xE00 - 0xE8];
-    /* 0x0E00 */ s32 dodgeA;       /* counters consumed by an automatic dodge */
-    /* 0x0E04 */ s32 dodgeB;
-    /* 0x0E08 */ s32 skillTimer;
-    /* 0x0E0C */ s32 skillSlot;       /* 0 / 1: which of flags 0xDE / 0xDF the dodge sets */
-    /* 0x0E10 */ s32 skillKiRate;
-    /* 0x0E14 */ s32 skillTimerC;
-    /* 0x0E18 */ s32 noFlinch;     /* > 0: every hit gets reaction 2 (no flinch) */
-    /* 0x0E1C */ u8 unkE1C[0xE44 - 0xE1C];
-    /* 0x0E44 */ f32 techCharge;
-    /* 0x0E48 */ u8 unkE48[0xE90 - 0xE48];
-    /* 0x0E90 */ BtlCollThrow thr;
-    /* 0x0EF8 */ u8 unkEF8[0xF40 - 0xEF8];
-    /* 0x0F40 */ s32 hitTarget;
-    /* 0x0F44 */ u8 unkF44[0xFB0 - 0xF44];
-    /* 0x0FB0 */ BtlCollReact react;
-    /* 0x0FF8 */ u8 unkFF8[0x106C - 0xFF8];
-    /* 0x106C */ s32 blastDodgeWindow;      /* > 0: dodge allowed without using a counter; zeroed by a rush hit */
-    /* 0x1070 */ s32 counterWindow;
-    /* 0x1074 */ s32 deflectWindow;
-    /* 0x1078 */ u8 unk1078[0x1288 - 0x1078];
-    /* 0x1288 */ u64 actBits;      /* classes of the actions started this frame (BtlColl_AddActionBit) */
-    /* 0x1290 */ s32 unk1290;
-    /* 0x1294 */ s32 framesLeftOverride;
-    /* 0x1298 */ u8 unk1298[0x1360 - 0x1298];
-    /* 0x1360 */ Vec4 deflectDir;  /* direction a deflected blast is sent in */
-    /* 0x1370 */ u8 unk1370[0x1600 - 0x1370];
-} BtlCollChr; /* size 0x1600 */
+typedef BtlFighter BtlCollChr;
 
 void BtlColl_Update(void);
 void BtlColl_UpdateFrozen(BtlCollChr *chr);
