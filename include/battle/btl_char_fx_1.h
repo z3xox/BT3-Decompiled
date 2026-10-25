@@ -15,13 +15,7 @@
 typedef BtlFighterPose FxPose;
 
 /* What BtlMember_GetActiveGauge returns: the active member's gauge block. */
-typedef struct FxGauge {
-    /* 0x00 */ s32 health;
-    /* 0x04 */ s32 healthMax;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 ki;
-    /* 0x10 */ s32 kiMax;
-} FxGauge;
+typedef BtlMemberGauge FxGauge;
 
 /* An action record of a battle object (obj + 0x91C points at the current one): only the attribute word. */
 typedef struct FxObjAction {

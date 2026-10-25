@@ -16,14 +16,7 @@
  */
 
 /* Active member's vitals, the block BtlMember_GetActiveGauge(chr) returns: chr + 0x9A4 + chr->member * 0xA4 + 0x40. */
-typedef struct BtlCharApiVitals {
-    /* 0x00 */ s32 hp;     /* < 1 = down (BtlChar_IsDead) */
-    /* 0x04 */ s32 hpMax;
-    /* 0x08 */ u8 unk8[0x20 - 0x8];
-    /* 0x20 */ s32 variant;  /* member +0x60 */
-    /* 0x24 */ u8 unk24[0x30 - 0x24];
-    /* 0x30 */ s32 bodyChanged;  /* member +0x70; non-zero makes the win / lose talk use character 0x56 (btl_seq.c) */
-} BtlCharApiVitals;
+typedef BtlMemberGauge BtlCharApiVitals;
 
 /* Fighter (0x1600 bytes, BtlChar_Get / BtlChar_FindByObjId). */
 typedef BtlFighter BtlCharApiChr;

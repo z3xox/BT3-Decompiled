@@ -394,7 +394,7 @@ s32 BtlCharApi_IsTargetBelowHalfHp(s32 objId, s32 targetId) {
         if (BtlChar_IsDead(target)) {
             return 0;
         }
-        return BtlMember_GetActiveGauge(target)->hp < BtlMember_GetActiveGauge(target)->hpMax / 2;
+        return BtlMember_GetActiveGauge(target)->health < BtlMember_GetActiveGauge(target)->healthMax / 2;
     }
     return result;
 }

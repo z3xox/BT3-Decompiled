@@ -406,15 +406,7 @@ typedef struct BtlActIRoster {
 } BtlActIRoster;
 
 /* Active member's gauge block (BtlMember_GetActiveGauge). */
-typedef struct BtlActIGauge {
-    /* 0x00 */ s32 health;
-    /* 0x04 */ s32 healthMax;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 ki;
-    /* 0x10 */ s32 kiMax;
-    /* 0x14 */ u8 unk14[0x38 - 0x14];
-    /* 0x38 */ s32 skillUses[2];     /* times each skill slot was used */
-} BtlActIGauge;
+typedef BtlMemberGauge BtlActIGauge;
 
 s32 BtlAct_SwitchArriveWait(BtlActIChr *chr, s32 phase);
 s32 BtlAct_SwitchArriveLand(BtlActIChr *chr, s32 phase);

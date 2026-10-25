@@ -85,10 +85,7 @@ typedef struct BtlStatObj {
 /* ---- fighter ------------------------------------------------------------------------------------------------- */
 
 /* What BtlMember_GetActiveGauge returns: the active member's gauge block. */
-typedef struct BtlStatGauge {
-    /* 0x0 */ s32 health; /* 10000 per bar */
-    /* 0x4 */ s32 healthMax;
-} BtlStatGauge;
+typedef BtlMemberGauge BtlStatGauge;
 
 /* What BtlMember_GetActive returns: the active member entry. */
 typedef BtlMember BtlStatMember;

@@ -546,7 +546,7 @@ s32 BtlAct_CanUseTechnique(BtlActJChr *chr, s32 slot) {
             check = !BtlChar_TestFlag(chr, 0x11F);
         }
         if (check) {
-            if (BtlMember_GetActiveGauge(chr)->techLock[slot] > 0) {
+            if (BtlMember_GetActiveGauge(chr)->fired[slot] > 0) {
                 return 0;
             }
         }
@@ -642,7 +642,7 @@ s32 BtlAct_CanUseSkill(BtlActJChr *chr, u32 slot) {
     if (!BtlMember_HasBlast(chr, BtlSkill_GetBlastCost(chr, slot))) {
         return 0;
     }
-    if ((flags & 0x10) && BtlMember_GetActiveGauge(chr)->skillLock[slot] > 0) {
+    if ((flags & 0x10) && BtlMember_GetActiveGauge(chr)->used[slot] > 0) {
         return 0;
     }
     switch (BtlSkill_GetId(chr, slot)) {

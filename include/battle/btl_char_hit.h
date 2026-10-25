@@ -64,17 +64,7 @@ typedef struct HitObj {
 typedef BtlMember HitMember;
 
 /* Gauge block of the active member (BtlMember_GetActiveGauge). */
-typedef struct HitGauge {
-    /* 0x00 */ s32 health;
-    /* 0x04 */ s32 healthMax;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 ki;
-    /* 0x10 */ s32 kiMax;
-    /* 0x14 */ s32 blast;
-    /* 0x18 */ s32 blastMax;
-    /* 0x1C */ s32 maxPower;
-    /* 0x20 */ s32 variant;
-} HitGauge;
+typedef BtlMemberGauge HitGauge;
 
 /* fighter + 0xF30 */
 typedef BtlFighterHitStatus HitStatus;

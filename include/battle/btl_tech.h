@@ -259,12 +259,7 @@ typedef struct BtlTechBRoster {
 /* Member entry and gauge block (BtlMember / BtlMemberGauge in btl_char_member.h). */
 typedef BtlMember BtlTechBMember;
 
-typedef struct BtlTechBGauge {
-    /* 0x00 */ s32 health;
-    /* 0x04 */ s32 healthMax;
-    /* 0x08 */ u8 unk8[0x20 - 0x8];
-    /* 0x20 */ s32 variant;
-} BtlTechBGauge;
+typedef BtlMemberGauge BtlTechBGauge;
 
 /* Fighter (0x1600 bytes). */
 typedef BtlFighter BtlTechBChr;

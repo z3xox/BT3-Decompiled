@@ -15,21 +15,7 @@
 typedef BtlFighterPose BtlActCPose;
 
 /* Active member's gauge block (what BtlMember_GetActiveGauge returns). */
-typedef struct BtlActCGauge {
-    /* 0x00 */ s32 hp;
-    /* 0x04 */ s32 hpMax;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 ki;
-    /* 0x10 */ s32 kiMax;
-    /* 0x14 */ s32 blast;
-    /* 0x18 */ s32 blastMax;
-    /* 0x1C */ s32 maxPower;
-    /* 0x20 */ s32 variant;     /* non-zero: getting up (0xE1) plays voice 0x20 / 0x21 once */
-    /* 0x24 */ s32 lowHealth;
-    /* 0x28 */ s32 lowHealthIdle;     /* non-zero: a downed fighter must mash to recover */
-    /* 0x2C */ s32 variantVoiced;     /* that voice was played */
-    /* 0x30 */ s32 bodyChanged;
-} BtlActCGauge;
+typedef BtlMemberGauge BtlActCGauge;
 
 /* Member entry (what BtlMember_GetActive returns). */
 typedef BtlMember BtlActCMember;
@@ -87,17 +73,7 @@ typedef BtlFighterPose BtlActDPose;
 typedef BtlFighterAttack BtlActDAttack;
 
 /* Active member's gauge block (BtlMember_GetActiveGauge). */
-typedef struct BtlActDGauge {
-    /* 0x00 */ s32 hp;
-    /* 0x04 */ s32 hpMax;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 ki;
-    /* 0x10 */ s32 kiMax;
-    /* 0x14 */ u8 unk14[0x28 - 0x14];
-    /* 0x28 */ s32 lowHealthIdle;      /* non-zero: second idle motion, flag 0x96 every frame */
-    /* 0x2C */ s32 variantVoiced;
-    /* 0x30 */ s32 bodyChanged;
-} BtlActDGauge;
+typedef BtlMemberGauge BtlActDGauge;
 
 /* Member entry (BtlMember_GetActive). */
 typedef BtlMember BtlActDMember;
@@ -142,15 +118,7 @@ s32 BtlAct_HomingDashHandler(BtlActDChr *chr, s32 phase);
 typedef BtlFighterPose BtlActEPose;
 
 /* Active member's gauge block (BtlMember_GetActiveGauge). */
-typedef struct BtlActEGauge {
-    /* 0x00 */ s32 hp;
-    /* 0x04 */ s32 hpMax;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 ki;
-    /* 0x10 */ s32 kiMax;
-    /* 0x14 */ u8 unk14[0x28 - 0x14];
-    /* 0x28 */ s32 lowHealthIdle;
-} BtlActEGauge;
+typedef BtlMemberGauge BtlActEGauge;
 
 /* Attack parameter block (see BtlActAttack in btl_char_action.h). */
 typedef BtlFighterAttack BtlActEAttack;

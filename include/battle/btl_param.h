@@ -168,10 +168,7 @@ typedef struct BtlTechObj {
 typedef BtlMember BtlTechMember;
 
 /* Gauge block of the active member (BtlMember_GetActiveGauge). */
-typedef struct BtlTechGauge {
-    /* 0x00 */ u8 unk0[0x20];
-    /* 0x20 */ s32 variant;         /* non-zero: BtlParam_GetType turns types 2..4 into 7 / 8 */
-} BtlTechGauge;
+typedef BtlMemberGauge BtlTechGauge;
 
 /* The pad the fighter reads (BtlChar_GetPad). */
 typedef struct BtlTechPad {

@@ -19,11 +19,7 @@ typedef struct BtlVoiceEntry {
 } BtlVoiceEntry; /* size 0x8 */
 
 /* What BtlMember_GetActiveGauge returns: the active member's block + 0x40. */
-typedef struct BtlCharGetVitals {
-    /* 0x00 */ s32 hp;
-    /* 0x04 */ u8 unk4[0x30 - 0x4];
-    /* 0x30 */ s32 bodyChanged;
-} BtlCharGetVitals;
+typedef BtlMemberGauge BtlCharGetVitals;
 
 /* Fighter (0x1600 bytes). */
 typedef BtlFighter BtlCharGetChr;

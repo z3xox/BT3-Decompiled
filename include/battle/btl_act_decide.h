@@ -23,17 +23,7 @@ typedef BtlFighterPose BtlActJPose;
 typedef BtlMember BtlActJMember;
 
 /* Gauge block of a member (BtlMember_GetGauge / BtlMember_GetActiveGauge). */
-typedef struct BtlActJGauge {
-    /* 0x00 */ s32 health;
-    /* 0x04 */ u8 unk4[0x20 - 0x4];
-    /* 0x20 */ s32 variant;
-    /* 0x24 */ u8 unk24[0x30 - 0x24];
-    /* 0x30 */ s32 bodyChanged;        /* non-zero: this member cannot be fused with */
-    /* 0x34 */ s32 fused;
-    /* 0x38 */ s32 skillLock[2]; /* > 0: skill slot 0 / 1 (blast 1) with flag 0x10 is locked */
-    /* 0x40 */ u8 unk40[0x4C - 0x40];
-    /* 0x4C */ s32 techLock[5];  /* indexed by technique slot (2..4 -> + 0x54..0x5C): > 0 = a flag-0x2000 technique is locked */
-} BtlActJGauge;
+typedef BtlMemberGauge BtlActJGauge;
 
 /* Form-change request (chr + 0x12CC), the same block btl_char_action.h calls BtlActForm. */
 typedef BtlFighterForm BtlActJForm;

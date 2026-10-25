@@ -2025,7 +2025,7 @@ void BtlSkill_Apply(BtlActIChr *chr, s32 slot) {
         chr->rateBonus = valF;
         chr->skillTimerF = time;
     }
-    BtlMember_GetActiveGauge(chr)->skillUses[slot]++;
+    BtlMember_GetActiveGauge(chr)->used[slot]++;
     if (kind != 0) {
         chr->slotOn[idx] = 1;
     }

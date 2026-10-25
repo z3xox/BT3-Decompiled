@@ -57,11 +57,7 @@ typedef struct BtlCollHit {
 } BtlCollHit;
 
 /* Active member's gauge block (BtlMember_GetActiveGauge). */
-typedef struct BtlCollGauge {
-    /* 0x00 */ s32 health;
-    /* 0x04 */ u8 unk4[0x20 - 0x4];
-    /* 0x20 */ s32 variant;
-} BtlCollGauge;
+typedef BtlMemberGauge BtlCollGauge;
 
 typedef BtlFighterPose BtlCollPose;
 

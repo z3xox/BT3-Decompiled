@@ -67,10 +67,7 @@ s32 BtlAct_RushFinishHandler(BtlActAChr *chr, s32 phase);
 typedef BtlFighterPose BtlActBPose;
 
 /* Active member's gauge block (BtlMember_GetActiveGauge). */
-typedef struct BtlActBGauge {
-    /* 0x00 */ u8 unk0[0x28];
-    /* 0x28 */ s32 lowHealthIdle;      /* non-zero: a downed fighter has to mash before it may act (chr + 0x1000) */
-} BtlActBGauge;
+typedef BtlMemberGauge BtlActBGauge;
 
 /* Latched attack parameters (chr + 0xCF8); BtlActAttack in btl_char_action.h. */
 typedef BtlFighterAttack BtlActBAttack;

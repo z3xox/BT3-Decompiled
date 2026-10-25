@@ -36,14 +36,7 @@ typedef struct BtlSuperObj {
 } BtlSuperObj;
 
 /* Active member's gauge block (BtlMember_GetActiveGauge). */
-typedef struct BtlSuperGauge {
-    /* 0x00 */ s32 health;
-    /* 0x04 */ u8 unk4[0x20 - 0x4];
-    /* 0x20 */ s32 variant;
-    /* 0x24 */ u8 unk24[0x38 - 0x24];
-    /* 0x38 */ s32 used[5];    /* [class]: times a technique of that class was started (only 2..4 written) */
-    /* 0x4C */ s32 fired[5];   /* [class]: times a self-destruct technique (flag B 0x2000) was fired */
-} BtlSuperGauge;
+typedef BtlMemberGauge BtlSuperGauge;
 
 /* Fighter (0x1600 bytes): the fields this module touches. */
 typedef BtlFighter BtlSuperChr;
@@ -101,19 +94,7 @@ typedef BtlFighterReact ActGReact;
 typedef BtlFighterForm ActGForm;
 
 /* Gauge block of the active member (BtlMember_GetActiveGauge). */
-typedef struct ActGGauge {
-    /* 0x00 */ s32 health;
-    /* 0x04 */ s32 healthMax;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 ki;
-    /* 0x10 */ s32 kiMax;
-    /* 0x14 */ s32 blast;
-    /* 0x18 */ s32 blastMax;
-    /* 0x1C */ s32 maxPower;
-    /* 0x20 */ s32 variant;     /* model variant in use; 0 = undamaged */
-    /* 0x24 */ u8 unk24[0x4C - 0x24];
-    /* 0x4C */ s32 fired[5];    /* by technique slot: counts self-destruct techniques (flag B 0x2000) used */
-} ActGGauge;
+typedef BtlMemberGauge ActGGauge;
 
 /* Damage queue (chr + 0xD94). Same layout as BtlMemberQueue in btl_char_member.h, plus the word after it. */
 typedef BtlFighterQueue ActGQueue;

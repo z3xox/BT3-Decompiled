@@ -227,7 +227,7 @@ s32 BtlChar_IsFree(BtlCharGetChr *chr) {
 
 /* 1 when the active member has no health left. */
 s32 BtlChar_IsDead(BtlCharGetChr *chr) {
-    return BtlMember_GetActiveGauge(chr)->hp <= 0;
+    return BtlMember_GetActiveGauge(chr)->health <= 0;
 }
 
 /* 1 when the active member's word 0x70 is set. */
