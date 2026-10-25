@@ -28,7 +28,7 @@ typedef struct BtlCharApiObj {
     /* 0xC80 */ f32 animStep;
     /* 0xC84 */ u8 unkC84[0xCAC - 0xC84];
     /* 0xCAC */ s8 hitCount;
-    /* 0xCAD */ s8 hitIndex;          /* expected to be ~hitCount */
+    /* 0xCAD */ s8 hitNo;          /* expected to be ~hitCount */
     /* 0xCAE */ s8 eventCount;       /* eventCount in btl_obj_anim.h: number of animation events (BtlObjAnim_TestEvent) */
 } BtlCharApiObj;
 
@@ -198,7 +198,7 @@ typedef struct BtlCapiBObj {
     /* 0x930 */ BtlCapiBMoves *moves;
     /* 0x934 */ u8 unk934[0xCAC - 0x934];
     /* 0xCAC */ s8 hitCount;
-    /* 0xCAD */ s8 hitIndex;          /* expected to be ~hitCount */
+    /* 0xCAD */ s8 hitNo;          /* expected to be ~hitCount */
 } BtlCapiBObj;
 
 /* Blast list (EftHit_GetList): 64 records of 0x190 bytes and a count. */
@@ -386,7 +386,7 @@ s32 BtlCtrl_CanAct(s32 player);
 /* --- the character-change request, for the loader --- */
 s32 BtlChange_IsPendingType0(s32 player);
 s32 BtlChange_IsPendingType1(s32 player);
-void BtlChange_GetArgs(s32 *chara, s32 *costume, s32 *variant, s32 *animChara, s32 *animChara2, s32 *voiceChara, s32 *slot);
+void BtlChange_GetArgs(s32 *chara, s32 *costume, s32 *variant, s32 *animChara, s32 *anim1Chara, s32 *voiceChara, s32 *slot);
 void BtlChange_NotifyTaken(void);
 void BtlChange_NotifyLoaded(void);
 s32 BtlChange_IsReady(void);

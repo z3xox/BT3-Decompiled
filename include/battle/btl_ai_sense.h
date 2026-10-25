@@ -55,7 +55,7 @@ typedef struct AiActAtk {
     /* 0x00 */ s32 hold;    /* (m) AI button bits sent as "hold" every frame of the run phase */
     /* 0x04 */ s32 press;   /* (m) AI button bits sent as "press" (every other frame) */
     /* 0x08 */ f32 charge;  /* (m) how long RUSH / BLAST stay held: compared with BtlCharApi_GetChargeRate(side) */
-    /* 0x0C */ s32 state;   /* (m) the fighter's state id when the input was chosen */
+    /* 0x0C */ s32 anim;   /* (m) the fighter's animation id when the input was chosen */
     /* 0x10 */ s32 flags;   /* (m) AIACT_ATK_* */
     /* 0x14 */ s32 waitTimer;  /* (m) 15: frames to wait for the fighter's state to change */
     /* 0x18 */ s32 idleTimer;  /* (m) 15: frames spent in state class 0 before giving up (option 10) */
@@ -87,7 +87,7 @@ typedef struct AiActPad {
 /* Situation: side + 0x2C0. */
 typedef struct AiActStatus {
     /* 0x00 */ u64 flags;     /* (m) situation bits rebuilt every frame by BtlAiSense_Update (AIACT_SIT_*) */
-    /* 0x08 */ s32 hitPendingTimer; /* (m) misnamed, nothing about being down: 4 while BtlCharApi_IsAttackHitPending is 1 in state classes 15..17, then counted down; BtlAiSense_IsBusy reports busy until it runs out */
+    /* 0x08 */ s32 hitPendingTimer; /* (m) 4 while BtlCharApi_IsAttackHitPending is 1 in state classes 15..17, then counted down; BtlAiSense_IsBusy reports busy until it runs out */
     /* 0x0C */ s32 oppClass;  /* (m) the opponent's state class when bit 29 was last raised */
     /* 0x10 */ s32 oppAction; /* (m) */
     /* 0x14 */ s32 react;     /* (m) persistent bits. Bits 0, 1 and 3 are rebuilt every frame; bits 5..20 are
@@ -118,15 +118,15 @@ typedef struct AiActSide {
 typedef struct AiActTables {
     /* 0x000 */ u8 unk000[0x288];
     /* 0x288 */ u16 actFlags[0x80];   /* by action id */
-    /* 0x388 */ s8 stateClass[0x200]; /* (m) by fighter state id */
-    /* 0x588 */ u8 stateFlags[1];     /* (m) by fighter state id; bit 0 makes sense stop early */
+    /* 0x388 */ s8 animClass[0x200]; /* (m) by fighter animation id */
+    /* 0x588 */ u8 animFlags[1];     /* (m) by fighter animation id; bit 0 makes sense stop early */
 } AiActTables;
 
 /* The same tables seen from +8, the form about half of the functions use. */
 typedef struct AiActTables8 {
     /* 0x000 */ u8 unk000[0x380];
-    /* 0x380 */ u8 stateClass[0x200]; /* (m) */
-    /* 0x580 */ u8 stateFlags[1];     /* (m) */
+    /* 0x380 */ u8 animClass[0x200]; /* (m) */
+    /* 0x580 */ u8 animFlags[1];     /* (m) */
 } AiActTables8;
 
 typedef struct AiActData {

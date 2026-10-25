@@ -57,7 +57,7 @@ extern f32 BtlCharApi_GetRadius(s32 objId);                   /* body radius: ob
 extern void BtlCharApi_GetVelocity(s32 objId, BtlAiVec *out);       /* fighter transform +0x30 */
 extern s32 BtlCharApi_IsClose(s32 objId);                   /* BtlChar_TestFlag(chr, 0x13) */
 extern s32 BtlCharApi_TestFlag0F(s32 objId);                   /* BtlChar_TestFlag(chr, 0xF) */
-extern s32 BtlCharApi_GetAnimId(s32 objId);                   /* fighter +0x974: current state id */
+extern s32 BtlCharApi_GetAnimId(s32 objId);                   /* fighter +0x974: current animation id */
 extern s32 BtlCharApi_IsInputInjected(s32 objId);                   /* fighter +0x1278: input comes from the AI */
 
 /* Stage (0x23Fxxx / 0x242xxx, not decompiled). */
@@ -539,7 +539,7 @@ void BtlAiMove_Steer(BtlAiWork *s, BtlAiVec *to, s32 kind) {
     side = s->objId;
     flags = &s->seq.flags;
     tbl = mgr->data->act;
-    cls = tbl->actClass[BtlCharApi_GetAnimId(side)];
+    cls = tbl->classByAnim[BtlCharApi_GetAnimId(side)];
     fly = BtlCharApi_TestFlag0F(s->objId);
     BtlCharApi_GetPos(s->objId, &pos);
     BtlCharApi_GetPos(s->objId ^ 1, &opp);
@@ -630,7 +630,7 @@ void BtlAiMove_Hold(BtlAiWork *s) {
     if (act->flags & BTLAI_ACT_BLOCKED_AHEAD) {
         hold |= BTLAI_BTN_ASCEND;
     }
-    cls = tbl->actClass[anim];
+    cls = tbl->classByAnim[anim];
     x = y;
     if (cls == 10) {
         y = -1.0f;
@@ -723,7 +723,7 @@ void BtlAiMove_End(BtlAiWork *s) {
     BtlAiSeq *act = &s->seq;
     BtlAiActTable *tbl = gBtlAi->data->act;
     s32 anim = BtlCharApi_GetAnimId(s->objId);
-    s32 cls = tbl->actClass[anim];
+    s32 cls = tbl->classByAnim[anim];
 
     BtlAiPad_Clear(&s->out, 1);
     if (cls == 10) {

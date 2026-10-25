@@ -47,7 +47,7 @@ typedef struct BtlChangeReq {
     /* 0x0C */ s32 costume;
     /* 0x10 */ s32 variant;
     /* 0x14 */ s32 animChara;  /* -1 for kind 1 */
-    /* 0x18 */ s32 animChara2;      /* -1 for kind 1 */
+    /* 0x18 */ s32 anim1Chara;      /* -1 for kind 1 */
     /* 0x1C */ s32 voiceChara; /* -1 for kind 1 */
     /* 0x20 */ s32 slot;       /* kind 1 only; 0 for kind 0 */
 } BtlChangeReq; /* 0x24 */
@@ -77,7 +77,7 @@ BtlChangeReq *BtlChange_Alloc(void);
 BtlChangeReq *BtlChange_Pop(void);
 void BtlChange_Reset(void);
 void BtlChange_Update(void);
-void BtlChange_RequestChara(s32 player, s32 chara, s32 costume, s32 variant, s32 animChara, s32 animChara2, s32 voiceChara);
+void BtlChange_RequestChara(s32 player, s32 chara, s32 costume, s32 variant, s32 animChara, s32 anim1Chara, s32 voiceChara);
 void BtlChange_RequestObject(s32 player, s32 id, s32 costume, s32 variant, s32 slot);
 void BtlChange_SetTaken(void);
 void BtlChange_SetLoaded(void);

@@ -30,8 +30,8 @@ typedef struct BtlAiSeqBody {
     /* 0x200 */ s8 timeout[0x80];    /* (m) per action id: seconds the run phase may last before the input has taken
                                             effect; 0 or less = no limit */
     /* 0x280 */ u16 flags[0x80];     /* (m) per action id: BTLAI_SEQF_* */
-    /* 0x380 */ s8 stateClass[0x200]; /* (m) per fighter state id (BtlCharApi_GetAnimId) */
-    /* 0x580 */ u8 stateFlags[0x200]; /* (m) per fighter state id; bit 1 (0x02) is tested here: the state cannot be
+    /* 0x380 */ s8 animClass[0x200]; /* (m) per fighter animation id (BtlCharApi_GetAnimId) */
+    /* 0x580 */ u8 animFlags[0x200]; /* (m) per fighter animation id; bit 1 (0x02) is tested here: the state cannot be
                                              taken as "reached" / the opponent is still a threat */
 } BtlAiSeqBody;
 
@@ -70,7 +70,7 @@ typedef struct BtlAiSeqA {
     /* 0x54 */ s32 timer;      /* (m) the step's parameter: frames, percent, member number ... set by the pick
                                       function, used by the step handler */
     /* 0x58 */ s32 waitTimer;  /* (m) frames the run phase has waited for the input to take effect */
-    /* 0x5C */ s32 startState; /* (m) the fighter's state id when the step started */
+    /* 0x5C */ s32 startAnim; /* (m) the fighter's animation id when the step started */
     /* 0x60 */ f32 charge;     /* (m) BtlCharApi_GetChargeRate when the step started / last frame */
     /* 0x64 */ f32 startDist;  /* (m) fighter distance when the step started; refreshed by step handler 2 */
     /* 0x68 */ s32 ruleSet;

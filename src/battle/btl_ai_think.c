@@ -32,7 +32,7 @@ void BtlAi_NoteOpponent(BtlAiWork *ai, s32 react) {
     BtlAiActTable *act = gBtlAi->data->act;
     s32 anim = BtlCharApi_GetAnimId(ai->objId ^ 1);
     BtlAiStatus *st = &ai->status;
-    s32 cls = act->actClass[anim];
+    s32 cls = act->classByAnim[anim];
 
     st->oppAction = anim;
     st->oppClass = cls;
@@ -176,7 +176,7 @@ s32 BtlAiCond_LevelBelowDummy(BtlAiWork *ai, u8 arg) {
 /* Helper of condition 20: 75% chance to react to an opponent action of class 1..7, 22 or 23. */
 s32 BtlAiCond_GuardRoll(BtlAiWork *ai) {
     BtlAiStatus *st = &ai->status;
-    s8 cls = gBtlAi->data->act->actClass[BtlCharApi_GetAnimId(ai->objId ^ 1)];
+    s8 cls = gBtlAi->data->act->classByAnim[BtlCharApi_GetAnimId(ai->objId ^ 1)];
     s32 roll = Rand_Range(100);
 
     if (!((u32)(cls - 1) < 7) && cls != 0x16 && cls != 0x17) {
@@ -1484,8 +1484,8 @@ s32 AiThCond_ActRateByFlags(AiThWork *ai, u8 arg) {
     }
     anim[0] = BtlCharApi_GetAnimId(ai->objId);
     anim[1] = BtlCharApi_GetAnimId(ai->objId ^ 1);
-    cls[0] = ((AiThActBody *)((u8 *)act + 8))->actClass[anim[0]];
-    cls[1] = ((AiThActBody *)((u8 *)act + 8))->actClass[anim[1]];
+    cls[0] = ((AiThActBody *)((u8 *)act + 8))->animClass[anim[0]];
+    cls[1] = ((AiThActBody *)((u8 *)act + 8))->animClass[anim[1]];
     switch (gBtlAiCondFuncIndex[plan->cond]) {
     case 0x38:
         if (!(actBits & 0x80)) {
@@ -2179,7 +2179,7 @@ s32 AiThink_GetBlastStep(AiThWork *ai) {
     AiThSeq *seq = &ai->seq;
     s32 k = anim - 0x3C;
 
-    if (act->actClass[anim] == 15) {
+    if (act->animClass[anim] == 15) {
         return 1;
     }
     if ((u32)k >= 4) {

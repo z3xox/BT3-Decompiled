@@ -36,7 +36,7 @@ typedef struct AiThSeq {
     /* 0x14 */ AiThSeqEntry stack[8];
     /* 0x54 */ s32 timer;
     /* 0x58 */ s32 waitTimer;
-    /* 0x5C */ s32 startState;
+    /* 0x5C */ s32 startAnim;
     /* 0x60 */ f32 charge;
     /* 0x64 */ f32 startDist;
     /* 0x68 */ s32 ruleSet;    /* (m) rule list being evaluated (0..7) */
@@ -68,7 +68,7 @@ typedef struct AiThStatus {
     /* 0x18 */ s32 timer18;
     /* 0x1C */ s32 timer1C;
     /* 0x20 */ s32 timer20;
-    /* 0x24 */ s32 act10Dist;
+    /* 0x24 */ f32 act10Dist;
 } AiThStatus; /* size 0x28 */
 
 /* One pre-drawn roll per condition position. */
@@ -157,14 +157,14 @@ typedef struct AiThActTable {
     /* 0x188 */ s8 pick[0x80];
     /* 0x208 */ s8 timeout[0x80];
     /* 0x288 */ u16 seqFlags[0x80];
-    /* 0x388 */ s8 actClass[0x400]; /* (m) per fighter action id */
+    /* 0x388 */ s8 animClass[0x400]; /* (m) per fighter animation id */
     /* 0x788 */ u8 stepData[1];
 } AiThActTable;
 
 /* The action table seen from its +8, the form AiThCond_ActRateByFlags uses. */
 typedef struct AiThActBody {
     /* 0x000 */ u8 unk0[0x380];
-    /* 0x380 */ u8 actClass[1];
+    /* 0x380 */ u8 animClass[1];
 } AiThActBody;
 
 /*

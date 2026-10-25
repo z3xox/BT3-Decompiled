@@ -29,7 +29,7 @@ typedef struct BtlAiChrSkills {
 /* The action table seen from its +8 (the form step handler 17 uses). */
 typedef struct BtlAiActBody {
     /* 0x000 */ u8 unk0[0x380];
-    /* 0x380 */ u8 actClass[1];
+    /* 0x380 */ u8 animClass[1];
 } BtlAiActBody;
 
 extern s32 BtlSeq_GetState(void);

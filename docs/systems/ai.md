@@ -1,15 +1,19 @@
 # CPU opponent (AI)
 
-Sources: `src/battle/btl_ai_mgr.c` (manager and the move action, linked),
-`btl_ai_seq.c` (first AI object from 0x1B4140: step handlers 14..23, sequence runner; the
-functions before 0x1B6008 are still assembly) and `btl_ai_cond.c` (start of the second object,
-0x1B6D00: rule conditions and rate getters), both linked. Layout:
-`include/battle/btl_ai.h` is the single definition of the AI block (`BtlAi`, per side `BtlAiWork`
-with `seq`, `move`, `out`, `status`, `plan`); `btl_ai_mgr.h` adds the manager file's helper types.
+Sources, all four decompiled and matching (vram ranges of their text):
+- `src/battle/btl_ai_seq.c` (0x1B3F78..0x1B6D4C): the generic action scripts: the four phases, the 16 pick
+  functions and the 24 step handlers (0..23), the sequence runner and `BtlAi_ScaleByLevel`;
+- `src/battle/btl_ai_think.c` (0x1B6D50..0x1BB124): the rule conditions (`BtlAiCond_*`, `AiThCond_*`), the rule
+  evaluator and the thinker (`AiThink_*`, with `AiThink_BindData`);
+- `src/battle/btl_ai_mgr.c` (0x1BB128..0x1BC8A4): the manager (`BtlAiMgr_*`) and the move action (`BtlAiMove_*`);
+- `src/battle/btl_ai_sense.c` (0x1BC8A8..0x1C0050): the virtual pad (`BtlAiPad_*`), the attack actions
+  (`BtlAiAtk_*`, `BtlAiCombo_*`, `BtlAiFollow_*`) and sense (`BtlAiSense_*`).
 
-Not decompiled: the rule evaluator (0x1BA760), sense and think (0x1BFF70, 0x1BAC30), most step
-handlers (0x1B4C00..0x1B6008) and the virtual pad (0x1BC8A8..). Statements about those are read
-from disassembly.
+Layout: `include/battle/btl_ai.h` is the main definition of the AI block (`BtlAi`, per side `BtlAiWork` with
+`seq`, `move`, `out`, `status`, `plan`); `btl_ai_seq.h`, `btl_ai_think.h`, `btl_ai_sense.h`, `btl_ai_mgr.h`
+and `btl_ai_int.h` hold the views and helper types of each file. The tables the AI data indexes by the
+fighter's animation id (fighter +0x974, `BtlCharApi_GetAnimId`) are `animClass` / `animFlags`
+(`classByAnim` in `BtlAiActTable`).
 
 ## Where it runs (verified)
 
@@ -38,11 +42,11 @@ Per side (`BtlAiWork`): `objId`, `type` (+4, the member's aiType), `level` (+8, 
 
 ## How it decides
 
-- (read from disassembly) Decisions are data: the common AI data (in common file 2) holds an
+- (read from the code) Decisions are data: the common AI data (in common file 2) holds an
   action table, eight rule lists and 32 per-`aiType` profiles. A rule is a 0x1C-byte record:
   a situation group, up to eight condition ids with one argument each, and an action.
 - (verified) Conditions 0..34 are the `BtlAiCond_*` functions.
-- (read from disassembly) Rules are re-evaluated every frame; there is no think interval.
+- (read from the code) Rules are re-evaluated every frame; there is no think interval.
   Slowness comes from level-scaled percentage rolls and timers.
 - (verified) An action is four phase functions (init, start, run, end). The move action picks
   a target at a keep-distance from the opponent, follows a path rebuilt at most every 60
@@ -57,7 +61,7 @@ level (the training dummy) evaluates only one rule list and never reacts.
 
 The menu's five difficulty levels map to 0, 6, 13, 21, 29 (see battle.md).
 
-## AI button bits (read from disassembly)
+## AI button bits (read from the code)
 
 1 GUARD, 2 DASH, 4 BLAST, 8 RUSH, 0x10..0x80 UP/DOWN/LEFT/RIGHT, 0x100 LOCKON, 0x200 CHARGE,
 0x800 ASCEND, 0x1000 DESCEND, 0x2000 R3. The gameplay names are guesses from the default
@@ -68,7 +72,7 @@ button layout.
 - (verified by a call scan of 0x1B4140..0x1C0400) The AI's only generator is `Rand_Range`, the
   broken-refill Mersenne Twister: 49 call sites in 40 functions.
 - (verified) Conditions draw even when the result is then discarded.
-- (read from disassembly) The rule evaluator draws 8 values each time it enters a new rule
+- (read from the code) The rule evaluator draws 8 values each time it enters a new rule
   group, so the number of draws per frame depends on the situation.
 - (verified by call scan) The stream is shared with about 198 call sites in the menu overlay
   and a few in the main executable.
@@ -85,9 +89,8 @@ button layout.
 
 ## Additions from the fighter-core batch
 
-Sources: `src/battle/btl_ai_act.c` (virtual pad, attack actions, sense; 55 of 56 match) and
-`src/battle/btl_ai_think.c` (rules and thinking; 36 of 43 match, so the rule evaluator below
-is read from disassembly plus near-matching C).
+Sources: `src/battle/btl_ai_sense.c` (virtual pad, attack actions, sense) and `src/battle/btl_ai_think.c`
+(rules and thinking); both match.
 
 ### Virtual pad (verified)
 
@@ -113,14 +116,14 @@ five options. Charge time is rolled: 10..50% chance of a full charge by `level /
 `BtlAiSense_Update` builds a 64-bit situation word per CPU side per frame: sequence state,
 distance band (close / middle / far, also as rule groups), opponent behind, line of sight
 blocked, incoming projectile, opponent downed or stunned, own gauge in four bands, health
-thresholds scaled by level, and more. All 64 bits are listed in `btl_ai_act.h`. Sense draws no
+thresholds scaled by level, and more. All 64 bits are listed at `BtlAiSense_Update` (btl_ai_sense.c) and as `AIACT_SIT_*` in `btl_ai_sense.h`. Sense draws no
 random numbers and reads no pad, clock or camera.
 
 ### Thinking
 
 - (verified) Per CPU fighter per frame: evaluate rule list 7; if nothing started and the level
   is not negative, list 4, then list 0, then list `{1,2,3,5,6,7}[plan.next]`.
-- (read from disassembly) Rules are taken in file order; a rule's group must be a set bit of
+- (read from the code) Rules are taken in file order; a rule's group must be a set bit of
   the situation word; the first rule whose conditions all pass ends that list.
 - (verified) Weighted choice: each condition position has a pre-drawn roll and a running sum; a
   weighted condition adds its level-scaled rate and passes when the roll is below the sum, so
@@ -142,18 +145,16 @@ time it enters a new rule group, before testing anything; some conditions draw o
 or not they pass; the attack actions draw one to four per decision. Draws per frame therefore
 depend on the situation, on rule order in the data, and on where each rule fails.
 
-## Generic action scripts (`btl_ai_seq_a.c`, 0x1B4140..0x1B6008; verified unless marked)
+## Generic action scripts (`btl_ai_seq.c`; verified unless marked)
 
-37 of 38 functions match per function (`BtlAiStep_GuardUntilSafe` is two instructions off); not
-linked yet (to be merged into the head of btl_ai_seq.c). Names implying game meaning are
-guesses.
+Names implying game meaning are guesses.
 
 - **A generic action is a script in the AI data**: per action id a first-step index, a step
   count, a pick function (0..15), a timeout in seconds and a flag word; per step (0x14 bytes) a
   handler (0..23), a group, the hold / press / once button bits, a "special", and the fighter
   state class reached when the input works. One step per group is played, group after group.
-- **Three function tables**: phases (0x2C46B8: init, start, run, end), 16 pick functions
-  (0x2C46C8), 24 step handlers (0x2C4708; 0..13 here, 14..23 in btl_ai_seq.c).
+- **Three function tables**: phases (`gBtlAiStateFuncs`: init, start, run, end), 16 pick functions
+  (`gBtlAiPickFuncs`), 24 step handlers (`gBtlAiStepFuncs`).
 - **Run phase, per frame**: note whether the input took effect; run the step handler (a
   finished step costs one frame with no input); interrupt test; while the input has not taken
   effect count frames and give up after timeout x 30 (not counted while any fighter has flag
@@ -172,8 +173,5 @@ guesses.
 - **Random draws**: 10 direct `Rand_Range` sites in 7 pick functions (several draw even when the
   value is unused), none in the phases or step handlers 0..13.
 - No pad, clock, camera or pause read. Timers stand still while any fighter has flag 0x128.
-- Corrections: `PickFusionSlot` / `PickTransformSlot` and several other by-id accessors listed
-  as "no caller" in btl_capi_b are called from here; in btl_ai_seq.c the local named `busy`
-  (from step handler 0) is inverted: it is 1 when the class is reached.
 - Not available yet: the per-action button scripts themselves are data (common file 2, member
   4); dumping them with this layout gives the full "action id -> buttons" table.

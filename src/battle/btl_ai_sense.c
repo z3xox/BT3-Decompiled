@@ -70,7 +70,7 @@ extern s32 BtlAi_ScaleByLevel(s32 level, s32 lo, s32 hi);
 extern s32 BtlAiSeq_IsInterrupted(AiActSide *s, s32 actionId); /* the action must stop (by actFlags and state class) */
 
 /* Fighter accessors by object id (btl_char_api_2.c and the not yet decompiled 0x204E78.. object). */
-extern s32 BtlCharApi_GetAnimId(s32 objId);            /* state id */
+extern s32 BtlCharApi_GetAnimId(s32 objId);            /* animation id */
 extern u64 BtlCharApi_GetActionBits(s32 objId);           /* 64-bit word at fighter +0x1288 */
 extern s32 BtlCharApi_IsAttackHitPending(s32 objId);
 extern s32 BtlCharApi_GetParamByte84(s32 objId, u32 n);
@@ -118,13 +118,13 @@ extern s32 BtlSide_IsPoweredUp(s32 side);                    /* fighter flag 6 *
 /* The running entry of the action stack. */
 #define AIACT_TOP(act) ((AiActEntry *)((u8 *)(act) + ((act)->depth << 3) + 0xC))
 
-/* Both fighters' state ids and state classes, the way six functions here fetch them: two local arrays
-   (s32 state[2]; s8 cls[2]; index 0 own, 1 opponent). */
-#define AIACT_GET_STATES(s, tbl, state, cls)                                   \
-    (state)[0] = BtlCharApi_GetAnimId((s)->side);                              \
-    (state)[1] = BtlCharApi_GetAnimId((s)->side ^ 1);                          \
-    (cls)[0] = ((AiActTables8 *)((u8 *)(tbl) + 8))->stateClass[(state)[0]];    \
-    (cls)[1] = ((AiActTables8 *)((u8 *)(tbl) + 8))->stateClass[(state)[1]]
+/* Both fighters' animation ids and state classes, the way six functions here fetch them: two local arrays
+   (s32 anim[2]; s8 cls[2]; index 0 own, 1 opponent). */
+#define AIACT_GET_ANIMS(s, tbl, anim, cls)                                   \
+    (anim)[0] = BtlCharApi_GetAnimId((s)->side);                              \
+    (anim)[1] = BtlCharApi_GetAnimId((s)->side ^ 1);                          \
+    (cls)[0] = ((AiActTables8 *)((u8 *)(tbl) + 8))->animClass[(anim)[0]];    \
+    (cls)[1] = ((AiActTables8 *)((u8 *)(tbl) + 8))->animClass[(anim)[1]]
 
 /* Action 7 (move): ends the action when BtlAiSeq_IsInterrupted says so, else runs its current phase. */
 void BtlAiMove_Dispatch(AiActSide *s) {
@@ -287,12 +287,12 @@ void BtlAiPad_EndFrame(AiActPad *pad) {
     pad->flip ^= 1;
 }
 
-/* Clears the chosen input and remembers the fighter's state id. */
+/* Clears the chosen input and remembers the fighter's animation id. */
 void BtlAiAtk_Reset(s32 side, AiActAtk *atk) {
     atk->hold = 0;
     atk->press = 0;
     atk->charge = 0.0f;
-    atk->state = BtlCharApi_GetAnimId(side);
+    atk->anim = BtlCharApi_GetAnimId(side);
     atk->flags &= ~7;
     atk->waitTimer = 15;
     atk->idleTimer = 15;
@@ -525,7 +525,7 @@ s32 BtlAiAtk_PickLastStep(AiActSide *s, s8 *lo, s8 *hi) {
 void BtlAiCombo_Init(AiActSide *s) {
     AiActSeq *act = &s->act;
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 cls = tbl->stateClass[BtlCharApi_GetAnimId(s->side)];
+    s32 cls = tbl->animClass[BtlCharApi_GetAnimId(s->side)];
 
     BtlAiPad_Set(s, 0, AIACT_BTN_RUSH, 0, 0, 0.0f, 0.0f);
     if ((u32)(cls - 13) < 2) {
@@ -547,7 +547,7 @@ void BtlAiCombo_Start(AiActSide *s) {
     AiActSeq *act = &s->act;
     s32 step;
 
-    AIACT_GET_STATES(s, tbl, anim, cls);
+    AIACT_GET_ANIMS(s, tbl, anim, cls);
     step = anim[0] < 0x3C ? anim[0] - 0x37 : anim[0] - 0x3C;
     BtlAiAtk_Reset(s->side, atk);
     atk->oppKind = 0;
@@ -584,7 +584,7 @@ void BtlAiCombo_Start(AiActSide *s) {
     BtlAiPad_Clear(&s->pad, 0);
 }
 
-/* Phase 2 of the three attack actions: sends the chosen input until the fighter's state id changes (15 frames
+/* Phase 2 of the three attack actions: sends the chosen input until the fighter's animation id changes (15 frames
    at most), keeps a held RUSH / BLAST down until BtlCharApi_GetChargeRate reaches atk->charge, then goes back to phase 1
    (action 0x1A: to phase 3). */
 void BtlAiAtk_Run(AiActSide *s) {
@@ -594,7 +594,7 @@ void BtlAiAtk_Run(AiActSide *s) {
     s32 anim = BtlCharApi_GetAnimId(s->side);
     f32 held = BtlCharApi_GetChargeRate(s->side);
     AiActEntry *e = AIACT_TOP(act);
-    s32 cls = tbl->stateClass[anim];
+    s32 cls = tbl->animClass[anim];
 
     BtlAiPad_Clear(&s->pad, 1);
     if (atk->flags & AIACT_ATK_IDLE) {
@@ -607,7 +607,7 @@ void BtlAiAtk_Run(AiActSide *s) {
         act->phase = 3;
         return;
     }
-    if (anim != atk->state) {
+    if (anim != atk->anim) {
         if (atk->hold & (AIACT_BTN_BLAST | AIACT_BTN_RUSH)) {
             if (atk->charge <= held || cls == 0) {
                 atk->hold = 0;
@@ -729,7 +729,7 @@ void BtlAiFollow_Start(AiActSide *s) {
 void BtlAiFollow_End(AiActSide *s) {
     AiActSeq *act = &s->act;
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 cls = tbl->stateClass[BtlCharApi_GetAnimId(s->side)];
+    s32 cls = tbl->animClass[BtlCharApi_GetAnimId(s->side)];
     AiActAtk *atk = &s->atk;
     AiActEntry *e = &s->act.stack[0];
 
@@ -761,7 +761,7 @@ void BtlAiFollow_Dispatch(AiActSide *s) {
 void BtlAiAct36_Init(AiActSide *s) {
     AiActSeq *act = &s->act;
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 cls = tbl->stateClass[BtlCharApi_GetAnimId(s->side)];
+    s32 cls = tbl->animClass[BtlCharApi_GetAnimId(s->side)];
     u64 w = BtlCharApi_GetActionBits(s->side);
 
     BtlAiPad_Set(s, 0, AIACT_BTN_BLAST, 0, 0, 0.0f, 0.0f);
@@ -1046,7 +1046,7 @@ s32 BtlAiSense_Basic(AiActSide *s) {
     s32 seq = BtlSeq_GetState();
     f32 ratio = (f32)BtlSide_GetKi(s->side) / 100000.0f;
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 cls = tbl->stateClass[BtlCharApi_GetAnimId(s->side)];
+    s32 cls = tbl->animClass[BtlCharApi_GetAnimId(s->side)];
     s32 r;
 
     if (seq == 3) {
@@ -1117,14 +1117,14 @@ s32 BtlAiSense_Basic(AiActSide *s) {
     return 0;
 }
 
-/* Sets react bit 4 while the opponent's state id is 0x97 or 0x189. */
+/* Sets react bit 4 while the opponent's animation id is 0x97 or 0x189. */
 void BtlAiSense_NoteOppState(AiActSide *s) {
     AiActTables *tbl = gBtlAi->data->tables;
     s32 anim[2];
     s8 cls[2];
     AiActStatus *st = &s->st;
 
-    AIACT_GET_STATES(s, tbl, anim, cls);
+    AIACT_GET_ANIMS(s, tbl, anim, cls);
     if (anim[1] == 0x97 || anim[1] == 0x189) {
         st->react |= 4;
     }
@@ -1139,8 +1139,8 @@ void BtlAiSense_NoteOppState(AiActSide *s) {
 s32 BtlAiSense_IsBusy(AiActSide *s) {
     AiActTables8 *tbl = (AiActTables8 *)((u8 *)gBtlAi->data->tables + 8);
     s32 anim = BtlCharApi_GetAnimId(s->side);
-    u8 busy = tbl->stateFlags[anim] & 1;
-    s32 cls = (s8)tbl->stateClass[anim] - 15;
+    u8 busy = tbl->animFlags[anim] & 1;
+    s32 cls = (s8)tbl->animClass[anim] - 15;
     s32 r = BtlCharApi_IsAttackHitPending(s->side);
     AiActStatus *st = &s->st;
 
@@ -1163,7 +1163,7 @@ s32 BtlAiSense_IsBusy(AiActSide *s) {
 /* Situation bit 49: state class 6 and the bottom action is not 0x50. */
 s32 BtlAiSense_CheckBit49(AiActSide *s) {
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 cls = tbl->stateClass[BtlCharApi_GetAnimId(s->side)];
+    s32 cls = tbl->animClass[BtlCharApi_GetAnimId(s->side)];
     AiActSeq *act = &s->act;
     AiActEntry *e = &s->act.stack[0];
 
@@ -1217,7 +1217,7 @@ s32 BtlAiSense_CheckBit43(AiActSide *s) {
 
 /* Situation bit 40: the opponent is behind this fighter with flag 6 set and in state class 13 / 14, bit 46
    of fighter +0x1288 is set, and the bottom action is not 0x5C. react bit 0x10 blocks it; react bit 0x100000
-   blocks it until the opponent's state id changes. */
+   blocks it until the opponent's animation id changes. */
 s32 BtlAiSense_CheckBit40(AiActSide *s) {
     AiActStatus *st = &s->st;
     AiActSeq *act = &s->act;
@@ -1225,7 +1225,7 @@ s32 BtlAiSense_CheckBit40(AiActSide *s) {
     AiActSide *opp = &gBtlAi->side[s->side ^ 1];
     AiActTables *tbl = gBtlAi->data->tables;
     s32 oppAnim = BtlCharApi_GetAnimId(s->side ^ 1);
-    s32 cls = tbl->stateClass[oppAnim];
+    s32 cls = tbl->animClass[oppAnim];
     u64 w = BtlCharApi_GetActionBits(s->side);
 
     if (!BtlSide_IsPoweredUp(opp->side)) {
@@ -1293,7 +1293,7 @@ s32 BtlAiSense_CheckBit28(AiActSide *s) {
     s8 cls[2];
     AiActStatus *st = &s->st;
 
-    AIACT_GET_STATES(s, tbl, anim, cls);
+    AIACT_GET_ANIMS(s, tbl, anim, cls);
     if (!(st->flags & 0x10)) {
         return 0;
     }
@@ -1317,7 +1317,7 @@ s32 BtlAiSense_CheckBit28(AiActSide *s) {
 
 /* Situation bit 29: close range, the opponent in state class 15..17, react bit 0x200 clear. */
 s32 BtlAiSense_CheckBit29(AiActSide *s) {
-    s32 cls = gBtlAi->data->tables->stateClass[BtlCharApi_GetAnimId(s->side ^ 1)];
+    s32 cls = gBtlAi->data->tables->animClass[BtlCharApi_GetAnimId(s->side ^ 1)];
     AiActStatus *st = &s->st;
 
     if (st->react & 0x200) {
@@ -1362,7 +1362,7 @@ s32 BtlAiSense_CheckBit31(AiActSide *s) {
     AiActStatus *st = &s->st;
     f32 progress = BtlCharApi_GetTechniqueFramesLeft(s->side ^ 1);
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 cls = tbl->stateClass[BtlCharApi_GetAnimId(s->side ^ 1)];
+    s32 cls = tbl->animClass[BtlCharApi_GetAnimId(s->side ^ 1)];
 
     if (!BtlCharApi_GetOppTechniqueKind(s->side)) {
         if (progress < 0.0f) {
@@ -1407,7 +1407,7 @@ s32 BtlAiSense_CheckBit34(AiActSide *s) {
     AiActSeq *act = &s->act;
     s32 step;
 
-    AIACT_GET_STATES(s, tbl, anim, cls);
+    AIACT_GET_ANIMS(s, tbl, anim, cls);
     step = anim[1] < 0x3C ? anim[1] - 0x37 : anim[1] - 0x3C;
     if (cls[0] == 0x1A) {
         if (!((u32)step < 4)) {
@@ -1495,7 +1495,7 @@ void BtlAiSense_Reactions(AiActSide *s) {
     AiActEntry *e;
     s32 r;
 
-    AIACT_GET_STATES(s, tbl, anim, cls);
+    AIACT_GET_ANIMS(s, tbl, anim, cls);
     r = BtlAiSense_CheckBit51(s);
     if (r != 0) {
         if (r == 2) {
@@ -1631,7 +1631,7 @@ void BtlAiSense_Derived(AiActSide *s) {
     u64 w = BtlCharApi_GetActionBits(s->side);
     s32 oppStun = BtlCharApi_GetStunTimer(s->side ^ 1);
 
-    AIACT_GET_STATES(s, tbl, anim, cls);
+    AIACT_GET_ANIMS(s, tbl, anim, cls);
     if (st->react & 1) {
         st->flags |= 0x2000;
     } else {
@@ -1700,7 +1700,7 @@ void BtlAiSense_Derived(AiActSide *s) {
 void BtlAiSense_Update(AiActSide *s) {
     AiActStatus *st = &s->st;
     AiActTables *tbl = gBtlAi->data->tables;
-    s32 cls = tbl->stateClass[BtlCharApi_GetAnimId(s->side ^ 1)];
+    s32 cls = tbl->animClass[BtlCharApi_GetAnimId(s->side ^ 1)];
     s32 react;
     s32 i;
 

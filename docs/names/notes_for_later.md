@@ -1,5 +1,13 @@
 # Wrong or stale names and comments found while naming placeholders (2026-10-08)
 
+## Resolved in names-pass-3 (2026-10-25)
+
+- AI: the +0xD74 and +0x974 getter comments, the health locals of steps 18/19/21 (lowHp / highHp) and `reached` of steps 15/23 were already right.
+- AI: the tables indexed by animation id are animClass / animFlags (BtlAiActTable: classByAnim, since animClass changes BtlAiStep_Unk23), startAnim, AiActAtk.anim; "state id" comments say animation id.
+- AI: BtlAiWork.costMin / costMax, BtlAiPlan.rolls[].acc, BtlAiOutput.accX / accY and the act10Dist words are f32, BtlAiStatus.hitPendingTimer.
+- AI: the AI arrays of group 02 were already split; docs/systems/ai.md describes the four decompiled files.
+- Object +0xCAD is hitNo in the btl_char_api_2.h views; BtlChange_RequestChara / BtlChange_GetArgs / BtlChangeReq call the second animation file anim1Chara.
+
 ## Resolved by the fighter merge (2026-10-25)
 
 The fighter is one structure now (include/battle/btl_fighter.h; every field with the old names in
@@ -18,15 +26,7 @@ Reported by the five agents that proposed the names of docs/names/renamed_2026_1
 except where a rename of that list covers it. For the pass over fields and local variables.
 
 CPU opponent:
-- btl_char_api_2.c: the comment on the getter of fighter +0xD74 says "(no caller)"; BtlAiSeq_RollPowerUpChain calls it.
-- btl_char_api_2.c: the comments on the two +0x974 getters are stale: they return BtlAnim_GetId(chr) and BtlAnim_GetFlags(BtlAnim_GetId(chr)).
-- btl_ai_seq.c, AI steps 18 / 19 / 21: the local `dist` holds BtlCharApi_GetHp (compared with 10000); the tables `near` / `far` are low /
-  high health; the comment on handler 18 says "by level and distance": it is by level and own health. The same in btl_ai_think.c near line 1199.
-- btl_ai_seq.c, steps 15 and 23: the local `busy = BtlAiStep_ReachClass(ai)` is inverted (1 = class reached).
-- AI locals named `state` that hold the animation id; the AI data's stateClass / stateFlags tables are indexed by animation id.
-- btl_char_api_2.h param view: unk14 / unk18 are flags2 / flags3 (btl_param.h); unkCAD is hitNo.
 - Two AI functions were left as Unk (step 23, condition 11): both hinge on "stage 4 or 27" and pose bit 0x80, whose meaning is not known.
-- docs/systems/ai.md: old file names, "still assembly" statements.
 
 Effects, stage, objects:
 - The comment above the rush-sequence frame getter (btl_char_api_2.c, about line 503) is wrong: animation frame plus the lengths of the earlier steps.
@@ -72,12 +72,6 @@ System, menu support:
 ## From the field-name groups
 
 Group 02 (btl_act_super.h .. btl_cam.h):
-- Arrays that span several named fields and want splitting, not one name: BtlAiSeq.unk5C[3], unk6C[2], unk8C[3]; AiThSeq.unk5C[3];
-  BtlAiSeqA.unk6C[2], unk8C[3]; AiActSeq.unk0C[2]. BtlAiWork.unk10[2] is costMin / costMax in AiThWork.
-- BtlAiPlan has two unk4: the plan's own (+0x04, `next`) and the one inside the anonymous rolls[] struct (`acc`): the second by hand.
-- Types differ between views: BtlAiOutput +0x48 / +0x4C (accX / accY) s32 here, f32 in AiActPad; status +0x24 (act10Dist) s32 / f32.
-- btl_ai_sense.h AiActStatus.downTimer (+0x08): set to 4 while an attack hit is pending, then counted down: nothing about being down.
-- btl_char_ctl.h:78: the sixth parameter of BtlChange_RequestChara is named unk18 but receives form +0x1C.
 
 Group 09 (eft_rays.h .. eft_stage_1.h):
 - Technique definition +0x04 / +0x05: eft_core.h and eft_shot.h have cls@4, kind@5; eft_emit.h and eft_obj_tech.h have kind@4, unk5 / sub@5.
@@ -98,8 +92,6 @@ Group 09 (eft_rays.h .. eft_stage_1.h):
 Group 01 (battle.h .. btl_act_decide.h):
 - Found: BattleRule.unk18 and BattleResult.unk44 are the Dragon Ball drop (1 + the first unset of the seven dragon-ball bits; stg_parts.c
   moves it to the result with a 1-in-8 chance when a stage object breaks; history_result.c sets the bit). BattleRes.unk8 is the HUD sprite file.
-- The +0x1C word of BtlJob and the unk18 argument of BtlChange_RequestChara are the character for the second resource file
-  (0x599 + n * 10), as the fighter's form.anim1Chara / switchAnim1Chara now say: the other spellings should follow.
 
 Group 06 (btl_script_cmd.h .. eft_disc.h):
 - eft_aura.h, EftAuraCfgSpark against EftAuraDataSpark: two views of one table shifted by 4 bytes; EftAuraCfgSpark.kind is the emitter node.

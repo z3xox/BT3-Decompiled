@@ -150,7 +150,7 @@ extern f32 cosf(f32 x);
 s32 BtlAiSeq_IsInterrupted(BtlAiWork *ai, s32 id) {
     BtlAiSeqBody *body = &AI_DATA->act->body;
     u16 flags = body->flags[id];
-    s8 cls = body->stateClass[BtlCharApi_GetAnimId(ai->objId)];
+    s8 cls = body->animClass[BtlCharApi_GetAnimId(ai->objId)];
     s32 kind = BtlCharApi_GetOppTechniqueKind(ai->objId);
     BtlAiSeqA *seq = SEQA(ai);
 
@@ -206,7 +206,7 @@ s32 BtlAiSeq_CheckHeight(BtlAiWork *ai, s32 mode) {
 s32 BtlAiSeq_CheckStageAbort(BtlAiWork *ai, s32 id) {
     BtlAiSeqA *seq = SEQA(ai);
     BtlAiOutput *out = &ai->out;
-    s8 cls = AI_DATA->act->body.stateClass[BtlCharApi_GetAnimId(ai->objId)];
+    s8 cls = AI_DATA->act->body.animClass[BtlCharApi_GetAnimId(ai->objId)];
     s32 special = BtlChar_IsStage4Or27();
     s32 pose[2];
     BtlAiVec pos;
@@ -281,7 +281,7 @@ void BtlAiSeq_PhaseInit(BtlAiWork *ai) {
     BtlAiSeqEntry *top = &SEQ_TOP(seq);
     BtlAiSeqBody *body = &AI_DATA->act->body;
     u16 flags = body->flags[top->id];
-    s8 cls = body->stateClass[BtlCharApi_GetAnimId(ai->objId)];
+    s8 cls = body->animClass[BtlCharApi_GetAnimId(ai->objId)];
 
     seq->group = 0;
     BtlAiPad_Clear(out, 0);
@@ -324,7 +324,7 @@ void BtlAiSeq_PhaseStart(BtlAiWork *ai) {
     seq->timer = 0;
     seq->waitTimer = 0;
     seq->flags &= ~0x1E40;
-    seq->startState = BtlCharApi_GetAnimId(ai->objId);
+    seq->startAnim = BtlCharApi_GetAnimId(ai->objId);
     seq->charge = BtlCharApi_GetChargeRate(ai->objId);
     seq->startDist = gBtlAi->dist;
     seq->dirX = 0.0f;
@@ -357,10 +357,10 @@ void BtlAiSeq_PhaseStart(BtlAiWork *ai) {
     seq->phase = 2;
     if (top->id == 10) {
         if (seq->step == 0) {
-            *(f32 *)&status->act10Dist = gBtlAi->dist;
+            status->act10Dist = gBtlAi->dist;
         }
     } else {
-        *(f32 *)&status->act10Dist = 0.0f;
+        status->act10Dist = 0.0f;
     }
     BtlAiSeq_PhaseRun(ai);
 }
@@ -385,10 +385,10 @@ void BtlAiSeq_PhaseRun(BtlAiWork *ai) {
 
     anim[0] = BtlCharApi_GetAnimId(ai->objId);
     anim[1] = BtlCharApi_GetAnimId(ai->objId ^ 1);
-    cls[0] = body->stateClass[anim[0]];
-    cls[1] = body->stateClass[anim[1]];
+    cls[0] = body->animClass[anim[0]];
+    cls[1] = body->animClass[anim[1]];
     step = &step[seq->step];
-    if (!(seq->flags & BTLAI_SEQ_TOOK_EFFECT) && cls[0] == step->cls && seq->startState != anim[0]) {
+    if (!(seq->flags & BTLAI_SEQ_TOOK_EFFECT) && cls[0] == step->cls && seq->startAnim != anim[0]) {
         seq->flags |= BTLAI_SEQ_TOOK_EFFECT;
     }
     if (gBtlAiStepFuncs[step->handler](ai) != 0) {
@@ -458,7 +458,7 @@ s32 BtlAiSeq_RollPowerUpChain(BtlAiWork *ai) {
  * BTLAI_SEQ_CHAIN; the next action starts at phase 0 on the next frame. */
 void BtlAiSeq_PhaseEnd(BtlAiWork *ai) {
     BtlAiSeqA *seq = SEQA(ai);
-    s8 cls = AI_DATA->act->body.stateClass[BtlCharApi_GetAnimId(ai->objId)];
+    s8 cls = AI_DATA->act->body.animClass[BtlCharApi_GetAnimId(ai->objId)];
     BtlAiSeqEntry *top = &SEQ_TOP(seq);
 
     if (cls == 10 && top->id != 14) {
@@ -572,10 +572,10 @@ s32 BtlAiPick_KiTarget(BtlAiWork *ai, s32 n, s32 arg) {
         seq->timer = 101;
         break;
     case 2:
-        seq->timer = ai->costRange[1];
+        seq->timer = ai->costMax;
         break;
     case 3:
-        seq->timer = ai->costRange[0];
+        seq->timer = ai->costMin;
         break;
     }
     return 0;
@@ -931,13 +931,13 @@ s32 BtlAiStep_ReachClass(BtlAiWork *ai) {
     BtlAiSeqBody *body = &act->body;
     BtlAiSeqStep *step = &act->steps[body->first[top->id]];
     s32 anim = BtlCharApi_GetAnimId(ai->objId);
-    s8 cls = body->stateClass[anim];
-    u8 flags = body->stateFlags[anim];
+    s8 cls = body->animClass[anim];
+    u8 flags = body->animFlags[anim];
 
     if (step->cls == -1) {
         return 1;
     }
-    if (seq->startState == anim && cls != 0) {
+    if (seq->startAnim == anim && cls != 0) {
         return 0;
     }
     if (top->id == 0x2E && (seq->flags & BTLAI_SEQ_TOOK_EFFECT)) {
@@ -977,7 +977,7 @@ s32 BtlAiStep_UntilBlocked(BtlAiWork *ai) {
     BtlAiSeqA *seq = SEQA(ai);
     BtlAiSeqActTable *act = AI_DATA->act;
     s32 blocked = BtlCharApi_IsBlockedByOpponent(ai->objId);
-    s8 cls = act->body.stateClass[BtlCharApi_GetAnimId(ai->objId)];
+    s8 cls = act->body.animClass[BtlCharApi_GetAnimId(ai->objId)];
     u64 flag = BtlCharApi_GetActionBits(ai->objId) & 0x20000000;
 
     if (cls == 0) {
@@ -1024,7 +1024,7 @@ s32 BtlAiStep_BlockedAndCharged(BtlAiWork *ai) {
 
 /* Step handler 6: finished when the fighter's state class is not 1..7. */
 s32 BtlAiStep_NotHit(BtlAiWork *ai) {
-    s8 cls = AI_DATA->act->body.stateClass[BtlCharApi_GetAnimId(ai->objId)];
+    s8 cls = AI_DATA->act->body.animClass[BtlCharApi_GetAnimId(ai->objId)];
 
     if ((u32)(cls - 1) < 7) {
         return 0;
@@ -1087,11 +1087,11 @@ s32 BtlAiStep_GuardUntilSafe(BtlAiWork *ai) {
     BtlAiSeqA *seq = SEQA(ai);
     BtlAiSeqActTable *act = AI_DATA->act;
     s32 anim = BtlCharApi_GetAnimId(ai->objId ^ 1);
-    s8 cls = act->body.stateClass[anim];
+    s8 cls = act->body.animClass[anim];
     s32 attacking = BtlCharApi_IsAttackHitPending(ai->objId ^ 1);
     s32 passing = BtlCharApi_IsBlastPassing(ai->objId);
     BtlAiSeqEntry *top = &SEQ_TOP(seq);
-    u8 flags = act->body.stateFlags[anim];
+    u8 flags = act->body.animFlags[anim];
     s32 kind = BtlCharApi_GetOppTechniqueKind(ai->objId);
     s32 hitCls = 0x10;
     s32 ret = 0;
@@ -1127,7 +1127,7 @@ s32 BtlAiStep_GuardUntilSafe(BtlAiWork *ai) {
  * state has flag bit 1. With no attack at all it ends when the step parameter has been counted below 0. */
 s32 BtlAiStep_GuardCountdown(BtlAiWork *ai) {
     BtlAiSeqA *seq = SEQA(ai);
-    u8 flags = AI_DATA->act->body.stateFlags[BtlCharApi_GetAnimId(ai->objId ^ 1)];
+    u8 flags = AI_DATA->act->body.animFlags[BtlCharApi_GetAnimId(ai->objId ^ 1)];
     s32 attacking = BtlCharApi_IsAttackHitPending(ai->objId ^ 1);
 
     if (flags & 2) {
@@ -1225,7 +1225,7 @@ s32 BtlAiStep_SwitchQueued(BtlAiWork *ai) {
  * rates for it and, on a successful roll, moves seq->step on (modulo 4). */
 s32 BtlAiStep_ClashMash(BtlAiWork *ai) {
     BtlAiSeq *seq = &ai->seq;
-    s8 cls = gBtlAi->data->act->actClass[BtlCharApi_GetAnimId(ai->objId)];
+    s8 cls = gBtlAi->data->act->classByAnim[BtlCharApi_GetAnimId(ai->objId)];
     s32 roll = Rand_Range(100);
     u8 *prof = gBtlAi->data->profile[ai->type];
     u8 *lo = prof + 0x2AC;
@@ -1355,8 +1355,8 @@ s32 BtlAiStep_FireSkill(BtlAiWork *ai) {
     anim[0] = BtlCharApi_GetAnimId(ai->objId);
     anim[1] = BtlCharApi_GetAnimId(ai->objId ^ 1);
     tbl = (BtlAiActBody *)((u8 *)act + 8);
-    cls[0] = tbl->actClass[anim[0]];
-    cls[1] = tbl->actClass[anim[1]];
+    cls[0] = tbl->animClass[anim[0]];
+    cls[1] = tbl->animClass[anim[1]];
     if (reached == 0 && !(seq->flags & 0x1000)) {
         if (seq->flags & 0x40) {
             if (p->cost[plan->slot] > BtlSide_GetKi(ai->objId)) {
@@ -1501,7 +1501,7 @@ s32 BtlAiStep_Unk23(BtlAiWork *ai) {
     BtlAiSeq *seq = &ai->seq;
     s32 reached = BtlAiStep_ReachClass(ai);
     BtlAiChrSkills *p = BtlCharApi_GetSkillTable(ai->objId);
-    s8 cls = gBtlAi->data->act->actClass[BtlCharApi_GetAnimId(ai->objId)];
+    s8 cls = gBtlAi->data->act->classByAnim[BtlCharApi_GetAnimId(ai->objId)];
     s32 n;
 
     if (reached == 0) {

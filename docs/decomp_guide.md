@@ -466,7 +466,7 @@ Tools
   variable and tested later counts as `x == 0`; with the compare next to its branch it is an
   unsigned compare.
 - This code base precomputes biased values into locals before earlier tests
-  (`s32 cls = (s8)tbl->stateClass[state] - 15;` ... later `if ((u32)cls < 3)`): a subtraction
+  (`s32 cls = (s8)tbl->animClass[anim] - 15;` ... later `if ((u32)cls < 3)`): a subtraction
   in front of an unrelated branch with its `sltiu` in that branch's delay slot is the sign.
 - `if (f() == 0) { ...; return 0; }` drops the `move v0,zero` (v0 still holds the call's 0).
   A path that uses v0 as a temporary before a `return 0` reached a SHARED `return 0` by
@@ -1078,3 +1078,7 @@ Inferred, not confirmed in the compiler's source: a hash in the optimiser that d
 allocated, which the length of a name moves. The three stay under their old names
 (docs/names/fields/changes_code.tsv). So: a rename is checked by the build like any other change, and a function
 that suddenly differs after a rename nearby may be this.
+
+Seen again on 2026-10-25: `BtlAiActTable.actClass` -> `animClass` (include/battle/btl_ai.h) changes the jump-table
+load of the `switch` in `BtlAiStep_Unk23` (src/battle/btl_ai_seq.c) in the same way, while `motionClass`,
+`classByAnim` and five other spellings do not; the field is `classByAnim` there.

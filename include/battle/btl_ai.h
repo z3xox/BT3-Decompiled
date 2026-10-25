@@ -50,7 +50,7 @@ typedef struct BtlAiSeq {
     /* 0x14 */ BtlAiSeqEntry stack[8];
     /* 0x54 */ s32 timer;      /* (m) per-step counter / parameter */
     /* 0x58 */ s32 waitTimer;      /* (m) cleared by step handler 17 */
-    /* 0x5C */ s32 startState;
+    /* 0x5C */ s32 startAnim;
     /* 0x60 */ f32 charge;
     /* 0x64 */ f32 startDist;
     /* 0x68 */ s32 ruleSet;    /* which of the eight rule lists the thinker is evaluating (0x1BAC30) */
@@ -108,8 +108,8 @@ typedef struct BtlAiOutput {
     /* 0x08 */ f32 stickY;     /* (m) */
     /* 0x0C */ s32 toggle[14]; /* each flipped 0 <-> 1 every frame by 0x1BCD70 (alternating presses) */
     /* 0x44 */ s32 toggle44;   /* flipped as well */
-    /* 0x48 */ s32 accX;      /* cleared every frame */
-    /* 0x4C */ s32 accY;      /* cleared every frame */
+    /* 0x48 */ f32 accX;      /* stick accumulator, cleared every frame */
+    /* 0x4C */ f32 accY;      /* cleared every frame */
     /* 0x50 */ s32 unk50;
     /* 0x54 */ s32 timer;      /* counted down every frame */
 } BtlAiOutput; /* size 0x58 */
@@ -117,14 +117,14 @@ typedef struct BtlAiOutput {
 /* Situation: work + 0x2C0. */
 typedef struct BtlAiStatus {
     /* 0x00 */ u64 flags;      /* (m) situation bits; a rule only runs when the bit of its group is set */
-    /* 0x08 */ s32 downTimer;
-    /* 0x0C */ s32 oppClass;   /* (m) class of the opponent's current action (BtlAiActTable.actClass) */
+    /* 0x08 */ s32 hitPendingTimer;
+    /* 0x0C */ s32 oppClass;   /* (m) class of the opponent's current action (BtlAiActTable.classByAnim) */
     /* 0x10 */ s32 oppAction;  /* (m) opponent's current action id */
     /* 0x14 */ s32 react;      /* (m) reaction bits, set by the conditions through BtlAi_NoteOpponent */
     /* 0x18 */ s32 timer18;    /* (m) set to 90 by condition 33 (arg 0) */
     /* 0x1C */ s32 timer1C;    /* (m) set to 90 by condition 33 (arg 1) */
     /* 0x20 */ s32 timer20;    /* (m) set to 90 by condition 34 */
-    /* 0x24 */ s32 act10Dist;
+    /* 0x24 */ f32 act10Dist; /* (m) the fighter distance when action 10 chose its step 0, else 0 */
 } BtlAiStatus; /* size 0x28 */
 
 /* Rule evaluation and plan: work + 0x2E8. */
@@ -136,7 +136,7 @@ typedef struct BtlAiPlan {
     /* 0x10 */ s32 condNo;     /* its position in the rule (0..7) */
     /* 0x14 */ struct {
         s32 roll;
-        s32 next;
+        s32 acc;   /* running sum of the rates tested at this position (AiThRoll.acc) */
     } rolls[8];                /* eight Rand_Range(100) rolls drawn for every rule group that is tested */
     /* 0x54 */ s32 sub;      /* (m) written by condition 17 */
     /* 0x58 */ s8 rate[14];    /* (m) per virtual button (0..13): BtlAi_GetPairRate of the AI type's profile */
@@ -158,7 +158,8 @@ typedef struct BtlAiWork {
     /* 0x004 */ s32 type;      /* (m) BattleMember.aiType: index into BtlAiData.profile[] */
     /* 0x008 */ s32 level;     /* (m) BattleMember.cpuLevel: 0..29, -1 = passive dummy */
     /* 0x00C */ s32 kit;      /* (m) bits 0..2 are tested by conditions 14..16 */
-    /* 0x010 */ s32 costRange[2];
+    /* 0x010 */ s32 costMin;   /* (m) smaller of the first two skill costs / 1000 */
+    /* 0x014 */ s32 costMax;   /* (m) larger of them / 1000 */
     /* 0x018 */ u8 *param;     /* (m) the character's own AI parameters (fighter + 0x934); NULL = no AI */
     /* 0x01C */ s32 unk1C[2];
     /* 0x024 */ s32 flags;     /* (m) bit 0: param is a heap copy owned by the work (Heap_Free on reset) */
@@ -178,7 +179,9 @@ typedef struct BtlAiActTable {
     /* 0x188 */ s8 pick[0x80];
     /* 0x208 */ s8 timeout[0x80];
     /* 0x288 */ u16 seqFlags[0x80]; /* (m) per sequence id; bit 2 is tested by condition 18 */
-    /* 0x388 */ s8 actClass[1];     /* (m) per fighter action id (fighter + 0x974); 0, 10 and 11 are tested by the move action */
+    /* 0x388 */ s8 classByAnim[1]; /* (m) per fighter animation id (fighter + 0x974); 0, 10 and 11 are tested by the move
+                                       action. The animClass of the other views; that name changes the code GCC makes
+                                       for BtlAiStep_Unk23 (identifier hashing), so this view keeps another spelling */
 } BtlAiActTable;
 
 /* The common AI data: member 4 of common file 2 (gCommonRes->data[0]), pointers fixed up by 0x1BAD50. */

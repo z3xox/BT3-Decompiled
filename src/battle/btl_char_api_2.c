@@ -799,13 +799,13 @@ s32 BtlCharApi_IsAttackHitPending(s32 objId) {
     if (obj == NULL) {
         return 0;
     }
-    if (obj->hitIndex != ~obj->hitCount) {
+    if (obj->hitNo != ~obj->hitCount) {
         return 1;
     }
     if (BtlChar_TestFlag(chr, 0x60) == 1) {
         return 0;
     }
-    return obj->hitIndex >= 0;
+    return obj->hitNo >= 0;
 }
 
 /* Fighter flag 0x60. */
@@ -917,7 +917,7 @@ s32 BtlCharApi_IsAttackHitsDone(s32 objId) {
     if (chr != NULL) {
         obj = BtlChar_GetObj(chr);
         if (obj != NULL) {
-            return obj->hitIndex == ~obj->hitCount;
+            return obj->hitNo == ~obj->hitCount;
         }
         return 0;
     }
@@ -2708,7 +2708,7 @@ s32 BtlChange_IsPendingType1(s32 player) {
 
 /* Copies the seven parameter words of the request being served (any pointer may be NULL). The names are those of
    a character request; for an object request `chara` is the object's id and only `slot` of the last four is used. */
-void BtlChange_GetArgs(s32 *chara, s32 *costume, s32 *variant, s32 *animChara, s32 *animChara2, s32 *voiceChara, s32 *slot) {
+void BtlChange_GetArgs(s32 *chara, s32 *costume, s32 *variant, s32 *animChara, s32 *anim1Chara, s32 *voiceChara, s32 *slot) {
     BtlCapiBChangeQueue *q = &gBtlChars->change;
 
     if (q->cur == NULL) {
@@ -2726,8 +2726,8 @@ void BtlChange_GetArgs(s32 *chara, s32 *costume, s32 *variant, s32 *animChara, s
     if (animChara != NULL) {
         *animChara = q->cur->arg[3];
     }
-    if (animChara2 != NULL) {
-        *animChara2 = q->cur->arg[4];
+    if (anim1Chara != NULL) {
+        *anim1Chara = q->cur->arg[4];
     }
     if (voiceChara != NULL) {
         *voiceChara = q->cur->arg[5];
