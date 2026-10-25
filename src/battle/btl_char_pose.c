@@ -77,7 +77,7 @@ void BtlChar_ObjToPose(BtlCtlChr *chr) {
     BtlCtlNode *node;
     Quat q;
 
-    Vec4_Sub(&pose->pos, &obj->outPos, &pose->move);
+    Vec4_Sub(&pose->pos, &obj->outPos, &pose->dispOfs);
     Vec4_Copy(&pose->rot, &obj->rot);
     node = BtlObj_GetNode(obj, 0);
     if (node != NULL) {
@@ -100,7 +100,7 @@ void BtlChar_PoseToObj(BtlCtlChr *chr, s32 keepRoot) {
     s32 apply;
 
     Vec4_Copy(&old, &obj->pos);
-    Vec4_Add(&obj->pos, &pose->pos, &pose->move);
+    Vec4_Add(&obj->pos, &pose->pos, &pose->dispOfs);
     Vec4_Copy(&obj->rot, &pose->rot);
     obj->scale = chr->scale;
     if (BtlChar_TestFlag(chr, 0x2B)) {
@@ -135,7 +135,7 @@ void BtlChar_ApplyRootYaw(BtlCtlChr *chr) {
     if (BtlChar_TestFlag(chr, 0x33) && !BtlChar_TestFlag(chr, 0x94)) {
         f32 yaw = pose->rootRot.y;
 
-        pose->heading = pose->rot.y = BtlUtil_WrapAngle(yaw + pose->rot.y);
+        pose->yaw = pose->rot.y = BtlUtil_WrapAngle(yaw + pose->rot.y);
         pose->pitch *= Mathf_Cos(yaw);
     }
 }
@@ -158,8 +158,8 @@ void BtlChar_Place(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, s32 area) {
     Vec4_Copy(&pose->pos, pos);
     Vec4_Copy(&pose->rot, rot);
     Vec4_Copy(&pose->vel, &gVu0ZeroVec);
-    Vec4_Copy(&pose->moved, &gVu0ZeroVec);
-    pose->heading = rot->y;
+    Vec4_Copy(&pose->move, &gVu0ZeroVec);
+    pose->yaw = rot->y;
     pose->pitch = 0.0f;
     pose->speed = 0.0f;
     pose->fallSpeed = 0.0f;
@@ -167,10 +167,10 @@ void BtlChar_Place(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, s32 area) {
     Vec4_Copy(&obj->outPos, pos);
     Vec4_Copy(&obj->rot, rot);
     obj->area = area;
-    chr->camEye[0] = pos->x;
-    chr->camEye[1] = pos->y - BtlCharApi_GetHeight(chr->objId);
-    chr->camEye[2] = pos->z;
-    chr->camYaw = rot->y;
+    chr->cam.eye.x = pos->x;
+    chr->cam.eye.y = pos->y - BtlCharApi_GetHeight(chr->objId);
+    chr->cam.eye.z = pos->z;
+    chr->cam.yaw = rot->y;
     pose->dir.x = Mathf_Sin(rot->y);
     pose->dir.y = 0.0f;
     pose->dir.z = Mathf_Cos(rot->y);

@@ -2,6 +2,7 @@
 #define BATTLE_BTL_CHAR_CTL_H
 
 #include "types.h"
+#include "battle/btl_fighter.h"
 #include "sys/math3d.h"
 #include "battle/btl_input.h"
 
@@ -89,24 +90,7 @@ void BtlChange_SetDone(s32 player);
 /* ---- Pose, placement, snapshots ---- */
 
 /* The pose block at fighter + 0x10 (BtlChar_GetPos), 0xF0 bytes. Offsets in brackets are fighter offsets. */
-typedef struct BtlCtlPose {
-    /* 0x00 [0x10] */ Vec4 pos;     /* world position */
-    /* 0x10 [0x20] */ Vec4 rot;     /* euler angles; y is the yaw */
-    /* 0x20 [0x30] */ Vec4 move;    /* added to pos when the pose goes to the object, subtracted on the way back */
-    /* 0x30 [0x40] */ Vec4 vel;   /* zeroed by a placement */
-    /* 0x40 [0x50] */ Vec4 moved;   /* zeroed by a placement */
-    /* 0x50 [0x60] */ Vec4 rootPos; /* translation of model node 0 (animation root motion) */
-    /* 0x60 [0x70] */ Vec4 rootRot; /* rotation of model node 0 as euler angles */
-    /* 0x70 [0x80] */ Vec4 impulse;
-    /* 0x80 [0x90] */ Vec4 dir;     /* (sin yaw, 0, cos yaw, 0) at placement */
-    /* 0x90 [0xA0] */ f32 pitch;    /* 0 at placement; scaled by cos(rootRot.y) in BtlChar_ApplyRootYaw */
-    /* 0x94 [0xA4] */ f32 heading;  /* yaw; rot.y at placement */
-    /* 0x98 [0xA8] */ f32 speed;    /* 0 at placement */
-    /* 0x9C [0xAC] */ f32 fallSpeed;    /* 0 at placement */
-    /* 0xA0 [0xB0] */ f32 leanX;    /* negated into the x angle of the object's quaternion at +0xD20 */
-    /* 0xA4 [0xB4] */ f32 leanZ;    /* z angle of the same */
-    /* 0xA8 [0xB8] */ u8 unkA8[0xF0 - 0xA8];
-} BtlCtlPose; /* 0xF0 */
+typedef BtlFighterPose BtlCtlPose;
 
 /* A model node as returned by BtlObj_GetNode(obj, index). */
 typedef struct BtlCtlNode {
@@ -157,50 +141,10 @@ typedef struct BtlCtlObj {
 #define BTL_SNAP_LAST 6 /* slot written by every snapshot */
 
 /* Head tracking state (fighter + 0x15A0). */
-typedef struct BtlCtlLook {
-    /* 0x00 [0x15A0] */ Vec4 offset;   /* smoothed offset added to the direction of the target */
-    /* 0x10 [0x15B0] */ Vec4 dir;      /* smoothed unit direction to look along; w doubles as the first argument of a Vec4_Set */
-    /* 0x20 [0x15C0] */ f32 height;
-    /* 0x24 [0x15C4] */ s32 enabled;   /* BtlChar_SetLookEnabled */
-    /* 0x28 [0x15C8] */ s32 tracking;  /* the target is inside the limits */
-    /* 0x2C [0x15CC] */ s32 snap;      /* non-zero: no smoothing */
-} BtlCtlLook; /* 0x30 */
+typedef BtlFighterLook BtlCtlLook;
 
 /* Partial view of a fighter (0x1600 bytes): what the pose / placement / head tracking code touches. */
-typedef struct BtlCtlChr {
-    /* 0x0000 */ s32 player;
-    /* 0x0004 */ s32 pad;
-    /* 0x0008 */ s32 side;
-    /* 0x000C */ s32 objId;
-    /* 0x0010 */ BtlCtlPose pose;
-    /* 0x0100 */ u8 unk100[0x2E0 - 0x100];
-    /* 0x02E0 */ Vec4 snapPos[BTL_SNAP_COUNT + 1]; /* position at each BtlChars_Snapshot(n) of this frame; [6] = the latest */
-    /* 0x0350 */ Vec4 snapRot[BTL_SNAP_COUNT + 1]; /* the same for the rotation */
-    /* 0x03C0 */ u32 snapMask;  /* bit n: snapshot n was taken this frame; bit 6: any */
-    /* 0x03C4 */ u8 unk3C4[0x420 - 0x3C4];
-    /* 0x0420 */ f32 camEye[3]; /* fighter camera eye (ChrCam) */
-    /* 0x042C */ u8 unk42C[0x4A0 - 0x42C];
-    /* 0x04A0 */ f32 camYaw;    /* fighter camera yaw */
-    /* 0x04A4 */ u8 unk4A4[0x988 - 0x4A4];
-    /* 0x0988 */ f32 scale;
-    /* 0x098C */ u8 unk98C[0xE70 - 0x98C];
-    /* 0x0E70 */ Vec4 relPos;   /* offsets for the flag 0xF6 placement (BtlChar_RequestPlaceRelative) */
-    /* 0x0E80 */ Vec4 relRot;
-    /* 0x0E90 */ u8 unkE90[0x12A0 - 0xE90];
-    /* 0x12A0 */ Vec4 savedPos; /* placement restored by flag 0xF5 */
-    /* 0x12B0 */ Vec4 savedRot;
-    /* 0x12C0 */ s32 savedArea;
-    /* 0x12C4 */ s32 savedFlagF; /* fighter flag 0xF at the time of the save */
-    /* 0x12C8 */ s32 savedFlagE; /* fighter flag 0xE */
-    /* 0x12CC */ u8 unk12CC[0x1310 - 0x12CC];
-    /* 0x1310 */ Vec4 bodyWarpPos;  /* copy of *obj->bodyPos */
-    /* 0x1320 */ u8 unk1320[0x1560 - 0x1320];
-    /* 0x1560 */ Vec4 warpPos;  /* taken by flag 0xFC */
-    /* 0x1570 */ Vec4 warpRot;  /* taken by flag 0xFD */
-    /* 0x1580 */ u8 unk1580[0x15A0 - 0x1580];
-    /* 0x15A0 */ BtlCtlLook look;
-    /* 0x15D0 */ u8 unk15D0[0x1600 - 0x15D0];
-} BtlCtlChr; /* 0x1600 */
+typedef BtlFighter BtlCtlChr;
 
 /* A stage path as returned by BtlStage_GetPath. */
 typedef struct BtlCtlPathPoint {

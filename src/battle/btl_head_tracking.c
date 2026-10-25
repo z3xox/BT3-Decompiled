@@ -183,7 +183,7 @@ void BtlChar_UpdateLook(BtlCtlChr *chr) {
             if (!look->tracking) {
                 BtlOpp_GetDelta(chr, &axis);
                 angle = atan2f(axis.x, axis.z);
-                if (fabsf(BtlUtil_WrapAngle(angle - BtlChar_GetPos(chr)->heading)) < 1.5707963f) {
+                if (fabsf(BtlUtil_WrapAngle(angle - BtlChar_GetPos(chr)->yaw)) < 1.5707963f) {
                     look->tracking = 1;
                 }
             }
@@ -322,7 +322,7 @@ void BtlChar_UpdateLookAlt(BtlCtlChr *chr) {
 
                 BtlOpp_GetDelta(chr, &tmp);
                 dir = atan2f(tmp.x, tmp.z);
-                if (fabsf(BtlUtil_WrapAngle(dir - BtlChar_GetPos(chr)->heading)) < 1.5707963f) {
+                if (fabsf(BtlUtil_WrapAngle(dir - BtlChar_GetPos(chr)->yaw)) < 1.5707963f) {
                     look->tracking = 1;
                 }
             }
