@@ -354,7 +354,7 @@ f32 BtlCharApi_GetUnkE60Ratio(s32 objId) {
     if (chr == NULL) {
         return 0.0f;
     }
-    return BtlUtil_ClampF((f32)chr->unkE60 / 5.0f, 0.0f, 1.0f);
+    return BtlUtil_ClampF((f32)chr->boostStock / 5.0f, 0.0f, 1.0f);
 }
 
 /* Sets or clears bit 0x100 of the object's flag word. */
@@ -588,9 +588,9 @@ s32 BtlCharApi_GetCamPose(s32 objId, Vec4 *pos, Vec4 *rot) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        Vec4_Copy(pos, &chr->camPos);
-        Vec4_Copy(rot, &chr->camRot);
-        return chr->camHit;
+        Vec4_Copy(pos, &chr->cam.pos);
+        Vec4_Copy(rot, &chr->cam.rot);
+        return chr->cam.hit;
     }
     Vec4_SetZeroW1(pos);
     Vec4_SetZero(rot);
@@ -602,7 +602,7 @@ f32 BtlCharApi_GetCamYaw(s32 objId) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return chr->camYaw;
+        return chr->cam.yaw;
     }
     return 0.0f;
 }
@@ -633,7 +633,7 @@ void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 strength, f32 ti
         if (BtlChar_IsFrozen(chr)) {
             continue;
         }
-        dist = Vec3_Dist(&chr->camEye, pos);
+        dist = Vec3_Dist(&chr->cam.eye, pos);
         if (dist < far) {
             rate = BtlUtil_ClampF(1.0f - (dist - near) / (far - near), 0.0f, 1.0f);
             ChrCam_AddShake(chr, strength * rate, time * rate);
@@ -672,7 +672,7 @@ s32 BtlCharApi_IsCamShown(s32 objId) {
             return 1;
         }
     }
-    return chr->side == BtlCam_GetDefaultView();
+    return chr->player == BtlCam_GetDefaultView();
 }
 
 /* Copies the vector at fighter +0x460: the camera's copy of the body position (object +0xFA0). */
@@ -680,7 +680,7 @@ void BtlCharApi_GetCamBodyPos(s32 objId, Vec4 *out) {
     BtlCharApiChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        Vec4_Copy(out, &chr->camBodyPos);
+        Vec4_Copy(out, &chr->cam.bodyPos);
     }
 }
 

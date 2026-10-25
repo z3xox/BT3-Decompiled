@@ -2,6 +2,7 @@
 #define BATTLE_BTL_CHAR_API_H
 
 #include "types.h"
+#include "battle/btl_fighter.h"
 #include "sys/math3d.h"
 
 /*
@@ -25,53 +26,7 @@ typedef struct BtlCharApiVitals {
 } BtlCharApiVitals;
 
 /* Fighter (0x1600 bytes, BtlChar_Get / BtlChar_FindByObjId). */
-typedef struct BtlCharApiChr {
-    /* 0x0000 */ s32 side;          /* 0 / 1; compared with BtlCam_GetDefaultView() */
-    /* 0x0004 */ s32 pad;           /* pad index (btl_input.h) */
-    /* 0x0008 */ u8 unk8[0xC - 0x8];
-    /* 0x000C */ s32 objId;         /* BtlObj_Get index of this fighter's object */
-    /* 0x0010 */ Vec4 pos;          /* world position (BtlChar_GetPos returns its address) */
-    /* 0x0020 */ u8 unk20[0x420 - 0x20];
-    /* 0x0420 */ Vec4 camEye;    /* ChrCam.eye (btl_char_cam.h): the wanted camera position; the camera-shake distance is measured from it */
-    /* 0x0430 */ Vec4 camPos;       /* fighter camera position */
-    /* 0x0440 */ Vec4 camRot;       /* fighter camera rotation */
-    /* 0x0450 */ u8 unk450[0x460 - 0x450];
-    /* 0x0460 */ Vec4 camBodyPos;    /* ChrCam.bodyPos: copy of the object's body position (+0xFA0); end point of the demo camera's stage trace */
-    /* 0x0470 */ u8 camShake[0x494 - 0x470]; /* CamShake_Add target (ChrCam_AddShake) */
-    /* 0x0494 */ s32 camHit;     /* ChrCam.hit: 1 = the stage is between target and eye; returned by BtlCharApi_GetCamPose */
-    /* 0x0498 */ u8 unk498[0x4A0 - 0x498];
-    /* 0x04A0 */ f32 camYaw;     /* ChrCam.yaw: yaw of the follow camera (BtlCharApi_GetCamYaw) */
-    /* 0x04A4 */ u8 unk4A4[0x4B8 - 0x4A4];
-    /* 0x04B8 */ s32 camShakeOn;    /* ChrCam_AddShake only shakes when non-zero */
-    /* 0x04BC */ u8 unk4BC[0x948 - 0x4BC];
-    /* 0x0948 */ s32 action;        /* action id (BtlAct_GetCurrent) */
-    /* 0x094C */ u8 unk94C[0x974 - 0x94C];
-    /* 0x0974 */ s32 motion;        /* index into the manager's table at +0x20 (BtlAnim_GetId) */
-    /* 0x0978 */ u8 unk978[0x990 - 0x978];
-    /* 0x0990 */ s32 prevStall;        /* > 0 makes BtlCharApi_ObjTestAttr answer 0 (BtlAnim_TestAttr) */
-    /* 0x0994 */ s32 member;        /* active member index (BtlMember_GetActive) */
-    /* 0x0998 */ u8 unk998[0xE44 - 0x998]; /* member blocks of 0xA4 bytes start at 0x9A4 */
-    /* 0x0E44 */ f32 techCharge;
-    /* 0x0E48 */ u8 unkE48[0xE5C - 0xE48];
-    /* 0x0E5C */ s32 skillCount3;        /* counter, full at 3 */
-    /* 0x0E60 */ s32 unkE60;        /* counter, full at 5 */
-    /* 0x0E64 */ u8 unkE64[0xEFC - 0xE64];
-    /* 0x0EFC */ f32 stepFrame[4];     /* five entries in btl_act_super.h (f32 stepFrame[5]); summed by BtlCharApi_GetRushSequenceFrame */
-    /* 0x0F0C */ u8 unkF0C[0x1278 - 0xF0C];
-    /* 0x1278 */ s32 injectOn;      /* input comes from the three fields below (btl_input.h) */
-    /* 0x127C */ u32 injectButtons;
-    /* 0x1280 */ f32 injectStickX;
-    /* 0x1284 */ f32 injectStickY;
-    /* 0x1288 */ u64 actBits;
-    /* 0x1290 */ u8 unk1290[0x1320 - 0x1290];
-    /* 0x1320 */ s32 freeze;       /* > 0: no camera shake from BtlCharApi_ShakeCamsNear (BtlChar_IsFrozen) */
-    /* 0x1324 */ u8 unk1324[0x15D0 - 0x1324];
-    /* 0x15D0 */ s32 rumbleOn;      /* pad vibration block, written by BtlChar_SetVibration / BtlChar_SetSmallVibration, run by BtlChar_UpdateVibration */
-    /* 0x15D4 */ f32 rumblePower;   /* 0..1 */
-    /* 0x15D8 */ s32 rumbleFrames;  /* time * 30 */
-    /* 0x15DC */ s32 rumbleFrames2; /* second motor, time * 30 */
-    /* 0x15E0 */ u8 unk15E0[0x1600 - 0x15E0];
-} BtlCharApiChr; /* size 0x1600 */
+typedef BtlFighter BtlCharApiChr;
 
 /* Battle object (BtlObj_Get): only the fields read here. */
 typedef struct BtlCharApiObj {
