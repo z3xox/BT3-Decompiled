@@ -51,7 +51,7 @@ typedef struct BtlCharApiMgr {
     /* 0x08 */ void *oneShotSounds;            /* the one-shot sound sets; the looping sets follow */
     /* 0x0C */ BtlCharApiSoundSet *loopSounds; /* one per side */
     /* 0x10 */ u8 unk10[0x1C - 0x10];
-    /* 0x1C */ s32 unk1C;               /* counter, full at 90 */
+    /* 0x1C */ s32 stageTimer;               /* counter, full at 90 */
     /* 0x20 */ void **motionFlags;            /* 0x19E pointers, indexed by fighter +0x974 */
     /* 0x24 .. 0x280: not touched here. Seen in callees: +0xA0 four 0x20-byte sound requests {Vec4 pos, f32 near,
        f32 far, s32 id, s8 owner, s8 kind} with their count at +0x120 (BtlCharSnd_Request); +0x130 / +0x134 (BtlReplay_GetViewSide). */
@@ -221,7 +221,7 @@ typedef struct BtlCapiBBlastRec {
     /* 0x020 */ u64 pos[2];         /* a Vec4; copied by value as two doublewords */
     /* 0x030 */ Vec4 prevPos;
     /* 0x040 */ u8 unk40[0x54 - 0x40];
-    /* 0x054 */ s32 unk54;          /* 1: ignored */
+    /* 0x054 */ s32 stationary;          /* 1: ignored */
     /* 0x058 */ u8 unk58[0x64 - 0x58];
     /* 0x064 */ BtlCapiBBlastSrc *src;
     /* 0x068 */ BtlCapiBBlastDef *def;

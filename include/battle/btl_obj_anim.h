@@ -114,7 +114,7 @@ typedef struct BobjBone {
     /* 0x06 */ u16 last;   /* non-zero on the last record */
     /* 0x08 */ u16 enabled;
     /* 0x0A */ u16 id;     /* model node id */
-    /* 0x0C */ s32 unk0C;
+    /* 0x0C */ s32 drawFlags;
     /* 0x10 */ Vec4 origin; /* the node's position in model space (body part offsets are relative to it) */
     /* 0x20 */ Vec4 unk20;
     /* 0x30 */ Vec4 rest;  /* translation from the parent in the rest pose */
@@ -314,7 +314,7 @@ typedef struct BobjMdl {
     /* 0x034 */ BobjTexTable *eyeTex;  /* BtlObj + 0x4C: eye texture table (its header is relocated in place) */
     /* 0x038 */ s32 unk38;
     /* 0x03C */ BobjBodyData *body;    /* BtlObj + 0x54: NULL = no body volumes */
-    /* 0x040 */ s32 unk40;
+    /* 0x040 */ s32 charPack;
     /* 0x044 */ void *mouthTexA[8];    /* BtlObj + 0x5C: mouth texture sets */
     /* 0x064 */ void *mouthTexB[8];    /* BtlObj + 0x7C */
     /* 0x084 */ u8 unk84[0x24];

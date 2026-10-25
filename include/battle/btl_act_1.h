@@ -13,7 +13,8 @@
 /* Battle object (what BtlChar_GetObj returns). */
 typedef struct BtlActAObj {
     /* 0x000 */ u8 unk0[0xBDC];
-    /* 0xBDC */ f32 unkBDC;    /* a length in frames at 60 Hz, added to the vanish attack's lead */
+    /* 0xBDC */ f32 subLength;  /* anim.layer[1].length: length of the second-layer animation, in 60ths; added to
+                                   the vanish attack's lead */
     /* 0xBE0 */ u8 unkBE0[0xCAC - 0xBE0];
     /* 0xCAC */ s8 hitCount;
     /* 0xCAD */ s8 hitNo;

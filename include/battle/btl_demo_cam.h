@@ -57,7 +57,7 @@ typedef struct DemoCamAnim {
     /* 0x10 */ s32 unk10;
     /* 0x14 */ f32 length;            /* DemoCam_GetLength */
     /* 0x18 */ DemoCamPose *defaults; /* the pose before any channel is applied */
-    /* 0x1C */ u8 *unk1C;             /* optional block; forced to NULL when version < 2 */
+    /* 0x1C */ u8 *extraData;             /* optional block; forced to NULL when version < 2 */
     /* 0x20 */ s32 version;
 } DemoCamAnim;
 

@@ -78,7 +78,7 @@ typedef struct BtlMoveBlastRec {
     /* 0x20 */ Vec4 pos;
     /* 0x30 */ Vec4 prevPos;
     /* 0x40 */ u8 unk40[0x14];
-    /* 0x54 */ s32 unk54;    /* 1: ignored */
+    /* 0x54 */ s32 stationary;    /* 1: ignored */
     /* 0x58 */ u8 unk58[0xC];
     /* 0x64 */ BtlMoveBlastSrc *src;
     /* 0x68 */ BtlMoveBlastDef *atk;

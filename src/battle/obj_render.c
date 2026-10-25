@@ -560,7 +560,7 @@ void ObjDraw_DrawParts(ObjDrawObj *obj, ObjDrawView *view, s32 mode, u64 tex0, u
                         pkt->tex0[0] = tex0;
                         pkt->tex0[1] = tex0 >> 32;
                         pkt->texReg = 7;
-                        pkt->unk1BC = 0;
+                        pkt->texRegHi = 0;
                         Mtx_Copy(&pkt->mtxB, &node->mtxB);
                         Mtx_Copy(&pkt->mtxA, &node->mtxA);
                         Vec4_Copy(&pkt->ofsA, &part->ofsA);

@@ -573,7 +573,7 @@ void BtlFx_SpawnHitSparkReq17(BtlFighter *chr) {
         Vec4_Copy(&arg.pos, &chr->aimDir);
         arg.objId = chr->objId;
         arg.kind = chr->blastNode;
-        arg.unk18 = BtlKiBlast_GetUnk3(chr);
+        arg.texVariant = BtlKiBlast_GetUnk3(chr);
         arg.scale = 1.0f;
         if (BtlChar_IsBodyChanged(chr)) {
             type = 1;
@@ -1312,7 +1312,7 @@ void BtlFx_FireKiBlast(BtlFighter *chr) {
         arg.objId = chr->objId;
         arg.area = obj->area;
         arg.type = BtlKiBlast_GetType(chr);
-        arg.unk1B = BtlKiBlast_GetUnk3(chr);
+        arg.texVariant = BtlKiBlast_GetUnk3(chr);
         arg.level = BtlKiBlast_GetCurrentKind(chr);
         arg.life = BtlKiBlast_GetFrames(chr);
         arg.speed = BtlKiBlast_GetSpeed(chr);
@@ -1322,7 +1322,7 @@ void BtlFx_FireKiBlast(BtlFighter *chr) {
         arg.unk34 = 1;
         arg.canHit = 1;
         arg.unk3C = (BtlKiBlast_GetFlags(chr) >> 5) & 1;
-        arg.unk41 = BtlObjAnim_QueryEvent(obj, 4, 0, 3);
+        arg.shotCount = BtlObjAnim_QueryEvent(obj, 4, 0, 3);
         switch (arg.level) {
         case 0:
             arg.size = 0;

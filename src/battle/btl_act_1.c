@@ -1447,7 +1447,7 @@ s32 BtlAct_SmashVanishHandler(BtlFighter *chr, s32 phase) {
                 (*count)++;
                 if (*count == 1) {
                     BtlAnim_PlaySub(chr, *anim);
-                    *lead += obj->unkBDC * 30.0f / 60.0f;
+                    *lead += obj->subLength * 30.0f / 60.0f;
                 }
                 if (*count == 2) {
                     BtlAnim_PlaySub(chr, *anim + 2);

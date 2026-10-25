@@ -117,12 +117,12 @@ typedef struct BtlSuperData {
     /* 0x030 */ u8 unk30[0x54 - 0x30];
     /* 0x054 */ f32 shotSpeed[3];     /* 10 km/h */
     /* 0x060 */ f32 shotTurn[3];      /* degrees per second */
-    /* 0x06C */ f32 shotUnk6C[3];
+    /* 0x06C */ f32 shotScale[3];
     /* 0x078 */ u8 unk78[0x90 - 0x78];
     /* 0x090 */ s8 unk90[3];
     /* 0x093 */ s8 shots[3];          /* hit factor 1: number of shots; < 1 counts as 1 */
     /* 0x096 */ s8 hitsB[3];          /* hit factor 2; < 1 counts as 1 */
-    /* 0x099 */ s8 unk99[3];
+    /* 0x099 */ s8 hitShape[3];
     /* 0x09C */ s8 hitsC[3];          /* hit factor 3, less 1 */
     /* 0x09F */ u8 unk9F[0x13B - 0x9F];
     /* 0x13B */ s8 hitDirKind[3];
@@ -169,15 +169,15 @@ typedef struct BtlSkillData {
     /* 0x08 */ u32 flags[2];       /* 0x100: stat levels are added to the current ones; 0x200: enters the
                                       powered-up state; others in btl_act_i.c / btl_act_decide.c */
     /* 0x10 */ s16 id[2];          /* skill id */
-    /* 0x14 */ s16 unk14[2];
+    /* 0x14 */ s16 clashPower[2];
     /* 0x18 */ f32 shotTime[2];
     /* 0x20 */ f32 shotSpeed[2];   /* 10 km/h */
     /* 0x28 */ f32 shotTurn[2];    /* degrees per second */
-    /* 0x30 */ f32 shotUnk30[2];
+    /* 0x30 */ f32 shotScale[2];
     /* 0x38 */ s8 unk38[2];
     /* 0x3A */ s8 shots[2];        /* hit factor 1; < 1 counts as 1 */
     /* 0x3C */ s8 hitsB[2];        /* hit factor 2; < 1 counts as 1 */
-    /* 0x3E */ s8 unk3E[2];
+    /* 0x3E */ s8 hitShape[2];
     /* 0x40 */ s8 hitsC[2];        /* hit factor 3, less 1 */
     /* 0x42 */ u8 unk42[0x62 - 0x42];
     /* 0x62 */ s8 hitDirKind[2];

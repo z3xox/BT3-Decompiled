@@ -294,7 +294,7 @@ f32 BtlColl_GetHitDir(BtlFighter *chr, BtlCollHit *hit, Vec4 *outDir) {
     s32 slot;
     f32 yaw;
 
-    if (hit->unk54 != 0 || Vec3_Length(&hit->vel) < 0.01f) {
+    if (hit->stationary != 0 || Vec3_Length(&hit->vel) < 0.01f) {
         fromPos = 1;
     }
     if (hit->type == BTL_HIT_TECH && hit->owner != NULL) {
@@ -1229,7 +1229,7 @@ s32 BtlColl_TryDeflect(s32 objId, BtlCollHit *hit) {
     if (hit->type != BTL_HIT_BLAST) {
         return 0;
     }
-    if (hit->unk54 == 1) {
+    if (hit->stationary == 1) {
         return 0;
     }
     if (hit->atk == NULL) {
@@ -1316,7 +1316,7 @@ s32 BtlColl_TryReflect(s32 objId, BtlCollHit *hit) {
     if (hit->type != BTL_HIT_BLAST) {
         return 0;
     }
-    if (hit->unk54 == 1) {
+    if (hit->stationary == 1) {
         return 0;
     }
     if (hit->atk == NULL) {
@@ -1368,7 +1368,7 @@ s32 BtlColl_TryAbsorb(s32 objId, BtlCollHit *hit) {
     if (chr == NULL) {
         return 0;
     }
-    if (hit->unk54 == 1) {
+    if (hit->stationary == 1) {
         return 0;
     }
     if (!BtlChar_TestFlag(chr, 0x54)) {

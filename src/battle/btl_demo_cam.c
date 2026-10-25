@@ -35,11 +35,11 @@ void DemoCam_FixupAnim(DemoCamAnim *anim) {
     if (anim->needsFixup != 0) {
         anim->channels = (DemoCamChannel *)((u8 *)anim->channels + (s32)anim);
         anim->defaults = (DemoCamPose *)((u8 *)anim->defaults + (s32)anim);
-        if (anim->unk1C != NULL) {
-            anim->unk1C = anim->unk1C + (s32)anim;
+        if (anim->extraData != NULL) {
+            anim->extraData = anim->extraData + (s32)anim;
         }
         if (anim->version < 2) {
-            anim->unk1C = NULL;
+            anim->extraData = NULL;
         }
         ch = anim->channels;
         for (i = 0; i < anim->channelCount; i++) {

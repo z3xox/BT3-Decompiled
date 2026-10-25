@@ -161,7 +161,7 @@ typedef struct ObjDrawPkt {
     /* 0x190 */ u8 unk190[0x20];
     /* 0x1B0 */ s32 tex0[2];
     /* 0x1B8 */ s32 texReg;
-    /* 0x1BC */ s32 unk1BC;
+    /* 0x1BC */ s32 texRegHi;
 } ObjDrawPkt;
 
 /* Work of ObjSeam_Transform, read and written by the VU0 routine ObjSeam_TransformVtx. */

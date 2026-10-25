@@ -544,8 +544,8 @@ void BtlScene_ClearStageChangeRequest(void) {
 
 /*
  * Once per frame, while fighting, outside modes 4..7 and with the time limit off or at least 10: looks for the
- * first active blast record whose definition is of type 1 (flags & 3) and, when that definition has bit 0x4000,
- * whose own flag 0x10 is set. hit is 1 when rule word 0x10 (stageChange, setup + 0x18) is on, EftHit_HasDefFlag200000(rec) holds and the opponent is
+ * first technique record (type 1; a ki blast is 0) whose definition is of type 1 (flags & 3) and, when that
+ * definition has bit 0x4000, whose own flag 0x10 is set. hit is 1 when rule word 0x10 (stageChange, setup + 0x18) is on, EftHit_HasDefFlag200000(rec) holds and the opponent is
  * below half HP (BtlCharApi_IsTargetBelowHalfHp), else 2 when BtlCharApi_CanTechniqueFinish holds. hit 1 marks the record (flags 2 and 8, two
  * separate stores in the source: with one `|= 0xA` the loop is short enough for the compiler to hoist its
  * constants) and asks for the stage change; hit 2 sets held flag 0xAB on the opponent. A pending
@@ -581,7 +581,7 @@ void BtlScene_CheckStageChange(void) {
         hit = 0;
         target = BtlCharApi_GetOpponentObjId(rec->objId);
         attr = EftHit_GetTaskFlags(i);
-        if (rec->active != 0) {
+        if (rec->type != 0) {
             if (Battle_IsStageChangeEnabled() && EftHit_HasDefFlag200000(rec) && BtlCharApi_IsTargetBelowHalfHp(rec->objId, target)) {
                 hit = 1;
             } else if (BtlCharApi_CanTechniqueFinish(rec->objId, target)) {

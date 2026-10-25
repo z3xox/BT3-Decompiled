@@ -80,7 +80,7 @@ typedef struct BtlCapiObj {
     /* 0xA48 */ u8 unkA48[0xFA0 - 0xA48];
     /* 0xFA0 */ Vec4 *bodyPos;      /* -> {Vec4 pos; f32 radius} (BtlMoveObjBody in btl_char_move.h) */
     /* 0xFA4 */ u8 unkFA4[0xFF0 - 0xFA4];
-    /* 0xFF0 */ f32 unkFF0;         /* from the model's body data; * 1.8 = default radius */
+    /* 0xFF0 */ f32 baseRadius;         /* from the model's body data; * 1.8 = default radius */
     /* 0xFF4 */ f32 height;         /* model header +0x18 (BtlObjBody_Init copies the four) */
     /* 0xFF8 */ f32 unkFF8;         /* model header +0x1C */
     /* 0xFFC */ f32 centerHeight;   /* model header +0x20 */

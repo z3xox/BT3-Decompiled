@@ -82,7 +82,7 @@ typedef struct FxHitArg {
     /* 0x00 */ Vec4 pos;
     /* 0x10 */ s32 objId;
     /* 0x14 */ s32 kind;
-    /* 0x18 */ s32 unk18;
+    /* 0x18 */ s32 texVariant;
     /* 0x1C */ f32 scale;
 } FxHitArg;
 
@@ -95,7 +95,7 @@ typedef struct FxHitArg2 {
     /* 0x16 */ u16 area;    /* obj->unkA24 */
     /* 0x18 */ s16 level;    /* BtlKiBlast_GetCurrentKind: 0..11, its low two bits pick the size */
     /* 0x1A */ u8 type;      /* BtlKiBlast_GetType: picks the spark module (5, 4, 2, 3, other) */
-    /* 0x1B */ u8 unk1B;
+    /* 0x1B */ u8 texVariant;
     /* 0x1C */ s16 life;
     /* 0x20 */ f32 speed;
     /* 0x24 */ f32 turn;
@@ -106,7 +106,7 @@ typedef struct FxHitArg2 {
     /* 0x38 */ s32 canHit;
     /* 0x3C */ s32 unk3C;
     /* 0x40 */ u8 unk40;
-    /* 0x41 */ u8 unk41;
+    /* 0x41 */ u8 shotCount;
     /* 0x42 */ u8 unk42[0xE];
 } FxHitArg2; /* size 0x50 */
 

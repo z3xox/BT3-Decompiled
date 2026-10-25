@@ -2324,7 +2324,7 @@ void BtlObj_BindTables(BObj *obj) {
     for (i = 0; i < 4; i++) {
         mdl->charCamAnims[i] = BObjFile_GetEntry(&slot->file[0], i + 0x25);
     }
-    mdl->unkA4 = BObjFile_GetEntry(&slot->file[0], gProgress->language + 0x2D);
+    mdl->skillText = BObjFile_GetEntry(&slot->file[0], gProgress->language + 0x2D);
     base = 0x64;
     if (!(gSaveData->flags & 1)) {
         base = 0;
@@ -2334,15 +2334,15 @@ void BtlObj_BindTables(BObj *obj) {
     }
     if (slot->file[2].buf != NULL) {
         for (i = 0; i < 5; i++) {
-            mdl->unk84[i] = BObjFile_GetEntry(&slot->file[2], i + 1);
+            mdl->effectPacks[i] = BObjFile_GetEntry(&slot->file[2], i + 1);
         }
-        mdl->unk40 = BObjFile_GetEntry(&slot->file[2], 6);
+        mdl->charPack = BObjFile_GetEntry(&slot->file[2], 6);
     }
     mdl->unk38 = BObjFile_GetEntry(&slot->file[0], 1);
     if (mdl->unk38 != NULL) {
         Res_RelocateOffsets(&mdl->unk38, mdl->unk38, mdl->unk38);
     }
-    mdl->unk924 = BObjFile_GetEntry(&slot->file[0], 0x16);
+    mdl->talkTable = BObjFile_GetEntry(&slot->file[0], 0x16);
     mdl->param = BObjFile_GetEntry(&slot->file[0], 0x12);
     mdl->atk = BObjFile_GetEntry(&slot->file[0], 0x13);
     mdl->kiBlast = BObjFile_GetEntry(&slot->file[0], 0x14);
@@ -2350,7 +2350,7 @@ void BtlObj_BindTables(BObj *obj) {
     mdl->super = BObjFile_GetEntry(&slot->file[0], 0x18);
     mdl->skill = BObjFile_GetEntry(&slot->file[0], 0x19);
     mdl->aiParam = BObjFile_GetEntry(&slot->file[0], 0x1B);
-    mdl->unk920 = BObjFile_GetEntry(&slot->file[0], 0x1C);
+    mdl->camCuts = BObjFile_GetEntry(&slot->file[0], 0x1C);
     mdl->chain = BObjFile_GetEntry(&slot->file[0], 0x17);
 }
 

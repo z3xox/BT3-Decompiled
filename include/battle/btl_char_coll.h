@@ -50,7 +50,7 @@ typedef struct BtlCollHit {
     /* 0x30 */ u8 unk30[0x10];
     /* 0x40 */ Vec4 vel;       /* travel direction of the hit */
     /* 0x50 */ s32 flags;      /* bit 0x10: second variant of a rush hit (other reaction table, sound and a push) */
-    /* 0x54 */ s32 unk54;      /* non-zero: direction taken from the hit position instead of vel; 1: cannot be
+    /* 0x54 */ s32 stationary;      /* non-zero: direction taken from the hit position instead of vel; 1: cannot be
                                   deflected, reflected or absorbed */
     /* 0x58 */ u8 unk58[0xC];
     /* 0x64 */ BtlCollOwner *owner;

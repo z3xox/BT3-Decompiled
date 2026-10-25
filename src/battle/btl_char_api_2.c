@@ -427,7 +427,7 @@ f32 BtlCharApi_GetMgrTimerRatio(void) {
     if (gBtlChars == NULL) {
         return 0.0f;
     }
-    return BtlUtil_ClampF((f32)gBtlChars->unk1C / 90.0f, 0.0f, 1.0f);
+    return BtlUtil_ClampF((f32)gBtlChars->stageTimer / 90.0f, 0.0f, 1.0f);
 }
 
 /* Starts the block at +0x15D0 (strength, frames) on every fighter within `far` of pos, scaled by closeness. */
@@ -1025,7 +1025,7 @@ s32 BtlCharApi_SkipBlastRec(s32 objId, BtlCapiBBlastRec *rec, s32 mode) {
             return 1;
         }
     }
-    if (rec->unk54 == 1) {
+    if (rec->stationary == 1) {
         return 1;
     }
     return rec->seen == 1;
@@ -1110,7 +1110,7 @@ s32 BtlCharApi_IsBlastPassing(s32 objId) {
                 continue;
             }
         }
-        if (rec->unk54 == 1) {
+        if (rec->stationary == 1) {
             continue;
         }
         Vec3_Sub(&toBlast, (Vec4 *)rec->pos, &pos);

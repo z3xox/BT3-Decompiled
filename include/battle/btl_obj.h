@@ -76,7 +76,7 @@ typedef struct BtlObjBound {
     /* 0x06 */ u16 last;     /* non-zero on the last record */
     /* 0x08 */ u16 enabled;  /* 0: record skipped */
     /* 0x0A */ u16 node;     /* argument of BtlObj_GetNode: the model node the box hangs on */
-    /* 0x0C */ s32 unk0C;
+    /* 0x0C */ s32 drawFlags;
     /* 0x10 */ Vec4 origin;
     /* 0x20 */ Vec4 unk20;
     /* 0x30 */ Vec4 rest;

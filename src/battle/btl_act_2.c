@@ -3891,7 +3891,7 @@ f32 BtlAct_PlayAttackPart(BtlFighter *chr, BtlFighterAttack *atk, s32 frame, f32
 
     if (frame < atk->parts - 1) {
         BtlAnim_PlaySub(chr, atk->motion[frame]);
-        time += obj->unkBDC * 30.0f / 60.0f / atk->rate;
+        time += obj->subLength * 30.0f / 60.0f / atk->rate;
     } else if (frame == atk->parts - 1) {
         s32 n;
 

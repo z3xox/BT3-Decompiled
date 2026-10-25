@@ -1028,7 +1028,7 @@ f32 BtlSuper_GetShotTurnRate(BtlFighter *chr, s32 slot) {
 
 /* Table +0x6C (float). */
 f32 BtlSuper_GetShotUnk6C(BtlFighter *chr, s32 slot) {
-    return BtlChar_GetObj(chr)->super->shotUnk6C[slot - 2];
+    return BtlChar_GetObj(chr)->super->shotScale[slot - 2];
 }
 
 /* Table +0x90 (s8; no caller found). */
@@ -1455,7 +1455,7 @@ s32 BtlSkill_GetId(BtlFighter *chr, s32 slot) {
 
 /* Table +0x14 (s16; no caller found). */
 s32 BtlSkill_GetUnk14(BtlFighter *chr, s32 slot) {
-    return BtlChar_GetObj(chr)->skill->unk14[slot];
+    return BtlChar_GetObj(chr)->skill->clashPower[slot];
 }
 
 /* Table +0x18 (float). */
@@ -1475,7 +1475,7 @@ f32 BtlSkill_GetShotTurnRate(BtlFighter *chr, s32 slot) {
 
 /* Table +0x30 (float). */
 f32 BtlSkill_GetShotUnk30(BtlFighter *chr, s32 slot) {
-    return BtlChar_GetObj(chr)->skill->shotUnk30[slot];
+    return BtlChar_GetObj(chr)->skill->shotScale[slot];
 }
 
 /* Table +0x38 (s8; no caller found). */

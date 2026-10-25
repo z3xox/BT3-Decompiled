@@ -57,7 +57,7 @@ typedef struct BObjBound {
     /* 0x06 */ u16 last;     /* (v) non-zero on the last record */
     /* 0x08 */ u16 enabled;
     /* 0x0A */ u16 node;     /* (v) node id */
-    /* 0x0C */ s32 unk0C;
+    /* 0x0C */ s32 drawFlags;
     /* 0x10 */ Vec4 origin;
     /* 0x20 */ Vec4 unk20;
     /* 0x30 */ Vec4 rest;
@@ -243,14 +243,14 @@ typedef struct BObjMdl {
     /* 0x034 */ BObjTexTable *eyes;     /* (v) entry 0xD: eye textures; NULL = no eyes */
     /* 0x038 */ void *unk38;            /* (v) entry 1, relocated in place */
     /* 0x03C */ void *body;            /* (v) entry 2 */
-    /* 0x040 */ void *unk40;            /* (v) animation file 2, entry 6 */
+    /* 0x040 */ void *charPack;            /* (v) animation file 2, entry 6 */
     /* 0x044 */ void *mouthA[8];        /* (v) entries 4..11 */
     /* 0x064 */ void *mouthB[8];        /* (v) [4..7] = entries 0xE..0x11; [0..3] = NULL */
-    /* 0x084 */ void *unk84[5];         /* (v) animation file 2, entries 1..5 */
+    /* 0x084 */ void *effectPacks[5];         /* (v) animation file 2, entries 1..5 */
     /* 0x098 */ void *camAnims[1];         /* (v) entries 0x29..0x2B run from here ... */
     /* 0x09C */ void *common9C;         /* (v) ... but BtlObj_BindCommonTables then stores common entry 12 here */
-    /* 0x0A0 */ void *unkA0;
-    /* 0x0A4 */ void *unkA4;            /* (v) entry 0x2D + gProgress->file */
+    /* 0x0A0 */ void *loseCamAnim;
+    /* 0x0A4 */ void *skillText;            /* (v) entry 0x2D + gProgress->language */
     /* 0x0A8 */ void *anims[0x19E];     /* (v) animation file 1, entries 1..0x19E (object + 0xC0) */
     /* 0x720 */ void *modelAnims[8];        /* (v) entries 0x1D..0x24 */
     /* 0x740 */ BObjLipData *lip[100];  /* (v) entries 0x35.. (0x99.. for the second voice language) */
@@ -264,8 +264,8 @@ typedef struct BObjMdl {
     /* 0x914 */ void *super;           /* (v) entry 0x18 */
     /* 0x918 */ void *skill;           /* (v) entry 0x19 */
     /* 0x91C */ void *aiParam;           /* (v) entry 0x1B */
-    /* 0x920 */ void *unk920;           /* (v) entry 0x1C */
-    /* 0x924 */ void *unk924;           /* (v) entry 0x16 */
+    /* 0x920 */ void *camCuts;           /* (v) entry 0x1C */
+    /* 0x924 */ void *talkTable;           /* (v) entry 0x16 */
     /* 0x928 */ BObjChainParam *chain;  /* (v) entry 0x17 (object + 0x940) */
 } BObjMdl; /* size 0x92C */
 

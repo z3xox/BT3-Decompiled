@@ -886,7 +886,7 @@ f32 BtlCharApi_GetRadius(s32 objId) {
             r = obj->param->radius;
         }
         if (r <= 0.0f) {
-            r = obj->unkFF0 * 1.8f;
+            r = obj->baseRadius * 1.8f;
         }
         return r;
     }

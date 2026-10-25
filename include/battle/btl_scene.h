@@ -112,7 +112,7 @@ typedef struct BtlScene {
 typedef struct BtlBlastRec {
     /* 0x00 */ s32 objId;   /* object id of the fighter it belongs to */
     /* 0x04 */ s32 unk4[2];
-    /* 0x0C */ s32 active;
+    /* 0x0C */ s32 type;
     /* 0x10 */ u8 unk10[0x40];
     /* 0x50 */ s32 flags;   /* bit 0x10 tested, 0xA set by BtlScene_CheckStageChange */
     /* 0x54 */ u8 unk54[0x13C];

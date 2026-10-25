@@ -135,7 +135,7 @@ typedef struct BtlParam {
     /* 0x84 */ u8 rushFinisher[4];       /* BtlParam_GetRushFinisher */
     /* 0x88 */ u8 chainKind[2];       /* BtlParam_GetChainKind: argument of BtlAct_GetChainAction when actions 0x67..0x69 end by flag 0x70 */
     /* 0x8A */ u8 finisherChoice[5];       /* BtlParam_GetFinisherChoice */
-    /* 0x8F */ u8 unk8F[0x98 - 0x8F];
+    /* 0x8F */ u8 comboFinish[0x98 - 0x8F];
     /* 0x98 */ u8 transTarget[4]; /* BtlParam_GetSlotId: transformation targets; 0xFF = none (BtlParam_CountSlots) */
     /* 0x9C */ u8 transCost[4];   /* BtlParam_GetSlotCost: blast stocks, returned * 100000 */
     /* 0xA0 */ u8 transSeq[4];    /* BtlParam_GetSlotA0 */

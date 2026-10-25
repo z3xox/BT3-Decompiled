@@ -90,7 +90,7 @@ s32 BtlAct_HomingDashHandler(BtlFighter *chr, s32 phase);
 /* Battle object of a fighter (BtlChar_GetObj). */
 typedef struct BtlActEObj {
     /* 0x000 */ u8 unk0[0xBDC];
-    /* 0xBDC */ f32 unkBDC;
+    /* 0xBDC */ f32 subLength;
 } BtlActEObj;
 
 /* Clash C state (roster + 0x7C; see BtlClashC in btl_char_flag.h). */

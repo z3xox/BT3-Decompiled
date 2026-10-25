@@ -237,7 +237,7 @@ s32 BtlMove_CanFireBlast(BtlFighter *chr, s32 mode, s32 *outCount) {
         if (def->ownerId != chr->objId) {
             continue;
         }
-        if (rec->unk54 == 1) {
+        if (rec->stationary == 1) {
             continue;
         }
         switch (def->kind) {
@@ -286,7 +286,7 @@ s32 BtlMove_IsBlastIncoming(BtlFighter *chr, s32 uncharged, s32 otherBlasts, s32
         f32 dist;
         f32 speed;
 
-        if (rec->unk54 == 1) {
+        if (rec->stationary == 1) {
             continue;
         }
         if (rec->type == 0) {
