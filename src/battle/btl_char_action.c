@@ -322,19 +322,19 @@ f32 BtlAct_GetFramesToGround(BtlActChr *chr) {
 
 /* Yaw of the fighter relative to its camera yaw. */
 f32 BtlAct_GetRotYRelCam(BtlActChr *chr) {
-    return BtlUtil_WrapAngle(BtlChar_GetPos(chr)->rot.y - chr->camYaw);
+    return BtlUtil_WrapAngle(BtlChar_GetPos(chr)->rot.y - chr->cam.yaw);
 }
 
 /* Facing of the fighter relative to its camera yaw. */
 f32 BtlAct_GetFacingRelCam(BtlActChr *chr) {
-    return BtlUtil_WrapAngle(BtlChar_GetPos(chr)->facing - chr->camYaw);
+    return BtlUtil_WrapAngle(BtlChar_GetPos(chr)->facing - chr->cam.yaw);
 }
 
 /* Direction of travel relative to the camera yaw. */
 f32 BtlAct_GetVelDirRelCam(BtlActChr *chr) {
     BtlActPose *pose = BtlChar_GetPos(chr);
 
-    return BtlUtil_WrapAngle(atan2f(pose->vel.x, pose->vel.z) - chr->camYaw);
+    return BtlUtil_WrapAngle(atan2f(pose->vel.x, pose->vel.z) - chr->cam.yaw);
 }
 
 /* In lock-on, within range of the opponent: scales the speed down by distance unless moving along the line to it. */
@@ -428,8 +428,8 @@ s32 BtlAct_IsAirMotion(BtlActChr *chr, s32 useSaved) {
     if (BtlChar_TestFlag(chr, 0x36)) {
         return 0;
     }
-    if (useSaved && chr->reaction != 1) {
-        return chr->hitBack;
+    if (useSaved && chr->react.reaction != 1) {
+        return chr->react.back;
     }
     if (BtlAnim_GetFlags(BtlAnim_GetId(chr)) & 0x8000) {
         return 1;
@@ -445,11 +445,11 @@ void BtlAct_PrepareSwitch(BtlActChr *chr) {
     chr->switchVariant = BtlMember_GetGauge(chr, chr->switchMember)->variant;
     if (BtlMember_GetGauge(chr, chr->switchMember)->bodyChanged != 0) {
         chr->switchAnimChara = 0x56;
-        chr->unkCEC = 0x56;
+        chr->switchAnim1Chara = 0x56;
         chr->switchVoiceChara = 0x56;
     } else {
         chr->switchAnimChara = chr->switchChara;
-        chr->unkCEC = chr->switchChara;
+        chr->switchAnim1Chara = chr->switchChara;
         chr->switchVoiceChara = chr->switchChara;
     }
 }
@@ -526,16 +526,16 @@ void BtlAct_PrepareAttack(BtlActChr *chr, s32 id) {
     if (BtlAct_IsAttackId(id)) {
         rec = BtlAct_GetAttackRec(id - 0x70);
         if (rec->parts >= 2) {
-            chr->nextAttack.motion = rec->motion;
-            chr->nextAttack.motion2 = rec->motion + 2;
+            chr->nextAttack.motion[0] = rec->motion;
+            chr->nextAttack.motion[1] = rec->motion + 2;
         } else {
-            chr->nextAttack.motion = rec->motion;
-            chr->nextAttack.motion2 = -1;
+            chr->nextAttack.motion[0] = rec->motion;
+            chr->nextAttack.motion[1] = -1;
         }
         chr->nextAttack.parts = BtlUtil_Max(rec->parts, 1);
         chr->nextAttack.flags = rec->flags;
         chr->nextAttack.speed = rec->speed * 10.0f * 0.0092592593f;
-        chr->nextAttack.leadIn = rec->leadIn;
+        chr->nextAttack.level = rec->leadIn;
         if (rec->rate > 0) {
             rate = rec->rate * 0.1f;
         } else {
@@ -543,7 +543,7 @@ void BtlAct_PrepareAttack(BtlActChr *chr, s32 id) {
         }
         chr->nextAttack.rate = rate;
         chr->nextAttack.cancelAt = rec->cancelAt;
-        chr->nextAttack.leadFrames = 0.0f;
+        chr->nextAttack.leadTime = 0.0f;
         chr->nextAttack.chained = 0;
         /* Camera cut of the attack. With record flag 0x20 the choice depends on which side of the
            fighter its camera sits (camSide < 0, since leadFrames was just zeroed): the one place the
@@ -552,7 +552,7 @@ void BtlAct_PrepareAttack(BtlActChr *chr, s32 id) {
             chr->nextAttack.cut = rec->cut;
         } else {
             if (rec->flags & 0x20) {
-                if (chr->camSide < chr->nextAttack.leadFrames) {
+                if (chr->cam.side < chr->nextAttack.leadTime) {
                     chr->nextAttack.cut = rec->cut;
                 } else {
                     chr->nextAttack.cut = rec->cutAlt;
@@ -582,15 +582,15 @@ void BtlAct_PrepareAttack(BtlActChr *chr, s32 id) {
 /* Resets the pending attack parameters to "no attack". */
 void BtlAct_ResetAttack(BtlActChr *chr) {
     s32 i;
-    chr->nextAttack.motion = -1;
-    chr->nextAttack.motion2 = -1;
+    chr->nextAttack.motion[0] = -1;
+    chr->nextAttack.motion[1] = -1;
     chr->nextAttack.parts = 0;
     chr->nextAttack.flags = 0;
     chr->nextAttack.speed = 0.0f;
-    chr->nextAttack.leadIn = 0;
+    chr->nextAttack.level = 0;
     chr->nextAttack.rate = 1.0f;
     chr->nextAttack.cancelAt = 1.0f;
-    chr->nextAttack.leadFrames = 15.0f;
+    chr->nextAttack.leadTime = 15.0f;
     chr->nextAttack.chained = 0;
     chr->nextAttack.cut = -1;
     for (i = 0; i < 2; i++) {
@@ -623,7 +623,7 @@ void BtlAct_SetFormCurrent(BtlActChr *chr) {
     chr->form.partner = -1;
     chr->form.objCostume = 0;
     chr->form.animChara = -1;
-    chr->form.unk1C = -1;
+    chr->form.anim1Chara = -1;
     chr->form.voiceChara = -1;
 }
 
@@ -642,14 +642,14 @@ void BtlAct_SetFormRandom(BtlActChr *chr) {
     chr->form.objCostume = 0;
     chr->form.variant = 0;
     chr->form.animChara = -1;
-    chr->form.unk1C = -1;
+    chr->form.anim1Chara = -1;
     chr->form.voiceChara = -1;
 }
 
 /* Counts one at chr + 0xE50 and sets the opponent's + 0xD4C. */
 void BtlAct_CountAndMarkOpponent(BtlActChr *chr) {
     chr->clashCountB++;
-    BtlChar_Get(BtlOpp_GetPlayer(chr))->comboNewHit = 1;
+    BtlChar_Get(BtlOpp_GetPlayer(chr))->combo.newHit = 1;
 }
 
 /* Ends the state held by flag 0x98: clears it, resets the object's sub-state and calls BtlStat_EndKind4. */
@@ -667,7 +667,7 @@ void BtlAct_EndFlag98(BtlActChr *chr) {
 /* With flag 0x94: applies the two floats saved at chr + 0xFD0 through BtlMove_SetHeading. */
 void BtlAct_ApplyFlag94(BtlActChr *chr) {
     if (BtlChar_TestFlag(chr, 0x94)) {
-        BtlMove_SetHeading(chr, chr->turnYaw, chr->turnPitch);
+        BtlMove_SetHeading(chr, chr->react.turnYaw, chr->react.turnPitch);
     }
 }
 
@@ -744,7 +744,7 @@ void BtlAct_CheckForced(BtlActChr *chr) {
     if (BtlChar_TestFlag(chr, 0x79)) {
         BtlAct_Request(chr, 0xBD);
     }
-    if (BtlAct_QueueReaction(chr, chr->reaction)) {
+    if (BtlAct_QueueReaction(chr, chr->react.reaction)) {
         BtlAct_Request(chr, BtlAct_GetQueued_(chr));
     }
     if (BtlChar_TestFlag(chr, 0x7F)) {
@@ -935,7 +935,7 @@ void BtlAct_UpdateGauges(BtlActChr *chr) {
         }
         /* Members waiting on the bench recover once per second. */
         for (i = 0; i < chr->memberCount; i++) {
-            if (i != chr->active) {
+            if (i != chr->curMember) {
                 member = BtlMember_Get(chr, i);
                 v = &member->vitals;
                 if (member->present) {
@@ -973,7 +973,7 @@ void BtlAct_UpdateTimers(BtlActChr *chr) {
     BtlMove_UpdateHoverOffset(chr);
     BtlMove_UpdateDefenseTimers(chr);
     if (BtlChar_TestFlag(chr, 0x8B)) {
-        Vec4_Add(&BtlChar_GetPos(chr)->pos, &BtlChar_GetPos(chr)->pos, &chr->holdDelta);
+        Vec4_Add(&BtlChar_GetPos(chr)->pos, &BtlChar_GetPos(chr)->pos, &chr->status.carryMove);
     }
     if (BtlChars_IsTimeStopped()) {
         return;
@@ -992,10 +992,10 @@ void BtlAct_UpdateTimers(BtlActChr *chr) {
         chr->vanishCount = 0;
     }
     if (!BtlChar_TestFlag(chr, 0x95)) {
-        chr->comboDamage = 0;
-        chr->comboHits = 0;
-        if (chr->comboTimer > 0) {
-            chr->comboTimer--;
+        chr->combo.damage = 0;
+        chr->combo.hits = 0;
+        if (chr->combo.timer > 0) {
+            chr->combo.timer--;
         }
         if (BtlChar_TestPrevFlag(chr, 0x95)) {
             s32 j;
@@ -1011,43 +1011,43 @@ void BtlAct_UpdateTimers(BtlActChr *chr) {
         }
     }
     /* Stun: counts down only in a motion with flag 0x10000; mashing (input bit 20) takes 3 more per press. */
-    if (chr->stunTimer > 0) {
+    if (chr->react.stunTimer > 0) {
         BtlChar_SetFxBit(chr, 0x1A);
         if (mflags & 0x10000) {
-            chr->stunTimer--;
+            chr->react.stunTimer--;
             BtlChar_SetSmallVibration(chr, 0.1f);
             BtlChar_SetFlag(chr, 0xE7);
             if (BtlInput_IsPressed(chr, 0x100000)) {
-                chr->stunTimer -= 3;
-                if (chr->stunTimer < 0) {
-                    chr->stunTimer = 0;
+                chr->react.stunTimer -= 3;
+                if (chr->react.stunTimer < 0) {
+                    chr->react.stunTimer = 0;
                 }
             }
         }
         if (BtlChar_IsDead(chr)) {
-            chr->stunTimer = 0;
+            chr->react.stunTimer = 0;
         }
     }
-    if (chr->blindTimer > 0) {
-        chr->blindTimer--;
+    if (chr->react.blindTimer > 0) {
+        chr->react.blindTimer--;
         BtlChar_SetFlag(chr, 0x93);
         BtlChar_SetFlag(chr, 0x137);
         BtlChar_SetFlag(chr, 0x96);
     }
-    chr->blindLevel = BtlUtil_Approach(chr->blindLevel, chr->blindTimer * 2, 15);
-    if (chr->shakeTimer > 0) {
-        chr->shakeTimer--;
+    chr->blindLevel = BtlUtil_Approach(chr->blindLevel, chr->react.blindTimer * 2, 15);
+    if (chr->react.shakeTimer > 0) {
+        chr->react.shakeTimer--;
         if (BtlChar_IsDead(chr)) {
-            chr->shakeTimer = 0;
+            chr->react.shakeTimer = 0;
         }
     }
-    if (chr->unkFE4 > 0) {
-        chr->unkFE4--;
+    if (chr->react.unk34 > 0) {
+        chr->react.unk34--;
         BtlChar_SetFlag(chr, 0x96);
     }
-    if (chr->blastShotsTimer > 0) {
+    if (chr->blastResetTimer > 0) {
         if (!(mflags & 4)) {
-            chr->blastShotsTimer--;
+            chr->blastResetTimer--;
         }
     } else {
         chr->blastShots = 0;
@@ -1057,10 +1057,10 @@ void BtlAct_UpdateTimers(BtlActChr *chr) {
             chr->techDelay--;
         }
     }
-    if (chr->unkFF0 > 0) {
-        chr->unkFF0--;
+    if (chr->react.unk40 > 0) {
+        chr->react.unk40--;
         if (!BtlChar_TestFlag(chr, 0x13)) {
-            chr->unkFF0 = 0;
+            chr->react.unk40 = 0;
         }
     }
     pose = BtlChar_GetPos(chr);
@@ -1138,12 +1138,12 @@ void BtlAct_UpdateTimers(BtlActChr *chr) {
             BtlChar_SetFlag(chr, 0x57);
         }
         if (BtlMember_GetActiveGauge(chr)->lowHealthIdle == 0) {
-            chr->recoverPresses = 0;
+            chr->mashLeft = 0;
         } else if (!(BtlAnim_GetFlags(BtlAnim_GetPrevId(chr)) & 0x800)) {
-            chr->recoverPresses = 4;
+            chr->mashLeft = 4;
         }
     } else {
-        chr->recoverPresses = 0;
+        chr->mashLeft = 0;
     }
     if (BtlChar_IsDead(chr) && (obj->flags & 0x40000)) {
         BtlObj_SetColorMode(obj, 2, 0);
@@ -1191,7 +1191,7 @@ void BtlAct_Update(BtlActChr *chr) {
         BtlChar_ClearFlagRange(chr, 0x81, 0x84);
         BtlChar_ClearFlagRange(chr, 0x5B, 0x5D);
         BtlChar_ClearFlagRange(chr, 0xDD, 0xDD);
-        chr->hitContact = 0;
+        chr->status.contact = 0;
         BtlChar_SetFlag(chr, 8);
         BtlAct_ApplyFlag94(chr);
         if (tbl[act->current] != NULL) {
@@ -1265,7 +1265,7 @@ s32 BtlAct_Action02(BtlActChr *chr, s32 phase) {
         BtlChar_SetFlag(chr, 0x24);
         BtlChar_GetPos(chr)->speed = 0.0f;
         BtlChar_GetPos(chr)->fallSpeed = 0.0f;
-        chr->stunTimer = 0;
+        chr->react.stunTimer = 0;
         if (obj->flags & 0x40000) {
             BtlObj_SetColorMode(obj, 2, 0);
         }
@@ -1302,7 +1302,7 @@ s32 BtlAct_Action03(BtlActChr *chr, s32 phase) {
         BtlChar_SetFlag(chr, 0x24);
         BtlChar_GetPos(chr)->speed = 0.0f;
         BtlChar_GetPos(chr)->fallSpeed = 0.0f;
-        chr->blindTimer = 0;
+        chr->react.blindTimer = 0;
         chr->blindLevel = 0;
     }
     if (phase == BTLACT_PHASE_RUN) {
@@ -1344,7 +1344,7 @@ s32 BtlAct_Action04(BtlActChr *chr, s32 phase) {
         BtlChar_SetFlag(chr, 0x29);
         BtlAct_EndFlag98(chr);
         BtlChar_ClearFlag(chr, 0xBE);
-        chr->stunTimer = 0;
+        chr->react.stunTimer = 0;
         BtlChar_ClearFlag(chr, 0xFA);
     }
     if (phase == BTLACT_PHASE_RUN) {

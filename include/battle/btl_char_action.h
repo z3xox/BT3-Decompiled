@@ -26,8 +26,7 @@
 #define BTLACT_PHASE_DECIDE 2
 #define BTLACT_PHASE_LEAVE  3
 
-struct BtlActChr;
-typedef s32 (*BtlActHandler)(struct BtlActChr *chr, s32 phase);
+typedef s32 (*BtlActHandler)(BtlFighter *chr, s32 phase);
 
 /* Pose block (chr + 0x10, what BtlChar_GetPos returns). */
 typedef struct BtlActPose {
@@ -49,21 +48,7 @@ typedef struct BtlActPose {
 } BtlActPose;
 
 /* Attack parameters built from an attack table record (0x24 bytes; pending at chr + 0xD1C, latched at + 0xCF8). */
-typedef struct BtlActAttack {
-    /* 0x00 */ s32 flags;      /* record +0x14 (u16) */
-    /* 0x04 */ s16 motion;     /* record +0x06 */
-    /* 0x06 */ s16 motion2;    /* motion + 2 when the record has 2 or more parts, else -1 */
-    /* 0x08 */ s8 parts;       /* max(record +0x04, 1) */
-    /* 0x09 */ u8 leadIn;        /* record +0x01 */
-    /* 0x0A */ s8 cut;         /* camera cut passed to ChrCam_RequestCut(chr, 1, cut); < 0 = none */
-    /* 0x0B */ s8 follow[2];   /* attack record indices: record +0x0D.. or +0x0F.. */
-    /* 0x0D */ u8 padD[3];
-    /* 0x10 */ f32 rate;      /* record +0x0C * 0.1, or 1.0 */
-    /* 0x14 */ f32 cancelAt;      /* record +0x08 */
-    /* 0x18 */ f32 leadFrames;      /* 0 from BtlAct_PrepareAttack, 15.0 from BtlAct_ResetAttack */
-    /* 0x1C */ f32 speed;      /* record +0x00 * 10 / 1080 */
-    /* 0x20 */ s32 chained;
-} BtlActAttack; /* size 0x24 */
+typedef BtlFighterAttack BtlActAttack;
 
 /* Attack table record (roster + 0x2C, index = action id - 0x70). */
 typedef struct BtlActAttackRec {
@@ -108,124 +93,10 @@ typedef struct BtlActMember {
 } BtlActMember;
 
 /* Form-change request (chr + 0x12CC). */
-typedef struct BtlActForm {
-    /* 0x00 */ s32 index;
-    /* 0x04 */ s32 chara;
-    /* 0x08 */ s32 costume;
-    /* 0x0C */ s32 cost;
-    /* 0x10 */ s32 kind;
-    /* 0x14 */ s32 variant;
-    /* 0x18 */ s32 animChara;
-    /* 0x1C */ s32 unk1C;
-    /* 0x20 */ s32 voiceChara;
-    /* 0x24 */ s32 objId;
-    /* 0x28 */ s32 objCostume;
-    /* 0x2C */ s32 partner;
-} BtlActForm;
+typedef BtlFighterForm BtlActForm;
 
 /* Fighter (0x1600 bytes). */
-typedef struct BtlActChr {
-    /* 0x0000 */ s32 player;
-    /* 0x0004 */ s32 pad;
-    /* 0x0008 */ s32 side;
-    /* 0x000C */ s32 objId;
-    /* 0x0010 */ u8 unk10[0x3D0 - 0x10];
-    /* 0x03D0 */ s32 work[0x14];    /* per-action scratch, zeroed when an action starts */
-    /* 0x0420 */ u8 unk420[0x4A0 - 0x420];
-    /* 0x04A0 */ f32 camYaw;        /* ChrCam yaw: movement reference */
-    /* 0x04A4 */ f32 camYawStep;
-    /* 0x04A8 */ f32 camSide;       /* ChrCam side: sign = which side of the fighter the camera sits */
-    /* 0x04AC */ u8 unk4AC[0x948 - 0x4AC];
-    /* 0x0948 */ BtlActState act;
-    /* 0x0964 */ s32 actionFrame;   /* frames spent in the current action */
-    /* 0x0968 */ s32 prevActionFrame;
-    /* 0x096C */ f32 pitch;         /* pitch toward the opponent, radians (BtlAct_SetPitchMotion) */
-    /* 0x0970 */ s32 holdAction;    /* set by a handler's run phase: skip next frame's forced-action check */
-    /* 0x0974 */ s32 motion;        /* motion id, index of the roster's motion flag table */
-    /* 0x0978 */ u8 unk978[0x994 - 0x978];
-    /* 0x0994 */ s32 active;        /* active member */
-    /* 0x0998 */ s32 memberCount;
-    /* 0x099C */ s32 switchGauge;        /* gauge, 0..100000 */
-    /* 0x09A0 */ s32 switchTarget;
-    /* 0x09A4 */ u8 members[0xCD8 - 0x9A4];
-    /* 0x0CD8 */ s32 switchMember;  /* member being switched to */
-    /* 0x0CDC */ s32 switchChara;
-    /* 0x0CE0 */ s32 switchCostume;
-    /* 0x0CE4 */ s32 switchVariant;
-    /* 0x0CE8 */ s32 switchAnimChara;
-    /* 0x0CEC */ s32 unkCEC;
-    /* 0x0CF0 */ s32 switchVoiceChara;
-    /* 0x0CF4 */ s32 switchEnabled;
-    /* 0x0CF8 */ BtlActAttack attack;     /* latched when the attack action starts */
-    /* 0x0D1C */ BtlActAttack nextAttack; /* prepared when the attack is queued */
-    /* 0x0D40 */ s32 comboDamage;
-    /* 0x0D44 */ s32 comboHits;
-    /* 0x0D48 */ s32 comboTimer;        /* countdown */
-    /* 0x0D4C */ s32 comboNewHit;
-    /* 0x0D50 */ u8 unkD50[0xD60 - 0xD50];
-    /* 0x0D60 */ s32 rushStep;
-    /* 0x0D64 */ s32 rapidRushStep;
-    /* 0x0D68 */ s32 dashCount;
-    /* 0x0D6C */ s32 dashLimit;
-    /* 0x0D70 */ s32 vanishCount;
-    /* 0x0D74 */ s32 vanishLimit;
-    /* 0x0D78 */ s32 charge;
-    /* 0x0D7C */ s32 chargeTimer;
-    /* 0x0D80 */ s32 chargeGauge;        /* gauge that drains 400 per frame down to a floor */
-    /* 0x0D84 */ s32 chargeFullFrames;
-    /* 0x0D88 */ s32 evasionCount;        /* +1 per frame with flag 8 in actions 0x89..0x8C; kept through 0x2B / 0x2D / 0x2E, else 0; read as a count (BtlOpp_GetEvasionCount, modulo 3) */
-    /* 0x0D8C */ s32 unkD8C;
-    /* 0x0D90 */ s32 attackId;      /* id BtlAct_PrepareAttack was last called with */
-    /* 0x0D94 */ u8 unkD94[0xDE0 - 0xD94];
-    /* 0x0DE0 */ s32 blastShots;
-    /* 0x0DE4 */ s32 blastShotsTimer;        /* countdown */
-    /* 0x0DE8 */ s32 blastHand;
-    /* 0x0DEC */ s32 blastCharge;
-    /* 0x0DF0 */ u8 unkDF0[0xE10 - 0xDF0];
-    /* 0x0E10 */ s32 skillKiRate;
-    /* 0x0E14 */ u8 unkE14[0xE20 - 0xE14];
-    /* 0x0E20 */ s32 skillValE;
-    /* 0x0E24 */ u8 unkE24[0xE40 - 0xE24];
-    /* 0x0E40 */ s32 techDelay;        /* countdown */
-    /* 0x0E44 */ u8 unkE44[0xE50 - 0xE44];
-    /* 0x0E50 */ s32 clashCountB;        /* counter */
-    /* 0x0E54 */ u8 unkE54[0xF30 - 0xE54];
-    /* 0x0F30 */ Vec4 holdDelta;       /* added to the position under flag 0x8B */
-    /* 0x0F40 */ u8 unkF40[0xF48 - 0xF40];
-    /* 0x0F48 */ s32 hitContact;
-    /* 0x0F4C */ u8 unkF4C[0xFB0 - 0xF4C];
-    /* 0x0FB0 */ s32 reaction;
-    /* 0x0FB4 */ u8 unkFB4[0xFBC - 0xFB4];
-    /* 0x0FBC */ s32 hitBack;
-    /* 0x0FC0 */ u8 unkFC0[0xFD0 - 0xFC0];
-    /* 0x0FD0 */ f32 turnYaw;
-    /* 0x0FD4 */ f32 turnPitch;
-    /* 0x0FD8 */ u8 unkFD8[0xFE0 - 0xFD8];
-    /* 0x0FE0 */ s32 stunTimer;        /* countdown shortened by mashing (bit 20); > 0 = not free */
-    /* 0x0FE4 */ s32 unkFE4;        /* countdown: flag 0x96 */
-    /* 0x0FE8 */ s32 shakeTimer;        /* countdown */
-    /* 0x0FEC */ s32 hitDamage;
-    /* 0x0FF0 */ s32 unkFF0;        /* countdown, cleared without flag 0x13 */
-    /* 0x0FF4 */ s32 unkFF4;
-    /* 0x0FF8 */ s32 blindTimer;        /* countdown: flags 0x93, 0x137, 0x96 */
-    /* 0x0FFC */ s32 blindLevel;        /* follows blindTimer * 2 by 15 per frame */
-    /* 0x1000 */ s32 recoverPresses;
-    /* 0x1004 */ u8 reactCount[0x32];
-    /* 0x1036 */ s8 reactTimer[0x32];  /* counters saturating at 100 */
-    /* 0x1068 */ u8 unk1068[0x12CC - 0x1068];
-    /* 0x12CC */ BtlActForm form;
-    /* 0x12FC */ u8 unk12FC[0x132C - 0x12FC];
-    /* 0x132C */ s32 secTimer;      /* 0..29: one "second" tick every 30 frames */
-    /* 0x1330 */ u8 unk1330[0x1550 - 0x1330];
-    /* 0x1550 */ s32 scriptMotion;       /* motion of action 4 */
-    /* 0x1554 */ f32 scriptMotionBlend;       /* its blend time */
-    /* 0x1558 */ s32 scriptMotionLoop;       /* its end mode */
-    /* 0x155C */ u8 unk155C[0x1580 - 0x155C];
-    /* 0x1580 */ s32 inputOffTimer;       /* mode 1 only: frames of flag 0x11E (input off) */
-    /* 0x1584 */ u8 unk1584[0x1590 - 0x1584];
-    /* 0x1590 */ s32 dirHeld;       /* last direction held: -1 (bit 16), 2 (bit 18), 3 (bit 19), 4 (bit 17) */
-    /* 0x1594 */ u8 unk1594[0x1600 - 0x1594];
-} BtlActChr; /* size 0x1600 */
+typedef BtlFighter BtlActChr;
 
 /* Fighter roster (gBtlChars). */
 typedef struct BtlActRoster {
