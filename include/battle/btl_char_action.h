@@ -54,27 +54,9 @@ typedef struct BtlActAttackRec {
 } BtlActAttackRec; /* size 0x18 */
 
 /* Member entry (chr + 0x9A4 + i * 0xA4). */
-typedef struct BtlActVitals {
-    /* 0x00 */ s32 hp;
-    /* 0x04 */ s32 hpMax;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 ki;
-    /* 0x10 */ s32 kiMax;
-    /* 0x14 */ u8 unk14[0x20 - 0x14];
-    /* 0x20 */ s32 variant;
-    /* 0x24 */ s32 lowHealth;
-    /* 0x28 */ s32 lowHealthIdle;
-    /* 0x2C */ s32 unk2C;
-    /* 0x30 */ s32 bodyChanged;
-} BtlActVitals;
+typedef BtlMemberGauge BtlActVitals;
 
-typedef struct BtlActMember {
-    /* 0x00 */ s32 chara;
-    /* 0x04 */ s32 costume;
-    /* 0x08 */ s32 present;
-    /* 0x0C */ u8 unkC[0x40 - 0xC];
-    /* 0x40 */ BtlActVitals vitals;
-} BtlActMember;
+typedef BtlMember BtlActMember;
 
 /* Form-change request (chr + 0x12CC). */
 typedef BtlFighterForm BtlActForm;

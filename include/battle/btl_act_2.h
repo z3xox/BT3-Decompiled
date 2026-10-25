@@ -32,10 +32,7 @@ typedef struct BtlActCGauge {
 } BtlActCGauge;
 
 /* Member entry (what BtlMember_GetActive returns). */
-typedef struct BtlActCMember {
-    /* 0x00 */ u8 unk0[0xA0];
-    /* 0xA0 */ s32 idleTalkCount;     /* counts action 0x43 */
-} BtlActCMember;
+typedef BtlMember BtlActCMember;
 
 /* Fighter (0x1600 bytes). */
 typedef BtlFighter BtlActCChr;
@@ -103,10 +100,7 @@ typedef struct BtlActDGauge {
 } BtlActDGauge;
 
 /* Member entry (BtlMember_GetActive). */
-typedef struct BtlActDMember {
-    /* 0x00 */ u8 unk0[0xA0];
-    /* 0xA0 */ s32 idleTalkCount;      /* <= 0 lets the neutral state time out into action 0x43 */
-} BtlActDMember;
+typedef BtlMember BtlActDMember;
 
 /* Fighter (0x1600 bytes). */
 typedef BtlFighter BtlActDChr;

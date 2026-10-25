@@ -91,10 +91,7 @@ typedef struct BtlStatGauge {
 } BtlStatGauge;
 
 /* What BtlMember_GetActive returns: the active member entry. */
-typedef struct BtlStatMember {
-    /* 0x00 */ u8 unk0[0xC];
-    /* 0x0C */ s32 bonus[7]; /* BattleMember.bonus[1..7] */
-} BtlStatMember;
+typedef BtlMember BtlStatMember;
 
 /* Partial view of a fighter (0x1600 bytes). */
 typedef BtlFighter BtlStatChr;

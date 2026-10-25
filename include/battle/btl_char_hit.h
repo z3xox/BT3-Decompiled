@@ -61,10 +61,7 @@ typedef struct HitObj {
 } HitObj;
 
 /* First words of a member entry (BtlMember_GetActive). */
-typedef struct HitMember {
-    /* 0x00 */ s32 chara;
-    /* 0x04 */ s32 costume;
-} HitMember;
+typedef BtlMember HitMember;
 
 /* Gauge block of the active member (BtlMember_GetActiveGauge). */
 typedef struct HitGauge {

@@ -20,10 +20,7 @@
 typedef BtlFighterPose BtlActJPose;
 
 /* First words of a member entry (BtlMember_Get / BtlMember_GetActive). */
-typedef struct BtlActJMember {
-    /* 0x00 */ s32 chara;
-    /* 0x04 */ s32 costume;
-} BtlActJMember;
+typedef BtlMember BtlActJMember;
 
 /* Gauge block of a member (BtlMember_GetGauge / BtlMember_GetActiveGauge). */
 typedef struct BtlActJGauge {

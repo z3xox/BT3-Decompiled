@@ -937,13 +937,13 @@ void BtlAct_UpdateGauges(BtlActChr *chr) {
         for (i = 0; i < chr->memberCount; i++) {
             if (i != chr->curMember) {
                 member = BtlMember_Get(chr, i);
-                v = &member->vitals;
+                v = &member->gauge;
                 if (member->present) {
-                    if (v->hp > 0) {
-                        cap = (v->hp + 9999) / 10000 * 10000;
-                        v->hp = BtlUtil_Min(v->hp + 100, cap);
+                    if (v->health > 0) {
+                        cap = (v->health + 9999) / 10000 * 10000;
+                        v->health = BtlUtil_Min(v->health + 100, cap);
                         if (BtlMember_HasAbilityOf(chr, i, 0x5F)) {
-                            v->hp = BtlUtil_Min(v->hp + 200, cap);
+                            v->health = BtlUtil_Min(v->health + 200, cap);
                         }
                         v->ki = BtlUtil_Min(v->ki + 1000, v->kiMax);
                         if (BtlMember_HasAbilityOf(chr, i, 0x60)) {

@@ -257,10 +257,7 @@ typedef struct BtlTechBRoster {
 } BtlTechBRoster;
 
 /* Member entry and gauge block (BtlMember / BtlMemberGauge in btl_char_member.h). */
-typedef struct BtlTechBMember {
-    /* 0x0 */ s32 chara;
-    /* 0x4 */ s32 costume;
-} BtlTechBMember;
+typedef BtlMember BtlTechBMember;
 
 typedef struct BtlTechBGauge {
     /* 0x00 */ s32 health;

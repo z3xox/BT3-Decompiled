@@ -48,9 +48,7 @@ typedef struct BtlActHObj {
 } BtlActHObj;
 
 /* Member entry (BtlMember_GetActive). */
-typedef struct BtlActHMember {
-    /* 0x00 */ s32 chara;
-} BtlActHMember;
+typedef BtlMember BtlActHMember;
 
 #define BTL_KMH(x) ((x) * 1000.0f / 3600.0f * (1.0f / 30.0f))
 #define BTL_DEG(x) ((x) / 180.0f * 3.14159265f)

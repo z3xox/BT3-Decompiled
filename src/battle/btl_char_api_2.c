@@ -1224,7 +1224,7 @@ s32 BtlCharApi_GetHp(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return BtlMember_GetActiveGauge(chr)->hp;
+        return BtlMember_GetActiveGauge(chr)->health;
     }
     return 0;
 }
@@ -1234,7 +1234,7 @@ s32 BtlCharApi_GetHpMax(s32 objId) {
     BtlCapiBChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return BtlMember_GetActiveGauge(chr)->hpMax;
+        return BtlMember_GetActiveGauge(chr)->healthMax;
     }
     return 0;
 }
@@ -1602,9 +1602,9 @@ s32 BtlCharApi_GetMemberHpPercent(s32 objId, s32 member) {
 
     if (chr != NULL) {
         g = BtlMember_GetGauge(chr, member);
-        if (g->hpMax > 0) {
-            pct = (f32)g->hp / (f32)g->hpMax * 100.0f;
-            if (pct <= 0 && g->hp > 0) {
+        if (g->healthMax > 0) {
+            pct = (f32)g->health / (f32)g->healthMax * 100.0f;
+            if (pct <= 0 && g->health > 0) {
                 pct = 1;
             }
             return pct;
@@ -2263,7 +2263,7 @@ s32 BtlCtrl_AddHp(s32 player, s32 member, f32 percent) {
 
     if (chr != NULL) {
         g = BtlMember_GetGauge(chr, member);
-        amount = g->hpMax * percent * 0.01f;
+        amount = g->healthMax * percent * 0.01f;
         if (member == BtlMember_GetActiveIndex(chr)) {
             if (amount >= 0) {
                 BtlMember_AddHealth(chr, amount);
@@ -2271,7 +2271,7 @@ s32 BtlCtrl_AddHp(s32 player, s32 member, f32 percent) {
                 BtlMember_Damage(chr, -amount, 0x42B);
             }
         } else {
-            g->hp = BtlUtil_Clamp(g->hp + amount, 0, g->hpMax);
+            g->health = BtlUtil_Clamp(g->health + amount, 0, g->healthMax);
         }
     }
 }
@@ -2285,12 +2285,12 @@ void BtlCtrl_RaiseHp(s32 player, s32 member, f32 percent) {
 
     if (chr != NULL) {
         g = BtlMember_GetGauge(chr, member);
-        max = g->hpMax;
+        max = g->healthMax;
         target = max * percent * 0.01f;
         if (target <= 0 && 0.0f < percent) {
             target = 1;
         }
-        g->hp = BtlUtil_Clamp(target, g->hp, max);
+        g->health = BtlUtil_Clamp(target, g->health, max);
     }
 }
 
@@ -2302,11 +2302,11 @@ void BtlCtrl_LowerHp(s32 player, s32 member, f32 percent) {
 
     if (chr != NULL) {
         g = BtlMember_GetGauge(chr, member);
-        target = g->hpMax * percent * 0.01f;
+        target = g->healthMax * percent * 0.01f;
         if (target <= 0 && 0.0f < percent) {
             target = 1;
         }
-        g->hp = BtlUtil_Clamp(target, 0, g->hp);
+        g->health = BtlUtil_Clamp(target, 0, g->health);
     }
 }
 
@@ -2471,8 +2471,8 @@ s32 BtlCtrl_Fuse(s32 player, s32 id) {
         BtlChar_SetHeldFlag(chr, slot + 0x11A);
         BtlChar_ClearFlag(chr, 0xBE);
         chr->react.stunTimer = 0;
-        g->hp = g->hpMax;
-        BtlMember_GetGauge(chr, partner)->hp = BtlMember_GetGauge(chr, partner)->hpMax;
+        g->health = g->healthMax;
+        BtlMember_GetGauge(chr, partner)->health = BtlMember_GetGauge(chr, partner)->healthMax;
         return 1;
     }
     return 0;
@@ -2817,7 +2817,7 @@ s32 BtlSide_GetHp(s32 side) {
     BtlCapiBChr *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
-        return BtlMember_GetActiveGauge(chr)->hp;
+        return BtlMember_GetActiveGauge(chr)->health;
     }
     return 0;
 }
@@ -2913,7 +2913,7 @@ s32 BtlSide_GetSwitchTargetHp(s32 side) {
         if (BtlMember_CountAlive(chr) < 2) {
             return 0;
         }
-        return BtlMember_GetGauge(chr, BtlMember_GetSwitchTarget(chr))->hp;
+        return BtlMember_GetGauge(chr, BtlMember_GetSwitchTarget(chr))->health;
     }
     return 0;
 }
@@ -2926,7 +2926,7 @@ s32 BtlSide_GetSwitchTargetHpMax(s32 side) {
         if (BtlMember_CountAlive(chr) < 2) {
             return 0;
         }
-        return BtlMember_GetGauge(chr, BtlMember_GetSwitchTarget(chr))->hpMax;
+        return BtlMember_GetGauge(chr, BtlMember_GetSwitchTarget(chr))->healthMax;
     }
     return 0;
 }
@@ -2979,7 +2979,7 @@ s32 BtlCtrl_IsTeamDead(s32 player) {
 
     if (chr != NULL) {
         for (i = 0; i < chr->memberCount; i++) {
-            if (BtlMember_GetGauge(chr, i)->hp > 0) {
+            if (BtlMember_GetGauge(chr, i)->health > 0) {
                 dead = 0;
                 break;
             }

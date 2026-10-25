@@ -152,24 +152,10 @@ s32 BtlCharApi_TestFlag60(s32 objId);
  */
 
 /* Gauge block of a team member (BtlMember_GetGauge(chr, n) / BtlMember_GetActiveGauge(chr)): member entry + 0x40. */
-typedef struct BtlCapiBGauge {
-    /* 0x00 */ s32 hp;        /* 10000 per bar; < 1 = down */
-    /* 0x04 */ s32 hpMax;
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 ki;        /* 20000 per bar */
-    /* 0x10 */ s32 kiMax;
-    /* 0x14 */ s32 blast;     /* blast stock, 100000 per stock */
-    /* 0x18 */ s32 blastMax;
-    /* 0x1C */ s32 maxPower;  /* 0..30000, the timer of the powered-up mode (fighter flag 6) */
-} BtlCapiBGauge;
+typedef BtlMemberGauge BtlCapiBGauge;
 
 /* Team member entry (BtlMember_GetActive): 0xA4 bytes at fighter +0x9A4. */
-typedef struct BtlCapiBMember {
-    /* 0x00 */ u8 unk0[0x38];
-    /* 0x38 */ s32 cpuLevel;
-    /* 0x3C */ s32 aiType;
-    /* 0x40 */ BtlCapiBGauge gauge;
-} BtlCapiBMember;
+typedef BtlMember BtlCapiBMember;
 
 /* Pose block (fighter +0x10, BtlChar_GetPos). */
 typedef BtlFighterPose BtlCapiBPose;

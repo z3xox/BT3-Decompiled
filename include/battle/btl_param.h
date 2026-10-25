@@ -165,12 +165,7 @@ typedef struct BtlTechObj {
 } BtlTechObj;
 
 /* Member entry (BtlMember_Get / BtlMember_GetActive). */
-typedef struct BtlTechMember {
-    /* 0x00 */ s32 chara;
-    /* 0x04 */ u32 costume;
-    /* 0x08 */ u8 unk8[0x38 - 0x8];
-    /* 0x38 */ s32 cpuLevel;
-} BtlTechMember;
+typedef BtlMember BtlTechMember;
 
 /* Gauge block of the active member (BtlMember_GetActiveGauge). */
 typedef struct BtlTechGauge {

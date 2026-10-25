@@ -153,23 +153,31 @@ typedef struct BtlAnimIds {
     /* 0xC */ s32 sub;  /* animation on the second layer; -1 when the object is bound */
 } BtlAnimIds; /* size 0x10 */
 
-/* Gauges of one member: member entry + 0x40. */
+/* Gauges and use counters of one member: member entry + 0x40 to its end (BtlMember_GetActiveGauge). */
 typedef struct BtlMemberGauge {
-    /* 0x00 */ s32 health;     /* 10000 = one bar */
-    /* 0x04 */ s32 healthMax;  /* table value +/- 10000..30000 by ability, at least 10000 */
+    /* 0x00 */ s32 health;        /* 10000 = one bar */
+    /* 0x04 */ s32 healthMax;     /* table value +/- 10000..30000 by ability, at least 10000 */
     /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 ki;         /* 0..kiMax */
-    /* 0x10 */ s32 kiMax;      /* always 100000 */
-    /* 0x14 */ s32 blast;      /* 0..blastMax */
-    /* 0x18 */ s32 blastMax;   /* table stock count * 100000 */
-    /* 0x1C */ s32 maxPower;   /* 0..30000; zeroed whenever ki is spent or drained */
-    /* 0x20 */ s32 variant;    /* BattleMember.variant, the model variant */
-    /* 0x24 */ s32 lowHealth;      /* low-health flags, see btl_char_mgr.h */
-    /* 0x28 */ s32 lowHealthIdle;
-    /* 0x2C */ s32 unk2C;
-    /* 0x30 */ s32 bodyChanged;      /* cleared by a full parameter load */
-    /* 0x34 */ s32 fused;      /* non-zero: healthMax is kept as it is by a parameter load */
-} BtlMemberGauge; /* size 0x38 */
+    /* 0x0C */ s32 ki;            /* 0..kiMax; set to kiMax by technique bit 4 and ability 0x43 */
+    /* 0x10 */ s32 kiMax;         /* always 100000 */
+    /* 0x14 */ s32 blast;         /* 0..blastMax; set to blastMax by ability 0x61 */
+    /* 0x18 */ s32 blastMax;      /* table stock count * 100000 */
+    /* 0x1C */ s32 maxPower;      /* 0..30000; zeroed whenever ki is spent or drained; 30000 together with held flag 6 */
+    /* 0x20 */ s32 variant;       /* BattleMember.variant, the model variant in use, 0 = undamaged; non-zero: BtlObj +
+                                     0xA40 bit 30 set, getting up (action 0xE1) plays voice 0x20 / 0x21 once */
+    /* 0x24 */ s32 lowHealth;     /* 1 while health < 10000 */
+    /* 0x28 */ s32 lowHealthIdle; /* lowHealth and nothing forbids it (see BtlChar_PostScene): a downed fighter must
+                                     mash to recover (fighter + 0x1000) */
+    /* 0x2C */ s32 variantVoiced; /* the voice of the changed variant was played */
+    /* 0x30 */ s32 bodyChanged;   /* BtlChar_IsBodyChanged() = (bodyChanged != 0); set to 1 with flag 0xA6, cleared by a
+                                     full parameter load; non-zero: this member cannot be fused with */
+    /* 0x34 */ s32 fused;         /* 1 after a fusion: healthMax is kept as it is by a parameter load */
+    /* 0x38 */ s32 used[5];       /* by move slot (skills 0..1, technique classes 2..4): times it was used; > 0 locks a
+                                     skill with flag 0x10 */
+    /* 0x4C */ s32 fired[5];      /* by slot: self-destruct techniques (flag B 0x2000) fired; > 0 locks a flag-0x2000
+                                     technique */
+    /* 0x60 */ s32 idleTalkCount; /* counts action 0x43; <= 0 lets the neutral state time out into it */
+} BtlMemberGauge; /* size 0x64 */
 
 /* One team member: fighter + 0x9A4 + n * 0xA4. */
 typedef struct BtlMember {
@@ -181,7 +189,6 @@ typedef struct BtlMember {
     /* 0x38 */ s32 cpuLevel;
     /* 0x3C */ s32 aiType;
     /* 0x40 */ BtlMemberGauge gauge;
-    /* 0x78 */ u8 unk78[0xA4 - 0x78];
 } BtlMember; /* size 0xA4 */
 
 /* Combo / damage counters of the fighter being hit: fighter + 0xD40. */

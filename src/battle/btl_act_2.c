@@ -1281,7 +1281,7 @@ s32 BtlAct_Action43(Chr *chr, s32 phase) {
     if (phase == 0) {
         BtlAnim_Play(chr, 0x185, 0.15f);
         BtlChar_PlayVoice(chr, 0x23);
-        BtlMember_GetActive(chr)->idleTalkCount++;
+        BtlMember_GetActive(chr)->gauge.idleTalkCount++;
     }
     if (phase == 1) {
         if (BtlAnim_Advance(chr, 0)) {
@@ -2122,7 +2122,7 @@ s32 BtlAct_NeutralHandler(BtlActDChr *chr, s32 phase) {
     if (phase == PHASE_DECIDE) {
         if (Battle_GetMode() != 1) {
             if (BtlChar_TestFlag(chr, 3)) {
-                if (((BtlActDMember *)BtlMember_GetActive(chr))->idleTalkCount <= 0) {
+                if (((BtlActDMember *)BtlMember_GetActive(chr))->gauge.idleTalkCount <= 0) {
                     if (!BtlChar_TestFlag(chr, 0xB1)) {
                         if (++(*timer) > 90) {
                             BtlAct_Request(chr, 0x43);
