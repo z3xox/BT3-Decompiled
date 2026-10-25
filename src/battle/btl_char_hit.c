@@ -137,7 +137,7 @@ extern f32 BtlUtil_WrapAngle(f32 a);
 extern f32 BtlUtil_LengthXZ(Vec4 *v);
 extern s32 BtlUtil_Clamp(s32 v, s32 lo, s32 hi);
 
-/* 1 when the attacker's facing yaw is within 90 degrees of the defender's model yaw (rot.y + rootYaw): both look the
+/* 1 when the attacker's facing yaw is within 90 degrees of the defender's model yaw (rot.y + rootRot.y): both look the
  * same way, so an attacker that is facing the defender stands behind it. */
 s32 BtlHit_IsFromBehind(BtlFighter *atk, BtlFighter *def) {
     BtlFighterPose *pd = BtlChar_GetPos(def);

@@ -2056,10 +2056,10 @@ void BtlAct_SuperRushStrikeHandler(BtlFighter *chr, s32 phase) {
  *   partnerStep     step that waits for a partner object: partnerChara..partnerSlot is the
  *             BtlChange_RequestObject request made on entry (work[0] bit 1); from the next step on the partner
  *             plays animation 0x19D + n
- *   lastStep  step in which the victim's model is reloaded when defReload is set (BtlAct_SetFormCurrent: the
- *             damaged variant); atkReload: the attacker's model is reloaded in the last step
+ *   defFormStep  step in which the victim's model is reloaded when defFormChange is set (BtlAct_SetFormCurrent:
+ *             the damaged variant); atkFormChange: the attacker's model is reloaded in the last step
  *   landingKind     landing kind passed to BtlAct_GetLandingAction for the victim's next action
- *   turnVictim, turnYaw, turnPitch   turn the victim (flag 0x94) to the attacker-relative yaw / pitch, mirrored
+ *   useAngles, angleYaw, anglePitch   turn the victim (flag 0x94) to the attacker-relative yaw / pitch, mirrored
  *             when hit from the front; otherwise a victim hit from behind is simply turned around
  *   failed    the victim ends in the neutral action 0xB;  koSkipLanding: a dead victim goes to action 0xEB
  *   raiseAtEnd      when the action ends the attacker is raised by its own height (BtlAct_GetHeight); without
@@ -2703,7 +2703,7 @@ void BtlAct_SuperRushFollowHandler(BtlFighter *chr, s32 phase) {
  * Actions 0x12A..0x12C: closing animation 0x15 of a rush technique. Fills the damage queue from the animation's own
  * hit events (BtlSuper_SetupRushDamage(chr, slot, 1)), holds position, sets the rush flags and 0x42..0x46 / 0x136,
  * and runs camera cut 9 between the two frames the technique gives (BtlSuper_GetFrames22C / 238). With throw
- * block unk38: flags 0x8B and 9. At the end: flags 0x8C and 0x33, BtlSuper_Finish. Leaving adds 3 s to the stage
+ * block holdVictim: flags 0x8B and 9. At the end: flags 0x8C and 0x33, BtlSuper_Finish. Leaving adds 3 s to the stage
  * timer and lands the fighter when it is less than 5 m above the ground.
  */
 void BtlAct_SuperRushFinishHandler(BtlFighter *chr, s32 phase) {
@@ -2775,7 +2775,7 @@ void BtlAct_SuperRushFinishHandler(BtlFighter *chr, s32 phase) {
  * technique that catches without a sequence. Animation 0x16; with throw block caughtLoop (reaction 0x1E) it loops, with
  * common sound 0x12, until flag 0xAF is no longer set; otherwise it plays once. Flags 0x95, 0x96, 0x136 and the
  * rush flags every frame. Then, exactly as the victim side of the sequence: flags 0x1D / 0x1E held, turn by the
- * throw block (turnVictim, turnYaw, turnPitch) around the direction to the opponent, flag 0x35 when hit from behind, and
+ * throw block (useAngles, angleYaw, anglePitch) around the direction to the opponent, flag 0x35 when hit from behind, and
  * the landing action BtlAct_GetLandingAction(chr, slot, thr.landingKind). Leaving raises flag 0x33.
  */
 void BtlAct_SuperRushCaughtHandler(BtlFighter *chr, s32 phase) {
@@ -2922,7 +2922,7 @@ s32 BtlAct_UltimateStartHandler(BtlFighter *chr, s32 phase) {
  * clash A. A technique of kind 1 (BtlSuper_GetHitDirKind, a beam) holds motion 0x16C, anything else the dash loop;
  * both are aimed up / down with BtlAct_SetPitchMotion unless technique flag B 0x1000 is set.
  *
- * The score is chr->clashPower (fighter + 0xE4C, "clashCountA" in btl_char_flag.h): BtlSuper_GetClashPower(chr, slot) / 20,
+ * The score is chr->clashCountA (fighter + 0xE4C): BtlSuper_GetClashPower(chr, slot) / 20,
  * + 10 / + 6 / + 3 for ability 0x14 / 0x13 / 0x12, - 10 / - 6 / - 3 for ability 0x6A / 0x69 / 0x68, and + 1 for
  * every frame from frame 16 on in which input 51 (a direction command) tests true. BtlClash_Update
  * (btl_clash.c) compares the two scores every frame and raises the result flags read here:

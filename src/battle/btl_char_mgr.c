@@ -74,7 +74,7 @@
  *   BtlChar_SetStage(chr, n) sets the stage byte chr+0x1084 = n and moves the flag bits queued "for stage n"
  *                        from the pending arrays into the live ones (BtlChar_PromoteFlags)
  *   BtlChar_IsFlagRaised(chr, f) flag f went 0 -> 1 this frame;   BtlChar_IsFlagDropped(chr, f) went 1 -> 0
- *   BtlChar_SetFrameBits(chr, m) chr->frameBits |= m
+ *   BtlChar_SetFrameBits(chr, m) chr->bits.frame |= m
  *   BtlAct_GetCurrent(chr)   chr->action;  BtlAct_GetCurrentClass(chr) a class number of the action
  *   BtlMember_Get(chr, n) &chr->members[n]; BtlMember_GetActive(chr) the current member; BtlMember_GetActiveGauge(chr) its gauge
  *   BtlMember_GetActiveIndex(chr)   chr->curMember; BtlMember_SetActiveIndex(chr, n) sets it; BtlMember_CountAlive(chr) members with health

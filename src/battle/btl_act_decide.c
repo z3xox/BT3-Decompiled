@@ -713,15 +713,15 @@ s32 BtlAct_CheckSkillInput(BtlFighter *chr) {
  *   - reactions 0 and 1: nothing (returns 0). Reaction 2 (no flinch): nothing unless the fighter is dead.
  *   - reactCount[reaction] is incremented (saturating at 100); 0x23 and 0x24 also increment each other's count.
  *   - reactions 5..13, 35, 36, 42, 45..47 taken for the second time or more (count >= 2) become reaction 0x10,
- *     with flag 0x94 and the fighter turned along the hit (hitYaw, or hitYaw + pi when not hit from behind).
+ *     with flag 0x94 and the fighter turned along the hit (react.yaw, or react.yaw + pi when not hit from behind).
  *   - on a dead fighter, reactions 2..9, 23..25, 42..48 become reaction 0xF the same way.
  *   - reactTimer[reaction] = 0, then reaction -> action:
  *        4 0xC1    5 0xC2    6 0xC3    7 0xC4    8 0xC5    9 0xC6   10 0xCE   11 0xCD   12 0xCB   13 0xCC
  *       14 0xDA   15 0xCF   16 0xD0   17 0xD5   18 0xD6   19 0xD4   20 0xB8   22 0xBA
- *       23 / 24 / 25  0xD3, and stunTime = 15 / 30 / 45 frames unless it is already running
- *       26 / 27 / 28  0xE0, and stunTime = 15 / 30 / 45 the same way
- *       29, 30  0x131 + thrSlot      31 0xDB   32 0xDC   33 0xDD   34 0x137 + thrSlot
- *       35 0xC7   36 0xC8   37 0xBC   38 0xD1   39 0xCB   40 0xDF   41 0x134 + unkFF4
+ *       23 / 24 / 25  0xD3, and react.stunTimer = 15 / 30 / 45 frames unless it is already running
+ *       26 / 27 / 28  0xE0, and react.stunTimer = 15 / 30 / 45 the same way
+ *       29, 30  0x131 + thr.slot      31 0xDB   32 0xDC   33 0xDD   34 0x137 + thr.slot
+ *       35 0xC7   36 0xC8   37 0xBC   38 0xD1   39 0xCB   40 0xDF   41 0x134 + react.slot
  *       42 0xC6   43 0xC4   44 0xC5   45 0xC6   46 0xC4   47 0xC6   48 0xC6   49 0xBF
  *       2, 3, 21 and anything else  0xC0
  *   - event 0x55 is raised for the opponent's player when the current animation has any flag; flag 0x129 is set.

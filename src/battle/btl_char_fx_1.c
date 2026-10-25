@@ -197,7 +197,7 @@ void BtlChar_SpawnFxBits3C(BtlFighter *chr) {
     }
 }
 
-/* Spawns the effects requested by fx bits 0..2, by the kind in chr->formKind. */
+/* Spawns the effects requested by fx bits 0..2, by the kind in chr->form.kind. */
 void BtlChar_SpawnFxBits0(BtlFighter *chr) {
     BtlMemberFx0Req req;
 

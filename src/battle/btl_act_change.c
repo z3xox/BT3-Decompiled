@@ -474,7 +474,7 @@ s32 BtlAct_SlamThrown(BtlFighter *chr, s32 phase) {
 
 /*
  * 0xBE: drags the opponent (who is in 0xBF) down at 2000 km/h (+Y is down) in the loop 0x197, head first, with
- * camera cut 0x18 / 0x19 picked by the side the fighter camera sits on (camSide < 0: 0x18); flag 0xD3 (this camera
+ * camera cut 0x18 / 0x19 picked by the side the fighter camera sits on (cam.side < 0: 0x18); flag 0xD3 (this camera
  * takes the whole screen) while the cut runs. When the opponent leaves 0xBF: animation 0x198, then 0x28, then 0xB.
  */
 s32 BtlAct_DragDown(BtlFighter *chr, s32 phase) {

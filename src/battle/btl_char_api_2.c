@@ -39,7 +39,7 @@ extern f32 BtlAnim_GetFrame(BtlFighter *chr);            /* BtlObj_Get(chr->objI
 extern s32 BtlAnim_GetId(BtlFighter *chr);            /* chr->motion */
 extern void *BtlAnim_GetFlags(s32 idx);                     /* gBtlChars->motionFlags[idx], idx < 0x19E */
 extern s32 BtlAnim_TestAttr(BtlFighter *chr, u64 mask);  /* 0 while chr->prevStall > 0, else BtlObjAnim_TestEvent on its object */
-extern void ChrCam_AddShake(BtlFighter *chr, f32 a, f32 b); /* CamShake_Add(&chr->camShake, a, b) if chr->camShakeOn */
+extern void ChrCam_AddShake(BtlFighter *chr, f32 a, f32 b); /* CamShake_Add(&chr->cam.shake, a, b) if chr->cam.shakeOn */
 extern s32 ChrCam_IsCutActive(BtlFighter *chr);
 extern BtlMemberGauge *BtlMember_GetActiveGauge(BtlFighter *chr); /* the active member's vitals */
 extern s32 BtlReplay_GetViewSide(void);

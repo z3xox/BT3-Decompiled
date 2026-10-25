@@ -7,6 +7,12 @@
 
 /*
  * The fighter object (0x1600 bytes, BtlChar_Get) and the structures it is made of.
+ *
+ * Every module used to declare its own partial view of the fighter (BtlCtlChr, BtlMgrChr, HitChr, ... 30 of them)
+ * and of its parts (nine pose types, four reaction blocks, two throw blocks, ...). They were merged into the
+ * structures below; docs/names/fighter/canonical.tsv lists, for every field, the names the views gave it and why
+ * the name here was chosen. Where views read the same bytes with different types, the code was checked to compile
+ * the same with one type; the exceptions are noted at the field (work[], pose.groundFlags, the ground vectors).
  */
 
 #define BTL_BUTTON_BITS   31 /* entries of BtlCharInput.mask; bit 31 is never set */
@@ -141,7 +147,8 @@ typedef struct ChrCamCut {
 typedef struct BtlActState {
     /* 0x00 */ s32 current;   /* current action id */
     /* 0x04 */ s32 request;   /* action to switch to at the next dispatch, -1 = none */
-    /* 0x08 */ s32 prev;      /* read by BtlAct_GetPrev; nothing stores it */
+    /* 0x08 */ s32 prev;      /* the action of the frame before: the manager copies current here (btl_char_mgr.c);
+                                 read by BtlAct_GetPrev */
     /* 0x0C */ s32 queue[4];  /* follow-up actions, -1 = empty */
 } BtlActState; /* size 0x1C */
 

@@ -236,9 +236,9 @@ s32 BtlAct_SwitchLeave(BtlFighter *chr, s32 phase);
  *     0..3 with the four levels, `add` = attribute 0x100 (stacks instead of replacing), time = BtlSkill_GetFrames.
  *     Attribute 0x200: full ki, BtlMember_AddMaxPower(30000), held flag 6 (powered-up mode), flag 0xBB.
  *     Attribute 0x800000: BtlStat_SetPenalty(stat 2, -10). Attribute 0x800: kind 1 -> skillTimerC, kind 2 ->
- *     kind2On, kind 3 -> kind3On. Attribute 0x400: skillTimerD. Health / ki changes are applied with
- *     BtlMember_AddHealth / Damage(flags 0x41B) / AddKi / SpendKi(force). Skill ids: 0xC, 0x32 skillStackA;
- *     0x33 skillTimer; 0x37 skillStackB; 0x17 costs 3000 health; 0x18 held flag 0x98 + flag 0x99, full ki and
+ *     kind2On, kind 3 -> kind3On. Attribute 0x400: noFlinch. Health / ki changes are applied with
+ *     BtlMember_AddHealth / Damage(flags 0x41B) / AddKi / SpendKi(force). Skill ids: 0xC, 0x32 dodges;
+ *     0x33 skillTimer; 0x37 dodgesB; 0x17 costs 3000 health; 0x18 held flag 0x98 + flag 0x99, full ki and
  *     skillKiRate = ki maximum / frames; 0x41 skillCount3. Then the use counter of the slot, slotOn (kind != 0)
  *     and the blast stock cost.
  *

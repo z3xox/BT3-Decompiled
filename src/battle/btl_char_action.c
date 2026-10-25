@@ -419,7 +419,7 @@ void BtlAct_SetPitchMotion(BtlFighter *chr, s32 motionUp, s32 motionDown, s32 re
     }
 }
 
-/* Flag 0x35 -> 1, flag 0x36 -> 0; else, when asked and the reaction is not 1, the saved hitBack word of the
+/* Flag 0x35 -> 1, flag 0x36 -> 0; else, when asked and the reaction is not 1, the saved react.back word of the
    last hit (fighter +0xFBC, "hit from behind"), not an air test; else motion flag 0x8000. */
 s32 BtlAct_IsAirMotion(BtlFighter *chr, s32 useSaved) {
     if (BtlChar_TestFlag(chr, 0x35)) {
@@ -546,7 +546,7 @@ void BtlAct_PrepareAttack(BtlFighter *chr, s32 id) {
         chr->nextAttack.leadTime = 0.0f;
         chr->nextAttack.chained = 0;
         /* Camera cut of the attack. With record flag 0x20 the choice depends on which side of the
-           fighter its camera sits (camSide < 0, since leadFrames was just zeroed): the one place the
+           fighter its camera sits (cam.side < 0, since leadTime was just zeroed): the one place the
            camera pose is read by fighter logic. Otherwise it alternates with the frame counter. */
         if (rec->cutAlt < 0) {
             chr->nextAttack.cut = rec->cut;
