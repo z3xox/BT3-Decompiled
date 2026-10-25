@@ -530,7 +530,7 @@ void EftQuad_CalcKeyDeltas(EftYTask *task);
 void EftQuad_Animate(EftYTask *task);
 void EftQuad_DrawSprite(EftYVec *corner, EftYVec uv0, EftYVec uv1, EftYVec color, s32 layer, s32 texIdx, s32 flip,
                         EftYTex8 *tex);
-void EftQuad_DrawFacing(EftYVec *corner, EftYVec uv0, EftYVec uv1, EftYVec color, s32 layer, s32 texIdx, s32 arg6,
+void EftQuad_DrawFacing(EftYVec *corner, EftYVec uv0, EftYVec uv1, EftYVec color, s32 layer, s32 texIdx, s32 unused,
                         s32 flip, EftYTex8 *tex);
 void EftQuad_SetSheet(EftQuadWork *w, u8 cols, u8 rows);
 void EftQuad_SetTex(EftQuadWork *w, EftYTex8 *tex, s32 image, s32 palette);

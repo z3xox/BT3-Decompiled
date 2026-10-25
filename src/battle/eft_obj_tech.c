@@ -97,9 +97,9 @@ extern f32 EftEmit_GetHead28(void *set);
 extern u8 EftEmit_GetEndFrames(void *set);
 extern void EftEmit_InitState(void *set, void *emit);
 extern void EftEmit_TermState(void *set, void *emit);
-extern s32 EftEmit_GetFlagsFromReq(EftKSet *set, void *emit, s32 objId, s32 group, s32 part, s32 f1, s32 f8);
-extern void EftEmit_SpawnOwn(EftKSet *set, void *emit, Vec4 *nodes, Vec4 *pos, void *work, s32 group, s32 part,
-                          s32 res, f32 scale);
+extern s32 EftEmit_GetFlagsFromReq(EftKSet *set, void *emit, s32 objId, s32 group, s32 part, s32 ending, s32 kill);
+extern void EftEmit_SpawnOwn(EftKSet *set, void *emit, Vec4 *nodes, Vec4 *pos, void *dir, s32 group, s32 part,
+                          s32 flags, f32 scale);
 extern void EftEmit_MarkKind6(void *set, void *emit);
 extern void EftEmit_KillAll(void *set, void *emit);
 extern s32 EftEmit_UpdateAlive(void *set, void *emit);
@@ -152,7 +152,7 @@ extern s32 EftObj_Create(void *arg, s32 *pack);
 extern void EftObj_Destroy(s32 objId);
 extern void EftObj_SetMtx(s32 objId, Mtx44 *m);
 extern void EftObj_SetVisible(s32 objId, s32 on);
-extern void EftObj_Nop(s32 objId, s32 a1);
+extern void EftObj_Nop(s32 objId, s32 unused);
 extern void ColSphere_Set(void *sphere, Vec4 *pos, f32 radius);
 extern void ColCapsule_Set(void *box, Vec4 *a, Vec4 *pos, f32 size);
 
@@ -2008,7 +2008,7 @@ extern void EftTechEvt_RequestStop(s32 objId);
 #define EftRushShot_CreateModels ((void (*)(EftTask *task))EftRushShot_CreateModels)
 #define EftRushShot_UpdateModels ((void (*)(EftTask *task))EftRushShot_UpdateModels)
 extern void EftFlash_Start(EftFlashArg *arg);
-extern s32 EftStreak_Start(s32 objId, s32 kind, s32 arg2, f32 angle);
+extern s32 EftStreak_Start(s32 objId, s32 kind, s32 color, f32 angle);
 #define EftStreak_Stop ((void (*)(s32 handle))EftStreak_Stop)
 extern void EftDelaySe_Start(s32 objId, EftSparkTbl *tbl, s32 count);
 extern void EftObj_Destroy(s32 handle);

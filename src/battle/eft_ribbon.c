@@ -590,7 +590,7 @@ extern void Vec4_Scale(Vec4 *dst, Vec4 *src, f32 s);
 extern f32 Vec3_Dist(Vec4 *a, Vec4 *b);                 /* distance between two points */
 extern s32 Vu0Cur_ProjectPoints(EftAcScr *out, Vec4 *pos, s32 count); /* projects count points */
 #define ClipVtx_Set ((void (*)(EftAcVert *vtx, Vec4 *pos, Vec4 *uv, Vec4 *col))ClipVtx_Set)
-#define EftGfx_DrawPolyScaledZ ((void (*)(EftAcVert *verts, s32 arg1, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex, f32 zScale))EftGfx_DrawPolyScaledZ)
+#define EftGfx_DrawPolyScaledZ ((void (*)(EftAcVert *verts, s32 layer, s32 unusedA, s32 unusedB, s32 front, s32 flip, u64 tex, f32 zScale))EftGfx_DrawPolyScaledZ)
 extern void Vu0Cur_Push(void);       /* VU0 matrix stack push */
 extern void Vu0Cur_LoadMtx(Mtx44 *m);   /* load the matrix */
 extern void Vu0Cur_Pop(void);       /* pop */
@@ -1359,7 +1359,7 @@ s32 EftRibbon_SetTexFrame(EftAcTask *task, s32 slot, void *uv, s32 image, s32 pa
 }
 
 /* Writes +0xD8. */
-s32 EftRibbon_SetUnkD8(EftAcTask *task, s32 value) {
+s32 EftRibbon_SetUnkD8(EftAcTask *task, s32 node) {
     EftRibbon *w;
 
     if (task == NULL) {
@@ -1372,7 +1372,7 @@ s32 EftRibbon_SetUnkD8(EftAcTask *task, s32 value) {
     if (!(w->flags & EFT_RIBBON_ALIVE)) {
         return 0;
     }
-    w->node = value;
+    w->node = node;
     return 1;
 }
 

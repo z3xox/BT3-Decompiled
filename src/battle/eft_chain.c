@@ -58,7 +58,7 @@ extern void Mtx_RotateX(Mtx44 *dst, Mtx44 *src, f32 angle); /* rotate about X */
 extern void Mtx_RotateY(Mtx44 *dst, Mtx44 *src, f32 angle); /* rotate about Y */
 extern s32 Vu0Cur_ProjectPoints(void *out, Vec4 *pos, s32 count);  /* project count points; 0 when clipped */
 extern void ClipVtx_Set(void *vtx, Vec4 *pos, Vec4 *uv, Vec4 *col);
-extern void EftGfx_DrawPolyScaledZ(void *verts, s32 layer, s32 a2, s32 a3, s32 front, s32 flip, u64 tex0,
+extern void EftGfx_DrawPolyScaledZ(void *verts, s32 layer, s32 unused1, s32 unused2, s32 front, s32 flip, u64 tex0,
                                    f32 zScale);
 /* The same callee as in eft_aura.c; this argument order (registers are assigned per class, so it is the same call)
    is the one that reproduces the order the arguments are set up in. */
@@ -1517,7 +1517,7 @@ extern s32 EftCam_IsActive(void);
 extern f32 EftMath_WrapAngle(f32 angle);
 extern EftTVec *EftGfx_GetClipPlanes(void);
 extern void EftPrim_DrawTriangle(EftTIVec *p0, EftTIVec *p1, EftTIVec *p2, EftTVec *c0, EftTVec *c1, EftTVec *c2,
-                                 EftTVec *st0, EftTVec *st1, EftTVec *st2, s32 a9, s32 a10, s32 layer, s32 z,
+                                 EftTVec *st0, EftTVec *st1, EftTVec *st2, s32 unused1, s32 unused2, s32 layer, s32 z,
                                  u64 tex0);
 
 extern s32 BtlCharApi_GetOpponentObjId(s32 objId);

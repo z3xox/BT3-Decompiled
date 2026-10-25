@@ -41,7 +41,7 @@ extern void Vec3_ScaleAdd(Vec4 *dst, Vec4 *dir, f32 len, Vec4 *from);     /* dst
 extern f32 Vec3_Dist(Vec4 *a, Vec4 *b);                               /* distance */
 extern s32 Vu0Cur_ProjectPoints(EftQScr *out, Vec4 *pos, s32 count);             /* projects count points */
 extern void ClipVtx_Set(EftQVert *out, Vec4 *pos, Vec4 *uv, Vec4 *col); /* builds one vertex */
-extern void EftGfx_DrawPolyAvgZ(EftQVert *verts, s32 arg1, s32 arg2, s32 arg3, s32 flip, u64 tex, s32 zOfs);
+extern void EftGfx_DrawPolyAvgZ(EftQVert *verts, s32 layer, s32 unused1, s32 unused2, s32 flip, u64 tex, s32 zOfs);
 extern void EftMath_MtxFromDir(Mtx44 *out, Vec4 *dir, f32 angle);
 extern void Mtx_ProjectPoints(EftQScr *out, Mtx44 *m, Vec4 *pos, s32 count);  /* projects count points */
 extern s32 IVec4_InGsRange4(EftQScr *a, EftQScr *b, EftQScr *c, EftQScr *d);  /* 1 when the quad is off screen */

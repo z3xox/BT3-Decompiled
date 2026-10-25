@@ -327,11 +327,11 @@ s32 EftAim_GetDir(EftVec *out, s32 from, s32 objId);
 s32 EftAim_GetDirKeep(EftHitSrc *src, EftVec *out, s32 from, s32 objId);
 void EftMath_RotateAboutAxis(EftVec *out, EftVec *v, EftVec *axis, f32 angle);
 void EftAim_Home(EftVec *out, EftVec *pos, EftVec *dir, s32 objId, f32 speed, f32 maxTurn);
-void EftGfx_DrawPolyAvgZ(EftGfxVert *verts, s32 layer, s32 arg2, s32 arg3, s32 flip, u64 tex, s32 zOfs);
-void EftGfx_DrawPolyFixedZ(EftGfxVert *verts, s32 layer, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex, s32 z);
-void EftGfx_DrawPolyAvgZFront(EftGfxVert *verts, s32 layer, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex,
+void EftGfx_DrawPolyAvgZ(EftGfxVert *verts, s32 layer, s32 unused1, s32 unused2, s32 flip, u64 tex, s32 zOfs);
+void EftGfx_DrawPolyFixedZ(EftGfxVert *verts, s32 layer, s32 unused1, s32 unused2, s32 front, s32 flip, u64 tex, s32 z);
+void EftGfx_DrawPolyAvgZFront(EftGfxVert *verts, s32 layer, s32 unused1, s32 unused2, s32 front, s32 flip, u64 tex,
                               s32 zOfs);
-void EftGfx_DrawPolyScaledZ(EftGfxVert *verts, s32 layer, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex,
+void EftGfx_DrawPolyScaledZ(EftGfxVert *verts, s32 layer, s32 unused1, s32 unused2, s32 front, s32 flip, u64 tex,
                             f32 zScale);
 void EftGfx_DrawSprite(EftVec *pos, EftVec *color, f32 w, f32 h, f32 u0, f32 v0, f32 u1, f32 v1, f32 rot, s32 layer,
                        s32 front, u64 tex0);

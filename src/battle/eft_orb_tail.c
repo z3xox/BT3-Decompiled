@@ -75,7 +75,7 @@ extern f32 EftMath_WrapAngle(f32 angle);
 /* The definition's parameter order (src/battle/eft_stage_1.c): with the integers declared in front of the floats the
    registers are the same but the caller loads them in another order. */
 extern void EftPrim_DrawQuadDepthScaled(EftAbVec *pos, EftAbVec *color, f32 w, f32 h, f32 u0, f32 v0, f32 u1, f32 v1,
-                                        f32 roll, s32 arg2, s32 arg3, u64 tex0, f32 depthScale);
+                                        f32 roll, s32 layer, s32 front, u64 tex0, f32 depthScale);
 
 /* The emitters of the 0x186B50 module (eft_emit.h EftEmitArgA). */
 typedef struct EftOrbBurstArg {

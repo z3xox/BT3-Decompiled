@@ -32,7 +32,7 @@ extern void Vu0Cur_LoadIdentity(void);                           /* VU0: current
 extern void Vu0Cur_Translate(Vec4 *pos);                      /* VU0: translate the current matrix */
 extern void Vu0Cur_StoreMtx(void *m);                        /* VU0: store the current matrix */
 
-extern void *File_Request(s32 id, void *buf, s32 arg);
+extern void *File_Request(s32 id, void *buf, s32 unused);
 extern void StreamSe_PlayDefault(s32 se, s32 id);
 extern void BtlCharApi_PlaySoundAt(Vec4 *pos, s32 kind, s32 id, f32 near, f32 far);
 extern void BtlCharApi_RumbleNear(Vec4 *pos, f32 near, f32 far, f32 power, f32 time);

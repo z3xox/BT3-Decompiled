@@ -55,7 +55,7 @@ extern void EftShot_SetCurSlot(s32 chr, s32 slot);
 extern void EftShot_SetCharPool(s32 chr);
 
 /* eft_sweep.c */
-extern void EftEmit_SpawnOwn(EftSet *set, EftSetState *st, EftVolleyPose *pose, Vec4 *a, Vec4 *dir, s32 type, s32 idx,
+extern void EftEmit_SpawnOwn(EftSet *set, EftSetState *st, EftVolleyPose *pose, Vec4 *pos, Vec4 *dir, s32 type, s32 idx,
                              s32 flags, f32 scale);
 extern void EftEmit_KillAll(EftSet *set, EftSetState *st);
 extern s32 EftEmit_UpdateAlive(EftSet *set, EftSetState *st);
@@ -71,7 +71,7 @@ extern void *EftBlastObj_Create(EftVolleyShotArg *arg);
 extern void *EftBlastObj_CreateWithModel(EftVolleyShotArg *arg, s32 *extra);
 extern void EftBlastObj_Stop(void *shot);
 extern s32 EftBlastObj_IsAlive(void *shot);
-extern void EftBlastObj_SetSel(void *shot, s32 a, s32 b, s32 c);
+extern void EftBlastObj_SetSel(void *shot, s32 n, s32 kind, s32 node);
 extern void EftBlastObj_SetTarget(void *shot, s32 a, EftVolleyShot *pos);
 extern void EftBlastObj_SetFrozen(void *shot, s32 a);
 extern void EftBlastObj_SetNoHit(void *shot, s32 a);
@@ -84,8 +84,8 @@ extern void EftTexSet_Load8(u8 *res, s32 *entry);
 extern void EftTexSet_Load16(u8 *res, s32 *entry);
 extern s32 EftVolleyAim_GetNodeSide(s32 node);
 extern void EftVolleyAim_InitShot(s32 objId, EftVolleyShot *shot, s32 aimKind, s32 side, s32 index, s32 count, f32 speed, f32 maxTurn);
-extern void EftVolleyAim_Spread(s32 objId, Vec4 *dir, s32 a, s32 b, s32 c, s32 index, s32 count);
-extern void EftVolleyAim_Update(s32 objId, EftVolleyShot *shot, Vec4 *out, s32 flag, f32 time, f32 a, f32 b);
+extern void EftVolleyAim_Spread(s32 objId, Vec4 *dir, s32 kind, s32 lockedOn, s32 side, s32 index, s32 count);
+extern void EftVolleyAim_Update(s32 objId, EftVolleyShot *shot, Vec4 *out, s32 flag, f32 time, f32 speed, f32 maxTurn);
 
 extern EftHMgr *gEftShot;
 extern EftHTaskClass gEftShotCharClass;

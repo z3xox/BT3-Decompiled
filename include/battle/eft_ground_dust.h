@@ -393,13 +393,13 @@ extern void EftLine_DrawClipped(EftZTask *task);                         /* shap
 extern EftGndDustPart *EftGndDust_MoveNode(List *list, List *free, EftGndDustPart *part); /* frees a particle, returns the next */
 extern u64 EftGndDust_GetTex(EftGndDustTex *tex, s32 idx);                        /* TEX0 of a texture */
 extern void EftGndDust_GetLightColors(u8 *colA, u8 *colB);                             /* default colours */
-extern EftGndDustPart *EftGndDust_SpawnPiece(EftGndDustEmit *w, EftGndDustArg *arg, s32 flags, f32 a, f32 angle); /* returns the
+extern EftGndDustPart *EftGndDust_SpawnPiece(EftGndDustEmit *w, EftGndDustArg *arg, s32 flags, f32 size, f32 angle); /* returns the
    piece (eft_char_parts.c); the return type matters: EftGndDustSlide_Init matches only with a non-void callee */
-extern EftGndDustPart *EftGndDust_SpawnPieceEx(EftGndDustEmit *w, Vec4 *pos, Vec4 *dir, u8 *colA, u8 *colB, f32 f12, f32 f13, f32 f14,
-                          f32 f15, f32 f16, f32 f17, f32 spin, f32 f19, s16 life, s16 fade, s32 size, f32 s0, f32 grow,
-                          s32 flags);
-extern void EftGndDust_SpawnBodyDust(EftGndDustEmit *w, EftGndDustArg *arg, f32 a, f32 b);
-extern void EftGndDust_SpawnChip(EftGndDustEmit *w, EftGndDustArg *arg, Vec4 *dir, u8 *colA, u8 *colB, s32 a5, s32 a6);
+extern EftGndDustPart *EftGndDust_SpawnPieceEx(EftGndDustEmit *w, Vec4 *pos, Vec4 *dir, u8 *colA, u8 *colB, f32 sizeX,
+                          f32 sizeY, f32 growX, f32 growY, f32 speed, f32 drag, f32 rot, f32 spin, s16 life, s16 fade,
+                          s32 tex, f32 growDamp, f32 gravity, s32 flags);
+extern void EftGndDust_SpawnBodyDust(EftGndDustEmit *w, EftGndDustArg *arg, f32 scale, f32 unused);
+extern void EftGndDust_SpawnChip(EftGndDustEmit *w, EftGndDustArg *arg, Vec4 *dir, u8 *colA, u8 *colB, s32 life, s32 fade);
 extern void EftGndDust_DrawPiece(Vec4 *pos, Vec4 *color, Vec4 *dir, s32 blend, f32 w, f32 h, f32 rot, u64 tex0, s32 far);
 
 /* Returns every particle of a task to its pool. */

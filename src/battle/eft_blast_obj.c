@@ -134,7 +134,7 @@ extern void EftObj_PlayAnim(s32 obj, s32 anim, s32 mode); /* starts an animation
 extern s32 EftObj_IsAnimPlaying(s32 obj);                    /* its animation is still playing */
 extern void EftObj_SetMtx(s32 obj, Mtx44 *m);         /* places it */
 extern void EftObj_SetVisible(s32 obj, s32 show);
-extern void EftObj_Nop(s32 obj, s32 a1);
+extern void EftObj_Nop(s32 obj, s32 unused);
 
 extern void *gEftBlastObjClass[6];
 

@@ -89,7 +89,7 @@ extern void EftEmit_TermState(EftVSet *set, EftVState *st);
 extern s32 EftEmit_GetFlagsFromMask(EftVSet *set, EftVState *st, s32 objId, s32 type, s32 idx, s32 ending, s32 kill,
                                     s32 mask);
 extern void EftEmit_Spawn(EftVSet *set, EftVState *state, EftVNodes *nodes, EftVVec *pos, EftVVec *dir, s32 objId,
-                          s32 node, s32 arg7, s32 type, s32 idx, s32 flags, f32 scale);
+                          s32 node, s32 srcKind, s32 type, s32 idx, s32 flags, f32 scale);
 extern void EftEmit_KillAll(EftVSet *set, EftVState *state);
 extern s32 EftEmit_UpdateAlive(EftVSet *set, EftVState *state);
 extern void EftEmit_SetNode(EftVNodes *nodes, s32 slot, s32 node, EftVVec *pos);
@@ -107,7 +107,7 @@ extern EftLinkNode *EftLink_NewNode(EftLinkWork *w, EftVVec *pos, f32 index); /*
 extern void EftLink_InitNode(EftLinkNode *n, EftLinkWork *w);             /* initialises a node from the current values */
 extern void EftLink_StepNodes(EftLinkWork *w, f32 fade);                   /* steps the nodes */
 extern void EftLink_UnlinkNode(EftLinkNode **head, EftLinkNode **tail, EftLinkNode *n); /* unlinks a node */
-extern void EftLink_DrawBillboardClipped(EftVVec *pos, EftVVec *color, EftVVec *unk, f32 w, f32 h, f32 u0, f32 v0, f32 u1, f32 v1,
+extern void EftLink_DrawBillboardClipped(EftVVec *pos, EftVVec *color, EftVVec *scale, f32 w, f32 h, f32 u0, f32 v0, f32 u1, f32 v1,
                           f32 rot, s32 layer, s32 front, u64 tex0, f32 zScale);
 extern void EftLink_DrawBillboard(EftVVec *pos, EftVVec *color, s32 w, s32 h, f32 sx, f32 sy, f32 u0, f32 v0, f32 u1, f32 v1,
                           f32 rot, s32 layer, s32 front, u64 tex0);

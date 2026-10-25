@@ -701,7 +701,7 @@ void EftQuad_DrawSprite(EftYVec *corner, EftYVec uv0, EftYVec uv1, EftYVec color
 
 
 /* Draws one quad as two triangles (corners 0-1-2 and 1-2-3) through the clipping polygon drawer. */
-void EftQuad_DrawFacing(EftYVec *corner, EftYVec uv0, EftYVec uv1, EftYVec color, s32 layer, s32 texIdx, s32 arg6,
+void EftQuad_DrawFacing(EftYVec *corner, EftYVec uv0, EftYVec uv1, EftYVec color, s32 layer, s32 texIdx, s32 unused,
                         s32 flip, EftYTex8 *tex) {
     EftYVec c[4];
     EftYVec st[4];

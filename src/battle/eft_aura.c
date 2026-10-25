@@ -52,7 +52,7 @@ extern void Vu0Cur_Push(void);                            /* VU0 matrix stack pu
 extern void Vu0Cur_LoadMtx(Mtx44 *m);                        /* load the matrix */
 extern void Vu0Cur_Pop(void);                            /* pop */
 extern void ClipVtx_Set(void *vtx, Vec4 *pos, Vec4 *uv, Vec4 *col);
-extern void EftGfx_DrawPolyAvgZFront(void *prim, s32 blend, s32 a2, s32 a3, s32 inView, s32 flip, u64 tex, s32 zOfs);
+extern void EftGfx_DrawPolyAvgZFront(void *prim, s32 blend, s32 unused1, s32 unused2, s32 inView, s32 flip, u64 tex, s32 zOfs);
 extern void EftTexSet_Load4(EftSpdTex *tex, s32 *entry);
 extern void EftTexSet_Keep4(EftSpdTex *tex, s32 tcc, s32 tfx);
 extern EftMBattleWork *Battle_GetWork(void);

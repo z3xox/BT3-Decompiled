@@ -35,7 +35,7 @@ extern void Vec4_Lerp(EftVec *dst, EftVec *a, EftVec *b, f32 t); /* dst = a * t 
 extern s32 ClipPoly_ClipPlane(EftGfxVert *verts, EftVec *plane, s32 count); /* clips a polygon against a plane, new count */
 extern void ClipPoly_ProjectCur(s32 (*scr)[4], EftVec *col, EftGfxVert *verts, s32 count); /* projects a polygon */
 extern void EftPrim_DrawTriangle(s32 *p0, s32 *p1, s32 *p2, EftVec *uv0, EftVec *uv1, EftVec *uv2,
-                          EftVec *col0, EftVec *col1, EftVec *col2, s32 arg9, s32 arg10, s32 layer, s32 z, u64 tex);
+                          EftVec *col0, EftVec *col1, EftVec *col2, s32 unused1, s32 unused2, s32 layer, s32 z, u64 tex);
 extern s32 abs(s32 x);
 extern f32 sinf(f32 x);
 extern f32 cosf(f32 x);
@@ -1552,7 +1552,7 @@ typedef struct EftGfxScr {
  * triangles (0x132E80). The sort depth of each triangle is the average of its three projected depths >> 8
  * (mirrored to 0x1000 - z when flip is set) plus zOfs; depths are clamped to 0xFFFFFF.
  */
-void EftGfx_DrawPolyAvgZ(EftGfxVert *verts, s32 layer, s32 arg2, s32 arg3, s32 flip, u64 tex, s32 zOfs) {
+void EftGfx_DrawPolyAvgZ(EftGfxVert *verts, s32 layer, s32 unused1, s32 unused2, s32 flip, u64 tex, s32 zOfs) {
     EftGfxScr scr[9];
     EftVec col[9];
     EftVec *plane;
@@ -1574,13 +1574,13 @@ void EftGfx_DrawPolyAvgZ(EftGfxVert *verts, s32 layer, s32 arg2, s32 arg3, s32 f
             if (scr[i - 1].z > 0xFFFFFF) { scr[i - 1].z = 0xFFFFFF; }
             if (scr[i].z > 0xFFFFFF) { scr[i].z = 0xFFFFFF; }
             EftPrim_DrawTriangle((void *)&scr[0], (void *)&scr[i - 1], (void *)&scr[i], &verts[0].uv, &verts[i - 1].uv, &verts[i].uv, &col[0],
-                          &col[i - 1], &col[i], arg2, arg3, layer, z + zOfs, tex);
+                          &col[i - 1], &col[i], unused1, unused2, layer, z + zOfs, tex);
         }
     }
 }
 
 /* Same with a fixed sort depth z (mirrored when flip is set); front forces the three depths to 0xFFFFFF. */
-void EftGfx_DrawPolyFixedZ(EftGfxVert *verts, s32 layer, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex, s32 z) {
+void EftGfx_DrawPolyFixedZ(EftGfxVert *verts, s32 layer, s32 unused1, s32 unused2, s32 front, s32 flip, u64 tex, s32 z) {
     EftGfxScr scr[9];
     EftVec col[9];
     EftVec *plane;
@@ -1601,13 +1601,13 @@ void EftGfx_DrawPolyFixedZ(EftGfxVert *verts, s32 layer, s32 arg2, s32 arg3, s32
             if (scr[i].z > 0xFFFFFF) { scr[i].z = 0xFFFFFF; }
             if (front) { scr[0].z = 0xFFFFFF; scr[i - 1].z = 0xFFFFFF; scr[i].z = 0xFFFFFF; }
             EftPrim_DrawTriangle((void *)&scr[0], (void *)&scr[i - 1], (void *)&scr[i], &verts[0].uv, &verts[i - 1].uv, &verts[i].uv, &col[0],
-                          &col[i - 1], &col[i], arg2, arg3, layer, z, tex);
+                          &col[i - 1], &col[i], unused1, unused2, layer, z, tex);
         }
     }
 }
 
 /* Same as EftGfx_DrawPolyAvgZ with the option to force the three depths to 0xFFFFFF (front). */
-void EftGfx_DrawPolyAvgZFront(EftGfxVert *verts, s32 layer, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex,
+void EftGfx_DrawPolyAvgZFront(EftGfxVert *verts, s32 layer, s32 unused1, s32 unused2, s32 front, s32 flip, u64 tex,
                               s32 zOfs) {
     EftGfxScr scr[9];
     EftVec col[9];
@@ -1631,13 +1631,13 @@ void EftGfx_DrawPolyAvgZFront(EftGfxVert *verts, s32 layer, s32 arg2, s32 arg3, 
             if (scr[i].z > 0xFFFFFF) { scr[i].z = 0xFFFFFF; }
             if (front) { scr[0].z = 0xFFFFFF; scr[i - 1].z = 0xFFFFFF; scr[i].z = 0xFFFFFF; }
             EftPrim_DrawTriangle((void *)&scr[0], (void *)&scr[i - 1], (void *)&scr[i], &verts[0].uv, &verts[i - 1].uv, &verts[i].uv, &col[0],
-                          &col[i - 1], &col[i], arg2, arg3, layer, z + zOfs, tex);
+                          &col[i - 1], &col[i], unused1, unused2, layer, z + zOfs, tex);
         }
     }
 }
 
 /* Same with the average depth multiplied by zScale. */
-void EftGfx_DrawPolyScaledZ(EftGfxVert *verts, s32 layer, s32 arg2, s32 arg3, s32 front, s32 flip, u64 tex,
+void EftGfx_DrawPolyScaledZ(EftGfxVert *verts, s32 layer, s32 unused1, s32 unused2, s32 front, s32 flip, u64 tex,
                               f32 zScale) {
     EftGfxScr scr[9];
     EftVec col[9];
@@ -1661,7 +1661,7 @@ void EftGfx_DrawPolyScaledZ(EftGfxVert *verts, s32 layer, s32 arg2, s32 arg3, s3
             if (scr[i].z > 0xFFFFFF) { scr[i].z = 0xFFFFFF; }
             if (front) { scr[0].z = 0xFFFFFF; scr[i - 1].z = 0xFFFFFF; scr[i].z = 0xFFFFFF; }
             EftPrim_DrawTriangle((void *)&scr[0], (void *)&scr[i - 1], (void *)&scr[i], &verts[0].uv, &verts[i - 1].uv, &verts[i].uv, &col[0],
-                          &col[i - 1], &col[i], arg2, arg3, layer, (s32)(z * zScale), tex);
+                          &col[i - 1], &col[i], unused1, unused2, layer, (s32)(z * zScale), tex);
         }
     }
 }
