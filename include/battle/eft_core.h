@@ -132,7 +132,7 @@ typedef struct EftHitSrc {
 typedef struct EftHitAtk {
     /* 0x00 */ u8 unk0[0x12];
     /* 0x12 */ s16 objId;
-    /* 0x14 */ s16 code;
+    /* 0x14 */ s16 node;
     /* 0x16 */ s16 area;    /* copied to EftHitRec.area */
     /* 0x18 */ s16 kind;
     /* 0x1A */ u8 type;     /* 1: second impact variant */
@@ -140,7 +140,7 @@ typedef struct EftHitAtk {
     /* 0x1C */ s32 unk1C;
     /* 0x20 */ f32 speed;    /* copied to EftHitRec.shape.unk8 */
     /* 0x24 */ u8 unk24[0x30 - 0x24];
-    /* 0x30 */ s32 level;    /* copied to EftHitRec.level; FxHitArg2 calls this word `size` (0..3) */
+    /* 0x30 */ s32 level;    /* copied to EftHitRec.level: the charge level 0..3 (EftRArg.level) */
 } EftHitAtk;
 
 /* Shape a record sweeps this frame. a and b point into gEftHitArena: the volume at the previous and at the

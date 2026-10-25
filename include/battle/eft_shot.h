@@ -45,7 +45,7 @@ typedef struct EftTexEntry {
 typedef struct EftTexSet {
     /* 0x000 */ EftTexEntry entry[32];
     /* 0x200 */ s32 count;
-    /* 0x204 */ s32 stepped;
+    /* 0x204 */ s32 ready;
 } EftTexSet; /* 0x208 */
 
 /* ---- blast record helpers -------------------------------------------------------------- */
@@ -124,7 +124,7 @@ typedef struct EftSmokeArg {
     /* 0x4C */ s32 unk4C;
 } __attribute__((aligned(16))) EftSmokeArg; /* 0x50; copied with 64-bit loads, so 16-byte aligned */
 
-/* Record of the stage's emitter list (BtlStage_GetFxResB2). */
+/* Record of the stage's emitter list (BtlStage_GetFxList1). */
 typedef struct EftSmokeSrc {
     /* 0x00 */ f32 pos[3];
     /* 0x0C */ f32 damp;

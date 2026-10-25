@@ -75,7 +75,7 @@ typedef struct EftYTex8 {
 typedef struct EftYTex16 {
     /* 0x000 */ EftYTex e[16];
     /* 0x100 */ s32 count;
-    /* 0x104 */ u32 loaded;
+    /* 0x104 */ u32 ready;
 } EftYTex16; /* size 0x108 */
 
 /* The task fields used here (0x40 bytes, see eft_shot.h). */

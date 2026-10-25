@@ -95,7 +95,7 @@ typedef struct EftModelNode {
     /* 0x00 */ u8 unk0[9];
     /* 0x09 */ u8 endPhase;
     /* 0x0A */ u8 unkA[0x18 - 0xA];
-    /* 0x18 */ f32 rate;
+    /* 0x18 */ f32 life;
     /* 0x1C */ u8 unk1C[0x40 - 0x1C];
 } EftModelNode; /* size 0x40 */
 

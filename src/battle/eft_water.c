@@ -42,9 +42,9 @@ extern void EftBurst_RelocateModel(void *model);
 extern void Res_RelocateOffsets(void *dst, void *base, void *table);
 extern void Vec4_Copy(Vec4 *dst, Vec4 *src);
 
-extern s32 BtlStage_GetFxResC(void);
-extern s32 BtlStage_GetFxResA(void);
-extern EftStageMarker *BtlStage_GetFxResC2(void);
+extern s32 BtlStage_GetFxCount2(void);
+extern s32 BtlStage_GetFxCount0(void);
+extern EftStageMarker *BtlStage_GetFxList2(void);
 extern void EftTexSet_Load8(EftSteamTex *tex, s32 *data);
 extern u64 EftVram_AddTex(u64 *tex0, s32 tcc, s32 tfx);
 extern s32 EftStage_IsDrawOn(void);
@@ -279,12 +279,12 @@ void EftSteamMgr_Init(void *task) {
     s32 i;
 
     stage = (s32 *)BtlScene_GetStageData();
-    count = BtlStage_GetFxResC();
+    count = BtlStage_GetFxCount2();
     gEftSteam = BtlPool_Alloc(BtlPool_GetCurrent(), sizeof(EftSteamShared));
     memset(gEftSteam, 0, sizeof(EftSteamShared));
-    gEftSteam->list = BtlTask_CreateChildList(task, count + BtlStage_GetFxResA(), sizeof(EftSteamWork));
+    gEftSteam->list = BtlTask_CreateChildList(task, count + BtlStage_GetFxCount0(), sizeof(EftSteamWork));
     EftTexSet_Load8(&gEftSteam->tex, BtlScene_GetPackEntry(stage, 0x12));
-    base = BtlStage_GetFxResC2();
+    base = BtlStage_GetFxList2();
     if (base != NULL) {
         for (i = 0; i < count; i++) {
             marker = &base[i];

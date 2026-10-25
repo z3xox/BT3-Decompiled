@@ -98,7 +98,7 @@ extern u8 EftEmit_GetEndFrames(void *set);
 extern void EftEmit_InitState(void *set, void *emit);
 extern void EftEmit_TermState(void *set, void *emit);
 extern s32 EftEmit_GetFlagsFromReq(EftKSet *set, void *emit, s32 objId, s32 group, s32 part, s32 ending, s32 kill);
-extern void EftEmit_SpawnOwn(EftKSet *set, void *emit, Vec4 *nodes, Vec4 *pos, void *dir, s32 group, s32 part,
+extern void EftEmit_SpawnOwn(EftKSet *set, void *state, Vec4 *nodes, Vec4 *pos, void *dir, s32 type, s32 idx,
                           s32 flags, f32 scale);
 extern void EftEmit_MarkKind6(void *set, void *emit);
 extern void EftEmit_KillAll(void *set, void *emit);
@@ -1209,7 +1209,7 @@ void EftObjTech_TermRings(EftKTask *task) {
 
 /* Runs the 19 emitter groups of the set: asks for each part what to do this frame (flag 1 = the object is ending,
    flag 8 = it was cut short) and starts or stops it at the body's head. Once the object has hit (0x400) the parts
-   move to the position on the target, and a part with a life of its own (its `rate` field, a life in seconds, > 0)
+   move to the position on the target, and a part with a life of its own (its `life` field, in seconds, > 0)
    is left to run out.
    endOnTarget, onTarget, objId and a loop pointer live on the stack in the original: the function uses all nine
    saved registers. */
@@ -1246,7 +1246,7 @@ void EftObjTech_UpdateEmitters(s32 objId, EftKTask *task, EftKSet *set) {
 
                 if (onTarget) {
                     end = endOnTarget;
-                    if (set->parts[idx].endPhase == 0 && set->parts[idx].rate > 0.0f) {
+                    if (set->parts[idx].endPhase == 0 && set->parts[idx].life > 0.0f) {
                         end = 0;
                         fast = 0;
                     }
@@ -2132,7 +2132,7 @@ void EftRushShot_UpdateFlash(EftTask *task) {
     EftFlashArg flash;
 
     if (!(arg->def->flags & 0x400000) && EftShot_TestBits(opp, 0x40)) {
-        flash = (EftFlashArg){ { 255.0f, 255.0f, 255.0f, 255.0f }, 0.5f, 0, 1.0f, arg->objId, 0 };
+        flash = (EftFlashArg){ { 255.0f, 255.0f, 255.0f, 255.0f }, 0.5f, 0.0f, 1.0f, arg->objId, 0 };
         EftFlash_Start(&flash);
     }
 }
@@ -2187,7 +2187,7 @@ void EftRushShot_Draw(s32 objId, EftTask *task, EftModel *model) {
 
                 if (alt) {
                     end = endAlt;
-                    if (model->nodes[idx].endPhase == 0 && model->nodes[idx].rate > 0.0f) {
+                    if (model->nodes[idx].endPhase == 0 && model->nodes[idx].life > 0.0f) {
                         end = 0;
                         fast = 0;
                     }

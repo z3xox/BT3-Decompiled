@@ -154,7 +154,7 @@ extern EftVolleyAimStep *gEftVolleyAimScripts[];
 extern void *gStgColMesh;
 extern EftDetResult gStgGroundResult;
 extern EftDetVec gVu0ZeroVecW1; /* {0, 0, 0, 1}: "no movement" */
-extern EftDetVec gStgDownDir; /* {0, 1, 0, 1}: down */
+extern EftDetVec gVu0AxisYW; /* {0, 1, 0, 1}: down */
 extern const f32 gEftDetFltMax[]; /* FLT_MAX */
 extern const f32 gStgGroundFltMax[]; /* FLT_MAX */
 
@@ -1405,7 +1405,7 @@ s32 StgGround_Cb(EftDetNode *node, StgGroundCtx *ctx) {
     if (poly->flags & 0x8000000) {
         return 0;
     }
-    if (!(Vec3_Dot(&gStgDownDir, &poly->nrm) < 0.0f)) {
+    if (!(Vec3_Dot(&gVu0AxisYW, &poly->nrm) < 0.0f)) {
         return 0;
     }
     ColMesh_GetPolyVerts(gStgColMesh, poly, &tri.v[0], &tri.v[1], &tri.v[2]);

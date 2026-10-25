@@ -84,7 +84,9 @@ gBtlAiRateColsE = 0x002EDEB0;
 // u8 [4][8]: condition codes of the columns of AiThRates.tblF (weight table 5), row plan.sub.
 gBtlAiRateColsF = 0x002EDEE8;
 // Rodata Vec4 (0,0,0,0) in the vu0 math constants (between the identity matrix D_002EC260 and gVu0AxisZW), every
-gVu0ZeroVec = 0x002EC2A0;
+gVu0ZeroVec = 0x002EC2A0; // size:0x10
+// Rodata Vec4 (1,1,1,1) after gVu0ZeroVec in the vu0 math constants; nothing refers to it.
+gVu0OneVec = 0x002EC2B0; // size:0x10
 // Seven {frame, mouth shape} records (frames 0..0x15), picked at random with talkCount = 7 as face->talkKeys.
 gBtlObjTalkPattern7 = 0x002C6C20;
 // Five {frame, mouth shape} records, the other talk pattern, picked with talkCount = 5.
@@ -106,7 +108,9 @@ gBtlObjJawTrackAlt2 = 0x002C6DD8;
 // Same, default case of the flag-0x400000 set.
 gBtlObjJawTrackAlt3 = 0x002C6E18;
 // Rodata Vec4 (0,0,0,1) in the vu0 math constants, used as zero translation / identity rotation / 'no movement'
-gVu0ZeroVecW1 = 0x002EC2C0;
+gVu0ZeroVecW1 = 0x002EC2C0; // size:0x10
+// Rodata Vec4 (1,0,0,1) after gVu0ZeroVecW1, the X axis of the vu0 math constants; nothing refers to it.
+gVu0AxisXW = 0x002EC2D0; // size:0x10
 // 71 x {x, y, z} floats: the reference translation of each model node, subtracted from a motion's translation ke
 gBtlObjRefNodePos = 0x002F2420;
 // BtlTaskClass {EftStage_Update, EftStage_Init, EftStage_Term}: scene layer 0.
@@ -121,8 +125,8 @@ gColObbFltMax = 0x002FEBA8;
 gEftKiObjClass = 0x002C3E18;
 // Task class table {EftChain_Update, _Init, _Term, _PostUpdate, _Reset, _Draw}, the chain creator adds it to gEf
 gEftChainClass = 0x002C3E48;
-// Constant vector (0, 1, 0, 1), +Y being down, StgShadow_Cb and StgGround_Cb dot it with the polygon normal to k
-gStgDownDir = 0x002EC2E0;
+// Rodata Vec4 (0, 1, 0, 1), the Y axis of the vu0 math constants (X axis before it, gVu0AxisZW after it); +Y being down, StgShadow_Cb and StgGround_Cb dot it with the polygon normal to k
+gVu0AxisYW = 0x002EC2E0; // size:0x10
 // Float 0x7F7FFFFE (FLT_MAX), EftDet_PrepareAll resets every record's stageDist and dist to it.
 gEftDetFltMax = 0x002FEAF8;
 // Float 0x7F7FFFFE (FLT_MAX), StgGround_Probe presets out->y with it, the documented 'no ground found' value.
@@ -147,7 +151,7 @@ gEftShotTechUpDir = 0x002ECB60;
 gEftBillClass = 0x002C40F0;
 // Float -0.0f in .sdata, the storm strip draw (gEftStorm) uses it as the y of corner[3].
 gEftStormNegZero = 0x002FE9E4;
-// Task class table {EftShotFx_Update, EftShotFxMgr_Init, EftShotFx_Term, EftShotFx_PostUpdate, 0, EftShotFx_Draw
+// Task class table {EftShotFx_Update, EftShotFx_Init, EftShotFx_Term, EftShotFx_PostUpdate, 0, EftShotFx_Draw
 gEftShotFxClass = 0x002C3EC0;
 // Task class table {EftSpdLine_Update, _Init, _Term, _Stub, 0, _Draw}, mentioned only in the file header comment
 gEftSpdLineClass = 0x002C3A18;

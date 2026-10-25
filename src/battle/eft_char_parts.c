@@ -116,9 +116,9 @@ extern EftAaOrbTailMgr *gEftOrbTail;
 
 extern EftBladeDef gEftBladeDef[8];
 extern u8 gEftBladeColor[0x20];
-extern u8 gEftDelaySeClass[0x18];
-extern u8 gEftBladeClass[0x18];
-extern u8 gEftAnimPartClass[0x18];
+extern void *gEftDelaySeClass[6];
+extern void *gEftBladeClass[6];
+extern void *gEftAnimPartClass[6];
 extern Vec4 gVu0ZeroVecW1;
 
 /* ---- ground effect pieces (tail of the module that starts in eft_z) ------------------------------------- */

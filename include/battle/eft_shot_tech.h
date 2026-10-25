@@ -357,7 +357,7 @@ typedef struct EftJShotArg {
 typedef struct EftJFlashArg {
     /* 0x00 */ EftJVec color;
     /* 0x10 */ f32 in;
-    /* 0x14 */ s32 hold;
+    /* 0x14 */ f32 hold;
     /* 0x18 */ f32 out;
     /* 0x1C */ s32 objId;
     /* 0x20 */ s32 wait;

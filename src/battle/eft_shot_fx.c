@@ -85,7 +85,7 @@ s32 EftShotFx_Start(s32 objId, u8 kind) {
 
 /* Init callback of the task class 0x2C3EC0: the work, two request slots, 200 lines and the texture set. Each
    block is only allocated when missing. */
-void EftShotFxMgr_Init(EftTTask *task) {
+void EftShotFx_Init(EftTTask *task) {
     EftTTex *tex;
 
     if (gEftShotFx == NULL) {

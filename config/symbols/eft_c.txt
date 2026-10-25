@@ -4,7 +4,7 @@
 // return EftSmoke_GetPos / EftSteam_GetWork of it. No caller.
 EftGeyser_GetSmokePos = 0x00136760; // type:func // guess
 EftGeyser_GetSteamWork = 0x001367D0; // type:func // guess
-// 0x136840 / 0x136AC8(task): fill an emitter description from the stage record (BtlStage_GetFxResB2 / C2) and
+// 0x136840 / 0x136AC8(task): fill an emitter description from the stage record (BtlStage_GetFxList1 / C2) and
 // start it (EftSmoke_Create / EftSteam_Create), task into work + 0xEC / + 0xF0. Called by EftGeyser_Init.
 EftGeyser_StartSmoke = 0x00136840; // type:func // guess
 EftGeyser_StartSteam = 0x00136AC8; // type:func // guess

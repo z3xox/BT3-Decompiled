@@ -51,7 +51,7 @@ extern void BtlTask_SetDead(EftTask *task);
 extern void BtlTask_SetOwnerTag(EftTask *task, s32 flag);
 extern EftTask *BtlTask_GetParent(EftTask *task);
 
-extern u8 gEftAbsorbClass[0x18]; /* the task class (0x2C3A00): six callbacks, see config/symbols/eft_l.txt */
+extern void *gEftAbsorbClass[6]; /* the task class (0x2C3A00): six callbacks, see config/symbols/eft_l.txt */
 
 /* Steps the emitters of one set and spawns their particles at pos, facing dir. */
 void EftAbsorb_DrawOne(s32 objId, EftTask *task, EftModel *model, EftModelInst *inst, Vec4 *pos, Vec4 *dir) {

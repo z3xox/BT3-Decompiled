@@ -212,7 +212,7 @@ typedef struct EftRayWork {
 typedef struct EftRayMgr {
     /* 0x000 */ EftTTex tex[32];  /* texture set of common entry 0xA; only tex[0] is used */
     /* 0x200 */ s32 texCount;
-    /* 0x204 */ s32 stepped;
+    /* 0x204 */ s32 ready;
     /* 0x208 */ EftTTaskList *list; /* 4 tasks of 0x520 bytes */
     /* 0x20C */ s32 unk20C;
 } EftRayMgr; /* size 0x210 */

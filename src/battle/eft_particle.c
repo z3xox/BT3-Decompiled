@@ -48,11 +48,11 @@ void EftPtcl_PickTexture(EftUPtclWork *w, EftUPtclTex *tex, s32 image, s32 palet
 /* The emitter's TEX0 for this frame: uploads image and palette the first time the set's entry is used and
    caches the value in the set; later emitters of the frame take the cached value. */
 void EftPtcl_UploadTexture(EftUPtclWork *w, EftUPtclWork *w2) {
-    if (!(w2->arg.res->uploaded & (1U << w2->arg.texIdx))) {
+    if (!(w2->arg.res->ready & (1U << w2->arg.texIdx))) {
         w->tex0 = EftVram_AddImage(&w->texA, 1, 0);
         w->tex0 |= (u64)EftVram_AddClut(&w->texB) << 37;
         w2->arg.res->tex[w2->arg.texIdx].tex0 = w->tex0;
-        w2->arg.res->uploaded |= 1U << w2->arg.texIdx;
+        w2->arg.res->ready |= 1U << w2->arg.texIdx;
     } else {
         w->tex0 = w2->arg.res->tex[w2->arg.texIdx].tex0;
     }

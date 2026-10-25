@@ -38,7 +38,7 @@ EftStorm_DrawRain = 0x00148C10; // type:func // guess
 
 // Smoke emitters (40 particles rising from a point, lit by the stage light). Manager class 0x2C3670
 // {Update, Init, Term}; emitter class 0x2C3688 {Update, Init, Term, -, Reset, Draw}. The manager creates one
-// emitter per record of the stage's list (BtlStage_GetFxResB2); 0x136AA8 creates more with EftSmoke_Create.
+// emitter per record of the stage's list (BtlStage_GetFxList1); 0x136AA8 creates more with EftSmoke_Create.
 gEftSmokeMgrClass = 0x002C3670; // size:0x18 // guess
 gEftSmokeClass = 0x002C3688; // size:0x18 // guess
 gEftSmokeMgr = 0x002FE9E8; // size:0x4 // guess

@@ -63,7 +63,7 @@ typedef struct EftBTexImg {
 typedef struct EftBTexSet {
     /* 0x000 */ EftBTex tex[32];
     /* 0x200 */ s32 count;
-    /* 0x204 */ s32 stepped;
+    /* 0x204 */ s32 ready;
 } EftBTexSet; /* size 0x208 */
 
 /* Vectors and matrices passed BY VALUE in this module (a pointer to the caller's object is passed and the callee
@@ -177,7 +177,7 @@ typedef struct EftGeyser {
     /* 0xF8 */ u8 unkF8[8];
 } EftGeyser; /* size 0x100 */
 
-/* A geyser record of the stage data (BtlStage_GetFxResA2). */
+/* A geyser record of the stage data (BtlStage_GetFxList0). */
 typedef struct EftGeyserRec {
     /* 0x00 */ f32 x, y, z;
     /* 0x0C */ f32 width;

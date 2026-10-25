@@ -224,7 +224,7 @@ BtlParam_GetUnk24 = 0x0020EAE8; // type:func // guess
 // Ki level below which ki regenerates by itself: parameter +0x28 plus 60000 / 40000 / 20000 by ability 0x2E / 0x2D / 0x2C, at most 100000.
 BtlParam_GetKiRegenLimit = 0x0020EB10; // type:func // guess
 // Parameter +0x2C: ki level that ends the ki-exhausted state (flag 0xBE).
-BtlParam_GetGaugeB = 0x0020EBB0; // type:func // guess
+BtlParam_GetKiRecoverGoal = 0x0020EBB0; // type:func // guess
 // Parameter +0x40.
 BtlParam_GetUnk40 = 0x0020EBD8; // type:func // guess
 // Ki gained per frame of charging: ((parameter +0x30) / 30 + curve row 0 + (fighter +0xE28) / 30) scaled by BtlParam_ScaleKiCharge, at least 200.

@@ -45,9 +45,9 @@ extern void BtlTask_DestroyChildList(void *task);
 extern s32 BtlStage_IsReady(void);
 
 /* Stage records (stg_ambient.c). */
-extern u8 *BtlStage_GetFxResA2(void);
-extern u8 *BtlStage_GetFxResB2(void);
-extern u8 *BtlStage_GetFxResC2(void);
+extern u8 *BtlStage_GetFxList0(void);
+extern u8 *BtlStage_GetFxList1(void);
+extern u8 *BtlStage_GetFxList2(void);
 extern u32 *BtlStage_GetList90(void);
 extern StgWeatherRec *BtlStage_GetList60(void);
 extern StgSurfRec *BtlStage_GetList58(void);
@@ -219,7 +219,7 @@ void EftGeyser_StartSmoke(EftTask *task) {
                                3 };
     u8 *rec;
 
-    rec = BtlStage_GetFxResB2();
+    rec = BtlStage_GetFxList1();
     if (rec != NULL) {
         arg.colorA.v.x = rec[0x1C];
         arg.colorA.v.y = rec[0x1D];
@@ -261,7 +261,7 @@ void EftGeyser_StartSteam(EftTask *task) {
                                5 };
     u8 *rec;
 
-    rec = BtlStage_GetFxResC2();
+    rec = BtlStage_GetFxList2();
     if (rec != NULL) {
         arg.color.v.x = rec[0x1A];
         arg.color.v.y = rec[0x1B];
@@ -866,17 +866,17 @@ s32 EftStage_HasKind(s32 kind) {
         }
         break;
     case 4:
-        if (BtlStage_GetFxResB2() != NULL) {
+        if (BtlStage_GetFxList1() != NULL) {
             ret = 1;
         }
         break;
     case 5:
-        if (BtlStage_GetFxResC2() != NULL) {
+        if (BtlStage_GetFxList2() != NULL) {
             ret = 1;
         }
         break;
     case 6:
-        if (BtlStage_GetFxResA2() != NULL) {
+        if (BtlStage_GetFxList0() != NULL) {
             ret = 1;
         }
         break;

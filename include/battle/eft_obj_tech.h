@@ -40,7 +40,7 @@ typedef struct EftKTask {
 /* Definition record of one technique effect. */
 typedef struct EftKDef {
     /* 0x00 */ s16 id;        /* effect id: selects the special cases (0x162, 0x167, 0x168, 0x1F3, 0x282, 0x2A8, 0x2B4) */
-    /* 0x02 */ s16 recType;
+    /* 0x02 */ s16 level;     /* copied to the hit record (EftHit_Add: rec->level) */
     /* 0x04 */ s8 kind;       /* 0: skill-like (events from the frame table, ends with BtlCharApi_IsInSkill);
                                  other: technique (events from animation attributes) */
     /* 0x05 */ s8 sub;        /* 5: rush technique (events are read from every fighter's animation) */
@@ -75,7 +75,7 @@ typedef struct EftKPart {
     /* 0x00 */ u8 unk0[9];
     /* 0x09 */ u8 endPhase;
     /* 0x0A */ u8 unkA[0xE];
-    /* 0x18 */ f32 rate;
+    /* 0x18 */ f32 life;
     /* 0x1C */ u8 unk1C[0x24];
 } EftKPart; /* size 0x40 */
 

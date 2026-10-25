@@ -129,7 +129,7 @@ extern u32 BtlParam_GetFlags2(BtlFighter *chr);                       /* flags2 
 extern u32 BtlParam_GetFlags3(BtlFighter *chr);                       /* flags3 of the parameter block (+0x18) */
 extern s32 BtlParam_GetSizeClass(BtlFighter *chr);
 extern s32 BtlParam_GetKiRegenLimit(BtlFighter *chr);
-extern s32 BtlParam_GetGaugeB(BtlFighter *chr);
+extern s32 BtlParam_GetKiRecoverGoal(BtlFighter *chr);
 extern s32 BtlParam_GetKiRegenRate(BtlFighter *chr);
 extern s32 BtlParam_GetKiRecoverRate(BtlFighter *chr);
 extern s32 BtlParam_GetBlastGainRate(BtlFighter *chr);
@@ -865,7 +865,7 @@ void BtlAct_UpdateGauges(BtlFighter *chr) {
                 amount *= 4;
             }
             BtlMember_AddKi(chr, amount);
-            if (BtlMember_HasKi(chr, BtlParam_GetGaugeB(chr))) {
+            if (BtlMember_HasKi(chr, BtlParam_GetKiRecoverGoal(chr))) {
                 BtlChar_ClearFlag(chr, 0xBE);
             }
         } else if (!BtlChar_TestFlag(chr, 0x98)) {

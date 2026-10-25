@@ -113,7 +113,7 @@ typedef struct EftAeTexSet16 {
 typedef struct EftAeTexSet32 {
     /* 0x000 */ EftAeTex tex[32];
     /* 0x200 */ s32 count;
-    /* 0x204 */ u32 kept;       /* EftSprAnim_KeepTextures: bit per texture already given VRAM this frame */
+    /* 0x204 */ u32 ready;       /* EftSprAnim_KeepTextures: bit per texture already given VRAM this frame */
 } EftAeTexSet32; /* size 0x208 */
 
 /* Header of a texture pack once relocated. */

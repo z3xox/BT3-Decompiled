@@ -69,16 +69,17 @@ typedef struct EftPSet {
     /* 0x0C */ EftPGroup grp[19];
 } EftPSet;
 
-/* One entry of a texture set (GS TEX0 value) and the set itself (32 entries, count, "stepped" mask). */
+/* One entry of a texture set (GS TEX0 value) and the set itself (32 entries, count, "ready" mask). */
 typedef struct EftPTexEntry {
     /* 0x00 */ u64 tex0;
-    /* 0x08 */ u64 unk8;
+    /* 0x08 */ void *def;   /* the image the entry was built from (EftBTexSet: img, EftTexTbl: def) */
+    /* 0x0C */ s32 unkC;
 } EftPTexEntry; /* size 0x10 */
 
 typedef struct EftPTexSet {
     /* 0x000 */ EftPTexEntry entry[32];
     /* 0x200 */ s32 count;
-    /* 0x204 */ s32 stepped; /* bit n: entry n was advanced this frame (bit 0: the whole set) */
+    /* 0x204 */ s32 ready; /* bit n: entry n was advanced this frame (bit 0: the whole set) */
 } EftPTexSet;
 
 /* Creation parameters of a disc (the EftJPieceArg of eft_shot_tech.h); copied whole into the work block. */
@@ -115,7 +116,7 @@ typedef struct EftDiscAtk {
     /* 0x16 */ s16 area;
     /* 0x18 */ s16 kind;
     /* 0x1A */ u8 type;
-    /* 0x1B */ u8 level;     /* 2, 4, 6: texture pair 1, 2, 3 */
+    /* 0x1B */ u8 texVariant;     /* 2, 4, 6: texture pair 1, 2, 3 */
     /* 0x1C */ s16 life;     /* frames */
     /* 0x1E */ s16 unk1E;
     /* 0x20 */ f32 speed;

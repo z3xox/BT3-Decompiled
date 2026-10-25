@@ -134,8 +134,8 @@ extern void EftTexSet_Load32(EftBTexSet *set, void *pack);     /* builds a textu
 extern EftBBattle *Battle_GetWork(void);
 extern s32 Battle_IsSplitScreen(void);
 extern s32 BtlStage_IsReady(void);
-extern s32 BtlStage_GetFxResA(void);
-extern EftGeyserRec *BtlStage_GetFxResA2(void);
+extern s32 BtlStage_GetFxCount0(void);
+extern EftGeyserRec *BtlStage_GetFxList0(void);
 extern s32 BtlPool_GetCurrent(void);
 extern void *BtlPool_Alloc(s32 slot, s32 size);
 extern void BtlPool_Free(s32 slot, void *ptr);
@@ -1414,7 +1414,7 @@ void EftGeyser_Kill(EftBTask *task) {
 void EftGeyser_MgrInit(EftBTask *task) {
     EftGeyserParam param;
     s32 *stage = BtlScene_GetStageData();
-    s32 count = BtlStage_GetFxResA();
+    s32 count = BtlStage_GetFxCount0();
     EftGeyserRec *res;
     EftGeyserRec *rec;
     s32 i;
@@ -1423,7 +1423,7 @@ void EftGeyser_MgrInit(EftBTask *task) {
     memset(gEftGeyserMgr, 0, sizeof(EftGeyserMgr));
     gEftGeyserMgr->list = BtlTask_CreateChildList(task, count + 1, sizeof(EftGeyser));
     EftTexSet_Load32(&gEftGeyserMgr->tex, BtlScene_GetPackEntry(stage, 0x12));
-    res = BtlStage_GetFxResA2();
+    res = BtlStage_GetFxList0();
     if (res != NULL) {
         for (i = 0; i < count; i++) {
             rec = &res[i];

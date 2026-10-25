@@ -19,7 +19,7 @@
  *   Eft_IsScreenPos*  0x13F3D8..0x13F430   two screen-position tests without callers.
  *   EftSteam_*   0x13F430..0x140338   particle emitters, sub-task 5 of effect layer 0: an emitter owns up to 32
  *                                     camera-facing quads that rise, drift and die. One per record of the stage's
- *                                     third effect list (BtlStage_GetFxResC2), plus the second emitter of every
+ *                                     third effect list (BtlStage_GetFxList2), plus the second emitter of every
  *                                     geyser (eft_stage_1.c / eft_stage_2.c: EftGeyser). Visual only.
  *   EftWater_*   0x140338..0x142CA0   water surface effects, sub-task 7 of effect layer 0: the splash when a
  *                                     fighter, a ki blast or a technique crosses the stage's water level, the
@@ -167,7 +167,7 @@ typedef struct EftSteamWork {
 #define EFT_STEAM_STOP 2     /* no new particles, and the task ends once all have died */
 #define EFT_STEAM_STARTED 4  /* set by the first update: one new particle per frame from the second on */
 
-/* A record of the stage's third effect list (BtlStage_GetFxResC2; BtlStage_GetFxResC() of them). */
+/* A record of the stage's third effect list (BtlStage_GetFxList2; BtlStage_GetFxCount2() of them). */
 typedef struct EftStageMarker {
     /* 0x00 */ f32 pos[3];
     /* 0x0C */ f32 speed;

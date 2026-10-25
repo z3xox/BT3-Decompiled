@@ -8,7 +8,7 @@
  * Effect code, 0x180BF8..0x1853C8. Two modules, both drawing only:
  *
  *   0x180BF8..0x182CE8  src/battle/eft_shot_fx.c, second part (formerly eft_u.c): vanish lines, the rest of the module that starts at 0x1809C0 in
- *                       its first part (EftShotFx_FindFree, EftShotFx_Start, EftShotFxMgr_Init). Task class gEftShotFxClass =
+ *                       its first part (EftShotFx_FindFree, EftShotFx_Start, EftShotFx_Init). Task class gEftShotFxClass =
  *                       {update, init, term, post-update, 0, draw}. The functions keep eft_t's `EftShotFx` prefix so
  *                       the module has one name; what it draws is the teleport ("vanish") effect: fighter effect
  *                       requests 0xC (vanish), 0xD (reappear), 0xE / 0xF (the short forms of both) and object
@@ -225,7 +225,12 @@ typedef struct EftUPtclDef {
     /* 0x25C */ f32 spinRange[3];
     /* 0x268 */ f32 spin2[3];           /* second stage */
     /* 0x274 */ f32 spin2Range[3];
-    /* 0x280 */ f32 angSpin[12];         /* emitter angles, read in the second part of eft_particle.c */
+    /* 0x280 */ f32 angX, angXRange;   /* half turns: base, random range (as eft_particle_unused.h) */
+    /* 0x288 */ f32 spinX, spinXRange;
+    /* 0x290 */ f32 angY, angYRange;
+    /* 0x298 */ f32 spinY, spinYRange;
+    /* 0x2A0 */ f32 angZ, angZRange;
+    /* 0x2A8 */ f32 spinZ, spinZRange;
 } EftUPtclDef;
 
 /* A texture set entry and the set (arg.res): TEX0 values cached per frame, one bit per entry. */
@@ -237,7 +242,7 @@ typedef struct EftUPtclTex {
 typedef struct EftUPtclRes {
     /* 0x000 */ EftUPtclTex tex[16];
     /* 0x100 */ s32 count;
-    /* 0x104 */ u32 uploaded;   /* bit n: tex[n].tex0 is valid (cleared elsewhere) */
+    /* 0x104 */ u32 ready;   /* bit n: tex[n].tex0 is valid (cleared elsewhere) */
 } EftUPtclRes;
 
 /* Argument block of the emitter (start of its work). */

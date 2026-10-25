@@ -63,7 +63,7 @@ extern void EftEmit_KillAll(EftPSet *set, void *emit);
 extern void EftEmit_TermState(EftPSet *set, void *emit);
 extern s32 EftEmit_GetFlagsFromReq(EftPSet *set, void *emit, s32 objId, s32 group, s32 part, s32 ending, s32 kill);
 extern s32 EftEmit_GetResetFlags(EftPSet *set, void *emit, s32 group, s32 part);
-extern void EftEmit_SpawnOwn(EftPSet *set, void *emit, void *nodes, void *pos, void *dir, s32 group, s32 part, s32 res,
+extern void EftEmit_SpawnOwn(EftPSet *set, void *state, void *nodes, void *pos, void *dir, s32 type, s32 idx, s32 flags,
                              f32 scale);
 extern f32 EftEmit_GetTrailWidth(void *emit);
 
@@ -409,17 +409,17 @@ void EftDisc_StepTex(EftDisc *w) {
         if (arg->kind < 3) {
             s32 bit = 1 << w->arg.texA;
 
-            if (!(tex->stepped & bit)) {
+            if (!(tex->ready & bit)) {
                 u64 lo = EftVram_AddImage(&w->texA, 1, 0);
                 u64 hi = EftVram_AddClut(&w->texB);
 
                 tex->entry[w->arg.texA].tex0 = lo | (hi << 37);
-                tex->stepped |= 1 << w->arg.texA;
+                tex->ready |= 1 << w->arg.texA;
             }
         } else {
-            if (!(tex->stepped & 1)) {
+            if (!(tex->ready & 1)) {
                 EftTexSet_Keep32(tex, 1, 0);
-                tex->stepped |= 1;
+                tex->ready |= 1;
             }
         }
     }
@@ -613,7 +613,7 @@ s32 EftDisc_SpawnThrown(EftDiscAtk *a) {
     } else {
         arg.hand = 1;
     }
-    switch (a->level) {
+    switch (a->texVariant) {
     case 1:
         arg.texB = 0;
         break;

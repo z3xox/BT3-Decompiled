@@ -59,11 +59,11 @@ extern f32 BtlParam_GetDamageTakenScale(BtlFighter *chr);
 extern s32 BtlCharApi_IsInTechnique(s32 objId);
 extern s32 BtlCharApi_IsInRushSequence(s32 objId);
 
-extern f32 BtlSkill_GetShotUnk30(BtlFighter *chr, s32 kind);
+extern f32 BtlSkill_GetShotScale(BtlFighter *chr, s32 kind);
 extern f32 BtlSkill_GetShotTime(BtlFighter *chr, s32 kind);
 extern f32 BtlSkill_GetShotSpeed(BtlFighter *chr, s32 kind);
 extern f32 BtlSkill_GetShotTurnRate(BtlFighter *chr, s32 kind);
-extern f32 BtlSuper_GetShotUnk6C(BtlFighter *chr, s32 kind);
+extern f32 BtlSuper_GetShotScale(BtlFighter *chr, s32 kind);
 extern f32 BtlSuper_GetShotTime(BtlFighter *chr, s32 kind);
 extern f32 BtlSuper_GetShotSpeed(BtlFighter *chr, s32 kind);
 extern f32 BtlSuper_GetShotTurnRate(BtlFighter *chr, s32 kind);

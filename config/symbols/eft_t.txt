@@ -112,5 +112,5 @@ gEftStreak = 0x002FEA70; // size:0x4
 // effect requests 0xC..0xF and animation event bit 42 (btl_char_fx.c, btl_char_fx_c.c); init callback of the class.
 EftShotFx_FindFree = 0x001809C0; // type:func
 EftShotFx_Start = 0x00180A00; // type:func
-EftShotFxMgr_Init = 0x00180AD0; // type:func
+EftShotFx_Init = 0x00180AD0; // type:func
 gEftShotFx = 0x002FF1B0; // size:0x4

@@ -1105,9 +1105,9 @@ extern void Gfx_AddDefaultEnv(void);
 extern void Res_RelocateOffsets(void *dst, void *base, void *table);
 extern void Vec4_Copy(Vec4 *dst, Vec4 *src);
 
-extern s32 BtlStage_GetFxResC(void);
-extern s32 BtlStage_GetFxResA(void);
-extern EftStageMarker *BtlStage_GetFxResC2(void);
+extern s32 BtlStage_GetFxCount2(void);
+extern s32 BtlStage_GetFxCount0(void);
+extern EftStageMarker *BtlStage_GetFxList2(void);
 extern void EftTexSet_Load8(EftSteamTex *tex, s32 *data);
 extern u64 EftVram_AddTex(u64 *tex0, s32 tcc, s32 tfx);
 extern s32 EftStage_IsDrawOn(void);

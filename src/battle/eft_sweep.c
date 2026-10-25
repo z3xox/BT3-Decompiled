@@ -132,7 +132,7 @@ typedef struct EftArg9 {
     /* 0x10 */ Vec4 pos __attribute__((aligned(16)));
     /* 0x20 */ Vec4 dir __attribute__((aligned(16)));
     /* 0x30 */ f32 size;
-    /* 0x34 */ f32 rate;
+    /* 0x34 */ f32 life;
     /* 0x38 */ s32 objId;
 } EftArg9; /* size 0x40 */
 extern void *EftQuad_Create(EftArg9 *arg);
@@ -157,7 +157,7 @@ typedef struct EftArg10 {
     /* 0x10 */ Vec4 pos __attribute__((aligned(16)));
     /* 0x20 */ Vec4 dir __attribute__((aligned(16)));
     /* 0x30 */ f32 size;
-    /* 0x34 */ f32 rate;
+    /* 0x34 */ f32 life;
     /* 0x38 */ s32 texIdxA;
     /* 0x3C */ s32 texIdxB;
     /* 0x40 */ s32 objId;
@@ -182,7 +182,7 @@ typedef struct EftArg15 {
     /* 0x10 */ Vec4 pos __attribute__((aligned(16)));
     /* 0x20 */ Vec4 pos2 __attribute__((aligned(16)));
     /* 0x30 */ f32 size;
-    /* 0x34 */ f32 rate;
+    /* 0x34 */ f32 life;
     /* 0x38 */ s32 texIdxA;
     /* 0x3C */ s32 texIdxB;
     /* 0x40 */ s32 objId;
@@ -207,7 +207,7 @@ typedef struct EftArg12 {
     /* 0x10 */ Vec4 dir __attribute__((aligned(16)));
     /* 0x20 */ Vec4 pos __attribute__((aligned(16)));
     /* 0x30 */ f32 size;
-    /* 0x34 */ f32 rate;
+    /* 0x34 */ f32 life;
     /* 0x38 */ s32 texIdx;
     /* 0x3C */ s32 objId;
     /* 0x40 */ u8 type[1];
@@ -253,7 +253,7 @@ extern s32 gEftEmitNodeSlot[8];
 
 /* Starts / moves / stops the particle object of emitter idx of group 9 (module 0x194970). */
 void EftEmit_SpawnType9(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32 srcKind, s32 objId, s32 idx, f32 size,
-                        f32 scale, f32 rate, Vec4 *pos, Vec4 *dir) {
+                        f32 scale, f32 life, Vec4 *pos, Vec4 *dir) {
     Vec4 p;
     EftEmitGroup *grp = &set->grp[9];
     s32 n = grp->first + idx;
@@ -266,7 +266,7 @@ void EftEmit_SpawnType9(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32
             void *tex = set->tex8 + (grp->texBase + def->tex) * 0x88;
             s32 res0 = EFT_EMIT_RES(set, grp->resFirst + idx).a;
             s32 res1 = EFT_EMIT_RES(set, grp->resFirst + idx).b;
-            EftArg9 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, rate, objId };
+            EftArg9 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, life, objId };
 
             Vec4_Copy(&arg.dir, dir);
             if (def->flags & 0x40) {
@@ -317,7 +317,7 @@ void EftEmit_SpawnType9(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32
 
 /* Starts / moves / stops the particle object of emitter idx of group 10 (module 0x190610). */
 void EftEmit_SpawnType10(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32 srcKind, s32 objId, s32 idx, f32 size,
-                         f32 scale, f32 rate, Vec4 *pos, Vec4 *unused, Vec4 *dir) {
+                         f32 scale, f32 life, Vec4 *pos, Vec4 *unused, Vec4 *dir) {
     Vec4 p;
     EftEmitGroup *grp = &set->grp[10];
     s32 n = grp->first + idx;
@@ -330,7 +330,7 @@ void EftEmit_SpawnType10(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s3
             void *tex = set->tex16 + (grp->texBase + def->tex) * 0x108;
             s32 res0 = EFT_EMIT_RES(set, grp->resFirst + idx).a;
             s32 res1 = EFT_EMIT_RES(set, grp->resFirst + idx).b;
-            EftArg10 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, rate, def->texIdx, def->texIdx, objId };
+            EftArg10 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, life, def->texIdx, def->texIdx, objId };
 
             Vec4_Copy(&arg.dir, dir);
             if (def->flags & 0x40) {
@@ -378,7 +378,7 @@ void EftEmit_SpawnType10(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s3
 /* Starts / moves / stops the particle object of emitter idx of group 15 (module 0x18BB08), which has two
    end points: pos + dir * offset and pos2 + dir * offset2. */
 void EftEmit_SpawnType15(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32 srcKind, s32 objId, s32 idx, f32 size,
-                         f32 scale, f32 rate, Vec4 *pos, Vec4 *pos2, Vec4 *dir) {
+                         f32 scale, f32 life, Vec4 *pos, Vec4 *pos2, Vec4 *dir) {
     Vec4 p;
     Vec4 p2;
     EftEmitGroup *grp = &set->grp[15];
@@ -394,7 +394,7 @@ void EftEmit_SpawnType15(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s3
             void *tex = set->tex16 + (grp->texBase + def->tex) * 0x108;
             s32 res0 = EFT_EMIT_RES(set, grp->resFirst + idx).a;
             s32 res1 = EFT_EMIT_RES(set, grp->resFirst + idx).b;
-            EftArg15 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, rate, def->texIdx, 0, objId };
+            EftArg15 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, life, def->texIdx, 0, objId };
 
             if (def->flags & 0x40) {
                 Vec4_Copy(&arg.pos, pos);
@@ -442,7 +442,7 @@ void EftEmit_SpawnType15(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s3
 
 /* Starts / moves / stops the particle object of emitter idx of group 12 (module 0x1A6598). */
 void EftEmit_SpawnType12(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32 srcKind, s32 objId, s32 idx, f32 size,
-                         f32 scale, f32 rate, Vec4 *pos, Vec4 *dir) {
+                         f32 scale, f32 life, Vec4 *pos, Vec4 *dir) {
     Vec4 p;
     EftEmitGroup *grp = &set->grp[12];
     s32 n = grp->first + idx;
@@ -455,7 +455,7 @@ void EftEmit_SpawnType12(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s3
             void *tex = set->tex16 + (grp->texBase + def->tex) * 0x108;
             s32 res0 = EFT_EMIT_RES(set, grp->resFirst + idx).a;
             s32 res1 = EFT_EMIT_RES(set, grp->resFirst + idx).b;
-            EftArg12 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, rate, def->texIdx, objId, { srcKind } };
+            EftArg12 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, life, def->texIdx, objId, { srcKind } };
 
             if (def->flags & 0x40) {
                 Vec4_Copy(&arg.pos, pos);
@@ -513,7 +513,7 @@ void EftEmit_SpawnOwn(EftEmitSet *set, EftEmitState *state, EftEmitNodes *nodes,
    part's module and to EftEmit_TagTask, which leaves the tasks of kinds 2 and 5 without an owner tag. */
 /* Matching notes. (1) The kind-2 and kind-6 start checks are two bodies in the source: the compiler merges them only
    after register allocation, and their two extra reads of `def` are what puts def / flags / objId in s3 / s4 / s5.
-   (2) The rate is read once behind the start checks (no goto): the partial-redundancy pass puts the load on each
+   (2) The life is read once behind the start checks (no goto): the partial-redundancy pass puts the load on each
    incoming path. (3) Every spawner is called with the three floats in front of the position pointers. */
 void EftEmit_Spawn(EftEmitSet *set, EftEmitState *state, EftEmitNodes *nodes, Vec4 *pos, Vec4 *dir, s32 objId,
                    s32 node, s32 srcKind, s32 type, s32 idx, s32 flags, f32 scale) {
@@ -528,7 +528,7 @@ void EftEmit_Spawn(EftEmitSet *set, EftEmitState *state, EftEmitNodes *nodes, Ve
     s32 sel;
     s32 n = set->grp[type].first + idx;
     EftEmitDef *def = &set->defs[n];
-    f32 rate;
+    f32 life;
     f32 size;
 
     if (def->flags2 & 1) {
@@ -553,7 +553,7 @@ void EftEmit_Spawn(EftEmitSet *set, EftEmitState *state, EftEmitNodes *nodes, Ve
                 if (def->endPhase != 0) {
                     return;
                 }
-                if (def->rate <= 0.0f) {
+                if (def->life <= 0.0f) {
                     return;
                 }
                 state->flags[n] |= EFT_EMIT_ONESHOT;
@@ -561,17 +561,17 @@ void EftEmit_Spawn(EftEmitSet *set, EftEmitState *state, EftEmitNodes *nodes, Ve
                 if (def->endPhase != 0) {
                     return;
                 }
-                if (def->rate <= 0.0f) {
+                if (def->life <= 0.0f) {
                     return;
                 }
                 state->flags[n] |= EFT_EMIT_ONESHOT;
             }
-            if (def->endPhase == 0 && def->rate <= 0.0f) {
+            if (def->endPhase == 0 && def->life <= 0.0f) {
                 return;
             }
         }
     }
-    rate = def->rate;
+    life = def->life;
     if (flags & EFT_SPAWN_STOP) {
         if (def->phase == 2) {
             flags &= ~EFT_SPAWN_STOP;
@@ -668,37 +668,37 @@ void EftEmit_Spawn(EftEmitSet *set, EftEmitState *state, EftEmitNodes *nodes, Ve
         }
         switch (type) {
         case 0:
-            EftEmit_SpawnType0(set, handles, flags, srcKind, objId, idx, size, scale, rate, &p, &d);
+            EftEmit_SpawnType0(set, handles, flags, srcKind, objId, idx, size, scale, life, &p, &d);
             break;
         case 2:
-            EftEmit_SpawnType2(set, handles, flags, srcKind, objId, idx, size, scale, rate, &p, &d);
+            EftEmit_SpawnType2(set, handles, flags, srcKind, objId, idx, size, scale, life, &p, &d);
             break;
         case 16:
-            EftEmit_SpawnType16(set, handles, flags, srcKind, objId, idx, size, scale, rate, &p, &d);
+            EftEmit_SpawnType16(set, handles, flags, srcKind, objId, idx, size, scale, life, &p, &d);
             break;
         case 17:
-            EftEmit_SpawnType17(set, handles, flags, srcKind, objId, node, idx, size, scale, rate, &p, pos, &d);
+            EftEmit_SpawnType17(set, handles, flags, srcKind, objId, node, idx, size, scale, life, &p, pos, &d);
             break;
         case 18:
-            EftEmit_SpawnType18(set, handles, flags, srcKind, objId, node, idx, size, scale, rate, &p, &d);
+            EftEmit_SpawnType18(set, handles, flags, srcKind, objId, node, idx, size, scale, life, &p, &d);
             break;
         case 14:
-            EftEmit_SpawnType14(set, handles, flags, srcKind, objId, idx, size, scale, rate, &p, &d);
+            EftEmit_SpawnType14(set, handles, flags, srcKind, objId, idx, size, scale, life, &p, &d);
             break;
         case 5:
-            EftEmit_SpawnType5(set, handles, flags, srcKind, objId, idx, size, scale, rate, &p, &d);
+            EftEmit_SpawnType5(set, handles, flags, srcKind, objId, idx, size, scale, life, &p, &d);
             break;
         case 9:
-            EftEmit_SpawnType9(set, handles, flags, srcKind, objId, idx, size, scale, rate, &p, &d);
+            EftEmit_SpawnType9(set, handles, flags, srcKind, objId, idx, size, scale, life, &p, &d);
             break;
         case 10:
-            EftEmit_SpawnType10(set, handles, flags, srcKind, objId, idx, size, scale, rate, &p, pos, &d);
+            EftEmit_SpawnType10(set, handles, flags, srcKind, objId, idx, size, scale, life, &p, pos, &d);
             break;
         case 15:
-            EftEmit_SpawnType15(set, handles, flags, srcKind, objId, idx, size, scale, rate, &p, pos, &d);
+            EftEmit_SpawnType15(set, handles, flags, srcKind, objId, idx, size, scale, life, &p, pos, &d);
             break;
         case 12:
-            EftEmit_SpawnType12(set, handles, flags, srcKind, objId, idx, size, scale, rate, &p, &d);
+            EftEmit_SpawnType12(set, handles, flags, srcKind, objId, idx, size, scale, life, &p, &d);
             break;
         }
     }

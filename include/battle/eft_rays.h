@@ -57,7 +57,7 @@ typedef struct EftOTexEntry {
 typedef struct EftOTexSet {
     /* 0x000 */ EftOTexEntry entry[32];
     /* 0x200 */ s32 count;
-    /* 0x204 */ s32 stepped;
+    /* 0x204 */ s32 ready;
 } EftOTexSet; /* size 0x208 */
 
 /* ---- EftBolt (body lightning; EftBoltWork / EftBoltPool in eft_aura_part2.h) -------------------------------------- */

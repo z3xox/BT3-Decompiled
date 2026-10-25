@@ -172,10 +172,10 @@ void *BtlStage_GetFileMember(s32 index) {
     return ret;
 }
 
-/* Stage effect resource A, when the stage flags allow it. */
-void *BtlStage_GetFxResA(void) {
+/* The record count of stage effect list 0 (StgFxRes.count0), when the stage flags allow it. */
+s32 BtlStage_GetFxCount0(void) {
     StgData *d;
-    void *ret = NULL;
+    s32 ret = 0;
 
     if (gBtlStage != NULL) {
         d = gBtlStage->data;
@@ -191,13 +191,13 @@ void *BtlStage_GetFxResA(void) {
     }
     return ret;
 fail:
-    return NULL;
+    return 0;
 }
 
-/* Stage effect resource B, when the stage flags allow it. */
-void *BtlStage_GetFxResB(void) {
+/* The record count of stage effect list 1 (StgFxRes.count1), when the stage flags allow it. */
+s32 BtlStage_GetFxCount1(void) {
     StgData *d;
-    void *ret = NULL;
+    s32 ret = 0;
 
     if (gBtlStage != NULL) {
         d = gBtlStage->data;
@@ -213,13 +213,13 @@ void *BtlStage_GetFxResB(void) {
     }
     return ret;
 fail:
-    return NULL;
+    return 0;
 }
 
-/* Stage effect resource C, when the stage flags allow it. */
-void *BtlStage_GetFxResC(void) {
+/* The record count of stage effect list 2 (StgFxRes.count2), when the stage flags allow it. */
+s32 BtlStage_GetFxCount2(void) {
     StgData *d;
-    void *ret = NULL;
+    s32 ret = 0;
 
     if (gBtlStage != NULL) {
         d = gBtlStage->data;
@@ -235,11 +235,11 @@ void *BtlStage_GetFxResC(void) {
     }
     return ret;
 fail:
-    return NULL;
+    return 0;
 }
 
-/* Second pointer of effect resource A, when the first exists. */
-void *BtlStage_GetFxResA2(void) {
+/* Stage effect list 0 (StgFxRes.list0), when its count is not 0. */
+void *BtlStage_GetFxList0(void) {
     StgData *d;
     StgFxRes *res;
     void *ret = NULL;
@@ -254,7 +254,7 @@ void *BtlStage_GetFxResA2(void) {
             if (res == NULL) {
                 goto fail;
             }
-            if (res->count0 == NULL) {
+            if (res->count0 == 0) {
                 goto fail;
             }
             ret = res->list0;
@@ -265,8 +265,8 @@ fail:
     return NULL;
 }
 
-/* Second pointer of effect resource B, when the first exists. */
-void *BtlStage_GetFxResB2(void) {
+/* Stage effect list 1 (StgFxRes.list1), when its count is not 0. */
+void *BtlStage_GetFxList1(void) {
     StgData *d;
     StgFxRes *res;
     void *ret = NULL;
@@ -281,7 +281,7 @@ void *BtlStage_GetFxResB2(void) {
             if (res == NULL) {
                 goto fail;
             }
-            if (res->count1 == NULL) {
+            if (res->count1 == 0) {
                 goto fail;
             }
             ret = res->list1;
@@ -292,8 +292,8 @@ fail:
     return NULL;
 }
 
-/* Second pointer of effect resource C, when the first exists. */
-void *BtlStage_GetFxResC2(void) {
+/* Stage effect list 2 (StgFxRes.list2), when its count is not 0. */
+void *BtlStage_GetFxList2(void) {
     StgData *d;
     StgFxRes *res;
     void *ret = NULL;
@@ -308,7 +308,7 @@ void *BtlStage_GetFxResC2(void) {
             if (res == NULL) {
                 goto fail;
             }
-            if (res->count2 == NULL) {
+            if (res->count2 == 0) {
                 goto fail;
             }
             ret = res->list2;

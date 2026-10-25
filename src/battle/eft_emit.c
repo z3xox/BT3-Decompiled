@@ -55,7 +55,7 @@ extern void EftShot_SetCurSlot(s32 chr, s32 slot);
 extern void EftShot_SetCharPool(s32 chr);
 
 /* eft_sweep.c */
-extern void EftEmit_SpawnOwn(EftSet *set, EftSetState *st, EftVolleyPose *pose, Vec4 *pos, Vec4 *dir, s32 type, s32 idx,
+extern void EftEmit_SpawnOwn(EftSet *set, EftSetState *state, EftVolleyPose *nodes, Vec4 *pos, Vec4 *dir, s32 type, s32 idx,
                              s32 flags, f32 scale);
 extern void EftEmit_KillAll(EftSet *set, EftSetState *st);
 extern s32 EftEmit_UpdateAlive(EftSet *set, EftSetState *st);
@@ -1696,7 +1696,7 @@ extern s32 EftRibbon_SetMaxNodes(void *obj, s32 v);
 extern s32 EftRibbon_SetDelay(void *obj, f32 v);
 extern s32 EftRibbon_SetFadeDelay(void *obj, f32 v);
 extern s32 EftRibbon_SetFadeTime(void *obj, f32 v);
-extern s32 EftRibbon_SetUnkD8(void *obj, s32 node);
+extern s32 EftRibbon_SetNode(void *obj, s32 node);
 
 /* Type 17: an object between two points, the node position pushed along the direction by EftSetDef.offset and
    pos2 pushed by EftSetDef.offset2. `node` is the model node the caller (EftEmit_Spawn) was given.
@@ -1736,7 +1736,7 @@ void EftEmit_SpawnType17(EftSet *set, EftSetHandles *handles, s32 flags, s32 typ
             Vec4_Copy((Vec4 *)&arg.pos, &p);
         }
         H(n) = EftRibbon_Create(&arg);
-        EftRibbon_SetUnkD8(H(n), node);
+        EftRibbon_SetNode(H(n), node);
         EftRibbon_SetDelay(H(n), part->delay);
         EftRibbon_SetFadeDelay(H(n), part->hold);
         EftRibbon_SetFadeTime(H(n), part->fade);

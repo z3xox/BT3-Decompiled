@@ -129,12 +129,12 @@ void EftZap_LoadTex(EftZap *w) {
     EftZapTexObj *tex = w->arg.tex;
 
     if (tex != NULL) {
-        if (!(tex->loaded & (1U << w->texIdx))) {
+        if (!(tex->ready & (1U << w->texIdx))) {
             u64 tex0 = EftVram_AddImage(&w->texPair[0], 1, 0);
 
             tex0 |= (u64)EftVram_AddClut(&w->texPair[1]) << 37;
             tex->entry[w->texIdx].tex0 = tex0;
-            tex->loaded |= 1U << w->texIdx;
+            tex->ready |= 1U << w->texIdx;
         }
     }
 }
@@ -520,7 +520,7 @@ void EftShockMgr_Term(EftAdTask *task) {
 void EftShockMgr_Update(EftAdTask *task) {
     EftShockMgr *mgr = task->work;
 
-    mgr->res->tex.stepped = 0;
+    mgr->res->tex.ready = 0;
 }
 
 /* Fighter effect request 6: starts the shock effect of this fighter (arg[0] = object id). Returns the task,

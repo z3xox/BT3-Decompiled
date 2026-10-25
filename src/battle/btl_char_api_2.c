@@ -894,7 +894,7 @@ extern s32 BtlParam_GetFusionResult(BtlFighter *chr, s32 slot);      /* param->f
 extern s32 BtlParam_GetCostAE(BtlFighter *chr, s32 slot);      /* param->fusionCost[slot] * 100000 */
 extern s32 BtlParam_GetBlastLimitA(BtlFighter *chr);                /* param->blastLimit less abilities 0x11 / 0x10 / 0xF */
 extern s32 BtlParam_GetBlastLimitB(BtlFighter *chr);                /* param->blastLimitB */
-extern s32 BtlParam_GetGaugeB(BtlFighter *chr);                /* param word +0x2C */
+extern s32 BtlParam_GetKiRecoverGoal(BtlFighter *chr);                /* param word +0x2C */
 extern s32 BtlParam_GetComboFinish(BtlFighter *chr, s32 n);         /* param->comboFinish[n] */
 extern s32 BtlKiBlast_GetFlagsOfHit(BtlCapiBBlastRec *rec);           /* flag word of the blast's definition */
 extern s32 BtlSuper_GetType(BtlFighter *chr, s32 cls);       /* skills->type[cls] */
@@ -2924,7 +2924,7 @@ s32 BtlSide_GetKiRecoverGoal(s32 side) {
     BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
-        return BtlParam_GetGaugeB(chr);
+        return BtlParam_GetKiRecoverGoal(chr);
     }
     return 0;
 }

@@ -73,8 +73,8 @@ extern void EftEmit_InitState(void *model, EftModelInst *inst);
 extern void EftEmit_TermState(EftModel *model, EftModelInst *inst);
 extern s32 EftEmit_GetFlagsFromReq(EftModel *model, EftModelInst *inst, s32 objId, s32 part, s32 sub, s32 end, s32 fast);
 extern s32 EftEmit_GetResetFlags(EftModel *model, EftModelInst *inst, s32 part, s32 sub);
-extern void EftEmit_SpawnOwn(EftModel *model, EftModelInst *inst, void *nodes, Vec4 *pos, Vec4 *dir, s32 part, s32 sub,
-                             s32 flags, f32 size);
+extern void EftEmit_SpawnOwn(EftModel *model, EftModelInst *state, void *nodes, Vec4 *pos, Vec4 *dir, s32 type, s32 idx,
+                             s32 flags, f32 scale);
 extern void EftEmit_KillAll(EftModel *model, EftModelInst *inst);
 extern s32 EftEmit_UpdateAlive(EftModel *model, EftModelInst *inst);
 extern void EftEmit_UpdateNodesReq(EftTechArg *arg, void *nodes);

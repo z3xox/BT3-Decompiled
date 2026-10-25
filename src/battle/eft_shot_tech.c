@@ -123,7 +123,7 @@ extern void EftEmit_InitState(EftJSet *set, void *emit);
 extern void EftEmit_TermState(EftJSet *set, void *emit);
 extern s32 EftEmit_GetFlagsFromReq(EftJSet *set, void *emit, s32 objId, s32 group, s32 part, s32 ending, s32 kill);
 extern s32 EftEmit_GetResetFlags(EftJSet *set, void *emit, s32 group, s32 part);
-extern void EftEmit_SpawnOwn(EftJSet *set, void *emit, void *nodes, void *pos, void *dir, s32 group, s32 part, s32 res, f32 scale);
+extern void EftEmit_SpawnOwn(EftJSet *set, void *state, void *nodes, void *pos, void *dir, s32 type, s32 idx, s32 flags, f32 scale);
 extern void EftEmit_KillAll(EftJSet *set, void *emit);
 extern void EftEmit_MarkKind6(EftJSet *set, void *emit);
 extern void EftEmit_UpdateAlive(EftJSet *set, void *emit);
@@ -1801,7 +1801,7 @@ void EftShotTech_UpdateFlash(EftJTask *task) {
     s32 opp = BtlCharApi_GetOpponentObjId(src->objId);
 
     if (!(src->def->flags & 0x400000) && EftShot_TestBits(opp, 0x40)) {
-        arg = (EftJFlashArg){ { 255.0f, 255.0f, 255.0f, 255.0f }, 0.5f, 0, 1.0f, src->objId, 0 };
+        arg = (EftJFlashArg){ { 255.0f, 255.0f, 255.0f, 255.0f }, 0.5f, 0.0f, 1.0f, src->objId, 0 };
         if (src->def->id == 0x27C) {
             arg.wait = 1;
         }

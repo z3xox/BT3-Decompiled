@@ -435,13 +435,14 @@ typedef struct EftAuraWork {
 /* One GS TEX0 value of a texture set (include/battle/eft_shot.h has the same layout). */
 typedef struct EftNTexEntry {
     /* 0x00 */ u64 tex0;
-    /* 0x08 */ u64 unk8;
+    /* 0x08 */ void *def;   /* the image the entry was built from (EftBTexSet: img, EftTexTbl: def) */
+    /* 0x0C */ s32 unkC;
 } EftNTexEntry; /* 0x10 */
 
 typedef struct EftNTexSet {
     /* 0x000 */ EftNTexEntry entry[32];
     /* 0x200 */ s32 count;
-    /* 0x204 */ s32 stepped;
+    /* 0x204 */ s32 ready;
 } EftNTexSet; /* 0x208 */
 
 /* A texture set of the aura manager with its pack data. */
@@ -488,8 +489,8 @@ typedef struct EftAuraDataPart {
     /* 0x8 */ s32 nodeRef;   /* node the flame leans away from, or negative */
 } EftAuraDataPart;
 
-/* A spark emitter. (EftAuraCfgSpark above is the same table placed 4 bytes later with the fields {kind, node}: its
-   `kind` is this `node` and its `node` is the next entry's `unk0`. That later placement is the one that fits the
+/* A spark emitter. (EftAuraCfgSpark above is the same table placed 4 bytes later with the fields {emitNode, node}:
+   its `emitNode` is this `node` and its `node` is the next entry's `unk0`. That later placement is the one that fits the
    seven fade nodes the draw reads.) */
 typedef struct EftAuraDataSpark {
     /* 0x0 */ s32 unk0;

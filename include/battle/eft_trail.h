@@ -60,7 +60,7 @@ typedef struct EftQTex {
 typedef struct EftQTexSet {
     /* 0x000 */ EftQTex entry[32];
     /* 0x200 */ s32 count;
-    /* 0x204 */ s32 kept;
+    /* 0x204 */ s32 ready;
 } EftQTexSet; /* size 0x208 */
 
 /* ---- 1. power-up glow ------------------------------------------------------------------------------------ */
@@ -337,7 +337,7 @@ typedef struct EftQQuadPkt {
 typedef struct EftTrailTexTbl {
     /* 0x000 */ EftQTex tex[16];
     /* 0x100 */ s32 unk100;
-    /* 0x104 */ u32 loaded;      /* bit n: tex[n..] hold this frame's words; cleared by the manager's update */
+    /* 0x104 */ u32 ready;      /* bit n: tex[n..] hold this frame's words; cleared by the manager's update */
 } EftTrailTexTbl; /* size 0x108 */
 
 /* gEftTrail: 0x110 bytes from the effect pool. */

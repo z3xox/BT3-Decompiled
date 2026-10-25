@@ -1655,7 +1655,7 @@ s32 BtlParam_GetKiRegenLimit(BtlFighter *chr) {
 }
 
 /* Parameter +0x2C: ki level that ends the ki-exhausted state (flag 0xBE). */
-s32 BtlParam_GetGaugeB(BtlFighter *chr) {
+s32 BtlParam_GetKiRecoverGoal(BtlFighter *chr) {
     return BtlChar_GetObj(chr)->param->kiRecoverGoal;
 }
 

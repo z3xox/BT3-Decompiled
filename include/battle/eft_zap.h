@@ -43,7 +43,7 @@ typedef struct EftAdScr {
 typedef struct EftAdTexSet {
     /* 0x000 */ EftAdTex entry[32];
     /* 0x200 */ s32 count;
-    /* 0x204 */ s32 stepped;
+    /* 0x204 */ s32 ready;
 } EftAdTexSet; /* 0x208 */
 
 /* ---- zap (effect pack part kind 12) ---------------------------------------------------------------------
@@ -87,7 +87,7 @@ typedef struct EftZapMgr {
 typedef struct EftZapTexObj {
     /* 0x000 */ EftAdTex entry[16]; /* per image; tex0 is replaced by the full GS TEX0 on first use */
     /* 0x100 */ s32 count;
-    /* 0x104 */ u32 loaded;      /* bit per image: tex0 is valid */
+    /* 0x104 */ u32 ready;      /* bit per image: tex0 is valid */
 } EftZapTexObj; /* 0x108 */
 
 /* Parameter block of a zap in the effect pack (first word of the part's resource pair). */

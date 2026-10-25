@@ -70,11 +70,11 @@ void EftLine_SetTex(EftLineWork *w, EftYTex16 *tex, s32 image, s32 palette) {
 
 /* Builds the line's GS TEX0 value, or takes the one already built for its table entry. */
 void EftLine_LoadTex(EftLineWork *w, EftLineArg *arg) {
-    if (!(arg->tex->loaded & (1 << arg->texIdx))) {
+    if (!(arg->tex->ready & (1 << arg->texIdx))) {
         w->gsTex0 = EftVram_AddImage(&w->tex0, 1, 0);
         w->gsTex0 |= (u64)EftVram_AddClut(&w->tex1) << 37;
         arg->tex->e[arg->texIdx].tex0 = w->gsTex0;
-        arg->tex->loaded |= 1 << arg->texIdx;
+        arg->tex->ready |= 1 << arg->texIdx;
     } else {
         w->gsTex0 = arg->tex->e[arg->texIdx].tex0;
     }
@@ -1630,14 +1630,6 @@ void EftGndDustBurst_Draw(EftZTask *task) {
  * 0x2FCDCC..0x2FCE28 (EftGndDustLand_Init's 21 constants, then 0x2FCE20 and 0x2FCE24).
  */
 
-/* EftGndDust_SpawnPieceEx with its real parameter order (the definition in src/battle/eft_char_parts.c: the eight
-   register floats in front of life / fade / tex). eft_ground_dust.h declares the three integers first: the registers are the
-   same, but the caller then loads them in another order. */
-extern EftGndDustPart *EftGndDust_SpawnPieceX(EftGndDustEmit *w, Vec4 *pos, Vec4 *dir, u8 *colA, u8 *colB, f32 sizeX,
-                                             f32 sizeY, f32 growX, f32 growY, f32 speed, f32 drag, f32 rot, f32 spin,
-                                             s16 life, s16 fade, s16 tex, f32 growDamp, f32 gravity, s32 flags)
-    __asm__("EftGndDust_SpawnPieceEx");
-
 /* Kind 4 init: a ring of three low puffs, eight particles thrown outwards and one in the middle.
    Matching notes: the callback's argument is copied into a typed local declared BEHIND `w` (see
    EftGndDustImpact_Init in eft_z_c.c: without the copy one stack slot holds each colour pointer from the start);
@@ -1693,7 +1685,7 @@ void EftGndDustLand_Init(EftZTask *task, void *param) {
         Vec4_Scale(&off, &dir, 2.0f);
         Vec4_Add(&pos, V(&arg->pos), &off);
         Vec3_Lerp(&v, V(&arg->dir), &dir, RANDF() * 0.2f + 0.6f);
-        EftGndDust_SpawnPieceX(w, &pos, &v, colA.c, colB.c, 5.0f, 6.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+        EftGndDust_SpawnPieceEx(w, &pos, &v, colA.c, colB.c, 5.0f, 6.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
                                (f32)arg->life, (f32)arg->fade, 10, 0.7f, 0.0f, EFT_GDUST_PART_FAR);
     }
     start = RANDF() * 6.2831853f;
@@ -1710,11 +1702,11 @@ void EftGndDustLand_Init(EftZTask *task, void *param) {
         pos.y -= 3.0f;
         life = arg->life + rand() % 10;
         fade = arg->fade + rand() % 5;
-        EftGndDust_SpawnPieceX(w, &pos, &dir, arg->colA, arg->colB, 1.0f, 1.0f, 0.0f, 0.0f, arg->scale * 7.8f, 0.8f,
+        EftGndDust_SpawnPieceEx(w, &pos, &dir, arg->colA, arg->colB, 1.0f, 1.0f, 0.0f, 0.0f, arg->scale * 7.8f, 0.8f,
                                RANDF() * 6.2831853f, 0.3f, (f32)life, (f32)fade, 350, arg->scale * 0.7f,
                                (RANDF() * 0.01f + 0.07f) * arg->scale, 0);
     }
-    EftGndDust_SpawnPieceX(w, V(&arg->pos), V(&arg->dir), arg->colA, arg->colB, 1.0f, 1.0f, 0.0f, 0.0f,
+    EftGndDust_SpawnPieceEx(w, V(&arg->pos), V(&arg->dir), arg->colA, arg->colB, 1.0f, 1.0f, 0.0f, 0.0f,
                            arg->scale * 0.8f, 0.8f, RANDF() * 6.2831853f, 0.3f, (f32)life, (f32)fade, 350,
                            arg->scale * 0.7f, (RANDF() * 0.01f + 0.03f) * arg->scale, 0);
     w->arg = *arg;
@@ -1802,14 +1794,6 @@ void EftGndDustLand_Draw(EftZTask *task) {
  * and the file's .lit4 is 0x2FCE28..0x2FCE54 (EftGndDustImpact_Init's ten constants, then 0x2FCE50).
  */
 
-/* EftGndDust_SpawnPieceEx with its real parameter order (the definition in src/battle/eft_char_parts.c: the eight
-   register floats in front of life / fade / tex). eft_ground_dust.h declares the three integers first: the registers are the
-   same, but the caller then loads them in another order. */
-extern EftGndDustPart *EftGndDust_SpawnPieceX(EftGndDustEmit *w, Vec4 *pos, Vec4 *dir, u8 *colA, u8 *colB, f32 sizeX,
-                                             f32 sizeY, f32 growX, f32 growY, f32 speed, f32 drag, f32 rot, f32 spin,
-                                             s16 life, s16 fade, s16 tex, f32 growDamp, f32 gravity, s32 flags)
-    __asm__("EftGndDust_SpawnPieceEx");
-
 /* Kind 5 init: two particles thrown outwards from the point.
    Matching notes: the callback's argument is copied into a typed local declared BEHIND `w` (declared first, or
    with the parameter used directly, gcse merges the `arg + 0x30` / `arg + 0x34` of the first call with those of
@@ -1869,7 +1853,7 @@ void EftGndDustImpact_Init(EftZTask *task, void *param) {
         fade = arg->fade + rand() % 5;
         spin = RANDF() * 6.2831853f;
         grow = (RANDF() * 0.005f + 0.005f) * arg->scale;
-        EftGndDust_SpawnPieceX(w, &pos, &dir, arg->colA, arg->colB, 1.0f, 1.0f, 0.05f, 0.05f, arg->scale * 0.3f, 0.8f,
+        EftGndDust_SpawnPieceEx(w, &pos, &dir, arg->colA, arg->colB, 1.0f, 1.0f, 0.05f, 0.05f, arg->scale * 0.3f, 0.8f,
                                spin, 0.3f, (f32)life, (f32)fade, rand() % 10 + 25, 1.0f, grow, 0);
     }
     w->arg = *arg;

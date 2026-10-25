@@ -25,8 +25,8 @@
  * EftStage_IsDrawOn, EftGfx_DrawPolyScaledZ (clips and queues a triangle), EftMath_WrapAngle,
  * EftTechEvt_GetEvents (bits of the shot the fighter is firing), EftShot_GetCharPack / EftShot_BuildParam /
  * EftShot_CreateSlotTask / EftShot_Start (the rest of the shot module, next file), BtlStage_GetWaterLevel,
- * BtlStage_GetLightVecB, BtlStage_GetInnerRadius / GetTop / GetBottom, BtlStage_GetFxResB (number of stage
- * emitters) / GetFxResB2 (their list) / GetFxResA (number of extra emitter tasks to reserve).
+ * BtlStage_GetLightVecB, BtlStage_GetInnerRadius / GetTop / GetBottom, BtlStage_GetFxCount1 (number of stage
+ * emitters) / GetFxList1 (their list) / GetFxCount0 (number of extra emitter tasks to reserve).
  */
 
 typedef struct EftCamView {
@@ -100,9 +100,9 @@ extern f32 EftMath_WrapAngle(f32 angle);
 extern f32 BtlStage_GetInnerRadius(void);
 extern f32 BtlStage_GetTop(void);
 extern f32 BtlStage_GetBottom(void);
-extern s32 BtlStage_GetFxResB(void);
-extern s32 BtlStage_GetFxResA(void);
-extern EftSmokeSrc *BtlStage_GetFxResB2(void);
+extern s32 BtlStage_GetFxCount1(void);
+extern s32 BtlStage_GetFxCount0(void);
+extern EftSmokeSrc *BtlStage_GetFxList1(void);
 extern void BtlTaskList_KillAll(void *list);
 extern void BtlTask_SetDead(void *task);
 extern s32 EftTechEvt_GetEvents(s32 objId);
@@ -843,7 +843,7 @@ void EftSmoke_SetPos(EftTask *task, Vec4 *pos) {
 void EftSmokeMgr_Init(EftTask *task) {
     EftSmokeArg arg;
     s32 pack = BtlScene_GetStageData();
-    s32 count = BtlStage_GetFxResB();
+    s32 count = BtlStage_GetFxCount1();
     EftSmokeSrc *src;
     EftSmokeSrc *list;
     s32 i;
@@ -851,8 +851,8 @@ void EftSmokeMgr_Init(EftTask *task) {
     gEftSmokeMgr = BtlPool_Alloc(BtlPool_GetCurrent(), sizeof(EftSmokeMgr));
     memset(gEftSmokeMgr, 0, sizeof(EftSmokeMgr));
     EftTexSet_Load8(gEftSmokeMgr->tex, BtlScene_GetPackEntry((s32 *)pack, 18));
-    gEftSmokeMgr->list = BtlTask_CreateChildList(task, count + BtlStage_GetFxResA(), sizeof(EftSmoke));
-    list = BtlStage_GetFxResB2();
+    gEftSmokeMgr->list = BtlTask_CreateChildList(task, count + BtlStage_GetFxCount0(), sizeof(EftSmoke));
+    list = BtlStage_GetFxList1();
     if (list == NULL) {
         return;
     }

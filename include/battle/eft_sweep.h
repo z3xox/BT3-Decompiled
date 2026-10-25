@@ -67,7 +67,7 @@ typedef struct EftEmitDef {
     /* 0x0C */ f32 spread;    /* radius of the random offset */
     /* 0x10 */ f32 offset;    /* distance along dir, times the scale */
     /* 0x14 */ f32 offset2;   /* second point (module 15) */
-    /* 0x18 */ f32 rate;
+    /* 0x18 */ f32 life;      /* seconds the emitter runs by itself; <= 0: until stopped (a one-shot needs > 0) */
     /* 0x1C */ f32 scale0;    /* scale animation: scale0 -> scale1 -> scale2 */
     /* 0x20 */ f32 scale1;
     /* 0x24 */ f32 scale2;
@@ -101,7 +101,7 @@ typedef struct EftEmitGroup {
 typedef struct EftOwnerParam {
     /* 0x00 */ u8 unk0[4];
     /* 0x04 */ s8 kind;       /* non-zero: EftSweep_Term sets the fighter's held flag 0xA8 (0x14AB60) */
-    /* 0x05 */ u8 unk5;
+    /* 0x05 */ u8 sub;        /* the sub-kind (EftShotParam.sub) */
     /* 0x06 */ s8 node;       /* passed on to the particle modules 3 and 4 */
     /* 0x07 */ u8 unk7;
     /* 0x08 */ s8 hitShape;   /* 0: two spheres (0x2399A0), 1: two boxes (0x239588) */
@@ -328,13 +328,13 @@ typedef struct EftFollowWork {
 } EftFollowWork; /* size 0x5B0 */
 
 void EftEmit_SpawnType9(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32 srcKind, s32 objId, s32 idx, f32 size,
-                        f32 scale, f32 rate, Vec4 *pos, Vec4 *dir);
+                        f32 scale, f32 life, Vec4 *pos, Vec4 *dir);
 void EftEmit_SpawnType10(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32 srcKind, s32 objId, s32 idx, f32 size,
-                         f32 scale, f32 rate, Vec4 *pos, Vec4 *unused, Vec4 *dir);
+                         f32 scale, f32 life, Vec4 *pos, Vec4 *unused, Vec4 *dir);
 void EftEmit_SpawnType15(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32 srcKind, s32 objId, s32 idx, f32 size,
-                         f32 scale, f32 rate, Vec4 *pos, Vec4 *pos2, Vec4 *dir);
+                         f32 scale, f32 life, Vec4 *pos, Vec4 *pos2, Vec4 *dir);
 void EftEmit_SpawnType12(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32 srcKind, s32 objId, s32 idx, f32 size,
-                         f32 scale, f32 rate, Vec4 *pos, Vec4 *dir);
+                         f32 scale, f32 life, Vec4 *pos, Vec4 *dir);
 void EftEmit_SpawnOwn(EftEmitSet *set, EftEmitState *state, EftEmitNodes *nodes, Vec4 *pos, Vec4 *dir, s32 type,
                       s32 idx, s32 flags, f32 scale);
 void EftEmit_Spawn(EftEmitSet *set, EftEmitState *state, EftEmitNodes *nodes, Vec4 *pos, Vec4 *dir, s32 objId,

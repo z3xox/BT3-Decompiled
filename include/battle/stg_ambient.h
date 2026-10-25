@@ -79,15 +79,15 @@ typedef struct BtlStageMgr {
 } BtlStageMgr;
 
 /* Member 16 of the stage file (gBtlStageFxRes, gp 0x2FEBF4): the MEF0 block, StgMef of battle/stg.h. The counts are
-   typed as pointers here because BtlStage_GetFxResA / B / C return them as void *; their callers take them as s32. */
+   typed as pointers here because BtlStage_GetFxCount0 / B / C return them as void *; their callers take them as s32. */
 typedef struct StgFxRes {
     /* 0x00 */ s32 magic;    /* 'MEF0' */
     /* 0x04 */ s32 unk4;
-    /* 0x08 */ void *count0; /* records of list0 (the geyser records of eft_stage_1.c) */
+    /* 0x08 */ s32 count0;   /* records in list0 (the geyser records of eft_stage_1.c) */
     /* 0x0C */ void *list0;
-    /* 0x10 */ void *count1;
+    /* 0x10 */ s32 count1;  
     /* 0x14 */ void *list1;
-    /* 0x18 */ void *count2;
+    /* 0x18 */ s32 count2;  
     /* 0x1C */ void *list2;
 } StgFxRes;
 
@@ -188,12 +188,12 @@ extern StgFxRes *gBtlStageFxRes;
 
 s32 BtlStage_HasFeature(u32 kind);
 void *BtlStage_GetFileMember(s32 index);
-void *BtlStage_GetFxResA(void);
-void *BtlStage_GetFxResB(void);
-void *BtlStage_GetFxResC(void);
-void *BtlStage_GetFxResA2(void);
-void *BtlStage_GetFxResB2(void);
-void *BtlStage_GetFxResC2(void);
+s32 BtlStage_GetFxCount0(void);
+s32 BtlStage_GetFxCount1(void);
+s32 BtlStage_GetFxCount2(void);
+void *BtlStage_GetFxList0(void);
+void *BtlStage_GetFxList1(void);
+void *BtlStage_GetFxList2(void);
 s32 BtlStage_HasFlag8(void);
 s32 BtlStage_HasMoon(void);
 s32 BtlStage_GetAmbient(s32 *rgba);

@@ -45,7 +45,8 @@ typedef struct EftTask {
 /* One texture entry (GS TEX0 value plus loader data). */
 typedef struct EftSTexEntry {
     /* 0x00 */ u64 tex0;
-    /* 0x08 */ u64 unk8;
+    /* 0x08 */ void *def;   /* the image the entry was built from (EftBTexSet: img, EftTexTbl: def) */
+    /* 0x0C */ s32 unkC;
 } __attribute__((aligned(16))) EftSTexEntry; /* 0x10 */
 
 /* ---- prop ki blast -------------------------------------------------------------------------------------- */
@@ -139,7 +140,7 @@ typedef struct EftKiPropMgr {
 typedef struct EftArcTexSet {
     /* 0x000 */ EftSTexEntry entry[16];
     /* 0x100 */ s32 count;
-    /* 0x104 */ s32 built;
+    /* 0x104 */ s32 ready;
 } EftArcTexSet;
 
 /* Static parameters of an arc effect. From 0x14 on, 39 rows of f32[3]: one value per key; the comment names the

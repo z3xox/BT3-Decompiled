@@ -55,7 +55,7 @@ EftStageScroll_Load = 0x00135420; // type:func // guess
 gEftStageScroll = 0x002FE9B4; // size:0x4 // guess
 gEftStageScrollClass = 0x002C34D8; // size:0x18 // guess
 
-// Columns rising at the positions of stage section "FxResA" (BtlStage_GetFxResA / A2): manager class
+// Columns rising at the positions of stage section "FxResA" (BtlStage_GetFxCount0 / A2): manager class
 // gEftGeyserMgrClass = {MgrUpdate, MgrInit, MgrTerm}, column class gEftGeyserClass = {Update, Init, Term, 0,
 // ResetStub, Draw}. "Geyser" is a guess from the behaviour (periodic column with two particle emitters).
 EftGeyser_Create = 0x00135610; // type:func // guess

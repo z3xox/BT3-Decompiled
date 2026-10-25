@@ -360,15 +360,15 @@ s32 EftQuad_InitQuad(EftPart9Ptcl *p, EftPart9 *em) {
         }
     }
     if (def->flags & 0x80) {
-        p->colorOscPeriod = em->stretchTime * 30.0f;
+        p->colorOscPeriod = em->mulTime * 30.0f;
         p->colorOscTime = 0.0f;
         if (p->colorOscTime < p->colorOscPeriod) {
-            p->colorOscAmp[0] = em->stretch1[0] - em->stretch0[0];
-            p->colorOscAmp[1] = em->stretch1[1] - em->stretch0[1];
-            p->colorOscAmp[2] = em->stretch1[2] - em->stretch0[2];
-            p->colorMul[0] = em->stretch0[0];
-            p->colorMul[1] = em->stretch0[1];
-            p->colorMul[2] = em->stretch0[2];
+            p->colorOscAmp[0] = em->mul1[0] - em->mul0[0];
+            p->colorOscAmp[1] = em->mul1[1] - em->mul0[1];
+            p->colorOscAmp[2] = em->mul1[2] - em->mul0[2];
+            p->colorMul[0] = em->mul0[0];
+            p->colorMul[1] = em->mul0[1];
+            p->colorMul[2] = em->mul0[2];
             if (p->colorOscAmp[0] != 0.0f) {
                 p->flags |= 0x10000;
             }

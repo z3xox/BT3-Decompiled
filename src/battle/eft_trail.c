@@ -95,7 +95,7 @@ extern EftGlowMgr *gEftGlow;      /* 0x2FEA38 */
 extern EftGlowCfg *gEftGlowCfg;   /* 0x2FEA3C */
 extern EftGlowCfg *gEftGlowCfg2;  /* 0x2FEA40: the same pointer */
 extern void *gEftGlowList;        /* 0x2FEA44: the manager's child list */
-extern u8 gEftGlowClass[0x18];    /* 0x2C3B68 */
+extern void *gEftGlowClass[6];    /* 0x2C3B68 */
 
 /* eft_glow.c */
 extern void EftGlow_BuildTables(void);                           /* builds the shape tables, links the particle pool */
@@ -501,7 +501,7 @@ extern void EftCharSlot_Set2(s32 objId, EftQTask *task);   /* per-fighter task s
 extern void EftCharSlot_Clear2(s32 objId);                   /* clear */
 extern EftQTask *EftCharSlot_Get2(s32 objId);              /* get */
 
-extern u8 gEftRushBurstClass[0x18]; /* 0x2C3B98 */
+extern void *gEftRushBurstClass[6]; /* 0x2C3B98 */
 
 void EftChar_SetList(s32 objId, s32 kind, void *list);
 void *EftChar_GetList(s32 objId, s32 kind);
@@ -722,10 +722,10 @@ void EftRushBurst_Nop(void) {
 /* ---- 3. per-character effect root = scene layer 2 (btl_scene.c creates it from class 0x2C3BB0) ----------- */
 
 extern EftCharRoot *gEftChar;        /* 0x2FEA48 */
-extern u8 gEftCharClass[0x18];       /* 0x2C3BC8 */
+extern void *gEftCharClass[6];       /* 0x2C3BC8 */
 extern void *gEftCharKindClass[11];  /* 0x2C3BE0: manager class of each kind */
-extern u8 gEftKiBombMgrClass[0x18];          /* manager class used for kind 2 when the fighter has a type 3 ki blast */
-extern u8 gEftKiObjMgrClass[0x18];          /* manager class used for kind 1 when the fighter has a type 2 ki blast */
+extern void *gEftKiBombMgrClass[6];          /* manager class used for kind 2 when the fighter has a type 3 ki blast */
+extern void *gEftKiObjMgrClass[6];          /* manager class used for kind 1 when the fighter has a type 2 ki blast */
 
 void EftChar_SetPool(s32 chr);
 void EftChar_ResetPool(s32 chr);
@@ -893,7 +893,7 @@ void *EftChar_GetList(s32 chr, s32 kind) {
 
 /* ---- 4. placeholder kind (kinds 6, 8 and 10 of the table) ------------------------------------------------- */
 
-extern u8 gEftCharNullClass[0x18];   /* 0x2C3C28 */
+extern void *gEftCharNullClass[6];   /* 0x2C3C28 */
 
 /* Adds a placeholder task to kind 0's list of a character (the task kills itself in its first update). No caller. */
 EftQTask *EftCharNull_Start(s32 chr) {
@@ -963,7 +963,7 @@ void EftCharNull_Draw(EftQTask *task) {
 /* ---- 5. full-screen flash --------------------------------------------------------------------------------- */
 
 extern EftFlashMgr *gEftFlash;       /* 0x2FEA4C */
-extern u8 gEftFlashClass[0x18];      /* 0x2C3C58 */
+extern void *gEftFlashClass[6];      /* 0x2C3C58 */
 
 void EftFlash_Update(EftQTask *task);
 s32 EftFlash_GetRushState(void);
@@ -1262,7 +1262,7 @@ s32 EftFlash_GetRushState(void) {
 /* ---- 6. trails (no caller starts one) ------------------------------------------------------------------------ */
 
 extern EftTrailMgr *gEftTrail;     /* 0x2FEA50 */
-extern u8 gEftTrailClass[0x18];     /* 0x2C3C88 */
+extern void *gEftTrailClass[6];     /* 0x2C3C88 */
 extern Vec4 gEftTrailOrigin;        /* 0x2C3CA0: (0, 0, 0, 1) */
 
 void EftTrail_Update(EftQTask *task);
@@ -1414,7 +1414,7 @@ void EftTrailMgr_Term(EftQTask *task) {
 
 /* Manager update: the shared texture words have to be renewed this frame. */
 void EftTrailMgr_Update(EftQTask *task) {
-    gEftTrail->tbl.loaded = 0;
+    gEftTrail->tbl.ready = 0;
 }
 
 /* Task init: the argument is the whole work. */
@@ -1597,12 +1597,12 @@ void EftTrail_Draw(EftQTask *task) {
 void EftTrail_UpdateTextures(EftTrail *w) {
     s32 i;
 
-    if (!(w->tbl->loaded & (1 << w->texFirst))) {
+    if (!(w->tbl->ready & (1 << w->texFirst))) {
         for (i = 0; i < w->texCount; i++) {
             w->tex0[i] = EftVram_AddTex(&w->tex[i], 1, 0);
             w->tbl->tex[w->texFirst + i].tex0 = w->tex0[i];
         }
-        w->tbl->loaded |= 1 << w->texFirst;
+        w->tbl->ready |= 1 << w->texFirst;
     } else {
         for (i = 0; i < w->texCount; i++) {
             w->tex0[i] = w->tbl->tex[w->texFirst + i].tex0;
@@ -1724,7 +1724,7 @@ extern void EftCharSlot_Set3(s32 objId, EftQTask *task);   /* per-fighter task s
 extern void EftCharSlot_Clear3(s32 objId);                   /* clear */
 extern EftQTask *EftCharSlot_Get3(s32 objId);              /* get */
 
-extern u8 gEftCharaFxClass[0x18];    /* 0x2C3CC8 */
+extern void *gEftCharaFxClass[6];    /* 0x2C3CC8 */
 
 /* Steps the emitters of one state and spawns their particles at pos, along the effect's direction. */
 void EftCharaFx_Emit(s32 objId, EftQTask *task, EftQEmitSet *set, EftQEmitState *state, Vec4 *pos) {

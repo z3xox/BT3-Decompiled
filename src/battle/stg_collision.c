@@ -93,7 +93,7 @@ extern s32 gStgColZoneMisses;
 extern s32 gStgColZoneVisits;
 extern f32 gStgColFar[];
 extern StgColVec gVu0ZeroVecW1;       /* {0, 0, 0, 1}: "no movement" */
-extern StgColVec gStgDownDir;       /* {0, 1, 0, 1}: down */
+extern StgColVec gVu0AxisYW;       /* {0, 1, 0, 1}: down */
 
 /* Queries test the zone's static mesh, whole objects and broken objects. */
 void StgCol_SetModeAll(void) {
@@ -806,7 +806,7 @@ s32 StgShadow_Cb(StgColNode *node, StgShadowCtx *ctx) {
     if (poly->flags & (STGCOL_POLY_NO_SOLID | STGCOL_POLY_NO_SHADOW | STGCOL_POLY_40 | STGCOL_POLY_20)) {
         return 0;
     }
-    if (!(Vec3_Dot(&gStgDownDir, &poly->nrm) < 0.0f)) {
+    if (!(Vec3_Dot(&gVu0AxisYW, &poly->nrm) < 0.0f)) {
         return 0;
     }
     ColMesh_GetPolyVerts(gStgColMesh, poly, &tri.v[0], &tri.v[1], &tri.v[2]);

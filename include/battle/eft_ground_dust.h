@@ -397,7 +397,7 @@ extern EftGndDustPart *EftGndDust_SpawnPiece(EftGndDustEmit *w, EftGndDustArg *a
    piece (eft_char_parts.c); the return type matters: EftGndDustSlide_Init matches only with a non-void callee */
 extern EftGndDustPart *EftGndDust_SpawnPieceEx(EftGndDustEmit *w, Vec4 *pos, Vec4 *dir, u8 *colA, u8 *colB, f32 sizeX,
                           f32 sizeY, f32 growX, f32 growY, f32 speed, f32 drag, f32 rot, f32 spin, s16 life, s16 fade,
-                          s32 tex, f32 growDamp, f32 gravity, s32 flags);
+                          s16 tex, f32 growDamp, f32 gravity, s32 flags);
 extern void EftGndDust_SpawnBodyDust(EftGndDustEmit *w, EftGndDustArg *arg, f32 scale, f32 unused);
 extern void EftGndDust_SpawnChip(EftGndDustEmit *w, EftGndDustArg *arg, Vec4 *dir, u8 *colA, u8 *colB, s32 life, s32 fade);
 extern void EftGndDust_DrawPiece(Vec4 *pos, Vec4 *color, Vec4 *dir, s32 blend, f32 w, f32 h, f32 rot, u64 tex0, s32 far);

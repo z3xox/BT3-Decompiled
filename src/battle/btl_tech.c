@@ -1026,8 +1026,8 @@ f32 BtlSuper_GetShotTurnRate(BtlFighter *chr, s32 slot) {
     return BtlChar_GetObj(chr)->super->shotTurn[slot - 2] * 3.14159265f / 180.0f * (1.0f / 30.0f);
 }
 
-/* Table +0x6C (float). */
-f32 BtlSuper_GetShotUnk6C(BtlFighter *chr, s32 slot) {
+/* Scale of the technique's shot (table +0x6C, float). */
+f32 BtlSuper_GetShotScale(BtlFighter *chr, s32 slot) {
     return BtlChar_GetObj(chr)->super->shotScale[slot - 2];
 }
 
@@ -1453,8 +1453,8 @@ s32 BtlSkill_GetId(BtlFighter *chr, s32 slot) {
     return BtlChar_GetObj(chr)->skill->id[slot];
 }
 
-/* Table +0x14 (s16; no caller found). */
-s32 BtlSkill_GetUnk14(BtlFighter *chr, s32 slot) {
+/* Clash power of the skill (table +0x14, s16; no caller found). */
+s32 BtlSkill_GetClashPower(BtlFighter *chr, s32 slot) {
     return BtlChar_GetObj(chr)->skill->clashPower[slot];
 }
 
@@ -1473,8 +1473,8 @@ f32 BtlSkill_GetShotTurnRate(BtlFighter *chr, s32 slot) {
     return BtlChar_GetObj(chr)->skill->shotTurn[slot] * 3.14159265f / 180.0f * (1.0f / 30.0f);
 }
 
-/* Table +0x30 (float). */
-f32 BtlSkill_GetShotUnk30(BtlFighter *chr, s32 slot) {
+/* Scale of the skill's shot (table +0x30, float). */
+f32 BtlSkill_GetShotScale(BtlFighter *chr, s32 slot) {
     return BtlChar_GetObj(chr)->skill->shotScale[slot];
 }
 

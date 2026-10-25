@@ -317,8 +317,8 @@ void EftDiscMgr_Init(EftOTask *task) {
 
 /* Update callback of the manager: the texture sets have not been advanced this frame. */
 void EftDiscMgr_Update(void) {
-    gEftDisc->res->texA.stepped = 0;
-    gEftDisc->res->texB.stepped = 0;
+    gEftDisc->res->texA.ready = 0;
+    gEftDisc->res->texB.ready = 0;
 }
 
 /* Reset callback of the manager: nothing. */

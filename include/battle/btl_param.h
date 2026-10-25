@@ -118,7 +118,7 @@ typedef struct BtlParam {
     /* 0x20 */ s32 unk20;         /* BtlParam_GetUnk20 (no caller found) */
     /* 0x24 */ s32 unk24;         /* BtlParam_GetUnk24 (no caller found) */
     /* 0x28 */ s32 kiRegenLimit;  /* BtlParam_GetKiRegenLimit: ki level the passive regeneration stops at */
-    /* 0x2C */ s32 kiRecoverGoal; /* BtlParam_GetGaugeB: ki level that ends the ki-exhausted state (flag 0xBE) */
+    /* 0x2C */ s32 kiRecoverGoal; /* BtlParam_GetKiRecoverGoal: ki level that ends the ki-exhausted state (flag 0xBE) */
     /* 0x30 */ s32 kiCharge;      /* per second; BtlParam_GetRateA */
     /* 0x34 */ s32 kiChargeWater; /* per second, with fighter flag 0x11; BtlParam_GetRateB */
     /* 0x38 */ s32 kiRegen;       /* per second; BtlParam_GetKiRegenRate */
@@ -336,7 +336,7 @@ s32 BtlParam_GetUnk1C(BtlFighter *chr);
 s32 BtlParam_GetUnk20(BtlFighter *chr);
 s32 BtlParam_GetUnk24(BtlFighter *chr);
 s32 BtlParam_GetKiRegenLimit(BtlFighter *chr);
-s32 BtlParam_GetGaugeB(BtlFighter *chr);
+s32 BtlParam_GetKiRecoverGoal(BtlFighter *chr);
 s32 BtlParam_GetUnk40(BtlFighter *chr);
 s32 BtlParam_GetRateA(BtlFighter *chr);
 s32 BtlParam_GetRateB(BtlFighter *chr);

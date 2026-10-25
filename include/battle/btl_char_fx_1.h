@@ -89,11 +89,11 @@ typedef struct FxHitArg {
 /* Launch argument of a ki blast (EftKiBlast_Fire and its four variants); pos carries the launch direction. */
 typedef struct FxHitArg2 {
     /* 0x00 */ Vec4 pos;
-    /* 0x10 */ u16 objId;
-    /* 0x12 */ u16 objId2;
+    /* 0x10 */ u16 srcId;
+    /* 0x12 */ u16 objId;
     /* 0x14 */ u16 node;     /* model node of the animation event (BtlObjAnim_MaskToNode): the firing hand */
-    /* 0x16 */ u16 area;    /* obj->unkA24 */
-    /* 0x18 */ s16 level;    /* BtlKiBlast_GetCurrentKind: 0..11, its low two bits pick the size */
+    /* 0x16 */ u16 area;    /* object +0xA24, the stage zone of its position */
+    /* 0x18 */ s16 kind;    /* BtlKiBlast_GetCurrentKind: 0..11, its low two bits pick the size */
     /* 0x1A */ u8 type;      /* BtlKiBlast_GetType: picks the spark module (5, 4, 2, 3, other) */
     /* 0x1B */ u8 texVariant;
     /* 0x1C */ s16 life;
@@ -101,7 +101,7 @@ typedef struct FxHitArg2 {
     /* 0x24 */ f32 turn;
     /* 0x28 */ f32 radius;
     /* 0x2C */ f32 unk2C;
-    /* 0x30 */ s32 size;     /* 0..3 */
+    /* 0x30 */ s32 level;     /* 0..3 */
     /* 0x34 */ s32 unk34;
     /* 0x38 */ s32 canHit;
     /* 0x3C */ s32 unk3C;

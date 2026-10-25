@@ -1358,8 +1358,8 @@ s32 EftRibbon_SetTexFrame(EftAcTask *task, s32 slot, void *uv, s32 image, s32 pa
     return 1;
 }
 
-/* Writes +0xD8. */
-s32 EftRibbon_SetUnkD8(EftAcTask *task, s32 node) {
+/* Sets the ribbon's node (EftRibbon.node, +0xD8; nothing reads it). */
+s32 EftRibbon_SetNode(EftAcTask *task, s32 node) {
     EftRibbon *w;
 
     if (task == NULL) {

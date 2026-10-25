@@ -45,11 +45,11 @@ extern f32 BtlParam_GetDamageTakenScale(BtlFighter *chr);
 extern s32 BtlCharApi_IsInTechnique(s32 objId);
 extern s32 BtlCharApi_IsInRushSequence(s32 objId);
 
-extern f32 BtlSkill_GetShotUnk30(BtlFighter *chr, s32 kind);
+extern f32 BtlSkill_GetShotScale(BtlFighter *chr, s32 kind);
 extern f32 BtlSkill_GetShotTime(BtlFighter *chr, s32 kind);
 extern f32 BtlSkill_GetShotSpeed(BtlFighter *chr, s32 kind);
 extern f32 BtlSkill_GetShotTurnRate(BtlFighter *chr, s32 kind);
-extern f32 BtlSuper_GetShotUnk6C(BtlFighter *chr, s32 kind);
+extern f32 BtlSuper_GetShotScale(BtlFighter *chr, s32 kind);
 extern f32 BtlSuper_GetShotTime(BtlFighter *chr, s32 kind);
 extern f32 BtlSuper_GetShotSpeed(BtlFighter *chr, s32 kind);
 extern f32 BtlSuper_GetShotTurnRate(BtlFighter *chr, s32 kind);
@@ -179,7 +179,7 @@ void BtlChar_SpawnFxBits3C(BtlFighter *chr) {
         switch (kind) {
         case 0:
         case 1:
-            req.unkC = BtlSkill_GetShotUnk30(chr, kind);
+            req.unkC = BtlSkill_GetShotScale(chr, kind);
             req.time = BtlSkill_GetShotTime(chr, kind);
             req.speed = BtlSkill_GetShotSpeed(chr, kind);
             req.turnRate = BtlSkill_GetShotTurnRate(chr, kind);
@@ -187,7 +187,7 @@ void BtlChar_SpawnFxBits3C(BtlFighter *chr) {
         case 2:
         case 3:
         case 4:
-            req.unkC = BtlSuper_GetShotUnk6C(chr, kind);
+            req.unkC = BtlSuper_GetShotScale(chr, kind);
             req.time = BtlSuper_GetShotTime(chr, kind);
             req.speed = BtlSuper_GetShotSpeed(chr, kind);
             req.turnRate = BtlSuper_GetShotTurnRate(chr, kind);
@@ -1308,12 +1308,12 @@ void BtlFx_FireKiBlast(BtlFighter *chr) {
             count = 1;
         }
         arg.node = node;
-        arg.objId2 = chr->objId;
         arg.objId = chr->objId;
+        arg.srcId = chr->objId;
         arg.area = obj->area;
         arg.type = BtlKiBlast_GetType(chr);
         arg.texVariant = BtlKiBlast_GetUnk3(chr);
-        arg.level = BtlKiBlast_GetCurrentKind(chr);
+        arg.kind = BtlKiBlast_GetCurrentKind(chr);
         arg.life = BtlKiBlast_GetFrames(chr);
         arg.speed = BtlKiBlast_GetSpeed(chr);
         arg.turn = BtlKiBlast_GetTurnRate(chr);
@@ -1323,49 +1323,49 @@ void BtlFx_FireKiBlast(BtlFighter *chr) {
         arg.canHit = 1;
         arg.unk3C = (BtlKiBlast_GetFlags(chr) >> 5) & 1;
         arg.shotCount = BtlObjAnim_QueryEvent(obj, 4, 0, 3);
-        switch (arg.level) {
+        switch (arg.kind) {
         case 0:
-            arg.size = 0;
+            arg.level = 0;
             break;
         case 1:
-            arg.size = 1;
+            arg.level = 1;
             break;
         case 2:
-            arg.size = 2;
+            arg.level = 2;
             break;
         case 3:
-            arg.size = 3;
+            arg.level = 3;
             break;
         case 4:
-            arg.size = 0;
+            arg.level = 0;
             break;
         case 5:
-            arg.size = 1;
+            arg.level = 1;
             break;
         case 6:
-            arg.size = 2;
+            arg.level = 2;
             break;
         case 7:
-            arg.size = 3;
+            arg.level = 3;
             break;
         case 8:
-            arg.size = 0;
+            arg.level = 0;
             break;
         case 9:
-            arg.size = 1;
+            arg.level = 1;
             break;
         case 10:
-            arg.size = 2;
+            arg.level = 2;
             break;
         case 11:
-            arg.size = 3;
+            arg.level = 3;
             break;
         default:
-            arg.size = 0;
+            arg.level = 0;
             break;
         }
         if (BtlChar_IsBodyChanged(chr)) {
-            switch (arg.level) {
+            switch (arg.kind) {
             case 0:
             case 4:
             case 8:

@@ -319,7 +319,7 @@ extern void Vu0Cur_LoadIdentity(void);
 extern void Vu0Cur_Pop(void);
 
 extern EftWLinkMgr *gEftLink;
-extern u8 gEftLinkClass[0x18];
+extern void *gEftLinkClass[6];
 
 /* Takes texture entry `image` and palette entry `palette` of a pack's texture table; the blended TEX0 is cached in
    table slot image + palette (slot `palette` when both are the same). */
@@ -338,12 +338,12 @@ void EftLink_BuildTex(EftWLink *w) {
     EftWLinkArg *arg = &w->arg;
 
     if (arg->tex != NULL) {
-        if (!(arg->tex->built & (1 << w->texIdx))) {
+        if (!(arg->tex->ready & (1 << w->texIdx))) {
             u64 t = EftVram_AddImage(&w->tex, 1, 0);
 
             t |= EftVram_AddClut(&w->clut) << 37;
             arg->tex->e[w->texIdx].tex0 = t;
-            arg->tex->built |= 1 << w->texIdx;
+            arg->tex->ready |= 1 << w->texIdx;
         }
     }
 }

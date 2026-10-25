@@ -205,7 +205,7 @@ BtlSuper_GetShotSpeed = 0x00210E60; // type:func // guess
 // Turn rate in radians per frame (table +0x60 in degrees per second).
 BtlSuper_GetShotTurnRate = 0x00210EA8; // type:func // guess
 // Table +0x6C (float).
-BtlSuper_GetShotUnk6C = 0x00210F00; // type:func // guess
+BtlSuper_GetShotScale = 0x00210F00; // type:func // guess
 // Table +0x90 (s8; no caller found).
 BtlSuper_GetUnk90 = 0x00210F38; // type:func // guess
 // First hit factor (number of shots), at least 1.
@@ -299,7 +299,7 @@ BtlSkill_GetFlags = 0x00212080; // type:func
 // Skill id.
 BtlSkill_GetId = 0x002120B8; // type:func
 // Table +0x14 (s16; no caller found).
-BtlSkill_GetUnk14 = 0x002120F0; // type:func // guess
+BtlSkill_GetClashPower = 0x002120F0; // type:func // guess
 // Table +0x18 (float).
 BtlSkill_GetShotTime = 0x00212128; // type:func // guess
 // Speed per frame of the skill's projectile (table +0x20 in 10 km/h).
@@ -307,7 +307,7 @@ BtlSkill_GetShotSpeed = 0x00212160; // type:func // guess
 // Turn rate in radians per frame (table +0x28 in degrees per second).
 BtlSkill_GetShotTurnRate = 0x002121A8; // type:func // guess
 // Table +0x30 (float).
-BtlSkill_GetShotUnk30 = 0x00212200; // type:func // guess
+BtlSkill_GetShotScale = 0x00212200; // type:func // guess
 // Table +0x38 (s8; no caller found).
 BtlSkill_GetUnk38 = 0x00212238; // type:func // guess
 // First hit factor, at least 1.

@@ -119,8 +119,8 @@ typedef struct BtlScriptCmdWindow {
     /* 0x28 */ u32 shadowColor; /* -C: the shadow colour (FontStyle.shadowColor) */
     /* 0x2C */ s16 shadowDx;   /* -O, first */
     /* 0x2E */ s16 shadowDy;   /* -O, second */
-    /* 0x30 */ u8 unk30[0x18];
-    /* 0x48 */ s32 x;       /* -d */
+    /* 0x30 */ u8 unk30[0x18];  /* FontStyle's clip rectangle, userFlags and the begin / tag / tagArg callbacks */
+    /* 0x48 */ s32 x;       /* -d (past the 0x48 bytes of FontStyle) */
     /* 0x4C */ s32 y;
 } BtlScriptCmdWindow; /* size 0x50 */
 

@@ -275,7 +275,7 @@ typedef struct EftSetDef {
     /* 0x0C */ f32 spread;
     /* 0x10 */ f32 offset;
     /* 0x14 */ f32 offset2;
-    /* 0x18 */ f32 rate;
+    /* 0x18 */ f32 life;
     /* 0x1C */ f32 scale0;
     /* 0x20 */ f32 scale1;
     /* 0x24 */ f32 scale2;

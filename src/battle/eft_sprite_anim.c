@@ -461,9 +461,9 @@ void EftSprAnim_KeepTextures(EftSprAnim *anim) {
     for (i = 0; i < pack->layerCount; i++) {
         def = st->def;
         st++;
-        if (!(tex->kept & (1 << def->tex))) {
+        if (!(tex->ready & (1 << def->tex))) {
             tex->tex[def->tex].tex0 = EftVram_AddTex(&tex->tex[def->tex], 1, 0);
-            tex->kept |= 1 << def->tex;
+            tex->ready |= 1 << def->tex;
         }
     }
 }

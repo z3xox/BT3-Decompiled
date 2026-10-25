@@ -312,11 +312,11 @@ void EftChain_SetTex(EftArc *w, EftArcTexSet *set, s32 idxA, s32 idxB) {
 void EftChain_BuildTex(EftArc *dst, EftArc *src) {
     s32 one = 1;
 
-    if (!(src->arg.texSet->built & (one << src->arg.texIdx))) {
+    if (!(src->arg.texSet->ready & (one << src->arg.texIdx))) {
         dst->tex0 = EftVram_AddImage(&dst->texA, 1, 0);
         dst->tex0 |= (u64)EftVram_AddClut(&dst->texB) << 37;
         src->arg.texSet->entry[src->arg.texIdx].tex0 = dst->tex0;
-        src->arg.texSet->built |= one << src->arg.texIdx;
+        src->arg.texSet->ready |= one << src->arg.texIdx;
     } else {
         dst->tex0 = src->arg.texSet->entry[src->arg.texIdx].tex0;
     }

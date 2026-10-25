@@ -25,9 +25,9 @@
  *   1  class 0x2C35B8 (surfaces)      stage pack entry 0xD not empty
  *   2  class 0x2C3520 (weather)       stage pack entry 0xB not empty
  *   3  class 0x2C3658                 stage pack entry 0xE not empty
- *   4  class 0x2C3670 (smoke)         BtlStage_GetFxResB2() != NULL
- *   5  class 0x2C3600 (steam)         BtlStage_GetFxResC2() != NULL
- *   6  class 0x2C34F0 (geysers)       BtlStage_GetFxResA2() != NULL
+ *   4  class 0x2C3670 (smoke)         BtlStage_GetFxList1() != NULL
+ *   5  class 0x2C3600 (steam)         BtlStage_GetFxList2() != NULL
+ *   6  class 0x2C34F0 (geysers)       BtlStage_GetFxList0() != NULL
  *   7  classes 0x2C3640 and 0x2C34C0  BtlStage_GetList90() has bit 0 set and stage pack entry 0x12 not empty
  *   8  class 0x2C36A0                 stage pack entries 0x15, 0x16 and 0x17 not empty
  *
@@ -137,7 +137,7 @@ typedef struct EftTexEntry {
 typedef struct EftTexTbl {
     /* 0x000 */ EftTexEntry tex[32];
     /* 0x200 */ s32 count;
-    /* 0x204 */ s32 kept;
+    /* 0x204 */ s32 ready;
 } EftTexTbl; /* size 0x208 */
 
 /* Per-view camera tracking of the weather. */

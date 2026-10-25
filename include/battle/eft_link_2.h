@@ -58,7 +58,7 @@ typedef struct EftWTexEntry {
 typedef struct EftWTexSet {
     /* 0x000 */ EftWTexEntry e[16];
     /* 0x100 */ s32 count;
-    /* 0x104 */ u32 built;
+    /* 0x104 */ u32 ready;
 } EftWTexSet; /* 0x108 */
 
 /* Definition of a kind 15 emitter (pack data); only what this file reads. */

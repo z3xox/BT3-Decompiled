@@ -481,7 +481,7 @@ typedef struct EftLinkDef {
     /* 0x060 */ f32 twist[3];      /* twist per node (turns) */
     /* 0x06C */ f32 ofsX[3];
     /* 0x078 */ f32 ofsY[3];
-    /* 0x084 */ f32 ofsAlongMin[3];      /* ofsAlongMin / ofsAlongMax: jitter along the chain */
+    /* 0x084 */ f32 ofsAlongMin[3];      /* with ofsAlongMax: a random offset along the chain direction (eft_link_1.c, Rand_FloatRange) */
     /* 0x090 */ f32 ofsAlongMax[3];
     /* 0x09C */ f32 dist[3];
     /* 0x0A8 */ f32 distRange[3];
@@ -543,8 +543,8 @@ typedef struct EftLinkArg {
 typedef struct EftLinkNode {
     /* 0x000 */ EftVVec corner[4];
     /* 0x040 */ EftVVec ofs;
-    /* 0x050 */ EftVVec offset;
-    /* 0x060 */ EftVVec pos;
+    /* 0x050 */ EftVVec dir;
+    /* 0x060 */ EftVVec origin;
     /* 0x070 */ u8 unk70[0x10];
     /* 0x080 */ EftVVec color;
     /* 0x090 */ EftVVec col0;
@@ -552,7 +552,7 @@ typedef struct EftLinkNode {
     /* 0x0B0 */ EftVVec uv0;
     /* 0x0C0 */ EftVVec uv1;
     /* 0x0D0 */ f32 rotX;
-    /* 0x0D4 */ f32 rot;
+    /* 0x0D4 */ f32 rotZ;
     /* 0x0D8 */ f32 twist;
     /* 0x0DC */ f32 spin;
     /* 0x0E0 */ f32 size;

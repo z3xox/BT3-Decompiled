@@ -184,14 +184,14 @@ void EftLink_Draw(EftVTask *task) {
     for (n = w->head; n != NULL; n = n->next) {
         if (n->flags & 0x40) {
             if (def->flags & 0x10) {
-                Vec4_Copy(EFTV_VEC(&pos), &n->offset);
+                Vec4_Copy(EFTV_VEC(&pos), &n->dir);
                 if (!(def->flags & 0x2000)) {
                     Vec3_Scale(EFTV_VEC(&pos), EFTV_VEC(&pos), w->arg.size * w->scale);
                 }
                 Mtx_MulVec4(EFTV_VEC(&pos), EFTV_MTX(&m), EFTV_VEC(&pos));
-                Vec3_Add(EFTV_VEC(&out), EFTV_VEC(&pos), &n->pos);
+                Vec3_Add(EFTV_VEC(&out), EFTV_VEC(&pos), &n->origin);
                 size = n->size * w->arg.size * w->scale * n->scale * 0.5f;
-                rot = EftMath_WrapAngle(n->rot + n->twist);
+                rot = EftMath_WrapAngle(n->rotZ + n->twist);
                 if (def->flags & 4) {
                     EftLink_DrawBillboardClipped(EFTV_VEC(&out), &n->color, &n->ofs, size, size, n->uv0.x, n->uv0.y, n->uv1.z, n->uv1.w, rot,
                                   def->layer, (w->flags >> 9) & 1, EFT_LINK_TEX0(w), 2.0f);
@@ -265,7 +265,7 @@ void EftLink_Place(EftLinkWork *w) {
             }
             if (!(n->flags & 1)) {
                 EftLink_InitNode(n, w);
-                Vec4_Copy(&n->pos, EFTV_VEC(&p));
+                Vec4_Copy(&n->origin, EFTV_VEC(&p));
                 n->twist = EftMath_WrapAngle(w->val[8].cur * 6.2831853f * fi);
                 n->flags |= 1;
             }
