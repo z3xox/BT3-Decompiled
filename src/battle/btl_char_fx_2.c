@@ -13,36 +13,36 @@ extern f32 Vec3_Length(Vec4 *v);
 extern f32 Mathf_Sin(f32 a);
 extern f32 Mathf_Cos(f32 a);
 extern f32 BtlUtil_WrapAngle(f32 a);
-extern FxObj *BtlChar_GetObj(FxChr *chr);
-extern FxPose *BtlChar_GetPos(FxChr *chr);
-extern s32 BtlChar_TestFlag(FxChr *chr, s32 flag);
-extern void BtlChar_SetFxBit(FxChr *chr, s32 bit);          /* set */
-extern s32 BtlChar_TestFxBit(FxChr *chr, s32 bit);           /* test */
+extern FxObj *BtlChar_GetObj(BtlFighter *chr);
+extern BtlFighterPose *BtlChar_GetPos(BtlFighter *chr);
+extern s32 BtlChar_TestFlag(BtlFighter *chr, s32 flag);
+extern void BtlChar_SetFxBit(BtlFighter *chr, s32 bit);          /* set */
+extern s32 BtlChar_TestFxBit(BtlFighter *chr, s32 bit);           /* test */
 extern void BtlCharApi_GetNodePos(s32 objId, s32 part, Vec4 *out); /* world position of a model part */
-extern void BtlCharSnd_PlayCommon(FxChr *chr, s32 sound);
+extern void BtlCharSnd_PlayCommon(BtlFighter *chr, s32 sound);
 extern void BtlObj_SetColorMode(FxObj *obj, s32 bit, s32 on);
 extern void EftShotFx_Start(s32 objId, s32 kind);
 extern void EftImpact_SpawnHit(FxPosArg *arg);
-extern s32 *BtlMember_GetActive(FxChr *chr);
+extern s32 *BtlMember_GetActive(BtlFighter *chr);
 extern void BtlObj_SetEyeFrame(FxObj *obj, s32 frame);
 extern s32 BtlObj_GetMouthMode(FxObj *obj);
 extern void BtlObj_SetSubState(FxObj *obj, s32 state, s32 arg);
-extern s32 BtlAnim_TestAttr(FxChr *chr, u64 mask);           /* animation event bits raised this frame */
-extern s32 BtlAnim_GetId(FxChr *chr);                      /* the current animation number */
+extern s32 BtlAnim_TestAttr(BtlFighter *chr, u64 mask);           /* animation event bits raised this frame */
+extern s32 BtlAnim_GetId(BtlFighter *chr);                      /* the current animation number */
 extern s32 BtlAnim_GetFlags(s32 anim);                        /* its attribute bits */
-extern s32 BtlOpp_GetPlayer(FxChr *chr);                      /* the opponent's roster index */
-extern s32 BtlAct_GetCurrent(FxChr *chr);
+extern s32 BtlOpp_GetPlayer(BtlFighter *chr);                      /* the opponent's roster index */
+extern s32 BtlAct_GetCurrent(BtlFighter *chr);
 extern s32 BtlAct_IsTechniqueId(s32 action);
-extern s32 BtlAct_GetCurrentClass(FxChr *chr);
-extern void BtlAct_PushAngle(FxChr *chr, f32 yaw, f32 speed, f32 max);
+extern s32 BtlAct_GetCurrentClass(BtlFighter *chr);
+extern void BtlAct_PushAngle(BtlFighter *chr, f32 yaw, f32 speed, f32 max);
 extern s32 BtlCharApi_IsInRushSequence(s32 objId);
 extern s32 BtlCharApi_IsInSkill(s32 objId);
 extern s32 BtlCharApi_HasWeaponOut(s32 objId);
-extern s32 BtlAtk_GetId(FxChr *chr);
-extern s32 BtlAtk_GetFlags(FxChr *chr);
-extern s32 BtlAtk_GetHitSoundLevel(FxChr *chr);
-extern s32 BtlSuper_GetFlagsA(FxChr *chr, s32 slot);
-extern s32 BtlSkill_GetId(FxChr *chr, s32 slot);
+extern s32 BtlAtk_GetId(BtlFighter *chr);
+extern s32 BtlAtk_GetFlags(BtlFighter *chr);
+extern s32 BtlAtk_GetHitSoundLevel(BtlFighter *chr);
+extern s32 BtlSuper_GetFlagsA(BtlFighter *chr, s32 slot);
+extern s32 BtlSkill_GetId(BtlFighter *chr, s32 slot);
 extern s32 BtlChar_GetHitSoundLine(s32 kind);
 extern s32 BtlObjAnim_GetEventArg(FxObj *obj, u64 mask);
 extern s32 BtlObjAnim_MaskToNode(s32 bits);
@@ -51,13 +51,13 @@ extern void BtlObj_GetNodeVelocity(FxObj *obj, s32 part, Vec4 *out);
 extern void Mtx_MulVec4(Vec4 *out, void *mtx, Vec4 *in);
 extern void EftSpdLine_SpawnPartStreaks(s32 objId, Vec4 *pos, s32 part);
 extern s32 BtlChar_FrameMod(s32 n);
-extern void BtlChar_Vibrate(FxChr *chr, f32 power, f32 seconds);
-extern void BtlChar_SetHeldFlag(FxChr *chr, s32 flag);
-extern void BtlChar_ClearFlag(FxChr *chr, s32 flag);
-extern FxChr *BtlChar_Get(s32 i);
-extern s32 BtlChar_IsFrozen(FxChr *chr);
-extern void BtlChar_PlayVoice(FxChr *chr, s32 kind);
-extern void ChrCam_AddShake(FxChr *chr, f32 strength, f32 time);
+extern void BtlChar_Vibrate(BtlFighter *chr, f32 power, f32 seconds);
+extern void BtlChar_SetHeldFlag(BtlFighter *chr, s32 flag);
+extern void BtlChar_ClearFlag(BtlFighter *chr, s32 flag);
+extern BtlFighter *BtlChar_Get(s32 i);
+extern s32 BtlChar_IsFrozen(BtlFighter *chr);
+extern void BtlChar_PlayVoice(BtlFighter *chr, s32 kind);
+extern void ChrCam_AddShake(BtlFighter *chr, f32 strength, f32 time);
 extern s32 BtlObjAnim_TestEvent(FxObj *obj, u64 mask);
 extern void BtlCharSnd_RequestAt(Vec4 *pos, s32 kind, s32 id, f32 near, f32 far);
 extern void BtlObjXf_Update(FxObj *obj);
@@ -71,10 +71,10 @@ extern void BtlObj_CopyLipTables(FxObj *obj, FxObj *owner);
 extern void BtlObj_AddPush(FxObj *obj, Vec4 *v, f32 max);
 extern void BtlObj_AddSway(FxObj *obj, f32 add, f32 max);
 extern void StgTint_Start(s32 slot, s32 dir, f32 time);
-extern void BtlChar_SpawnFxBits3C(FxChr *chr);
-extern void BtlChar_SpawnFxBits0(FxChr *chr);
-extern void BtlChar_SpawnHitFx(FxChr *chr);
-extern s32 BtlChar_TestPrevFxBit(FxChr *chr, s32 bit);
+extern void BtlChar_SpawnFxBits3C(BtlFighter *chr);
+extern void BtlChar_SpawnFxBits0(BtlFighter *chr);
+extern void BtlChar_SpawnHitFx(BtlFighter *chr);
+extern s32 BtlChar_TestPrevFxBit(BtlFighter *chr, s32 bit);
 extern s32 BtlChar_GetCount(void);
 extern FxObj *BtlObj_Get(s32 id);
 extern s32 BtlObj_Destroy(s32 id);
@@ -89,7 +89,7 @@ extern FxSave *gSaveData;
  * `work` is the alternate sound and later the fighter that speaks: only one variable for both gives the original's
  * register assignment (s1 before the flag in s2).
  */
-void BtlFx_HandleImpactEvents(FxChr *chr) {
+void BtlFx_HandleImpactEvents(BtlFighter *chr) {
     FxPosArg arg;
     f32 time = 0.0f;
     s32 work = 0; /* the alternate sound, then the fighter that speaks: one variable in the original (see below) */
@@ -100,7 +100,7 @@ void BtlFx_HandleImpactEvents(FxChr *chr) {
     s32 sound = 0;
     f32 strength = time;
     FxObj *obj = BtlChar_GetObj(chr);
-    FxChr *other;
+    BtlFighter *other;
     s32 ok;
 
     if (BtlAnim_TestAttr(chr, 0x100)) {
@@ -152,23 +152,23 @@ void BtlFx_HandleImpactEvents(FxChr *chr) {
         BtlCharSnd_PlayCommon(chr, sound);
         if (BtlAnim_GetFlags(BtlAnim_GetId(chr)) & 0x10) {
             work = (s32)chr;
-            other = BtlChar_Get(BtlOpp_GetPlayer((FxChr *)work));
+            other = BtlChar_Get(BtlOpp_GetPlayer((BtlFighter *)work));
         } else {
             other = chr;
             work = (s32)BtlChar_Get(BtlOpp_GetPlayer(other));
         }
         ok = !BtlChar_TestFlag(other, 0x13B);
-        if (BtlChar_IsFrozen((FxChr *)work)) {
+        if (BtlChar_IsFrozen((BtlFighter *)work)) {
             ok = 0;
         }
         if (ok) {
-            BtlChar_PlayVoice((FxChr *)work, 1);
+            BtlChar_PlayVoice((BtlFighter *)work, 1);
         }
     }
 }
 
 /* Animation event 1: raises request 0x1B when the current technique has attribute 0x80000 and the event value is 1. */
-void BtlFx_HandleEvent1(FxChr *chr) {
+void BtlFx_HandleEvent1(BtlFighter *chr) {
     FxObj *obj = BtlChar_GetObj(chr);
 
     if (BtlAnim_TestAttr(chr, 1)) {
@@ -183,7 +183,7 @@ void BtlFx_HandleEvent1(FxChr *chr) {
 }
 
 /* Animation events 0x2000000 / 0x4000000: set / clear fighter flag 0x30. */
-void BtlFx_HandleFlag30Events(FxChr *chr) {
+void BtlFx_HandleFlag30Events(BtlFighter *chr) {
     if (BtlAnim_TestAttr(chr, 0x2000000)) {
         BtlChar_SetHeldFlag(chr, 0x30);
     }
@@ -193,7 +193,7 @@ void BtlFx_HandleFlag30Events(FxChr *chr) {
 }
 
 /* Animation event 2: the swing sound of the current attack (not with flag 0x91, nor with 0x60 unless 0x5C). */
-void BtlFx_PlaySwingSound(FxChr *chr) {
+void BtlFx_PlaySwingSound(BtlFighter *chr) {
     s32 sound;
 
     if (!BtlChar_TestFlag(chr, 0x91)) {
@@ -209,7 +209,7 @@ void BtlFx_PlaySwingSound(FxChr *chr) {
 }
 
 /* Animation event 8: effect 0x15F3D8 at each model part named by the event's value bits (19 of them). */
-void BtlFx_SpawnPartFxEvent8(FxChr *chr) {
+void BtlFx_SpawnPartFxEvent8(BtlFighter *chr) {
     Vec4 pos;
     FxObj *obj = BtlChar_GetObj(chr);
     s32 bits;
@@ -233,7 +233,7 @@ void BtlFx_SpawnPartFxEvent8(FxChr *chr) {
 }
 
 /* Animation event 0x1000000: effect 0xC at each model part named by the event's value bits, with sound 0x4B. */
-void BtlFx_SpawnPartFlashes(FxChr *chr) {
+void BtlFx_SpawnPartFlashes(BtlFighter *chr) {
     FxPosArg arg;
     FxObj *obj = BtlChar_GetObj(chr);
     s32 bits;
@@ -267,7 +267,7 @@ void BtlFx_SpawnPartFlashes(FxChr *chr) {
  * Animation event 0x400 in a damage action (not with class attribute 0x1000000): sets flag 0x9F, and while that flag
  * lasts pushes the fighter, and its partner object, backwards (yaw + pi, speed 1, 5). Not void in the original.
  */
-s32 BtlFx_PushBackOnEvent400(FxChr *chr) {
+s32 BtlFx_PushBackOnEvent400(BtlFighter *chr) {
     if (BtlAct_IsTechniqueId(BtlAct_GetCurrent(chr))) {
         if (BtlCharApi_IsInRushSequence(chr->objId)) {
             if (!(BtlSuper_GetFlagsA(chr, BtlAct_GetCurrentClass(chr)) & 0x1000000)) {
@@ -286,7 +286,7 @@ s32 BtlFx_PushBackOnEvent400(FxChr *chr) {
 }
 
 /* Animation event 0x400 in a technique of class 0x18: sets object mask bit 2. Not void in the original (no tail call). */
-s32 BtlFx_SetObjMaskOnEvent400(FxChr *chr) {
+s32 BtlFx_SetObjMaskOnEvent400(BtlFighter *chr) {
     FxObj *obj = BtlChar_GetObj(chr);
 
     if (BtlCharApi_IsInSkill(chr->objId)) {
@@ -298,23 +298,23 @@ s32 BtlFx_SetObjMaskOnEvent400(FxChr *chr) {
     }
 }
 
-static inline void Fx_ShakeCam(FxChr *chr, f32 strength) {
+static inline void Fx_ShakeCam(BtlFighter *chr, f32 strength) {
     ChrCam_AddShake(chr, strength, 0.3f);
 }
 
 /* Animation event bit 46: camera shake 3.0 for 0.3 s. */
-void BtlFx_ShakeCamOnEvent(FxChr *chr) {
+void BtlFx_ShakeCamOnEvent(BtlFighter *chr) {
     if (BtlAnim_TestAttr(chr, 0x400000000000)) {
         Fx_ShakeCam(chr, 3.0f);
     }
 }
 
-static inline void Fx_Vibrate(FxChr *chr, f32 power) {
+static inline void Fx_Vibrate(BtlFighter *chr, f32 power) {
     BtlChar_Vibrate(chr, power, 0.2f);
 }
 
 /* Animation event bit 45: pad vibration 1.0 for 0.2 s. */
-void BtlFx_VibrateOnEvent(FxChr *chr) {
+void BtlFx_VibrateOnEvent(BtlFighter *chr) {
     if (BtlAnim_TestAttr(chr, 0x200000000000)) {
         Fx_Vibrate(chr, 1.0f);
     }
@@ -438,12 +438,12 @@ void BtlFxObj_HandleSubStateEvents(FxObj *obj) {
 }
 
 /* Manager pass (action stage): the object events of the fighter's own model. */
-void BtlFx_UpdateObjEvents(FxChr *chr) {
+void BtlFx_UpdateObjEvents(BtlFighter *chr) {
     BtlFxObj_HandleSubStateEvents(BtlChar_GetObj(chr));
 }
 
 /* Manager pass (camera stage): every effect request and animation event of the fighter, in a fixed order. */
-void BtlFx_UpdateAll(FxChr *chr) {
+void BtlFx_UpdateAll(BtlFighter *chr) {
     FxObj *obj = BtlChar_GetObj(chr);
 
     BtlFx_UpdateAura(chr);
@@ -486,7 +486,7 @@ void BtlFx_UpdateAll(FxChr *chr) {
 }
 
 /* Manager pass (stage 10, after hit detection): the requests raised by hits. */
-void BtlFx_UpdateAfterHits(FxChr *chr) {
+void BtlFx_UpdateAfterHits(BtlFighter *chr) {
     BtlFx_TriggerObjReq1D(chr);
     BtlFx_HandleEvent1(chr);
     BtlChar_SpawnHitFx(chr);
@@ -495,18 +495,18 @@ void BtlFx_UpdateAfterHits(FxChr *chr) {
 }
 
 /* Manager pass (after the effect scene and the fighter camera): requests 0x37 and 0x2E. */
-void BtlFx_UpdatePostScene(FxChr *chr) {
+void BtlFx_UpdatePostScene(BtlFighter *chr) {
     BtlFx_SpawnReq37(chr);
     BtlFx_SpawnFlashReq2E(chr);
 }
 
 /* Manager pass (end of frame): the camera-trace object flag. */
-void BtlFx_UpdateLate(FxChr *chr) {
+void BtlFx_UpdateLate(BtlFighter *chr) {
     BtlFx_UpdateOccludedFlag(chr);
 }
 
 /* Turns requests 0x10 / 0x11 into request 0x12 (the stage effect of BtlFx_UpdateStageFx), and drops flag 0x12E when 0x11 ends. */
-void BtlFx_UpdateStageFxRequest(FxChr *chr) {
+void BtlFx_UpdateStageFxRequest(BtlFighter *chr) {
     s32 on;
 
     if (BtlChar_TestFxBit(chr, 0x10)) {
@@ -535,7 +535,7 @@ void BtlFx_UpdateStageFx(void) {
     s32 i;
     s32 prev = 0;
     s32 now = 0;
-    FxChr *chr;
+    BtlFighter *chr;
 
     for (i = 0; i < BtlChar_GetCount(); i++) {
         BtlFx_UpdateStageFxRequest(BtlChar_Get(i));
@@ -572,7 +572,7 @@ void BtlFxObj_Place(FxObj *obj, Vec4 *pos, Vec4 *rot) {
  * lines 0x57 / 0x59 / 0x5B (+1) of the fighter's character by technique class 2 / 3 / 4. Each line also sets the
  * partner's sub-state 2 to the line number.
  */
-void BtlPartner_HandleEvents(FxObj *obj, FxChr *chr) {
+void BtlPartner_HandleEvents(FxObj *obj, BtlFighter *chr) {
     Vec4 pos;
     FxPosArg arg;
     s32 on;
@@ -674,13 +674,13 @@ void BtlPartner_HandleEvents(FxObj *obj, FxChr *chr) {
 }
 
 /* Whether the fighter has a partner object. */
-s32 BtlPartner_IsActive(FxChr *chr) {
+s32 BtlPartner_IsActive(BtlFighter *chr) {
     return chr->partner.active;
 }
 
 /* Attaches a partner object (resource slot and battle object) unless one is attached already. */
-void BtlPartner_Attach(FxChr *chr, s32 res, s32 objId) {
-    FxPartner *p = &chr->partner;
+void BtlPartner_Attach(BtlFighter *chr, s32 res, s32 objId) {
+    BtlFighterPartner *p = &chr->partner;
 
     if (!p->active) {
         p->res = res;
@@ -690,8 +690,8 @@ void BtlPartner_Attach(FxChr *chr, s32 res, s32 objId) {
 }
 
 /* Destroys the partner object and frees its resource slot. */
-void BtlPartner_Release(FxChr *chr) {
-    FxPartner *p = &chr->partner;
+void BtlPartner_Release(BtlFighter *chr) {
+    BtlFighterPartner *p = &chr->partner;
 
     if (p->active) {
         BtlObj_Destroy(p->objId);
@@ -703,8 +703,8 @@ void BtlPartner_Release(FxChr *chr) {
 }
 
 /* Manager pass (stage 6): puts the partner on the fighter and runs its animation and pose passes. */
-void BtlPartner_Update(FxChr *chr) {
-    FxPartner *p = &chr->partner;
+void BtlPartner_Update(BtlFighter *chr) {
+    BtlFighterPartner *p = &chr->partner;
     FxObj *obj;
     FxObj *partner;
     Vec4 *pos;
@@ -726,8 +726,8 @@ void BtlPartner_Update(FxChr *chr) {
 }
 
 /* Manager pass (stage 10): the partner's animation events. */
-void BtlPartner_UpdateEvents(FxChr *chr) {
-    FxPartner *p = &chr->partner;
+void BtlPartner_UpdateEvents(BtlFighter *chr) {
+    BtlFighterPartner *p = &chr->partner;
 
     if (p->active) {
         BtlPartner_HandleEvents(BtlObj_Get(p->objId), chr);
@@ -735,8 +735,8 @@ void BtlPartner_UpdateEvents(FxChr *chr) {
 }
 
 /* Starts the partner animation that belongs to a fighter animation number (those from 0x19E up). */
-void BtlPartner_PlayAnim(FxChr *chr, s32 anim) {
-    FxPartner *p = &chr->partner;
+void BtlPartner_PlayAnim(BtlFighter *chr, s32 anim) {
+    BtlFighterPartner *p = &chr->partner;
     FxObj *obj;
 
     if (!p->active) {
@@ -766,8 +766,8 @@ void BtlPartner_PlayAnim(FxChr *chr, s32 anim) {
 }
 
 /* Advances the partner animation by its step; 1 when it has reached its end (or there is no partner). */
-s32 BtlPartner_StepAnim(FxChr *chr) {
-    FxPartner *p = &chr->partner;
+s32 BtlPartner_StepAnim(BtlFighter *chr) {
+    BtlFighterPartner *p = &chr->partner;
     s32 done = 0;
     FxObjAnim *anim;
 
@@ -785,8 +785,8 @@ s32 BtlPartner_StepAnim(FxChr *chr) {
 }
 
 /* Sets or clears partner object flag 0x10. */
-void BtlPartner_SetFlag10(FxChr *chr, s32 on) {
-    FxPartner *p = &chr->partner;
+void BtlPartner_SetFlag10(BtlFighter *chr, s32 on) {
+    BtlFighterPartner *p = &chr->partner;
     FxObj *obj;
 
     if (p->active) {
@@ -800,8 +800,8 @@ void BtlPartner_SetFlag10(FxChr *chr, s32 on) {
 }
 
 /* Links the partner object to the fighter's object (BtlObj_CopyLipTables). */
-void BtlPartner_LinkToOwner(FxChr *chr) {
-    FxPartner *p = &chr->partner;
+void BtlPartner_LinkToOwner(BtlFighter *chr) {
+    BtlFighterPartner *p = &chr->partner;
 
     if (p->active) {
         BtlObj_CopyLipTables(BtlObj_Get(p->objId), BtlChar_GetObj(chr));
@@ -809,8 +809,8 @@ void BtlPartner_LinkToOwner(FxChr *chr) {
 }
 
 /* The partner object. Without one the original falls off the end (the caller gets the 0 left in the result register). */
-FxObj *BtlPartner_GetObj(FxChr *chr) {
-    FxPartner *p = &chr->partner;
+FxObj *BtlPartner_GetObj(BtlFighter *chr) {
+    BtlFighterPartner *p = &chr->partner;
 
     if (p->active) {
         return BtlObj_Get(p->objId);
@@ -818,8 +818,8 @@ FxObj *BtlPartner_GetObj(FxChr *chr) {
 }
 
 /* Gives the partner a horizontal velocity along a yaw. */
-void BtlPartner_PushAngle(FxChr *chr, f32 yaw, f32 speed, f32 max) {
-    FxPartner *p = &chr->partner;
+void BtlPartner_PushAngle(BtlFighter *chr, f32 yaw, f32 speed, f32 max) {
+    BtlFighterPartner *p = &chr->partner;
     Vec4 v;
     FxObj *obj;
 
@@ -834,8 +834,8 @@ void BtlPartner_PushAngle(FxChr *chr, f32 yaw, f32 speed, f32 max) {
 }
 
 /* Gives the partner a velocity of a given speed along a direction (ignored when the direction is shorter than 0.0001). */
-void BtlPartner_PushDir(FxChr *chr, Vec4 *dir, f32 speed, f32 max) {
-    FxPartner *p = &chr->partner;
+void BtlPartner_PushDir(BtlFighter *chr, Vec4 *dir, f32 speed, f32 max) {
+    BtlFighterPartner *p = &chr->partner;
     Vec4 v;
     FxObj *obj;
     f32 len;
@@ -852,8 +852,8 @@ void BtlPartner_PushDir(FxChr *chr, Vec4 *dir, f32 speed, f32 max) {
 }
 
 /* BtlObj_AddSway(add, max) on the partner's object. */
-void BtlPartner_AddSway(FxChr *chr, f32 add, f32 max) {
-    FxPartner *p = &chr->partner;
+void BtlPartner_AddSway(BtlFighter *chr, f32 add, f32 max) {
+    BtlFighterPartner *p = &chr->partner;
 
     if (p->active) {
         BtlObj_AddSway(BtlObj_Get(p->objId), add, max);
@@ -861,8 +861,8 @@ void BtlPartner_AddSway(FxChr *chr, f32 add, f32 max) {
 }
 
 /* Partner object flag 0x80 = on, while its action has attribute 0x200000 (only with flag 2 set). */
-void BtlPartner_SetFlag80(FxChr *chr, s32 on) {
-    FxPartner *p = &chr->partner;
+void BtlPartner_SetFlag80(BtlFighter *chr, s32 on) {
+    BtlFighterPartner *p = &chr->partner;
     s32 set = 0;
     FxObj *obj;
 

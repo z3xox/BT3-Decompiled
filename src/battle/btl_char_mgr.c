@@ -100,127 +100,127 @@
 extern void *memset(void *dst, s32 c, u32 n);
 
 extern s32 BtlChar_GetCount(void);
-extern BtlMgrChr *BtlChar_Get(s32 idx);
-extern void BtlChar_SetFlag(BtlMgrChr *chr, s32 flag);
-extern s32 BtlChar_TestFlag(BtlMgrChr *chr, s32 flag);
-extern void BtlChar_SetHeldFlag(BtlMgrChr *chr, s32 flag);
-extern void BtlChar_ClearFlag(BtlMgrChr *chr, s32 flag);
-extern void BtlInput_Init(BtlMgrChr *chr);
-extern void BtlInput_Sample(BtlMgrChr *chr);
-extern void BtlInput_Update(BtlMgrChr *chr);
-extern void BtlInput_Stub(BtlMgrChr *chr);
-extern s32 BtlInput_IsPressed(BtlMgrChr *chr, u32 mask);
+extern BtlFighter *BtlChar_Get(s32 idx);
+extern void BtlChar_SetFlag(BtlFighter *chr, s32 flag);
+extern s32 BtlChar_TestFlag(BtlFighter *chr, s32 flag);
+extern void BtlChar_SetHeldFlag(BtlFighter *chr, s32 flag);
+extern void BtlChar_ClearFlag(BtlFighter *chr, s32 flag);
+extern void BtlInput_Init(BtlFighter *chr);
+extern void BtlInput_Sample(BtlFighter *chr);
+extern void BtlInput_Update(BtlFighter *chr);
+extern void BtlInput_Stub(BtlFighter *chr);
+extern s32 BtlInput_IsPressed(BtlFighter *chr, u32 mask);
 extern s32 BtlCtrl_CanAct(s32 side);
 
 extern void Vec4_SetZero(void *vec);
 extern void BtlBodyHit_Update(void);
 extern void StgGround_UpdateFighter(BtlMgrObj *obj);
 extern void StgCol_UpdateFighter(BtlMgrObj *obj, s32 keepSphere, s32 grow);
-extern void BtlStat_ClearFrameMods(BtlMgrChr *chr);
-extern void BtlStat_Reset(BtlMgrChr *chr);
-extern void BtlStat_SetFrameMod(BtlMgrChr *chr, s32 idx, s32 val, s32 add);
-extern void BtlAnim_Play(BtlMgrChr *chr, s32 anim, f32 blend);
-extern void BtlAnim_FlushRequest(BtlMgrChr *chr);
-extern void BtlAnim_SetObjRate(BtlMgrChr *chr, f32 rate);
-extern void BtlAnim_SetRate(BtlMgrChr *chr, f32 rate);
-extern s32 BtlAnim_GetId(BtlMgrChr *chr);
+extern void BtlStat_ClearFrameMods(BtlFighter *chr);
+extern void BtlStat_Reset(BtlFighter *chr);
+extern void BtlStat_SetFrameMod(BtlFighter *chr, s32 idx, s32 val, s32 add);
+extern void BtlAnim_Play(BtlFighter *chr, s32 anim, f32 blend);
+extern void BtlAnim_FlushRequest(BtlFighter *chr);
+extern void BtlAnim_SetObjRate(BtlFighter *chr, f32 rate);
+extern void BtlAnim_SetRate(BtlFighter *chr, f32 rate);
+extern s32 BtlAnim_GetId(BtlFighter *chr);
 extern s32 BtlAnim_GetFlags(s32 idx);
-extern void ChrCam_UpdateInput(BtlMgrChr *chr);
-extern void ChrCam_Update(BtlMgrChr *chr);
-extern void ChrCam_UpdateDemo(BtlMgrChr *chr);
-extern void ChrCam_StartCut(BtlMgrChr *chr);
+extern void ChrCam_UpdateInput(BtlFighter *chr);
+extern void ChrCam_Update(BtlFighter *chr);
+extern void ChrCam_UpdateDemo(BtlFighter *chr);
+extern void ChrCam_StartCut(BtlFighter *chr);
 extern void BtlColl_Update(void);
-extern void BtlColl_UpdateFrozen(BtlMgrChr *chr);
-extern void BtlColl_UpdateGround(BtlMgrChr *chr);
-extern void BtlColl_ClearActionBits(BtlMgrChr *chr);
-extern void BtlMember_LoadParams(BtlMgrChr *chr, s32 member, s32 init, f32 health, s32 variant);
-extern BtlMgrMember *BtlMember_Get(BtlMgrChr *chr, s32 idx);
-extern BtlMgrMember *BtlMember_GetActive(BtlMgrChr *chr);
-extern BtlMgrGauge *BtlMember_GetActiveGauge(BtlMgrChr *chr);
-extern void BtlMember_SetActiveIndex(BtlMgrChr *chr, s32 member);
-extern s32 BtlMember_CountAlive(BtlMgrChr *chr);
-extern s32 BtlMember_GetActiveIndex(BtlMgrChr *chr);
-extern s32 BtlMember_GetSwitchTarget(BtlMgrChr *chr);
-extern void BtlMember_AddHealth(BtlMgrChr *chr, s32 amount);
-extern f32 BtlMember_GetHealthRatio(BtlMgrChr *chr);
-extern f32 BtlMember_GetTeamHealthRatio(BtlMgrChr *chr);
-extern s32 BtlMember_HasAbility(BtlMgrChr *chr, s32 ability);
+extern void BtlColl_UpdateFrozen(BtlFighter *chr);
+extern void BtlColl_UpdateGround(BtlFighter *chr);
+extern void BtlColl_ClearActionBits(BtlFighter *chr);
+extern void BtlMember_LoadParams(BtlFighter *chr, s32 member, s32 init, f32 health, s32 variant);
+extern BtlMember *BtlMember_Get(BtlFighter *chr, s32 idx);
+extern BtlMember *BtlMember_GetActive(BtlFighter *chr);
+extern BtlMemberGauge *BtlMember_GetActiveGauge(BtlFighter *chr);
+extern void BtlMember_SetActiveIndex(BtlFighter *chr, s32 member);
+extern s32 BtlMember_CountAlive(BtlFighter *chr);
+extern s32 BtlMember_GetActiveIndex(BtlFighter *chr);
+extern s32 BtlMember_GetSwitchTarget(BtlFighter *chr);
+extern void BtlMember_AddHealth(BtlFighter *chr, s32 amount);
+extern f32 BtlMember_GetHealthRatio(BtlFighter *chr);
+extern f32 BtlMember_GetTeamHealthRatio(BtlFighter *chr);
+extern s32 BtlMember_HasAbility(BtlFighter *chr, s32 ability);
 extern void BtlMembers_UpdateQueuedDamage(void);
-extern void BtlFx_UpdateObjEvents(BtlMgrChr *chr);
-extern void BtlFx_UpdateAll(BtlMgrChr *chr);
-extern void BtlFx_UpdateAfterHits(BtlMgrChr *chr);
-extern void BtlFx_UpdatePostScene(BtlMgrChr *chr);
-extern void BtlFx_UpdateLate(BtlMgrChr *chr);
+extern void BtlFx_UpdateObjEvents(BtlFighter *chr);
+extern void BtlFx_UpdateAll(BtlFighter *chr);
+extern void BtlFx_UpdateAfterHits(BtlFighter *chr);
+extern void BtlFx_UpdatePostScene(BtlFighter *chr);
+extern void BtlFx_UpdateLate(BtlFighter *chr);
 extern void BtlFx_UpdateRoster(void);
-extern void BtlPartner_Release(BtlMgrChr *chr);
-extern void BtlPartner_Update(BtlMgrChr *chr);
-extern void BtlPartner_UpdateEvents(BtlMgrChr *chr);
+extern void BtlPartner_Release(BtlFighter *chr);
+extern void BtlPartner_Update(BtlFighter *chr);
+extern void BtlPartner_UpdateEvents(BtlFighter *chr);
 extern void BtlChange_Reset(void);
 extern void BtlChange_Update(void);
 extern s32 BtlChars_IsTimeStopped(void);
-extern void BtlChar_ResetLook(BtlMgrChr *chr);
-extern void BtlChar_UpdateLookOffset(BtlMgrChr *chr);
-extern void BtlChar_SetLookEnabled(BtlMgrChr *chr, s32 enabled);
-extern void BtlChar_UpdateHead(BtlMgrChr *chr);
-extern void BtlChar_ObjToPose(BtlMgrChr *chr);
-extern void BtlChar_PoseToObj(BtlMgrChr *chr, s32 keepRoot);
-extern void BtlChar_UpdateLean(BtlMgrChr *chr);
-extern void BtlChar_PlaceAtStart(BtlMgrChr *chr);
-extern void BtlChar_PlaceRestart(BtlMgrChr *chr);
-extern void BtlChar_PlaceCenter(BtlMgrChr *chr);
-extern void BtlChar_PlaceRelative(BtlMgrChr *chr);
-extern void BtlChar_PlaceOnPath(BtlMgrChr *chr);
-extern void BtlChar_PlaceCenterHigh(BtlMgrChr *chr);
-extern void BtlChar_PlaceSaved(BtlMgrChr *chr);
-extern void BtlChar_PlaceWarp(BtlMgrChr *chr);
+extern void BtlChar_ResetLook(BtlFighter *chr);
+extern void BtlChar_UpdateLookOffset(BtlFighter *chr);
+extern void BtlChar_SetLookEnabled(BtlFighter *chr, s32 enabled);
+extern void BtlChar_UpdateHead(BtlFighter *chr);
+extern void BtlChar_ObjToPose(BtlFighter *chr);
+extern void BtlChar_PoseToObj(BtlFighter *chr, s32 keepRoot);
+extern void BtlChar_UpdateLean(BtlFighter *chr);
+extern void BtlChar_PlaceAtStart(BtlFighter *chr);
+extern void BtlChar_PlaceRestart(BtlFighter *chr);
+extern void BtlChar_PlaceCenter(BtlFighter *chr);
+extern void BtlChar_PlaceRelative(BtlFighter *chr);
+extern void BtlChar_PlaceOnPath(BtlFighter *chr);
+extern void BtlChar_PlaceCenterHigh(BtlFighter *chr);
+extern void BtlChar_PlaceSaved(BtlFighter *chr);
+extern void BtlChar_PlaceWarp(BtlFighter *chr);
 extern void BtlChars_UpdateHold(void);
-extern void BtlChar_ClearSnapshots(BtlMgrChr *chr);
+extern void BtlChar_ClearSnapshots(BtlFighter *chr);
 extern void BtlChars_Snapshot(s32 pass);
-extern void BtlChar_GetSnapDelta(BtlMgrChr *chr, void *out, s32 from, s32 to);
-extern void BtlChar_GetMoveSince(BtlMgrChr *chr, void *out, s32 n);
-extern void BtlReplay_Rewind(BtlMgrChr *chr);
+extern void BtlChar_GetSnapDelta(BtlFighter *chr, void *out, s32 from, s32 to);
+extern void BtlChar_GetMoveSince(BtlFighter *chr, void *out, s32 n);
+extern void BtlReplay_Rewind(BtlFighter *chr);
 extern void BtlReplay_ResetViewer(void);
 extern void BtlReplay_UpdateViewer(void);
 extern void BtlClash_Update(void);
 extern void BtlCharSnd_Init(void);
 extern void BtlCharSnd_ClearRequests(void);
 extern void BtlCharSnd_PlayRequests(void);
-extern void BtlCharSnd_PlayTechSounds(BtlMgrChr *chr);
-extern void BtlChar_SetStage(BtlMgrChr *chr, s32 stage);
-extern void BtlChar_ClearFlagRange(BtlMgrChr *chr, s32 first, s32 last);
-extern s32 BtlChar_IsFlagRaised(BtlMgrChr *chr, s32 flag);
-extern s32 BtlChar_IsFlagDropped(BtlMgrChr *chr, s32 flag);
-extern void BtlChar_UpdateLockOn(BtlMgrChr *chr);
+extern void BtlCharSnd_PlayTechSounds(BtlFighter *chr);
+extern void BtlChar_SetStage(BtlFighter *chr, s32 stage);
+extern void BtlChar_ClearFlagRange(BtlFighter *chr, s32 first, s32 last);
+extern s32 BtlChar_IsFlagRaised(BtlFighter *chr, s32 flag);
+extern s32 BtlChar_IsFlagDropped(BtlFighter *chr, s32 flag);
+extern void BtlChar_UpdateLockOn(BtlFighter *chr);
 extern void BtlChars_UpdateSightFlag(void);
-extern void BtlChar_SetFrameBits(BtlMgrChr *chr, u64 bits);
-extern s32 BtlOpp_GetPlayer(BtlMgrChr *chr);
-extern void BtlOpp_MirrorFlags(BtlMgrChr *chr);
+extern void BtlChar_SetFrameBits(BtlFighter *chr, u64 bits);
+extern s32 BtlOpp_GetPlayer(BtlFighter *chr);
+extern void BtlOpp_MirrorFlags(BtlFighter *chr);
 extern s32 BtlUtil_Clamp(s32 val, s32 lo, s32 hi);
 extern s32 BtlUtil_Max(s32 a, s32 b);
-extern BtlMgrObj *BtlChar_GetObj(BtlMgrChr *chr);
-extern BtlMgrPose *BtlChar_GetPos(BtlMgrChr *chr);
-extern s32 BtlChar_IsFrozen(BtlMgrChr *chr);
-extern s32 BtlChar_IsBodyChanged(BtlMgrChr *chr);
-extern void BtlChar_UpdateVibration(BtlMgrChr *chr);
-extern void BtlChar_StopVoiceOnFlag(BtlMgrChr *chr);
-extern void BtlChar_TickVoiceTimers(BtlMgrChr *chr);
-extern void BtlMove_UpdateAnimVoice(BtlMgrChr *chr);
-extern void BtlMove_UpdateAction(BtlMgrChr *chr);
-extern void BtlMove_ClampToStage(BtlMgrChr *chr);
-extern void BtlMove_ApplyOrbit(BtlMgrChr *chr);
-extern void BtlMove_PushOut(BtlMgrChr *chr);
-extern void BtlAct_ClearQueue(BtlMgrChr *chr);
-extern s32 BtlAct_GetCurrent(BtlMgrChr *chr);
-extern s32 BtlAct_GetCurrentClass(BtlMgrChr *chr);
+extern BtlMgrObj *BtlChar_GetObj(BtlFighter *chr);
+extern BtlFighterPose *BtlChar_GetPos(BtlFighter *chr);
+extern s32 BtlChar_IsFrozen(BtlFighter *chr);
+extern s32 BtlChar_IsBodyChanged(BtlFighter *chr);
+extern void BtlChar_UpdateVibration(BtlFighter *chr);
+extern void BtlChar_StopVoiceOnFlag(BtlFighter *chr);
+extern void BtlChar_TickVoiceTimers(BtlFighter *chr);
+extern void BtlMove_UpdateAnimVoice(BtlFighter *chr);
+extern void BtlMove_UpdateAction(BtlFighter *chr);
+extern void BtlMove_ClampToStage(BtlFighter *chr);
+extern void BtlMove_ApplyOrbit(BtlFighter *chr);
+extern void BtlMove_PushOut(BtlFighter *chr);
+extern void BtlAct_ClearQueue(BtlFighter *chr);
+extern s32 BtlAct_GetCurrent(BtlFighter *chr);
+extern s32 BtlAct_GetCurrentClass(BtlFighter *chr);
 extern s32 BtlCharApi_EnteredTechnique(s32 objId);
 extern s32 BtlCharApi_IsSkillStart(s32 objId);
 extern s32 BtlCharApi_IsChanging(s32 objId);
-extern s32 BtlAtk_GetId(BtlMgrChr *chr);
-extern s32 BtlParam_GetCharaFlags(BtlMgrChr *chr);
-extern s32 BtlParam_GetFormFlags(BtlMgrChr *chr);
-extern s32 BtlParam_GetAuraKind(BtlMgrChr *chr);
-extern s32 BtlParam_GetPoweredDashLimit(BtlMgrChr *chr);
-extern s32 BtlParam_GetPoweredVanishLimit(BtlMgrChr *chr);
+extern s32 BtlAtk_GetId(BtlFighter *chr);
+extern s32 BtlParam_GetCharaFlags(BtlFighter *chr);
+extern s32 BtlParam_GetFormFlags(BtlFighter *chr);
+extern s32 BtlParam_GetAuraKind(BtlFighter *chr);
+extern s32 BtlParam_GetPoweredDashLimit(BtlFighter *chr);
+extern s32 BtlParam_GetPoweredVanishLimit(BtlFighter *chr);
 extern void BtlObjAnim_SamplePose(BtlMgrObj *obj);
 extern void BtlObjAnim_UpdateEvents(BtlMgrObj *obj);
 extern void BtlObjBody_Warp(BtlMgrObj *obj, void *vec);
@@ -240,7 +240,7 @@ extern void BtlObj_UpdateChains(BtlMgrObj *obj);
 #define FILE_TABLE(file, word) ((u32 *)(file) + ((u32 *)(file))[word] / 4)
 
 /* Binds the fighter to its side's object and clears the state that belongs to the old object. */
-void BtlChar_BindObject(BtlMgrChr *chr) {
+void BtlChar_BindObject(BtlFighter *chr) {
     BtlMgrObj *obj;
     s32 i;
 
@@ -261,8 +261,8 @@ void BtlChar_BindObject(BtlMgrChr *chr) {
 }
 
 /* Copies one member's seven bonus levels from the battle setup. */
-void BtlChar_CopyMemberBonus(BtlMgrChr *chr, s32 idx) {
-    BtlMgrMember *dst = &chr->members[idx];
+void BtlChar_CopyMemberBonus(BtlFighter *chr, s32 idx) {
+    BtlMember *dst = &chr->members[idx];
     BattleMember *src = BattleSide_GetMember(chr->player, idx);
 
     dst->bonus[0] = src->bonus[1];
@@ -275,7 +275,7 @@ void BtlChar_CopyMemberBonus(BtlMgrChr *chr, s32 idx) {
 }
 
 /* Copies every member's bonus levels. */
-void BtlChar_CopyAllBonus(BtlMgrChr *chr) {
+void BtlChar_CopyAllBonus(BtlFighter *chr) {
     s32 i;
 
     for (i = 0; i < chr->memberCount; i++) {
@@ -284,8 +284,8 @@ void BtlChar_CopyAllBonus(BtlMgrChr *chr) {
 }
 
 /* Copies one member's four ability words from the battle setup. */
-void BtlChar_CopyMemberAbility(BtlMgrChr *chr, s32 idx) {
-    BtlMgrMember *dst = &chr->members[idx];
+void BtlChar_CopyMemberAbility(BtlFighter *chr, s32 idx) {
+    BtlMember *dst = &chr->members[idx];
     BattleMember *src = BattleSide_GetMember(chr->player, idx);
     s32 i;
 
@@ -295,7 +295,7 @@ void BtlChar_CopyMemberAbility(BtlMgrChr *chr, s32 idx) {
 }
 
 /* Copies every member's ability words. */
-void BtlChar_CopyAllAbility(BtlMgrChr *chr) {
+void BtlChar_CopyAllAbility(BtlFighter *chr) {
     s32 i;
 
     for (i = 0; i < chr->memberCount; i++) {
@@ -304,12 +304,12 @@ void BtlChar_CopyAllAbility(BtlMgrChr *chr) {
 }
 
 /* Resets one fighter from its side of the battle setup. */
-void BtlChar_Reset(BtlMgrChr *chr) {
+void BtlChar_Reset(BtlFighter *chr) {
     s32 side = chr->player;
     s32 i;
     BtlMgrObj *obj;
     BattleMember *m;
-    BtlMgrMember *mem;
+    BtlMember *mem;
     BattleResult *res;
 
     BtlChar_SetStage(chr, BTL_CHR_STAGE_RESET);
@@ -358,12 +358,12 @@ void BtlChar_Reset(BtlMgrChr *chr) {
 }
 
 /* Applies the form change of the current action once the new model is loaded. */
-void BtlChar_OnModelLoaded(BtlMgrChr *chr) {
+void BtlChar_OnModelLoaded(BtlFighter *chr) {
     BtlMgrObj *obj;
-    BtlMgrMember *m;
-    BtlMgrGauge *g;
-    BtlMgrMember *other;
-    BtlMgrGauge *og;
+    BtlMember *m;
+    BtlMemberGauge *g;
+    BtlMember *other;
+    BtlMemberGauge *og;
     f32 ratio;
     s32 i;
 
@@ -504,7 +504,7 @@ void BtlChar_OnModelLoaded(BtlMgrChr *chr) {
 }
 
 /* Clears the pose block and the per-stage state after a stage change. */
-void BtlChar_OnStageLoaded(BtlMgrChr *chr) {
+void BtlChar_OnStageLoaded(BtlFighter *chr) {
     BtlMgrObj *obj = BtlChar_GetObj(chr);
 
     memset(&chr->pose, 0, 0x2D0);
@@ -530,7 +530,7 @@ void BtlChar_OnStageLoaded(BtlMgrChr *chr) {
 }
 
 /* Puts the fighter back to the round start action (0xF9) with its timers cleared. */
-void BtlChar_ResetRound(BtlMgrChr *chr) {
+void BtlChar_ResetRound(BtlFighter *chr) {
     s32 prev;
 
     if (chr->partner.active != 0) {
@@ -558,7 +558,7 @@ void BtlChar_ResetRound(BtlMgrChr *chr) {
 }
 
 /* Resets the work area of the fighter's object. */
-void BtlChar_ResetObjWork(BtlMgrChr *chr) {
+void BtlChar_ResetObjWork(BtlFighter *chr) {
     BtlObj_InitChains(BtlChar_GetObj(chr));
 }
 
@@ -568,7 +568,7 @@ void BtlChars_UpdateFreeze(void) {
     s32 i;
     s32 max;
     u8 *bytes;
-    BtlMgrChr *chr;
+    BtlFighter *chr;
 
     max = 0;
     bytes = (u8 *)level;
@@ -632,7 +632,7 @@ void BtlChars_UpdateFreeze(void) {
 void BtlChars_UpdateObjFlag2(void) {
     s32 i;
     s32 found = -1;
-    BtlMgrChr *chr;
+    BtlFighter *chr;
 
     for (i = 0; i < BtlChar_GetCount(); i++) {
         if (BtlChar_TestFlag(BtlChar_Get(i), 0x12A)) {
@@ -696,8 +696,8 @@ void BtlChars_UpdateCollision(void) {
 }
 
 /* Raises this frame's battle events for one fighter. */
-void BtlChar_RaiseEvents(BtlMgrChr *chr) {
-    BtlMgrGauge *g = BtlMember_GetActiveGauge(chr);
+void BtlChar_RaiseEvents(BtlFighter *chr) {
+    BtlMemberGauge *g = BtlMember_GetActiveGauge(chr);
     s32 lost = g->healthMax - g->health;
     s32 tech;
 
@@ -961,7 +961,7 @@ void BtlChars_CheckRoundReset(void) {
 }
 
 /* Re-reads the bonus levels of each member whose request flag (0x103 + n) is set. */
-void BtlChar_ApplyBonusRequests(BtlMgrChr *chr) {
+void BtlChar_ApplyBonusRequests(BtlFighter *chr) {
     s32 i;
 
     for (i = 0; i < BTL_CHR_MEMBER_MAX; i++) {
@@ -973,7 +973,7 @@ void BtlChar_ApplyBonusRequests(BtlMgrChr *chr) {
 }
 
 /* Re-reads the ability words of each member whose request flag (0x108 + n) is set. */
-void BtlChar_ApplyAbilityRequests(BtlMgrChr *chr) {
+void BtlChar_ApplyAbilityRequests(BtlFighter *chr) {
     s32 i;
 
     for (i = 0; i < BTL_CHR_MEMBER_MAX; i++) {
@@ -985,7 +985,7 @@ void BtlChar_ApplyAbilityRequests(BtlMgrChr *chr) {
 }
 
 /* Phase 2 body: builds this frame's input record from the pad. */
-void BtlChar_SampleInput(BtlMgrChr *chr) {
+void BtlChar_SampleInput(BtlFighter *chr) {
     if (!BtlChar_IsFrozen(chr)) {
         BtlChar_SetStage(chr, BTL_CHR_STAGE_SAMPLE);
         BtlInput_Sample(chr);
@@ -993,7 +993,7 @@ void BtlChar_SampleInput(BtlMgrChr *chr) {
 }
 
 /* Phase 3 body: keeps last frame's values, clears the per-frame state and consumes the input record. */
-void BtlChar_BeginFrame(BtlMgrChr *chr) {
+void BtlChar_BeginFrame(BtlFighter *chr) {
     if (BtlChar_IsFrozen(chr)) {
         BtlInput_Stub(chr);
         return;
@@ -1042,7 +1042,7 @@ void BtlChar_BeginFrame(BtlMgrChr *chr) {
 }
 
 /* Phase 3 body: sets the held flag of the sequence state (1 intro, 2 ready, 3 fight, 4 after) and flag 0x135. */
-void BtlChar_UpdateSeqFlags(BtlMgrChr *chr) {
+void BtlChar_UpdateSeqFlags(BtlFighter *chr) {
     if (BtlChar_IsFrozen(chr)) {
         return;
     }
@@ -1082,7 +1082,7 @@ void BtlChar_UpdateSeqFlags(BtlMgrChr *chr) {
 }
 
 /* Phase 4 body 1: seven BtlChar_PlaceRestart.. passes, then pose -> object, object update, object -> pose. */
-void BtlChar_UpdateMotion(BtlMgrChr *chr) {
+void BtlChar_UpdateMotion(BtlFighter *chr) {
     BtlMgrObj *obj = BtlChar_GetObj(chr);
 
     if (BtlChar_IsFrozen(chr)) {
@@ -1112,7 +1112,7 @@ void BtlChar_UpdateMotion(BtlMgrChr *chr) {
 }
 
 /* Phase 4 body 2 (stage 6). */
-void BtlChar_UpdateStage6(BtlMgrChr *chr) {
+void BtlChar_UpdateStage6(BtlFighter *chr) {
     if (!BtlChar_IsFrozen(chr)) {
         BtlChar_SetStage(chr, BTL_CHR_STAGE_6);
         BtlOpp_MirrorFlags(chr);
@@ -1121,7 +1121,7 @@ void BtlChar_UpdateStage6(BtlMgrChr *chr) {
 }
 
 /* Phase 4 body 3 (stage 7). */
-void BtlChar_UpdateStage7(BtlMgrChr *chr) {
+void BtlChar_UpdateStage7(BtlFighter *chr) {
     BtlMgrObj *obj = BtlChar_GetObj(chr);
 
     if (!BtlChar_IsFrozen(chr)) {
@@ -1135,7 +1135,7 @@ void BtlChar_UpdateStage7(BtlMgrChr *chr) {
 }
 
 /* Phase 4 body 4 (stage 8). */
-void BtlChar_UpdateStage8(BtlMgrChr *chr) {
+void BtlChar_UpdateStage8(BtlFighter *chr) {
     BtlMgrObj *obj;
     s32 keepSphere = 1;
     s32 started;
@@ -1165,7 +1165,7 @@ void BtlChar_UpdateStage8(BtlMgrChr *chr) {
 }
 
 /* Phase 4 body 5 (stage 9). */
-void BtlChar_UpdateStage9(BtlMgrChr *chr) {
+void BtlChar_UpdateStage9(BtlFighter *chr) {
     BtlMgrObj *obj = BtlChar_GetObj(chr);
 
     if (!BtlChar_IsFrozen(chr)) {
@@ -1177,7 +1177,7 @@ void BtlChar_UpdateStage9(BtlMgrChr *chr) {
 }
 
 /* Phase 4 body 6: the fighter's own camera, then the object's final placement. */
-void BtlChar_UpdateCamera(BtlMgrChr *chr) {
+void BtlChar_UpdateCamera(BtlFighter *chr) {
     BtlMgrObj *obj = BtlChar_GetObj(chr);
 
     if (!BtlChar_IsFrozen(chr)) {
@@ -1194,7 +1194,7 @@ void BtlChar_UpdateCamera(BtlMgrChr *chr) {
 }
 
 /* Phase 4 body 7 (stage 10). */
-void BtlChar_UpdateStage10(BtlMgrChr *chr) {
+void BtlChar_UpdateStage10(BtlFighter *chr) {
     if (!BtlChar_IsFrozen(chr)) {
         BtlChar_SetStage(chr, BTL_CHR_STAGE_10);
         BtlPartner_UpdateEvents(chr);
@@ -1203,8 +1203,8 @@ void BtlChar_UpdateStage10(BtlMgrChr *chr) {
 }
 
 /* Phase 5 body: after the effect scene: low-health state and the vector pushed onto the opponent. */
-void BtlChar_PostScene(BtlMgrChr *chr) {
-    BtlMgrChr *opp;
+void BtlChar_PostScene(BtlFighter *chr) {
+    BtlFighter *opp;
 
     if (BtlChar_IsFrozen(chr)) {
         return;
@@ -1236,7 +1236,7 @@ void BtlChar_PostScene(BtlMgrChr *chr) {
 }
 
 /* Phase 6 body 1: late per-fighter updates and the status-table penalty while the active member's body is changed (gauge.bodyChanged). */
-void BtlChar_UpdateLate(BtlMgrChr *chr) {
+void BtlChar_UpdateLate(BtlFighter *chr) {
     BtlMgrObj *obj = BtlChar_GetObj(chr);
 
     if (BtlChar_IsFrozen(chr)) {
@@ -1259,8 +1259,8 @@ void BtlChar_UpdateLate(BtlMgrChr *chr) {
 }
 
 /* Phase 6 body 2 (stages 11, 12): final pose vectors and the frame's battle events. */
-void BtlChar_EndFrame(BtlMgrChr *chr) {
-    BtlMgrPose *pose = BtlChar_GetPos(chr);
+void BtlChar_EndFrame(BtlFighter *chr) {
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
 
     if (BtlChar_IsFrozen(chr)) {
         return;
@@ -1311,7 +1311,7 @@ void BtlChar_FreeAll(void) {
 /* Zeroes the manager's state and every fighter, then sets each fighter up from the battle setup. */
 void BtlChar_ResetAll(void) {
     s32 i;
-    BtlMgrChr *chr;
+    BtlFighter *chr;
     s32 pad;
 
     for (i = 0; i < BtlChar_GetCount(); i++) {
@@ -1341,7 +1341,7 @@ void BtlChar_ResetAll(void) {
 
 /* Loader callback: a side's new character model is ready. */
 void BtlChars_OnModelLoaded(s32 side) {
-    BtlMgrChr *chr = BtlChar_Get(side);
+    BtlFighter *chr = BtlChar_Get(side);
 
     if (chr != NULL) {
         BtlChar_OnModelLoaded(chr);

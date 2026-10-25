@@ -25,24 +25,24 @@ extern f32 BtlUtil_WrapAngle(f32 a);
 extern s32 BtlUtil_Clamp(s32 v, s32 lo, s32 hi);
 extern s32 BtlUtil_Max(s32 a, s32 b);
 extern s32 BtlChar_GetCount(void);
-extern BtlFlagChr *BtlChar_Get(s32 i);
-extern void *BtlChar_GetObj(BtlFlagChr *chr);
-extern s32 BtlChar_IsBodyChanged(BtlFlagChr *chr);
+extern BtlFighter *BtlChar_Get(s32 i);
+extern void *BtlChar_GetObj(BtlFighter *chr);
+extern s32 BtlChar_IsBodyChanged(BtlFighter *chr);
 extern void BtlObj_SetSubState(void *obj, s32 state, s32 arg);
 extern s32 Battle_IsSplitScreen(void);
 extern s32 Battle_GetMode(void);
 extern s32 BtlScript_IsTextShown(void);
-extern s32 BtlAnim_TestAttr(BtlFlagChr *chr, u64 mask);       /* event bits of the object's animation */
-extern s32 BtlAct_GetCurrentClass(BtlFlagChr *chr);                 /* technique slot of the current action, or -1 */
+extern s32 BtlAnim_TestAttr(BtlFighter *chr, u64 mask);       /* event bits of the object's animation */
+extern s32 BtlAct_GetCurrentClass(BtlFighter *chr);                 /* technique slot of the current action, or -1 */
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out); /* world position of a model node */
-extern s32 BtlSuper_GetFlags(BtlFlagChr *chr, s32 slot);       /* attribute word of technique `slot` */
+extern s32 BtlSuper_GetFlags(BtlFighter *chr, s32 slot);       /* attribute word of technique `slot` */
 
 extern BtlFlagRoster *gBtlChars;
 /* Sample bank of request kinds 0..3; none for the rest. Defined here: this object's first rodata. */
 const s32 gBtlSndBankMask[8] = { 4, 8, 0x10, 0x20, -1, -1, -1, -1 };
 
 /* The fighter's set of one-shot sound slots. */
-BtlFlagSoundSet *BtlCharSnd_GetSet(BtlFlagChr *chr) {
+BtlFlagSoundSet *BtlCharSnd_GetSet(BtlFighter *chr) {
     if (gBtlChars != NULL) {
         return &gBtlChars->sounds[chr->player];
     }
@@ -50,7 +50,7 @@ BtlFlagSoundSet *BtlCharSnd_GetSet(BtlFlagChr *chr) {
 }
 
 /* The fighter's set of looping sound slots. */
-BtlFlagSoundSet *BtlCharSnd_GetLoopSet(BtlFlagChr *chr) {
+BtlFlagSoundSet *BtlCharSnd_GetLoopSet(BtlFighter *chr) {
     if (gBtlChars != NULL) {
         return &gBtlChars->loopSounds[chr->player];
     }
@@ -59,7 +59,7 @@ BtlFlagSoundSet *BtlCharSnd_GetLoopSet(BtlFlagChr *chr) {
 
 /* 1 when the fighter already has this looping sound playing. */
 s32 BtlCharSnd_IsLoopPlaying(s32 player, s32 kind, s32 id) {
-    BtlFlagChr *chr = BtlChar_Get(player);
+    BtlFighter *chr = BtlChar_Get(player);
     BtlFlagSound *slot = BtlCharSnd_GetLoopSet(chr)->slot;
     s32 i;
 
@@ -128,7 +128,7 @@ void BtlCharSnd_StoreHandle(BtlFlagSoundSet *set, s32 handle, s32 player, s32 ki
 }
 
 /* Stops the fighter's looping sounds that were not requested this frame. */
-void BtlCharSnd_StopUnrequestedLoops(BtlFlagChr *chr) {
+void BtlCharSnd_StopUnrequestedLoops(BtlFighter *chr) {
     BtlFlagSound *slot = BtlCharSnd_GetLoopSet(chr)->slot;
     s32 i;
 
@@ -192,7 +192,7 @@ void BtlCharSnd_Init(void) {
         p->owner = -1;
     }
     for (i = 0; i < BtlChar_GetCount(); i++) {
-        BtlFlagChr *chr = BtlChar_Get(i);
+        BtlFighter *chr = BtlChar_Get(i);
         BtlFlagSoundSet *set = BtlCharSnd_GetSet(chr);
         BtlFlagSoundSet *loop = BtlCharSnd_GetLoopSet(chr);
 
@@ -228,7 +228,7 @@ void BtlCharSnd_PlayRequests(void) {
         s32 vol;
         s32 pan;
         s32 owner;
-        BtlFlagChr *chr;
+        BtlFighter *chr;
         s32 chara;
         s32 handle;
 
@@ -280,7 +280,7 @@ void BtlCharSnd_RequestAt(Vec4 *pos, s32 kind, s32 id, f32 near, f32 far) {
 }
 
 /* Queues a sound of bank 4 (kind 0) at the fighter's node 3. */
-void BtlCharSnd_PlayCommon(BtlFlagChr *chr, s32 id) {
+void BtlCharSnd_PlayCommon(BtlFighter *chr, s32 id) {
     Vec4 pos;
 
     BtlCharApi_GetNodePos(chr->objId, 3, &pos);
@@ -288,7 +288,7 @@ void BtlCharSnd_PlayCommon(BtlFlagChr *chr, s32 id) {
 }
 
 /* The same, heard at full volume anywhere (near = far = 100000). */
-void BtlCharSnd_PlayCommonFar(BtlFlagChr *chr, s32 id) {
+void BtlCharSnd_PlayCommonFar(BtlFighter *chr, s32 id) {
     Vec4 pos;
 
     BtlCharApi_GetNodePos(chr->objId, 3, &pos);
@@ -296,7 +296,7 @@ void BtlCharSnd_PlayCommonFar(BtlFlagChr *chr, s32 id) {
 }
 
 /* Queues a sound of bank 8 (kind 1) at the fighter's node 3. */
-void BtlCharSnd_PlayBank8(BtlFlagChr *chr, s32 id) {
+void BtlCharSnd_PlayBank8(BtlFighter *chr, s32 id) {
     Vec4 pos;
 
     BtlCharApi_GetNodePos(chr->objId, 3, &pos);
@@ -304,7 +304,7 @@ void BtlCharSnd_PlayBank8(BtlFlagChr *chr, s32 id) {
 }
 
 /* Queues a sound of the fighter's own bank (kind 2 / 3: banks 0x10 / 0x20) at its node 0x30. */
-void BtlCharSnd_PlayOwn(BtlFlagChr *chr, s32 id) {
+void BtlCharSnd_PlayOwn(BtlFighter *chr, s32 id) {
     Vec4 pos;
 
     BtlCharApi_GetNodePos(chr->objId, 0x30, &pos);
@@ -312,7 +312,7 @@ void BtlCharSnd_PlayOwn(BtlFlagChr *chr, s32 id) {
 }
 
 /* Queues a streamed sound (kind 4) at the fighter's node 3. */
-void BtlCharSnd_PlayStream(BtlFlagChr *chr, s32 id) {
+void BtlCharSnd_PlayStream(BtlFighter *chr, s32 id) {
     Vec4 pos;
 
     BtlCharApi_GetNodePos(chr->objId, 3, &pos);
@@ -320,7 +320,7 @@ void BtlCharSnd_PlayStream(BtlFlagChr *chr, s32 id) {
 }
 
 /* Queues a streamed voice line of the fighter's character (kind 5 / 6) at its node 0x30. */
-void BtlCharSnd_PlayVoice(BtlFlagChr *chr, s32 line) {
+void BtlCharSnd_PlayVoice(BtlFighter *chr, s32 line) {
     Vec4 pos;
 
     BtlCharApi_GetNodePos(chr->objId, 0x30, &pos);
@@ -328,7 +328,7 @@ void BtlCharSnd_PlayVoice(BtlFlagChr *chr, s32 line) {
 }
 
 /* Plays the sounds and voice lines of the technique in use when its animation raises the matching event bits. */
-void BtlCharSnd_PlayTechSounds(BtlFlagChr *chr) {
+void BtlCharSnd_PlayTechSounds(BtlFighter *chr) {
     s32 line = -1;
     s32 se = -1;
     void *obj = BtlChar_GetObj(chr);
@@ -390,7 +390,7 @@ void BtlCharSnd_PlayTechSounds(BtlFlagChr *chr) {
 }
 
 /* Cuts short the fighter's one-shot sound (kind, id) unless it was requested again this frame. */
-void BtlCharSnd_Stop(BtlFlagChr *chr, s32 kind, s32 id) {
+void BtlCharSnd_Stop(BtlFighter *chr, s32 kind, s32 id) {
     BtlFlagSound *slot = BtlCharSnd_GetSet(chr)->slot;
     s32 i;
 
@@ -404,12 +404,12 @@ void BtlCharSnd_Stop(BtlFlagChr *chr, s32 kind, s32 id) {
 }
 
 /* Cuts short a bank 4 sound of the fighter. */
-void BtlCharSnd_StopCommon(BtlFlagChr *chr, s32 id) {
+void BtlCharSnd_StopCommon(BtlFighter *chr, s32 id) {
     BtlCharSnd_Stop(chr, 0, id);
 }
 
 /* Cuts short a sound of the fighter's own bank. */
-void BtlCharSnd_StopOwn(BtlFlagChr *chr, s32 id) {
+void BtlCharSnd_StopOwn(BtlFighter *chr, s32 id) {
     BtlCharSnd_Stop(chr, chr->player + 2, id);
 }
 

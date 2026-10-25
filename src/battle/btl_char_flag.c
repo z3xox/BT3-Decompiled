@@ -6,14 +6,14 @@
  * Fighter flags: 0x1DA8B8..0x1DB048. The layout and the stage mechanism are described in the header.
  */
 
-extern BtlFlagChr *BtlChar_Get(s32 i);
-extern f32 BtlChar_GetSpacing(BtlFlagChr *chr, s32 mode);          /* lock-on range */
+extern BtlFighter *BtlChar_Get(s32 i);
+extern f32 BtlChar_GetSpacing(BtlFighter *chr, s32 mode);          /* lock-on range */
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out);   /* world position of a model node */
 extern void ColSeg_Set(void *seg, Vec4 *a, Vec4 *b);      /* builds a segment from two points */
 extern s32 StgCol_TraceSegment(void *seg);                         /* segment against the stage */
 
 /* Promotes every flag last written in the given stage: previous := current, plain flag cleared. */
-void BtlChar_PromoteFlags(BtlFlagChr *chr, u8 stage) {
+void BtlChar_PromoteFlags(BtlFighter *chr, u8 stage) {
     s32 n;
 
     for (n = 0; n < BTL_FLAG_COUNT; n++) {
@@ -31,7 +31,7 @@ void BtlChar_PromoteFlags(BtlFlagChr *chr, u8 stage) {
 }
 
 /* Enters a stage of the frame: promotes the flags written in that stage a frame ago (and stage 1's when the frame wraps). */
-void BtlChar_SetStage(BtlFlagChr *chr, u8 stage) {
+void BtlChar_SetStage(BtlFighter *chr, u8 stage) {
     if (stage < chr->stage) {
         BtlChar_PromoteFlags(chr, 1);
     }
@@ -40,12 +40,12 @@ void BtlChar_SetStage(BtlFlagChr *chr, u8 stage) {
 }
 
 /* Current stage of the frame. */
-u32 BtlChar_GetStage(BtlFlagChr *chr) {
+u32 BtlChar_GetStage(BtlFighter *chr) {
     return chr->stage;
 }
 
 /* Raises a held flag: it stays up until BtlChar_ClearFlag. */
-void BtlChar_SetHeldFlag(BtlFlagChr *chr, u32 n) {
+void BtlChar_SetHeldFlag(BtlFighter *chr, u32 n) {
     u32 i = n >> 3;
     u8 m = 1 << (n & 7);
 
@@ -58,7 +58,7 @@ void BtlChar_SetHeldFlag(BtlFlagChr *chr, u32 n) {
 }
 
 /* Drops a flag of either kind. */
-void BtlChar_ClearFlag(BtlFlagChr *chr, u32 n) {
+void BtlChar_ClearFlag(BtlFighter *chr, u32 n) {
     u32 i = n >> 3;
     u8 m = 1 << (n & 7);
 
@@ -72,7 +72,7 @@ void BtlChar_ClearFlag(BtlFlagChr *chr, u32 n) {
 }
 
 /* Drops flags first..last inclusive (in either order). */
-void BtlChar_ClearFlagRange(BtlFlagChr *chr, u32 first, u32 last) {
+void BtlChar_ClearFlagRange(BtlFighter *chr, u32 first, u32 last) {
     u32 n;
 
     if (last < first) {
@@ -86,7 +86,7 @@ void BtlChar_ClearFlagRange(BtlFlagChr *chr, u32 first, u32 last) {
 }
 
 /* Inverts a held flag. */
-void BtlChar_ToggleHeldFlag(BtlFlagChr *chr, u32 n) {
+void BtlChar_ToggleHeldFlag(BtlFighter *chr, u32 n) {
     u32 i = n >> 3;
     u8 m = 1 << (n & 7);
 
@@ -99,7 +99,7 @@ void BtlChar_ToggleHeldFlag(BtlFlagChr *chr, u32 n) {
 }
 
 /* Raises a plain flag: it drops by itself when the stage it was raised in comes round again. */
-void BtlChar_SetFlag(BtlFlagChr *chr, u32 n) {
+void BtlChar_SetFlag(BtlFighter *chr, u32 n) {
     u32 i = n >> 3;
     u8 m = 1 << (n & 7);
 
@@ -113,7 +113,7 @@ void BtlChar_SetFlag(BtlFlagChr *chr, u32 n) {
 }
 
 /* 1 when the flag is up (held or plain). */
-s32 BtlChar_TestFlag(BtlFlagChr *chr, u32 n) {
+s32 BtlChar_TestFlag(BtlFighter *chr, u32 n) {
     u32 i = n >> 3;
     u8 m = 1 << (n & 7);
     u8 cur = chr->held[i] | chr->pulse[i];
@@ -122,7 +122,7 @@ s32 BtlChar_TestFlag(BtlFlagChr *chr, u32 n) {
 }
 
 /* 1 when the flag was up a frame ago. */
-s32 BtlChar_TestPrevFlag(BtlFlagChr *chr, u32 n) {
+s32 BtlChar_TestPrevFlag(BtlFighter *chr, u32 n) {
     u32 i = n >> 3;
     u8 m = 1 << (n & 7);
     u8 prev = chr->prevHeld[i] | chr->prevPulse[i];
@@ -131,7 +131,7 @@ s32 BtlChar_TestPrevFlag(BtlFlagChr *chr, u32 n) {
 }
 
 /* 1 when the flag is up and was not a frame ago. */
-s32 BtlChar_IsFlagRaised(BtlFlagChr *chr, u32 n) {
+s32 BtlChar_IsFlagRaised(BtlFighter *chr, u32 n) {
     u32 i = n >> 3;
     u8 m = 1 << (n & 7);
 
@@ -139,7 +139,7 @@ s32 BtlChar_IsFlagRaised(BtlFlagChr *chr, u32 n) {
 }
 
 /* 1 when the flag was up a frame ago and is not now. */
-s32 BtlChar_IsFlagDropped(BtlFlagChr *chr, u32 n) {
+s32 BtlChar_IsFlagDropped(BtlFighter *chr, u32 n) {
     u32 i = n >> 3;
     u8 m = 1 << (n & 7);
 
@@ -150,7 +150,7 @@ s32 BtlChar_IsFlagDropped(BtlFlagChr *chr, u32 n) {
 }
 
 /* Lock-on: drops flag 5 on flags 0x93 / 0xB2, and raises 0x13 and 5 when the opponent is within range. */
-void BtlChar_UpdateLockOn(BtlFlagChr *chr) {
+void BtlChar_UpdateLockOn(BtlFighter *chr) {
     f32 range;
 
     if (BtlChar_TestFlag(chr, 0x93)) {
@@ -175,8 +175,8 @@ void BtlChars_UpdateSightFlag(void) {
     u8 seg[0x20];
     Vec4 a;
     Vec4 b;
-    BtlFlagChr *chr0 = BtlChar_Get(0);
-    BtlFlagChr *chr1 = BtlChar_Get(1);
+    BtlFighter *chr0 = BtlChar_Get(0);
+    BtlFighter *chr1 = BtlChar_Get(1);
 
     BtlChar_ClearFlag(chr0, 0xBA);
     BtlChar_ClearFlag(chr1, 0xBA);
@@ -190,24 +190,24 @@ void BtlChars_UpdateSightFlag(void) {
 }
 
 /* Sets bit n of the fighter's set-once bits. */
-void BtlChar_SetOnceBit(BtlFlagChr *chr, s32 n) {
+void BtlChar_SetOnceBit(BtlFighter *chr, s32 n) {
     chr->bits.once[n >> 3] |= 1 << (n & 7);
 }
 
 /* 1 when bit n of the set-once bits is set. */
-s32 BtlChar_TestOnceBit(BtlFlagChr *chr, s32 n) {
+s32 BtlChar_TestOnceBit(BtlFighter *chr, s32 n) {
     u8 m = 1 << (n & 7);
 
     return (chr->bits.once[n >> 3] & m) != 0;
 }
 
 /* Adds bits to the per-frame bit set. */
-void BtlChar_SetFrameBits(BtlFlagChr *chr, u64 bits) {
+void BtlChar_SetFrameBits(BtlFighter *chr, u64 bits) {
     chr->bits.frame |= bits;
 }
 
 /* The first clash won in a battle (by either side): set-once bit 0, flag 0xE3 and battle event 0x3C for this fighter. */
-void BtlChar_RaiseFirstClash(BtlFlagChr *chr) {
+void BtlChar_RaiseFirstClash(BtlFighter *chr) {
     if (!BtlChar_TestOnceBit(BtlChar_Get(0), 0) && !BtlChar_TestOnceBit(BtlChar_Get(1), 0)) {
         BtlChar_SetOnceBit(chr, 0);
         BtlChar_SetFlag(chr, 0xE3);

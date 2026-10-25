@@ -13,7 +13,8 @@
  *   src/battle/btl_change.c  0x1D60A0..0x1D6438  character change request queue, the "time stopped" word
  *   src/battle/btl_head_tracking.c  0x1D6438..0x1D70E8  head tracking
  *   src/battle/btl_char_pose.c  0x1D70E8..0x1D8330  pose <-> object, placement, hold attachment, snapshots
- * The structures are partial views local to this module (BtlCtl*); the fighter is 0x1600 bytes.
+ * The structures are partial views local to this module (BtlCtl*); the fighter is BtlFighter
+ * (battle/btl_fighter.h).
  */
 
 #define BTLC_DIR_ANY (BTLC_DIR_LEFT | BTLC_DIR_RIGHT | BTLC_DIR_UP | BTLC_DIR_DOWN) /* 0x3C000000 */
@@ -89,9 +90,6 @@ void BtlChange_SetDone(s32 player);
 
 /* ---- Pose, placement, snapshots ---- */
 
-/* The pose block at fighter + 0x10 (BtlChar_GetPos), 0xF0 bytes. Offsets in brackets are fighter offsets. */
-typedef BtlFighterPose BtlCtlPose;
-
 /* A model node as returned by BtlObj_GetNode(obj, index). */
 typedef struct BtlCtlNode {
     /* 0x00 */ s32 link;
@@ -140,12 +138,6 @@ typedef struct BtlCtlObj {
 
 #define BTL_SNAP_LAST 6 /* slot written by every snapshot */
 
-/* Head tracking state (fighter + 0x15A0). */
-typedef BtlFighterLook BtlCtlLook;
-
-/* Partial view of a fighter (0x1600 bytes): what the pose / placement / head tracking code touches. */
-typedef BtlFighter BtlCtlChr;
-
 /* A stage path as returned by BtlStage_GetPath. */
 typedef struct BtlCtlPathPoint {
     /* 0x00 */ f32 x, y, z;
@@ -158,41 +150,41 @@ typedef struct BtlCtlPath {
     /* 0x8 */ s32 first;
 } BtlCtlPath;
 
-void BtlChar_ResetLook(BtlCtlChr *chr);
-void BtlChar_UpdateLookOffset(BtlCtlChr *chr);
-void BtlChar_SetLookEnabled(BtlCtlChr *chr, s32 enabled);
-void BtlChar_UpdateLook(BtlCtlChr *chr);
-void BtlChar_UpdateLookAlt(BtlCtlChr *chr);
-s32 BtlChar_UpdateHead(BtlCtlChr *chr);
+void BtlChar_ResetLook(BtlFighter *chr);
+void BtlChar_UpdateLookOffset(BtlFighter *chr);
+void BtlChar_SetLookEnabled(BtlFighter *chr, s32 enabled);
+void BtlChar_UpdateLook(BtlFighter *chr);
+void BtlChar_UpdateLookAlt(BtlFighter *chr);
+s32 BtlChar_UpdateHead(BtlFighter *chr);
 
-void BtlChar_ObjToPose(BtlCtlChr *chr);
-void BtlChar_PoseToObj(BtlCtlChr *chr, s32 keepRoot);
-void BtlChar_ApplyRootYaw(BtlCtlChr *chr);
-void BtlChar_UpdateLean(BtlCtlChr *chr);
-void BtlChar_Place(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, s32 area);
-void BtlChar_PlaceAtStart(BtlCtlChr *chr);
-void BtlChar_PlaceRestart(BtlCtlChr *chr);
-void BtlChar_PlaceCenter(BtlCtlChr *chr);
-void BtlChar_PlaceRelative(BtlCtlChr *chr);
-void BtlChar_PlaceOnPath(BtlCtlChr *chr);
-void BtlChar_PlaceCenterHigh(BtlCtlChr *chr);
-s32 BtlChar_PlaceSaved(BtlCtlChr *chr);
-void BtlChar_PlaceWarp(BtlCtlChr *chr);
-f32 BtlChar_GetSpacing(BtlCtlChr *chr, s32 mode);
+void BtlChar_ObjToPose(BtlFighter *chr);
+void BtlChar_PoseToObj(BtlFighter *chr, s32 keepRoot);
+void BtlChar_ApplyRootYaw(BtlFighter *chr);
+void BtlChar_UpdateLean(BtlFighter *chr);
+void BtlChar_Place(BtlFighter *chr, Vec4 *pos, Vec4 *rot, s32 area);
+void BtlChar_PlaceAtStart(BtlFighter *chr);
+void BtlChar_PlaceRestart(BtlFighter *chr);
+void BtlChar_PlaceCenter(BtlFighter *chr);
+void BtlChar_PlaceRelative(BtlFighter *chr);
+void BtlChar_PlaceOnPath(BtlFighter *chr);
+void BtlChar_PlaceCenterHigh(BtlFighter *chr);
+s32 BtlChar_PlaceSaved(BtlFighter *chr);
+void BtlChar_PlaceWarp(BtlFighter *chr);
+f32 BtlChar_GetSpacing(BtlFighter *chr, s32 mode);
 void BtlChars_UpdateHold(void);
-void BtlChar_SavePlacement(BtlCtlChr *chr);
-void BtlChar_SetSavedPlacement(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, Vec4 *bodyWarpPos, s32 flagF, s32 flagE);
-void BtlChar_RequestBodyWarp(BtlCtlChr *chr, Vec4 *pos);
-void BtlChar_ResetBodyWarp(BtlCtlChr *chr);
-void BtlChar_RequestPlaceRelative(BtlCtlChr *chr, s32 slot, s32 n, s32 self);
-void BtlChar_RequestPlaceOnPath(BtlCtlChr *chr);
-void BtlChar_ClearSnapshots(BtlCtlChr *chr);
-void BtlChar_Snapshot(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, s32 n);
+void BtlChar_SavePlacement(BtlFighter *chr);
+void BtlChar_SetSavedPlacement(BtlFighter *chr, Vec4 *pos, Vec4 *rot, Vec4 *bodyWarpPos, s32 flagF, s32 flagE);
+void BtlChar_RequestBodyWarp(BtlFighter *chr, Vec4 *pos);
+void BtlChar_ResetBodyWarp(BtlFighter *chr);
+void BtlChar_RequestPlaceRelative(BtlFighter *chr, s32 slot, s32 n, s32 self);
+void BtlChar_RequestPlaceOnPath(BtlFighter *chr);
+void BtlChar_ClearSnapshots(BtlFighter *chr);
+void BtlChar_Snapshot(BtlFighter *chr, Vec4 *pos, Vec4 *rot, s32 n);
 void BtlChars_Snapshot(s32 n);
-void BtlChar_GetSnapPos(BtlCtlChr *chr, Vec4 *out, s32 n);
-void BtlChar_GetSnapRot(BtlCtlChr *chr, Vec4 *out, s32 n);
-void BtlChar_GetSnapDelta(BtlCtlChr *chr, Vec4 *out, s32 from, s32 to);
-void BtlChar_GetMoveSince(BtlCtlChr *chr, Vec4 *out, s32 n);
+void BtlChar_GetSnapPos(BtlFighter *chr, Vec4 *out, s32 n);
+void BtlChar_GetSnapRot(BtlFighter *chr, Vec4 *out, s32 n);
+void BtlChar_GetSnapDelta(BtlFighter *chr, Vec4 *out, s32 from, s32 to);
+void BtlChar_GetMoveSince(BtlFighter *chr, Vec4 *out, s32 n);
 
 /* ---- Action input queries ---- */
 
@@ -258,11 +250,11 @@ void BtlChar_GetMoveSince(BtlCtlChr *chr, Vec4 *out, s32 n);
 #define BTL_ACTION_INPUT_MAX 114
 
 
-s32 BtlInput_TestAction(BtlInputChr *chr, s32 id, s32 want);
-f32 BtlInput_GetStickX(BtlInputChr *chr);
-f32 BtlInput_GetStickY(BtlInputChr *chr);
-f32 BtlInput_GetStickLength(BtlInputChr *chr);
-f32 BtlInput_GetStickAngle(BtlInputChr *chr);
-f32 BtlInput_GetStickTurnFromFacing(BtlInputChr *chr);
+s32 BtlInput_TestAction(BtlFighter *chr, s32 id, s32 want);
+f32 BtlInput_GetStickX(BtlFighter *chr);
+f32 BtlInput_GetStickY(BtlFighter *chr);
+f32 BtlInput_GetStickLength(BtlFighter *chr);
+f32 BtlInput_GetStickAngle(BtlFighter *chr);
+f32 BtlInput_GetStickTurnFromFacing(BtlFighter *chr);
 
 #endif

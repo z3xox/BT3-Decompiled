@@ -17,14 +17,14 @@
  * the frame before and after the last advance.
  */
 
-extern BtlStatObj *BtlChar_GetObj(BtlStatChr *chr);
-extern s32 BtlChar_TestFlag(BtlStatChr *chr, s32 flag);
-extern void BtlChar_SetFlag(BtlStatChr *chr, s32 flag);
-extern void BtlChar_SetHeldFlag(BtlStatChr *chr, s32 flag);
-extern void BtlChar_ClearFlag(BtlStatChr *chr, s32 flag);
-extern s32 BtlChar_TestPrevFlag(BtlStatChr *chr, s32 flag);              /* the flag in the second pair of flag arrays */
-extern void BtlChar_ClearFlagRange(BtlStatChr *chr, s32 first, s32 last);  /* BtlChar_ClearFlag for first..last */
-extern s32 BtlOpp_GetObj(BtlStatChr *chr);                        /* the opponent's battle object (inferred) */
+extern BtlStatObj *BtlChar_GetObj(BtlFighter *chr);
+extern s32 BtlChar_TestFlag(BtlFighter *chr, s32 flag);
+extern void BtlChar_SetFlag(BtlFighter *chr, s32 flag);
+extern void BtlChar_SetHeldFlag(BtlFighter *chr, s32 flag);
+extern void BtlChar_ClearFlag(BtlFighter *chr, s32 flag);
+extern s32 BtlChar_TestPrevFlag(BtlFighter *chr, s32 flag);              /* the flag in the second pair of flag arrays */
+extern void BtlChar_ClearFlagRange(BtlFighter *chr, s32 first, s32 last);  /* BtlChar_ClearFlag for first..last */
+extern s32 BtlOpp_GetObj(BtlFighter *chr);                        /* the opponent's battle object (inferred) */
 extern s32 BtlCharApi_IsInRushSequence(s32 objId);
 extern void BtlObj_SetSubState(BtlStatObj *obj, s32 state, s32 arg);
 extern void BtlObjAnim_StartBlend(BtlStatObj *obj, f32 blend);            /* starts a blend of `blend` seconds */
@@ -93,7 +93,7 @@ void BtlAnim_HideModelNode10(void *handle, s32 model) {
 }
 
 /* Starts an animation on the main layer now, raising flag 0x2B; blend > 0 blends into it over that many seconds. */
-void BtlAnim_Play(BtlStatChr *chr, s32 anim, f32 blend) {
+void BtlAnim_Play(BtlFighter *chr, s32 anim, f32 blend) {
     BtlAnimIds *ids = &chr->anim;
     BtlStatObj *obj = BtlChar_GetObj(chr);
     s32 n;
@@ -135,7 +135,7 @@ void BtlAnim_Play(BtlStatChr *chr, s32 anim, f32 blend) {
 }
 
 /* Starts an animation on the main layer without resetting the object's state, raising flag 0x2C. */
-void BtlAnim_PlayKeep(BtlStatChr *chr, s32 anim, f32 blend) {
+void BtlAnim_PlayKeep(BtlFighter *chr, s32 anim, f32 blend) {
     BtlStatObj *obj = BtlChar_GetObj(chr);
     BtlAnimIds *ids = &chr->anim;
 
@@ -153,7 +153,7 @@ void BtlAnim_PlayKeep(BtlStatChr *chr, s32 anim, f32 blend) {
 }
 
 /* Makes the second layer's animation the main one, raising flag 0x2B. */
-void BtlAnim_SubToMain(BtlStatChr *chr) {
+void BtlAnim_SubToMain(BtlFighter *chr) {
     BtlStatObj *obj = BtlChar_GetObj(chr);
     BtlAnimIds *ids = &chr->anim;
 
@@ -167,51 +167,51 @@ void BtlAnim_SubToMain(BtlStatChr *chr) {
 }
 
 /* Requests an animation: BtlAnim_FlushRequest starts it with BtlAnim_Play. */
-void BtlAnim_Request(BtlStatChr *chr, s32 anim, f32 blend) {
+void BtlAnim_Request(BtlFighter *chr, s32 anim, f32 blend) {
     BtlChar_SetHeldFlag(chr, BTL_ANIM_FLAG_REQ);
     chr->anim.next = anim;
     BtlAnim_SetBlend(chr, blend);
 }
 
 /* Requests an animation: BtlAnim_FlushRequestKeep starts it with BtlAnim_PlayKeep. */
-void BtlAnim_RequestKeep(BtlStatChr *chr, s32 anim, f32 blend) {
+void BtlAnim_RequestKeep(BtlFighter *chr, s32 anim, f32 blend) {
     BtlChar_SetHeldFlag(chr, BTL_ANIM_FLAG_REQ_KEEP);
     chr->anim.next = anim;
     BtlAnim_SetBlend(chr, blend);
 }
 
 /* Requests BtlAnim_SubToMain. */
-void BtlAnim_RequestSubToMain(BtlStatChr *chr) {
+void BtlAnim_RequestSubToMain(BtlFighter *chr) {
     BtlChar_SetHeldFlag(chr, BTL_ANIM_FLAG_REQ_SUB);
 }
 
 /* Stores the blend time for the next animation start and holds flag 0x32. */
-void BtlAnim_SetBlend(BtlStatChr *chr, f32 blend) {
+void BtlAnim_SetBlend(BtlFighter *chr, f32 blend) {
     BtlChar_SetHeldFlag(chr, BTL_ANIM_FLAG_BLEND_REQ);
     chr->blendTime = blend;
 }
 
 /* The same with a blend time of 0. No caller. */
-void BtlAnim_SetNoBlend(BtlStatChr *chr) {
+void BtlAnim_SetNoBlend(BtlFighter *chr) {
     BtlAnim_SetBlend(chr, 0.0f);
 }
 
 /* Starts the animation requested with BtlAnim_Request. */
-void BtlAnim_FlushRequest(BtlStatChr *chr) {
+void BtlAnim_FlushRequest(BtlFighter *chr) {
     if (BtlChar_TestFlag(chr, BTL_ANIM_FLAG_REQ)) {
         BtlAnim_Play(chr, chr->anim.next, chr->blendTime);
     }
 }
 
 /* Starts the animation requested with BtlAnim_RequestKeep. */
-void BtlAnim_FlushRequestKeep(BtlStatChr *chr) {
+void BtlAnim_FlushRequestKeep(BtlFighter *chr) {
     if (BtlChar_TestFlag(chr, BTL_ANIM_FLAG_REQ_KEEP)) {
         BtlAnim_PlayKeep(chr, chr->anim.next, chr->blendTime);
     }
 }
 
 /* Carries out BtlAnim_RequestSubToMain when the second layer has an animation. */
-void BtlAnim_FlushSubToMain(BtlStatChr *chr) {
+void BtlAnim_FlushSubToMain(BtlFighter *chr) {
     if (BtlChar_TestFlag(chr, BTL_ANIM_FLAG_REQ_SUB)) {
         if (chr->anim.sub >= 0) {
             BtlAnim_SubToMain(chr);
@@ -220,7 +220,7 @@ void BtlAnim_FlushSubToMain(BtlStatChr *chr) {
 }
 
 /* Hands the stored blend time to the object (0 with flag 0x37) and takes one step off the blend counter. */
-void BtlAnim_ApplyBlend(BtlStatChr *chr) {
+void BtlAnim_ApplyBlend(BtlFighter *chr) {
     BtlStatObj *obj = BtlChar_GetObj(chr);
 
     if (BtlChar_TestFlag(chr, BTL_ANIM_FLAG_NO_BLEND)) {
@@ -242,7 +242,7 @@ void BtlAnim_ApplyBlend(BtlStatChr *chr) {
 }
 
 /* Starts an animation on the second layer unless it is already there. */
-void BtlAnim_PlaySub(BtlStatChr *chr, s32 anim) {
+void BtlAnim_PlaySub(BtlFighter *chr, s32 anim) {
     if (chr->anim.sub != anim) {
         BtlAnimIds *ids = &chr->anim;
         BtlStatObj *obj = BtlChar_GetObj(chr);
@@ -255,17 +255,17 @@ void BtlAnim_PlaySub(BtlStatChr *chr, s32 anim) {
 }
 
 /* Sets object + 0xC8C. */
-void BtlAnim_SetSubMix(BtlStatChr *chr, f32 v) {
+void BtlAnim_SetSubMix(BtlFighter *chr, f32 v) {
     BtlChar_GetObj(chr)->anim.mix = v;
 }
 
 /* Sets the frames added per advance. */
-void BtlAnim_SetStep(BtlStatChr *chr, f32 step) {
+void BtlAnim_SetStep(BtlFighter *chr, f32 step) {
     BtlChar_GetObj(chr)->anim.step = step;
 }
 
 /* Sets the step so that the whole animation takes `seconds` (one advance if shorter than a frame). */
-void BtlAnim_SetDuration(BtlStatChr *chr, f32 seconds) {
+void BtlAnim_SetDuration(BtlFighter *chr, f32 seconds) {
     BtlAnimObj *a = &BtlChar_GetObj(chr)->anim;
 
     if (seconds < 0.033333333f) {
@@ -276,17 +276,17 @@ void BtlAnim_SetDuration(BtlStatChr *chr, f32 seconds) {
 }
 
 /* Sets object + 0xCB8 (1.0 from the manager every frame). */
-void BtlAnim_SetObjRate(BtlStatChr *chr, f32 rate) {
+void BtlAnim_SetObjRate(BtlFighter *chr, f32 rate) {
     BtlChar_GetObj(chr)->anim.rate = rate;
 }
 
 /* Sets fighter + 0x988 (1.0 from the manager every frame). */
-void BtlAnim_SetRate(BtlStatChr *chr, f32 rate) {
+void BtlAnim_SetRate(BtlFighter *chr, f32 rate) {
     chr->scale = rate;
 }
 
 /* Puts the animation on its last frame, with no blend, and holds the end flag 0x31. */
-void BtlAnim_JumpToEnd(BtlStatChr *chr) {
+void BtlAnim_JumpToEnd(BtlFighter *chr) {
     BtlAnimObj *a = &BtlChar_GetObj(chr)->anim;
 
     a->blend = 0.0f;
@@ -296,22 +296,22 @@ void BtlAnim_JumpToEnd(BtlStatChr *chr) {
 }
 
 /* BtlObjAnim_ZeroRootAxes(main handle, 1, 1, 1): what table flag 0x40000000 does at an animation start. */
-void BtlAnim_EnableHandle(BtlStatChr *chr) {
+void BtlAnim_EnableHandle(BtlFighter *chr) {
     BtlObjAnim_ZeroRootAxes(BtlChar_GetObj(chr)->anim.handle, 1, 1, 1);
 }
 
 /* Current animation id. */
-s32 BtlAnim_GetId(BtlStatChr *chr) {
+s32 BtlAnim_GetId(BtlFighter *chr) {
     return chr->anim.cur;
 }
 
 /* Requested animation id (-1 after a start). */
-s32 BtlAnim_GetNextId(BtlStatChr *chr) {
+s32 BtlAnim_GetNextId(BtlFighter *chr) {
     return chr->anim.next;
 }
 
 /* Last frame's animation id. */
-s32 BtlAnim_GetPrevId(BtlStatChr *chr) {
+s32 BtlAnim_GetPrevId(BtlFighter *chr) {
     return chr->anim.prev;
 }
 
@@ -334,34 +334,34 @@ u32 BtlAnim_GetFlags(u32 anim) {
 }
 
 /* Current frame. */
-f32 BtlAnim_GetFrame(BtlStatChr *chr) {
+f32 BtlAnim_GetFrame(BtlFighter *chr) {
     return BtlChar_GetObj(chr)->anim.frame;
 }
 
 /* Current frame / length, 0..1. */
-f32 BtlAnim_GetProgress(BtlStatChr *chr) {
+f32 BtlAnim_GetProgress(BtlFighter *chr) {
     BtlAnimObj *a = &BtlChar_GetObj(chr)->anim;
 
     return a->frame / a->length;
 }
 
 /* Length of the current animation in frames. */
-f32 BtlAnim_GetLength(BtlStatChr *chr) {
+f32 BtlAnim_GetLength(BtlFighter *chr) {
     return BtlChar_GetObj(chr)->anim.length;
 }
 
 /* Frames added per advance. */
-f32 BtlAnim_GetStep(BtlStatChr *chr) {
+f32 BtlAnim_GetStep(BtlFighter *chr) {
     return BtlChar_GetObj(chr)->anim.step;
 }
 
 /* Object + 0xCB8. */
-f32 BtlAnim_GetObjRate(BtlStatChr *chr) {
+f32 BtlAnim_GetObjRate(BtlFighter *chr) {
     return BtlChar_GetObj(chr)->anim.rate;
 }
 
 /* Attribute test of the current animation frame; 0 while the frame did not move on the advance before last. */
-s32 BtlAnim_TestAttr(BtlStatChr *chr, u64 mask) {
+s32 BtlAnim_TestAttr(BtlFighter *chr, u64 mask) {
     BtlChar_GetObj(chr);
     if (chr->prevStall > 0) {
         return 0;
@@ -370,7 +370,7 @@ s32 BtlAnim_TestAttr(BtlStatChr *chr, u64 mask) {
 }
 
 /* Advances the animation one step (flags & 1: not while blending); at the end clamps, holds flag 0x31 and returns 1. */
-s32 BtlAnim_Advance(BtlStatChr *chr, s32 flags) {
+s32 BtlAnim_Advance(BtlFighter *chr, s32 flags) {
     s32 done = 0;
     BtlAnimObj *a = &BtlChar_GetObj(chr)->anim;
 
@@ -400,7 +400,7 @@ s32 BtlAnim_Advance(BtlStatChr *chr, s32 flags) {
 }
 
 /* BtlAnim_Advance, and at the end requests the animation `next`. */
-s32 BtlAnim_AdvanceThen(BtlStatChr *chr, s32 next, f32 blend, s32 flags) {
+s32 BtlAnim_AdvanceThen(BtlFighter *chr, s32 next, f32 blend, s32 flags) {
     s32 done = BtlAnim_Advance(chr, flags);
 
     if (done) {
@@ -410,7 +410,7 @@ s32 BtlAnim_AdvanceThen(BtlStatChr *chr, s32 next, f32 blend, s32 flags) {
 }
 
 /* Advances a looping animation one step (flags & 1: not while blending); at the end goes back to frame 0. */
-void BtlAnim_AdvanceLoop(BtlStatChr *chr, s32 flags) {
+void BtlAnim_AdvanceLoop(BtlFighter *chr, s32 flags) {
     BtlAnimObj *a = &BtlChar_GetObj(chr)->anim;
 
     a->blend -= a->blendStep;
@@ -436,7 +436,7 @@ void BtlAnim_AdvanceLoop(BtlStatChr *chr, s32 flags) {
 }
 
 /* 1 when the last advance passed the point `ratio` (0..1) of the animation, wrap-around included. */
-s32 BtlAnim_PassedRatio(BtlStatChr *chr, f32 ratio) {
+s32 BtlAnim_PassedRatio(BtlFighter *chr, f32 ratio) {
     BtlAnimObj *a = &BtlChar_GetObj(chr)->anim;
     f32 t = a->length * ratio;
 
@@ -453,7 +453,7 @@ s32 BtlAnim_PassedRatio(BtlStatChr *chr, f32 ratio) {
 }
 
 /* 1 when the last advance passed frame `frame`, wrap-around included. */
-s32 BtlAnim_PassedFrame(BtlStatChr *chr, f32 frame) {
+s32 BtlAnim_PassedFrame(BtlFighter *chr, f32 frame) {
     BtlAnimObj *a = &BtlChar_GetObj(chr)->anim;
 
     if (a->frame >= a->prevFrame) {
@@ -469,14 +469,14 @@ s32 BtlAnim_PassedFrame(BtlStatChr *chr, f32 frame) {
 }
 
 /* BtlAnim_InFrameRange with the bounds given as ratios of the length. No caller. */
-s32 BtlAnim_InRatioRange(BtlStatChr *chr, f32 lo, f32 hi) {
+s32 BtlAnim_InRatioRange(BtlFighter *chr, f32 lo, f32 hi) {
     f32 len = BtlChar_GetObj(chr)->anim.length;
 
     return BtlAnim_InFrameRange(chr, len * lo, len * hi);
 }
 
 /* 1 when the frames covered by the last advance overlap lo..hi, wrap-around included. */
-s32 BtlAnim_InFrameRange(BtlStatChr *chr, f32 lo, f32 hi) {
+s32 BtlAnim_InFrameRange(BtlFighter *chr, f32 lo, f32 hi) {
     BtlAnimObj *a = &BtlChar_GetObj(chr)->anim;
 
     if (a->frame >= a->prevFrame) {
@@ -492,11 +492,11 @@ s32 BtlAnim_InFrameRange(BtlStatChr *chr, f32 lo, f32 hi) {
 }
 
 /* 1 on the frame an animation was started (flag 0x2B). */
-s32 BtlAnim_IsNew(BtlStatChr *chr) {
+s32 BtlAnim_IsNew(BtlFighter *chr) {
     return BtlChar_TestFlag(chr, BTL_ANIM_FLAG_NEW) != 0;
 }
 
 /* Flag 0x2B in the second pair of flag arrays (the frame before, inferred). */
-s32 BtlAnim_WasNew(BtlStatChr *chr) {
+s32 BtlAnim_WasNew(BtlFighter *chr) {
     return BtlChar_TestPrevFlag(chr, BTL_ANIM_FLAG_NEW) != 0;
 }

@@ -45,7 +45,7 @@ extern f32 Mathf_Sin(f32 angle);                        /* sin */
 
 extern s32 BtlStage_IsReady(void);
 extern s32 BtlChar_GetCount(void);
-extern BtlAiMgrChr *BtlChar_Get(s32 side);
+extern BtlFighter *BtlChar_Get(s32 side);
 extern s32 BtlChar_IsStage4Or27(void);                        /* Battle_GetStage() is 4 or 27 */
 
 /* Fighter accessors by object id (0x204xxx..0x208xxx, not decompiled). */
@@ -524,7 +524,7 @@ void BtlAiMove_Steer(BtlAiWork *s, BtlAiVec *to, s32 kind) {
     s32 hold = 0;
     BtlAiMoveWork *m = &s->move;
     s32 press = 0;
-    BtlAiMgrChr *chr = BtlChar_Get(s->objId);
+    BtlFighter *chr = BtlChar_Get(s->objId);
     BtlAiActTable *tbl;
     s32 side;
     BtlAi *mgr;

@@ -25,7 +25,7 @@ extern BtlReplayRoster *gBtlChars;
 extern s32 gBtlReplayHudMode;
 
 /* Rewinds the fighter's track; when no replay is being played it is also emptied, ready to record. */
-void BtlReplay_Rewind(BtlReplayChr *chr) {
+void BtlReplay_Rewind(BtlFighter *chr) {
     BtlReplayTrack *trk = &BattleReplay_GetData()->track[chr->player];
 
     trk->pos = 0;
@@ -35,7 +35,7 @@ void BtlReplay_Rewind(BtlReplayChr *chr) {
 }
 
 /* Appends this frame's stick bytes and button word to the fighter's track; a full track raises the end flag. */
-void BtlReplay_Record(BtlReplayChr *chr, u32 buttons, u32 commands, u8 *stick) {
+void BtlReplay_Record(BtlFighter *chr, u32 buttons, u32 commands, u8 *stick) {
     BtlReplayTracks *data = BattleReplay_GetData();
     BtlReplayTrack *trk = &data->track[chr->player];
 
@@ -50,7 +50,7 @@ void BtlReplay_Record(BtlReplayChr *chr, u32 buttons, u32 commands, u8 *stick) {
 }
 
 /* Reads the fighter's next recorded frame; past the last one raises the end flag and gives neutral input. */
-void BtlReplay_Play(BtlReplayChr *chr, u32 *buttons, u8 *stick) {
+void BtlReplay_Play(BtlFighter *chr, u32 *buttons, u8 *stick) {
     BtlReplayTracks *data = BattleReplay_GetData();
     BtlReplayTrack *trk = &data->track[chr->player];
 

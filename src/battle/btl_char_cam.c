@@ -15,7 +15,7 @@
  */
 
 /* Offset of the follow camera from the fighter for a distance preset; returns the pitch. */
-f32 ChrCam_GetOffset(ChrCamChr *chr, Vec4 *out, s32 mode) {
+f32 ChrCam_GetOffset(BtlFighter *chr, Vec4 *out, s32 mode) {
     f32 scale;
     f32 dist;
     f32 pitch;
@@ -51,7 +51,7 @@ f32 ChrCam_GetOffset(ChrCamChr *chr, Vec4 *out, s32 mode) {
 }
 
 /* Smoothing factor for a camera at this distance from its target: 0.2 + 0.2 * distance / body scale, at most 1. */
-f32 ChrCam_CalcRate(ChrCamChr *chr, Vec4 *eye, Vec4 *target) {
+f32 ChrCam_CalcRate(BtlFighter *chr, Vec4 *eye, Vec4 *target) {
     Vec4 d;
     f32 len;
     f32 rate;
@@ -66,7 +66,7 @@ f32 ChrCam_CalcRate(ChrCamChr *chr, Vec4 *eye, Vec4 *target) {
 }
 
 /* Moves cam->rate towards ChrCam_CalcRate (1/75 per frame), then lets the fighter flags override it. */
-f32 ChrCam_GetRate(ChrCamChr *chr, Vec4 *eye, Vec4 *target) {
+f32 ChrCam_GetRate(BtlFighter *chr, Vec4 *eye, Vec4 *target) {
     ChrCam *cam = &chr->cam;
 
     cam->rate = BtlUtil_ApproachF(cam->rate, ChrCam_CalcRate(chr, eye, target), 0.4f / 30.0f);
@@ -85,7 +85,7 @@ f32 ChrCam_GetRate(ChrCamChr *chr, Vec4 *eye, Vec4 *target) {
 /* Vertical swing of the camera: advances the phase while flag 0xE is up, else lets it die out.
    The C is right but the build needs a prelude fix: gas has to move the `li.s $f14` in front of the unfilled
    `jal BtlUtil_ApproachF` into its delay slot, as the original assembler did (see the report). */
-f32 ChrCam_GetBob(ChrCamChr *chr) {
+f32 ChrCam_GetBob(BtlFighter *chr) {
     ChrCam *cam = &chr->cam;
 
     if (BtlChars_IsTimeStopped() || cam->shakeOn == 0) {
@@ -119,7 +119,7 @@ f32 ChrCam_GetBob(ChrCamChr *chr) {
    three angles by the cut's progress, derives the rotation, raises the cut's flags and counts its timer down.
    The masked node id is written out at each of the two calls (`node & CHRCUT_NODE_MASK`): a variable for it
    shares the node's register and frees one for a hoisted &tmp0, which the original does not have. */
-void ChrCam_CalcCut(ChrCamChr *chr, Vec4 *eye, Vec4 *rot, Vec4 *target) {
+void ChrCam_CalcCut(BtlFighter *chr, Vec4 *eye, Vec4 *rot, Vec4 *target) {
     Vec4 look;
     Vec4 dir;
     Vec4 tmp0;
@@ -328,7 +328,7 @@ void ChrCam_CalcCut(ChrCamChr *chr, Vec4 *eye, Vec4 *rot, Vec4 *target) {
  * btl_char_cam.c (see the note at the top of that file). */
 
 /* Fixed-distance camera (fighter flags 0xDC / 0xB8): beside the fighter, angled by the height of the opponent. */
-void ChrCam_CalcFixed(ChrCamChr *chr, Vec4 *eye, Vec4 *rot, Vec4 *target) {
+void ChrCam_CalcFixed(BtlFighter *chr, Vec4 *eye, Vec4 *rot, Vec4 *target) {
     ChrCam *cam = &chr->cam;
     Vec4 pos;
     Vec4 opp;
@@ -437,7 +437,7 @@ void ChrCam_CalcFixed(ChrCamChr *chr, Vec4 *eye, Vec4 *rot, Vec4 *target) {
 }
 
 /* Lock-on camera: behind and to one side of the fighter so that both fighters stay in view. */
-void ChrCam_CalcLockOn(ChrCamChr *chr, Vec4 *eye, Vec4 *rot, Vec4 *target) {
+void ChrCam_CalcLockOn(BtlFighter *chr, Vec4 *eye, Vec4 *rot, Vec4 *target) {
     ChrCam *cam = &chr->cam;
     Vec4 pos;
     Vec4 opp;
@@ -587,7 +587,7 @@ void ChrCam_CalcLockOn(ChrCamChr *chr, Vec4 *eye, Vec4 *rot, Vec4 *target) {
 }
 
 /* Free (no lock-on) camera: behind the fighter at cam->yaw, at the preset distance. */
-void ChrCam_CalcFree(ChrCamChr *chr, Vec4 *eye, Vec4 *rot, Vec4 *target) {
+void ChrCam_CalcFree(BtlFighter *chr, Vec4 *eye, Vec4 *rot, Vec4 *target) {
     ChrCam *cam = &chr->cam;
     Vec4 pos;
     Vec4 ofs;
@@ -598,7 +598,7 @@ void ChrCam_CalcFree(ChrCamChr *chr, Vec4 *eye, Vec4 *rot, Vec4 *target) {
     f32 yaw;
     f32 s;
     f32 c;
-    ChrCamBody *body;
+    BtlFighterPose *body;
 
     body = BtlChar_GetPos(chr);
     one = 1.0f;
@@ -629,7 +629,7 @@ void ChrCam_CalcFree(ChrCamChr *chr, Vec4 *eye, Vec4 *rot, Vec4 *target) {
 }
 
 /* Pushes the eye back onto a vertical plane behind model node 0x30 so the camera never passes it. */
-void ChrCam_KeepBehindHead(ChrCamChr *chr, Vec4 *eye, Vec4 *rot) {
+void ChrCam_KeepBehindHead(BtlFighter *chr, Vec4 *eye, Vec4 *rot) {
     Vec4 plane;
     Vec4 node;
     Vec4 dir;
@@ -659,7 +659,7 @@ void ChrCam_KeepBehindHead(ChrCamChr *chr, Vec4 *eye, Vec4 *rot) {
 }
 
 /* Lock-on: turns cam->yaw towards the opponent and updates which side of the fighter the camera sits on. */
-void ChrCam_UpdateLockOnYaw(ChrCamChr *chr) {
+void ChrCam_UpdateLockOnYaw(BtlFighter *chr) {
     ChrCam *cam;
     f32 step;
     f32 limit;
@@ -710,7 +710,7 @@ void ChrCam_UpdateLockOnYaw(ChrCamChr *chr) {
 }
 
 /* No lock-on: the stick (flag 0xC9) or the fighter's facing (flag 0xCA) drives cam->yaw. */
-void ChrCam_UpdateFreeYaw(ChrCamChr *chr) {
+void ChrCam_UpdateFreeYaw(BtlFighter *chr) {
     ChrCam *cam = &chr->cam;
     f32 d;
 
@@ -730,7 +730,7 @@ void ChrCam_UpdateFreeYaw(ChrCamChr *chr) {
 }
 
 /* Camera blocked by the stage: turns the yaw towards the opponent, more the closer it is and the nearer the hit. */
-void ChrCam_TurnToOpponent(ChrCamChr *chr, Vec4 *rot) {
+void ChrCam_TurnToOpponent(BtlFighter *chr, Vec4 *rot) {
     Vec4 camPos;
     Vec4 pos;
     Vec4 opp;
@@ -766,7 +766,7 @@ void ChrCam_TurnToOpponent(ChrCamChr *chr, Vec4 *rot) {
 }
 
 /* Camera controls, run in the fighter's control phase: SELECT steps the distance preset, then the yaw update. */
-void ChrCam_UpdateInput(ChrCamChr *chr) {
+void ChrCam_UpdateInput(BtlFighter *chr) {
     Vec4 *dst = &chr->cam.bodyPos;
 
     if (BtlInput_IsPressed(chr, 0x800000)) {
@@ -783,7 +783,7 @@ void ChrCam_UpdateInput(ChrCamChr *chr) {
 }
 
 /* Per-frame camera update: picks the mode, adds shake, smooths, and keeps the camera out of the stage. */
-void ChrCam_Update(ChrCamChr *chr) {
+void ChrCam_Update(BtlFighter *chr) {
     ChrCam *cam = &chr->cam;
     Vec4 eye;
     Vec4 rot;
@@ -874,7 +874,7 @@ shake:
 }
 
 /* Largest side angle of the lock-on camera: atan(obj + 0x1000), at least pi/4. */
-f32 ChrCam_GetSideLimit(ChrCamChr *chr) {
+f32 ChrCam_GetSideLimit(BtlFighter *chr) {
     f32 a;
 
     a = Mathf_Atan(BtlCharApi_GetCamSideSlope(chr->objId));
@@ -885,14 +885,14 @@ f32 ChrCam_GetSideLimit(ChrCamChr *chr) {
 }
 
 /* Requests a camera shake on this fighter's camera (ignored while cam->shakeOn is 0). */
-void ChrCam_AddShake(ChrCamChr *chr, f32 strength, f32 time) {
+void ChrCam_AddShake(BtlFighter *chr, f32 strength, f32 time) {
     if (chr->cam.shakeOn != 0) {
         CamShake_Add(&chr->cam.shake, strength, time);
     }
 }
 
 /* Fighter flags 0xDA / 0xD7 / 0xD8 / 0xD9: stop the scripted camera / play one of the character's three camera animations. */
-void ChrCam_UpdateDemo(ChrCamChr *chr) {
+void ChrCam_UpdateDemo(BtlFighter *chr) {
     if (BtlChar_TestFlag(chr, 0xDA)) {
         DemoCam_Stop();
     }
@@ -908,7 +908,7 @@ void ChrCam_UpdateDemo(ChrCamChr *chr) {
 }
 
 /* Starts a camera cut from explicit (start, delta) pairs. */
-void ChrCam_SetCut(ChrCamChr *chr, Vec4 *vecA, Vec4 *vecADelta, Vec4 *vecB, Vec4 *vecBDelta, Vec4 *vecC,
+void ChrCam_SetCut(BtlFighter *chr, Vec4 *vecA, Vec4 *vecADelta, Vec4 *vecB, Vec4 *vecBDelta, Vec4 *vecC,
                    Vec4 *vecCDelta, s32 nodeA, f32 valA, f32 valADelta, f32 valB, f32 valBDelta, f32 valC,
                    f32 valCDelta, s32 nodeA2, s32 nodeC, s32 nodeC2, s32 time, s32 flags) {
     ChrCamCut *cut = &chr->cut;
@@ -941,7 +941,7 @@ void ChrCam_SetCut(ChrCamChr *chr, Vec4 *vecA, Vec4 *vecADelta, Vec4 *vecB, Vec4
 }
 
 /* Starts a cut that begins where the camera is now: the running cut's current values, or the live camera. */
-void ChrCam_BlendToCut(ChrCamChr *chr, Vec4 *vecADelta, Vec4 *vecBDelta, Vec4 *vecCDelta, s32 nodeA2, s32 nodeC2,
+void ChrCam_BlendToCut(BtlFighter *chr, Vec4 *vecADelta, Vec4 *vecBDelta, Vec4 *vecCDelta, s32 nodeA2, s32 nodeC2,
                        f32 valADelta, f32 valBDelta, f32 valCDelta, s32 time, s32 flags) {
     Vec4 vecA;
     Vec4 vecB;
@@ -1001,14 +1001,14 @@ void ChrCam_BlendToCut(ChrCamChr *chr, Vec4 *vecADelta, Vec4 *vecBDelta, Vec4 *v
 }
 
 /* Asks for cut `index` of table `table` (0: the character's own, 1: the common one); ChrCam_StartCut acts on it. */
-void ChrCam_RequestCut(ChrCamChr *chr, s32 table, s32 index) {
+void ChrCam_RequestCut(BtlFighter *chr, s32 table, s32 index) {
     chr->cut.reqTable = table;
     chr->cut.reqIndex = index;
     BtlChar_SetFlag(chr, 0xDB);
 }
 
 /* Starts the cut asked for with ChrCam_RequestCut from its table entry. */
-void ChrCam_StartCut(ChrCamChr *chr) {
+void ChrCam_StartCut(BtlFighter *chr) {
     Vec4 vecA;
     Vec4 vecADelta;
     Vec4 vecB;
@@ -1198,7 +1198,7 @@ void ChrCam_StartCut(ChrCamChr *chr) {
 }
 
 /* Ends the running cut, raising the flags its end bits ask for. */
-void ChrCam_EndCut(ChrCamChr *chr) {
+void ChrCam_EndCut(BtlFighter *chr) {
     ChrCamCut *cut = &chr->cut;
 
     if (cut->flags & CHRCUT_F_SNAP_END) {
@@ -1212,7 +1212,7 @@ void ChrCam_EndCut(ChrCamChr *chr) {
 }
 
 /* Whether a cut owns the camera this frame: one is running, held, or was just requested. */
-s32 ChrCam_IsCutActive(ChrCamChr *chr) {
+s32 ChrCam_IsCutActive(BtlFighter *chr) {
     ChrCamCut *cut = &chr->cut;
 
     if (cut->timer > 0 || (cut->flags & CHRCUT_F_HOLD)) {

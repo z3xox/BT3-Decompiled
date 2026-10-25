@@ -31,47 +31,47 @@
 extern BtlTechRoster *gBtlChars;
 extern BtlTechProgress *gProgress;
 
-extern BtlTechChr *BtlChar_FindBySide(s32 side);
-extern BtlTechChr *BtlChar_Get(s32 player);
-extern BtlTechObj *BtlChar_GetObj(BtlTechChr *chr);
-extern BtlTechPad *BtlChar_GetPad(BtlTechChr *chr);
-extern s32 BtlChar_IsFrozen(BtlTechChr *chr);
-extern s32 BtlChar_IsDead(BtlTechChr *chr);
-extern s32 BtlChar_IsBodyChanged(BtlTechChr *chr);
-extern s32 BtlChar_TestFlag(BtlTechChr *chr, s32 flag);
-extern s32 BtlChar_IsFlagRaised(BtlTechChr *chr, s32 flag); /* set this frame and not the frame before */
-extern s32 BtlOpp_GetPlayer(BtlTechChr *chr);
-extern s32 BtlOpp_HasAbility(BtlTechChr *chr, s32 ability);
-extern s32 BtlAct_GetCurrent(BtlTechChr *chr);
+extern BtlFighter *BtlChar_FindBySide(s32 side);
+extern BtlFighter *BtlChar_Get(s32 player);
+extern BtlTechObj *BtlChar_GetObj(BtlFighter *chr);
+extern BtlTechPad *BtlChar_GetPad(BtlFighter *chr);
+extern s32 BtlChar_IsFrozen(BtlFighter *chr);
+extern s32 BtlChar_IsDead(BtlFighter *chr);
+extern s32 BtlChar_IsBodyChanged(BtlFighter *chr);
+extern s32 BtlChar_TestFlag(BtlFighter *chr, s32 flag);
+extern s32 BtlChar_IsFlagRaised(BtlFighter *chr, s32 flag); /* set this frame and not the frame before */
+extern s32 BtlOpp_GetPlayer(BtlFighter *chr);
+extern s32 BtlOpp_HasAbility(BtlFighter *chr, s32 ability);
+extern s32 BtlAct_GetCurrent(BtlFighter *chr);
 extern s32 BtlAct_IsAttackId(s32 action);
-extern s32 BtlAct_TestPoweredSkill(BtlTechChr *chr, s32 bit);
-extern s32 BtlAnim_GetId(BtlTechChr *chr);
-extern f32 BtlAnim_GetFrame(BtlTechChr *chr);
-extern BtlTechMember *BtlMember_Get(BtlTechChr *chr, s32 n);
-extern BtlTechMember *BtlMember_GetActive(BtlTechChr *chr);
-extern BtlTechGauge *BtlMember_GetActiveGauge(BtlTechChr *chr);
-extern s32 BtlMember_CountAlive(BtlTechChr *chr);
-extern s32 BtlMember_HasAbility(BtlTechChr *chr, s32 ability);
-extern s32 BtlStat_GetMod(BtlTechChr *chr, s32 stat);
-extern s32 BtlStat_GetKiChargeBonus(BtlTechChr *chr);
-extern s32 BtlStat_GetKiRegenBonus(BtlTechChr *chr);
-extern s32 BtlStat_GetKiRecoverBonus(BtlTechChr *chr);
-extern s32 BtlStat_GetBlastGainBonus(BtlTechChr *chr);
-extern f32 BtlStat_GetMeleeDamageScale(BtlTechChr *chr);
-extern f32 BtlStat_GetGuardKiCostScale(BtlTechChr *chr);
-extern f32 BtlStat_GetSpeedScale(BtlTechChr *chr);
-extern f32 BtlStat_GetMaxPowerChargeScale(BtlTechChr *chr);
-extern f32 BtlStat_GetMaxPowerExtraTime(BtlTechChr *chr);
+extern s32 BtlAct_TestPoweredSkill(BtlFighter *chr, s32 bit);
+extern s32 BtlAnim_GetId(BtlFighter *chr);
+extern f32 BtlAnim_GetFrame(BtlFighter *chr);
+extern BtlMember *BtlMember_Get(BtlFighter *chr, s32 n);
+extern BtlMember *BtlMember_GetActive(BtlFighter *chr);
+extern BtlMemberGauge *BtlMember_GetActiveGauge(BtlFighter *chr);
+extern s32 BtlMember_CountAlive(BtlFighter *chr);
+extern s32 BtlMember_HasAbility(BtlFighter *chr, s32 ability);
+extern s32 BtlStat_GetMod(BtlFighter *chr, s32 stat);
+extern s32 BtlStat_GetKiChargeBonus(BtlFighter *chr);
+extern s32 BtlStat_GetKiRegenBonus(BtlFighter *chr);
+extern s32 BtlStat_GetKiRecoverBonus(BtlFighter *chr);
+extern s32 BtlStat_GetBlastGainBonus(BtlFighter *chr);
+extern f32 BtlStat_GetMeleeDamageScale(BtlFighter *chr);
+extern f32 BtlStat_GetGuardKiCostScale(BtlFighter *chr);
+extern f32 BtlStat_GetSpeedScale(BtlFighter *chr);
+extern f32 BtlStat_GetMaxPowerChargeScale(BtlFighter *chr);
+extern f32 BtlStat_GetMaxPowerExtraTime(BtlFighter *chr);
 extern s32 BtlUtil_Max(s32 a, s32 b);
 extern BtlTechWork *Battle_GetWork(void);
 extern BtlTechWork5A8 *Battle_GetWork5A8(void);
 extern s32 Battle_GetMode(void);
 extern s32 BtlSeq_GetState(void);
 
-extern s32 BtlAct_CanUseTechnique(BtlTechChr *chr, s32 slot); /* slots 2..4 */
-extern s32 BtlAct_CanUseSkill(BtlTechChr *chr, s32 slot); /* slots 0..1 */
-extern s32 BtlCharApi_GetButtonIcon(BtlTechChr *chr, s32 cmd);  /* button 0..3 the key config gives command `cmd`, -1 if none */
-extern s32 BtlSuper_GetPromptRowIndex(BtlTechChr *chr, s32 idx);  /* (obj + 0x92C)[0x227 + idx], signed */
+extern s32 BtlAct_CanUseTechnique(BtlFighter *chr, s32 slot); /* slots 2..4 */
+extern s32 BtlAct_CanUseSkill(BtlFighter *chr, s32 slot); /* slots 0..1 */
+extern s32 BtlCharApi_GetButtonIcon(BtlFighter *chr, s32 cmd);  /* button 0..3 the key config gives command `cmd`, -1 if none */
+extern s32 BtlSuper_GetPromptRowIndex(BtlFighter *chr, s32 idx);  /* (obj + 0x92C)[0x227 + idx], signed */
 /* Animation events of layer `layer` whose attribute word has a bit of `mask`: what 2 = frame of the last one,
    3 = how many there are. */
 extern s32 BtlObjAnim_QueryEvent(BtlTechObj *obj, u64 mask, s32 layer, s32 what);
@@ -80,8 +80,8 @@ extern s32 BtlObjAnim_QueryEvent(BtlTechObj *obj, u64 mask, s32 layer, s32 what)
 
 /* The opponent's +0xD50, 0 while the opponent is frozen or the battle flag 0x2000 is set. */
 s32 BtlCtrl_IsOppComboDamageNew(s32 side) {
-    BtlTechChr *chr = BtlChar_FindBySide(side);
-    BtlTechChr *opp;
+    BtlFighter *chr = BtlChar_FindBySide(side);
+    BtlFighter *opp;
 
     if (chr != NULL) {
         opp = BtlChar_Get(BtlOpp_GetPlayer(chr));
@@ -98,13 +98,13 @@ s32 BtlCtrl_IsOppComboDamageNew(s32 side) {
 
 /* BtlChar_GetObj behind an inline: the original calls it with jal (no tail call), which a direct `return f(chr)`
    does not give. */
-static inline BtlTechObj *BtlCtrl_ObjOf(BtlTechChr *chr) {
+static inline BtlTechObj *BtlCtrl_ObjOf(BtlFighter *chr) {
     return BtlChar_GetObj(chr);
 }
 
 /* The battle object of the side's fighter. */
 BtlTechObj *BtlCtrl_GetObj(s32 side) {
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
         return BtlCtrl_ObjOf(chr);
@@ -114,7 +114,7 @@ BtlTechObj *BtlCtrl_GetObj(s32 side) {
 
 /* Which of flags 0xDE..0xE2 the fighter has, as 0..4; -1 for none or while frozen. */
 s32 BtlCtrl_GetFlagDEtoE2(s32 side) {
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr == NULL) {
         return -1;
@@ -144,7 +144,7 @@ s32 BtlCtrl_GetFlagDEtoE2(s32 side) {
 
 /* The fighter's clash counter (+0xE50: compared to pick the winner of clashes B and C). */
 s32 BtlCtrl_GetClashCount(s32 side) {
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
         return chr->clashCountB;
@@ -154,7 +154,7 @@ s32 BtlCtrl_GetClashCount(s32 side) {
 
 /* Flag 6 (powered-up mode) was raised this frame. */
 s32 BtlCtrl_IsFlag6Raised(s32 side) {
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
         if (BtlChar_IsFrozen(chr)) {
@@ -167,7 +167,7 @@ s32 BtlCtrl_IsFlag6Raised(s32 side) {
 
 /* Flag 0x71, 0 while frozen. */
 s32 BtlCtrl_TestFlag71(s32 side) {
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
         if (BtlChar_IsFrozen(chr)) {
@@ -180,7 +180,7 @@ s32 BtlCtrl_TestFlag71(s32 side) {
 
 /* Flag 5 (lock-on) was raised this frame, only in sequence state 3. */
 s32 BtlCtrl_IsFlag5RaisedInFight(s32 side) {
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
         if (BtlChar_IsFrozen(chr)) {
@@ -196,7 +196,7 @@ s32 BtlCtrl_IsFlag5RaisedInFight(s32 side) {
 
 /* Flag 0xE3, 0 while frozen. */
 s32 BtlCtrl_TestFlagE3(s32 side) {
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
         if (BtlChar_IsFrozen(chr)) {
@@ -209,7 +209,7 @@ s32 BtlCtrl_TestFlagE3(s32 side) {
 
 /* Flag 0x9C was raised this frame. */
 s32 BtlCtrl_IsFlag9CRaised(s32 side) {
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
         if (BtlChar_IsFrozen(chr)) {
@@ -222,7 +222,7 @@ s32 BtlCtrl_IsFlag9CRaised(s32 side) {
 
 /* Flag 0x9E was raised this frame. */
 s32 BtlCtrl_IsFlag9ERaised(s32 side) {
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
         if (BtlChar_IsFrozen(chr)) {
@@ -235,7 +235,7 @@ s32 BtlCtrl_IsFlag9ERaised(s32 side) {
 
 /* The active member has no health left. */
 s32 BtlCtrl_IsDead(s32 side) {
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
         return BtlChar_IsDead(chr);
@@ -245,7 +245,7 @@ s32 BtlCtrl_IsDead(s32 side) {
 
 /* Flag 0x12B. */
 s32 BtlCtrl_TestFlag12B(s32 side) {
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
         return BtlChar_TestFlag(chr, 0x12B);
@@ -255,7 +255,7 @@ s32 BtlCtrl_TestFlag12B(s32 side) {
 
 /* The fighter is in one of the member-switch actions 0xF3..0xF8. */
 s32 BtlCtrl_IsSwitching(s32 side) {
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
         switch (BtlAct_GetCurrent(chr)) {
@@ -274,7 +274,7 @@ s32 BtlCtrl_IsSwitching(s32 side) {
 
 /* Flag 0xE4. */
 s32 BtlCtrl_TestFlagE4(s32 side) {
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
         return BtlChar_TestFlag(chr, 0xE4);
@@ -284,7 +284,7 @@ s32 BtlCtrl_TestFlagE4(s32 side) {
 
 /* Flag 0xE5. */
 s32 BtlCtrl_TestFlagE5(s32 side) {
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
         return BtlChar_TestFlag(chr, 0xE5);
@@ -294,7 +294,7 @@ s32 BtlCtrl_TestFlagE5(s32 side) {
 
 /* In battle mode 5: bit gProgress->tutorial (the tutorial number) of fighter 0's per-frame bit set. */
 s32 BtlCtrl_TestTutorialFrameBit(void) {
-    BtlTechChr *chr;
+    BtlFighter *chr;
 
     if (Battle_GetMode() != 5) {
         return 0;
@@ -311,7 +311,7 @@ s32 BtlCtrl_TestTutorialFrameBit(void) {
 
 /* Flag 0xE6 when the fighter's pad status is not 1; the status is written to *padStatus. */
 s32 BtlCtrl_TestFlagE6Pad(s32 side, s32 *padStatus) {
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
         if (BtlChar_GetPad(chr)->lastStatus == 1) {
@@ -327,7 +327,7 @@ s32 BtlCtrl_TestFlagE6Pad(s32 side, s32 *padStatus) {
 
 /* Flag 0xE6 when the fighter's pad status is 1. */
 s32 BtlCtrl_TestFlagE6Pad1(s32 side) {
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
         if (BtlChar_GetPad(chr)->lastStatus != 1) {
@@ -343,7 +343,7 @@ s32 BtlCtrl_TestFlagE6Pad1(s32 side) {
 s32 BtlCtrl_GetTechPromptPad1(s32 side, s32 *row, s32 *kind, s32 *idx) {
     s32 n = -1;
     s32 col = -1;
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
     s32 r;
     s32 k;
     BtlTechPromptRow *rowp;
@@ -436,7 +436,7 @@ s32 BtlCtrl_GetTechPromptPad1(s32 side, s32 *row, s32 *kind, s32 *idx) {
 s32 BtlCtrl_GetSwitchPrompt(s32 side, s32 *buttons, s32 *count, s32 *kind, s32 *padStatus, s32 *idx) {
     s32 btn[8];
     s32 n = -1;
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
     BtlTechPromptRow *row;
     s32 cnt;
     s32 k;
@@ -531,7 +531,7 @@ s32 BtlCtrl_GetSwitchPrompt(s32 side, s32 *buttons, s32 *count, s32 *kind, s32 *
 s32 BtlCtrl_GetChangePrompt(s32 side, s32 *button, s32 *kind, s32 *padStatus) {
     s32 k = -1;
     s32 btn = -1;
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr == NULL) {
         return 0;
@@ -580,7 +580,7 @@ s32 BtlCtrl_GetChangePrompt(s32 side, s32 *button, s32 *kind, s32 *padStatus) {
 
 /* Sum of the modifiers of stat 0. */
 s32 BtlCtrl_GetStatMod0(s32 side) {
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
         return BtlStat_GetMod(chr, 0);
@@ -590,7 +590,7 @@ s32 BtlCtrl_GetStatMod0(s32 side) {
 
 /* Sum of the modifiers of stat 2. */
 s32 BtlCtrl_GetStatMod2(s32 side) {
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
         return BtlStat_GetMod(chr, 2);
@@ -600,7 +600,7 @@ s32 BtlCtrl_GetStatMod2(s32 side) {
 
 /* Sum of the modifiers of stat 1. */
 s32 BtlCtrl_GetStatMod1(s32 side) {
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
         return BtlStat_GetMod(chr, 1);
@@ -610,7 +610,7 @@ s32 BtlCtrl_GetStatMod1(s32 side) {
 
 /* Sum of the modifiers of stat 3. */
 s32 BtlCtrl_GetStatMod3(s32 side) {
-    BtlTechChr *chr = BtlChar_FindBySide(side);
+    BtlFighter *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
         return BtlStat_GetMod(chr, 3);
@@ -620,7 +620,7 @@ s32 BtlCtrl_GetStatMod3(s32 side) {
 
 /* Whether skill slot 0..1 (BtlAct_CanUseSkill) or technique class 2..4 (BtlAct_CanUseTechnique) can be used now. */
 s32 BtlCtrl_CanUseTechnique(s32 player, s32 slot) {
-    BtlTechChr *chr = BtlChar_Get(player);
+    BtlFighter *chr = BtlChar_Get(player);
 
     if (chr == NULL) {
         return 0;
@@ -661,7 +661,7 @@ s32 BtlCtrl_GetWork5A8Count(void) {
 
 /* Sets the CPU level of every member of a fighter. */
 void BtlCtrl_SetCpuLevel(s32 player, s32 level) {
-    BtlTechChr *chr = BtlChar_Get(player);
+    BtlFighter *chr = BtlChar_Get(player);
     s32 i;
 
     if (chr != NULL && chr->memberCount > 0) {
@@ -673,7 +673,7 @@ void BtlCtrl_SetCpuLevel(s32 player, s32 level) {
 
 /* The active member's gauge word +0x30 is set. */
 s32 BtlCtrl_IsMemberBodyChanged(s32 player) {
-    BtlTechChr *chr = BtlChar_Get(player);
+    BtlFighter *chr = BtlChar_Get(player);
 
     if (chr != NULL) {
         return BtlChar_IsBodyChanged(chr);
@@ -699,7 +699,7 @@ static inline BtlTechAtkAction *BtlAtk_GetActionRow(s32 n) {
     return c
 
 /* The id of the attack record the fighter's current action / animation uses, -1 when it is not attacking. */
-s32 BtlAtk_GetId(BtlTechChr *chr) {
+s32 BtlAtk_GetId(BtlFighter *chr) {
     BtlTechObj *obj = BtlChar_GetObj(chr);
     f32 charge = chr->charge;
     s8 *hit = (s8 *)obj->hitVolume;
@@ -913,7 +913,7 @@ s32 BtlAtk_GetId(BtlTechChr *chr) {
 }
 
 /* The fighter's current attack record; ids outside 0..0xA2 (and -1) give record 0. The id used goes to *id. */
-BtlAtkRecord *BtlAtk_GetRecord(BtlTechChr *chr, s32 *id) {
+BtlAtkRecord *BtlAtk_GetRecord(BtlFighter *chr, s32 *id) {
     u32 n = BtlAtk_GetId(chr);
 
     if (n >= BTL_ATK_COUNT) {
@@ -926,7 +926,7 @@ BtlAtkRecord *BtlAtk_GetRecord(BtlTechChr *chr, s32 *id) {
 }
 
 /* Record `id` of the fighter's character. */
-BtlAtkRecord *BtlAtk_GetRecordOf(BtlTechChr *chr, u32 id) {
+BtlAtkRecord *BtlAtk_GetRecordOf(BtlFighter *chr, u32 id) {
     if (id >= BTL_ATK_COUNT) {
         id = 0;
     }
@@ -935,7 +935,7 @@ BtlAtkRecord *BtlAtk_GetRecordOf(BtlTechChr *chr, u32 id) {
 
 /* Damage changes by ability: ids 0..9 +10% (4) / -10% (5); ids 0x13..0x21 +10% (6) / -10% (7); ids 0x55, 0x56
    x2 (8) / halved (9). */
-s32 BtlAtk_ApplyAbilities(BtlTechChr *chr, s32 val, u32 id) {
+s32 BtlAtk_ApplyAbilities(BtlFighter *chr, s32 val, u32 id) {
     if (id < 10) {
         if (BtlMember_HasAbility(chr, 4)) {
             val += val / 10;
@@ -969,12 +969,12 @@ static inline s32 BtlAtk_IsId13to21(s32 id) {
 }
 
 /* Record +0x26: which attack wins when two connect on the same frame. */
-s32 BtlAtk_GetPriority(BtlTechChr *chr) {
+s32 BtlAtk_GetPriority(BtlFighter *chr) {
     return BtlAtk_GetRecord(chr, NULL)->priority;
 }
 
 /* Damage of one hit: record damage * curve row 4, ability changes, divided by the animation's hit count. */
-s32 BtlAtk_GetDamage(BtlTechChr *chr) {
+s32 BtlAtk_GetDamage(BtlFighter *chr) {
     s32 id;
     BtlTechObj *obj = BtlChar_GetObj(chr);
     s32 val = BtlAtk_GetRecord(chr, &id)->damage;
@@ -990,7 +990,7 @@ s32 BtlAtk_GetDamage(BtlTechChr *chr) {
 }
 
 /* Damage of one guarded hit: the same chain on record +0x06, with -30% for ids 0..10 under skill effect 0x10. */
-s32 BtlAtk_GetGuardDamage(BtlTechChr *chr) {
+s32 BtlAtk_GetGuardDamage(BtlFighter *chr) {
     s32 id;
     BtlTechObj *obj = BtlChar_GetObj(chr);
     s32 val = BtlAtk_GetRecord(chr, &id)->guardDamage;
@@ -1011,17 +1011,17 @@ s32 BtlAtk_GetGuardDamage(BtlTechChr *chr) {
 }
 
 /* Record +0x0C: first of two values the throw setup (0x1FC008) reads. */
-s32 BtlAtk_GetThrowParamC(BtlTechChr *chr) {
+s32 BtlAtk_GetThrowParamC(BtlFighter *chr) {
     return BtlAtk_GetRecord(chr, NULL)->throwC;
 }
 
 /* Record +0x0E: the second. */
-s32 BtlAtk_GetThrowParamE(BtlTechChr *chr) {
+s32 BtlAtk_GetThrowParamE(BtlFighter *chr) {
     return BtlAtk_GetRecord(chr, NULL)->throwE;
 }
 
 /* Ki the attacker gains per hit: record +0x0A, +50% (ability 0x6E) or +25% (0x20), divided by the hit count. */
-s32 BtlAtk_GetKiGain(BtlTechChr *chr) {
+s32 BtlAtk_GetKiGain(BtlFighter *chr) {
     BtlTechObj *obj = BtlChar_GetObj(chr);
     s32 val = BtlAtk_GetRecord(chr, NULL)->kiGain;
     s32 hits;
@@ -1039,7 +1039,7 @@ s32 BtlAtk_GetKiGain(BtlTechChr *chr) {
 }
 
 /* Ki the defender pays when it guards: record +0x08 * curve row 5, x2 (ability 0x44) or x1.5 (0x6D). */
-s32 BtlAtk_GetGuardKiCost(BtlTechChr *chr) {
+s32 BtlAtk_GetGuardKiCost(BtlFighter *chr) {
     s32 val = BtlAtk_GetRecord(chr, NULL)->guardKi;
 
     val = val * BtlStat_GetGuardKiCostScale(chr);
@@ -1052,7 +1052,7 @@ s32 BtlAtk_GetGuardKiCost(BtlTechChr *chr) {
 }
 
 /* Record +0x10 divided by the hit count: what a hit adds to the fighter's +0xD80 gauge (decays 400 per frame). */
-s32 BtlAtk_GetChargeGaugeGain(BtlTechChr *chr) {
+s32 BtlAtk_GetChargeGaugeGain(BtlFighter *chr) {
     BtlTechObj *obj = BtlChar_GetObj(chr);
     s32 val = BtlAtk_GetRecord(chr, NULL)->chargeGaugeGain;
     s32 hits = BtlObjAnim_QueryEvent(obj, 1, 0, 3);
@@ -1064,131 +1064,131 @@ s32 BtlAtk_GetChargeGaugeGain(BtlTechChr *chr) {
 }
 
 /* Reaction id, record +0x1B. */
-s32 BtlAtk_GetReaction(BtlTechChr *chr) {
+s32 BtlAtk_GetReaction(BtlFighter *chr) {
     return BtlAtk_GetRecord(chr, NULL)->react;
 }
 
 /* Reaction id +0x1C (defender animation flag 0x800), or +0x1B when it is 0. */
-s32 BtlAtk_GetReactionB(BtlTechChr *chr) {
+s32 BtlAtk_GetReactionB(BtlFighter *chr) {
     BtlAtkRecord *rec = BtlAtk_GetRecord(chr, NULL);
 
     return rec->reactB != 0 ? rec->reactB : rec->react;
 }
 
 /* Reaction id +0x1F (defender animation flag 0x4000 or action 0xDF), or +0x1B when it is 0. */
-s32 BtlAtk_GetReactionC(BtlTechChr *chr) {
+s32 BtlAtk_GetReactionC(BtlFighter *chr) {
     BtlAtkRecord *rec = BtlAtk_GetRecord(chr, NULL);
 
     return rec->reactC != 0 ? rec->reactC : rec->react;
 }
 
 /* Reaction id +0x1D (defender animation flag 0x1000), or +0x1B when it is 0. */
-s32 BtlAtk_GetReactionD(BtlTechChr *chr) {
+s32 BtlAtk_GetReactionD(BtlFighter *chr) {
     BtlAtkRecord *rec = BtlAtk_GetRecord(chr, NULL);
 
     return rec->reactD != 0 ? rec->reactD : rec->react;
 }
 
 /* Reaction id +0x1E (defender animation flag 0x2000), or +0x1B when it is 0. */
-s32 BtlAtk_GetReactionE(BtlTechChr *chr) {
+s32 BtlAtk_GetReactionE(BtlFighter *chr) {
     BtlAtkRecord *rec = BtlAtk_GetRecord(chr, NULL);
 
     return rec->reactE != 0 ? rec->reactE : rec->react;
 }
 
 /* Record +0x20: stored in the defender's reaction block (+0xFB4). */
-s32 BtlAtk_GetReactionSub(BtlTechChr *chr) {
+s32 BtlAtk_GetReactionSub(BtlFighter *chr) {
     return BtlAtk_GetRecord(chr, NULL)->reactSub;
 }
 
 /* Reaction id +0x21 (defender animation flag 0x100, hit from the front), or +0x1B when it is 0. */
-s32 BtlAtk_GetReactionF(BtlTechChr *chr) {
+s32 BtlAtk_GetReactionF(BtlFighter *chr) {
     BtlAtkRecord *rec = BtlAtk_GetRecord(chr, NULL);
 
     return rec->reactF != 0 ? rec->reactF : rec->react;
 }
 
 /* Reaction id +0x22 (defender animation 0xAE / 0xAF or flag 0x200), or +0x1B when it is 0. */
-s32 BtlAtk_GetReactionG(BtlTechChr *chr) {
+s32 BtlAtk_GetReactionG(BtlFighter *chr) {
     BtlAtkRecord *rec = BtlAtk_GetRecord(chr, NULL);
 
     return rec->reactG != 0 ? rec->reactG : rec->react;
 }
 
 /* Record +0x00: the attack's flag word. */
-u32 BtlAtk_GetFlags(BtlTechChr *chr) {
+u32 BtlAtk_GetFlags(BtlFighter *chr) {
     return BtlAtk_GetRecord(chr, NULL)->flags;
 }
 
 /* Push speed on hit: record +0x12 in units of 10 km/h, per frame. */
-f32 BtlAtk_GetPushOnHit(BtlTechChr *chr) {
+f32 BtlAtk_GetPushOnHit(BtlFighter *chr) {
     return BtlAtk_GetRecord(chr, NULL)->pushHit * 10.0f * BTL_KMH(1.0f);
 }
 
 /* Push speed on guard: record +0x13 in units of 10 km/h, per frame. */
-f32 BtlAtk_GetPushOnGuard(BtlTechChr *chr) {
+f32 BtlAtk_GetPushOnGuard(BtlFighter *chr) {
     return BtlAtk_GetRecord(chr, NULL)->pushGuard * 10.0f * BTL_KMH(1.0f);
 }
 
 /* Record +0x14 in units of 10 km/h, per frame, times curve row 8: the speed the attack handlers give the attacker. */
-f32 BtlAtk_GetLaunchSpeed(BtlTechChr *chr) {
+f32 BtlAtk_GetLaunchSpeed(BtlFighter *chr) {
     f32 v = BtlAtk_GetRecord(chr, NULL)->launchSpeed * 10.0f * BTL_KMH(1.0f);
 
     return v * BtlStat_GetSpeedScale(chr);
 }
 
 /* Record +0x15 (degrees) in radians: yaw offset of the launch direction. */
-f32 BtlAtk_GetLaunchAngleA(BtlTechChr *chr) {
+f32 BtlAtk_GetLaunchAngleA(BtlFighter *chr) {
     return BtlAtk_GetRecord(chr, NULL)->launchA * 3.14159265f / 180.0f;
 }
 
 /* The same of record `id`. */
-f32 BtlAtk_GetLaunchAngleAOf(BtlTechChr *chr, u32 id) {
+f32 BtlAtk_GetLaunchAngleAOf(BtlFighter *chr, u32 id) {
     return BtlAtk_GetRecordOf(chr, id)->launchA * 3.14159265f / 180.0f;
 }
 
 /* Record +0x16 (degrees) in radians: pitch of the launch direction. */
-f32 BtlAtk_GetLaunchAngleB(BtlTechChr *chr) {
+f32 BtlAtk_GetLaunchAngleB(BtlFighter *chr) {
     return BtlAtk_GetRecord(chr, NULL)->launchB * 3.14159265f / 180.0f;
 }
 
 /* The same of record `id`. */
-f32 BtlAtk_GetLaunchAngleBOf(BtlTechChr *chr, u32 id) {
+f32 BtlAtk_GetLaunchAngleBOf(BtlFighter *chr, u32 id) {
     return BtlAtk_GetRecordOf(chr, id)->launchB * 3.14159265f / 180.0f;
 }
 
 /* Record +0x17 as a float: camera shake power on a hit. */
-f32 BtlAtk_GetShakePower(BtlTechChr *chr) {
+f32 BtlAtk_GetShakePower(BtlFighter *chr) {
     return BtlAtk_GetRecord(chr, NULL)->shakePower;
 }
 
 /* Record +0x18 (tenths of a second) in seconds: camera shake time on a hit. */
-f32 BtlAtk_GetShakeTime(BtlTechChr *chr) {
+f32 BtlAtk_GetShakeTime(BtlFighter *chr) {
     return BtlAtk_GetRecord(chr, NULL)->shakeTime * 0.1f;
 }
 
 /* Record +0x19 as a float: camera shake power on a guard. */
-f32 BtlAtk_GetShakePowerB(BtlTechChr *chr) {
+f32 BtlAtk_GetShakePowerB(BtlFighter *chr) {
     return BtlAtk_GetRecord(chr, NULL)->shakePowerB;
 }
 
 /* Record +0x1A (tenths of a second) in seconds: camera shake time on a guard. */
-f32 BtlAtk_GetShakeTimeB(BtlTechChr *chr) {
+f32 BtlAtk_GetShakeTimeB(BtlFighter *chr) {
     return BtlAtk_GetRecord(chr, NULL)->shakeTimeB * 0.1f;
 }
 
 /* Record +0x23: hit effect kind (1, 2 | 3, 4 | 10 pick the effect; non-zero sets effect bit 0x1D on the defender). */
-s32 BtlAtk_GetHitFxKind(BtlTechChr *chr) {
+s32 BtlAtk_GetHitFxKind(BtlFighter *chr) {
     return BtlAtk_GetRecord(chr, NULL)->hitFx;
 }
 
 /* Record +0x24: level that picks the hit sound line. */
-s32 BtlAtk_GetHitSoundLevel(BtlTechChr *chr) {
+s32 BtlAtk_GetHitSoundLevel(BtlFighter *chr) {
     return BtlAtk_GetRecord(chr, NULL)->hitSound;
 }
 
 /* Voice kind of the attack: record +0x25 mapped 1, 2, 3 -> 5, 6, 7; -1 (none) otherwise. */
-s32 BtlAtk_GetVoiceKind(BtlTechChr *chr) {
+s32 BtlAtk_GetVoiceKind(BtlFighter *chr) {
     switch (BtlAtk_GetRecord(chr, NULL)->voice) {
         case 0:
             return -1;
@@ -1203,7 +1203,7 @@ s32 BtlAtk_GetVoiceKind(BtlTechChr *chr) {
 }
 
 /* Guard result against guard kind 1 (record +0x29); result 1 becomes 0 when the opponent has ability 0x40. */
-s32 BtlAtk_GetGuardKindA(BtlTechChr *chr) {
+s32 BtlAtk_GetGuardKindA(BtlFighter *chr) {
     s32 id;
     s32 v = BtlAtk_GetRecord(chr, &id)->guardA;
 
@@ -1215,7 +1215,7 @@ s32 BtlAtk_GetGuardKindA(BtlTechChr *chr) {
 
 /* Guard result against guard kind 2 (record +0x27); result 1 becomes 0 for ids 0x13..0x21 when the opponent has
    ability 0x40. */
-s32 BtlAtk_GetGuardKindB(BtlTechChr *chr) {
+s32 BtlAtk_GetGuardKindB(BtlFighter *chr) {
     s32 id;
     s32 v = BtlAtk_GetRecord(chr, &id)->guardB;
 
@@ -1226,7 +1226,7 @@ s32 BtlAtk_GetGuardKindB(BtlTechChr *chr) {
 }
 
 /* The same against guard kind 3 (record +0x28). */
-s32 BtlAtk_GetGuardKindC(BtlTechChr *chr) {
+s32 BtlAtk_GetGuardKindC(BtlFighter *chr) {
     s32 id;
     s32 v = BtlAtk_GetRecord(chr, &id)->guardC;
 
@@ -1254,7 +1254,7 @@ s32 BtlAtk_RankGuardKind(u32 kind) {
 }
 
 /* Against guard kind 4: the highest-ranked of the record's three raw guard results (+0x29, +0x27, +0x28). */
-s32 BtlAtk_GetBestGuardKind(BtlTechChr *chr) {
+s32 BtlAtk_GetBestGuardKind(BtlFighter *chr) {
     s32 i = 0;
     s32 v = 0;
     s32 bestRank = -1;
@@ -1284,27 +1284,27 @@ s32 BtlAtk_GetBestGuardKind(BtlTechChr *chr) {
 }
 
 /* Record +0x2A: guard result against guard kind 5. */
-s32 BtlAtk_GetGuardKindE(BtlTechChr *chr) {
+s32 BtlAtk_GetGuardKindE(BtlFighter *chr) {
     return BtlAtk_GetRecord(chr, NULL)->guardE;
 }
 
 /* Record +0x2B: 0 / 1 selects defender flag 0x66 / 0x67 on a guard. */
-s32 BtlAtk_GetGuardFlagSel(BtlTechChr *chr) {
+s32 BtlAtk_GetGuardFlagSel(BtlFighter *chr) {
     return BtlAtk_GetRecord(chr, NULL)->guardFlagSel;
 }
 
 /* Record +0x2C: armour levels the attack ignores. */
-s32 BtlAtk_GetArmorIgnore(BtlTechChr *chr) {
+s32 BtlAtk_GetArmorIgnore(BtlFighter *chr) {
     return BtlAtk_GetRecord(chr, NULL)->armorIgnore;
 }
 
 /* +0x2C of record `id`. */
-s32 BtlAtk_GetArmorIgnoreOf(BtlTechChr *chr, u32 id) {
+s32 BtlAtk_GetArmorIgnoreOf(BtlFighter *chr, u32 id) {
     return BtlAtk_GetRecordOf(chr, id)->armorIgnore;
 }
 
 /* The ki charge rate scaled by ability: x0.4 (0x31), x0.6 (0x30) or x0.8 (0x2F), then x1.25 (0x75). */
-s32 BtlParam_ScaleKiCharge(BtlTechChr *chr, s32 val) {
+s32 BtlParam_ScaleKiCharge(BtlFighter *chr, s32 val) {
     if (BtlMember_HasAbility(chr, 0x31)) {
         val = val * 4 / 10;
     } else if (BtlMember_HasAbility(chr, 0x30)) {
@@ -1321,67 +1321,67 @@ s32 BtlParam_ScaleKiCharge(BtlTechChr *chr, s32 val) {
 /* ---- character parameter block ---------------------------------------------------------------------------------- */
 
 /* Parameter +0x10: flag word. */
-u32 BtlParam_GetFlags(BtlTechChr *chr) {
+u32 BtlParam_GetFlags(BtlFighter *chr) {
     return BtlChar_GetObj(chr)->param->flags;
 }
 
 /* Parameter +0x14: skill bits. */
-u32 BtlParam_GetFlags2(BtlTechChr *chr) {
+u32 BtlParam_GetFlags2(BtlFighter *chr) {
     return BtlChar_GetObj(chr)->param->flags2;
 }
 
 /* Parameter +0x18: skill bits that also need the powered-up mode. */
-u32 BtlParam_GetFlags3(BtlTechChr *chr) {
+u32 BtlParam_GetFlags3(BtlFighter *chr) {
     return BtlChar_GetObj(chr)->param->flags3;
 }
 
 /* Parameter +0x00 (u16). */
-s32 BtlParam_GetCharaFlags(BtlTechChr *chr) {
+s32 BtlParam_GetCharaFlags(BtlFighter *chr) {
     return BtlChar_GetObj(chr)->param->charaFlags;
 }
 
 /* Parameter +0x02: 4 is tested by the hit code (not thrown, not rushed). */
-s32 BtlParam_GetSizeClass(BtlTechChr *chr) {
+s32 BtlParam_GetSizeClass(BtlFighter *chr) {
     return BtlChar_GetObj(chr)->param->sizeClass;
 }
 
 /* Parameter +0xAC: the transformation slot a neutral input picks. */
-s32 BtlParam_GetDefaultSlot(BtlTechChr *chr) {
+s32 BtlParam_GetDefaultSlot(BtlFighter *chr) {
     return BtlChar_GetObj(chr)->param->transDefault;
 }
 
 /* Parameter +0x98 + slot: transformation target, 0xFF = none. */
-s32 BtlParam_GetSlotId(BtlTechChr *chr, s32 slot) {
+s32 BtlParam_GetSlotId(BtlFighter *chr, s32 slot) {
     return BtlChar_GetObj(chr)->param->transTarget[slot];
 }
 
 /* Parameter +0x9C + slot, times 100000: blast gauge a transformation costs. */
-s32 BtlParam_GetSlotCost(BtlTechChr *chr, s32 slot) {
+s32 BtlParam_GetSlotCost(BtlFighter *chr, s32 slot) {
     return BtlChar_GetObj(chr)->param->transCost[slot] * 100000;
 }
 
 /* Parameter +0xA0 + slot. */
-s32 BtlParam_GetSlotA0(BtlTechChr *chr, s32 slot) {
+s32 BtlParam_GetSlotA0(BtlFighter *chr, s32 slot) {
     return BtlChar_GetObj(chr)->param->transSeq[slot];
 }
 
 /* Parameter +0xA4 + slot. */
-s32 BtlParam_GetSlotA4(BtlTechChr *chr, s32 slot) {
+s32 BtlParam_GetSlotA4(BtlFighter *chr, s32 slot) {
     return BtlChar_GetObj(chr)->param->transKind[slot];
 }
 
 /* Parameter +0xA8 + slot. */
-s32 BtlParam_GetSlotA8(BtlTechChr *chr, s32 slot) {
+s32 BtlParam_GetSlotA8(BtlFighter *chr, s32 slot) {
     return BtlChar_GetObj(chr)->param->transA8[slot];
 }
 
 /* Parameter +0xAD. */
-s32 BtlParam_GetFormFlags(BtlTechChr *chr) {
+s32 BtlParam_GetFormFlags(BtlFighter *chr) {
     return BtlChar_GetObj(chr)->param->formFlags;
 }
 
 /* How many of the four transformation targets at +0x98 are not 0xFF. */
-s32 BtlParam_CountSlots(BtlTechChr *chr) {
+s32 BtlParam_CountSlots(BtlFighter *chr) {
     BtlParam *param = BtlChar_GetObj(chr)->param;
     s32 n = 0;
     s32 i;
@@ -1395,43 +1395,43 @@ s32 BtlParam_CountSlots(BtlTechChr *chr) {
 }
 
 /* Bit 4 + n of parameter +0xAD. */
-s32 BtlParam_TestSlotResetsVariant(BtlTechChr *chr, s32 n) {
+s32 BtlParam_TestSlotResetsVariant(BtlFighter *chr, s32 n) {
     return (BtlChar_GetObj(chr)->param->formFlags & (0x10 << n)) != 0;
 }
 
 /* Parameter +0xB4 + n: fusion n. */
-s32 BtlParam_GetFusionResult(BtlTechChr *chr, s32 n) {
+s32 BtlParam_GetFusionResult(BtlFighter *chr, s32 n) {
     return BtlChar_GetObj(chr)->param->fusionResult[n];
 }
 
 /* Parameter +0xB7 + n: fusion n. */
-s32 BtlParam_GetUnkB7(BtlTechChr *chr, s32 n) {
+s32 BtlParam_GetUnkB7(BtlFighter *chr, s32 n) {
     return BtlChar_GetObj(chr)->param->fusionB7[n];
 }
 
 /* Parameter +0xBA + n * 4 + m: partner m of fusion n. */
-s32 BtlParam_GetFusionPartner(BtlTechChr *chr, s32 n, s32 m) {
+s32 BtlParam_GetFusionPartner(BtlFighter *chr, s32 n, s32 m) {
     return BtlChar_GetObj(chr)->param->fusionPartner[n][m];
 }
 
 /* Parameter +0xAE + n, times 100000: blast gauge fusion n costs. */
-s32 BtlParam_GetCostAE(BtlTechChr *chr, s32 n) {
+s32 BtlParam_GetCostAE(BtlFighter *chr, s32 n) {
     return BtlChar_GetObj(chr)->param->fusionCost[n] * 100000;
 }
 
 /* Parameter +0xC6. */
-s32 BtlParam_GetUnkC6(BtlTechChr *chr) {
+s32 BtlParam_GetUnkC6(BtlFighter *chr) {
     return BtlChar_GetObj(chr)->param->unkC6;
 }
 
 /* Parameter +0xB1 + n: fusion n. */
-s32 BtlParam_GetFusionSequence(BtlTechChr *chr, s32 n) {
+s32 BtlParam_GetFusionSequence(BtlFighter *chr, s32 n) {
     return BtlChar_GetObj(chr)->param->fusionSeq[n];
 }
 
 /* Aura kind (passed to BtlObj_SetColorPreset on the object): parameter +0x03, replaced by 0..10 when the member has one of
    abilities 0x4D..0x53, 0x74, 0x54..0x56 (first match in that order). */
-s32 BtlParam_GetAuraKind(BtlTechChr *chr) {
+s32 BtlParam_GetAuraKind(BtlFighter *chr) {
     s32 v = BtlChar_GetObj(chr)->param->auraKind;
 
     if (BtlMember_HasAbility(chr, 0x4D)) {
@@ -1462,7 +1462,7 @@ s32 BtlParam_GetAuraKind(BtlTechChr *chr) {
 
 /* Search type 0..9 of the active member's costume (parameter +0x58 + costume, costume above 3 reads 0); types 2..4
    become 7 (8 for type 4) while the member's gauge word +0x20 is set. */
-s32 BtlParam_GetType(BtlTechChr *chr) {
+s32 BtlParam_GetType(BtlFighter *chr) {
     BtlParam *param = BtlChar_GetObj(chr)->param;
     u32 costume = BtlMember_GetActive(chr)->costume;
     s32 type;
@@ -1490,7 +1490,7 @@ s32 BtlParam_GetType(BtlTechChr *chr) {
 /* Radians per frame the search window widens, by search type; doubled by ability 0x6B (BtlAct_GrowWindow).
    The ten constants are written as literals: no expression was found for them (1.29, 1.58, 3.60, 6.31, 16.8, 1.26,
    1.74, 0.97, 1.12, 1.44 degrees per frame). The bits were compared with 0x2F1878. */
-f32 BtlParam_GetTypeValueA(BtlTechChr *chr) {
+f32 BtlParam_GetTypeValueA(BtlFighter *chr) {
     f32 tbl[BTL_TYPE_COUNT] = {
         0.02257771464f, 0.0275165909f, 0.06289506145f, 0.1100663636f, 0.2935102955f,
         0.02201326983f, 0.03036313364f, 0.01693328703f, 0.01956735225f, 0.02515802393f,
@@ -1504,7 +1504,7 @@ f32 BtlParam_GetTypeValueA(BtlTechChr *chr) {
 }
 
 /* Distance per frame the search window grows, by search type (3000..40000 km/h); doubled by ability 0x6B. */
-f32 BtlParam_GetTypeValueB(BtlTechChr *chr) {
+f32 BtlParam_GetTypeValueB(BtlFighter *chr) {
     f32 tbl[BTL_TYPE_COUNT] = {
         BTL_KMH(3000.0f), BTL_KMH(3500.0f), BTL_KMH(20000.0f), BTL_KMH(30000.0f), BTL_KMH(40000.0f),
         BTL_KMH(3000.0f), BTL_KMH(4000.0f), BTL_KMH(2000.0f), BTL_KMH(2500.0f), BTL_KMH(3000.0f),
@@ -1518,7 +1518,7 @@ f32 BtlParam_GetTypeValueB(BtlTechChr *chr) {
 }
 
 /* A third value by search type (0.1..0.5); no caller found. */
-f32 BtlParam_GetTypeValueC(BtlTechChr *chr) {
+f32 BtlParam_GetTypeValueC(BtlFighter *chr) {
     f32 tbl[BTL_TYPE_COUNT] = {
         0.15f, 0.2f, 0.4f, 0.45f, 0.5f, 0.2f, 0.35f, 0.1f, 0.15f, 0.2f,
     };
@@ -1527,7 +1527,7 @@ f32 BtlParam_GetTypeValueC(BtlTechChr *chr) {
 }
 
 /* The search type is 2..4 (the search action then plays animation 0x17F instead of 0x17E). */
-s32 BtlParam_IsType2to4(BtlTechChr *chr) {
+s32 BtlParam_IsType2to4(BtlFighter *chr) {
     switch (BtlParam_GetType(chr)) {
         case 2:
         case 3:
@@ -1538,7 +1538,7 @@ s32 BtlParam_IsType2to4(BtlTechChr *chr) {
 }
 
 /* The search type is 2, 3, 4, 6 or 9 (no caller found). */
-s32 BtlParam_IsTypeSetA(BtlTechChr *chr) {
+s32 BtlParam_IsTypeSetA(BtlFighter *chr) {
     switch (BtlParam_GetType(chr)) {
         case 2:
         case 3:
@@ -1551,7 +1551,7 @@ s32 BtlParam_IsTypeSetA(BtlTechChr *chr) {
 }
 
 /* The search type is 0..4, 6 or 9 (no caller found). */
-s32 BtlParam_IsTypeSetB(BtlTechChr *chr) {
+s32 BtlParam_IsTypeSetB(BtlFighter *chr) {
     switch (BtlParam_GetType(chr)) {
         case 0:
         case 1:
@@ -1567,7 +1567,7 @@ s32 BtlParam_IsTypeSetB(BtlTechChr *chr) {
 
 /* How many class-0 ki blasts may be alive at once: parameter +0x80 less 3 / 2 / 1 by ability 0x11 / 0x10 / 0xF, but
    at least 1 when the raw value is positive. */
-s32 BtlParam_GetBlastLimitA(BtlTechChr *chr) {
+s32 BtlParam_GetBlastLimitA(BtlFighter *chr) {
     BtlParam *param = BtlChar_GetObj(chr)->param;
     s32 v = param->blastLimitA;
 
@@ -1587,12 +1587,12 @@ s32 BtlParam_GetBlastLimitA(BtlTechChr *chr) {
 }
 
 /* Parameter +0x82: the same limit for class-1 blasts. */
-s32 BtlParam_GetBlastLimitB(BtlTechChr *chr) {
+s32 BtlParam_GetBlastLimitB(BtlFighter *chr) {
     return BtlChar_GetObj(chr)->param->blastLimitB;
 }
 
 /* Parameter +0x84 + n (n above 3 reads entry 0). */
-s32 BtlParam_GetRushFinisher(BtlTechChr *chr, u32 n) {
+s32 BtlParam_GetRushFinisher(BtlFighter *chr, u32 n) {
     BtlParam *param = BtlChar_GetObj(chr)->param;
 
     if (n >= 4) {
@@ -1602,7 +1602,7 @@ s32 BtlParam_GetRushFinisher(BtlTechChr *chr, u32 n) {
 }
 
 /* Parameter +0x88 + n (n above 1 reads entry 0). */
-s32 BtlParam_GetChainKind(BtlTechChr *chr, u32 n) {
+s32 BtlParam_GetChainKind(BtlFighter *chr, u32 n) {
     BtlParam *param = BtlChar_GetObj(chr)->param;
 
     if (n >= 2) {
@@ -1612,7 +1612,7 @@ s32 BtlParam_GetChainKind(BtlTechChr *chr, u32 n) {
 }
 
 /* Parameter +0x8A + n (n above 4 reads entry 0). */
-s32 BtlParam_GetFinisherChoice(BtlTechChr *chr, u32 n) {
+s32 BtlParam_GetFinisherChoice(BtlFighter *chr, u32 n) {
     BtlParam *param = BtlChar_GetObj(chr)->param;
 
     if (n >= 5) {
@@ -1622,23 +1622,23 @@ s32 BtlParam_GetFinisherChoice(BtlTechChr *chr, u32 n) {
 }
 
 /* Parameter +0x1C. */
-s32 BtlParam_GetUnk1C(BtlTechChr *chr) {
+s32 BtlParam_GetUnk1C(BtlFighter *chr) {
     return BtlChar_GetObj(chr)->param->unk1C;
 }
 
 /* Parameter +0x20. */
-s32 BtlParam_GetUnk20(BtlTechChr *chr) {
+s32 BtlParam_GetUnk20(BtlFighter *chr) {
     return BtlChar_GetObj(chr)->param->unk20;
 }
 
 /* Parameter +0x24. */
-s32 BtlParam_GetUnk24(BtlTechChr *chr) {
+s32 BtlParam_GetUnk24(BtlFighter *chr) {
     return BtlChar_GetObj(chr)->param->unk24;
 }
 
 /* Ki level below which ki regenerates by itself: parameter +0x28 plus 60000 / 40000 / 20000 by ability 0x2E / 0x2D /
    0x2C, at most 100000. */
-s32 BtlParam_GetKiRegenLimit(BtlTechChr *chr) {
+s32 BtlParam_GetKiRegenLimit(BtlFighter *chr) {
     s32 v = BtlChar_GetObj(chr)->param->kiRegenLimit;
 
     if (BtlMember_HasAbility(chr, 0x2E)) {
@@ -1655,18 +1655,18 @@ s32 BtlParam_GetKiRegenLimit(BtlTechChr *chr) {
 }
 
 /* Parameter +0x2C: ki level that ends the ki-exhausted state (flag 0xBE). */
-s32 BtlParam_GetGaugeB(BtlTechChr *chr) {
+s32 BtlParam_GetGaugeB(BtlFighter *chr) {
     return BtlChar_GetObj(chr)->param->kiRecoverGoal;
 }
 
 /* Parameter +0x40. */
-s32 BtlParam_GetUnk40(BtlTechChr *chr) {
+s32 BtlParam_GetUnk40(BtlFighter *chr) {
     return BtlChar_GetObj(chr)->param->unk40;
 }
 
 /* Ki gained per frame of charging: ((parameter +0x30) / 30 + curve row 0 + (fighter +0xE28) / 30) scaled by
    BtlParam_ScaleKiCharge, at least 200. */
-s32 BtlParam_GetRateA(BtlTechChr *chr) {
+s32 BtlParam_GetRateA(BtlFighter *chr) {
     s32 v = BtlChar_GetObj(chr)->param->kiCharge / 30;
 
     v += BtlStat_GetKiChargeBonus(chr);
@@ -1674,7 +1674,7 @@ s32 BtlParam_GetRateA(BtlTechChr *chr) {
 }
 
 /* The same from parameter +0x34: used while the fighter has flag 0x11. */
-s32 BtlParam_GetRateB(BtlTechChr *chr) {
+s32 BtlParam_GetRateB(BtlFighter *chr) {
     s32 v = BtlChar_GetObj(chr)->param->kiChargeWater / 30;
 
     v += BtlStat_GetKiChargeBonus(chr);
@@ -1682,7 +1682,7 @@ s32 BtlParam_GetRateB(BtlTechChr *chr) {
 }
 
 /* Ki regenerated per frame below BtlParam_GetKiRegenLimit: (parameter +0x38) / 30 + curve row 1, at least 0. */
-s32 BtlParam_GetKiRegenRate(BtlTechChr *chr) {
+s32 BtlParam_GetKiRegenRate(BtlFighter *chr) {
     s32 v = BtlChar_GetObj(chr)->param->kiRegen / 30;
 
     return BtlUtil_Max(v + BtlStat_GetKiRegenBonus(chr), 0);
@@ -1690,7 +1690,7 @@ s32 BtlParam_GetKiRegenRate(BtlTechChr *chr) {
 
 /* Ki recovered per frame in the ki-exhausted state (x4 by the caller on a button press): (parameter +0x3C) / 30 +
    curve row 2, doubled by ability 0x3C, at least 10. */
-s32 BtlParam_GetKiRecoverRate(BtlTechChr *chr) {
+s32 BtlParam_GetKiRecoverRate(BtlFighter *chr) {
     s32 v = BtlChar_GetObj(chr)->param->kiRecover / 30;
 
     v += BtlStat_GetKiRecoverBonus(chr);
@@ -1701,7 +1701,7 @@ s32 BtlParam_GetKiRecoverRate(BtlTechChr *chr) {
 }
 
 /* Ki actions 0x67..0x69 spend per frame: (parameter +0x4C) / 30, halved by ability 0x28. */
-s32 BtlParam_GetKiDrain67(BtlTechChr *chr) {
+s32 BtlParam_GetKiDrain67(BtlFighter *chr) {
     s32 v = BtlChar_GetObj(chr)->param->kiDrain67 / 30;
 
     if (BtlMember_HasAbility(chr, 0x28)) {
@@ -1711,12 +1711,12 @@ s32 BtlParam_GetKiDrain67(BtlTechChr *chr) {
 }
 
 /* Parameter +0x48: ki an air recovery (actions 0x25..0x2A) costs; also tested by action 0xD5 / 0xD6 / 0xDF. */
-s32 BtlParam_GetRecoverKiCost(BtlTechChr *chr) {
+s32 BtlParam_GetRecoverKiCost(BtlFighter *chr) {
     return BtlChar_GetObj(chr)->param->recoverKiCost;
 }
 
 /* Ki a vanishing step costs: 10000; 5000 with ability 0x23; 0 with ability 0x24. */
-s32 BtlParam_GetAmountA(BtlTechChr *chr) {
+s32 BtlParam_GetAmountA(BtlFighter *chr) {
     s32 v = 10000;
 
     if (BtlMember_HasAbility(chr, 0x24)) {
@@ -1728,7 +1728,7 @@ s32 BtlParam_GetAmountA(BtlTechChr *chr) {
 }
 
 /* Ki vanishing behind the opponent costs: 20000; 10000 with ability 0x23; 0 with ability 0x24. */
-s32 BtlParam_GetAmountB(BtlTechChr *chr) {
+s32 BtlParam_GetAmountB(BtlFighter *chr) {
     s32 v = 20000;
 
     if (BtlMember_HasAbility(chr, 0x24)) {
@@ -1741,7 +1741,7 @@ s32 BtlParam_GetAmountB(BtlTechChr *chr) {
 
 /* Blast gauge gained per frame: (parameter +0x44) / 30 + curve row 3; x1.2 (ability 0x32), halved (0x1A), x0.8
    (0x33); at least 20. */
-s32 BtlParam_GetBlastGainRate(BtlTechChr *chr) {
+s32 BtlParam_GetBlastGainRate(BtlFighter *chr) {
     s32 v = BtlChar_GetObj(chr)->param->blastGain / 30;
 
     v += BtlStat_GetBlastGainBonus(chr);
@@ -1759,7 +1759,7 @@ s32 BtlParam_GetBlastGainRate(BtlTechChr *chr) {
 
 /* Max power gained per frame of charging at full ki: 30000 (the whole gauge) divided by the frames in
    (parameter +0x50 seconds / curve row 11). */
-s32 BtlParam_GetStepA(BtlTechChr *chr) {
+s32 BtlParam_GetStepA(BtlFighter *chr) {
     f32 t = BtlChar_GetObj(chr)->param->maxPowerChargeTime;
 
     t /= BtlStat_GetMaxPowerChargeScale(chr);
@@ -1768,7 +1768,7 @@ s32 BtlParam_GetStepA(BtlTechChr *chr) {
 
 /* Max power lost per frame: 30000 divided by the frames in (parameter +0x54 + curve row 12) seconds, the time
    being at least one frame. */
-s32 BtlParam_GetMaxPowerDrain(BtlTechChr *chr) {
+s32 BtlParam_GetMaxPowerDrain(BtlFighter *chr) {
     f32 t = BtlChar_GetObj(chr)->param->maxPowerTime;
 
     t += BtlStat_GetMaxPowerExtraTime(chr);

@@ -15,7 +15,7 @@
  *   +0x17, +0x18 u8 shake power / time on hit (BtlAtk_GetShakePower, BtlAtk_GetShakeTime)
  *   +0x19, +0x1A u8 shake power / time on guard (BtlAtk_GetShakePowerB, BtlAtk_GetShakeTimeB)
  *   +0x1B..+0x1F, +0x21, +0x22 s8 reaction ids by defender state (BtlAtk_GetReaction..BtlAtk_GetReactionG)
- *   +0x20 s8 -> HitReact.reactionSub (BtlAtk_GetReactionSub)     +0x23 s8 -> effect bit 0x1D on the defender (BtlAtk_GetHitFxKind)
+ *   +0x20 s8 -> react.reactSub (BtlAtk_GetReactionSub)     +0x23 s8 -> effect bit 0x1D on the defender (BtlAtk_GetHitFxKind)
  *   +0x26 s8 priority for trades (BtlAtk_GetPriority)
  *   +0x27..+0x2A s8 guard results (BtlAtk_GetGuardKindB, BtlAtk_GetGuardKindC, BtlAtk_GetGuardKindA, BtlAtk_GetGuardKindE; BtlAtk_GetBestGuardKind mixes)
  *   +0x2B s8 0 / 1 -> defender flag 0x66 / 0x67 on guard (BtlAtk_GetGuardFlagSel)
@@ -39,92 +39,92 @@
 
 /* Fighter accessors and flags. */
 extern s32 BtlChar_GetCount(void);
-extern HitChr *BtlChar_Get(s32 i);
-extern HitPose *BtlChar_GetPos(HitChr *chr);
-extern HitObj *BtlChar_GetObj(HitChr *chr);
-extern s32 BtlChar_IsFree(HitChr *chr);
-extern s32 BtlChar_IsBodyChanged(HitChr *chr);                 /* active member's gauge + 0x30 != 0 */
-extern s32 BtlChar_TestFlag(HitChr *chr, s32 flag);
-extern void BtlChar_SetFlag(HitChr *chr, s32 flag);
-extern void BtlChar_SetHeldFlag(HitChr *chr, s32 flag);
-extern void BtlChar_ClearFlag(HitChr *chr, s32 flag);
-extern void BtlChar_SetFxBit(HitChr *chr, s32 bit);              /* one-frame effect / sound request bit */
+extern BtlFighter *BtlChar_Get(s32 i);
+extern BtlFighterPose *BtlChar_GetPos(BtlFighter *chr);
+extern HitObj *BtlChar_GetObj(BtlFighter *chr);
+extern s32 BtlChar_IsFree(BtlFighter *chr);
+extern s32 BtlChar_IsBodyChanged(BtlFighter *chr);                 /* active member's gauge + 0x30 != 0 */
+extern s32 BtlChar_TestFlag(BtlFighter *chr, s32 flag);
+extern void BtlChar_SetFlag(BtlFighter *chr, s32 flag);
+extern void BtlChar_SetHeldFlag(BtlFighter *chr, s32 flag);
+extern void BtlChar_ClearFlag(BtlFighter *chr, s32 flag);
+extern void BtlChar_SetFxBit(BtlFighter *chr, s32 bit);              /* one-frame effect / sound request bit */
 extern s32 BtlChar_FrameMod(s32 n);                              /* frame counter % n */
-extern void BtlChar_PlayVoice(HitChr *chr, s32 kind);
-extern void BtlChar_Vibrate(HitChr *chr, f32 power, f32 seconds);
+extern void BtlChar_PlayVoice(BtlFighter *chr, s32 kind);
+extern void BtlChar_Vibrate(BtlFighter *chr, f32 power, f32 seconds);
 extern void BtlChar_AddStageTimer(f32 seconds);
-extern void BtlChar_RaiseFirstClash(HitChr *chr);
-extern void BtlCharSnd_PlayCommon(HitChr *chr, s32 id);
-extern void ChrCam_AddShake(HitChr *chr, f32 power, f32 seconds);
-extern s32 BtlInput_IsHeld(HitChr *chr, u32 mask);
-extern s32 BtlInput_IsCmdHeld(HitChr *chr, u32 mask);
-extern s32 BtlOpp_GetPlayer(HitChr *chr);                        /* the opponent's player index */
-extern f32 BtlOpp_GetYaw(HitChr *chr);                           /* yaw of the direction to the opponent */
-extern f32 BtlOpp_GetYawFromFacing(HitChr *chr);                 /* the same relative to the own facing */
-extern s32 BtlMove_IsBlockedByOpponent(HitChr *chr);                           /* flags 0x5E / 0x5F and a height test: the bodies touch */
-extern void BtlMove_SetImpulseYaw(HitChr *chr, f32 yaw, f32 speed);      /* push: velocity (sin yaw, 0, cos yaw) * speed */
-extern void BtlMove_AimVerticalAtOpponent(HitChr *chr, s32 mode);
+extern void BtlChar_RaiseFirstClash(BtlFighter *chr);
+extern void BtlCharSnd_PlayCommon(BtlFighter *chr, s32 id);
+extern void ChrCam_AddShake(BtlFighter *chr, f32 power, f32 seconds);
+extern s32 BtlInput_IsHeld(BtlFighter *chr, u32 mask);
+extern s32 BtlInput_IsCmdHeld(BtlFighter *chr, u32 mask);
+extern s32 BtlOpp_GetPlayer(BtlFighter *chr);                        /* the opponent's player index */
+extern f32 BtlOpp_GetYaw(BtlFighter *chr);                           /* yaw of the direction to the opponent */
+extern f32 BtlOpp_GetYawFromFacing(BtlFighter *chr);                 /* the same relative to the own facing */
+extern s32 BtlMove_IsBlockedByOpponent(BtlFighter *chr);                           /* flags 0x5E / 0x5F and a height test: the bodies touch */
+extern void BtlMove_SetImpulseYaw(BtlFighter *chr, f32 yaw, f32 speed);      /* push: velocity (sin yaw, 0, cos yaw) * speed */
+extern void BtlMove_AimVerticalAtOpponent(BtlFighter *chr, s32 mode);
 
 /* Animation state, action, team member. */
-extern s32 BtlAnim_GetId(HitChr *chr);                           /* fighter + 0x974 */
+extern s32 BtlAnim_GetId(BtlFighter *chr);                           /* fighter + 0x974 */
 extern u32 BtlAnim_GetFlags(s32 id);                             /* roster table 0, 0 when out of range */
-extern s32 BtlAct_GetCurrent(HitChr *chr);
-extern s32 BtlAct_GetCurrentClass(HitChr *chr);
-extern s32 BtlAct_TestPoweredSkill(HitChr *chr, s32 mask);       /* flag 6 and parameter word & mask */
-extern s32 BtlColl_GetGuardKind(HitChr *chr);                   /* animation ids 0xEC..0xF7 -> 1..5: used here as the guard kind */
-extern s32 BtlColl_IsGuarding(HitChr *chr);                      /* that kind is 1..4 */
-extern s32 BtlColl_StartThrow(HitChr *a, HitChr *b, s32 tech, u32 flags);
-extern HitMember *BtlMember_GetActive(HitChr *chr);
-extern HitGauge *BtlMember_GetActiveGauge(HitChr *chr);
-extern void BtlMember_Damage(HitChr *chr, s32 amount, s32 flags);
-extern void BtlMember_AddKi(HitChr *chr, s32 amount);
-extern s32 BtlMember_HasKi(HitChr *chr, s32 amount);
-extern s32 BtlMember_SpendKi(HitChr *chr, s32 amount, s32 force);
-extern s32 BtlMember_IsKiEmpty(HitChr *chr);
-extern void BtlMember_AddBlast(HitChr *chr, s32 amount);
-extern s32 BtlMember_HasAbility(HitChr *chr, s32 ability);
+extern s32 BtlAct_GetCurrent(BtlFighter *chr);
+extern s32 BtlAct_GetCurrentClass(BtlFighter *chr);
+extern s32 BtlAct_TestPoweredSkill(BtlFighter *chr, s32 mask);       /* flag 6 and parameter word & mask */
+extern s32 BtlColl_GetGuardKind(BtlFighter *chr);                   /* animation ids 0xEC..0xF7 -> 1..5: used here as the guard kind */
+extern s32 BtlColl_IsGuarding(BtlFighter *chr);                      /* that kind is 1..4 */
+extern s32 BtlColl_StartThrow(BtlFighter *a, BtlFighter *b, s32 tech, u32 flags);
+extern BtlMember *BtlMember_GetActive(BtlFighter *chr);
+extern BtlMemberGauge *BtlMember_GetActiveGauge(BtlFighter *chr);
+extern void BtlMember_Damage(BtlFighter *chr, s32 amount, s32 flags);
+extern void BtlMember_AddKi(BtlFighter *chr, s32 amount);
+extern s32 BtlMember_HasKi(BtlFighter *chr, s32 amount);
+extern s32 BtlMember_SpendKi(BtlFighter *chr, s32 amount, s32 force);
+extern s32 BtlMember_IsKiEmpty(BtlFighter *chr);
+extern void BtlMember_AddBlast(BtlFighter *chr, s32 amount);
+extern s32 BtlMember_HasAbility(BtlFighter *chr, s32 ability);
 
 /* The attacker's current attack and its record (see the table above). */
-extern s32 BtlAtk_GetId(HitChr *chr);
-extern s32 BtlAtk_GetFlags(HitChr *chr);
-extern s32 BtlAtk_GetPriority(HitChr *chr);
-extern s32 BtlAtk_GetDamage(HitChr *chr);
-extern s32 BtlAtk_GetGuardDamage(HitChr *chr);
-extern s32 BtlAtk_GetKiGain(HitChr *chr);
-extern s32 BtlAtk_GetGuardKiCost(HitChr *chr);
-extern s32 BtlAtk_GetChargeGaugeGain(HitChr *chr);
-extern s32 BtlAtk_GetReaction(HitChr *chr);
-extern s32 BtlAtk_GetReactionB(HitChr *chr);
-extern s32 BtlAtk_GetReactionC(HitChr *chr);
-extern s32 BtlAtk_GetReactionD(HitChr *chr);
-extern s32 BtlAtk_GetReactionE(HitChr *chr);
-extern s32 BtlAtk_GetReactionSub(HitChr *chr);
-extern s32 BtlAtk_GetReactionF(HitChr *chr);
-extern s32 BtlAtk_GetReactionG(HitChr *chr);
-extern f32 BtlAtk_GetPushOnHit(HitChr *chr);
-extern f32 BtlAtk_GetPushOnGuard(HitChr *chr);
-extern f32 BtlAtk_GetLaunchAngleA(HitChr *chr);
-extern f32 BtlAtk_GetLaunchAngleB(HitChr *chr);
-extern f32 BtlAtk_GetShakePower(HitChr *chr);
-extern f32 BtlAtk_GetShakeTime(HitChr *chr);
-extern f32 BtlAtk_GetShakePowerB(HitChr *chr);
-extern f32 BtlAtk_GetShakeTimeB(HitChr *chr);
-extern s32 BtlAtk_GetHitFxKind(HitChr *chr);
-extern s32 BtlAtk_GetGuardKindA(HitChr *chr);
-extern s32 BtlAtk_GetGuardKindB(HitChr *chr);
-extern s32 BtlAtk_GetGuardKindC(HitChr *chr);
-extern s32 BtlAtk_GetBestGuardKind(HitChr *chr);
-extern s32 BtlAtk_GetGuardKindE(HitChr *chr);
-extern s32 BtlAtk_GetGuardFlagSel(HitChr *chr);
-extern s32 BtlAtk_GetArmorIgnore(HitChr *chr);
+extern s32 BtlAtk_GetId(BtlFighter *chr);
+extern s32 BtlAtk_GetFlags(BtlFighter *chr);
+extern s32 BtlAtk_GetPriority(BtlFighter *chr);
+extern s32 BtlAtk_GetDamage(BtlFighter *chr);
+extern s32 BtlAtk_GetGuardDamage(BtlFighter *chr);
+extern s32 BtlAtk_GetKiGain(BtlFighter *chr);
+extern s32 BtlAtk_GetGuardKiCost(BtlFighter *chr);
+extern s32 BtlAtk_GetChargeGaugeGain(BtlFighter *chr);
+extern s32 BtlAtk_GetReaction(BtlFighter *chr);
+extern s32 BtlAtk_GetReactionB(BtlFighter *chr);
+extern s32 BtlAtk_GetReactionC(BtlFighter *chr);
+extern s32 BtlAtk_GetReactionD(BtlFighter *chr);
+extern s32 BtlAtk_GetReactionE(BtlFighter *chr);
+extern s32 BtlAtk_GetReactionSub(BtlFighter *chr);
+extern s32 BtlAtk_GetReactionF(BtlFighter *chr);
+extern s32 BtlAtk_GetReactionG(BtlFighter *chr);
+extern f32 BtlAtk_GetPushOnHit(BtlFighter *chr);
+extern f32 BtlAtk_GetPushOnGuard(BtlFighter *chr);
+extern f32 BtlAtk_GetLaunchAngleA(BtlFighter *chr);
+extern f32 BtlAtk_GetLaunchAngleB(BtlFighter *chr);
+extern f32 BtlAtk_GetShakePower(BtlFighter *chr);
+extern f32 BtlAtk_GetShakeTime(BtlFighter *chr);
+extern f32 BtlAtk_GetShakePowerB(BtlFighter *chr);
+extern f32 BtlAtk_GetShakeTimeB(BtlFighter *chr);
+extern s32 BtlAtk_GetHitFxKind(BtlFighter *chr);
+extern s32 BtlAtk_GetGuardKindA(BtlFighter *chr);
+extern s32 BtlAtk_GetGuardKindB(BtlFighter *chr);
+extern s32 BtlAtk_GetGuardKindC(BtlFighter *chr);
+extern s32 BtlAtk_GetBestGuardKind(BtlFighter *chr);
+extern s32 BtlAtk_GetGuardKindE(BtlFighter *chr);
+extern s32 BtlAtk_GetGuardFlagSel(BtlFighter *chr);
+extern s32 BtlAtk_GetArmorIgnore(BtlFighter *chr);
 
 /* The fighter's parameter block (object + 0x91C). */
-extern s32 BtlParam_GetFlags(HitChr *chr);                           /* flags, + 0x10 */
-extern u32 BtlParam_GetFlags2(HitChr *chr);                           /* flags, + 0x14 */
-extern s32 BtlParam_GetSizeClass(HitChr *chr);                           /* byte + 2 */
-extern f32 BtlParam_GetHitReactScale(HitChr *chr);                           /* float + 0x60 */
-extern u32 BtlSuper_GetFlags(HitChr *chr, s32 tech);                 /* technique flags */
-extern s32 BtlSkill_GetFrames(HitChr *chr, s32 slot);
+extern s32 BtlParam_GetFlags(BtlFighter *chr);                           /* flags, + 0x10 */
+extern u32 BtlParam_GetFlags2(BtlFighter *chr);                           /* flags, + 0x14 */
+extern s32 BtlParam_GetSizeClass(BtlFighter *chr);                           /* byte + 2 */
+extern f32 BtlParam_GetHitReactScale(BtlFighter *chr);                           /* float + 0x60 */
+extern u32 BtlSuper_GetFlags(BtlFighter *chr, s32 tech);                 /* technique flags */
+extern s32 BtlSkill_GetFrames(BtlFighter *chr, s32 slot);
 
 /* Model objects and maths. */
 extern f32 BtlCharApi_GetHeight(s32 objId);                             /* body size, obj + 0xFF4 */
@@ -139,8 +139,8 @@ extern s32 BtlUtil_Clamp(s32 v, s32 lo, s32 hi);
 
 /* 1 when the attacker's facing yaw is within 90 degrees of the defender's model yaw (rot.y + rootYaw): both look the
  * same way, so an attacker that is facing the defender stands behind it. */
-s32 BtlHit_IsFromBehind(HitChr *atk, HitChr *def) {
-    HitPose *pd = BtlChar_GetPos(def);
+s32 BtlHit_IsFromBehind(BtlFighter *atk, BtlFighter *def) {
+    BtlFighterPose *pd = BtlChar_GetPos(def);
     f32 ang = BtlUtil_WrapAngle(pd->rot.y + BtlChar_GetPos(def)->rootRot.y);
 
     ang = BtlUtil_WrapAngle(ang - BtlChar_GetPos(atk)->yaw);
@@ -172,7 +172,7 @@ s32 BtlHit_GetVoiceKind(s32 reaction) {
 /* Number of the current hit of the attack: the model's hit counter (obj + 0xCAD) while the model has active hit
  * volumes (work + 0x18020 & 0xF000000), else the count of frames flag 0x65 ("contact by proximity") has been up,
  * else -1. */
-s32 BtlHit_GetHitNo(HitChr *chr) {
+s32 BtlHit_GetHitNo(BtlFighter *chr) {
     HitObj *obj = BtlChar_GetObj(chr);
 
     if (obj->work->hitFlags & 0xF000000) {
@@ -187,11 +187,11 @@ s32 BtlHit_GetHitNo(HitChr *chr) {
 /* The effects of a hit that was guarded or deflected. result: 0 plain guard, 1 flag-0x40 guard, 2..4 the three timed
  * guards (flags 0x68..0x6A), 5 guard that costs the defender ki, 6 guard that pushes the attacker back and gives the
  * defender half a blast stock, 7 / 8 the same with hit-stop and a voice / flag 0x7B. No health is touched here. */
-void BtlHit_ApplyGuard(HitChr *atk, HitChr *def, u32 result) {
+void BtlHit_ApplyGuard(BtlFighter *atk, BtlFighter *def, u32 result) {
     f32 scale;
     f32 power;
     f32 time;
-    HitPose *pose;
+    BtlFighterPose *pose;
 
     if (BtlAtk_GetFlags(atk) & 0x10000) {
         BtlChar_SetFxBit(atk, 0x25);
@@ -301,7 +301,7 @@ void BtlHit_ApplyGuard(HitChr *atk, HitChr *def, u32 result) {
 
 /* Attacker flags 0x4A / 0x4B: raise "contact" (0x65) when the opponent's node 3 is within 5 (0x4A) or 2 (0x4B)
  * body sizes, clamped to 20..150. Always returns 0. */
-s32 BtlHit_CheckNear(HitChr *a, HitChr *b) {
+s32 BtlHit_CheckNear(BtlFighter *a, BtlFighter *b) {
     Vec4 pa;
     Vec4 pb;
     Vec4 d;
@@ -336,14 +336,14 @@ s32 BtlHit_CheckNear(HitChr *a, HitChr *b) {
 }
 
 /* Bit index of the active member's model form: costume * 2 + (variant != 0). The original inlined a helper here. */
-static inline s32 BtlHit_FormIndex(s32 costume, HitGauge *g) {
+static inline s32 BtlHit_FormIndex(s32 costume, BtlMemberGauge *g) {
     return costume * 2 + (g->variant != 0);
 }
 
 /* Attacker flags 0x4C / 0x4D (skill slot 0 / 1): a grab attempt within 100 units. Fails against flag 0x42, a form
  * whose parameter bit (0x1000000 << form) is set, flag 0x137, or from behind (animation flag 0x800: when 0x8000 is
  * set). On success fills the defender's reaction block (reaction 9, or 0xE with animation flag 0x800). */
-s32 BtlHit_CheckGrab(HitChr *a, HitChr *b) {
+s32 BtlHit_CheckGrab(BtlFighter *a, BtlFighter *b) {
     Vec4 pa;
     Vec4 pb;
     Vec4 d;
@@ -352,7 +352,7 @@ s32 BtlHit_CheckGrab(HitChr *a, HitChr *b) {
     f32 range;
     u32 flags;
     s32 t;
-    HitGauge *g;
+    BtlMemberGauge *g;
     s32 is800;
 
     if (BtlChar_TestFlag(b, 0x42)) {
@@ -418,13 +418,13 @@ s32 BtlHit_Stub(void) {
 
 /* Attacker flag 0x4F: raise "contact" (0x65) when BtlMove_IsBlockedByOpponent says so or the two bodies overlap (flat distance
  * below 1.2 * both radii and the height difference inside 1.2 * both body sizes). Returns whether it did. */
-s32 BtlHit_CheckTouch(HitChr *a, HitChr *b) {
+s32 BtlHit_CheckTouch(BtlFighter *a, BtlFighter *b) {
     Vec4 d;
     f32 h[2];
     f32 k;
     s32 hit;
     f32 dist;
-    HitPose *pb;
+    BtlFighterPose *pb;
 
     if (BtlChar_TestFlag(b, 0x42)) {
         return 0;
@@ -455,7 +455,7 @@ s32 BtlHit_CheckTouch(HitChr *a, HitChr *b) {
 
 /* 1 when the attack cannot touch the defender at all: attacker flag 0xBA, defender flag 0x42 (0x43 for attack 0x55),
  * or attack 0x56 from behind (or against animation flags 0x800 + 0x8000). */
-s32 BtlHit_IsVoid(HitChr *atk, HitChr *def) {
+s32 BtlHit_IsVoid(BtlFighter *atk, BtlFighter *def) {
     s32 atkId = BtlAtk_GetId(atk);
     s32 behind;
     u32 flags;
@@ -492,7 +492,7 @@ s32 BtlHit_IsVoid(HitChr *atk, HitChr *def) {
  * attack and it is its first hit, or a counter at +0xE00 / +0xE04 is left (one is used up), or flags 0x56 / 0x57 are
  * up. The side step is chosen by held direction, else by BtlChar_FrameMod. A second path (flag 0x4E and parameter
  * bit 0x80, frontal, attack id below 11) answers with flags 0x7D / 0x7E and costs the attacker 2000 ki. */
-s32 BtlHit_CheckDodge(HitChr *atk, HitChr *def) {
+s32 BtlHit_CheckDodge(BtlFighter *atk, BtlFighter *def) {
     u32 flags;
     u32 animFlags;
     s32 window;
@@ -638,7 +638,7 @@ s32 BtlHit_CheckDodge(HitChr *atk, HitChr *def) {
 }
 
 /* 1 when the defender's animation has flag 0x200 and the attack has flag 2: the hit is ignored. */
-s32 BtlHit_CheckArmor(HitChr *atk, HitChr *def) {
+s32 BtlHit_CheckArmor(BtlFighter *atk, BtlFighter *def) {
     s32 ret;
 
     if (!(BtlAnim_GetFlags(BtlAnim_GetId(def)) & 0x200)) {
@@ -652,7 +652,7 @@ s32 BtlHit_CheckArmor(HitChr *atk, HitChr *def) {
 }
 
 /* Defender flag 0x59 or 0x53: the attacker gets flag 0x6F (pushed back) and the hit is ignored. */
-s32 BtlHit_CheckRepel(HitChr *atk, HitChr *def) {
+s32 BtlHit_CheckRepel(BtlFighter *atk, BtlFighter *def) {
     if (BtlChar_TestFlag(def, 0x59) || BtlChar_TestFlag(def, 0x53)) {
         BtlChar_SetFlag(atk, 0x6F);
         return 1;
@@ -662,7 +662,7 @@ s32 BtlHit_CheckRepel(HitChr *atk, HitChr *def) {
 
 /* Guard resolution. *full is 0 only for the level-based counter (reaction 8), which takes no chip damage. Returns 1
  * when the hit was guarded in some way (BtlHit_ApplyGuard has run), 0 when it goes through. */
-s32 BtlHit_CheckGuard(HitChr *atk, HitChr *def, s32 *full) {
+s32 BtlHit_CheckGuard(BtlFighter *atk, BtlFighter *def, s32 *full) {
     s32 guard;
     s32 res;
 
@@ -756,7 +756,7 @@ s32 BtlHit_CheckGuard(HitChr *atk, HitChr *def, s32 *full) {
 /* Attack 0x55 only (a throw): 1 when it fails. Against parameter byte 4, or parameter bit 0x4000 with attack flag
  * 0x4000, the attacker gets flag 0x7A; a free defender in a 0x31 animation that is facing the attacker and has a
  * level at +0x1078 also gets 0x79 (the break). */
-s32 BtlHit_CheckThrowBreak(HitChr *atk, HitChr *def) {
+s32 BtlHit_CheckThrowBreak(BtlFighter *atk, BtlFighter *def) {
     u32 animFlags;
 
     if (BtlAtk_GetId(atk) != 0x55) {
@@ -791,9 +791,9 @@ s32 BtlHit_CheckThrowBreak(HitChr *atk, HitChr *def) {
 
 /* Start of the hit step for one fighter: reaction id back to 1, and "this hit was handled" (0x60) is dropped when
  * the model's hit counter changed. A counter that ends without having been handled raises held flag 0x5C. */
-void BtlHit_BeginFrame(HitChr *chr) {
-    HitStatus *st = &chr->status;
-    HitReact *react = &chr->react;
+void BtlHit_BeginFrame(BtlFighter *chr) {
+    BtlFighterHitStatus *st = &chr->status;
+    BtlFighterReact *react = &chr->react;
     HitObj *obj = BtlChar_GetObj(chr);
 
     react->reaction = 1;
@@ -821,8 +821,8 @@ s32 BtlHit_CheckClash(void) {
     s32 i;
 
     for (i = 0; i < BtlChar_GetCount(); i++) {
-        HitChr *a = BtlChar_Get(i);
-        HitChr *b = BtlChar_Get(BtlOpp_GetPlayer(a));
+        BtlFighter *a = BtlChar_Get(i);
+        BtlFighter *b = BtlChar_Get(BtlOpp_GetPlayer(a));
 
         if (BtlChar_TestFlag(a, 3)) {
             s32 same = 0;
@@ -882,8 +882,8 @@ s32 BtlHit_CheckRush(void) {
     s32 i;
 
     for (i = 0; i < BtlChar_GetCount(); i++) {
-        HitChr *a = BtlChar_Get(i);
-        HitChr *b = BtlChar_Get(BtlOpp_GetPlayer(a));
+        BtlFighter *a = BtlChar_Get(i);
+        BtlFighter *b = BtlChar_Get(BtlOpp_GetPlayer(a));
         u32 animFlags;
         s32 tech;
         u32 techFlags;
@@ -1012,8 +1012,8 @@ void BtlHit_CheckProximityAll(void) {
     for (i = 0; i < BtlChar_GetCount(); i++) {
         for (j = 0; j < BtlChar_GetCount(); j++) {
             if (i != j) {
-                HitChr *a = BtlChar_Get(i);
-                HitChr *b = BtlChar_Get(j);
+                BtlFighter *a = BtlChar_Get(i);
+                BtlFighter *b = BtlChar_Get(j);
 
                 BtlHit_CheckNear(a, b);
                 BtlHit_CheckGrab(a, b);
@@ -1026,8 +1026,8 @@ void BtlHit_CheckProximityAll(void) {
 /* Does this fighter's attack connect this frame? Needs an attack id, active hit volumes or "contact" (0x65), and
  * the opponent within 90 degrees of the facing (or attack flag 8). Marks the hit handled (0x60), then runs the
  * avoid / guard / throw-break tests in order; if none applies the opponent is stored as the pending target. */
-void BtlHit_TestHit(HitChr *chr) {
-    HitStatus *st = &chr->status;
+void BtlHit_TestHit(BtlFighter *chr) {
+    BtlFighterHitStatus *st = &chr->status;
     HitObj *obj = BtlChar_GetObj(chr);
     s32 full;
 
@@ -1040,7 +1040,7 @@ void BtlHit_TestHit(HitChr *chr) {
     if ((obj->work->hitFlags & 0xF000000) || BtlChar_TestFlag(chr, 0x65)) {
         s32 ok = 0;
         s32 oppIdx = BtlOpp_GetPlayer(chr);
-        HitChr *opp = BtlChar_Get(oppIdx);
+        BtlFighter *opp = BtlChar_Get(oppIdx);
 
         if (__builtin_fabsf(BtlOpp_GetYawFromFacing(chr)) < 1.5707963f) {
             ok = 1;
@@ -1075,10 +1075,10 @@ void BtlHit_ResolveTrades(void) {
 
     for (i = 0; i < BtlChar_GetCount(); i++) {
         for (j = i + 1; j < BtlChar_GetCount(); j++) {
-            HitChr *a = BtlChar_Get(i);
-            HitChr *b = BtlChar_Get(j);
-            HitStatus *sa = &a->status;
-            HitStatus *sb = &b->status;
+            BtlFighter *a = BtlChar_Get(i);
+            BtlFighter *b = BtlChar_Get(j);
+            BtlFighterHitStatus *sa = &a->status;
+            BtlFighterHitStatus *sb = &b->status;
 
             if (sa->target == b->player && sb->target == a->player) {
                 s32 pa = BtlAtk_GetPriority(a);
@@ -1109,10 +1109,10 @@ void BtlHit_ResolveTrades(void) {
  * defender's animation flags (or a "does not flinch" reaction 2 from the armour level comparison), fills the
  * defender's reaction block, shakes cameras and pads, then takes health with BtlMember_Damage and gives the attacker
  * its ki and gauge gains. */
-void BtlHit_ApplyHit(HitChr *atk) {
+void BtlHit_ApplyHit(BtlFighter *atk) {
     s32 drain = 0;
     s32 launch = 0;
-    HitChr *def;
+    BtlFighter *def;
     HitObj *dobj;
     s32 atkId;
     s32 atkFlags;
@@ -1409,7 +1409,7 @@ void BtlHit_ApplyHit(HitChr *atk) {
  * resolution, and per fighter the hit application. */
 void BtlColl_Update(void) {
     s32 i;
-    HitChr *chr;
+    BtlFighter *chr;
 
     for (i = 0; i < BtlChar_GetCount(); i++) {
         BtlHit_BeginFrame(BtlChar_Get(i));
@@ -1432,12 +1432,12 @@ void BtlColl_Update(void) {
 }
 
 /* All the collision step does for a fighter while somebody is frozen (also run before each hit test): no target. */
-void BtlColl_UpdateFrozen(HitChr *chr) {
+void BtlColl_UpdateFrozen(BtlFighter *chr) {
     chr->status.target = -1;
 }
 
 /* Guard kind of the fighter's current animation (ids 0xEC..0xF7): 1..5, or 0 when it is not a guard animation. */
-s32 BtlColl_GetGuardKind(HitChr *chr) {
+s32 BtlColl_GetGuardKind(BtlFighter *chr) {
     switch (BtlAnim_GetId(chr)) {
     case 0xEF:
     case 0xF0:
@@ -1462,7 +1462,7 @@ s32 BtlColl_GetGuardKind(HitChr *chr) {
 }
 
 /* Whether the guard kind is 1..4. */
-s32 BtlColl_IsGuarding(HitChr *chr) {
+s32 BtlColl_IsGuarding(BtlFighter *chr) {
     s32 kind = BtlColl_GetGuardKind(chr);
 
     switch (kind) {

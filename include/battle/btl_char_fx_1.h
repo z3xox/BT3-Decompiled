@@ -8,14 +8,9 @@
 /*
  * Fighter effect requests, animation events and the partner object
  * (src/battle/btl_char_fx_1.c, btl_char_fx_b.c, btl_char_fx_2.c: 0x1D00D8..0x1D3B40).
- * The structures are partial views local to this module: only the fields these files touch.
+ * The structures are partial views local to this module: only the fields these files touch. The fighter is
+ * BtlFighter (battle/btl_fighter.h).
  */
-
-/* The pose block at fighter + 0x10 (BtlChar_GetPos returns it). Offsets in [] are fighter offsets. */
-typedef BtlFighterPose FxPose;
-
-/* What BtlMember_GetActiveGauge returns: the active member's gauge block. */
-typedef BtlMemberGauge FxGauge;
 
 /* An action record of a battle object (obj + 0x91C points at the current one): only the attribute word. */
 typedef struct FxObjAction {
@@ -71,12 +66,6 @@ typedef struct FxObj {
     /* 0xA44 */ u8 unkA44[0xB40 - 0xA44];
     /* 0xB40 */ FxObjAnim anim;
 } FxObj;
-
-/* A second character model attached to a fighter: fighter + 0x1330. */
-typedef BtlFighterPartner FxPartner;
-
-/* Partial view of a fighter (0x1600 bytes). */
-typedef BtlFighter FxChr;
 
 /* Argument of EftImpact_SpawnHit / EftImpact_SpawnHitScaled (the "flash" effects). */
 typedef struct FxPosArg {
@@ -173,76 +162,76 @@ typedef struct FxSave {
 } FxSave;
 
 /* btl_char_fx_1.c */
-void BtlFx_SpawnFlashReq20(FxChr *chr);
-void BtlFx_SpawnFlashReq2B(FxChr *chr);
-void BtlFx_SpawnHitSparkReq17(FxChr *chr);
-s32 BtlFx_UpdateAura(FxChr *chr);
-void BtlFx_UpdateChargeFx(FxChr *chr);
-s32 BtlFx_UpdatePowerUpLook(FxChr *chr);
-void BtlFx_SpawnReq6(FxChr *chr);
-void BtlFx_UpdateScreenFilter(FxChr *chr);
-void BtlFx_SpawnBurstReqC(FxChr *chr);
-void BtlFx_SpawnFastMoveFx(FxChr *chr);
-void BtlFx_SpawnSpeedLines(FxChr *chr);
+void BtlFx_SpawnFlashReq20(BtlFighter *chr);
+void BtlFx_SpawnFlashReq2B(BtlFighter *chr);
+void BtlFx_SpawnHitSparkReq17(BtlFighter *chr);
+s32 BtlFx_UpdateAura(BtlFighter *chr);
+void BtlFx_UpdateChargeFx(BtlFighter *chr);
+s32 BtlFx_UpdatePowerUpLook(BtlFighter *chr);
+void BtlFx_SpawnReq6(BtlFighter *chr);
+void BtlFx_UpdateScreenFilter(BtlFighter *chr);
+void BtlFx_SpawnBurstReqC(BtlFighter *chr);
+void BtlFx_SpawnFastMoveFx(BtlFighter *chr);
+void BtlFx_SpawnSpeedLines(BtlFighter *chr);
 
 /* btl_char_fx_b.c */
-void BtlFx_SpawnReq18(FxChr *chr);
-void BtlFx_UpdateGroundFx(FxChr *chr);
-void BtlFx_UpdateWaterFx(FxChr *chr);
-void BtlFx_UpdateAimedFxReq28(FxChr *chr);
-void BtlFx_UpdateReq1A(FxChr *chr);
-void BtlFx_UpdateReq38(FxChr *chr);
-void BtlFx_SpawnReq37(FxChr *chr);
-void BtlFx_SpawnFlashReq2E(FxChr *chr);
-void BtlFx_UpdateCharaFx(FxChr *chr);
-void BtlFx_SpawnClashFlash(FxChr *chr);
-void BtlFx_TriggerObjReq1D(FxChr *chr);
-void BtlFx_TriggerObjReq1E(FxChr *chr);
-void BtlFx_TriggerObjReq1F(FxChr *chr);
-void BtlFx_UpdateObjFlagReq3(FxChr *chr);
-void BtlFx_UpdateOccludedFlag(FxChr *chr);
-void BtlFx_UpdateObjCmdFlag137(FxChr *chr);
-void BtlFx_UpdateSubStateFlag96(FxChr *chr);
-void BtlFx_UpdateObjFlag80(FxChr *chr);
-void BtlFx_FireKiBlast(FxChr *chr);
+void BtlFx_SpawnReq18(BtlFighter *chr);
+void BtlFx_UpdateGroundFx(BtlFighter *chr);
+void BtlFx_UpdateWaterFx(BtlFighter *chr);
+void BtlFx_UpdateAimedFxReq28(BtlFighter *chr);
+void BtlFx_UpdateReq1A(BtlFighter *chr);
+void BtlFx_UpdateReq38(BtlFighter *chr);
+void BtlFx_SpawnReq37(BtlFighter *chr);
+void BtlFx_SpawnFlashReq2E(BtlFighter *chr);
+void BtlFx_UpdateCharaFx(BtlFighter *chr);
+void BtlFx_SpawnClashFlash(BtlFighter *chr);
+void BtlFx_TriggerObjReq1D(BtlFighter *chr);
+void BtlFx_TriggerObjReq1E(BtlFighter *chr);
+void BtlFx_TriggerObjReq1F(BtlFighter *chr);
+void BtlFx_UpdateObjFlagReq3(BtlFighter *chr);
+void BtlFx_UpdateOccludedFlag(BtlFighter *chr);
+void BtlFx_UpdateObjCmdFlag137(BtlFighter *chr);
+void BtlFx_UpdateSubStateFlag96(BtlFighter *chr);
+void BtlFx_UpdateObjFlag80(BtlFighter *chr);
+void BtlFx_FireKiBlast(BtlFighter *chr);
 
 /* btl_char_fx_2.c */
-void BtlFx_HandleImpactEvents(FxChr *chr);
-void BtlFx_HandleEvent1(FxChr *chr);
-void BtlFx_HandleFlag30Events(FxChr *chr);
-void BtlFx_PlaySwingSound(FxChr *chr);
-void BtlFx_SpawnPartFxEvent8(FxChr *chr);
-void BtlFx_SpawnPartFlashes(FxChr *chr);
-s32 BtlFx_PushBackOnEvent400(FxChr *chr);
-s32 BtlFx_SetObjMaskOnEvent400(FxChr *chr);
-void BtlFx_ShakeCamOnEvent(FxChr *chr);
-void BtlFx_VibrateOnEvent(FxChr *chr);
+void BtlFx_HandleImpactEvents(BtlFighter *chr);
+void BtlFx_HandleEvent1(BtlFighter *chr);
+void BtlFx_HandleFlag30Events(BtlFighter *chr);
+void BtlFx_PlaySwingSound(BtlFighter *chr);
+void BtlFx_SpawnPartFxEvent8(BtlFighter *chr);
+void BtlFx_SpawnPartFlashes(BtlFighter *chr);
+s32 BtlFx_PushBackOnEvent400(BtlFighter *chr);
+s32 BtlFx_SetObjMaskOnEvent400(BtlFighter *chr);
+void BtlFx_ShakeCamOnEvent(BtlFighter *chr);
+void BtlFx_VibrateOnEvent(BtlFighter *chr);
 void BtlFxObj_HandleFlagEvents(FxObj *obj);
 void BtlFxObj_PlayEventSounds(FxObj *obj);
 void BtlFxObj_HandleSubStateEvents(FxObj *obj);
-void BtlFx_UpdateObjEvents(FxChr *chr);
-void BtlFx_UpdateAll(FxChr *chr);
-void BtlFx_UpdateAfterHits(FxChr *chr);
-void BtlFx_UpdatePostScene(FxChr *chr);
-void BtlFx_UpdateLate(FxChr *chr);
-void BtlFx_UpdateStageFxRequest(FxChr *chr);
+void BtlFx_UpdateObjEvents(BtlFighter *chr);
+void BtlFx_UpdateAll(BtlFighter *chr);
+void BtlFx_UpdateAfterHits(BtlFighter *chr);
+void BtlFx_UpdatePostScene(BtlFighter *chr);
+void BtlFx_UpdateLate(BtlFighter *chr);
+void BtlFx_UpdateStageFxRequest(BtlFighter *chr);
 void BtlFx_UpdateStageFx(void);
 void BtlFx_UpdateRoster(void);
 void BtlFxObj_Place(FxObj *obj, Vec4 *pos, Vec4 *rot);
-void BtlPartner_HandleEvents(FxObj *obj, FxChr *chr);
-s32 BtlPartner_IsActive(FxChr *chr);
-void BtlPartner_Attach(FxChr *chr, s32 res, s32 objId);
-void BtlPartner_Release(FxChr *chr);
-void BtlPartner_Update(FxChr *chr);
-void BtlPartner_UpdateEvents(FxChr *chr);
-void BtlPartner_PlayAnim(FxChr *chr, s32 anim);
-s32 BtlPartner_StepAnim(FxChr *chr);
-void BtlPartner_SetFlag10(FxChr *chr, s32 on);
-void BtlPartner_LinkToOwner(FxChr *chr);
-FxObj *BtlPartner_GetObj(FxChr *chr);
-void BtlPartner_PushAngle(FxChr *chr, f32 yaw, f32 speed, f32 max);
-void BtlPartner_PushDir(FxChr *chr, Vec4 *dir, f32 speed, f32 max);
-void BtlPartner_AddSway(FxChr *chr, f32 add, f32 max);
-void BtlPartner_SetFlag80(FxChr *chr, s32 on);
+void BtlPartner_HandleEvents(FxObj *obj, BtlFighter *chr);
+s32 BtlPartner_IsActive(BtlFighter *chr);
+void BtlPartner_Attach(BtlFighter *chr, s32 res, s32 objId);
+void BtlPartner_Release(BtlFighter *chr);
+void BtlPartner_Update(BtlFighter *chr);
+void BtlPartner_UpdateEvents(BtlFighter *chr);
+void BtlPartner_PlayAnim(BtlFighter *chr, s32 anim);
+s32 BtlPartner_StepAnim(BtlFighter *chr);
+void BtlPartner_SetFlag10(BtlFighter *chr, s32 on);
+void BtlPartner_LinkToOwner(BtlFighter *chr);
+FxObj *BtlPartner_GetObj(BtlFighter *chr);
+void BtlPartner_PushAngle(BtlFighter *chr, f32 yaw, f32 speed, f32 max);
+void BtlPartner_PushDir(BtlFighter *chr, Vec4 *dir, f32 speed, f32 max);
+void BtlPartner_AddSway(BtlFighter *chr, f32 add, f32 max);
+void BtlPartner_SetFlag80(BtlFighter *chr, s32 on);
 
 #endif

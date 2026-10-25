@@ -7,14 +7,8 @@
 
 /*
  * Fighter action handlers, first group (src/battle/btl_act_1.c, 0x1E3158..0x1E6CC0).
- * The structures are partial views local to this module.
+ * The structures are partial views local to this module; the fighter is BtlFighter (battle/btl_fighter.h).
  */
-
-/* Pose block (chr + 0x10, what BtlChar_GetPos returns). */
-typedef BtlFighterPose BtlActAPose;
-
-/* Latched attack parameters (chr + 0xCF8); same layout as BtlActAttack in btl_char_action.h. */
-typedef BtlFighterAttack BtlActAAttack;
 
 /* Battle object (what BtlChar_GetObj returns). */
 typedef struct BtlActAObj {
@@ -25,30 +19,27 @@ typedef struct BtlActAObj {
     /* 0xCAD */ s8 hitNo;
 } BtlActAObj;
 
-/* Fighter (0x1600 bytes). */
-typedef BtlFighter BtlActAChr;
-
-s32 BtlAct_WaitHandler(BtlActAChr *chr, s32 phase);
-f32 BtlAct_GetChargeRate(BtlActAChr *chr);
-s32 BtlAct_StepCharge(BtlActAChr *chr);
-void BtlAct_SetChargeFromAnim(BtlActAChr *chr);
-void BtlAct_SetChargeAnimDuration(BtlActAChr *chr);
-void BtlAct_SetChargeAnimStep(BtlActAChr *chr);
-void BtlAct_CancelOnOppC9(BtlActAChr *chr, f32 after);
-void BtlAct_PlayPickedVoice(BtlActAChr *chr);
-s32 BtlAct_StartSub19B(BtlActAChr *chr);
-void BtlAct_DecideAttackFollow(BtlActAChr *chr, BtlActAAttack *atk);
-void BtlAct_RequestAttackEnd(BtlActAChr *chr, BtlActAAttack *atk);
-s32 BtlAct_RushHandler(BtlActAChr *chr, s32 phase);
-s32 BtlAct_RushAutoHandler(BtlActAChr *chr, s32 phase);
-s32 BtlAct_RushRapidHandler(BtlActAChr *chr, s32 phase);
-s32 BtlAct_SmashChargeHandler(BtlActAChr *chr, s32 phase);
-s32 BtlAct_SmashFullHandler(BtlActAChr *chr, s32 phase);
-s32 BtlAct_DashSmashHandler(BtlActAChr *chr, s32 phase);
-s32 BtlAct_FlyingKickHandler(BtlActAChr *chr, s32 phase);
-s32 BtlAct_LiftStrikeHandler(BtlActAChr *chr, s32 phase);
-s32 BtlAct_SmashVanishHandler(BtlActAChr *chr, s32 phase);
-s32 BtlAct_RushFinishHandler(BtlActAChr *chr, s32 phase);
+s32 BtlAct_WaitHandler(BtlFighter *chr, s32 phase);
+f32 BtlAct_GetChargeRate(BtlFighter *chr);
+s32 BtlAct_StepCharge(BtlFighter *chr);
+void BtlAct_SetChargeFromAnim(BtlFighter *chr);
+void BtlAct_SetChargeAnimDuration(BtlFighter *chr);
+void BtlAct_SetChargeAnimStep(BtlFighter *chr);
+void BtlAct_CancelOnOppC9(BtlFighter *chr, f32 after);
+void BtlAct_PlayPickedVoice(BtlFighter *chr);
+s32 BtlAct_StartSub19B(BtlFighter *chr);
+void BtlAct_DecideAttackFollow(BtlFighter *chr, BtlFighterAttack *atk);
+void BtlAct_RequestAttackEnd(BtlFighter *chr, BtlFighterAttack *atk);
+s32 BtlAct_RushHandler(BtlFighter *chr, s32 phase);
+s32 BtlAct_RushAutoHandler(BtlFighter *chr, s32 phase);
+s32 BtlAct_RushRapidHandler(BtlFighter *chr, s32 phase);
+s32 BtlAct_SmashChargeHandler(BtlFighter *chr, s32 phase);
+s32 BtlAct_SmashFullHandler(BtlFighter *chr, s32 phase);
+s32 BtlAct_DashSmashHandler(BtlFighter *chr, s32 phase);
+s32 BtlAct_FlyingKickHandler(BtlFighter *chr, s32 phase);
+s32 BtlAct_LiftStrikeHandler(BtlFighter *chr, s32 phase);
+s32 BtlAct_SmashVanishHandler(BtlFighter *chr, s32 phase);
+s32 BtlAct_RushFinishHandler(BtlFighter *chr, s32 phase);
 
 
 /* ======== formerly btl_act_1_part2.h ======== */
@@ -60,17 +51,8 @@ s32 BtlAct_RushFinishHandler(BtlActAChr *chr, s32 phase);
 /*
  * Fighter action handlers, second slice (src/battle/btl_act_b.c, 0x1E6CC0..0x1EA5F8).
  * The handler protocol is described in include/battle/btl_char_action.h. The structures are
- * partial views local to this module: only the fields this file touches.
+ * partial views local to this module: only the fields this file touches. The fighter is BtlFighter.
  */
-
-/* Pose block (chr + 0x10, what BtlChar_GetPos returns); the same layout as BtlMovePose. */
-typedef BtlFighterPose BtlActBPose;
-
-/* Active member's gauge block (BtlMember_GetActiveGauge). */
-typedef BtlMemberGauge BtlActBGauge;
-
-/* Latched attack parameters (chr + 0xCF8); BtlActAttack in btl_char_action.h. */
-typedef BtlFighterAttack BtlActBAttack;
 
 /* The fighter's battle object (BtlChar_GetObj). */
 typedef struct BtlActBObjSub {
@@ -83,15 +65,12 @@ typedef struct BtlActBObj {
     /* 0x1660 */ BtlActBObjSub *work;
 } BtlActBObj;
 
-/* Fighter (0x1600 bytes). */
-typedef BtlFighter BtlActBChr;
-
 /* Helpers other slices call. */
-s32 BtlActB_NextVariant(BtlActBChr *chr, s32 n);
-void BtlActB_SetReactionFlags(BtlActBChr *chr);
-s32 BtlActB_PickDownAnim(BtlActBChr *chr, s32 cur);
-void BtlActB_UpdateMashRate(BtlActBChr *chr, f32 *rate, s32 scaled);
-s32 BtlActB_TickMemberChange(BtlActBChr *chr, s32 *frames);
+s32 BtlActB_NextVariant(BtlFighter *chr, s32 n);
+void BtlActB_SetReactionFlags(BtlFighter *chr);
+s32 BtlActB_PickDownAnim(BtlFighter *chr, s32 cur);
+void BtlActB_UpdateMashRate(BtlFighter *chr, f32 *rate, s32 scaled);
+s32 BtlActB_TickMemberChange(BtlFighter *chr, s32 *frames);
 
 
 #endif

@@ -49,12 +49,9 @@ typedef struct BtlReplayRoster {
     /* 0x130 */ BtlReplayViewer viewer;
 } BtlReplayRoster;
 
-/* Partial view of a fighter. */
-typedef BtlFighter BtlReplayChr;
-
-void BtlReplay_Rewind(BtlReplayChr *chr);
-void BtlReplay_Record(BtlReplayChr *chr, u32 buttons, u32 commands, u8 *stick);
-void BtlReplay_Play(BtlReplayChr *chr, u32 *buttons, u8 *stick);
+void BtlReplay_Rewind(BtlFighter *chr);
+void BtlReplay_Record(BtlFighter *chr, u32 buttons, u32 commands, u8 *stick);
+void BtlReplay_Play(BtlFighter *chr, u32 *buttons, u8 *stick);
 void BtlReplay_ResetViewer(void);
 void BtlReplay_UpdateViewer(void);
 s32 BtlReplay_GetViewSide(void);

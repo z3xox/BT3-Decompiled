@@ -8,12 +8,13 @@
  * Fighter stat modifiers and fighter animation control:
  *   src/battle/btl_stats.c       0x1C2FF0..0x1C3CA8  stat modifiers and the stat curves
  *   src/battle/btl_anim.c  0x1C3CA8..0x1C4BF8  animation playback of the fighter's battle object
- * The structures are partial views local to this module: only the fields these files touch.
+ * The structures are partial views local to this module: only the fields these files touch. The fighter is
+ * BtlFighter (battle/btl_fighter.h).
  */
 
 /* ---- stat modifiers ------------------------------------------------------------------------------------------ */
 
-/* The four modified stats: index of BtlStatChr.stat[]. Meanings inferred from the curve rows each one feeds. */
+/* The four modified stats: index of BtlFighter.stat[]. Meanings inferred from the curve rows each one feeds. */
 #define BTL_STAT_0     0 /* with bonus[1]: rows 4..6 (multipliers 0.5..1..3) */
 #define BTL_STAT_1     1 /* with bonus[2]: row 7 (multiplier 1.1875..1..0.25: lower is better, damage taken) */
 #define BTL_STAT_2     2 /* with bonus[0] and bonus[3]: rows 0..2, 8, 11, 12 */
@@ -84,15 +85,6 @@ typedef struct BtlStatObj {
 
 /* ---- fighter ------------------------------------------------------------------------------------------------- */
 
-/* What BtlMember_GetActiveGauge returns: the active member's gauge block. */
-typedef BtlMemberGauge BtlStatGauge;
-
-/* What BtlMember_GetActive returns: the active member entry. */
-typedef BtlMember BtlStatMember;
-
-/* Partial view of a fighter (0x1600 bytes). */
-typedef BtlFighter BtlStatChr;
-
 /* Fighter roster (gBtlChars): only the animation flag table. */
 typedef struct BtlStatRoster {
     /* 0x00 */ u8 unk0[0x20];
@@ -100,86 +92,86 @@ typedef struct BtlStatRoster {
 } BtlStatRoster;
 
 /* btl_stats.c */
-void BtlStat_ClearSlotOn(BtlStatChr *chr, s32 slot, s32 kind);
-void BtlStat_EndKind2(BtlStatChr *chr);
-void BtlStat_EndKind3(BtlStatChr *chr);
-void BtlStat_EndKind4(BtlStatChr *chr);
-void BtlStat_ClearPenalty(BtlStatChr *chr);
-void BtlStat_ClearFrameMods(BtlStatChr *chr);
-void BtlStat_Reset(BtlStatChr *chr);
-void BtlStat_Update(BtlStatChr *chr);
-void BtlStat_SetBase(BtlStatChr *chr, s32 stat, s32 slot, s32 val, s32 add);
-void BtlStat_SetFrameMod(BtlStatChr *chr, s32 stat, s32 val, s32 add);
-void BtlStat_SetTimed(BtlStatChr *chr, s32 stat, s32 slot, s32 val, s32 add, s32 time);
-void BtlStat_SetKind2(BtlStatChr *chr, s32 stat, s32 slot, s32 val, s32 add);
-void BtlStat_SetKind3(BtlStatChr *chr, s32 stat, s32 slot, s32 val, s32 add);
-void BtlStat_SetKind4(BtlStatChr *chr, s32 stat, s32 slot, s32 val, s32 add);
-void BtlStat_SetPenalty(BtlStatChr *chr, s32 stat, s32 slot, s32 val);
-s32 BtlStat_GetMod(BtlStatChr *chr, s32 stat);
-s32 BtlStat_GetLevel0(BtlStatChr *chr);
-s32 BtlStat_GetLevel1(BtlStatChr *chr);
-s32 BtlStat_GetLevel2(BtlStatChr *chr);
-s32 BtlStat_GetLevel3(BtlStatChr *chr);
-s32 BtlStat_GetLevel4(BtlStatChr *chr);
-s32 BtlStat_GetLevel5(BtlStatChr *chr);
-s32 BtlStat_GetLevel6(BtlStatChr *chr);
+void BtlStat_ClearSlotOn(BtlFighter *chr, s32 slot, s32 kind);
+void BtlStat_EndKind2(BtlFighter *chr);
+void BtlStat_EndKind3(BtlFighter *chr);
+void BtlStat_EndKind4(BtlFighter *chr);
+void BtlStat_ClearPenalty(BtlFighter *chr);
+void BtlStat_ClearFrameMods(BtlFighter *chr);
+void BtlStat_Reset(BtlFighter *chr);
+void BtlStat_Update(BtlFighter *chr);
+void BtlStat_SetBase(BtlFighter *chr, s32 stat, s32 slot, s32 val, s32 add);
+void BtlStat_SetFrameMod(BtlFighter *chr, s32 stat, s32 val, s32 add);
+void BtlStat_SetTimed(BtlFighter *chr, s32 stat, s32 slot, s32 val, s32 add, s32 time);
+void BtlStat_SetKind2(BtlFighter *chr, s32 stat, s32 slot, s32 val, s32 add);
+void BtlStat_SetKind3(BtlFighter *chr, s32 stat, s32 slot, s32 val, s32 add);
+void BtlStat_SetKind4(BtlFighter *chr, s32 stat, s32 slot, s32 val, s32 add);
+void BtlStat_SetPenalty(BtlFighter *chr, s32 stat, s32 slot, s32 val);
+s32 BtlStat_GetMod(BtlFighter *chr, s32 stat);
+s32 BtlStat_GetLevel0(BtlFighter *chr);
+s32 BtlStat_GetLevel1(BtlFighter *chr);
+s32 BtlStat_GetLevel2(BtlFighter *chr);
+s32 BtlStat_GetLevel3(BtlFighter *chr);
+s32 BtlStat_GetLevel4(BtlFighter *chr);
+s32 BtlStat_GetLevel5(BtlFighter *chr);
+s32 BtlStat_GetLevel6(BtlFighter *chr);
 f32 BtlStat_EvalCurve(s32 level, s32 row);
-s32 BtlStat_GetKiChargeBonus(BtlStatChr *chr);
-s32 BtlStat_GetKiRegenBonus(BtlStatChr *chr);
-s32 BtlStat_GetKiRecoverBonus(BtlStatChr *chr);
-s32 BtlStat_GetBlastGainBonus(BtlStatChr *chr);
-f32 BtlStat_GetMeleeDamageScale(BtlStatChr *chr);
-f32 BtlStat_GetGuardKiCostScale(BtlStatChr *chr);
-f32 BtlStat_GetKiBlastDamageScale(BtlStatChr *chr);
-f32 BtlStat_GetScale7(BtlStatChr *chr);
-f32 BtlStat_GetSpeedScale(BtlStatChr *chr);
-f32 BtlStat_GetBlast2DamageScale(BtlStatChr *chr);
-f32 BtlStat_GetUltimateDamageScale(BtlStatChr *chr);
-f32 BtlStat_GetMaxPowerChargeScale(BtlStatChr *chr);
-f32 BtlStat_GetMaxPowerExtraTime(BtlStatChr *chr);
+s32 BtlStat_GetKiChargeBonus(BtlFighter *chr);
+s32 BtlStat_GetKiRegenBonus(BtlFighter *chr);
+s32 BtlStat_GetKiRecoverBonus(BtlFighter *chr);
+s32 BtlStat_GetBlastGainBonus(BtlFighter *chr);
+f32 BtlStat_GetMeleeDamageScale(BtlFighter *chr);
+f32 BtlStat_GetGuardKiCostScale(BtlFighter *chr);
+f32 BtlStat_GetKiBlastDamageScale(BtlFighter *chr);
+f32 BtlStat_GetScale7(BtlFighter *chr);
+f32 BtlStat_GetSpeedScale(BtlFighter *chr);
+f32 BtlStat_GetBlast2DamageScale(BtlFighter *chr);
+f32 BtlStat_GetUltimateDamageScale(BtlFighter *chr);
+f32 BtlStat_GetMaxPowerChargeScale(BtlFighter *chr);
+f32 BtlStat_GetMaxPowerExtraTime(BtlFighter *chr);
 
 /* btl_anim.c */
 void BtlAnim_ApplyTableFlags(void *handle, s32 anim);
 void BtlAnim_HideModelNodes(void *handle, s32 model);
 void BtlAnim_HideModelNode10(void *handle, s32 model);
-void BtlAnim_Play(BtlStatChr *chr, s32 anim, f32 blend);
-void BtlAnim_PlayKeep(BtlStatChr *chr, s32 anim, f32 blend);
-void BtlAnim_SubToMain(BtlStatChr *chr);
-void BtlAnim_Request(BtlStatChr *chr, s32 anim, f32 blend);
-void BtlAnim_RequestKeep(BtlStatChr *chr, s32 anim, f32 blend);
-void BtlAnim_RequestSubToMain(BtlStatChr *chr);
-void BtlAnim_SetBlend(BtlStatChr *chr, f32 blend);
-void BtlAnim_SetNoBlend(BtlStatChr *chr);
-void BtlAnim_FlushRequest(BtlStatChr *chr);
-void BtlAnim_FlushRequestKeep(BtlStatChr *chr);
-void BtlAnim_FlushSubToMain(BtlStatChr *chr);
-void BtlAnim_ApplyBlend(BtlStatChr *chr);
-void BtlAnim_PlaySub(BtlStatChr *chr, s32 anim);
-void BtlAnim_SetSubMix(BtlStatChr *chr, f32 v);
-void BtlAnim_SetStep(BtlStatChr *chr, f32 step);
-void BtlAnim_SetDuration(BtlStatChr *chr, f32 seconds);
-void BtlAnim_SetObjRate(BtlStatChr *chr, f32 rate);
-void BtlAnim_SetRate(BtlStatChr *chr, f32 rate);
-void BtlAnim_JumpToEnd(BtlStatChr *chr);
-void BtlAnim_EnableHandle(BtlStatChr *chr);
-s32 BtlAnim_GetId(BtlStatChr *chr);
-s32 BtlAnim_GetNextId(BtlStatChr *chr);
-s32 BtlAnim_GetPrevId(BtlStatChr *chr);
+void BtlAnim_Play(BtlFighter *chr, s32 anim, f32 blend);
+void BtlAnim_PlayKeep(BtlFighter *chr, s32 anim, f32 blend);
+void BtlAnim_SubToMain(BtlFighter *chr);
+void BtlAnim_Request(BtlFighter *chr, s32 anim, f32 blend);
+void BtlAnim_RequestKeep(BtlFighter *chr, s32 anim, f32 blend);
+void BtlAnim_RequestSubToMain(BtlFighter *chr);
+void BtlAnim_SetBlend(BtlFighter *chr, f32 blend);
+void BtlAnim_SetNoBlend(BtlFighter *chr);
+void BtlAnim_FlushRequest(BtlFighter *chr);
+void BtlAnim_FlushRequestKeep(BtlFighter *chr);
+void BtlAnim_FlushSubToMain(BtlFighter *chr);
+void BtlAnim_ApplyBlend(BtlFighter *chr);
+void BtlAnim_PlaySub(BtlFighter *chr, s32 anim);
+void BtlAnim_SetSubMix(BtlFighter *chr, f32 v);
+void BtlAnim_SetStep(BtlFighter *chr, f32 step);
+void BtlAnim_SetDuration(BtlFighter *chr, f32 seconds);
+void BtlAnim_SetObjRate(BtlFighter *chr, f32 rate);
+void BtlAnim_SetRate(BtlFighter *chr, f32 rate);
+void BtlAnim_JumpToEnd(BtlFighter *chr);
+void BtlAnim_EnableHandle(BtlFighter *chr);
+s32 BtlAnim_GetId(BtlFighter *chr);
+s32 BtlAnim_GetNextId(BtlFighter *chr);
+s32 BtlAnim_GetPrevId(BtlFighter *chr);
 u32 BtlAnim_GetFlags(u32 anim);
-f32 BtlAnim_GetFrame(BtlStatChr *chr);
-f32 BtlAnim_GetProgress(BtlStatChr *chr);
-f32 BtlAnim_GetLength(BtlStatChr *chr);
-f32 BtlAnim_GetStep(BtlStatChr *chr);
-f32 BtlAnim_GetObjRate(BtlStatChr *chr);
-s32 BtlAnim_TestAttr(BtlStatChr *chr, u64 mask);
-s32 BtlAnim_Advance(BtlStatChr *chr, s32 flags);
-s32 BtlAnim_AdvanceThen(BtlStatChr *chr, s32 next, f32 blend, s32 flags);
-void BtlAnim_AdvanceLoop(BtlStatChr *chr, s32 flags);
-s32 BtlAnim_PassedRatio(BtlStatChr *chr, f32 ratio);
-s32 BtlAnim_PassedFrame(BtlStatChr *chr, f32 frame);
-s32 BtlAnim_InRatioRange(BtlStatChr *chr, f32 lo, f32 hi);
-s32 BtlAnim_InFrameRange(BtlStatChr *chr, f32 lo, f32 hi);
-s32 BtlAnim_IsNew(BtlStatChr *chr);
-s32 BtlAnim_WasNew(BtlStatChr *chr);
+f32 BtlAnim_GetFrame(BtlFighter *chr);
+f32 BtlAnim_GetProgress(BtlFighter *chr);
+f32 BtlAnim_GetLength(BtlFighter *chr);
+f32 BtlAnim_GetStep(BtlFighter *chr);
+f32 BtlAnim_GetObjRate(BtlFighter *chr);
+s32 BtlAnim_TestAttr(BtlFighter *chr, u64 mask);
+s32 BtlAnim_Advance(BtlFighter *chr, s32 flags);
+s32 BtlAnim_AdvanceThen(BtlFighter *chr, s32 next, f32 blend, s32 flags);
+void BtlAnim_AdvanceLoop(BtlFighter *chr, s32 flags);
+s32 BtlAnim_PassedRatio(BtlFighter *chr, f32 ratio);
+s32 BtlAnim_PassedFrame(BtlFighter *chr, f32 frame);
+s32 BtlAnim_InRatioRange(BtlFighter *chr, f32 lo, f32 hi);
+s32 BtlAnim_InFrameRange(BtlFighter *chr, f32 lo, f32 hi);
+s32 BtlAnim_IsNew(BtlFighter *chr);
+s32 BtlAnim_WasNew(BtlFighter *chr);
 
 #endif

@@ -29,8 +29,8 @@
  */
 
 /* Thrown fighter: sets the heading of the release from the hit reaction (mirrored when grabbed from behind). */
-void BtlActThrow_SetReleaseHeading(BtlActHChr *chr) {
-    BtlActHPose *pose = BtlChar_GetPos(chr);
+void BtlActThrow_SetReleaseHeading(BtlFighter *chr) {
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
     f32 yaw;
     f32 pitch;
 
@@ -51,7 +51,7 @@ void BtlActThrow_SetReleaseHeading(BtlActHChr *chr) {
  * The yaw mode switch needs its redundant cases (0xB4 and 0xB6 assign the 6 the variable already has, behind an
  * empty default): with them the compiler keeps the branch; reduced to `case 0xB5` alone it makes a conditional move.
  */
-s32 BtlAct_GrabDash(BtlActHChr *chr, s32 phase) {
+s32 BtlAct_GrabDash(BtlFighter *chr, s32 phase) {
     s32 yawMode;
 
     if (phase == 0) {
@@ -135,7 +135,7 @@ s32 BtlAct_GrabDash(BtlActHChr *chr, s32 phase) {
  * BtlChar_FrameMod(2) unless attack flag 0x8000 is set. Near the stage edge and facing outward the pair is turned
  * around. Between the animation frames drainFrom..drainTo sound 0x51 and fx bit 0x38 run (a drain).
  */
-s32 BtlAct_Throw(BtlActHChr *chr, s32 phase) {
+s32 BtlAct_Throw(BtlFighter *chr, s32 phase) {
     s32 alt;
     f32 radius;
     f32 dist;
@@ -213,7 +213,7 @@ s32 BtlAct_Throw(BtlActHChr *chr, s32 phase) {
  * action queue is filled from the reaction and the queued action starts. When flag 0x23 drops the fighter is released
  * (BtlActThrow_SetReleaseHeading).
  */
-s32 BtlAct_Thrown(BtlActHChr *chr, s32 phase) {
+s32 BtlAct_Thrown(BtlFighter *chr, s32 phase) {
     if (phase == 0) {
         BtlAnim_Play(chr, BtlAct_GetCurrent(chr) == 0xBA ? 0x189 : 0x97, chr->react.noBlend != 0 ? 0.0f : 0.3f);
         BtlChar_SetHeldFlag(chr, 0xE);
@@ -270,7 +270,7 @@ s32 BtlAct_Thrown(BtlActHChr *chr, s32 phase) {
  * (BtlStage_GetWaterLevel) is less than three body heights below; only characters with parameter flag 0x400 test that level.
  * Void in the original (the delay slot of the last switch only matches that way).
  */
-void BtlAct_SlamThrow(BtlActHChr *chr, s32 phase) {
+void BtlAct_SlamThrow(BtlFighter *chr, s32 phase) {
     s32 *timer = &chr->work[2];
     s32 rise;
     s32 end;
@@ -371,7 +371,7 @@ void BtlAct_SlamThrow(BtlActHChr *chr, s32 phase) {
  * 0xF (on the ground) is set without flag 0x23; at its end the cameras shake and action 0xDE starts. Leaves through
  * 0xE6 on flag 0x16, on flag 0x17 on stages 4 / 27, or when the opponent is no longer in 0xBB.
  */
-s32 BtlAct_SlamThrown(BtlActHChr *chr, s32 phase) {
+s32 BtlAct_SlamThrown(BtlFighter *chr, s32 phase) {
     BtlActHAnim *anim;
     BtlActHTrack *track;
     Quat q;
@@ -477,7 +477,7 @@ s32 BtlAct_SlamThrown(BtlActHChr *chr, s32 phase) {
  * camera cut 0x18 / 0x19 picked by the side the fighter camera sits on (camSide < 0: 0x18); flag 0xD3 (this camera
  * takes the whole screen) while the cut runs. When the opponent leaves 0xBF: animation 0x198, then 0x28, then 0xB.
  */
-s32 BtlAct_DragDown(BtlActHChr *chr, s32 phase) {
+s32 BtlAct_DragDown(BtlFighter *chr, s32 phase) {
     f32 lean;
     f32 speed;
 
@@ -542,8 +542,8 @@ s32 BtlAct_DragDown(BtlActHChr *chr, s32 phase) {
  * ends it with 500 damage, a camera shake and action 0xDE; flags 0x16, 0xB6 (and 0x17, 0xB7 on stages 4 / 27) lead to
  * 0xE6, or 0xD9 when dead.
  */
-s32 BtlAct_DraggedDown(BtlActHChr *chr, s32 phase) {
-    BtlActHPose *pose = BtlChar_GetPos(chr);
+s32 BtlAct_DraggedDown(BtlFighter *chr, s32 phase) {
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
     Vec4 pos;
     Vec4 node0;
     Vec4 node16;
@@ -630,7 +630,7 @@ s32 BtlAct_DraggedDown(BtlActHChr *chr, s32 phase) {
  * Raised on every run frame of a character-change action (0xEC..0xF8): hit-stop level 2 (0x125, the opponent
  * freezes), 0x128 (no end-of-battle check) and the rest of the set; holds the action against forced actions.
  */
-void BtlActChange_SetFlags(BtlActHChr *chr) {
+void BtlActChange_SetFlags(BtlFighter *chr) {
     BtlChar_SetFlag(chr, 0x125);
     BtlChar_SetFlag(chr, 0x12A);
     BtlChar_SetFlag(chr, 0x42);
@@ -648,7 +648,7 @@ void BtlActChange_SetFlags(BtlActHChr *chr) {
 }
 
 /* Transformations 0xEC / 0xF0: a push straight behind the fighter (BtlAct_PushAngle, speed 0.4). */
-void BtlActChange_PushBack(BtlActHChr *chr) {
+void BtlActChange_PushBack(BtlFighter *chr) {
     BtlAct_PushAngle(chr, BtlUtil_WrapAngle(BtlChar_GetPos(chr)->rot.y + BTL_DEG(180.0f)), 0.4f, 3.0f);
 }
 
@@ -657,7 +657,7 @@ void BtlActChange_PushBack(BtlActHChr *chr) {
  * the opponent's, up to the stage height limit or 300 units, pulled inside the stage radius; saved as the placement
  * (taken by flag 0xF5).
  */
-void BtlActSwitch_SaveEntryPlacement(BtlActHChr *chr) {
+void BtlActSwitch_SaveEntryPlacement(BtlFighter *chr) {
     Vec4 own;
     Vec4 opp;
     Vec4 pos;
@@ -705,11 +705,11 @@ void BtlActSwitch_SaveEntryPlacement(BtlActHChr *chr) {
  * Member switch: camera cut on the leaving member. Returns 1 (and uses a cut on a stage point instead of the
  * fighter) when the fighter is below the stage floor level or the previous action was 0xEB.
  */
-s32 BtlActSwitch_SetLeaveCut(BtlActHChr *chr) {
+s32 BtlActSwitch_SetLeaveCut(BtlFighter *chr) {
     Vec4 pos;
     Vec4 rot;
     s32 hidden = 0;
-    BtlActHPose *pose = BtlChar_GetPos(chr);
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
     s32 onFighter;
 
     onFighter = 1;
@@ -735,7 +735,7 @@ s32 BtlActSwitch_SetLeaveCut(BtlActHChr *chr) {
 }
 
 /* Member switch: camera cut on the arriving member, placed from the player's start placement. */
-void BtlActSwitch_SetEnterCut(BtlActHChr *chr) {
+void BtlActSwitch_SetEnterCut(BtlFighter *chr) {
     Vec4 pos;
     Vec4 rot;
     Vec4 a;
@@ -754,7 +754,7 @@ void BtlActSwitch_SetEnterCut(BtlActHChr *chr) {
 }
 
 /* Ends a change action: action 0xB, or the queued action when BtlAct_CheckStoryForced queued one. */
-void BtlActChange_Finish(BtlActHChr *chr) {
+void BtlActChange_Finish(BtlFighter *chr) {
     BtlAct_Request(chr, 0xB);
     if (BtlAct_CheckStoryForced(chr)) {
         BtlAct_Request(chr, BtlAct_GetQueued(chr));
@@ -765,8 +765,8 @@ void BtlActChange_Finish(BtlActHChr *chr) {
  * 0xEC: transformation. Lead-in 0x177 (camera cut 4), loop 0x178 until the model is in memory, closing 0x179
  * (camera cut 6, voice 0x22). Pushes back with BtlActChange_PushBack during the lead-in and the loop.
  */
-s32 BtlAct_TransformA(BtlActHChr *chr, s32 phase) {
-    BtlActHPose *pose;
+s32 BtlAct_TransformA(BtlFighter *chr, s32 phase) {
+    BtlFighterPose *pose;
     s32 waiting;
 
     if (phase == 0) {
@@ -859,8 +859,8 @@ s32 BtlAct_TransformA(BtlActHChr *chr, s32 phase) {
  * 0xED: transformation. The request is pushed in the enter phase. Lead-in 0x18F (camera cut 1/0), loop 0x190 until
  * the model is in memory, closing 0x191 (voice 0x22, stream sound 0x8D34).
  */
-s32 BtlAct_TransformB(BtlActHChr *chr, s32 phase) {
-    BtlActHPose *pose;
+s32 BtlAct_TransformB(BtlFighter *chr, s32 phase) {
+    BtlFighterPose *pose;
 
     if (phase == 0) {
         pose = BtlChar_GetPos(chr);
@@ -931,7 +931,7 @@ s32 BtlAct_TransformB(BtlActHChr *chr, s32 phase) {
  * then the closing 0x179 (voice 0x22, stream sound 0x8D36). Gravity applies; the placement is taken (flag 0xF5) on
  * leaving unless a warp flag (0xFC / 0xFD) is set.
  */
-s32 BtlAct_TransformC(BtlActHChr *chr, s32 phase) {
+s32 BtlAct_TransformC(BtlFighter *chr, s32 phase) {
     if (phase == 0) {
         BtlAnim_Play(chr, 0x177, 0.0f);
         BtlChar_GetPos(chr)->speed = 0.0f;
@@ -1011,9 +1011,9 @@ s32 BtlAct_TransformC(BtlActHChr *chr, s32 phase) {
  * rising at 800 km/h, loop 0x17E for at least 61 frames and until the object is in memory, then 0x177 with the object's
  * animation 0x1A2 until the character is in memory, then the closing 0x179.
  */
-s32 BtlAct_TransformD(BtlActHChr *chr, s32 phase) {
+s32 BtlAct_TransformD(BtlFighter *chr, s32 phase) {
     s32 *timer = &chr->work[2];
-    BtlActHPose *pose;
+    BtlFighterPose *pose;
 
     if (phase == 0) {
         pose = BtlChar_GetPos(chr);
@@ -1120,8 +1120,8 @@ s32 BtlAct_TransformD(BtlActHChr *chr, s32 phase) {
  * 0xF0: transformation, the long presentation. Lead-in 0x177 with three sounds, loop 0x178 until the model is in
  * memory, closing 0x179 with sounds, camera shakes and vibration at fixed points of the animation.
  */
-s32 BtlAct_TransformE(BtlActHChr *chr, s32 phase) {
-    BtlActHPose *pose;
+s32 BtlAct_TransformE(BtlFighter *chr, s32 phase) {
+    BtlFighterPose *pose;
     s32 waiting;
 
     if (phase == 0) {
@@ -1234,7 +1234,7 @@ s32 BtlAct_TransformE(BtlActHChr *chr, s32 phase) {
  * animation 0x1A2 (0xF1) / 0x1A3 (0xF2), which holds on its last frame until the fused character is in memory; then
  * the closing 0x1A4 (voice 0x22 at 30%).
  */
-s32 BtlAct_Fusion(BtlActHChr *chr, s32 phase) {
+s32 BtlAct_Fusion(BtlFighter *chr, s32 phase) {
     if (phase == 0) {
         BtlAnim_Play(chr, 0x1F, 0.0f);
         BtlChar_GetPos(chr)->speed = 0.0f;
@@ -1360,7 +1360,7 @@ s32 BtlAct_Fusion(BtlActHChr *chr, s32 phase) {
  * frames, fx bit 0xC and sound 0x20 on frame 15, hidden (flag 0xB) from frame 15; from frame 46 on, as soon as the
  * next member's files are in memory: BtlChange_SetReady and action 0xF4.
  */
-s32 BtlAct_SwitchLeave(BtlActHChr *chr, s32 phase) {
+s32 BtlAct_SwitchLeave(BtlFighter *chr, s32 phase) {
     s32 *timer = &chr->work[2];
 
     if (phase == 0) {
@@ -1456,76 +1456,76 @@ extern void *memset(void *dst, s32 c, s32 n);
 extern BtlActIRoster *gBtlChars;
 
 /* Fighter accessors, flags, effects, sound. */
-#define BtlChar_GetPos ((BtlActIPose *(*)(BtlActIChr *chr))BtlChar_GetPos)
-#define BtlChar_GetObj ((BtlActIObj *(*)(BtlActIChr *chr))BtlChar_GetObj)
-extern s32 BtlChar_IsFree(BtlActIChr *chr);
-#define BtlChar_IsDead ((s32 (*)(BtlActIChr *chr))BtlChar_IsDead)
-extern s32 BtlChar_IsBodyChanged(BtlActIChr *chr);
+#define BtlChar_GetPos ((BtlFighterPose *(*)(BtlFighter *chr))BtlChar_GetPos)
+#define BtlChar_GetObj ((BtlActIObj *(*)(BtlFighter *chr))BtlChar_GetObj)
+extern s32 BtlChar_IsFree(BtlFighter *chr);
+#define BtlChar_IsDead ((s32 (*)(BtlFighter *chr))BtlChar_IsDead)
+extern s32 BtlChar_IsBodyChanged(BtlFighter *chr);
 extern s32 BtlChar_FrameMod(s32 n);
-#define BtlChar_TestFlag ((s32 (*)(BtlActIChr *chr, s32 n))BtlChar_TestFlag)
-#define BtlChar_TestPrevFlag ((s32 (*)(BtlActIChr *chr, s32 n))BtlChar_TestPrevFlag)
-extern s32 BtlChar_IsFlagRaised(BtlActIChr *chr, s32 n);
-#define BtlChar_SetFlag ((void (*)(BtlActIChr *chr, s32 n))BtlChar_SetFlag)
-#define BtlChar_SetHeldFlag ((void (*)(BtlActIChr *chr, s32 n))BtlChar_SetHeldFlag)
-extern void BtlChar_ClearFlag(BtlActIChr *chr, s32 n);
-#define BtlChar_SetFxBit ((void (*)(BtlActIChr *chr, s32 n))BtlChar_SetFxBit)
-#define BtlChar_PlayVoice ((void (*)(BtlActIChr *chr, s32 kind))BtlChar_PlayVoice)
-#define BtlChar_Vibrate ((void (*)(BtlActIChr *chr, f32 power, f32 seconds))BtlChar_Vibrate)
-extern void BtlChar_SetSmallVibration(BtlActIChr *chr, f32 seconds);
+#define BtlChar_TestFlag ((s32 (*)(BtlFighter *chr, s32 n))BtlChar_TestFlag)
+#define BtlChar_TestPrevFlag ((s32 (*)(BtlFighter *chr, s32 n))BtlChar_TestPrevFlag)
+extern s32 BtlChar_IsFlagRaised(BtlFighter *chr, s32 n);
+#define BtlChar_SetFlag ((void (*)(BtlFighter *chr, s32 n))BtlChar_SetFlag)
+#define BtlChar_SetHeldFlag ((void (*)(BtlFighter *chr, s32 n))BtlChar_SetHeldFlag)
+extern void BtlChar_ClearFlag(BtlFighter *chr, s32 n);
+#define BtlChar_SetFxBit ((void (*)(BtlFighter *chr, s32 n))BtlChar_SetFxBit)
+#define BtlChar_PlayVoice ((void (*)(BtlFighter *chr, s32 kind))BtlChar_PlayVoice)
+#define BtlChar_Vibrate ((void (*)(BtlFighter *chr, f32 power, f32 seconds))BtlChar_Vibrate)
+extern void BtlChar_SetSmallVibration(BtlFighter *chr, f32 seconds);
 extern void BtlChar_AddStageTimer(f32 seconds);
-#define BtlCharSnd_PlayCommon ((void (*)(BtlActIChr *chr, s32 id))BtlCharSnd_PlayCommon)
+#define BtlCharSnd_PlayCommon ((void (*)(BtlFighter *chr, s32 id))BtlCharSnd_PlayCommon)
 extern void BtlEvent_Raise(s32 side, s32 ev);
-#define ChrCam_RequestCut ((void (*)(BtlActIChr *chr, s32 table, s32 index))ChrCam_RequestCut)
-#define ChrCam_AddShake ((void (*)(BtlActIChr *chr, f32 strength, f32 time))ChrCam_AddShake)
-extern void BtlColl_AddActionBit(BtlActIChr *chr, s32 action);
-#define BtlOpp_GetSeenAction ((s32 (*)(BtlActIChr *chr))BtlOpp_GetSeenAction)
-extern f32 BtlOpp_GetYawFromFacing(BtlActIChr *chr);
-extern s32 BtlInput_TestAction(BtlActIChr *chr, s32 id, s32 want);
+#define ChrCam_RequestCut ((void (*)(BtlFighter *chr, s32 table, s32 index))ChrCam_RequestCut)
+#define ChrCam_AddShake ((void (*)(BtlFighter *chr, f32 strength, f32 time))ChrCam_AddShake)
+extern void BtlColl_AddActionBit(BtlFighter *chr, s32 action);
+#define BtlOpp_GetSeenAction ((s32 (*)(BtlFighter *chr))BtlOpp_GetSeenAction)
+extern f32 BtlOpp_GetYawFromFacing(BtlFighter *chr);
+extern s32 BtlInput_TestAction(BtlFighter *chr, s32 id, s32 want);
 extern s32 BtlUtil_Min(s32 a, s32 b);
 extern s32 BtlUtil_Clamp(s32 v, s32 lo, s32 hi);
 
 /* Animation. */
-#define BtlAnim_Play ((void (*)(BtlActIChr *chr, s32 anim, f32 blend))BtlAnim_Play)
-#define BtlAnim_Request ((void (*)(BtlActIChr *chr, s32 anim, f32 blend))BtlAnim_Request)
-#define BtlAnim_GetId ((s32 (*)(BtlActIChr *chr))BtlAnim_GetId)
-#define BtlAnim_GetProgress ((f32 (*)(BtlActIChr *chr))BtlAnim_GetProgress)
-#define BtlAnim_Advance ((s32 (*)(BtlActIChr *chr, s32 flags))BtlAnim_Advance)
-#define BtlAnim_AdvanceThen ((s32 (*)(BtlActIChr *chr, s32 next, f32 blend, s32 flags))BtlAnim_AdvanceThen)
-#define BtlAnim_AdvanceLoop ((void (*)(BtlActIChr *chr, s32 flags))BtlAnim_AdvanceLoop)
-#define BtlAnim_PassedRatio ((s32 (*)(BtlActIChr *chr, f32 ratio))BtlAnim_PassedRatio)
+#define BtlAnim_Play ((void (*)(BtlFighter *chr, s32 anim, f32 blend))BtlAnim_Play)
+#define BtlAnim_Request ((void (*)(BtlFighter *chr, s32 anim, f32 blend))BtlAnim_Request)
+#define BtlAnim_GetId ((s32 (*)(BtlFighter *chr))BtlAnim_GetId)
+#define BtlAnim_GetProgress ((f32 (*)(BtlFighter *chr))BtlAnim_GetProgress)
+#define BtlAnim_Advance ((s32 (*)(BtlFighter *chr, s32 flags))BtlAnim_Advance)
+#define BtlAnim_AdvanceThen ((s32 (*)(BtlFighter *chr, s32 next, f32 blend, s32 flags))BtlAnim_AdvanceThen)
+#define BtlAnim_AdvanceLoop ((void (*)(BtlFighter *chr, s32 flags))BtlAnim_AdvanceLoop)
+#define BtlAnim_PassedRatio ((s32 (*)(BtlFighter *chr, f32 ratio))BtlAnim_PassedRatio)
 
 /* Movement. */
-#define BtlMove_Step ((void (*)(BtlActIChr *chr, s32 yawMode, s32 pitchMode, s32 dirMode, f32 speed, f32 accel))BtlMove_Step)
-#define BtlMove_BrakeVertical ((void (*)(BtlActIChr *chr))BtlMove_BrakeVertical)
-#define BtlMove_ApplyGravity ((void (*)(BtlActIChr *chr))BtlMove_ApplyGravity)
-extern void BtlMove_TurnToPoint(BtlActIChr *chr, Vec4 *target, f32 yawStep, f32 pitchStep);
-extern void BtlMove_TurnModelYaw(BtlActIChr *chr, f32 maxStep, f32 rate);
-#define BtlMove_TurnYaw ((void (*)(BtlActIChr *chr, s32 mode, f32 maxStep))BtlMove_TurnYaw)
-extern void BtlMove_TurnPitch(BtlActIChr *chr, s32 mode, f32 maxStep);
-extern void BtlMove_SnapToOpponent(BtlActIChr *chr);
-extern void BtlMove_WarpBehindOpponent(BtlActIChr *chr, f32 gap);
-extern void BtlMove_SetDirection(BtlActIChr *chr, s32 mode);
-extern s32 BtlMove_IsBlastIncoming(BtlActIChr *chr, s32 a, s32 b, s32 c, f32 limit);
-extern s32 BtlMove_CanFireBlast(BtlActIChr *chr, s32 mode, s32 *outCount);
+#define BtlMove_Step ((void (*)(BtlFighter *chr, s32 yawMode, s32 pitchMode, s32 dirMode, f32 speed, f32 accel))BtlMove_Step)
+#define BtlMove_BrakeVertical ((void (*)(BtlFighter *chr))BtlMove_BrakeVertical)
+#define BtlMove_ApplyGravity ((void (*)(BtlFighter *chr))BtlMove_ApplyGravity)
+extern void BtlMove_TurnToPoint(BtlFighter *chr, Vec4 *target, f32 yawStep, f32 pitchStep);
+extern void BtlMove_TurnModelYaw(BtlFighter *chr, f32 maxStep, f32 rate);
+#define BtlMove_TurnYaw ((void (*)(BtlFighter *chr, s32 mode, f32 maxStep))BtlMove_TurnYaw)
+extern void BtlMove_TurnPitch(BtlFighter *chr, s32 mode, f32 maxStep);
+extern void BtlMove_SnapToOpponent(BtlFighter *chr);
+extern void BtlMove_WarpBehindOpponent(BtlFighter *chr, f32 gap);
+extern void BtlMove_SetDirection(BtlFighter *chr, s32 mode);
+extern s32 BtlMove_IsBlastIncoming(BtlFighter *chr, s32 a, s32 b, s32 c, f32 limit);
+extern s32 BtlMove_CanFireBlast(BtlFighter *chr, s32 mode, s32 *outCount);
 
 /* Action state machine core (btl_char_action.c). */
-#define BtlAct_Request ((void (*)(BtlActIChr *chr, s32 id))BtlAct_Request)
-extern void BtlAct_SetQueue(BtlActIChr *chr, u32 slot, s32 id);
-#define BtlAct_GetQueued ((s32 (*)(BtlActIChr *chr))BtlAct_GetQueued)
-#define BtlAct_GetCurrent ((s32 (*)(BtlActIChr *chr))BtlAct_GetCurrent)
-extern s32 BtlAct_GetCurrentClass(BtlActIChr *chr);
-extern void BtlAct_PrepareSwitch(BtlActIChr *chr);
+#define BtlAct_Request ((void (*)(BtlFighter *chr, s32 id))BtlAct_Request)
+extern void BtlAct_SetQueue(BtlFighter *chr, u32 slot, s32 id);
+#define BtlAct_GetQueued ((s32 (*)(BtlFighter *chr))BtlAct_GetQueued)
+#define BtlAct_GetCurrent ((s32 (*)(BtlFighter *chr))BtlAct_GetCurrent)
+extern s32 BtlAct_GetCurrentClass(BtlFighter *chr);
+extern void BtlAct_PrepareSwitch(BtlFighter *chr);
 extern s32 BtlAct_IsAttackId(s32 id);
-extern s32 BtlAct_TestAttackSkill(BtlActIChr *chr, s32 attack);
-extern void BtlAct_PrepareAttack(BtlActIChr *chr, s32 id);
-extern s32 BtlAct_TestPoweredSkill(BtlActIChr *chr, u32 mask);
+extern s32 BtlAct_TestAttackSkill(BtlFighter *chr, s32 attack);
+extern void BtlAct_PrepareAttack(BtlFighter *chr, s32 id);
+extern s32 BtlAct_TestPoweredSkill(BtlFighter *chr, u32 mask);
 
 /* Character change (btl_act_change.c, btl_change.c). */
-#define BtlActChange_SetFlags ((void (*)(BtlActIChr *chr))BtlActChange_SetFlags)          /* the flag set of a change action; holds the action */
-#define BtlActChange_Finish ((void (*)(BtlActIChr *chr))BtlActChange_Finish)            /* request 0xB, or the action a story script forces */
-#define BtlActSwitch_SaveEntryPlacement ((void (*)(BtlActIChr *chr))BtlActSwitch_SaveEntryPlacement) /* entry point of the arriving member -> saved placement */
-#define BtlActSwitch_SetLeaveCut ((s32 (*)(BtlActIChr *chr))BtlActSwitch_SetLeaveCut)        /* camera cut; 1 = below the stage floor or after action 0xEB */
-#define BtlActSwitch_SetEnterCut ((void (*)(BtlActIChr *chr))BtlActSwitch_SetEnterCut)
+#define BtlActChange_SetFlags ((void (*)(BtlFighter *chr))BtlActChange_SetFlags)          /* the flag set of a change action; holds the action */
+#define BtlActChange_Finish ((void (*)(BtlFighter *chr))BtlActChange_Finish)            /* request 0xB, or the action a story script forces */
+#define BtlActSwitch_SaveEntryPlacement ((void (*)(BtlFighter *chr))BtlActSwitch_SaveEntryPlacement) /* entry point of the arriving member -> saved placement */
+#define BtlActSwitch_SetLeaveCut ((s32 (*)(BtlFighter *chr))BtlActSwitch_SetLeaveCut)        /* camera cut; 1 = below the stage floor or after action 0xEB */
+#define BtlActSwitch_SetEnterCut ((void (*)(BtlFighter *chr))BtlActSwitch_SetEnterCut)
 extern void BtlChange_RequestChara(s32 player, s32 chara, s32 costume, s32 variant, s32 animChara, s32 anim1Chara, s32 voiceChara);
 extern s32 BtlChange_IsLoadedFor(s32 player);
 extern void BtlChange_SetReady(s32 player);
@@ -1535,65 +1535,65 @@ extern void BtlStage_GetStartPlace(s32 player, Vec4 *pos, Vec4 *rot, s32 alt); /
 extern void BtlObj_SetColorMode(BtlActIObj *obj, s32 bit, s32 on);        /* battle object: called for object flag 0x40000 */
 
 /* Gauges and stat modifiers. */
-extern BtlActIGauge *BtlMember_GetActiveGauge(BtlActIChr *chr);
-extern s32 BtlMember_HasHealth(BtlActIChr *chr, s32 amount);
-extern s32 BtlMember_HasKi(BtlActIChr *chr, s32 amount);
-extern s32 BtlMember_HasBlast(BtlActIChr *chr, s32 amount);
-extern s32 BtlMember_IsKiFull(BtlActIChr *chr);
-extern void BtlMember_AddMaxPower(BtlActIChr *chr, s32 amount);
-extern void BtlMember_AddHealth(BtlActIChr *chr, s32 amount);
-#define BtlMember_Damage ((void (*)(BtlActIChr *chr, s32 damage, s32 flags))BtlMember_Damage)
-extern s32 BtlMember_AddKi(BtlActIChr *chr, s32 amount);
-extern s32 BtlMember_SpendKi(BtlActIChr *chr, s32 amount, s32 force);
-#define BtlMember_SubBlast ((void (*)(BtlActIChr *chr, s32 amount))BtlMember_SubBlast)
-extern void BtlStat_SetBase(BtlActIChr *chr, s32 stat, s32 slot, s32 val, s32 add);
-extern void BtlStat_SetTimed(BtlActIChr *chr, s32 stat, s32 slot, s32 val, s32 add, s32 time);
-extern void BtlStat_SetKind2(BtlActIChr *chr, s32 stat, s32 slot, s32 val, s32 add);
-extern void BtlStat_SetKind3(BtlActIChr *chr, s32 stat, s32 slot, s32 val, s32 add);
-extern void BtlStat_SetKind4(BtlActIChr *chr, s32 stat, s32 slot, s32 val, s32 add);
-extern void BtlStat_SetPenalty(BtlActIChr *chr, s32 stat, s32 slot, s32 val);
+extern BtlMemberGauge *BtlMember_GetActiveGauge(BtlFighter *chr);
+extern s32 BtlMember_HasHealth(BtlFighter *chr, s32 amount);
+extern s32 BtlMember_HasKi(BtlFighter *chr, s32 amount);
+extern s32 BtlMember_HasBlast(BtlFighter *chr, s32 amount);
+extern s32 BtlMember_IsKiFull(BtlFighter *chr);
+extern void BtlMember_AddMaxPower(BtlFighter *chr, s32 amount);
+extern void BtlMember_AddHealth(BtlFighter *chr, s32 amount);
+#define BtlMember_Damage ((void (*)(BtlFighter *chr, s32 damage, s32 flags))BtlMember_Damage)
+extern s32 BtlMember_AddKi(BtlFighter *chr, s32 amount);
+extern s32 BtlMember_SpendKi(BtlFighter *chr, s32 amount, s32 force);
+#define BtlMember_SubBlast ((void (*)(BtlFighter *chr, s32 amount))BtlMember_SubBlast)
+extern void BtlStat_SetBase(BtlFighter *chr, s32 stat, s32 slot, s32 val, s32 add);
+extern void BtlStat_SetTimed(BtlFighter *chr, s32 stat, s32 slot, s32 val, s32 add, s32 time);
+extern void BtlStat_SetKind2(BtlFighter *chr, s32 stat, s32 slot, s32 val, s32 add);
+extern void BtlStat_SetKind3(BtlFighter *chr, s32 stat, s32 slot, s32 val, s32 add);
+extern void BtlStat_SetKind4(BtlFighter *chr, s32 stat, s32 slot, s32 val, s32 add);
+extern void BtlStat_SetPenalty(BtlFighter *chr, s32 stat, s32 slot, s32 val);
 
 /* Character parameters (btl_param.c / btl_tech.c). */
-extern s32 BtlParam_GetCharaFlags(BtlActIChr *chr);
-#define BtlParam_GetFlags ((s32 (*)(BtlActIChr *chr))BtlParam_GetFlags)
-extern s32 BtlParam_GetFlags2(BtlActIChr *chr);
-extern s32 BtlParam_GetFlags3(BtlActIChr *chr);
-extern s32 BtlParam_GetAmountA(BtlActIChr *chr);   /* ki cost: 10000; 5000 with ability 0x23; 0 with ability 0x24 */
-extern s32 BtlParam_GetAmountB(BtlActIChr *chr);   /* ki cost: 20000; 10000; 0 */
-extern s32 BtlParam_GetBlastLimitA(BtlActIChr *chr);   /* how many ki blasts can be fired in a row */
-extern s32 BtlParam_GetRushFinisher(BtlActIChr *chr, s32 n);
-extern s32 BtlParam_GetChainKind(BtlActIChr *chr, s32 n);
-extern s32 BtlParam_GetFinisherChoice(BtlActIChr *chr, s32 n);
-#define BtlParam_GetDashSound ((s32 (*)(BtlActIChr *chr))BtlParam_GetDashSound)
-extern s32 BtlParam_CanFly(BtlActIChr *chr);
-extern s32 BtlKiBlast_GetKiCostOf(BtlActIChr *chr, s32 kind);
+extern s32 BtlParam_GetCharaFlags(BtlFighter *chr);
+#define BtlParam_GetFlags ((s32 (*)(BtlFighter *chr))BtlParam_GetFlags)
+extern s32 BtlParam_GetFlags2(BtlFighter *chr);
+extern s32 BtlParam_GetFlags3(BtlFighter *chr);
+extern s32 BtlParam_GetAmountA(BtlFighter *chr);   /* ki cost: 10000; 5000 with ability 0x23; 0 with ability 0x24 */
+extern s32 BtlParam_GetAmountB(BtlFighter *chr);   /* ki cost: 20000; 10000; 0 */
+extern s32 BtlParam_GetBlastLimitA(BtlFighter *chr);   /* how many ki blasts can be fired in a row */
+extern s32 BtlParam_GetRushFinisher(BtlFighter *chr, s32 n);
+extern s32 BtlParam_GetChainKind(BtlFighter *chr, s32 n);
+extern s32 BtlParam_GetFinisherChoice(BtlFighter *chr, s32 n);
+#define BtlParam_GetDashSound ((s32 (*)(BtlFighter *chr))BtlParam_GetDashSound)
+extern s32 BtlParam_CanFly(BtlFighter *chr);
+extern s32 BtlKiBlast_GetKiCostOf(BtlFighter *chr, s32 kind);
 
 /* Skill slot parameters: the character parameter block (object +0x930), by slot 0 / 1. */
-extern s32 BtlSkill_GetFlags(BtlActIChr *chr, s32 slot);        /* +0x08 + slot * 4: attribute bits */
-extern s32 BtlSkill_GetId(BtlActIChr *chr, s32 slot);           /* +0x10 + slot * 2 (s16): skill id */
-extern s32 BtlSkill_GetStatKind(BtlActIChr *chr, s32 slot);     /* +0x66 + slot (s8): BTL_STAT_KIND_* */
-extern s32 BtlSkill_GetBlastCost(BtlActIChr *chr, s32 slot);    /* max(+0x94[slot] (- 1 with ability 0x15), 1) * 100000 */
-extern s32 BtlSkill_GetStatLevel0(BtlActIChr *chr, s32 slot);   /* +0x96 + slot (s8) */
-extern s32 BtlSkill_GetStatLevel1(BtlActIChr *chr, s32 slot);   /* +0x9A + slot (s8) */
-extern s32 BtlSkill_GetStatLevel2(BtlActIChr *chr, s32 slot);   /* +0x98 + slot (s8) */
-extern s32 BtlSkill_GetStatLevel3(BtlActIChr *chr, s32 slot);   /* +0x9C + slot (s8) */
-extern s32 BtlSkill_GetFrames(BtlActIChr *chr, s32 slot);       /* +0xA0 + slot * 4 (f32 seconds) * 30 */
-extern s32 BtlSkill_GetHealthChange(BtlActIChr *chr, s32 slot); /* health maximum * (+0xA8 + slot * 4) / 100 */
-extern s32 BtlSkill_GetKiChange(BtlActIChr *chr, s32 slot);     /* +0xB0 + slot * 4 */
-extern s32 BtlSkill_GetValF(BtlActIChr *chr, s32 slot);         /* +0xB8 + slot * 4 */
-extern s32 BtlSkill_GetValE(BtlActIChr *chr, s32 slot);         /* +0xC0 + slot * 4 */
+extern s32 BtlSkill_GetFlags(BtlFighter *chr, s32 slot);        /* +0x08 + slot * 4: attribute bits */
+extern s32 BtlSkill_GetId(BtlFighter *chr, s32 slot);           /* +0x10 + slot * 2 (s16): skill id */
+extern s32 BtlSkill_GetStatKind(BtlFighter *chr, s32 slot);     /* +0x66 + slot (s8): BTL_STAT_KIND_* */
+extern s32 BtlSkill_GetBlastCost(BtlFighter *chr, s32 slot);    /* max(+0x94[slot] (- 1 with ability 0x15), 1) * 100000 */
+extern s32 BtlSkill_GetStatLevel0(BtlFighter *chr, s32 slot);   /* +0x96 + slot (s8) */
+extern s32 BtlSkill_GetStatLevel1(BtlFighter *chr, s32 slot);   /* +0x9A + slot (s8) */
+extern s32 BtlSkill_GetStatLevel2(BtlFighter *chr, s32 slot);   /* +0x98 + slot (s8) */
+extern s32 BtlSkill_GetStatLevel3(BtlFighter *chr, s32 slot);   /* +0x9C + slot (s8) */
+extern s32 BtlSkill_GetFrames(BtlFighter *chr, s32 slot);       /* +0xA0 + slot * 4 (f32 seconds) * 30 */
+extern s32 BtlSkill_GetHealthChange(BtlFighter *chr, s32 slot); /* health maximum * (+0xA8 + slot * 4) / 100 */
+extern s32 BtlSkill_GetKiChange(BtlFighter *chr, s32 slot);     /* +0xB0 + slot * 4 */
+extern s32 BtlSkill_GetValF(BtlFighter *chr, s32 slot);         /* +0xB8 + slot * 4 */
+extern s32 BtlSkill_GetValE(BtlFighter *chr, s32 slot);         /* +0xC0 + slot * 4 */
 
 /* The rest of the decision code (btl_act_decide.c). */
-extern s32 BtlAct_QueueComboFinish(BtlActIChr *chr);
-extern s32 BtlAct_CheckTransformInput(BtlActIChr *chr);
-extern s32 BtlAct_CheckFusionInput(BtlActIChr *chr);
-extern s32 BtlAct_CheckSwitchInput(BtlActIChr *chr);
-extern s32 BtlAct_CheckTechniqueInput(BtlActIChr *chr);
-extern s32 BtlAct_CheckSkillInput(BtlActIChr *chr);
-extern s32 BtlAct_GetAction14or16(BtlActIChr *chr);
+extern s32 BtlAct_QueueComboFinish(BtlFighter *chr);
+extern s32 BtlAct_CheckTransformInput(BtlFighter *chr);
+extern s32 BtlAct_CheckFusionInput(BtlFighter *chr);
+extern s32 BtlAct_CheckSwitchInput(BtlFighter *chr);
+extern s32 BtlAct_CheckTechniqueInput(BtlFighter *chr);
+extern s32 BtlAct_CheckSkillInput(BtlFighter *chr);
+extern s32 BtlAct_GetAction14or16(BtlFighter *chr);
 
 /* 0xF4 (after 0xF3, the member switch by input): first action on the new member's model, one hidden frame; then 0xF5. */
-s32 BtlAct_SwitchArriveWait(BtlActIChr *chr, s32 phase) {
+s32 BtlAct_SwitchArriveWait(BtlFighter *chr, s32 phase) {
     if (phase == 0) {
         BtlAnim_Play(chr, 0, 0.0f);
         BtlChange_SetDone(chr->player);
@@ -1617,7 +1617,7 @@ s32 BtlAct_SwitchArriveWait(BtlActIChr *chr, s32 phase) {
  * Matches only with BtlActChange_SetFlags and BtlActChange_Finish DEFINED earlier in the same translation unit:
  * with declarations alone one instruction differs (0x1FFD2C `beqz` comes out as `beqzl`).
  */
-s32 BtlAct_SwitchArriveLand(BtlActIChr *chr, s32 phase) {
+s32 BtlAct_SwitchArriveLand(BtlFighter *chr, s32 phase) {
     s32 *timer = &chr->work[2];
 
     if (phase == 0) {
@@ -1671,7 +1671,7 @@ s32 BtlAct_SwitchArriveLand(BtlActIChr *chr, s32 phase) {
 }
 
 /* 0xF6 (after 0xEB, a member was defeated): the defeated member stays put while the next member's files load; then 0xF7. */
-s32 BtlAct_KoSwitchLoad(BtlActIChr *chr, s32 phase) {
+s32 BtlAct_KoSwitchLoad(BtlFighter *chr, s32 phase) {
     if (phase == 0) {
         BtlAnim_Play(chr, BtlChar_TestFlag(chr, 0x11) ? 0xD8 : 0xD6, 0.0f);
         BtlChar_GetPos(chr)->speed = 0.0f;
@@ -1707,7 +1707,7 @@ s32 BtlAct_KoSwitchLoad(BtlActIChr *chr, s32 phase) {
 }
 
 /* 0xF7: first action on the next member's model: placement at its entry point requested, one hidden frame; then 0xF8. */
-s32 BtlAct_KoSwitchEnterWait(BtlActIChr *chr, s32 phase) {
+s32 BtlAct_KoSwitchEnterWait(BtlFighter *chr, s32 phase) {
     if (phase == 0) {
         BtlAnim_Play(chr, 0, 0.0f);
         BtlChange_SetDone(chr->player);
@@ -1738,7 +1738,7 @@ s32 BtlAct_KoSwitchEnterWait(BtlActIChr *chr, s32 phase) {
  * BTL_KMH(2500.0) has a double literal on purpose: with 2500.0f the constant folds to 0x41B92F66, the original is
  * 0x41B92F67 (other spellings give that too, e.g. BTL_KMH(500.0f) * 5.0f; which one the source had is not known).
  */
-s32 BtlAct_KoSwitchFlyIn(BtlActIChr *chr, s32 phase) {
+s32 BtlAct_KoSwitchFlyIn(BtlFighter *chr, s32 phase) {
     Vec4 pos;
     Vec4 rot;
     s32 *timer = &chr->work[2];
@@ -1812,7 +1812,7 @@ s32 BtlAct_KoSwitchFlyIn(BtlActIChr *chr, s32 phase) {
 }
 
 /* 0xF9: the round reset action. Leaves through BtlActChange_Finish; on leaving sets effect bit 5, flags 0xD5, 0xCD, 0x37 and adds 2 seconds to the stage timer. */
-s32 BtlAct_RoundReset(BtlActIChr *chr, s32 phase) {
+s32 BtlAct_RoundReset(BtlFighter *chr, s32 phase) {
     if (phase == 2) {
         BtlActChange_Finish(chr);
     }
@@ -1827,7 +1827,7 @@ s32 BtlAct_RoundReset(BtlActIChr *chr, s32 phase) {
 }
 
 /* Starts the skill animation of a class: 0x103 for class 0 (actions 0xFD / 0xFF / 0x101), 0x104 for class 1. */
-void BtlSkill_PlayAnim(BtlActIChr *chr, s32 cls) {
+void BtlSkill_PlayAnim(BtlFighter *chr, s32 cls) {
     s32 anim = 0;
 
     switch (cls) {
@@ -1842,7 +1842,7 @@ void BtlSkill_PlayAnim(BtlActIChr *chr, s32 cls) {
 }
 
 /* Sets the effect bit of a skill class: 0x3C / 0x3D. */
-void BtlSkill_SetFxBit(BtlActIChr *chr, s32 cls) {
+void BtlSkill_SetFxBit(BtlFighter *chr, s32 cls) {
     s32 bit = 0;
 
     switch (cls) {
@@ -1857,7 +1857,7 @@ void BtlSkill_SetFxBit(BtlActIChr *chr, s32 cls) {
 }
 
 /* Sets the fighter flag of a skill class: 0xDE / 0xDF. */
-void BtlSkill_SetFlag(BtlActIChr *chr, s32 cls) {
+void BtlSkill_SetFlag(BtlFighter *chr, s32 cls) {
     s32 flag = 0;
 
     switch (cls) {
@@ -1875,7 +1875,7 @@ void BtlSkill_SetFlag(BtlActIChr *chr, s32 cls) {
  * Applies the skill of a slot (0 / 1): the special cases by skill id, health and ki changes, the four stat
  * modifiers by the skill's kind, the two timed values, the use counter, and the blast stock cost.
  */
-void BtlSkill_Apply(BtlActIChr *chr, s32 slot) {
+void BtlSkill_Apply(BtlFighter *chr, s32 slot) {
     s32 idx = slot != 0;
     s32 id = BtlSkill_GetId(chr, slot);
     s32 attr = BtlSkill_GetFlags(chr, slot);
@@ -2033,7 +2033,7 @@ void BtlSkill_Apply(BtlActIChr *chr, s32 slot) {
 }
 
 /* Per-frame countdown of the skill timers (not while time is stopped). */
-void BtlSkill_UpdateTimers(BtlActIChr *chr) {
+void BtlSkill_UpdateTimers(BtlFighter *chr) {
     if (BtlChars_IsTimeStopped()) {
         return;
     }
@@ -2069,7 +2069,7 @@ void BtlSkill_UpdateTimers(BtlActIChr *chr) {
  * 0xFD / 0xFE: skill of slot 0 / 1, the plain kind: plays the skill animation and applies the skill at the start
  * (or at the end with attribute 0x80), then returns to action 0xB.
  */
-s32 BtlAct_SkillBasic(BtlActIChr *chr, s32 phase) {
+s32 BtlAct_SkillBasic(BtlFighter *chr, s32 phase) {
     s32 cls = BtlAct_GetCurrentClass(chr);
     s32 attr = BtlSkill_GetFlags(chr, cls);
 
@@ -2158,7 +2158,7 @@ s32 BtlAct_SkillBasic(BtlActIChr *chr, s32 phase) {
  * 0xFF / 0x100: skill of slot 0 / 1, the teleport kind: applies the skill at once, plays the animation, and when it
  * ends (flag 0x31) vanishes and, with lock-on (flag 5), reappears behind the opponent over nine frames.
  */
-s32 BtlAct_SkillTeleport(BtlActIChr *chr, s32 phase) {
+s32 BtlAct_SkillTeleport(BtlFighter *chr, s32 phase) {
     s32 *timer = &chr->work[2];
     s32 cls = BtlAct_GetCurrentClass(chr);
 
@@ -2227,7 +2227,7 @@ s32 BtlAct_SkillTeleport(BtlActIChr *chr, s32 phase) {
 }
 
 /* 0x101 / 0x102: skill of slot 0 / 1 with no animation of its own: applies the skill and leaves at once. */
-s32 BtlAct_SkillInstant(BtlActIChr *chr, s32 phase) {
+s32 BtlAct_SkillInstant(BtlFighter *chr, s32 phase) {
     s32 cls = BtlAct_GetCurrentClass(chr);
 
     if (phase == 0) {
@@ -2251,7 +2251,7 @@ s32 BtlAct_SkillInstant(BtlActIChr *chr, s32 phase) {
  * bit 0: neither airborne (0xE) nor grounded (0xF) now, nor grounded last frame -> 0x11; bit 1: dead -> 0xD2.
  * Queues the action in slot 0 and returns 1.
  */
-s32 BtlDecide_Common(BtlActIChr *chr, s32 mask) {
+s32 BtlDecide_Common(BtlFighter *chr, s32 mask) {
     if ((mask & 8) && chr->react.stunTimer > 0) {
         BtlAct_SetQueue(chr, 0, 0xD3);
         return 1;
@@ -2278,7 +2278,7 @@ s32 BtlDecide_Common(BtlActIChr *chr, s32 mask) {
  * that is satisfied queues its action in slot 0. Returns the number of actions queued (0, 1 or 2).
  * The table is written out in the header.
  */
-s32 BtlDecide_Main(BtlActIChr *chr, s32 mask) {
+s32 BtlDecide_Main(BtlFighter *chr, s32 mask) {
     if (!BtlChar_IsFree(chr)) {
         return 0;
     }
@@ -2484,7 +2484,7 @@ s32 BtlDecide_Main(BtlActIChr *chr, s32 mask) {
  * The attack input table of a free fighter (rush attacks, ki blasts, charged attacks, throws ...). Same protocol as
  * BtlDecide_Main: groups enabled by `mask`, the first satisfied input queues its action(s); returns the count.
  */
-s32 BtlDecide_Attack(BtlActIChr *chr, s32 mask) {
+s32 BtlDecide_Attack(BtlFighter *chr, s32 mask) {
     if (!BtlChar_IsFree(chr)) {
         return 0;
     }
@@ -2886,7 +2886,7 @@ s32 BtlDecide_Attack(BtlActIChr *chr, s32 mask) {
  * its kind needs, and its input. Queues the record's lead-in action(s) first, then the attack, and prepares the
  * attack parameters. Returns the number of actions queued. The only caller of BtlAct_PrepareAttack.
  */
-s32 BtlDecide_QueueAttack(BtlActIChr *chr, s32 id) {
+s32 BtlDecide_QueueAttack(BtlFighter *chr, s32 id) {
     s32 list[8];
     s32 queued = 0;
     BtlActIAttackRec *rec;

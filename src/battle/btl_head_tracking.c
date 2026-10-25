@@ -44,20 +44,20 @@ extern void Mtx_RotateX(Mtx44 *out, Mtx44 *in, f32 angle);
 extern void Vec4_Lerp(Vec4 *out, Vec4 *a, Vec4 *b, f32 t);
 extern void Vec3_RotateAxis(Vec4 *out, Vec4 *v, Vec4 *axis, f32 angle);
 
-extern BtlCtlObj *BtlChar_GetObj(BtlCtlChr *chr);
-extern BtlCtlPose *BtlChar_GetPos(BtlCtlChr *chr);
-extern s32 BtlChar_TestFlag(BtlCtlChr *chr, s32 bit);
+extern BtlCtlObj *BtlChar_GetObj(BtlFighter *chr);
+extern BtlFighterPose *BtlChar_GetPos(BtlFighter *chr);
+extern s32 BtlChar_TestFlag(BtlFighter *chr, s32 bit);
 extern f32 BtlUtil_WrapAngle(f32 angle);
-extern s32 *BtlMember_GetActive(BtlCtlChr *chr);
-extern void BtlOpp_GetDelta(BtlCtlChr *chr, Vec4 *out);
-extern void BtlOpp_GetLookOffset(BtlCtlChr *chr, Vec4 *out);
+extern s32 *BtlMember_GetActive(BtlFighter *chr);
+extern void BtlOpp_GetDelta(BtlFighter *chr, Vec4 *out);
+extern void BtlOpp_GetLookOffset(BtlFighter *chr, Vec4 *out);
 extern f32 BtlCharApi_GetHeight(s32 objId);
-extern s32 BtlParam_GetFlags(BtlCtlChr *chr);
+extern s32 BtlParam_GetFlags(BtlFighter *chr);
 extern BtlCtlNode *BtlObj_GetNode(BtlCtlObj *obj, s32 node);
 
 /* Clears the head tracking: identity rotations, zero weights, and the height offset. */
-void BtlChar_ResetLook(BtlCtlChr *chr) {
-    BtlCtlLook *look = &chr->look;
+void BtlChar_ResetLook(BtlFighter *chr) {
+    BtlFighterLook *look = &chr->look;
     BtlCtlObj *obj = BtlChar_GetObj(chr);
 
     Quat_SetIdentity(&obj->headRot);
@@ -68,10 +68,10 @@ void BtlChar_ResetLook(BtlCtlChr *chr) {
 }
 
 /* Per frame: eases the look offset towards the head node's offset from the body (reset while time is stopped). */
-void BtlChar_UpdateLookOffset(BtlCtlChr *chr) {
+void BtlChar_UpdateLookOffset(BtlFighter *chr) {
     Vec4 delta;
     Vec4 offset;
-    BtlCtlLook *look = &chr->look;
+    BtlFighterLook *look = &chr->look;
     BtlCtlObj *obj = BtlChar_GetObj(chr);
 
     if (BtlChars_IsTimeStopped()) {
@@ -88,12 +88,12 @@ void BtlChar_UpdateLookOffset(BtlCtlChr *chr) {
 }
 
 /* Turns the head tracking on or off. */
-void BtlChar_SetLookEnabled(BtlCtlChr *chr, s32 enabled) {
+void BtlChar_SetLookEnabled(BtlFighter *chr, s32 enabled) {
     chr->look.enabled = enabled;
 }
 
 /* Head tracking: turns the head and neck nodes towards the look target within the character's limits. */
-void BtlChar_UpdateLook(BtlCtlChr *chr) {
+void BtlChar_UpdateLook(BtlFighter *chr) {
     Vec4 q0;
     Vec4 q1;
     Mtx44 m;
@@ -110,7 +110,7 @@ void BtlChar_UpdateLook(BtlCtlChr *chr) {
     BtlCtlNode *neck;
     s32 full;
     BtlCtlObj *obj;
-    BtlCtlLook *look = &chr->look;
+    BtlFighterLook *look = &chr->look;
     s32 active;
     f32 headPitch;
     f32 neckPitch;
@@ -243,7 +243,7 @@ void BtlChar_UpdateLook(BtlCtlChr *chr) {
 }
 
 /* Head tracking used during action 0x99: plain yaw and pitch clamps instead of the rotated direction. */
-void BtlChar_UpdateLookAlt(BtlCtlChr *chr) {
+void BtlChar_UpdateLookAlt(BtlFighter *chr) {
     Vec4 q0;
     Vec4 q1;
     Mtx44 m;
@@ -254,7 +254,7 @@ void BtlChar_UpdateLookAlt(BtlCtlChr *chr) {
     Vec4 tmp;
     s32 full;
     BtlCtlObj *obj;
-    BtlCtlLook *look = &chr->look;
+    BtlFighterLook *look = &chr->look;
     s32 active;
     BtlCtlNode *head;
     BtlCtlNode *neck;
@@ -368,7 +368,7 @@ void BtlChar_UpdateLookAlt(BtlCtlChr *chr) {
 }
 
 /* Runs the head tracking unless BtlParam_GetFlags has bit 0x20; action 0x99 uses the second variant. */
-s32 BtlChar_UpdateHead(BtlCtlChr *chr) {
+s32 BtlChar_UpdateHead(BtlFighter *chr) {
     if (!(BtlParam_GetFlags(chr) & 0x20)) {
         if (*BtlMember_GetActive(chr) == 0x99) {
             BtlChar_UpdateLookAlt(chr);

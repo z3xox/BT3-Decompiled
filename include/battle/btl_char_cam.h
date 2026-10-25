@@ -101,37 +101,31 @@ typedef struct ChrCamMgr {
     /* 0x274 */ s32 timeStopped;            /* BtlChars_IsTimeStopped: non-zero forces rate 1 and no swing */
 } ChrCamMgr;
 
-/* The fighter's body block, fighter + 0x10 (BtlChar_GetPos returns it): only what this file reads. */
-typedef BtlFighterPose ChrCamBody;
-
-/* Partial view of a fighter (0x1600 bytes, BtlChar_Get): only what this file touches. */
-typedef BtlFighter ChrCamChr;
-
-f32 ChrCam_GetOffset(ChrCamChr *chr, Vec4 *out, s32 mode);
-f32 ChrCam_CalcRate(ChrCamChr *chr, Vec4 *eye, Vec4 *target);
-f32 ChrCam_GetRate(ChrCamChr *chr, Vec4 *eye, Vec4 *target);
-f32 ChrCam_GetBob(ChrCamChr *chr);
-void ChrCam_CalcCut(ChrCamChr *chr, Vec4 *eye, Vec4 *rot, Vec4 *target);
-void ChrCam_CalcFixed(ChrCamChr *chr, Vec4 *eye, Vec4 *rot, Vec4 *target);
-void ChrCam_CalcLockOn(ChrCamChr *chr, Vec4 *eye, Vec4 *rot, Vec4 *target);
-void ChrCam_CalcFree(ChrCamChr *chr, Vec4 *eye, Vec4 *rot, Vec4 *target);
-void ChrCam_KeepBehindHead(ChrCamChr *chr, Vec4 *eye, Vec4 *rot);
-void ChrCam_UpdateLockOnYaw(ChrCamChr *chr);
-void ChrCam_UpdateFreeYaw(ChrCamChr *chr);
-void ChrCam_TurnToOpponent(ChrCamChr *chr, Vec4 *rot);
-void ChrCam_UpdateInput(ChrCamChr *chr);
-void ChrCam_Update(ChrCamChr *chr);
-f32 ChrCam_GetSideLimit(ChrCamChr *chr);
-void ChrCam_AddShake(ChrCamChr *chr, f32 strength, f32 time);
-void ChrCam_UpdateDemo(ChrCamChr *chr);
-void ChrCam_SetCut(ChrCamChr *chr, Vec4 *vecA, Vec4 *vecADelta, Vec4 *vecB, Vec4 *vecBDelta, Vec4 *vecC,
+f32 ChrCam_GetOffset(BtlFighter *chr, Vec4 *out, s32 mode);
+f32 ChrCam_CalcRate(BtlFighter *chr, Vec4 *eye, Vec4 *target);
+f32 ChrCam_GetRate(BtlFighter *chr, Vec4 *eye, Vec4 *target);
+f32 ChrCam_GetBob(BtlFighter *chr);
+void ChrCam_CalcCut(BtlFighter *chr, Vec4 *eye, Vec4 *rot, Vec4 *target);
+void ChrCam_CalcFixed(BtlFighter *chr, Vec4 *eye, Vec4 *rot, Vec4 *target);
+void ChrCam_CalcLockOn(BtlFighter *chr, Vec4 *eye, Vec4 *rot, Vec4 *target);
+void ChrCam_CalcFree(BtlFighter *chr, Vec4 *eye, Vec4 *rot, Vec4 *target);
+void ChrCam_KeepBehindHead(BtlFighter *chr, Vec4 *eye, Vec4 *rot);
+void ChrCam_UpdateLockOnYaw(BtlFighter *chr);
+void ChrCam_UpdateFreeYaw(BtlFighter *chr);
+void ChrCam_TurnToOpponent(BtlFighter *chr, Vec4 *rot);
+void ChrCam_UpdateInput(BtlFighter *chr);
+void ChrCam_Update(BtlFighter *chr);
+f32 ChrCam_GetSideLimit(BtlFighter *chr);
+void ChrCam_AddShake(BtlFighter *chr, f32 strength, f32 time);
+void ChrCam_UpdateDemo(BtlFighter *chr);
+void ChrCam_SetCut(BtlFighter *chr, Vec4 *vecA, Vec4 *vecADelta, Vec4 *vecB, Vec4 *vecBDelta, Vec4 *vecC,
                    Vec4 *vecCDelta, s32 nodeA, f32 valA, f32 valADelta, f32 valB, f32 valBDelta, f32 valC,
                    f32 valCDelta, s32 nodeA2, s32 nodeC, s32 nodeC2, s32 time, s32 flags);
-void ChrCam_BlendToCut(ChrCamChr *chr, Vec4 *vecADelta, Vec4 *vecBDelta, Vec4 *vecCDelta, s32 nodeA2, s32 nodeC2,
+void ChrCam_BlendToCut(BtlFighter *chr, Vec4 *vecADelta, Vec4 *vecBDelta, Vec4 *vecCDelta, s32 nodeA2, s32 nodeC2,
                        f32 valADelta, f32 valBDelta, f32 valCDelta, s32 time, s32 flags);
-void ChrCam_RequestCut(ChrCamChr *chr, s32 table, s32 index);
-void ChrCam_StartCut(ChrCamChr *chr);
-void ChrCam_EndCut(ChrCamChr *chr);
-s32 ChrCam_IsCutActive(ChrCamChr *chr);
+void ChrCam_RequestCut(BtlFighter *chr, s32 table, s32 index);
+void ChrCam_StartCut(BtlFighter *chr);
+void ChrCam_EndCut(BtlFighter *chr);
+s32 ChrCam_IsCutActive(BtlFighter *chr);
 
 #endif

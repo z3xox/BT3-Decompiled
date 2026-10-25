@@ -123,9 +123,6 @@
 #define BTL_COUNT_MAX 100     /* the frame counters saturate here */
 
 
-/* Partial view of a fighter (0x1600 bytes, BtlChar_Get): only what this file touches. */
-typedef BtlFighter BtlInputChr;
-
 /* Entry returned by BtlSuper_GetPromptRow (0x14 bytes; only the field read here). */
 typedef struct BtlInputSwitchEntry {
     /* 0x00 */ u8 unk0[2];
@@ -134,44 +131,44 @@ typedef struct BtlInputSwitchEntry {
 
 u8 BtlInput_StickToByte(f32 v);
 f32 BtlInput_ByteToStick(u8 b);
-BtlCharInput *BtlInput_Get(BtlInputChr *chr);
+BtlCharInput *BtlInput_Get(BtlFighter *chr);
 u32 BtlInput_RemapButtons(u32 rawHeld, u32 *mask);
 void BtlInput_TickCounter(s32 cond, s8 *count);
 void BtlInput_TickCounters(BtlInputCounters *c, u32 held, u32 pressed, u32 released);
-void BtlInput_RingPush(BtlInputChr *chr, u32 buttons, u32 commands, u8 *stick);
-void BtlInput_RingPop(BtlInputChr *chr, u32 *buttons, u32 *commands, u8 *stick);
-u32 BtlInput_AddDoubleTaps(BtlInputChr *chr, u32 buttons, u32 prev, s32 padStatus);
-s32 BtlInput_TestSwitch(BtlInputChr *chr, s32 techClass, u32 held, u32 pressed);
-u32 BtlInput_MergeStick(BtlInputChr *chr, u32 buttons, u8 *stick);
-u32 BtlInput_BuildCommands(BtlInputChr *chr, u32 held, u32 prev);
-void BtlInput_BuildRecord(BtlInputChr *chr);
-void BtlInput_Fetch(BtlInputChr *chr, u32 *buttons, u32 *commands, u8 *stick);
-u32 BtlInput_GetKeyMask(BtlInputChr *chr, s32 action);
-void BtlInput_BuildMaskTable(BtlInputChr *chr);
-void BtlInput_Init(BtlInputChr *chr);
-void BtlInput_Sample(BtlInputChr *chr);
-void BtlInput_Update(BtlInputChr *chr);
+void BtlInput_RingPush(BtlFighter *chr, u32 buttons, u32 commands, u8 *stick);
+void BtlInput_RingPop(BtlFighter *chr, u32 *buttons, u32 *commands, u8 *stick);
+u32 BtlInput_AddDoubleTaps(BtlFighter *chr, u32 buttons, u32 prev, s32 padStatus);
+s32 BtlInput_TestSwitch(BtlFighter *chr, s32 techClass, u32 held, u32 pressed);
+u32 BtlInput_MergeStick(BtlFighter *chr, u32 buttons, u8 *stick);
+u32 BtlInput_BuildCommands(BtlFighter *chr, u32 held, u32 prev);
+void BtlInput_BuildRecord(BtlFighter *chr);
+void BtlInput_Fetch(BtlFighter *chr, u32 *buttons, u32 *commands, u8 *stick);
+u32 BtlInput_GetKeyMask(BtlFighter *chr, s32 action);
+void BtlInput_BuildMaskTable(BtlFighter *chr);
+void BtlInput_Init(BtlFighter *chr);
+void BtlInput_Sample(BtlFighter *chr);
+void BtlInput_Update(BtlFighter *chr);
 void BtlInput_Stub(void);
-void BtlInput_Push(BtlInputChr *chr, u32 buttons, u32 commands, u8 *stick);
-void BtlInput_Pop(BtlInputChr *chr, u32 *buttons, u32 *commands, u8 *stick);
-s32 BtlInput_GetQueued(BtlInputChr *chr);
-s32 BtlInput_IsPressed(BtlInputChr *chr, u32 mask);
-s32 BtlInput_IsHeldNotPrev(BtlInputChr *chr, u32 mask);
-s32 BtlInput_IsHeld(BtlInputChr *chr, u32 mask);
-s32 BtlInput_IsReleased(BtlInputChr *chr, u32 mask);
-s32 BtlInput_GetHeldFrames(BtlInputChr *chr, s32 bit);
-s32 BtlInput_GetNotHeldFrames(BtlInputChr *chr, s32 bit);
-s32 BtlInput_GetFramesSincePress(BtlInputChr *chr, s32 bit);
-s32 BtlInput_GetFramesSinceRelease(BtlInputChr *chr, s32 bit);
-s32 BtlInput_GetPrevFramesSincePress(BtlInputChr *chr, s32 bit);
-s32 BtlInput_IsCmdPressed(BtlInputChr *chr, u32 mask);
-s32 BtlInput_IsCmdHeld(BtlInputChr *chr, u32 mask);
-s32 BtlInput_IsCmdReleased(BtlInputChr *chr, u32 mask);
-s32 BtlInput_GetCmdHeldFrames(BtlInputChr *chr, s32 bit);
-s32 BtlInput_GetCmdNotHeldFrames(BtlInputChr *chr, s32 bit);
-s32 BtlInput_GetCmdPrevFramesSincePress(BtlInputChr *chr, s32 bit);
-void BtlInput_SetFrameBit(BtlInputChr *chr, s32 bit, s32 set);
-s32 BtlInput_TestFrameBit(BtlInputChr *chr, s32 bit, s32 set);
-void BtlInput_ClearFrameBits(BtlInputChr *chr);
+void BtlInput_Push(BtlFighter *chr, u32 buttons, u32 commands, u8 *stick);
+void BtlInput_Pop(BtlFighter *chr, u32 *buttons, u32 *commands, u8 *stick);
+s32 BtlInput_GetQueued(BtlFighter *chr);
+s32 BtlInput_IsPressed(BtlFighter *chr, u32 mask);
+s32 BtlInput_IsHeldNotPrev(BtlFighter *chr, u32 mask);
+s32 BtlInput_IsHeld(BtlFighter *chr, u32 mask);
+s32 BtlInput_IsReleased(BtlFighter *chr, u32 mask);
+s32 BtlInput_GetHeldFrames(BtlFighter *chr, s32 bit);
+s32 BtlInput_GetNotHeldFrames(BtlFighter *chr, s32 bit);
+s32 BtlInput_GetFramesSincePress(BtlFighter *chr, s32 bit);
+s32 BtlInput_GetFramesSinceRelease(BtlFighter *chr, s32 bit);
+s32 BtlInput_GetPrevFramesSincePress(BtlFighter *chr, s32 bit);
+s32 BtlInput_IsCmdPressed(BtlFighter *chr, u32 mask);
+s32 BtlInput_IsCmdHeld(BtlFighter *chr, u32 mask);
+s32 BtlInput_IsCmdReleased(BtlFighter *chr, u32 mask);
+s32 BtlInput_GetCmdHeldFrames(BtlFighter *chr, s32 bit);
+s32 BtlInput_GetCmdNotHeldFrames(BtlFighter *chr, s32 bit);
+s32 BtlInput_GetCmdPrevFramesSincePress(BtlFighter *chr, s32 bit);
+void BtlInput_SetFrameBit(BtlFighter *chr, s32 bit, s32 set);
+s32 BtlInput_TestFrameBit(BtlFighter *chr, s32 bit, s32 set);
+void BtlInput_ClearFrameBits(BtlFighter *chr);
 
 #endif

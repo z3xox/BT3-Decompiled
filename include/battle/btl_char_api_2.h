@@ -11,15 +11,9 @@
  * `objId` are battle object ids (BtlObj_Get index; a fighter's own id is at fighter +0xC); every function is safe on
  * an id that is not a fighter and then returns 0 / 0.0f / does nothing.
  *
- * The structs below are this module's partial views (rule: no shared fighter header yet). Only the fields this file
- * touches, or that its direct callees show, are named.
+ * The structs below are this module's partial views; the fighter is BtlFighter (battle/btl_fighter.h). Only the
+ * fields this file touches, or that its direct callees show, are named.
  */
-
-/* Active member's vitals, the block BtlMember_GetActiveGauge(chr) returns: chr + 0x9A4 + chr->member * 0xA4 + 0x40. */
-typedef BtlMemberGauge BtlCharApiVitals;
-
-/* Fighter (0x1600 bytes, BtlChar_Get / BtlChar_FindByObjId). */
-typedef BtlFighter BtlCharApiChr;
 
 /* Battle object (BtlObj_Get): only the fields read here. */
 typedef struct BtlCharApiObj {
@@ -53,7 +47,7 @@ typedef struct BtlCharApiSoundSet {
 /* Fighter manager (gBtlChars, 0x280 bytes). */
 typedef struct BtlCharApiMgr {
     /* 0x00 */ s32 count;
-    /* 0x04 */ BtlCharApiChr *chars;
+    /* 0x04 */ BtlFighter *chars;
     /* 0x08 */ void *oneShotSounds;            /* the one-shot sound sets; the looping sets follow */
     /* 0x0C */ BtlCharApiSoundSet *loopSounds; /* one per side */
     /* 0x10 */ u8 unk10[0x1C - 0x10];
@@ -140,21 +134,9 @@ s32 BtlCharApi_TestFlag60(s32 objId);
  *                       for the sequence
  * Every function is safe on an id that is not a fighter and then returns 0 / -1 / does nothing.
  *
- * The structs are this module's partial views (no shared fighter header yet): only fields this file touches, or
- * that its direct callees show, are named.
+ * The structs are this module's partial views; the fighter is BtlFighter (battle/btl_fighter.h): only fields this
+ * file touches, or that its direct callees show, are named.
  */
-
-/* Gauge block of a team member (BtlMember_GetGauge(chr, n) / BtlMember_GetActiveGauge(chr)): member entry + 0x40. */
-typedef BtlMemberGauge BtlCapiBGauge;
-
-/* Team member entry (BtlMember_GetActive): 0xA4 bytes at fighter +0x9A4. */
-typedef BtlMember BtlCapiBMember;
-
-/* Pose block (fighter +0x10, BtlChar_GetPos). */
-typedef BtlFighterPose BtlCapiBPose;
-
-/* Fighter (0x1600 bytes). */
-typedef BtlFighter BtlCapiBChr;
 
 /* Character parameter block (battle object +0x91C); read here only through BtlCharApi_GetParamByte2 / Flags /
    Unk14 / Unk18. The rest is what the callees of this file read (0x20DF80..0x20F3C8). */
@@ -409,7 +391,7 @@ void BtlChange_NotifyTaken(void);
 void BtlChange_NotifyLoaded(void);
 s32 BtlChange_IsReady(void);
 void BtlCtrl_AttachPartner(s32 player, s32 slot, s32 objId);
-s32 BtlCharApi_GetButtonIcon(BtlCapiBChr *chr, u32 bit);
+s32 BtlCharApi_GetButtonIcon(BtlFighter *chr, u32 bit);
 
 /* --- by side --- */
 s32 BtlSide_GetHp(s32 side);

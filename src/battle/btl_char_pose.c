@@ -5,7 +5,7 @@
 /*
  * Pose <-> object, placement, holds and per-frame snapshots: 0x1D70E8..0x1D8330.
  *
- * The fighter keeps its own pose block (fighter + 0x10, BtlCtlPose); the battle object it drives keeps the
+ * The fighter keeps its own pose block (fighter + 0x10, BtlFighterPose); the battle object it drives keeps the
  * model placement. BtlChar_PoseToObj writes pose -> object (object position = pos + move, less the animation's
  * root translation rotated into the world and scaled), BtlChar_ObjToPose reads it back after the object update.
  *
@@ -42,24 +42,24 @@ extern BtlCtlRoster *gBtlChars;
 extern Vec4 gVu0ZeroVec; /* (0, 0, 0, 0) */
 
 extern s32 BtlChar_GetCount(void);
-extern BtlCtlChr *BtlChar_Get(s32 index);
-extern BtlCtlObj *BtlChar_GetObj(BtlCtlChr *chr);
-extern BtlCtlPose *BtlChar_GetPos(BtlCtlChr *chr);
-extern s32 BtlChar_IsFrozen(BtlCtlChr *chr);
-extern s32 BtlChar_TestFlag(BtlCtlChr *chr, s32 bit);
-extern void BtlChar_SetFlag(BtlCtlChr *chr, s32 bit);
-extern void BtlChar_SetHeldFlag(BtlCtlChr *chr, s32 bit);
-extern void BtlChar_ClearFlag(BtlCtlChr *chr, s32 bit);
+extern BtlFighter *BtlChar_Get(s32 index);
+extern BtlCtlObj *BtlChar_GetObj(BtlFighter *chr);
+extern BtlFighterPose *BtlChar_GetPos(BtlFighter *chr);
+extern s32 BtlChar_IsFrozen(BtlFighter *chr);
+extern s32 BtlChar_TestFlag(BtlFighter *chr, s32 bit);
+extern void BtlChar_SetFlag(BtlFighter *chr, s32 bit);
+extern void BtlChar_SetHeldFlag(BtlFighter *chr, s32 bit);
+extern void BtlChar_ClearFlag(BtlFighter *chr, s32 bit);
 extern f32 BtlUtil_WrapAngle(f32 angle);
 extern void BtlUtil_WrapAngles(Vec4 *dst, Vec4 *src);
-extern s32 BtlOpp_GetPlayer(BtlCtlChr *chr); /* player index of the other fighter */
-extern f32 BtlOpp_GetHeight(BtlCtlChr *chr); /* size of the other fighter */
-extern s32 BtlAct_GetCurrent(BtlCtlChr *chr); /* chr + 0x948: action id */
+extern s32 BtlOpp_GetPlayer(BtlFighter *chr); /* player index of the other fighter */
+extern f32 BtlOpp_GetHeight(BtlFighter *chr); /* size of the other fighter */
+extern s32 BtlAct_GetCurrent(BtlFighter *chr); /* chr + 0x948: action id */
 extern f32 BtlCharApi_GetHeight(s32 objId);        /* obj + 0xFF4 (10.0 without an object): the fighter's size */
 extern f32 BtlCharApi_GetCenterHeight(s32 objId);
 extern f32 BtlCharApi_GetRadius(s32 objId);
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out);
-extern void BtlSuper_GetStagePlacement(BtlCtlChr *target, s32 slot, s32 n, Vec4 *pos, Vec4 *rot);
+extern void BtlSuper_GetStagePlacement(BtlFighter *target, s32 slot, s32 n, Vec4 *pos, Vec4 *rot);
 extern s32 BtlStage_FindZoneNear(s32 zone, Vec4 *pos);
 extern f32 BtlStage_GetTop(void);
 extern BtlCtlPath *BtlStage_GetPath(s32 n);
@@ -71,9 +71,9 @@ extern void BtlObjPose_CalcMatrices(BtlCtlObj *obj);
 extern BtlCtlNode *BtlObj_GetNode(BtlCtlObj *obj, s32 node);
 
 /* Reads the object's position, rotation and root node back into the pose. */
-void BtlChar_ObjToPose(BtlCtlChr *chr) {
+void BtlChar_ObjToPose(BtlFighter *chr) {
     BtlCtlObj *obj = BtlChar_GetObj(chr);
-    BtlCtlPose *pose = BtlChar_GetPos(chr);
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
     BtlCtlNode *node;
     Quat q;
 
@@ -91,12 +91,12 @@ void BtlChar_ObjToPose(BtlCtlChr *chr) {
 }
 
 /* Writes the pose to the object (position less the rotated root motion) and updates the object. */
-void BtlChar_PoseToObj(BtlCtlChr *chr, s32 keepRoot) {
+void BtlChar_PoseToObj(BtlFighter *chr, s32 keepRoot) {
     Vec4 old;
     Mtx44 m;
     Vec4 v;
     BtlCtlObj *obj = BtlChar_GetObj(chr);
-    BtlCtlPose *pose = BtlChar_GetPos(chr);
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
     s32 apply;
 
     Vec4_Copy(&old, &obj->pos);
@@ -129,8 +129,8 @@ void BtlChar_PoseToObj(BtlCtlChr *chr, s32 keepRoot) {
 }
 
 /* Under flag 0x33 (and not 0x94): turns the yaw by the root node's yaw and scales the speed by its cosine. */
-void BtlChar_ApplyRootYaw(BtlCtlChr *chr) {
-    BtlCtlPose *pose = BtlChar_GetPos(chr);
+void BtlChar_ApplyRootYaw(BtlFighter *chr) {
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
 
     if (BtlChar_TestFlag(chr, 0x33) && !BtlChar_TestFlag(chr, 0x94)) {
         f32 yaw = pose->rootRot.y;
@@ -141,8 +141,8 @@ void BtlChar_ApplyRootYaw(BtlCtlChr *chr) {
 }
 
 /* Builds the object's lean quaternion from the two lean angles of the pose. */
-void BtlChar_UpdateLean(BtlCtlChr *chr) {
-    BtlCtlPose *pose = BtlChar_GetPos(chr);
+void BtlChar_UpdateLean(BtlFighter *chr) {
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
     BtlCtlObj *obj = BtlChar_GetObj(chr);
     Vec4 angles;
 
@@ -151,8 +151,8 @@ void BtlChar_UpdateLean(BtlCtlChr *chr) {
 }
 
 /* Puts the fighter at a position and rotation: pose, object, camera eye and yaw; raises flags 0xCD, 0x24, 0x3F. */
-void BtlChar_Place(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, s32 area) {
-    BtlCtlPose *pose = BtlChar_GetPos(chr);
+void BtlChar_Place(BtlFighter *chr, Vec4 *pos, Vec4 *rot, s32 area) {
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
     BtlCtlObj *obj = BtlChar_GetObj(chr);
 
     Vec4_Copy(&pose->pos, pos);
@@ -182,7 +182,7 @@ void BtlChar_Place(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, s32 area) {
 }
 
 /* Places the fighter at its player's start position of the stage. */
-void BtlChar_PlaceAtStart(BtlCtlChr *chr) {
+void BtlChar_PlaceAtStart(BtlFighter *chr) {
     Vec4 pos;
     Vec4 rot;
 
@@ -190,7 +190,7 @@ void BtlChar_PlaceAtStart(BtlCtlChr *chr) {
 }
 
 /* Flag 0xF3: places the fighter at its player's second start position. */
-void BtlChar_PlaceRestart(BtlCtlChr *chr) {
+void BtlChar_PlaceRestart(BtlFighter *chr) {
     Vec4 pos;
     Vec4 rot;
 
@@ -200,7 +200,7 @@ void BtlChar_PlaceRestart(BtlCtlChr *chr) {
 }
 
 /* Flag 0xF4: places the fighter at the stage position BtlStage_GetPlace gives. */
-void BtlChar_PlaceCenter(BtlCtlChr *chr) {
+void BtlChar_PlaceCenter(BtlFighter *chr) {
     Vec4 pos;
     Vec4 rot;
 
@@ -210,7 +210,7 @@ void BtlChar_PlaceCenter(BtlCtlChr *chr) {
 }
 
 /* Flag 0xF6: the same position plus the offsets stored by BtlChar_RequestPlaceRelative. */
-void BtlChar_PlaceRelative(BtlCtlChr *chr) {
+void BtlChar_PlaceRelative(BtlFighter *chr) {
     Vec4 pos;
     Vec4 rot;
 
@@ -225,7 +225,7 @@ void BtlChar_PlaceRelative(BtlCtlChr *chr) {
 }
 
 /* Flag 0xF8: places the fighter beside a point of a stage path, player 0 on one side and the others opposite. */
-void BtlChar_PlaceOnPath(BtlCtlChr *chr) {
+void BtlChar_PlaceOnPath(BtlFighter *chr) {
     Vec4 side;
     Vec4 delta;
     Vec4 pos;
@@ -277,7 +277,7 @@ void BtlChar_PlaceOnPath(BtlCtlChr *chr) {
 }
 
 /* Flag 0xF7: the BtlStage_GetPlace position at a height of BtlStage_GetTop() plus half the fighter's height. */
-void BtlChar_PlaceCenterHigh(BtlCtlChr *chr) {
+void BtlChar_PlaceCenterHigh(BtlFighter *chr) {
     Vec4 pos;
     Vec4 rot;
 
@@ -291,7 +291,7 @@ void BtlChar_PlaceCenterHigh(BtlCtlChr *chr) {
 }
 
 /* Flag 0xF5: restores the saved placement and the saved state of flags 0xF and 0xE. */
-s32 BtlChar_PlaceSaved(BtlCtlChr *chr) {
+s32 BtlChar_PlaceSaved(BtlFighter *chr) {
     if (BtlChar_TestFlag(chr, 0xF5)) {
         BtlChar_Place(chr, &chr->savedPos, &chr->savedRot, chr->savedArea);
         if (chr->savedFlagF) {
@@ -311,7 +311,7 @@ s32 BtlChar_PlaceSaved(BtlCtlChr *chr) {
 }
 
 /* In actions 4 and 7..10: flags 0xFC / 0xFD replace the position / rotation by the warp vectors (and are cleared). */
-void BtlChar_PlaceWarp(BtlCtlChr *chr) {
+void BtlChar_PlaceWarp(BtlFighter *chr) {
     Vec4 pos;
     Vec4 rot;
     s32 changed = 0;
@@ -345,7 +345,7 @@ void BtlChar_PlaceWarp(BtlCtlChr *chr) {
 }
 
 /* Returns own size (obj + 0xFF4) + the other fighter's size + a margin: 30, or 40 in mode 0 under flag 0x13. */
-f32 BtlChar_GetSpacing(BtlCtlChr *chr, s32 mode) {
+f32 BtlChar_GetSpacing(BtlFighter *chr, s32 mode) {
     f32 r = 0.0f;
 
     r += BtlCharApi_GetHeight(chr->objId);
@@ -373,12 +373,12 @@ void BtlChars_UpdateHold(void) {
     Vec4 holderPos;
     Vec4 heldPos;
     Vec4 delta;
-    BtlCtlChr *held = NULL;
-    BtlCtlChr *holder = NULL;
+    BtlFighter *held = NULL;
+    BtlFighter *holder = NULL;
     s32 i;
 
     for (i = 0; i < BtlChar_GetCount(); i++) {
-        BtlCtlChr *chr = BtlChar_Get(i);
+        BtlFighter *chr = BtlChar_Get(i);
 
         if (!BtlChar_IsFrozen(chr)) {
             if (BtlChar_TestFlag(chr, 0x8B)) {
@@ -420,7 +420,7 @@ void BtlChars_UpdateHold(void) {
 }
 
 /* Saves the current placement and the state of flags 0xF and 0xE for a later flag 0xF5 restore. */
-void BtlChar_SavePlacement(BtlCtlChr *chr) {
+void BtlChar_SavePlacement(BtlFighter *chr) {
     BtlCtlObj *obj = BtlChar_GetObj(chr);
 
     Vec4_Copy(&chr->savedPos, &BtlChar_GetPos(chr)->pos);
@@ -432,7 +432,7 @@ void BtlChar_SavePlacement(BtlCtlChr *chr) {
 }
 
 /* Sets the saved placement from arguments. */
-void BtlChar_SetSavedPlacement(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, Vec4 *bodyWarpPos, s32 flagF, s32 flagE) {
+void BtlChar_SetSavedPlacement(BtlFighter *chr, Vec4 *pos, Vec4 *rot, Vec4 *bodyWarpPos, s32 flagF, s32 flagE) {
     Vec4_Copy(&chr->savedPos, pos);
     Vec4_Copy(&chr->savedRot, rot);
     Vec4_Copy(&chr->bodyWarpPos, bodyWarpPos);
@@ -442,21 +442,21 @@ void BtlChar_SetSavedPlacement(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, Vec4 *bodyW
 }
 
 /* Stores a vector at +0x1310 and raises flag 0x55. */
-void BtlChar_RequestBodyWarp(BtlCtlChr *chr, Vec4 *pos) {
+void BtlChar_RequestBodyWarp(BtlFighter *chr, Vec4 *pos) {
     Vec4_Copy(&chr->bodyWarpPos, pos);
     BtlChar_SetFlag(chr, 0x55);
 }
 
 /* Reloads +0x1310 from the object's vector. */
-void BtlChar_ResetBodyWarp(BtlCtlChr *chr) {
+void BtlChar_ResetBodyWarp(BtlFighter *chr) {
     BtlCtlObj *obj = BtlChar_GetObj(chr);
 
     Vec4_Copy(&chr->bodyWarpPos, obj->bodyPos);
 }
 
 /* Computes the relative placement offsets (from this fighter or from BtlOpp_GetPlayer's fighter) and raises flag 0xF6. */
-void BtlChar_RequestPlaceRelative(BtlCtlChr *chr, s32 slot, s32 n, s32 self) {
-    BtlCtlChr *target = chr;
+void BtlChar_RequestPlaceRelative(BtlFighter *chr, s32 slot, s32 n, s32 self) {
+    BtlFighter *target = chr;
 
     if (!self) {
         target = BtlChar_Get(BtlOpp_GetPlayer(chr));
@@ -466,17 +466,17 @@ void BtlChar_RequestPlaceRelative(BtlCtlChr *chr, s32 slot, s32 n, s32 self) {
 }
 
 /* Raises flag 0xF8 (placement on the stage path). */
-void BtlChar_RequestPlaceOnPath(BtlCtlChr *chr) {
+void BtlChar_RequestPlaceOnPath(BtlFighter *chr) {
     BtlChar_SetFlag(chr, 0xF8);
 }
 
 /* Forgets this frame's snapshots. */
-void BtlChar_ClearSnapshots(BtlCtlChr *chr) {
+void BtlChar_ClearSnapshots(BtlFighter *chr) {
     chr->snapMask = 0;
 }
 
 /* Stores a position and rotation as snapshot n and as the latest snapshot. */
-void BtlChar_Snapshot(BtlCtlChr *chr, Vec4 *pos, Vec4 *rot, s32 n) {
+void BtlChar_Snapshot(BtlFighter *chr, Vec4 *pos, Vec4 *rot, s32 n) {
     Vec4_Copy(&chr->snapPos[n], pos);
     Vec4_Copy(&chr->snapRot[n], rot);
     chr->snapMask |= 1 << n;
@@ -490,15 +490,15 @@ void BtlChars_Snapshot(s32 n) {
     s32 i;
 
     for (i = 0; i < BtlChar_GetCount(); i++) {
-        BtlCtlChr *chr = BtlChar_Get(i);
-        BtlCtlPose *pose = BtlChar_GetPos(chr);
+        BtlFighter *chr = BtlChar_Get(i);
+        BtlFighterPose *pose = BtlChar_GetPos(chr);
 
         BtlChar_Snapshot(chr, &pose->pos, &pose->rot, n);
     }
 }
 
 /* Gives the position of snapshot n, or the current position when it was not taken. */
-void BtlChar_GetSnapPos(BtlCtlChr *chr, Vec4 *out, s32 n) {
+void BtlChar_GetSnapPos(BtlFighter *chr, Vec4 *out, s32 n) {
     if (chr->snapMask & (1 << n)) {
         Vec4_Copy(out, &chr->snapPos[n]);
     } else {
@@ -507,7 +507,7 @@ void BtlChar_GetSnapPos(BtlCtlChr *chr, Vec4 *out, s32 n) {
 }
 
 /* Gives the rotation of snapshot n, or the current rotation when it was not taken. */
-void BtlChar_GetSnapRot(BtlCtlChr *chr, Vec4 *out, s32 n) {
+void BtlChar_GetSnapRot(BtlFighter *chr, Vec4 *out, s32 n) {
     if (chr->snapMask & (1 << n)) {
         Vec4_Copy(out, &chr->snapRot[n]);
     } else {
@@ -516,7 +516,7 @@ void BtlChar_GetSnapRot(BtlCtlChr *chr, Vec4 *out, s32 n) {
 }
 
 /* Gives the movement between two snapshots. */
-void BtlChar_GetSnapDelta(BtlCtlChr *chr, Vec4 *out, s32 from, s32 to) {
+void BtlChar_GetSnapDelta(BtlFighter *chr, Vec4 *out, s32 from, s32 to) {
     Vec4 a;
     Vec4 b;
 
@@ -526,7 +526,7 @@ void BtlChar_GetSnapDelta(BtlCtlChr *chr, Vec4 *out, s32 from, s32 to) {
 }
 
 /* Gives the movement since snapshot n. */
-void BtlChar_GetMoveSince(BtlCtlChr *chr, Vec4 *out, s32 n) {
+void BtlChar_GetMoveSince(BtlFighter *chr, Vec4 *out, s32 n) {
     Vec4 a;
 
     BtlChar_GetSnapPos(chr, &a, n);

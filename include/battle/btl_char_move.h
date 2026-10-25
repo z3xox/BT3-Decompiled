@@ -7,7 +7,8 @@
 
 /*
  * Fighter movement (src/battle/btl_char_move.c, 0x1DC9A0..0x1E0290).
- * The structures are partial views local to this module: only the fields this file touches.
+ * The structures are partial views local to this module: only the fields this file touches. The fighter is
+ * BtlFighter (battle/btl_fighter.h).
  *
  * The movement model (everything here is verified by the matching C unless marked):
  *
@@ -30,13 +31,6 @@
  *   constants bit for bit (10, 50, 100, 500, 800 and 3000 km/h), so lengths are metres and speeds metres per frame.
  *   Angles written in degrees and converted (1.8, 6, 18, 36 degrees).
  */
-
-/* Pose block of a fighter (chr + 0x10, 0xF0 bytes; BtlChar_GetPos returns it). Offsets in brackets are fighter
-   offsets. Meanings marked (other) come from other modules' headers, not from this file. */
-typedef BtlFighterPose BtlMovePose;
-
-/* Fighter (0x1600 bytes). */
-typedef BtlFighter BtlMoveChr;
 
 /* What obj + 0xFA0 points to. */
 typedef struct BtlMoveObjBody {
@@ -117,52 +111,52 @@ typedef struct BtlMoveBlastList {
 #define BTL_DIR_KEEP_FLAT    6 /* keep, y removed */
 #define BTL_DIR_KEEP         7 /* keep */
 
-void BtlMove_UpdateAnimVoice(BtlMoveChr *chr);
-void BtlMove_ResetAnimStep(BtlMoveChr *chr);
-void BtlMove_UpdateAction(BtlMoveChr *chr);
-s32 BtlMove_TestContact(BtlMoveChr *chr, s32 floor, f32 angle);
-s32 BtlMove_IsHeadingIntoFloor(BtlMoveChr *chr, f32 angle);
-s32 BtlMove_IsHeadingIntoWall(BtlMoveChr *chr, f32 angle);
-s32 BtlMove_CanFireBlast(BtlMoveChr *chr, s32 mode, s32 *outCount);
-s32 BtlMove_IsBlastIncoming(BtlMoveChr *chr, s32 uncharged, s32 otherBlasts, s32 techniques, f32 limit);
-s32 BtlMove_CountOwnBeams(BtlMoveChr *chr);
+void BtlMove_UpdateAnimVoice(BtlFighter *chr);
+void BtlMove_ResetAnimStep(BtlFighter *chr);
+void BtlMove_UpdateAction(BtlFighter *chr);
+s32 BtlMove_TestContact(BtlFighter *chr, s32 floor, f32 angle);
+s32 BtlMove_IsHeadingIntoFloor(BtlFighter *chr, f32 angle);
+s32 BtlMove_IsHeadingIntoWall(BtlFighter *chr, f32 angle);
+s32 BtlMove_CanFireBlast(BtlFighter *chr, s32 mode, s32 *outCount);
+s32 BtlMove_IsBlastIncoming(BtlFighter *chr, s32 uncharged, s32 otherBlasts, s32 techniques, f32 limit);
+s32 BtlMove_CountOwnBeams(BtlFighter *chr);
 s32 BtlMove_ClipToRadius(Vec4 *out, Vec4 *from, Vec4 *to, f32 radius);
-void BtlMove_TurnYaw(BtlMoveChr *chr, s32 mode, f32 maxStep);
-void BtlMove_TurnPitch(BtlMoveChr *chr, s32 mode, f32 maxStep);
-void BtlMove_SteerAtOpponent(BtlMoveChr *chr, f32 closeSpeed, f32 yawAccel, f32 pitchAccel, f32 yawMax, f32 pitchMax, f32 maxStep);
-void BtlMove_TurnModelYaw(BtlMoveChr *chr, f32 maxStep, f32 rate);
-void BtlMove_SetHeading(BtlMoveChr *chr, f32 yaw, f32 pitch);
-void BtlMove_TurnToPoint(BtlMoveChr *chr, Vec4 *target, f32 yawStep, f32 pitchStep);
-void BtlMove_SetDirection(BtlMoveChr *chr, s32 mode);
-void BtlMove_Advance(BtlMoveChr *chr, f32 speed, f32 accel);
-void BtlMove_Step(BtlMoveChr *chr, s32 yawMode, s32 pitchMode, s32 dirMode, f32 speed, f32 accel);
-void BtlMove_WarpAheadOfOpponent(BtlMoveChr *chr, f32 lead);
-void BtlMove_WarpBehindOpponent(BtlMoveChr *chr, f32 gap);
-void BtlMove_WarpInFrontOfOpponent(BtlMoveChr *chr, f32 gap);
-void BtlMove_SnapToOpponent(BtlMoveChr *chr);
-s32 BtlMove_CircleOpponent(BtlMoveChr *chr, s32 side, s32 lead, f32 baseYaw, f32 speed);
-void BtlMove_CalcApproachPoint(BtlMoveChr *chr, Vec4 *out, Vec4 *outTarget, f32 dist, f32 angle, f32 distScale, f32 lead);
-void BtlMove_Fall(BtlMoveChr *chr);
-void BtlMove_MoveVertical(BtlMoveChr *chr, f32 speed, f32 accel);
-void BtlMove_BrakeVertical(BtlMoveChr *chr);
-void BtlMove_ApplyGravity(BtlMoveChr *chr);
-void BtlMove_SetLeanX(BtlMoveChr *chr, f32 angle);
-void BtlMove_SetLeanZ(BtlMoveChr *chr, f32 angle);
-s32 BtlMove_IsBlockedByOpponent(BtlMoveChr *chr);
-void BtlMove_ClampToStage(BtlMoveChr *chr);
-void BtlMove_RequestOrbit(BtlMoveChr *chr, f32 near, f32 far);
-void BtlMove_ApplyOrbit(BtlMoveChr *chr);
-s32 BtlMove_PushOut(BtlMoveChr *chr);
+void BtlMove_TurnYaw(BtlFighter *chr, s32 mode, f32 maxStep);
+void BtlMove_TurnPitch(BtlFighter *chr, s32 mode, f32 maxStep);
+void BtlMove_SteerAtOpponent(BtlFighter *chr, f32 closeSpeed, f32 yawAccel, f32 pitchAccel, f32 yawMax, f32 pitchMax, f32 maxStep);
+void BtlMove_TurnModelYaw(BtlFighter *chr, f32 maxStep, f32 rate);
+void BtlMove_SetHeading(BtlFighter *chr, f32 yaw, f32 pitch);
+void BtlMove_TurnToPoint(BtlFighter *chr, Vec4 *target, f32 yawStep, f32 pitchStep);
+void BtlMove_SetDirection(BtlFighter *chr, s32 mode);
+void BtlMove_Advance(BtlFighter *chr, f32 speed, f32 accel);
+void BtlMove_Step(BtlFighter *chr, s32 yawMode, s32 pitchMode, s32 dirMode, f32 speed, f32 accel);
+void BtlMove_WarpAheadOfOpponent(BtlFighter *chr, f32 lead);
+void BtlMove_WarpBehindOpponent(BtlFighter *chr, f32 gap);
+void BtlMove_WarpInFrontOfOpponent(BtlFighter *chr, f32 gap);
+void BtlMove_SnapToOpponent(BtlFighter *chr);
+s32 BtlMove_CircleOpponent(BtlFighter *chr, s32 side, s32 lead, f32 baseYaw, f32 speed);
+void BtlMove_CalcApproachPoint(BtlFighter *chr, Vec4 *out, Vec4 *outTarget, f32 dist, f32 angle, f32 distScale, f32 lead);
+void BtlMove_Fall(BtlFighter *chr);
+void BtlMove_MoveVertical(BtlFighter *chr, f32 speed, f32 accel);
+void BtlMove_BrakeVertical(BtlFighter *chr);
+void BtlMove_ApplyGravity(BtlFighter *chr);
+void BtlMove_SetLeanX(BtlFighter *chr, f32 angle);
+void BtlMove_SetLeanZ(BtlFighter *chr, f32 angle);
+s32 BtlMove_IsBlockedByOpponent(BtlFighter *chr);
+void BtlMove_ClampToStage(BtlFighter *chr);
+void BtlMove_RequestOrbit(BtlFighter *chr, f32 near, f32 far);
+void BtlMove_ApplyOrbit(BtlFighter *chr);
+s32 BtlMove_PushOut(BtlFighter *chr);
 f32 BtlMove_CalcVerticalSpeed(f32 height, f32 extra);
-void BtlMove_AimVerticalAtOpponent(BtlMoveChr *chr, s32 lead);
-void BtlMove_BeginRiseToOpponent(BtlMoveChr *chr);
+void BtlMove_AimVerticalAtOpponent(BtlFighter *chr, s32 lead);
+void BtlMove_BeginRiseToOpponent(BtlFighter *chr);
 f32 BtlMove_CalcJumpSpeed(f32 height);
-void BtlMove_SetImpulse(BtlMoveChr *chr, Vec4 *vel);
-void BtlMove_SetImpulseDir(BtlMoveChr *chr, Vec4 *dir, f32 speed);
-void BtlMove_SetImpulseYaw(BtlMoveChr *chr, f32 yaw, f32 speed);
-void BtlMove_DeflectAtStageLimit(BtlMoveChr *chr, s32 back);
-s32 BtlMove_ApplyImpulse(BtlMoveChr *chr);
-void BtlMove_UpdateHoverOffset(BtlMoveChr *chr);
-void BtlMove_UpdateDefenseTimers(BtlMoveChr *chr);
+void BtlMove_SetImpulse(BtlFighter *chr, Vec4 *vel);
+void BtlMove_SetImpulseDir(BtlFighter *chr, Vec4 *dir, f32 speed);
+void BtlMove_SetImpulseYaw(BtlFighter *chr, f32 yaw, f32 speed);
+void BtlMove_DeflectAtStageLimit(BtlFighter *chr, s32 back);
+s32 BtlMove_ApplyImpulse(BtlFighter *chr);
+void BtlMove_UpdateHoverOffset(BtlFighter *chr);
+void BtlMove_UpdateDefenseTimers(BtlFighter *chr);
 
 #endif

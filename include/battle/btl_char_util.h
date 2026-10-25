@@ -8,7 +8,8 @@
 
 /*
  * Small battle helpers and fighter accessors (src/battle/btl_char_util.c, 0x1DBF20..0x1DC9A0).
- * The structures are partial views local to this module: only the fields this file touches.
+ * The structures are partial views local to this module: only the fields this file touches. The fighter is
+ * BtlFighter (battle/btl_fighter.h).
  */
 
 /* Entry of the voice table (roster + 0x28). */
@@ -18,16 +19,10 @@ typedef struct BtlVoiceEntry {
     /* 0x4 */ f32 interval; /* cooldown in seconds */
 } BtlVoiceEntry; /* size 0x8 */
 
-/* What BtlMember_GetActiveGauge returns: the active member's block + 0x40. */
-typedef BtlMemberGauge BtlCharGetVitals;
-
-/* Fighter (0x1600 bytes). */
-typedef BtlFighter BtlCharGetChr;
-
 /* Fighter roster (gBtlChars, 0x280 bytes). */
 typedef struct BtlCharGetRoster {
     /* 0x00 */ s32 count;
-    /* 0x04 */ BtlCharGetChr *chars;
+    /* 0x04 */ BtlFighter *chars;
     /* 0x08 */ u8 unk8[0x14 - 0x8];
     /* 0x14 */ s32 frame;       /* frames simulated since BtlChar_ResetAll, 30 bits */
     /* 0x18 */ u32 randState;   /* BtlChar_Rand; 0 at BtlChar_ResetAll */
@@ -50,30 +45,30 @@ s32 BtlUtil_Max(s32 a, s32 b);
 s32 BtlUtil_RoundUp(s32 n, s32 unit);
 s32 BtlUtil_AngleToSector(f32 a);
 s32 BtlChar_GetCount(void);
-BtlCharGetChr *BtlChar_Get(s32 i);
-BtlCharGetChr *BtlChar_FindByObjId(s32 objId);
-BtlCharGetChr *BtlChar_FindBySide(s32 side);
-void *BtlChar_GetObj(BtlCharGetChr *chr);
-Vec4 *BtlChar_GetPos(BtlCharGetChr *chr);
-Pad *BtlChar_GetPad(BtlCharGetChr *chr);
-s32 BtlChar_IsFrozen(BtlCharGetChr *chr);
-s32 BtlChar_IsFree(BtlCharGetChr *chr);
-s32 BtlChar_IsDead(BtlCharGetChr *chr);
-s32 BtlChar_IsBodyChanged(BtlCharGetChr *chr);
+BtlFighter *BtlChar_Get(s32 i);
+BtlFighter *BtlChar_FindByObjId(s32 objId);
+BtlFighter *BtlChar_FindBySide(s32 side);
+void *BtlChar_GetObj(BtlFighter *chr);
+Vec4 *BtlChar_GetPos(BtlFighter *chr);
+Pad *BtlChar_GetPad(BtlFighter *chr);
+s32 BtlChar_IsFrozen(BtlFighter *chr);
+s32 BtlChar_IsFree(BtlFighter *chr);
+s32 BtlChar_IsDead(BtlFighter *chr);
+s32 BtlChar_IsBodyChanged(BtlFighter *chr);
 s32 BtlChar_GetFrame(void);
 s32 BtlChar_FrameMod(s32 n);
 s32 BtlChar_Rand(void);
 f32 BtlChar_RandF(void);
 s32 BtlChar_IsStage4Or27(void);
 void BtlChar_AddStageTimer(f32 seconds);
-void BtlChar_SetVibration(BtlCharGetChr *chr, f32 power, f32 seconds);
-void BtlChar_SetSmallVibration(BtlCharGetChr *chr, f32 seconds);
-void BtlChar_Vibrate(BtlCharGetChr *chr, f32 power, f32 seconds);
-void BtlChar_UpdateVibration(BtlCharGetChr *chr);
+void BtlChar_SetVibration(BtlFighter *chr, f32 power, f32 seconds);
+void BtlChar_SetSmallVibration(BtlFighter *chr, f32 seconds);
+void BtlChar_Vibrate(BtlFighter *chr, f32 power, f32 seconds);
+void BtlChar_UpdateVibration(BtlFighter *chr);
 BtlVoiceEntry *BtlChar_GetVoiceEntry(s32 kind);
-void BtlChar_PlayVoice(BtlCharGetChr *chr, s32 kind);
-void BtlChar_StopVoiceOnFlag(BtlCharGetChr *chr);
-void BtlChar_TickVoiceTimers(BtlCharGetChr *chr);
-void BtlChar_PlayVoiceSingle(BtlCharGetChr *chr, s32 kind);
+void BtlChar_PlayVoice(BtlFighter *chr, s32 kind);
+void BtlChar_StopVoiceOnFlag(BtlFighter *chr);
+void BtlChar_TickVoiceTimers(BtlFighter *chr);
+void BtlChar_PlayVoiceSingle(BtlFighter *chr, s32 kind);
 
 #endif

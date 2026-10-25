@@ -38,9 +38,6 @@ typedef struct BtlAiHit {
 #define BTLAI_BTN_ASCEND 0x0800
 #define BTLAI_BTN_DESCEND 0x1000
 
-/* Partial view of a fighter (BtlChar_Get): the one field this file reads directly. */
-typedef BtlFighter BtlAiMgrChr;
-
 void BtlAiMgr_Reset(void);
 void BtlAiMgr_ResetSide(s32 side);
 void BtlAiMgr_Init(void);

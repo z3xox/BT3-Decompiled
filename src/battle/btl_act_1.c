@@ -22,96 +22,96 @@
 
 extern f32 floorf(f32 x);
 
-extern s32 BtlAct_GetCurrent(BtlActAChr *chr);
-extern f32 BtlAct_GetHeight(BtlActAChr *chr);
-extern f32 BtlAct_GetHeightRatio(BtlActAChr *chr);
-extern s32 BtlAct_GetPrev(BtlActAChr *chr);
-extern s32 BtlAct_GetQueued(BtlActAChr *chr);
-extern s32 BtlAct_HasQueued(BtlActAChr *chr);
-extern void BtlAct_Request(BtlActAChr *chr, s32 id);
-extern void BtlAct_SetQueue(BtlActAChr *chr, u32 slot, s32 id);
-extern s32 BtlAct_TestAttackSkill(BtlActAChr *chr, s32 attack);
-extern s32 BtlAct_TestPoweredSkill(BtlActAChr *chr, u32 mask);
-extern s32 BtlAnim_Advance(BtlActAChr *chr, s32 flags);
-extern void BtlAnim_AdvanceLoop(BtlActAChr *chr, s32 flags);
+extern s32 BtlAct_GetCurrent(BtlFighter *chr);
+extern f32 BtlAct_GetHeight(BtlFighter *chr);
+extern f32 BtlAct_GetHeightRatio(BtlFighter *chr);
+extern s32 BtlAct_GetPrev(BtlFighter *chr);
+extern s32 BtlAct_GetQueued(BtlFighter *chr);
+extern s32 BtlAct_HasQueued(BtlFighter *chr);
+extern void BtlAct_Request(BtlFighter *chr, s32 id);
+extern void BtlAct_SetQueue(BtlFighter *chr, u32 slot, s32 id);
+extern s32 BtlAct_TestAttackSkill(BtlFighter *chr, s32 attack);
+extern s32 BtlAct_TestPoweredSkill(BtlFighter *chr, u32 mask);
+extern s32 BtlAnim_Advance(BtlFighter *chr, s32 flags);
+extern void BtlAnim_AdvanceLoop(BtlFighter *chr, s32 flags);
 /* The float goes before the flags: with (next, flags, blend) the argument set-up order differs at five call sites. */
-extern s32 BtlAnim_AdvanceThen(BtlActAChr *chr, s32 next, f32 blend, s32 flags);
-extern f32 BtlAnim_GetFrame(BtlActAChr *chr);
-extern s32 BtlAnim_GetId(BtlActAChr *chr);
-extern f32 BtlAnim_GetLength(BtlActAChr *chr);
-extern f32 BtlAnim_GetProgress(BtlActAChr *chr);
-extern s32 BtlAnim_IsNew(BtlActAChr *chr);
-extern void BtlAnim_Play(BtlActAChr *chr, s32 anim, f32 blend);
-extern void BtlAnim_PlaySub(BtlActAChr *chr, s32 anim);
-extern void BtlAnim_Request(BtlActAChr *chr, s32 anim, f32 blend);
-extern void BtlAnim_SetDuration(BtlActAChr *chr, f32 seconds);
-extern void BtlAnim_SetObjRate(BtlActAChr *chr, f32 rate);
-extern void BtlAnim_SetStep(BtlActAChr *chr, f32 step);
-extern void BtlChar_ClearFlag(BtlActAChr *chr, u32 n);
-extern BtlActAObj *BtlChar_GetObj(BtlActAChr *chr);
-extern BtlActAPose *BtlChar_GetPos(BtlActAChr *chr);
-extern s32 BtlChar_IsFlagDropped(BtlActAChr *chr, u32 n);
-extern void BtlChar_PlayVoice(BtlActAChr *chr, s32 kind);
-extern void BtlChar_SetFlag(BtlActAChr *chr, u32 n);
-extern void BtlChar_SetFxBit(BtlActAChr *chr, s32 n);
-extern void BtlChar_SetHeldFlag(BtlActAChr *chr, u32 n);
-extern void BtlChar_SetSmallVibration(BtlActAChr *chr, f32 seconds);
-extern void BtlChar_SetVibration(BtlActAChr *chr, f32 power, f32 seconds);
-extern void BtlCharSnd_PlayCommon(BtlActAChr *chr, s32 id);
-extern s32 BtlChar_TestFlag(BtlActAChr *chr, u32 n);
-extern s32 BtlChar_IsBodyChanged(BtlActAChr *chr);
-extern void BtlChar_ToggleHeldFlag(BtlActAChr *chr, u32 n);
-extern void BtlColl_AddActionBit(BtlActAChr *chr, s32 action);
-extern s32 BtlInput_TestAction(BtlActAChr *chr, s32 id, s32 want);
-extern s32 BtlMember_SpendKi(BtlActAChr *chr, s32 amount, s32 force);
-extern void BtlMove_Advance(BtlActAChr *chr, f32 speed, f32 accel);
-extern void BtlMove_ApplyGravity(BtlActAChr *chr);
-extern void BtlMove_BeginRiseToOpponent(BtlActAChr *chr);
-extern void BtlMove_BrakeVertical(BtlActAChr *chr);
-extern void BtlMove_Fall(BtlActAChr *chr);
-extern s32 BtlMove_IsBlockedByOpponent(BtlActAChr *chr);
-extern void BtlMove_SetDirection(BtlActAChr *chr, s32 mode);
-extern void BtlMove_SetHeading(BtlActAChr *chr, f32 yaw, f32 pitch);
-extern void BtlMove_SetLeanX(BtlActAChr *chr, f32 v);
-extern void BtlMove_SnapToOpponent(BtlActAChr *chr);
-extern void BtlMove_SteerAtOpponent(BtlActAChr *chr, f32 closeSpeed, f32 yawAccel, f32 pitchAccel, f32 yawMax, f32 pitchMax, f32 maxStep);
-extern void BtlMove_Step(BtlActAChr *chr, s32 yawMode, s32 pitchMode, s32 dirMode, f32 speed, f32 accel);
-extern void BtlMove_TurnModelYaw(BtlActAChr *chr, f32 maxStep, f32 rate);
-extern void BtlMove_TurnPitch(BtlActAChr *chr, s32 mode, f32 maxStep);
-extern void BtlMove_TurnYaw(BtlActAChr *chr, s32 mode, f32 maxStep);
-extern void BtlMove_WarpAheadOfOpponent(BtlActAChr *chr, f32 lead);
-extern f32 BtlOpp_GetGapXZ(BtlActAChr *chr);
-extern s32 BtlOpp_GetSeenAction(BtlActAChr *chr);
-extern f32 BtlOpp_GetYawFromFacing(BtlActAChr *chr);
+extern s32 BtlAnim_AdvanceThen(BtlFighter *chr, s32 next, f32 blend, s32 flags);
+extern f32 BtlAnim_GetFrame(BtlFighter *chr);
+extern s32 BtlAnim_GetId(BtlFighter *chr);
+extern f32 BtlAnim_GetLength(BtlFighter *chr);
+extern f32 BtlAnim_GetProgress(BtlFighter *chr);
+extern s32 BtlAnim_IsNew(BtlFighter *chr);
+extern void BtlAnim_Play(BtlFighter *chr, s32 anim, f32 blend);
+extern void BtlAnim_PlaySub(BtlFighter *chr, s32 anim);
+extern void BtlAnim_Request(BtlFighter *chr, s32 anim, f32 blend);
+extern void BtlAnim_SetDuration(BtlFighter *chr, f32 seconds);
+extern void BtlAnim_SetObjRate(BtlFighter *chr, f32 rate);
+extern void BtlAnim_SetStep(BtlFighter *chr, f32 step);
+extern void BtlChar_ClearFlag(BtlFighter *chr, u32 n);
+extern BtlActAObj *BtlChar_GetObj(BtlFighter *chr);
+extern BtlFighterPose *BtlChar_GetPos(BtlFighter *chr);
+extern s32 BtlChar_IsFlagDropped(BtlFighter *chr, u32 n);
+extern void BtlChar_PlayVoice(BtlFighter *chr, s32 kind);
+extern void BtlChar_SetFlag(BtlFighter *chr, u32 n);
+extern void BtlChar_SetFxBit(BtlFighter *chr, s32 n);
+extern void BtlChar_SetHeldFlag(BtlFighter *chr, u32 n);
+extern void BtlChar_SetSmallVibration(BtlFighter *chr, f32 seconds);
+extern void BtlChar_SetVibration(BtlFighter *chr, f32 power, f32 seconds);
+extern void BtlCharSnd_PlayCommon(BtlFighter *chr, s32 id);
+extern s32 BtlChar_TestFlag(BtlFighter *chr, u32 n);
+extern s32 BtlChar_IsBodyChanged(BtlFighter *chr);
+extern void BtlChar_ToggleHeldFlag(BtlFighter *chr, u32 n);
+extern void BtlColl_AddActionBit(BtlFighter *chr, s32 action);
+extern s32 BtlInput_TestAction(BtlFighter *chr, s32 id, s32 want);
+extern s32 BtlMember_SpendKi(BtlFighter *chr, s32 amount, s32 force);
+extern void BtlMove_Advance(BtlFighter *chr, f32 speed, f32 accel);
+extern void BtlMove_ApplyGravity(BtlFighter *chr);
+extern void BtlMove_BeginRiseToOpponent(BtlFighter *chr);
+extern void BtlMove_BrakeVertical(BtlFighter *chr);
+extern void BtlMove_Fall(BtlFighter *chr);
+extern s32 BtlMove_IsBlockedByOpponent(BtlFighter *chr);
+extern void BtlMove_SetDirection(BtlFighter *chr, s32 mode);
+extern void BtlMove_SetHeading(BtlFighter *chr, f32 yaw, f32 pitch);
+extern void BtlMove_SetLeanX(BtlFighter *chr, f32 v);
+extern void BtlMove_SnapToOpponent(BtlFighter *chr);
+extern void BtlMove_SteerAtOpponent(BtlFighter *chr, f32 closeSpeed, f32 yawAccel, f32 pitchAccel, f32 yawMax, f32 pitchMax, f32 maxStep);
+extern void BtlMove_Step(BtlFighter *chr, s32 yawMode, s32 pitchMode, s32 dirMode, f32 speed, f32 accel);
+extern void BtlMove_TurnModelYaw(BtlFighter *chr, f32 maxStep, f32 rate);
+extern void BtlMove_TurnPitch(BtlFighter *chr, s32 mode, f32 maxStep);
+extern void BtlMove_TurnYaw(BtlFighter *chr, s32 mode, f32 maxStep);
+extern void BtlMove_WarpAheadOfOpponent(BtlFighter *chr, f32 lead);
+extern f32 BtlOpp_GetGapXZ(BtlFighter *chr);
+extern s32 BtlOpp_GetSeenAction(BtlFighter *chr);
+extern f32 BtlOpp_GetYawFromFacing(BtlFighter *chr);
 extern s32 BtlUtil_Clamp(s32 v, s32 lo, s32 hi);
 extern f32 BtlUtil_ClampF(f32 v, f32 lo, f32 hi);
 extern f32 BtlUtil_MaxF(f32 a, f32 b);
 extern f32 BtlUtil_MinF(f32 a, f32 b);
-extern void ChrCam_EndCut(BtlActAChr *chr);
-extern void ChrCam_RequestCut(BtlActAChr *chr, s32 table, s32 index);
+extern void ChrCam_EndCut(BtlFighter *chr);
+extern void ChrCam_RequestCut(BtlFighter *chr, s32 table, s32 index);
 
-extern s32 BtlDecide_Main(BtlActAChr *chr, u32 mask);
-extern s32 BtlDecide_Attack(BtlActAChr *chr, u32 mask);
-extern s32 BtlDecide_QueueAttack(BtlActAChr *chr, s32 action);
-extern s32 BtlAct_QueueComboFinish(BtlActAChr *chr);
-extern f32 BtlAtk_GetLaunchSpeed(BtlActAChr *chr);
-extern f32 BtlAtk_GetLaunchAngleBOf(BtlActAChr *chr, s32 id);
-extern s32 BtlAtk_GetVoiceKind(BtlActAChr *chr);
-extern s32 BtlParam_GetFlags2(BtlActAChr *chr);
-extern f32 BtlParam_GetChargeRateA(BtlActAChr *chr);
-extern f32 BtlParam_GetChargeRateB(BtlActAChr *chr);
+extern s32 BtlDecide_Main(BtlFighter *chr, u32 mask);
+extern s32 BtlDecide_Attack(BtlFighter *chr, u32 mask);
+extern s32 BtlDecide_QueueAttack(BtlFighter *chr, s32 action);
+extern s32 BtlAct_QueueComboFinish(BtlFighter *chr);
+extern f32 BtlAtk_GetLaunchSpeed(BtlFighter *chr);
+extern f32 BtlAtk_GetLaunchAngleBOf(BtlFighter *chr, s32 id);
+extern s32 BtlAtk_GetVoiceKind(BtlFighter *chr);
+extern s32 BtlParam_GetFlags2(BtlFighter *chr);
+extern f32 BtlParam_GetChargeRateA(BtlFighter *chr);
+extern f32 BtlParam_GetChargeRateB(BtlFighter *chr);
 extern s32 BtlObjAnim_MaskToNode(u32 bit);                                /* event bit -> model node id */
 extern s32 BtlObjAnim_QueryEvent(BtlActAObj *obj, u64 a, s32 b, s32 c);  /* motion event query (mask, layer, what) */
-extern s32 BtlParam_GetDashSound(BtlActAChr *chr);
-extern f32 BtlMoveParam_GetSpeed(BtlActAChr *chr, s32 kind);
-extern f32 BtlMoveParam_GetAngle58(BtlActAChr *chr);
-extern s32 BtlMoveParam_GetKiCost(BtlActAChr *chr, s32 kind);
-extern f32 BtlMoveParam_GetTurnAccel(BtlActAChr *chr, s32 axis);
-extern f32 BtlMoveParam_GetTurnMax(BtlActAChr *chr, s32 axis);
+extern s32 BtlParam_GetDashSound(BtlFighter *chr);
+extern f32 BtlMoveParam_GetSpeed(BtlFighter *chr, s32 kind);
+extern f32 BtlMoveParam_GetAngle58(BtlFighter *chr);
+extern s32 BtlMoveParam_GetKiCost(BtlFighter *chr, s32 kind);
+extern f32 BtlMoveParam_GetTurnAccel(BtlFighter *chr, s32 axis);
+extern f32 BtlMoveParam_GetTurnMax(BtlFighter *chr, s32 axis);
 extern s32 BtlObj_GetNodeSide(s32 a);                                   /* node id -> group 0..3 */
 
 /* Actions 7..0xA: stand (animations 0 / 0x26, 1 / 0x27, 0x196, 0x17B) facing the opponent until flag 0xAF or 0xB0 drops. */
-s32 BtlAct_WaitHandler(BtlActAChr *chr, s32 phase) {
+s32 BtlAct_WaitHandler(BtlFighter *chr, s32 phase) {
     s32 anim;
     s32 air;
     f32 turn;
@@ -165,7 +165,7 @@ s32 BtlAct_WaitHandler(BtlActAChr *chr, s32 phase) {
 }
 
 /* Attack charge rate: the character's two rates blended by the gauge at +0xD80 (0..100000), at least 0.1. */
-f32 BtlAct_GetChargeRate(BtlActAChr *chr) {
+f32 BtlAct_GetChargeRate(BtlFighter *chr) {
     f32 t = (f32)chr->chargeGauge / 100000.0f;
     f32 a = BtlParam_GetChargeRateA(chr);
     f32 b = BtlParam_GetChargeRateB(chr);
@@ -174,7 +174,7 @@ f32 BtlAct_GetChargeRate(BtlActAChr *chr) {
 }
 
 /* Advances the charge timer by one frame; returns 1 when the charge level reached 1. */
-s32 BtlAct_StepCharge(BtlActAChr *chr) {
+s32 BtlAct_StepCharge(BtlFighter *chr) {
     f32 rate = BtlAct_GetChargeRate(chr);
 
     chr->chargeTimer = BtlUtil_MinF(chr->chargeTimer + rate * (1.0f / 22.5f), 1.0f);
@@ -187,17 +187,17 @@ s32 BtlAct_StepCharge(BtlActAChr *chr) {
 }
 
 /* Takes the charge level from the animation progress. */
-void BtlAct_SetChargeFromAnim(BtlActAChr *chr) {
+void BtlAct_SetChargeFromAnim(BtlFighter *chr) {
     chr->charge = BtlAnim_GetProgress(chr);
 }
 
 /* Sets the charge animation's duration from the charge rate (1.5 s at rate 1, at least 0.75 s). */
-void BtlAct_SetChargeAnimDuration(BtlActAChr *chr) {
+void BtlAct_SetChargeAnimDuration(BtlFighter *chr) {
     BtlAnim_SetDuration(chr, BtlUtil_MaxF(1.5f / BtlAct_GetChargeRate(chr), 0.75f));
 }
 
 /* Sets the animation step to twice the blended rate. */
-void BtlAct_SetChargeAnimStep(BtlActAChr *chr) {
+void BtlAct_SetChargeAnimStep(BtlFighter *chr) {
     f32 t = (f32)chr->chargeGauge / 100000.0f;
     f32 a = BtlParam_GetChargeRateA(chr);
     f32 b = BtlParam_GetChargeRateB(chr);
@@ -206,7 +206,7 @@ void BtlAct_SetChargeAnimStep(BtlActAChr *chr) {
 }
 
 /* Under flag 0x5D, when the opponent is seen in action 0xC9: queue a follow-up and start it past the given progress. */
-void BtlAct_CancelOnOppC9(BtlActAChr *chr, f32 after) {
+void BtlAct_CancelOnOppC9(BtlFighter *chr, f32 after) {
     if (BtlChar_TestFlag(chr, 0x5D) && BtlOpp_GetSeenAction(chr) == 0xC9) {
         if (!BtlAct_HasQueued(chr)) {
             BtlDecide_Attack(chr, 1);
@@ -218,7 +218,7 @@ void BtlAct_CancelOnOppC9(BtlActAChr *chr, f32 after) {
 }
 
 /* Plays the voice kind BtlAtk_GetVoiceKind picks, if any. */
-void BtlAct_PlayPickedVoice(BtlActAChr *chr) {
+void BtlAct_PlayPickedVoice(BtlFighter *chr) {
     s32 kind = BtlAtk_GetVoiceKind(chr);
 
     if (kind >= 0) {
@@ -227,7 +227,7 @@ void BtlAct_PlayPickedVoice(BtlActAChr *chr) {
 }
 
 /* Starts sub animation 0x19B and returns a model node (0x2D, 0x1F or 0x15) by the group of the first node its event names. */
-s32 BtlAct_StartSub19B(BtlActAChr *chr) {
+s32 BtlAct_StartSub19B(BtlFighter *chr) {
     s32 i;
     BtlActAObj *obj;
     u32 mask;
@@ -252,7 +252,7 @@ s32 BtlAct_StartSub19B(BtlActAChr *chr) {
 }
 
 /* Attack decide step: under flag 0x5B read follow-up inputs by the attack's flags, and start the queued action past cancelAt. */
-void BtlAct_DecideAttackFollow(BtlActAChr *chr, BtlActAAttack *atk) {
+void BtlAct_DecideAttackFollow(BtlFighter *chr, BtlFighterAttack *atk) {
     s32 i;
 
     if (BtlChar_TestFlag(chr, 0x5B)) {
@@ -308,7 +308,7 @@ void BtlAct_DecideAttackFollow(BtlActAChr *chr, BtlActAAttack *atk) {
 }
 
 /* Attack end: back to action 0xB, or 0xC under flag 0x5C when the attack has flag 0x400. */
-void BtlAct_RequestAttackEnd(BtlActAChr *chr, BtlActAAttack *atk) {
+void BtlAct_RequestAttackEnd(BtlFighter *chr, BtlFighterAttack *atk) {
     s32 id = 0xB;
 
     if (BtlChar_TestFlag(chr, 0x5C)) {
@@ -320,9 +320,9 @@ void BtlAct_RequestAttackEnd(BtlActAChr *chr, BtlActAAttack *atk) {
 }
 
 /* Action 0x44: rush combo step. */
-s32 BtlAct_RushHandler(BtlActAChr *chr, s32 phase) {
+s32 BtlAct_RushHandler(BtlFighter *chr, s32 phase) {
     f32 *cancelAt = (f32 *)&chr->work[6];
-    BtlActAPose *pose;
+    BtlFighterPose *pose;
     s32 next;
     s32 mode;
     s32 anim;
@@ -441,7 +441,7 @@ s32 BtlAct_RushHandler(BtlActAChr *chr, s32 phase) {
 }
 
 /* Action 0x45 (forced by flag 0x7E): the whole rush chain played at triple speed with a camera cut. */
-s32 BtlAct_RushAutoHandler(BtlActAChr *chr, s32 phase) {
+s32 BtlAct_RushAutoHandler(BtlFighter *chr, s32 phase) {
     if (phase == 0) {
         if (BtlAct_GetPrev(chr) != 0x45) {
             BtlAnim_Play(chr, 0x37, 0.1f);
@@ -488,8 +488,8 @@ s32 BtlAct_RushAutoHandler(BtlActAChr *chr, s32 phase) {
 }
 
 /* Action 0x46: rapid rush (animations 0x3C..0x40 at triple speed), repeated by input condition 52. */
-s32 BtlAct_RushRapidHandler(BtlActAChr *chr, s32 phase) {
-    BtlActAPose *pose;
+s32 BtlAct_RushRapidHandler(BtlFighter *chr, s32 phase) {
+    BtlFighterPose *pose;
     s32 next;
     s32 can;
     s32 go;
@@ -587,10 +587,10 @@ s32 BtlAct_RushRapidHandler(BtlActAChr *chr, s32 phase) {
 }
 
 /* Actions 0x47..0x4C: charged smash attack (wind-up, hold, release animations). */
-s32 BtlAct_SmashChargeHandler(BtlActAChr *chr, s32 phase) {
+s32 BtlAct_SmashChargeHandler(BtlFighter *chr, s32 phase) {
     s32 *frames = &chr->work[2];
     f32 *cancelAt = (f32 *)&chr->work[6];
-    BtlActAPose *pose;
+    BtlFighterPose *pose;
     s32 anim;
     s32 yawMode;
     s32 pitchMode;
@@ -841,9 +841,9 @@ s32 BtlAct_SmashChargeHandler(BtlActAChr *chr, s32 phase) {
 }
 
 /* Actions 0x4D..0x52: fully charged smash attack with a camera cut (hit-stop flag 0x125 during the wind-up). */
-s32 BtlAct_SmashFullHandler(BtlActAChr *chr, s32 phase) {
+s32 BtlAct_SmashFullHandler(BtlFighter *chr, s32 phase) {
     f32 *cancelAt = (f32 *)&chr->work[6];
-    BtlActAPose *pose;
+    BtlFighterPose *pose;
     s32 cut;
     s32 anim;
     s32 mode;
@@ -979,7 +979,7 @@ s32 BtlAct_SmashFullHandler(BtlActAChr *chr, s32 phase) {
 }
 
 /* Actions 0x53..0x57: charged attack out of a dash: flies at the opponent spending ki while charging. */
-s32 BtlAct_DashSmashHandler(BtlActAChr *chr, s32 phase) {
+s32 BtlAct_DashSmashHandler(BtlFighter *chr, s32 phase) {
     s32 anim;
     s32 cost;
     s32 steer;
@@ -1170,7 +1170,7 @@ s32 BtlAct_DashSmashHandler(BtlActAChr *chr, s32 phase) {
 }
 
 /* Action 0x58: flying kick out of a dash (animations 0x6B wind-up, 0x6C hold, 0x6D strike). */
-s32 BtlAct_FlyingKickHandler(BtlActAChr *chr, s32 phase) {
+s32 BtlAct_FlyingKickHandler(BtlFighter *chr, s32 phase) {
     f32 *cancelAt = (f32 *)&chr->work[6];
     s32 steer;
     s32 i;
@@ -1288,9 +1288,9 @@ s32 BtlAct_FlyingKickHandler(BtlActAChr *chr, s32 phase) {
 }
 
 /* Action 0x59: rising attack that leaves flight (animations 0x6E wind-up, 0x6F hold, 0x70 strike). */
-s32 BtlAct_LiftStrikeHandler(BtlActAChr *chr, s32 phase) {
+s32 BtlAct_LiftStrikeHandler(BtlFighter *chr, s32 phase) {
     f32 *cancelAt = (f32 *)&chr->work[6];
-    BtlActAPose *pose;
+    BtlFighterPose *pose;
     s32 falling;
     s32 steer;
     f32 speed;
@@ -1392,7 +1392,7 @@ s32 BtlAct_LiftStrikeHandler(BtlActAChr *chr, s32 phase) {
 }
 
 /* Actions 0x5A..0x5D: vanishing attack: disappear, reappear ahead of the opponent and strike. */
-s32 BtlAct_SmashVanishHandler(BtlActAChr *chr, s32 phase) {
+s32 BtlAct_SmashVanishHandler(BtlFighter *chr, s32 phase) {
     s32 *anim = &chr->work[4];
     s32 *step = &chr->work[2];
     f32 *lead = (f32 *)&chr->work[6];
@@ -1558,10 +1558,10 @@ s32 BtlAct_SmashVanishHandler(BtlActAChr *chr, s32 phase) {
 }
 
 /* Actions 0x5E..0x66 (not 0x63): chargeable rush finishers (wind-up, hold, release animation triples). */
-s32 BtlAct_RushFinishHandler(BtlActAChr *chr, s32 phase) {
+s32 BtlAct_RushFinishHandler(BtlFighter *chr, s32 phase) {
     f32 *cancelAt = (f32 *)&chr->work[6];
     BtlActAObj *obj = BtlChar_GetObj(chr);
-    BtlActAPose *pose;
+    BtlFighterPose *pose;
     s32 follow[8];
     s32 anim;
     s32 mode;
@@ -1883,114 +1883,114 @@ extern f32 BtlUtil_WrapAngle(f32 a);
 extern f32 BtlUtil_ClampF(f32 v, f32 lo, f32 hi);
 extern f32 BtlUtil_ApproachF(f32 cur, f32 target, f32 step);
 
-#define BtlChar_GetObj ((void *(*)(BtlActBChr *chr))BtlChar_GetObj)
-#define BtlChar_GetPos ((BtlActBPose *(*)(BtlActBChr *chr))BtlChar_GetPos)
-extern s32 BtlChar_IsFree(BtlActBChr *chr);
-extern s32 BtlChar_IsDead(BtlActBChr *chr);
+#define BtlChar_GetObj ((void *(*)(BtlFighter *chr))BtlChar_GetObj)
+#define BtlChar_GetPos ((BtlFighterPose *(*)(BtlFighter *chr))BtlChar_GetPos)
+extern s32 BtlChar_IsFree(BtlFighter *chr);
+extern s32 BtlChar_IsDead(BtlFighter *chr);
 extern s32 BtlChar_IsStage4Or27(void);
-#define BtlChar_SetVibration ((void (*)(BtlActBChr *chr, f32 power, f32 seconds))BtlChar_SetVibration)
-#define BtlChar_PlayVoice ((void (*)(BtlActBChr *chr, s32 kind))BtlChar_PlayVoice)
-#define BtlChar_TestFlag ((s32 (*)(BtlActBChr *chr, s32 bit))BtlChar_TestFlag)
-extern s32 BtlChar_TestPrevFlag(BtlActBChr *chr, s32 bit);
-extern s32 BtlChar_IsFlagRaised(BtlActBChr *chr, s32 bit);
-#define BtlChar_SetFlag ((void (*)(BtlActBChr *chr, s32 bit))BtlChar_SetFlag)
-#define BtlChar_SetHeldFlag ((void (*)(BtlActBChr *chr, s32 bit))BtlChar_SetHeldFlag)
-#define BtlChar_ClearFlag ((void (*)(BtlActBChr *chr, s32 bit))BtlChar_ClearFlag)
-#define BtlChar_SetFxBit ((void (*)(BtlActBChr *chr, s32 bit))BtlChar_SetFxBit)
-extern s32 BtlInput_IsHeld(BtlActBChr *chr, u32 mask);
-extern s32 BtlInput_IsPressed(BtlActBChr *chr, u32 mask);
-#define BtlInput_TestAction ((s32 (*)(BtlActBChr *chr, s32 id, s32 want))BtlInput_TestAction)
-#define ChrCam_RequestCut ((void (*)(BtlActBChr *chr, s32 table, s32 index))ChrCam_RequestCut)
-#define ChrCam_EndCut ((void (*)(BtlActBChr *chr))ChrCam_EndCut)
+#define BtlChar_SetVibration ((void (*)(BtlFighter *chr, f32 power, f32 seconds))BtlChar_SetVibration)
+#define BtlChar_PlayVoice ((void (*)(BtlFighter *chr, s32 kind))BtlChar_PlayVoice)
+#define BtlChar_TestFlag ((s32 (*)(BtlFighter *chr, s32 bit))BtlChar_TestFlag)
+extern s32 BtlChar_TestPrevFlag(BtlFighter *chr, s32 bit);
+extern s32 BtlChar_IsFlagRaised(BtlFighter *chr, s32 bit);
+#define BtlChar_SetFlag ((void (*)(BtlFighter *chr, s32 bit))BtlChar_SetFlag)
+#define BtlChar_SetHeldFlag ((void (*)(BtlFighter *chr, s32 bit))BtlChar_SetHeldFlag)
+#define BtlChar_ClearFlag ((void (*)(BtlFighter *chr, s32 bit))BtlChar_ClearFlag)
+#define BtlChar_SetFxBit ((void (*)(BtlFighter *chr, s32 bit))BtlChar_SetFxBit)
+extern s32 BtlInput_IsHeld(BtlFighter *chr, u32 mask);
+extern s32 BtlInput_IsPressed(BtlFighter *chr, u32 mask);
+#define BtlInput_TestAction ((s32 (*)(BtlFighter *chr, s32 id, s32 want))BtlInput_TestAction)
+#define ChrCam_RequestCut ((void (*)(BtlFighter *chr, s32 table, s32 index))ChrCam_RequestCut)
+#define ChrCam_EndCut ((void (*)(BtlFighter *chr))ChrCam_EndCut)
 
-#define BtlAnim_Play ((void (*)(BtlActBChr *chr, s32 anim, f32 blend))BtlAnim_Play)
-#define BtlAnim_Request ((void (*)(BtlActBChr *chr, s32 anim, f32 blend))BtlAnim_Request)
-#define BtlAnim_SetStep ((void (*)(BtlActBChr *chr, f32 step))BtlAnim_SetStep)
-#define BtlAnim_SetDuration ((void (*)(BtlActBChr *chr, f32 seconds))BtlAnim_SetDuration)
-#define BtlAnim_SetObjRate ((void (*)(BtlActBChr *chr, f32 rate))BtlAnim_SetObjRate)
-#define BtlAnim_GetId ((s32 (*)(BtlActBChr *chr))BtlAnim_GetId)
-#define BtlAnim_GetProgress ((f32 (*)(BtlActBChr *chr))BtlAnim_GetProgress)
-#define BtlAnim_Advance ((s32 (*)(BtlActBChr *chr, s32 flags))BtlAnim_Advance)
+#define BtlAnim_Play ((void (*)(BtlFighter *chr, s32 anim, f32 blend))BtlAnim_Play)
+#define BtlAnim_Request ((void (*)(BtlFighter *chr, s32 anim, f32 blend))BtlAnim_Request)
+#define BtlAnim_SetStep ((void (*)(BtlFighter *chr, f32 step))BtlAnim_SetStep)
+#define BtlAnim_SetDuration ((void (*)(BtlFighter *chr, f32 seconds))BtlAnim_SetDuration)
+#define BtlAnim_SetObjRate ((void (*)(BtlFighter *chr, f32 rate))BtlAnim_SetObjRate)
+#define BtlAnim_GetId ((s32 (*)(BtlFighter *chr))BtlAnim_GetId)
+#define BtlAnim_GetProgress ((f32 (*)(BtlFighter *chr))BtlAnim_GetProgress)
+#define BtlAnim_Advance ((s32 (*)(BtlFighter *chr, s32 flags))BtlAnim_Advance)
 /* The float comes before the flags here: only this order reproduces the argument set-up at 0x1E9378 / 0x1E93C8
    (btl_stats.h declares it (chr, next, flags, blend); the registers are the same either way). */
-#define BtlAnim_AdvanceThen ((s32 (*)(BtlActBChr *chr, s32 next, f32 blend, s32 flags))BtlAnim_AdvanceThen)
-#define BtlAnim_AdvanceLoop ((void (*)(BtlActBChr *chr, s32 flags))BtlAnim_AdvanceLoop)
-#define BtlAnim_IsNew ((s32 (*)(BtlActBChr *chr))BtlAnim_IsNew)
+#define BtlAnim_AdvanceThen ((s32 (*)(BtlFighter *chr, s32 next, f32 blend, s32 flags))BtlAnim_AdvanceThen)
+#define BtlAnim_AdvanceLoop ((void (*)(BtlFighter *chr, s32 flags))BtlAnim_AdvanceLoop)
+#define BtlAnim_IsNew ((s32 (*)(BtlFighter *chr))BtlAnim_IsNew)
 
-#define BtlMove_Step ((void (*)(BtlActBChr *chr, s32 yawMode, s32 pitchMode, s32 dirMode, f32 speed, f32 accel))BtlMove_Step)
-#define BtlMove_ApplyGravity ((void (*)(BtlActBChr *chr))BtlMove_ApplyGravity)
-#define BtlMove_Fall ((void (*)(BtlActBChr *chr))BtlMove_Fall)
-extern void BtlMove_MoveVertical(BtlActBChr *chr, f32 speed, f32 accel);
-#define BtlMove_BrakeVertical ((void (*)(BtlActBChr *chr))BtlMove_BrakeVertical)
-#define BtlMove_SetLeanX ((void (*)(BtlActBChr *chr, f32 v))BtlMove_SetLeanX)
-extern void BtlMove_SetLeanZ(BtlActBChr *chr, f32 v);
-#define BtlMove_IsBlockedByOpponent ((s32 (*)(BtlActBChr *chr))BtlMove_IsBlockedByOpponent)
-#define BtlMove_BeginRiseToOpponent ((void (*)(BtlActBChr *chr))BtlMove_BeginRiseToOpponent)
-extern void BtlMove_DeflectAtStageLimit(BtlActBChr *chr, s32 back);
-extern s32 BtlMove_IsHeadingIntoFloor(BtlActBChr *chr, f32 angle);
-extern s32 BtlMove_IsHeadingIntoWall(BtlActBChr *chr, f32 angle);
+#define BtlMove_Step ((void (*)(BtlFighter *chr, s32 yawMode, s32 pitchMode, s32 dirMode, f32 speed, f32 accel))BtlMove_Step)
+#define BtlMove_ApplyGravity ((void (*)(BtlFighter *chr))BtlMove_ApplyGravity)
+#define BtlMove_Fall ((void (*)(BtlFighter *chr))BtlMove_Fall)
+extern void BtlMove_MoveVertical(BtlFighter *chr, f32 speed, f32 accel);
+#define BtlMove_BrakeVertical ((void (*)(BtlFighter *chr))BtlMove_BrakeVertical)
+#define BtlMove_SetLeanX ((void (*)(BtlFighter *chr, f32 v))BtlMove_SetLeanX)
+extern void BtlMove_SetLeanZ(BtlFighter *chr, f32 v);
+#define BtlMove_IsBlockedByOpponent ((s32 (*)(BtlFighter *chr))BtlMove_IsBlockedByOpponent)
+#define BtlMove_BeginRiseToOpponent ((void (*)(BtlFighter *chr))BtlMove_BeginRiseToOpponent)
+extern void BtlMove_DeflectAtStageLimit(BtlFighter *chr, s32 back);
+extern s32 BtlMove_IsHeadingIntoFloor(BtlFighter *chr, f32 angle);
+extern s32 BtlMove_IsHeadingIntoWall(BtlFighter *chr, f32 angle);
 
-extern s32 BtlMember_CountAlive(BtlActBChr *chr);
-extern s32 BtlMember_HasKi(BtlActBChr *chr, s32 amount);
-#define BtlMember_SpendKi ((s32 (*)(BtlActBChr *chr, s32 amount, s32 force))BtlMember_SpendKi)
-extern s32 BtlMember_IsKiEmpty(BtlActBChr *chr);
-extern f32 BtlMember_GetHealthRatio(BtlActBChr *chr);
+extern s32 BtlMember_CountAlive(BtlFighter *chr);
+extern s32 BtlMember_HasKi(BtlFighter *chr, s32 amount);
+#define BtlMember_SpendKi ((s32 (*)(BtlFighter *chr, s32 amount, s32 force))BtlMember_SpendKi)
+extern s32 BtlMember_IsKiEmpty(BtlFighter *chr);
+extern f32 BtlMember_GetHealthRatio(BtlFighter *chr);
 
-#define BtlCharSnd_PlayCommon ((void (*)(BtlActBChr *chr, s32 sound))BtlCharSnd_PlayCommon)
-extern void BtlCharSnd_PlayBank8(BtlActBChr *chr, s32 id);
-extern void BtlCharSnd_StopCommon(BtlActBChr *chr, s32 id);
-#define BtlOpp_GetSeenAction ((s32 (*)(BtlActBChr *chr))BtlOpp_GetSeenAction)
-extern s32 BtlOpp_GetSeenActionFrame(BtlActBChr *chr);
-extern f32 BtlOpp_GetPitchAdjusted(BtlActBChr *chr);
-#define BtlOpp_GetYawFromFacing ((f32 (*)(BtlActBChr *chr))BtlOpp_GetYawFromFacing)
-#define BtlColl_AddActionBit ((void (*)(BtlActBChr *chr, s32 action))BtlColl_AddActionBit)
+#define BtlCharSnd_PlayCommon ((void (*)(BtlFighter *chr, s32 sound))BtlCharSnd_PlayCommon)
+extern void BtlCharSnd_PlayBank8(BtlFighter *chr, s32 id);
+extern void BtlCharSnd_StopCommon(BtlFighter *chr, s32 id);
+#define BtlOpp_GetSeenAction ((s32 (*)(BtlFighter *chr))BtlOpp_GetSeenAction)
+extern s32 BtlOpp_GetSeenActionFrame(BtlFighter *chr);
+extern f32 BtlOpp_GetPitchAdjusted(BtlFighter *chr);
+#define BtlOpp_GetYawFromFacing ((f32 (*)(BtlFighter *chr))BtlOpp_GetYawFromFacing)
+#define BtlColl_AddActionBit ((void (*)(BtlFighter *chr, s32 action))BtlColl_AddActionBit)
 
-#define BtlAct_Request ((void (*)(BtlActBChr *chr, s32 id))BtlAct_Request)
-#define BtlAct_HasQueued ((s32 (*)(BtlActBChr *chr))BtlAct_HasQueued)
-#define BtlAct_GetCurrent ((s32 (*)(BtlActBChr *chr))BtlAct_GetCurrent)
-#define BtlAct_GetPrev ((s32 (*)(BtlActBChr *chr))BtlAct_GetPrev)
-#define BtlAct_GetQueued ((s32 (*)(BtlActBChr *chr))BtlAct_GetQueued)
-extern f32 BtlAct_GetGroundY(BtlActBChr *chr);
-#define BtlAct_GetHeight ((f32 (*)(BtlActBChr *chr))BtlAct_GetHeight)
-extern f32 BtlAct_GetFramesToGround(BtlActBChr *chr);
-extern s32 BtlAct_IsAirMotion(BtlActBChr *chr, s32 useSaved);
+#define BtlAct_Request ((void (*)(BtlFighter *chr, s32 id))BtlAct_Request)
+#define BtlAct_HasQueued ((s32 (*)(BtlFighter *chr))BtlAct_HasQueued)
+#define BtlAct_GetCurrent ((s32 (*)(BtlFighter *chr))BtlAct_GetCurrent)
+#define BtlAct_GetPrev ((s32 (*)(BtlFighter *chr))BtlAct_GetPrev)
+#define BtlAct_GetQueued ((s32 (*)(BtlFighter *chr))BtlAct_GetQueued)
+extern f32 BtlAct_GetGroundY(BtlFighter *chr);
+#define BtlAct_GetHeight ((f32 (*)(BtlFighter *chr))BtlAct_GetHeight)
+extern f32 BtlAct_GetFramesToGround(BtlFighter *chr);
+extern s32 BtlAct_IsAirMotion(BtlFighter *chr, s32 useSaved);
 extern s32 BtlAct_IsAttackId(s32 id);
-extern void BtlAct_LatchAttack(BtlActBChr *chr);
+extern void BtlAct_LatchAttack(BtlFighter *chr);
 
 /* Handlers' shared helpers in the previous slice (0x1E3158..0x1E6CC0). */
-#define BtlAct_PlayPickedVoice ((void (*)(BtlActBChr *chr))BtlAct_PlayPickedVoice)                          /* voice kind BtlAtk_GetVoiceKind picks, if any */
-#define BtlAct_DecideAttackFollow ((void (*)(BtlActBChr *chr, BtlActBAttack *atk))BtlAct_DecideAttackFollow)   /* decide phase of an attack: follow-up inputs */
+#define BtlAct_PlayPickedVoice ((void (*)(BtlFighter *chr))BtlAct_PlayPickedVoice)                          /* voice kind BtlAtk_GetVoiceKind picks, if any */
+#define BtlAct_DecideAttackFollow ((void (*)(BtlFighter *chr, BtlFighterAttack *atk))BtlAct_DecideAttackFollow)   /* decide phase of an attack: follow-up inputs */
 /* Ends an attack: action 0xB, or 0xC under flag 0x5C when the attack has flag 0x400. */
-#define BtlAct_RequestAttackEnd ((void (*)(BtlActBChr *chr, BtlActBAttack *atk))BtlAct_RequestAttackEnd)
+#define BtlAct_RequestAttackEnd ((void (*)(BtlFighter *chr, BtlFighterAttack *atk))BtlAct_RequestAttackEnd)
 
 /* Decision functions and parameter readers (0x2013E0..0x20F4E8). */
-#define BtlDecide_Main ((s32 (*)(BtlActBChr *chr, u32 mask))BtlDecide_Main)          /* main input table; 1 = something was queued */
-#define BtlDecide_Attack ((s32 (*)(BtlActBChr *chr, u32 mask))BtlDecide_Attack)        /* attack input table */
-#define BtlDecide_QueueAttack ((s32 (*)(BtlActBChr *chr, s32 attack))BtlDecide_QueueAttack) /* queue an attack table record */
-extern s32 BtlAct_GetChainAction(BtlActBChr *chr, s32 kind);
-#define BtlAtk_GetLaunchSpeed ((f32 (*)(BtlActBChr *chr))BtlAtk_GetLaunchSpeed)
-extern s32 BtlParam_GetChainKind(BtlActBChr *chr, s32 which);
-extern s32 BtlParam_GetKiDrain67(BtlActBChr *chr);
-#define BtlParam_GetDashSound ((s32 (*)(BtlActBChr *chr))BtlParam_GetDashSound)
+#define BtlDecide_Main ((s32 (*)(BtlFighter *chr, u32 mask))BtlDecide_Main)          /* main input table; 1 = something was queued */
+#define BtlDecide_Attack ((s32 (*)(BtlFighter *chr, u32 mask))BtlDecide_Attack)        /* attack input table */
+#define BtlDecide_QueueAttack ((s32 (*)(BtlFighter *chr, s32 attack))BtlDecide_QueueAttack) /* queue an attack table record */
+extern s32 BtlAct_GetChainAction(BtlFighter *chr, s32 kind);
+#define BtlAtk_GetLaunchSpeed ((f32 (*)(BtlFighter *chr))BtlAtk_GetLaunchSpeed)
+extern s32 BtlParam_GetChainKind(BtlFighter *chr, s32 which);
+extern s32 BtlParam_GetKiDrain67(BtlFighter *chr);
+#define BtlParam_GetDashSound ((s32 (*)(BtlFighter *chr))BtlParam_GetDashSound)
 
-extern s32 BtlAct_GetIdleFollowUp(BtlActBChr *chr); /* 0xB unless a decision queues something: how the damage actions end */
-extern s32 BtlAct_GetDownAction(BtlActBChr *chr); /* 0xE0 while chr + 0xFE0 counts down, else 0xD8 */
-extern s32 BtlParam_CanFly(BtlActBChr *chr); /* 1 unless parameter flag 0x1000 without ability 0x36 */
+extern s32 BtlAct_GetIdleFollowUp(BtlFighter *chr); /* 0xB unless a decision queues something: how the damage actions end */
+extern s32 BtlAct_GetDownAction(BtlFighter *chr); /* 0xE0 while chr + 0xFE0 counts down, else 0xD8 */
+extern s32 BtlParam_CanFly(BtlFighter *chr); /* 1 unless parameter flag 0x1000 without ability 0x36 */
 extern f32 BtlCharApi_GetHeight(s32 objId); /* body size of the object */
-extern s32 BtlAct_QueueFlag21Action(BtlActBChr *chr); /* flags 0x21 / 0x22: queue air recovery 0x25 / 0x27 / 0x28; 1 = queued */
-extern s32 BtlAct_QueueFlag21ActionB(BtlActBChr *chr); /* the same against a wall: 0x29 / 0x2A */
-#define BtlParam_GetFlags2 ((s32 (*)(BtlActBChr *chr))BtlParam_GetFlags2) /* parameter +0x14, skill bits */
-extern s32 BtlParam_GetRecoverKiCost(BtlActBChr *chr); /* ki an air recovery costs */
-extern s32 BtlMember_Damage(BtlActBChr *chr, s32 amount, s32 flags);
+extern s32 BtlAct_QueueFlag21Action(BtlFighter *chr); /* flags 0x21 / 0x22: queue air recovery 0x25 / 0x27 / 0x28; 1 = queued */
+extern s32 BtlAct_QueueFlag21ActionB(BtlFighter *chr); /* the same against a wall: 0x29 / 0x2A */
+#define BtlParam_GetFlags2 ((s32 (*)(BtlFighter *chr))BtlParam_GetFlags2) /* parameter +0x14, skill bits */
+extern s32 BtlParam_GetRecoverKiCost(BtlFighter *chr); /* ki an air recovery costs */
+extern s32 BtlMember_Damage(BtlFighter *chr, s32 amount, s32 flags);
 extern void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 strength, f32 time);
 extern void BtlCharApi_RumbleNear(Vec4 *pos, f32 near, f32 far, f32 power, f32 time);
-extern BtlActBGauge *BtlMember_GetActiveGauge(BtlActBChr *chr);
-extern s32 BtlAct_CheckRecoveryInput(BtlActBChr *chr, s32 held); /* get-up input of a downed fighter: queues 0xE1..0xE6 */
+extern BtlMemberGauge *BtlMember_GetActiveGauge(BtlFighter *chr);
+extern s32 BtlAct_CheckRecoveryInput(BtlFighter *chr, s32 held); /* get-up input of a downed fighter: queues 0xE1..0xE6 */
 extern f32 BtlStage_GetBottom(void); /* stage: height below which a fighter is out of the arena (inferred) */
 
 /* Action 0x63: animation 0x93 after taking off toward the opponent, with the attack voice; attack inputs (mask 3)
    are read all through and the queued action starts once the animation is past 90%. Ends in 0xB. */
-s32 BtlAct_Action63(BtlActBChr *chr, s32 phase) {
+s32 BtlAct_Action63(BtlFighter *chr, s32 phase) {
     if (phase == 0) {
         BtlAnim_Play(chr, 0x93, 0.1f);
         BtlMove_BeginRiseToOpponent(chr);
@@ -2036,10 +2036,10 @@ s32 BtlAct_Action63(BtlActBChr *chr, s32 phase) {
  *
  * Decide: BtlAct_DecideAttackFollow (follow-up inputs of the record).
  */
-s32 BtlAct_AttackHandler(BtlActBChr *chr, s32 phase) {
-    BtlActBAttack *atk = &chr->attack;
+s32 BtlAct_AttackHandler(BtlFighter *chr, s32 phase) {
+    BtlFighterAttack *atk = &chr->attack;
     s32 *part = &chr->work[2];
-    BtlActBPose *pos;
+    BtlFighterPose *pos;
     s32 cut;
     s32 homing;
     f32 speed;
@@ -2130,7 +2130,7 @@ s32 BtlAct_AttackHandler(BtlActBChr *chr, s32 phase) {
    pad. When the animation ends: guard (0x38) if the ki ran out, idle (0xB) if input condition 0x22 no longer holds.
    Flag 0x70 chains into the action BtlAct_GetChainAction picks from the character parameter (entry 0 for 0x67 / 0x68,
    entry 1 for 0x69): 0x6A or attack 0x9E..0xA1. Action 0x67 raises flag 0x4E in its first ten frames. */
-s32 BtlAct_Action67to69(BtlActBChr *chr, s32 phase) {
+s32 BtlAct_Action67to69(BtlFighter *chr, s32 phase) {
     if (phase == 0) {
         BtlAnim_Play(chr, 0xF7, 0.15f);
         BtlChar_PlayVoice(chr, 5);
@@ -2173,7 +2173,7 @@ s32 BtlAct_Action67to69(BtlActBChr *chr, s32 phase) {
 
 /* Action 0x6A: animation 0xF8 starting at 1000 km/h toward the opponent and braking; once the hit lands (flag 0x5B)
    attack 0xA2 is queued and starts when the animation is past 60%. Ends in 0xB. */
-s32 BtlAct_Action6A(BtlActBChr *chr, s32 phase) {
+s32 BtlAct_Action6A(BtlFighter *chr, s32 phase) {
     if (phase == 0) {
         BtlAnim_Play(chr, 0xF8, 0.15f);
         BtlChar_GetPos(chr)->speed = BTL_KMH(1000.0f);
@@ -2213,8 +2213,8 @@ s32 BtlAct_Action6A(BtlActBChr *chr, s32 phase) {
  * translation unit: with a declaration alone the beqz at 0x1E7568 comes out as beqzl. That is why the two parts
  * are one file.
  */
-void BtlAct_AttackDashHandler(BtlActBChr *chr, s32 phase) {
-    BtlActBAttack *atk = &chr->attack;
+void BtlAct_AttackDashHandler(BtlFighter *chr, s32 phase) {
+    BtlFighterAttack *atk = &chr->attack;
     s32 *frames = &chr->work[2];
     f32 lean;
     f32 accel;
@@ -2312,8 +2312,8 @@ void BtlAct_AttackDashHandler(BtlActBChr *chr, s32 phase) {
    Decide, in the loop: whenever flag 0x4F is found cleared (nothing in this handler clears it during the loop) it is set again two frames later, at most
    three times; the fourth time, after 24 frames, or when guarded (flag 0x5C) the strike starts. The strike then takes
    the follow-up inputs. Leave: flag 0x4F cleared. */
-void BtlAct_AttackVolleyDashHandler(BtlActBChr *chr, s32 phase) {
-    BtlActBAttack *atk = &chr->attack;
+void BtlAct_AttackVolleyDashHandler(BtlFighter *chr, s32 phase) {
+    BtlFighterAttack *atk = &chr->attack;
     s32 *pause = &chr->work[3];
     s32 *bursts = &chr->work[4];
     s32 *frames = &chr->work[2];
@@ -2431,7 +2431,7 @@ void BtlAct_AttackVolleyDashHandler(BtlActBChr *chr, s32 phase) {
    with flags 0x89 and 9, camera cut 0x20 when chr + 0xD68 is positive. Once the hit lands, flag 0x3D, and by the
    action the opponent is seen in: 0xD5 (blown away) takes attack inputs 0x180000 and follows up past 70%; 0xC6 takes
    main input 0x8000 and attack input 1 and follows up past 60%. Ends in 0xB. */
-s32 BtlAct_Action6Bto6F(BtlActBChr *chr, s32 phase) {
+s32 BtlAct_Action6Bto6F(BtlFighter *chr, s32 phase) {
     s32 anim;
     s32 homing;
     f32 speed;
@@ -2521,7 +2521,7 @@ s32 BtlAct_Action6Bto6F(BtlActBChr *chr, s32 phase) {
 
 /* Steps the fighter's variant counter (chr + 0xFB8) and returns it modulo n; 0 when n < 2. Cycles the stagger
    animations so the same one does not play twice in a row; not random. */
-s32 BtlActB_NextVariant(BtlActBChr *chr, s32 n) {
+s32 BtlActB_NextVariant(BtlFighter *chr, s32 n) {
     if (n < 2) {
         return 0;
     }
@@ -2531,7 +2531,7 @@ s32 BtlActB_NextVariant(BtlActBChr *chr, s32 n) {
 }
 
 /* Flags every damage action raises each frame: 0xD5, 0x95, 0x96, and flight mode (0xE) while in water (flag 0x11). */
-void BtlActB_SetReactionFlags(BtlActBChr *chr) {
+void BtlActB_SetReactionFlags(BtlFighter *chr) {
     BtlChar_SetFlag(chr, 0xD5);
     BtlChar_SetFlag(chr, 0x95);
     BtlChar_SetFlag(chr, 0x96);
@@ -2543,7 +2543,7 @@ void BtlActB_SetReactionFlags(BtlActBChr *chr) {
 /* Picks the animation of a downed fighter: 0xD7 / 0xD8 floating in water (flag 0x11), 0xD2 / 0xD3 while still moving
    faster than 300 km/h, else 0xD5 / 0xD6; the second of each pair for an "air" animation set. The second parameter
    (the current animation at both call sites) is not used. */
-s32 BtlActB_PickDownAnim(BtlActBChr *chr, s32 cur) {
+s32 BtlActB_PickDownAnim(BtlFighter *chr, s32 cur) {
     s32 air = BtlAct_IsAirMotion(chr, 0);
     s32 id;
 
@@ -2560,7 +2560,7 @@ s32 BtlActB_PickDownAnim(BtlActBChr *chr, s32 cur) {
 /* Animation step of a stagger the player can mash out of: each press of any of the four action buttons (bit 20)
    adds `add` to the step, kept in 1..4, and the step drifts toward 2 * add by 4 per second. add is 1, or with
    `scaled` past 20% of the animation 0.5 + 0.5 * (1 - chr + 0xFC8). Raises flag 0xE7 while the fighter is free. */
-void BtlActB_UpdateMashRate(BtlActBChr *chr, f32 *rate, s32 scaled) {
+void BtlActB_UpdateMashRate(BtlFighter *chr, f32 *rate, s32 scaled) {
     f32 add = 1.0f;
     f32 target;
 
@@ -2585,7 +2585,7 @@ void BtlActB_UpdateMashRate(BtlActBChr *chr, f32 *rate, s32 scaled) {
    clear, a member left alive (and in mode 1 only with flag 0x10E). With a counter it answers 1 from the 31st call.
    The last two tests have to share the final `return 0` (written as early returns the compiler turns the counter
    test into slti / sltiu; with one `return 0` reached from two places it keeps the branches). */
-s32 BtlActB_TickMemberChange(BtlActBChr *chr, s32 *frames) {
+s32 BtlActB_TickMemberChange(BtlFighter *chr, s32 *frames) {
     if (Battle_GetMode() == 1 && !BtlChar_TestFlag(chr, 0x10E)) {
         return 0;
     }
@@ -2612,7 +2612,7 @@ s32 BtlActB_TickMemberChange(BtlActBChr *chr, s32 *frames) {
    0xC8 0xE1, 0xC9 0xB8, 0xCA 0xDF, 0xBD 0x9C. Ends in BtlAct_GetIdleFollowUp; flag 0x31, or main inputs 0x10000000
    (close to the opponent) and 0x840000, cut it short. On the ground above 200 km/h it requests effect bit 0x32.
    Leaves with flag 0x33 and chr + 0xFF0 = 15. */
-s32 BtlAct_HitStaggerHandler(BtlActBChr *chr, s32 phase) {
+s32 BtlAct_HitStaggerHandler(BtlFighter *chr, s32 phase) {
     s32 anim;
     s32 air;
 
@@ -2697,7 +2697,7 @@ s32 BtlAct_HitStaggerHandler(BtlActBChr *chr, s32 phase) {
 /* Actions 0xCB, 0xCC: animation 0xAE (air 0xAF) played at the mash rate (BtlActB_UpdateMashRate, scaled for 0xCB),
    starting at 2; 0xCC leans the model back and straightens it as the animation goes. Ends in BtlAct_GetIdleFollowUp;
    main inputs 0x10000000 / 0x800000 cut it short. Leaves with chr + 0xFF0 = 15. */
-s32 BtlAct_ActionCBtoCC(BtlActBChr *chr, s32 phase) {
+s32 BtlAct_ActionCBtoCC(BtlFighter *chr, s32 phase) {
     f32 *rate = (f32 *)&chr->work[6];
     s32 anim;
     s32 airSaved;
@@ -2754,7 +2754,7 @@ s32 BtlAct_ActionCBtoCC(BtlActBChr *chr, s32 phase) {
 /* Action 0xCD: hits the ground: animations 0xDC then 0xDD at the mash rate, sliding on at 50 km/h. When 0xDD ends:
    in flight mode 0xE6 (free) or 0xD9; otherwise the down action 0xDB, or with a direction held by a free fighter a
    recovery (0x25 for up / down, 0xE2 left, 0xE3 right; an "air" set turns the heading round first). */
-s32 BtlAct_GroundBounceHandler(BtlActBChr *chr, s32 phase) {
+s32 BtlAct_GroundBounceHandler(BtlFighter *chr, s32 phase) {
     f32 *rate = (f32 *)&chr->work[6];
     s32 next;
     s32 id;
@@ -2829,7 +2829,7 @@ s32 BtlAct_GroundBounceHandler(BtlActBChr *chr, s32 phase) {
    into 0xDC, or straight into an air recovery (0x25 / 0x27) with a direction held; meets a wall into 0xE7 / 0xE8 /
    0xDC; water (flag 0x11) gives the down action; flags 0x16 / 0x17 give 0xE6. From the ninth frame a free fighter can
    recover with input condition 0x2F (0xE6) or 0x30 (flight mode and 0x68). */
-s32 BtlAct_LaunchedHandler(BtlActBChr *chr, s32 phase) {
+s32 BtlAct_LaunchedHandler(BtlFighter *chr, s32 phase) {
     if (phase == 0) {
         if (BtlAct_IsAirMotion(chr, 1)) {
             chr->work[0] |= 1;
@@ -2931,10 +2931,10 @@ s32 BtlAct_LaunchedHandler(BtlActBChr *chr, s32 phase) {
    (0xD0 turns an "air" set round first), 0xD1 animation 0x17C / 0x17D in place. Above 10 units the vertical speed is
    braked, below it the fighter falls. Ends on flag 0x31, or past 70% when off the ground: 0xDB on the ground, else
    0xD9 (0xE6 on stages 4 / 27), or a recovery with up (0x26) / down (0x25, 0xE6) held. */
-s32 BtlAct_ActionCFtoD1(BtlActBChr *chr, s32 phase) {
+s32 BtlAct_ActionCFtoD1(BtlFighter *chr, s32 phase) {
     s32 anim;
     s32 air;
-    BtlActBPose *pos;
+    BtlFighterPose *pos;
     f32 speed;
     s32 end;
 
@@ -3030,7 +3030,7 @@ s32 BtlAct_ActionCFtoD1(BtlActBChr *chr, s32 phase) {
 }
 
 /* Action 0xD2: animation 0xD9 in place, then the down action; off the ground past 40% it falls (0xD9) instead. */
-s32 BtlAct_ActionD2(BtlActBChr *chr, s32 phase) {
+s32 BtlAct_ActionD2(BtlFighter *chr, s32 phase) {
     if (phase == 0) {
         BtlAnim_Play(chr, 0xD9, 0.0f);
         BtlChar_GetPos(chr)->speed = 0.0f;
@@ -3057,7 +3057,7 @@ s32 BtlAct_ActionD2(BtlActBChr *chr, s32 phase) {
    stages 4 / 27) and deflects at the stage limit; when it ends a free fighter holding a direction recovers (0xE6).
    The end animation gives the down action, or 0xD9 when higher than the body size past 60%. Work bit 1 (previous
    action 0xB8 / 0xBA, a throw) raises flag 0x138 every frame. */
-s32 BtlAct_KnockBackHandler(BtlActBChr *chr, s32 phase) {
+s32 BtlAct_KnockBackHandler(BtlFighter *chr, s32 phase) {
     s32 *timer = &chr->work[2];
     f32 speed;
     f32 height;
@@ -3144,7 +3144,7 @@ s32 BtlAct_KnockBackHandler(BtlActBChr *chr, s32 phase) {
    rumble and 0xDD; a wall the same with 0xE7, or 0xE8 / 0xE7 when the object's word (+0x1660)->+0x18060 has bit 0x40; flag 0x14 with the movement pointing
    away from the centre 0xE8 / 0xE7; the opponent 0xE9 / 0xE7. When the time runs out: 0xD9 (0xE6 on stages 4 / 27).
    `sel` is one register in the original for the animation, the direction mode and the phase 2 air test. */
-s32 BtlAct_BlowAwayHandler(BtlActBChr *chr, s32 phase) {
+s32 BtlAct_BlowAwayHandler(BtlFighter *chr, s32 phase) {
     s32 *timer = &chr->work[2];
     s32 *mash = &chr->work[3];
     f32 *spin = (f32 *)&chr->work[6];
@@ -3344,8 +3344,8 @@ s32 BtlAct_BlowAwayHandler(BtlActBChr *chr, s32 phase) {
 
 /* Action 0xD7: stops being blown away: animation 0x18D / 0x18E, speed halved, common sound 0x1F, flight mode, braking
    at 50 km/h per frame while the lean follows the heading pitch; then 0x19 with up held, else 0xB. */
-s32 BtlAct_BlowRecoverHandler(BtlActBChr *chr, s32 phase) {
-    BtlActBPose *pos;
+s32 BtlAct_BlowRecoverHandler(BtlFighter *chr, s32 phase) {
+    BtlFighterPose *pos;
     s32 air;
     f32 t;
 
@@ -3377,7 +3377,7 @@ s32 BtlAct_BlowRecoverHandler(BtlActBChr *chr, s32 phase) {
    counts the presses down) before it may get up; a dead fighter raises flag 0x137, and once at rest the member change
    0xF6 after 31 frames. Decide: off the ground 0xD9; after 90 frames 0xE6 / 0xE1; the get-up inputs
    (BtlAct_CheckRecoveryInput); 0xE0 while chr + 0xFE0 counts. */
-s32 BtlAct_LieDownHandler(BtlActBChr *chr, s32 phase) {
+s32 BtlAct_LieDownHandler(BtlFighter *chr, s32 phase) {
     s32 *timer = &chr->work[2];
     s32 cur;
     s32 next;
@@ -3484,8 +3484,8 @@ s32 BtlAct_LieDownHandler(BtlActBChr *chr, s32 phase) {
    on stages 4 / 27 only on the ground) into 0xDC or an air recovery with a direction held; landing in a pit below
    the stage height gives the member change 0xF6 at once. Water gives the down action, flag 0x16 gives 0xE6, and a
    press of an action button gives 0xE6 when no mashing is owed. */
-s32 BtlAct_FallHandler(BtlActBChr *chr, s32 phase) {
-    BtlActBPose *pos;
+s32 BtlAct_FallHandler(BtlFighter *chr, s32 phase) {
+    BtlFighterPose *pos;
     s32 air;
     s32 land;
     f32 blend;

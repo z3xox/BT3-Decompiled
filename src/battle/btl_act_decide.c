@@ -19,77 +19,77 @@ extern void BtlEvent_Raise(s32 player, s32 event);
 extern s32 BtlStage_HasMoon(void); /* the stage's flag word has bit 0x10 */
 
 extern f32 BtlUtil_WrapAngle(f32 a);
-extern BtlActJPose *BtlChar_GetPos(BtlActJChr *chr);
-extern s32 BtlChar_IsFree(BtlActJChr *chr);
-extern s32 BtlChar_IsDead(BtlActJChr *chr);
-extern s32 BtlChar_IsBodyChanged(BtlActJChr *chr);
-extern s32 BtlChar_TestFlag(BtlActJChr *chr, s32 bit);
-extern void BtlChar_SetFlag(BtlActJChr *chr, s32 bit);
-extern void BtlChar_ClearFlag(BtlActJChr *chr, s32 bit);
-extern s32 BtlInput_IsHeld(BtlActJChr *chr, u32 mask);
-extern s32 BtlInput_IsPressed(BtlActJChr *chr, u32 mask);
-extern s32 BtlInput_TestAction(BtlActJChr *chr, s32 id, s32 want);
-extern s32 BtlAnim_GetId(BtlActJChr *chr);
+extern BtlFighterPose *BtlChar_GetPos(BtlFighter *chr);
+extern s32 BtlChar_IsFree(BtlFighter *chr);
+extern s32 BtlChar_IsDead(BtlFighter *chr);
+extern s32 BtlChar_IsBodyChanged(BtlFighter *chr);
+extern s32 BtlChar_TestFlag(BtlFighter *chr, s32 bit);
+extern void BtlChar_SetFlag(BtlFighter *chr, s32 bit);
+extern void BtlChar_ClearFlag(BtlFighter *chr, s32 bit);
+extern s32 BtlInput_IsHeld(BtlFighter *chr, u32 mask);
+extern s32 BtlInput_IsPressed(BtlFighter *chr, u32 mask);
+extern s32 BtlInput_TestAction(BtlFighter *chr, s32 id, s32 want);
+extern s32 BtlAnim_GetId(BtlFighter *chr);
 extern s32 BtlAnim_GetFlags(s32 anim);
-extern s32 BtlOpp_GetPlayer(BtlActJChr *chr);
-extern s32 BtlOpp_GetEvasionCount(BtlActJChr *chr);
+extern s32 BtlOpp_GetPlayer(BtlFighter *chr);
+extern s32 BtlOpp_GetEvasionCount(BtlFighter *chr);
 
-extern BtlActJMember *BtlMember_Get(BtlActJChr *chr, s32 member);
-extern BtlActJMember *BtlMember_GetActive(BtlActJChr *chr);
-extern s32 BtlMember_FindPresentIndex(BtlActJChr *chr, s32 chara);
-extern BtlActJGauge *BtlMember_GetGauge(BtlActJChr *chr, s32 member);
-extern BtlActJGauge *BtlMember_GetActiveGauge(BtlActJChr *chr);
-extern s32 BtlMember_CountAlive(BtlActJChr *chr);
-extern s32 BtlMember_HasKi(BtlActJChr *chr, s32 amount);
-extern s32 BtlMember_HasBlast(BtlActJChr *chr, s32 amount);
-extern s32 BtlMember_HasAbility(BtlActJChr *chr, s32 ability);
+extern BtlMember *BtlMember_Get(BtlFighter *chr, s32 member);
+extern BtlMember *BtlMember_GetActive(BtlFighter *chr);
+extern s32 BtlMember_FindPresentIndex(BtlFighter *chr, s32 chara);
+extern BtlMemberGauge *BtlMember_GetGauge(BtlFighter *chr, s32 member);
+extern BtlMemberGauge *BtlMember_GetActiveGauge(BtlFighter *chr);
+extern s32 BtlMember_CountAlive(BtlFighter *chr);
+extern s32 BtlMember_HasKi(BtlFighter *chr, s32 amount);
+extern s32 BtlMember_HasBlast(BtlFighter *chr, s32 amount);
+extern s32 BtlMember_HasAbility(BtlFighter *chr, s32 ability);
 
-extern void BtlAct_SetQueue(BtlActJChr *chr, u32 slot, s32 id);
-extern s32 BtlAct_GetCurrent(BtlActJChr *chr);
-extern s32 BtlAct_GetQueued(BtlActJChr *chr);
+extern void BtlAct_SetQueue(BtlFighter *chr, u32 slot, s32 id);
+extern s32 BtlAct_GetCurrent(BtlFighter *chr);
+extern s32 BtlAct_GetQueued(BtlFighter *chr);
 extern s32 BtlAct_IsTechniqueId(s32 id);
-extern f32 BtlAct_GetHeightRatio(BtlActJChr *chr);
-extern void BtlAct_PrepareSwitch(BtlActJChr *chr);
+extern f32 BtlAct_GetHeightRatio(BtlFighter *chr);
+extern void BtlAct_PrepareSwitch(BtlFighter *chr);
 extern s32 BtlAct_IsAttackId(s32 id);
-extern void BtlAct_ResetAttack(BtlActJChr *chr);
+extern void BtlAct_ResetAttack(BtlFighter *chr);
 
 /* Earlier parts of the decision code (not decompiled here). */
-extern s32 BtlDecide_Common(BtlActJChr *chr, s32 mask);  /* status overrides: stunned 0xD3, flag 0xBE 0xEA, landing 0x11, dead 0xD2 */
-extern s32 BtlDecide_Main(BtlActJChr *chr, u32 mask);  /* the input -> action decision for a free fighter */
-extern s32 BtlDecide_QueueAttack(BtlActJChr *chr, s32 attack); /* builds the queue for an attack id */
+extern s32 BtlDecide_Common(BtlFighter *chr, s32 mask);  /* status overrides: stunned 0xD3, flag 0xBE 0xEA, landing 0x11, dead 0xD2 */
+extern s32 BtlDecide_Main(BtlFighter *chr, u32 mask);  /* the input -> action decision for a free fighter */
+extern s32 BtlDecide_QueueAttack(BtlFighter *chr, s32 attack); /* builds the queue for an attack id */
 
 /* Character parameter block (object + 0x91C) readers. */
-extern s32 BtlParam_GetDefaultSlot(BtlActJChr *chr);                       /* s8 + 0xAC: default transformation index */
-extern s32 BtlParam_GetSlotId(BtlActJChr *chr, s32 index);            /* u8 + 0x98[index]: transformation target character, 0xFF = none */
-extern s32 BtlParam_GetSlotCost(BtlActJChr *chr, s32 index);            /* u8 + 0x9C[index] * 100000: transformation blast cost */
-extern s32 BtlParam_GetSlotA0(BtlActJChr *chr, s32 index);            /* u8 + 0xA0[index]: transformation sequence 0..4 */
-extern s32 BtlParam_GetSlotA4(BtlActJChr *chr, s32 index);            /* u8 + 0xA4[index]: transformation kind (3 needs the stage flag) */
-extern s32 BtlParam_GetSlotA8(BtlActJChr *chr, s32 index);            /* u8 + 0xA8[index] */
-extern s32 BtlParam_CountSlots(BtlActJChr *chr);                       /* number of transformation targets that are not 0xFF */
-extern s32 BtlParam_TestSlotResetsVariant(BtlActJChr *chr, s32 index);            /* u8 + 0xAD & (0x10 << index) */
-extern s32 BtlParam_GetFusionResult(BtlActJChr *chr, s32 index);            /* u8 + 0xB4[index]: fusion result character, 0xFF = none */
-extern s32 BtlParam_GetUnkB7(BtlActJChr *chr, s32 index);            /* u8 + 0xB7[index] */
-extern s32 BtlParam_GetFusionPartner(BtlActJChr *chr, s32 index, s32 n);     /* u8 + 0xBA[index][n]: fusion partner characters */
-extern s32 BtlParam_GetCostAE(BtlActJChr *chr, s32 index);            /* u8 + 0xAE[index] * 100000: fusion blast cost */
-extern s32 BtlParam_GetFusionSequence(BtlActJChr *chr, s32 index);            /* u8 + 0xB1[index]: fusion sequence 1 / 2 */
-extern s32 BtlParam_GetComboFinish(BtlActJChr *chr, s32 index);            /* u8 + 0x8F[index]: combo finisher mode 0..5 */
-extern s32 BtlParam_CanFly(BtlActJChr *chr);                       /* parameter flag 0x1000 clear, or ability 0x36 */
+extern s32 BtlParam_GetDefaultSlot(BtlFighter *chr);                       /* s8 + 0xAC: default transformation index */
+extern s32 BtlParam_GetSlotId(BtlFighter *chr, s32 index);            /* u8 + 0x98[index]: transformation target character, 0xFF = none */
+extern s32 BtlParam_GetSlotCost(BtlFighter *chr, s32 index);            /* u8 + 0x9C[index] * 100000: transformation blast cost */
+extern s32 BtlParam_GetSlotA0(BtlFighter *chr, s32 index);            /* u8 + 0xA0[index]: transformation sequence 0..4 */
+extern s32 BtlParam_GetSlotA4(BtlFighter *chr, s32 index);            /* u8 + 0xA4[index]: transformation kind (3 needs the stage flag) */
+extern s32 BtlParam_GetSlotA8(BtlFighter *chr, s32 index);            /* u8 + 0xA8[index] */
+extern s32 BtlParam_CountSlots(BtlFighter *chr);                       /* number of transformation targets that are not 0xFF */
+extern s32 BtlParam_TestSlotResetsVariant(BtlFighter *chr, s32 index);            /* u8 + 0xAD & (0x10 << index) */
+extern s32 BtlParam_GetFusionResult(BtlFighter *chr, s32 index);            /* u8 + 0xB4[index]: fusion result character, 0xFF = none */
+extern s32 BtlParam_GetUnkB7(BtlFighter *chr, s32 index);            /* u8 + 0xB7[index] */
+extern s32 BtlParam_GetFusionPartner(BtlFighter *chr, s32 index, s32 n);     /* u8 + 0xBA[index][n]: fusion partner characters */
+extern s32 BtlParam_GetCostAE(BtlFighter *chr, s32 index);            /* u8 + 0xAE[index] * 100000: fusion blast cost */
+extern s32 BtlParam_GetFusionSequence(BtlFighter *chr, s32 index);            /* u8 + 0xB1[index]: fusion sequence 1 / 2 */
+extern s32 BtlParam_GetComboFinish(BtlFighter *chr, s32 index);            /* u8 + 0x8F[index]: combo finisher mode 0..5 */
+extern s32 BtlParam_CanFly(BtlFighter *chr);                       /* parameter flag 0x1000 clear, or ability 0x36 */
 
 /* Technique table (object + 0x92C) and skill table (object + 0x930) readers. */
-extern s32 BtlSuper_GetFlags(BtlActJChr *chr, s32 slot);             /* technique flags */
-extern s32 BtlSuper_GetType(BtlActJChr *chr, s32 slot);             /* technique kind (s8 + 0x13C[slot]) */
-extern s32 BtlSuper_GetKiCost(BtlActJChr *chr, s32 slot);             /* technique ki cost (halved with ability 0x2B) */
-extern s32 BtlSkill_GetFlags(BtlActJChr *chr, s32 slot);             /* skill flags */
-extern s32 BtlSkill_GetId(BtlActJChr *chr, s32 slot);             /* skill id (s16) */
-extern s32 BtlSkill_GetSequence(BtlActJChr *chr, s32 slot);             /* skill sequence 0..2 */
-extern s32 BtlSkill_GetBlastCost(BtlActJChr *chr, s32 slot);             /* skill blast cost (one stock less with ability 0x15, minimum 1) */
+extern s32 BtlSuper_GetFlags(BtlFighter *chr, s32 slot);             /* technique flags */
+extern s32 BtlSuper_GetType(BtlFighter *chr, s32 slot);             /* technique kind (s8 + 0x13C[slot]) */
+extern s32 BtlSuper_GetKiCost(BtlFighter *chr, s32 slot);             /* technique ki cost (halved with ability 0x2B) */
+extern s32 BtlSkill_GetFlags(BtlFighter *chr, s32 slot);             /* skill flags */
+extern s32 BtlSkill_GetId(BtlFighter *chr, s32 slot);             /* skill id (s16) */
+extern s32 BtlSkill_GetSequence(BtlFighter *chr, s32 slot);             /* skill sequence 0..2 */
+extern s32 BtlSkill_GetBlastCost(BtlFighter *chr, s32 slot);             /* skill blast cost (one stock less with ability 0x15, minimum 1) */
 
 /*
  * Powered-up mode (flag 6) only: input 80 (blast pressed) during a rush combo queues a technique as its finisher.
  * The last prepared attack id picks a column of the character's finisher table, whose value says which technique
  * (slot 2, slot 3, or the plain rush finisher 0x115) and whether a dash (0x2B, 0x2E) goes first.
  */
-s32 BtlAct_QueueComboFinish(BtlActJChr *chr) {
+s32 BtlAct_QueueComboFinish(BtlFighter *chr) {
     s32 n = 0;
     s32 col;
     s32 tech2;
@@ -191,7 +191,7 @@ s32 BtlAct_QueueComboFinish(BtlActJChr *chr) {
  * state, no target, a target the side may not use, kind 3 on a stage without flag 0x10, or (needBlast) not enough
  * blast gauge; needAllowed also requires form.allowed.
  */
-s32 BtlAct_CanTransform(BtlActJChr *chr, u32 index, s32 needBlast, s32 needAllowed) {
+s32 BtlAct_CanTransform(BtlFighter *chr, u32 index, s32 needBlast, s32 needAllowed) {
     s32 chara;
     s32 cost;
     s32 kind;
@@ -233,7 +233,7 @@ s32 BtlAct_CanTransform(BtlActJChr *chr, u32 index, s32 needBlast, s32 needAllow
  * Transformation inputs: 99 (R3 tapped, no direction) = the character's default index, 100..103 (R3 tapped with
  * left / up / right / down) = index 0..3. A character with a single transformation always uses its default.
  */
-s32 BtlAct_CheckTransformInput(BtlActJChr *chr) {
+s32 BtlAct_CheckTransformInput(BtlFighter *chr) {
     s32 index = -1;
     s32 def = BtlParam_GetDefaultSlot(chr);
 
@@ -265,7 +265,7 @@ s32 BtlAct_CheckTransformInput(BtlActJChr *chr) {
 }
 
 /* Fills the form-change request for transformation `index` and queues its action (0xEC..0xF0 by sequence). */
-s32 BtlAct_QueueTransform(BtlActJChr *chr, s32 index) {
+s32 BtlAct_QueueTransform(BtlFighter *chr, s32 index) {
     s32 chara = BtlParam_GetSlotId(chr, index);
     s32 cost = BtlParam_GetSlotCost(chr, index);
     s32 seq = BtlParam_GetSlotA0(chr, index);
@@ -320,7 +320,7 @@ s32 BtlAct_QueueTransform(BtlActJChr *chr, s32 index) {
  * characters must be a present member that is alive and not excluded (gauge unk30). The partner's member index
  * goes to *partner.
  */
-s32 BtlAct_CanFuse(BtlActJChr *chr, s32 index, s32 needBlast, s32 needAllowed, s32 *partner) {
+s32 BtlAct_CanFuse(BtlFighter *chr, s32 index, s32 needBlast, s32 needAllowed, s32 *partner) {
     s32 chara;
     s32 cost;
     s32 member;
@@ -373,7 +373,7 @@ s32 BtlAct_CanFuse(BtlActJChr *chr, s32 index, s32 needBlast, s32 needAllowed, s
 }
 
 /* Fusion inputs: 104..106 (R3 held 12 frames with left / up / right) = fusion index 0..2. */
-s32 BtlAct_CheckFusionInput(BtlActJChr *chr) {
+s32 BtlAct_CheckFusionInput(BtlFighter *chr) {
     s32 partner;
     s32 index = -1;
 
@@ -399,7 +399,7 @@ s32 BtlAct_CheckFusionInput(BtlActJChr *chr) {
  * Fills the form-change request for fusion `index` with member `partner` (searched for when negative) and queues
  * action 0xF1 or 0xF2 by the fusion's sequence.
  */
-s32 BtlAct_QueueFusion(BtlActJChr *chr, s32 index, s32 partner) {
+s32 BtlAct_QueueFusion(BtlFighter *chr, s32 index, s32 partner) {
     s32 chara = BtlParam_GetFusionResult(chr, index);
     s32 cost = BtlParam_GetCostAE(chr, index);
     s32 seq = BtlParam_GetFusionSequence(chr, index);
@@ -446,7 +446,7 @@ s32 BtlAct_QueueFusion(BtlActJChr *chr, s32 index, s32 partner) {
 }
 
 /* Can the fighter switch member? Needs two living members, no flag 0xAF, and (needGauge) a full switch gauge. */
-s32 BtlAct_CanSwitch(BtlActJChr *chr, s32 needGauge, s32 needAllowed) {
+s32 BtlAct_CanSwitch(BtlFighter *chr, s32 needGauge, s32 needAllowed) {
     if (needAllowed && chr->form.allowed == 0) {
         return 0;
     }
@@ -464,7 +464,7 @@ s32 BtlAct_CanSwitch(BtlActJChr *chr, s32 needGauge, s32 needAllowed) {
 }
 
 /* Member switch input: 107 (L3 + R3 pressed). */
-s32 BtlAct_CheckSwitchInput(BtlActJChr *chr) {
+s32 BtlAct_CheckSwitchInput(BtlFighter *chr) {
     if (!BtlInput_TestAction(chr, 0x6B, 1)) {
         return 0;
     }
@@ -475,14 +475,14 @@ s32 BtlAct_CheckSwitchInput(BtlActJChr *chr) {
 }
 
 /* Picks the member to switch to and queues the switch action 0xF3. */
-s32 BtlAct_QueueSwitch(BtlActJChr *chr) {
+s32 BtlAct_QueueSwitch(BtlFighter *chr) {
     BtlAct_PrepareSwitch(chr);
     BtlAct_SetQueue(chr, 0, 0xF3);
     return 1;
 }
 
 /* Action id of technique slot 2..4 from the technique's kind: a block of three ids per kind. */
-s32 BtlAct_GetTechniqueAction(BtlActJChr *chr, s32 slot) {
+s32 BtlAct_GetTechniqueAction(BtlFighter *chr, s32 slot) {
     s32 n = slot - 2;
 
     switch (BtlSuper_GetType(chr, slot)) {
@@ -516,7 +516,7 @@ s32 BtlAct_GetTechniqueAction(BtlActJChr *chr, s32 slot) {
  * cost. A technique with flag 0x2000 is refused while its lock counter is positive, except in modes 5 and 6 and
  * in story mode under flag 0x11F.
  */
-s32 BtlAct_CanUseTechnique(BtlActJChr *chr, s32 slot) {
+s32 BtlAct_CanUseTechnique(BtlFighter *chr, s32 slot) {
     s32 check;
 
     if ((u32)(slot - 2) >= 3) {
@@ -558,7 +558,7 @@ s32 BtlAct_CanUseTechnique(BtlActJChr *chr, s32 slot) {
  * Technique inputs: 108 / 109 / 110 (charge + blast, neutral / up / down, or flags 0x122..0x124) = slot 2 / 3 / 4.
  * Queues [0x1B first when flag 0x13 is set and the technique allows it], [0x105 for slot 4], the technique action.
  */
-s32 BtlAct_CheckTechniqueInput(BtlActJChr *chr) {
+s32 BtlAct_CheckTechniqueInput(BtlFighter *chr) {
     s32 slot = -1;
     s32 n = 0;
     s32 pre;
@@ -606,7 +606,7 @@ s32 BtlAct_CheckTechniqueInput(BtlActJChr *chr) {
 }
 
 /* Action id of skill slot 0..1 from the skill's sequence: 0xFD.., 0xFF.. or 0x101... */
-s32 BtlAct_GetSkillAction(BtlActJChr *chr, s32 slot) {
+s32 BtlAct_GetSkillAction(BtlFighter *chr, s32 slot) {
     switch (BtlSkill_GetSequence(chr, slot)) {
         case 1:
             return slot + 0xFF;
@@ -624,7 +624,7 @@ s32 BtlAct_GetSkillAction(BtlActJChr *chr, s32 slot) {
  * has flag 0x10, and room for what it gives: skills 0xC / 0x32 refill the evasions (not while any are left, or
  * with flag 0x100 while 3 are left), 0x37 the second kind, 0x41 the counter at + 0xE5C.
  */
-s32 BtlAct_CanUseSkill(BtlActJChr *chr, u32 slot) {
+s32 BtlAct_CanUseSkill(BtlFighter *chr, u32 slot) {
     s32 flags;
     s32 stack;
 
@@ -682,7 +682,7 @@ s32 BtlAct_CanUseSkill(BtlActJChr *chr, u32 slot) {
  * Skill inputs: 113 / 114 (charge + guard, neutral / up, or flags 0x120 / 0x121) = slot 0 / 1. During an
  * animation with flag 0x10 only skills with flag 8 are accepted.
  */
-s32 BtlAct_CheckSkillInput(BtlActJChr *chr) {
+s32 BtlAct_CheckSkillInput(BtlFighter *chr) {
     s32 slot = -1;
 
     if (BtlInput_TestAction(chr, 0x71, 1)) {
@@ -708,7 +708,7 @@ s32 BtlAct_CheckSkillInput(BtlActJChr *chr) {
 }
 
 /*
- * Queues the damage action for a pending hit reaction (HitReact.reaction, fighter + 0xFB0); called every frame by
+ * Queues the damage action for a pending hit reaction (react.reaction, fighter + 0xFB0); called every frame by
  * BtlAct_CheckForced and by the handler of actions 0xB8 / 0xBA.
  *   - reactions 0 and 1: nothing (returns 0). Reaction 2 (no flinch): nothing unless the fighter is dead.
  *   - reactCount[reaction] is incremented (saturating at 100); 0x23 and 0x24 also increment each other's count.
@@ -726,7 +726,7 @@ s32 BtlAct_CheckSkillInput(BtlActJChr *chr) {
  *       2, 3, 21 and anything else  0xC0
  *   - event 0x55 is raised for the opponent's player when the current animation has any flag; flag 0x129 is set.
  */
-s32 BtlAct_QueueReaction(BtlActJChr *chr, u32 reaction) {
+s32 BtlAct_QueueReaction(BtlFighter *chr, u32 reaction) {
     s32 action;
 
     if (reaction < 2) {
@@ -958,7 +958,7 @@ s32 BtlAct_QueueReaction(BtlActJChr *chr, u32 reaction) {
 }
 
 /* Action that follows actions 0x12D..0x12F, 0x133..0x135 and 0x139..0x13B, by `kind` 0..7 (5 and others: 0xCF). */
-s32 BtlAct_GetLandingAction(BtlActJChr *chr, s32 slot, u32 kind) {
+s32 BtlAct_GetLandingAction(BtlFighter *chr, s32 slot, u32 kind) {
     s32 action = 0xCF;
 
     switch (kind) {
@@ -988,7 +988,7 @@ s32 BtlAct_GetLandingAction(BtlActJChr *chr, s32 slot, u32 kind) {
 }
 
 /* Flag 0x21, or flag 0x22: queues 0x25 / 0x27 (by BtlParam_CanFly), or 0x28 for flag 0x22 under lock-on. */
-s32 BtlAct_QueueFlag21Action(BtlActJChr *chr) {
+s32 BtlAct_QueueFlag21Action(BtlFighter *chr) {
     if (BtlChar_TestFlag(chr, 0x21)) {
         if (!BtlParam_CanFly(chr)) {
             BtlAct_SetQueue(chr, 0, 0x25);
@@ -1016,7 +1016,7 @@ s32 BtlAct_QueueFlag21Action(BtlActJChr *chr) {
 }
 
 /* Flag 0x21: queues 0x29. Flag 0x22: queues 0x2A under lock-on, else 0x29. */
-s32 BtlAct_QueueFlag21ActionB(BtlActJChr *chr) {
+s32 BtlAct_QueueFlag21ActionB(BtlFighter *chr) {
     if (BtlChar_TestFlag(chr, 0x21)) {
         BtlAct_SetQueue(chr, 0, 0x29);
         return 1;
@@ -1040,9 +1040,9 @@ s32 BtlAct_QueueFlag21ActionB(BtlActJChr *chr) {
  * degrees or more off the camera yaw). A face button alone queues 0xE1. `held` tests held directions instead of
  * pressed ones; a face button press always makes the directions "held".
  */
-s32 BtlAct_CheckRecoveryInput(BtlActJChr *chr, s32 held) {
-    BtlActJPose *pose = BtlChar_GetPos(chr);
-    s32 (*test)(BtlActJChr *chr, u32 mask);
+s32 BtlAct_CheckRecoveryInput(BtlFighter *chr, s32 held) {
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
+    s32 (*test)(BtlFighter *chr, u32 mask);
     s32 button;
     s32 front;
 
@@ -1101,7 +1101,7 @@ s32 BtlAct_CheckRecoveryInput(BtlActJChr *chr, s32 held) {
  * Outside a damage action: 0x116..0x119 transformation 0..3, 0x11A..0x11C fusion 0..2, 0x11D member switch (no
  * cost or availability check). Always: 0x110..0x115 queue actions 5..10. The flag is consumed (except 0xFA).
  */
-s32 BtlAct_CheckStoryForced(BtlActJChr *chr) {
+s32 BtlAct_CheckStoryForced(BtlFighter *chr) {
     if (Battle_GetMode() != 1) {
         return 0;
     }
@@ -1185,7 +1185,7 @@ s32 BtlAct_CheckStoryForced(BtlActJChr *chr) {
 }
 
 /* Action a fighter on the ground goes to: 0xE0 while the stun countdown runs, else 0xD8. */
-s32 BtlAct_GetDownAction(BtlActJChr *chr) {
+s32 BtlAct_GetDownAction(BtlFighter *chr) {
     return chr->react.stunTimer > 0 ? 0xE0 : 0xD8;
 }
 
@@ -1193,7 +1193,7 @@ s32 BtlAct_GetDownAction(BtlActJChr *chr) {
  * Attack id of a paid evasion (flag 0x7C) and of action 0x39: (own + opponent's counter at + 0xD88) % 3 picks
  * 0x89, 0x8A, or by height 0x8B (low) / 0x8C (above half of the height range).
  */
-s32 BtlAct_GetEvasionAttack(BtlActJChr *chr) {
+s32 BtlAct_GetEvasionAttack(BtlFighter *chr) {
     s32 n = chr->evasionCount;
 
     n += BtlOpp_GetEvasionCount(chr);
@@ -1212,7 +1212,7 @@ s32 BtlAct_GetEvasionAttack(BtlActJChr *chr) {
  * Follow-up of actions 0x67..0x69 by `kind`: 0 = 0x6A, 1..4 = 0x9E..0xA1 (attack ids: the queue is built with
  * BtlDecide_QueueAttack and its first action returned), anything else 0x6A.
  */
-s32 BtlAct_GetChainAction(BtlActJChr *chr, u32 kind) {
+s32 BtlAct_GetChainAction(BtlFighter *chr, u32 kind) {
     s32 id;
 
     switch (kind) {
@@ -1248,7 +1248,7 @@ s32 BtlAct_GetChainAction(BtlActJChr *chr, u32 kind) {
  * What a fighter does when a damage action ends: idle (0xB), unless an input (BtlDecide_Main with mask 0x80000)
  * or a status override (BtlDecide_Common with mask 0xF) queues something else.
  */
-s32 BtlAct_GetIdleFollowUp(BtlActJChr *chr) {
+s32 BtlAct_GetIdleFollowUp(BtlFighter *chr) {
     BtlAct_SetQueue(chr, 0, 0xB);
     BtlDecide_Main(chr, 0x80000);
     BtlDecide_Common(chr, 0xF);
@@ -1256,12 +1256,12 @@ s32 BtlAct_GetIdleFollowUp(BtlActJChr *chr) {
 }
 
 /* 0x14 when BtlParam_CanFly holds for the character, else 0x16. */
-s32 BtlAct_GetAction14or16(BtlActJChr *chr) {
+s32 BtlAct_GetAction14or16(BtlFighter *chr) {
     return !BtlParam_CanFly(chr) ? 0x16 : 0x14;
 }
 
 /* 0x15 when BtlParam_CanFly holds or flag 0x11 is set, else 0x11. */
-s32 BtlAct_GetAction11or15(BtlActJChr *chr) {
+s32 BtlAct_GetAction11or15(BtlFighter *chr) {
     if (!BtlParam_CanFly(chr)) {
         if (!BtlChar_TestFlag(chr, 0x11)) {
             return 0x11;

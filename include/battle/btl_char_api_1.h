@@ -16,16 +16,9 @@
  * function is safe on an id that is not a fighter, or not an object, and then returns 0 / 0.0f / a zero vector /
  * an identity, except where the comment in the source gives another default.
  *
- * The structs are this module's partial views (no shared fighter header yet). Fields are named where another
- * module's matching code or this file's callers say what they are; the rest are unkXX.
+ * The structs are this module's partial views; the fighter is BtlFighter (battle/btl_fighter.h). Fields are named
+ * where another module's matching code or this file's callers say what they are; the rest are unkXX.
  */
-
-/* Pose block (fighter +0x10, what BtlChar_GetPos returns). Same layout as BtlMovePose in btl_char_move.h, where
-   the writers are. */
-typedef BtlFighterPose BtlCapiPose;
-
-/* Fighter (0x1600 bytes). */
-typedef BtlFighter BtlCapiChr;
 
 /* General parameters of the character (object +0x91C); BtlParam / BtlTechBParam in btl_param.h / btl_tech.h. */
 typedef struct BtlCapiParam {

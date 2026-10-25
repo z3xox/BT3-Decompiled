@@ -33,16 +33,16 @@ extern f32 atan2f(f32 y, f32 x);
 extern f32 fabsf(f32 x);
 
 /* Declared here and not taken from other modules' headers. */
-extern s32 BtlChar_TestFlag(BtlInputChr *chr, s32 bit);
-extern void BtlChar_ClearFlag(BtlInputChr *chr, s32 bit);
-extern f32 BtlAct_GetFacingRelCam(BtlInputChr *chr); /* wrap(pose heading - fighter camera yaw) */
+extern s32 BtlChar_TestFlag(BtlFighter *chr, s32 bit);
+extern void BtlChar_ClearFlag(BtlFighter *chr, s32 bit);
+extern f32 BtlAct_GetFacingRelCam(BtlFighter *chr); /* wrap(pose heading - fighter camera yaw) */
 extern s32 BattleReplay_IsActive(void); /* 0x12A9E8: a replay is being played back */
-extern BtlInputSwitchEntry *BtlSuper_GetPromptRow(BtlInputChr *chr, s32 slot);
+extern BtlInputSwitchEntry *BtlSuper_GetPromptRow(BtlFighter *chr, s32 slot);
 extern s32 BtlChars_IsTimeStopped(void);          /* gBtlChars->unk274 */
-extern void BtlReplay_Play(BtlInputChr *chr, u32 *buttons, u8 *stick);              /* replay: read this frame */
-extern void BtlReplay_Record(BtlInputChr *chr, u32 buttons, u32 commands, u8 *stick); /* replay: record this frame */
+extern void BtlReplay_Play(BtlFighter *chr, u32 *buttons, u8 *stick);              /* replay: read this frame */
+extern void BtlReplay_Record(BtlFighter *chr, u32 buttons, u32 commands, u8 *stick); /* replay: record this frame */
 extern s32 BtlChar_IsStage4Or27(void);          /* Battle_GetStage() is 4 or 27 */
-extern Pad *BtlChar_GetPad(BtlInputChr *chr); /* &gPad[chr->pad] */
+extern Pad *BtlChar_GetPad(BtlFighter *chr); /* &gPad[chr->pad] */
 extern f32 BtlUtil_WrapAngle(f32 angle);     /* wraps an angle into -pi..pi */
 
 /* Turns a stick value (-1..1) into a byte (0..0xFE, 0x7F = centre). */
@@ -64,7 +64,7 @@ f32 BtlInput_ByteToStick(u8 b) {
 }
 
 /* Returns the fighter's input block. */
-BtlCharInput *BtlInput_Get(BtlInputChr *chr) {
+BtlCharInput *BtlInput_Get(BtlFighter *chr) {
     return &chr->input;
 }
 
@@ -117,7 +117,7 @@ void BtlInput_TickCounters(BtlInputCounters *c, u32 held, u32 pressed, u32 relea
 }
 
 /* Appends one frame of input to the ring; dropped when the ring is full. */
-void BtlInput_RingPush(BtlInputChr *chr, u32 buttons, u32 commands, u8 *stick) {
+void BtlInput_RingPush(BtlFighter *chr, u32 buttons, u32 commands, u8 *stick) {
     BtlCharInput *in = &chr->input;
 
     if ((in->ringWrite + 1) % BTL_INPUT_RING != in->ringRead) {
@@ -130,7 +130,7 @@ void BtlInput_RingPush(BtlInputChr *chr, u32 buttons, u32 commands, u8 *stick) {
 }
 
 /* Takes the oldest frame of input out of the ring; neutral input when it is empty. */
-void BtlInput_RingPop(BtlInputChr *chr, u32 *buttons, u32 *commands, u8 *stick) {
+void BtlInput_RingPop(BtlFighter *chr, u32 *buttons, u32 *commands, u8 *stick) {
     BtlCharInput *in = &chr->input;
     u32 b;
     u32 c;
@@ -159,7 +159,7 @@ void BtlInput_RingPop(BtlInputChr *chr, u32 *buttons, u32 *commands, u8 *stick) 
 }
 
 /* Adds the double-tap bits of ASCEND and DESCEND (second press within BTL_TAP_FRAMES of the first). */
-u32 BtlInput_AddDoubleTaps(BtlInputChr *chr, u32 buttons, u32 prev, s32 padStatus) {
+u32 BtlInput_AddDoubleTaps(BtlFighter *chr, u32 buttons, u32 prev, s32 padStatus) {
     BtlCharInput *in = &chr->input;
     u32 pressed = buttons & ~prev;
 
@@ -178,7 +178,7 @@ u32 BtlInput_AddDoubleTaps(BtlInputChr *chr, u32 buttons, u32 prev, s32 padStatu
 }
 
 /* Tells whether the buttons ask for BTLC_SWITCH: RUSH pressed while holding the direction of the entry BtlSuper_GetPromptRow returns. */
-s32 BtlInput_TestSwitch(BtlInputChr *chr, s32 techClass, u32 held, u32 pressed) {
+s32 BtlInput_TestSwitch(BtlFighter *chr, s32 techClass, u32 held, u32 pressed) {
     if (BtlChar_TestFlag(chr, 0xA2)) {
         if (!(held & BTLB_BLAST)) {
             return 1;
@@ -215,7 +215,7 @@ s32 BtlInput_TestSwitch(BtlInputChr *chr, s32 techClass, u32 held, u32 pressed) 
 }
 
 /* Makes d-pad and stick agree: a d-pad bit forces the stick byte to its end, otherwise the stick's dominant axis sets a direction bit. */
-u32 BtlInput_MergeStick(BtlInputChr *chr, u32 buttons, u8 *stick) {
+u32 BtlInput_MergeStick(BtlFighter *chr, u32 buttons, u8 *stick) {
     if (buttons & BTLB_DIR_MASK) {
         if (buttons & BTLB_LEFT) {
             stick[0] = 0;
@@ -247,7 +247,7 @@ u32 BtlInput_MergeStick(BtlInputChr *chr, u32 buttons, u8 *stick) {
 }
 
 /* Builds the command word from this frame's and the previous frame's button words. */
-u32 BtlInput_BuildCommands(BtlInputChr *chr, u32 held, u32 prev) {
+u32 BtlInput_BuildCommands(BtlFighter *chr, u32 held, u32 prev) {
     BtlCharInput *in = &chr->input;
     u32 cmd = 0;
     u32 released = ~held & prev;
@@ -364,7 +364,7 @@ u32 BtlInput_BuildCommands(BtlInputChr *chr, u32 held, u32 prev) {
 }
 
 /* Builds this frame's input record from the injected input or the pad sample, then lets the replay code overwrite or record it. */
-void BtlInput_BuildRecord(BtlInputChr *chr) {
+void BtlInput_BuildRecord(BtlFighter *chr) {
     u8 stick[2];
     f32 fstick[2];
     u32 buttons;
@@ -448,7 +448,7 @@ void BtlInput_BuildRecord(BtlInputChr *chr) {
 }
 
 /* Queues this frame's record, takes the oldest queued frame and blanks or filters it according to the battle state. */
-void BtlInput_Fetch(BtlInputChr *chr, u32 *outButtons, u32 *outCommands, u8 *stick) {
+void BtlInput_Fetch(BtlFighter *chr, u32 *outButtons, u32 *outCommands, u8 *stick) {
     u32 buttons;
     u32 commands;
     s32 block = 0;
@@ -488,7 +488,7 @@ void BtlInput_Fetch(BtlInputChr *chr, u32 *outButtons, u32 *outCommands, u8 *sti
 }
 
 /* Returns the raw pad bit of the physical button the player's key config assigns to an action (0 when none). */
-u32 BtlInput_GetKeyMask(BtlInputChr *chr, s32 action) {
+u32 BtlInput_GetKeyMask(BtlFighter *chr, s32 action) {
     s32 padBit[SAVE_KEY_COUNT] = { PAD_CIRCLE, PAD_CROSS, PAD_SQUARE, PAD_TRIANGLE, PAD_L1, PAD_L2, PAD_R1, PAD_R2 };
     s32 i;
 
@@ -501,7 +501,7 @@ u32 BtlInput_GetKeyMask(BtlInputChr *chr, s32 action) {
 }
 
 /* Fills the fighter's table of raw pad masks, one per battle button bit, from the key config. */
-void BtlInput_BuildMaskTable(BtlInputChr *chr) {
+void BtlInput_BuildMaskTable(BtlFighter *chr) {
     BtlCharInput *in = &chr->input;
 
     in->mask[3] = BtlInput_GetKeyMask(chr, 0);
@@ -538,12 +538,12 @@ void BtlInput_BuildMaskTable(BtlInputChr *chr) {
 }
 
 /* Sets up the fighter's input: builds the mask table. */
-void BtlInput_Init(BtlInputChr *chr) {
+void BtlInput_Init(BtlFighter *chr) {
     BtlInput_BuildMaskTable(chr);
 }
 
 /* Samples the fighter's controller and builds this frame's input record. */
-void BtlInput_Sample(BtlInputChr *chr) {
+void BtlInput_Sample(BtlFighter *chr) {
     Pad *pad = BtlChar_GetPad(chr);
     BtlCharInput *in = &chr->input;
 
@@ -577,7 +577,7 @@ void BtlInput_Sample(BtlInputChr *chr) {
  * cmdPressed's 8 / 13; with four references no statement order can make it win (the `nor` is pinned at the
  * third instruction and the store cannot come earlier), with six it is 12 / 18. The float values and the four
  * results go through locals because the loads and the stores are in different orders. */
-void BtlInput_Update(BtlInputChr *chr) {
+void BtlInput_Update(BtlFighter *chr) {
     u8 stick[2];
     u32 buttons;
     u32 commands;
@@ -649,12 +649,12 @@ void BtlInput_Stub(void) {
 }
 
 /* Queues a frame of input for the fighter (public form of BtlInput_RingPush). */
-void BtlInput_Push(BtlInputChr *chr, u32 buttons, u32 commands, u8 *stick) {
+void BtlInput_Push(BtlFighter *chr, u32 buttons, u32 commands, u8 *stick) {
     BtlInput_RingPush(chr, buttons, commands, stick);
 }
 
 /* Takes the oldest queued frame of input; every output pointer may be NULL. */
-void BtlInput_Pop(BtlInputChr *chr, u32 *buttons, u32 *commands, u8 *stick) {
+void BtlInput_Pop(BtlFighter *chr, u32 *buttons, u32 *commands, u8 *stick) {
     u8 s[2];
     u32 b;
     u32 c;
@@ -673,19 +673,19 @@ void BtlInput_Pop(BtlInputChr *chr, u32 *buttons, u32 *commands, u8 *stick) {
 }
 
 /* Returns the number of frames waiting in the ring. */
-s32 BtlInput_GetQueued(BtlInputChr *chr) {
+s32 BtlInput_GetQueued(BtlFighter *chr) {
     BtlCharInput *in = &chr->input;
 
     return (in->ringWrite - in->ringRead + BTL_INPUT_RING) % BTL_INPUT_RING;
 }
 
 /* True when any button of mask went down this frame. */
-s32 BtlInput_IsPressed(BtlInputChr *chr, u32 mask) {
+s32 BtlInput_IsPressed(BtlFighter *chr, u32 mask) {
     return (chr->input.pressed & mask) != 0;
 }
 
 /* True when a button of mask is down and none of mask was down last frame. */
-s32 BtlInput_IsHeldNotPrev(BtlInputChr *chr, u32 mask) {
+s32 BtlInput_IsHeldNotPrev(BtlFighter *chr, u32 mask) {
     if (chr->input.prev & mask) {
         return 0;
     }
@@ -693,72 +693,72 @@ s32 BtlInput_IsHeldNotPrev(BtlInputChr *chr, u32 mask) {
 }
 
 /* True when any button of mask is down. */
-s32 BtlInput_IsHeld(BtlInputChr *chr, u32 mask) {
+s32 BtlInput_IsHeld(BtlFighter *chr, u32 mask) {
     return (chr->input.held & mask) != 0;
 }
 
 /* True when any button of mask went up this frame. */
-s32 BtlInput_IsReleased(BtlInputChr *chr, u32 mask) {
+s32 BtlInput_IsReleased(BtlFighter *chr, u32 mask) {
     return (chr->input.released & mask) != 0;
 }
 
 /* Frames button bit `bit` has been down. */
-s32 BtlInput_GetHeldFrames(BtlInputChr *chr, s32 bit) {
+s32 BtlInput_GetHeldFrames(BtlFighter *chr, s32 bit) {
     return chr->input.count.held.n[bit];
 }
 
 /* Frames button bit `bit` has been up. */
-s32 BtlInput_GetNotHeldFrames(BtlInputChr *chr, s32 bit) {
+s32 BtlInput_GetNotHeldFrames(BtlFighter *chr, s32 bit) {
     return chr->input.count.notHeld.n[bit];
 }
 
 /* Frames since button bit `bit` was last pressed. */
-s32 BtlInput_GetFramesSincePress(BtlInputChr *chr, s32 bit) {
+s32 BtlInput_GetFramesSincePress(BtlFighter *chr, s32 bit) {
     return chr->input.count.sincePress.n[bit];
 }
 
 /* Frames since button bit `bit` was last released. */
-s32 BtlInput_GetFramesSinceRelease(BtlInputChr *chr, s32 bit) {
+s32 BtlInput_GetFramesSinceRelease(BtlFighter *chr, s32 bit) {
     return chr->input.count.sinceRelease.n[bit];
 }
 
 /* Last frame's "frames since press" of button bit `bit` (on a press frame: the gap to the previous press). */
-s32 BtlInput_GetPrevFramesSincePress(BtlInputChr *chr, s32 bit) {
+s32 BtlInput_GetPrevFramesSincePress(BtlFighter *chr, s32 bit) {
     return chr->input.count.prevSincePress.n[bit];
 }
 
 /* True when any command of mask became set this frame. */
-s32 BtlInput_IsCmdPressed(BtlInputChr *chr, u32 mask) {
+s32 BtlInput_IsCmdPressed(BtlFighter *chr, u32 mask) {
     return (chr->input.cmdPressed & mask) != 0;
 }
 
 /* True when any command of mask is set. */
-s32 BtlInput_IsCmdHeld(BtlInputChr *chr, u32 mask) {
+s32 BtlInput_IsCmdHeld(BtlFighter *chr, u32 mask) {
     return (chr->input.cmdHeld & mask) != 0;
 }
 
 /* True when any command of mask became clear this frame. */
-s32 BtlInput_IsCmdReleased(BtlInputChr *chr, u32 mask) {
+s32 BtlInput_IsCmdReleased(BtlFighter *chr, u32 mask) {
     return (chr->input.cmdReleased & mask) != 0;
 }
 
 /* Frames command bit `bit` has been set. */
-s32 BtlInput_GetCmdHeldFrames(BtlInputChr *chr, s32 bit) {
+s32 BtlInput_GetCmdHeldFrames(BtlFighter *chr, s32 bit) {
     return chr->input.cmdCount.held.n[bit];
 }
 
 /* Frames command bit `bit` has been clear. */
-s32 BtlInput_GetCmdNotHeldFrames(BtlInputChr *chr, s32 bit) {
+s32 BtlInput_GetCmdNotHeldFrames(BtlFighter *chr, s32 bit) {
     return chr->input.cmdCount.notHeld.n[bit];
 }
 
 /* Last frame's "frames since set" of command bit `bit`. */
-s32 BtlInput_GetCmdPrevFramesSincePress(BtlInputChr *chr, s32 bit) {
+s32 BtlInput_GetCmdPrevFramesSincePress(BtlFighter *chr, s32 bit) {
     return chr->input.cmdCount.prevSincePress.n[bit];
 }
 
 /* Sets a bit in one of the fighter's two per-frame bit sets. */
-void BtlInput_SetFrameBit(BtlInputChr *chr, s32 bit, s32 set) {
+void BtlInput_SetFrameBit(BtlFighter *chr, s32 bit, s32 set) {
     s32 byte = bit >> 3;
     s32 n = bit & 7;
 
@@ -767,7 +767,7 @@ void BtlInput_SetFrameBit(BtlInputChr *chr, s32 bit, s32 set) {
 }
 
 /* Tests a bit in one of the fighter's two per-frame bit sets. */
-s32 BtlInput_TestFrameBit(BtlInputChr *chr, s32 bit, s32 set) {
+s32 BtlInput_TestFrameBit(BtlFighter *chr, s32 bit, s32 set) {
     s32 byte = bit >> 3;
     s32 n = bit & 7;
     u8 mask;
@@ -778,7 +778,7 @@ s32 BtlInput_TestFrameBit(BtlInputChr *chr, s32 bit, s32 set) {
 }
 
 /* Clears both per-frame bit sets. */
-void BtlInput_ClearFrameBits(BtlInputChr *chr) {
+void BtlInput_ClearFrameBits(BtlFighter *chr) {
     memset(chr->input.frameBits, 0, sizeof(chr->input.frameBits));
 }
 
@@ -798,7 +798,7 @@ void BtlInput_ClearFrameBits(BtlInputChr *chr) {
  */
 
 /* Marks action input `id` as queried this frame, then tests it; returns the test when want != 0, its negation otherwise. */
-s32 BtlInput_TestAction(BtlInputChr *chr, s32 id, s32 want) {
+s32 BtlInput_TestAction(BtlFighter *chr, s32 id, s32 want) {
     s32 invert = want == 0;
     s32 result;
 
@@ -1324,22 +1324,22 @@ s32 BtlInput_TestAction(BtlInputChr *chr, s32 id, s32 want) {
 }
 
 /* Returns the smoothed stick x. */
-f32 BtlInput_GetStickX(BtlInputChr *chr) {
+f32 BtlInput_GetStickX(BtlFighter *chr) {
     return chr->input.stick[0];
 }
 
 /* Returns the smoothed stick y. */
-f32 BtlInput_GetStickY(BtlInputChr *chr) {
+f32 BtlInput_GetStickY(BtlFighter *chr) {
     return chr->input.stick[1];
 }
 
 /* Returns the length of the smoothed stick vector. */
-f32 BtlInput_GetStickLength(BtlInputChr *chr) {
+f32 BtlInput_GetStickLength(BtlFighter *chr) {
     return sqrtf(chr->input.stick[0] * chr->input.stick[0] + chr->input.stick[1] * chr->input.stick[1]);
 }
 
 /* Returns the direction of the raw stick as an angle, atan2(x, -y): 0 = up, positive = right; 0 when both axes are under 0.01. */
-f32 BtlInput_GetStickAngle(BtlInputChr *chr) {
+f32 BtlInput_GetStickAngle(BtlFighter *chr) {
     f32 x = chr->input.stickRaw[0];
     f32 y = chr->input.stickRaw[1];
 
@@ -1350,6 +1350,6 @@ f32 BtlInput_GetStickAngle(BtlInputChr *chr) {
 }
 
 /* Returns how far the stick direction is from the fighter's facing: stick angle - (heading - camera yaw), wrapped. */
-f32 BtlInput_GetStickTurnFromFacing(BtlInputChr *chr) {
+f32 BtlInput_GetStickTurnFromFacing(BtlFighter *chr) {
     return BtlUtil_WrapAngle(BtlInput_GetStickAngle(chr) - BtlAct_GetFacingRelCam(chr));
 }

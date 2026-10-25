@@ -26,29 +26,29 @@ extern BtlCapiMgr *gBtlChars;
 extern f32 sqrtf(f32 x);
 
 extern s32 BtlChar_GetCount(void);
-extern BtlCapiChr *BtlChar_Get(s32 idx);
-extern BtlCapiChr *BtlChar_FindByObjId(s32 objId);
+extern BtlFighter *BtlChar_Get(s32 idx);
+extern BtlFighter *BtlChar_FindByObjId(s32 objId);
 extern BtlCapiObj *BtlObj_Get(s32 objId);
-extern BtlCapiObj *BtlChar_GetObj(BtlCapiChr *chr);
-extern BtlCapiPose *BtlChar_GetPos(BtlCapiChr *chr);
-extern s32 BtlChar_TestFlag(BtlCapiChr *chr, s32 flag);
-extern s32 BtlChar_IsFrozen(BtlCapiChr *chr);
+extern BtlCapiObj *BtlChar_GetObj(BtlFighter *chr);
+extern BtlFighterPose *BtlChar_GetPos(BtlFighter *chr);
+extern s32 BtlChar_TestFlag(BtlFighter *chr, s32 flag);
+extern s32 BtlChar_IsFrozen(BtlFighter *chr);
 extern f32 BtlChar_RandF(void);
-extern f32 BtlChar_GetSpacing(BtlCapiChr *chr, s32 mode); /* own size + the other fighter's + 30 (40 with flag 0x13) */
-extern void *BtlMember_GetActive(BtlCapiChr *chr);
-extern s32 BtlOpp_GetObjId(BtlCapiChr *chr);
-extern void BtlOpp_GetNodePos(BtlCapiChr *chr, s32 node, Vec4 *out);
-extern void BtlOpp_GetDelta(BtlCapiChr *chr, Vec4 *out);
-extern s32 BtlAct_GetCurrent(BtlCapiChr *chr);
-extern s32 BtlAct_GetPrev(BtlCapiChr *chr);
+extern f32 BtlChar_GetSpacing(BtlFighter *chr, s32 mode); /* own size + the other fighter's + 30 (40 with flag 0x13) */
+extern void *BtlMember_GetActive(BtlFighter *chr);
+extern s32 BtlOpp_GetObjId(BtlFighter *chr);
+extern void BtlOpp_GetNodePos(BtlFighter *chr, s32 node, Vec4 *out);
+extern void BtlOpp_GetDelta(BtlFighter *chr, Vec4 *out);
+extern s32 BtlAct_GetCurrent(BtlFighter *chr);
+extern s32 BtlAct_GetPrev(BtlFighter *chr);
 extern s32 BtlAct_IsTechniqueId(s32 action);          /* action is 0x105..0x132: a technique action */
-extern s32 BtlAct_GetCurrentClass(BtlCapiChr *chr);
-extern s32 BtlAct_GetMotionLevel(BtlCapiChr *chr, s32 anim);
-extern s32 BtlAnim_GetId(BtlCapiChr *chr);
+extern s32 BtlAct_GetCurrentClass(BtlFighter *chr);
+extern s32 BtlAct_GetMotionLevel(BtlFighter *chr, s32 anim);
+extern s32 BtlAnim_GetId(BtlFighter *chr);
 extern s32 BtlAnim_GetFlags(s32 anim);
-extern s32 BtlParam_GetFlags(BtlCapiChr *chr);    /* parameter word +0x10 */
-extern s32 BtlParam_GetAuraKind(BtlCapiChr *chr); /* parameter byte +3, replaced by abilities 0x4D.. */
-extern s32 BtlSuper_GetFlags(BtlCapiChr *chr, s32 slot); /* attribute word of technique `slot` */
+extern s32 BtlParam_GetFlags(BtlFighter *chr);    /* parameter word +0x10 */
+extern s32 BtlParam_GetAuraKind(BtlFighter *chr); /* parameter byte +3, replaced by abilities 0x4D.. */
+extern s32 BtlSuper_GetFlags(BtlFighter *chr, s32 slot); /* attribute word of technique `slot` */
 extern BtlCapiNode *BtlObj_GetNode(BtlCapiObj *obj, s32 node);
 extern BtlCapiPart *BtlObj_FindBound(BtlCapiObj *obj, s32 node);
 extern void BtlObj_GetNodeVelocity(BtlCapiObj *obj, s32 node, Vec4 *out);
@@ -147,7 +147,7 @@ s32 BtlCharApi_ObjGetParamFlags(s32 objId) {
 /* Aura type of the character: 3 while object flag 0x40000 is set, else the parameter byte +3 (for a fighter: as
    replaced by its abilities, BtlParam_GetAuraKind). */
 s32 BtlCharApi_GetAuraType(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
     BtlCapiObj *obj;
 
     if (chr != NULL) {
@@ -181,7 +181,7 @@ f32 BtlCharApi_GetParamUnkC8(s32 objId) {
 
 /* Costume of the fighter's active member. */
 s32 BtlCharApi_GetCostume(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return ((s32 *)BtlMember_GetActive(chr))[1];
@@ -242,7 +242,7 @@ s32 BtlCharApi_IsFighter(s32 objId) {
 
 /* Object id of fighter `player`, or `player` itself when there is none. No caller. */
 s32 BtlCharApi_GetObjIdOfPlayer(s32 player) {
-    BtlCapiChr *chr = BtlChar_Get(player);
+    BtlFighter *chr = BtlChar_Get(player);
 
     if (chr != NULL) {
         return chr->objId;
@@ -252,7 +252,7 @@ s32 BtlCharApi_GetObjIdOfPlayer(s32 player) {
 
 /* Player index of the fighter (fighter +0), -1 for a non-fighter. Called from btl_demo_cam.c. */
 s32 BtlCharApi_GetPlayer(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return chr->player;
@@ -262,7 +262,7 @@ s32 BtlCharApi_GetPlayer(s32 objId) {
 
 /* Object id of the fighter's opponent. */
 s32 BtlCharApi_GetOpponentObjId(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return BtlOpp_GetObjId(chr);
@@ -272,7 +272,7 @@ s32 BtlCharApi_GetOpponentObjId(s32 objId) {
 
 /* Object id of the fighter's partner object (fighter +0x1338) while it has one (+0x1330), else objId itself. */
 s32 BtlCharApi_GetPartnerObjId(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
 
     if (chr == NULL) {
@@ -286,7 +286,7 @@ s32 BtlCharApi_GetPartnerObjId(s32 objId) {
 
 /* Pointer n (0..4) of the five at +0x9C of fighter `player`'s object. */
 s32 BtlCharApi_GetPlayerEffectPack(s32 player, u32 n) {
-    BtlCapiChr *chr = BtlChar_Get(player);
+    BtlFighter *chr = BtlChar_Get(player);
     BtlCapiObj *obj;
 
     if (chr != NULL) {
@@ -304,7 +304,7 @@ s32 BtlCharApi_GetPlayerEffectPack(s32 player, u32 n) {
 
 /* Technique table (object +0x92C, slots 2..4) of fighter `player`. */
 void *BtlCharApi_GetPlayerSuperData(s32 player) {
-    BtlCapiChr *chr = BtlChar_Get(player);
+    BtlFighter *chr = BtlChar_Get(player);
     BtlCapiObj *obj;
 
     if (chr != NULL) {
@@ -319,7 +319,7 @@ void *BtlCharApi_GetPlayerSuperData(s32 player) {
 
 /* Skill table (object +0x930, slots 0..1) of fighter `player`. */
 void *BtlCharApi_GetPlayerSkillData(s32 player) {
-    BtlCapiChr *chr = BtlChar_Get(player);
+    BtlFighter *chr = BtlChar_Get(player);
     BtlCapiObj *obj;
 
     if (chr != NULL) {
@@ -335,7 +335,7 @@ void *BtlCharApi_GetPlayerSkillData(s32 player) {
 /* Word +0x58 of fighter `player`'s object: the character pack. Called by BtlScene_GetCharPackEntry (btl_scene.c),
    which declares the result as a pointer (s32 *); here it is an s32. */
 s32 BtlCharApi_GetPlayerCharPack(s32 player) {
-    BtlCapiChr *chr = BtlChar_Get(player);
+    BtlFighter *chr = BtlChar_Get(player);
     BtlCapiObj *obj;
 
     if (chr != NULL) {
@@ -350,7 +350,7 @@ s32 BtlCharApi_GetPlayerCharPack(s32 player) {
 
 /* Position: for a fighter its position plus the display offset (hover bob and shake), else the object's +0x970. */
 void BtlCharApi_GetPos(s32 objId, Vec4 *out) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
     BtlCapiObj *obj;
 
     if (chr != NULL) {
@@ -367,7 +367,7 @@ void BtlCharApi_GetPos(s32 objId, Vec4 *out) {
 
 /* Position without the display offset. */
 void BtlCharApi_GetBasePos(s32 objId, Vec4 *out) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
     BtlCapiObj *obj;
 
     if (chr != NULL) {
@@ -384,7 +384,7 @@ void BtlCharApi_GetBasePos(s32 objId, Vec4 *out) {
 
 /* Rotation: the fighter's model rotation, else the object's +0x960. */
 void BtlCharApi_GetRot(s32 objId, Vec4 *out) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
     BtlCapiObj *obj;
 
     if (chr != NULL) {
@@ -404,7 +404,7 @@ void BtlCharApi_GetRot(s32 objId, Vec4 *out) {
 void BtlCharApi_GetModelRot(s32 objId, Vec4 *out) {
     Quat q;
     Vec4 euler;
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
     BtlCapiObj *obj;
     BtlCapiNode *node;
 
@@ -431,7 +431,7 @@ void BtlCharApi_GetModelRot(s32 objId, Vec4 *out) {
 
 /* Heading yaw of a fighter, rotation y of another object. No caller. */
 f32 BtlCharApi_GetYaw(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
     BtlCapiObj *obj;
 
     if (chr != NULL) {
@@ -446,7 +446,7 @@ f32 BtlCharApi_GetYaw(s32 objId) {
 
 /* Pose +0x30: the fighter's movement over the previous frame (between snapshots 0 and 1). */
 void BtlCharApi_GetVelocity(s32 objId, Vec4 *out) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         Vec4_Copy(out, &BtlChar_GetPos(chr)->vel);
@@ -457,7 +457,7 @@ void BtlCharApi_GetVelocity(s32 objId, Vec4 *out) {
 
 /* Pose +0x40: the fighter's whole movement of the previous frame. */
 void BtlCharApi_GetFrameMove(s32 objId, Vec4 *out) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         Vec4_Copy(out, &BtlChar_GetPos(chr)->move);
@@ -468,7 +468,7 @@ void BtlCharApi_GetFrameMove(s32 objId, Vec4 *out) {
 
 /* Unit direction of travel. */
 void BtlCharApi_GetDir(s32 objId, Vec4 *out) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         Vec4_Copy(out, &BtlChar_GetPos(chr)->dir);
@@ -479,7 +479,7 @@ void BtlCharApi_GetDir(s32 objId, Vec4 *out) {
 
 /* Speed along the direction of travel, per frame. */
 f32 BtlCharApi_GetSpeed(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return BtlChar_GetPos(chr)->speed;
@@ -489,7 +489,7 @@ f32 BtlCharApi_GetSpeed(s32 objId) {
 
 /* Vertical speed, positive down. */
 f32 BtlCharApi_GetFallSpeed(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return BtlChar_GetPos(chr)->fallSpeed;
@@ -499,7 +499,7 @@ f32 BtlCharApi_GetFallSpeed(s32 objId) {
 
 /* Height (y) of the ground point below the fighter. */
 f32 BtlCharApi_GetGroundY(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return BtlChar_GetPos(chr)->groundPos.y;
@@ -638,7 +638,7 @@ f32 BtlCharApi_GetNodeBoundSize(s32 objId, s32 node) {
 
 /* The distance under which the opponent counts as close (flags 0x13 and 5): own size + the other's + a margin. */
 f32 BtlCharApi_GetCloseRange(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr == NULL) {
         return 0.0f;
@@ -656,7 +656,7 @@ f32 BtlCharApi_ObjExistsF(s32 objId) {
 
 /* Fighter flag 0x13: the opponent is within the close range. Called from btl_ai_mgr.c. */
 s32 BtlCharApi_IsClose(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return BtlChar_TestFlag(chr, 0x13);
@@ -666,7 +666,7 @@ s32 BtlCharApi_IsClose(s32 objId) {
 
 /* Fighter flag 0xBA: the stage blocks the line between the two fighters' heads. */
 s32 BtlCharApi_IsSightBlocked(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return BtlChar_TestFlag(chr, 0xBA);
@@ -676,7 +676,7 @@ s32 BtlCharApi_IsSightBlocked(s32 objId) {
 
 /* Fighter flag 0xF: standing on the ground. No caller (the copy at 0x2081E8 is the one used). */
 s32 BtlCharApi_IsOnGround(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return BtlChar_TestFlag(chr, 0xF);
@@ -686,7 +686,7 @@ s32 BtlCharApi_IsOnGround(s32 objId) {
 
 /* Fighter flag 0x11: the body centre is under water. */
 s32 BtlCharApi_IsInWater(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return BtlChar_TestFlag(chr, 0x11);
@@ -706,7 +706,7 @@ s32 BtlCharApi_IsHidden(s32 objId) {
 
 /* Whether the fighter is frozen by hit-stop. Called from btl_scene.c. */
 s32 BtlCharApi_IsFrozen(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return BtlChar_IsFrozen(chr);
@@ -730,7 +730,7 @@ s32 BtlCharApi_AnyFrozen(void) {
 
 /* 1 for a character with parameter flag 0x800 that is not in flag 0xA, else flag 9 (fast vertical flight). */
 s32 BtlCharApi_TestStageBreakA(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         if ((BtlParam_GetFlags(chr) & 0x800) && !BtlChar_TestFlag(chr, 0xA)) {
@@ -743,7 +743,7 @@ s32 BtlCharApi_TestStageBreakA(s32 objId) {
 
 /* Flag 0xA unless flag 0x21 or 0x22 is up. */
 s32 BtlCharApi_TestStageBreakB(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         if (BtlChar_TestFlag(chr, 0x21)) {
@@ -759,7 +759,7 @@ s32 BtlCharApi_TestStageBreakB(s32 objId) {
 
 /* How far the fighter has charged: the larger of the attack charge (+0xD78) and the charged ki blast's (+0xDEC), 0..1. */
 f32 BtlCharApi_GetChargeRate(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
     f32 t = 0.0f;
 
     if (chr == NULL) {
@@ -777,7 +777,7 @@ f32 BtlCharApi_GetChargeRate(s32 objId) {
 /* A class of the current action for the effect code: 3 fast ascent / leaving switch, 4 fast descent / lift throw,
    5 rush sequence, else 1. */
 s32 BtlCharApi_GetActionFxKind(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         switch (BtlAct_GetCurrent(chr)) {
@@ -810,7 +810,7 @@ f32 BtlCharApi_GetClashBias(void) {
 
 /* Fighter counter +0xFFC as a 0..1 ratio of 90. */
 f32 BtlCharApi_GetBlindRatio(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr == NULL) {
         return 0.0f;
@@ -822,7 +822,7 @@ f32 BtlCharApi_GetBlindRatio(s32 objId) {
    +0x1C), 2 before that step, 1 from it on; -1 outside a rush sequence. */
 s32 BtlCharApi_GetRushFinishPhase(s32 objId) {
     s32 level = -1;
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr == NULL) {
         return -1;
@@ -909,8 +909,8 @@ void BtlCharApi_GetBodyPos(s32 objId, Vec4 *out) {
 void BtlCharApi_CalcAimDir(s32 objId, s32 node, Vec4 *from, Vec4 *out, f32 minPitch, f32 maxPitch) {
     Vec4 pos;
     Vec4 delta;
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
-    BtlCapiPose *pose;
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
+    BtlFighterPose *pose;
     f32 len;
     f32 lo;
     f32 hi;
@@ -994,7 +994,7 @@ void BtlCharApi_GetDeflectDir(s32 objId, Vec4 *out) {
     Vec4 v;
     Vec4 side;
     Vec4 fwd;
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
     f32 c;
 
     if (chr == NULL) {
@@ -1047,7 +1047,7 @@ void BtlCharApi_GetDeflectDir(s32 objId, Vec4 *out) {
 
 /* Fighter flag 5: locked on to the opponent. */
 s32 BtlCharApi_IsLockedOn(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return BtlChar_TestFlag(chr, 5);
@@ -1057,7 +1057,7 @@ s32 BtlCharApi_IsLockedOn(s32 objId) {
 
 /* Fighter flag 0x8E. */
 s32 BtlCharApi_IsChargingKiBlast(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return BtlChar_TestFlag(chr, 0x8E);
@@ -1067,7 +1067,7 @@ s32 BtlCharApi_IsChargingKiBlast(s32 objId) {
 
 /* Whether the fighter is in a technique action (0x105..0x132). */
 s32 BtlCharApi_IsInTechnique(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return BtlAct_IsTechniqueId(BtlAct_GetCurrent(chr));
@@ -1077,7 +1077,7 @@ s32 BtlCharApi_IsInTechnique(s32 objId) {
 
 /* In a technique action while the previous action (+0x950) was not one. Called from btl_char_mgr.c (events 0x26..0x28). */
 s32 BtlCharApi_EnteredTechnique(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         if (BtlAct_IsTechniqueId(BtlAct_GetCurrent(chr)) && !BtlAct_IsTechniqueId(BtlAct_GetPrev(chr))) {
@@ -1090,7 +1090,7 @@ s32 BtlCharApi_EnteredTechnique(s32 objId) {
 
 /* Fighter flag 0xA1 (raised when the damage of a rush technique is set up). */
 s32 BtlCharApi_IsRushConnected(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return BtlChar_TestFlag(chr, 0xA1);
@@ -1100,7 +1100,7 @@ s32 BtlCharApi_IsRushConnected(s32 objId) {
 
 /* Whether the fighter is in a rush sequence action (0x12D..0x12F, 0x139..0x13B). */
 s32 BtlCharApi_IsInRushSequence(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         switch (BtlAct_GetCurrent(chr)) {
@@ -1119,7 +1119,7 @@ s32 BtlCharApi_IsInRushSequence(s32 objId) {
 
 /* Whether the fighter is in a skill action (0xFD..0x102). */
 s32 BtlCharApi_IsInSkill(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return (u32)(BtlAct_GetCurrent(chr) - 0xFD) < 6;
@@ -1129,7 +1129,7 @@ s32 BtlCharApi_IsInSkill(s32 objId) {
 
 /* In a skill action on the frame it was entered (flag 8). Called from btl_char_mgr.c. */
 s32 BtlCharApi_IsSkillStart(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         if (BtlCharApi_IsInSkill(objId)) {
@@ -1142,7 +1142,7 @@ s32 BtlCharApi_IsSkillStart(s32 objId) {
 
 /* Fighter flag 0x9A (raised on the frame a skill takes effect). */
 s32 BtlCharApi_IsSkillApplied(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return BtlChar_TestFlag(chr, 0x9A);
@@ -1152,7 +1152,7 @@ s32 BtlCharApi_IsSkillApplied(s32 objId) {
 
 /* Whether the fighter is in a clash A action (0x130..0x132). */
 s32 BtlCharApi_IsInClashA(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         switch (BtlAct_GetCurrent(chr)) {
@@ -1168,7 +1168,7 @@ s32 BtlCharApi_IsInClashA(s32 objId) {
 
 /* Whether the fighter is in action 0xFA (clash B) or 0xFC (a clash C exchange). */
 s32 BtlCharApi_IsInClashBC(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
     s32 action;
 
     if (chr != NULL) {
@@ -1183,7 +1183,7 @@ s32 BtlCharApi_IsInClashBC(s32 objId) {
 
 /* Fighter flag 0xC (raised by the ki charge loop). No caller. */
 s32 BtlCharApi_IsChargingKi(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return BtlChar_TestFlag(chr, 0xC);
@@ -1193,7 +1193,7 @@ s32 BtlCharApi_IsChargingKi(s32 objId) {
 
 /* Fighter flag 0xD (raised when the ki charge goes on into the powered-up state). No caller. */
 s32 BtlCharApi_IsMaxPowerStart(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return BtlChar_TestFlag(chr, 0xD);
@@ -1203,7 +1203,7 @@ s32 BtlCharApi_IsMaxPowerStart(s32 objId) {
 
 /* Whether the fighter is transforming, fusing or switching (0xEC..0xF8) or in action 0x103 / 0x104. */
 s32 BtlCharApi_IsChanging(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         switch (BtlAct_GetCurrent(chr)) {
@@ -1231,7 +1231,7 @@ s32 BtlCharApi_IsChanging(s32 objId) {
 
 /* Bit 4 of the table word of the fighter's animation. */
 s32 BtlCharApi_TestAnimFlag10(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return (BtlAnim_GetFlags(BtlAnim_GetId(chr)) >> 4) & 1;
@@ -1241,7 +1241,7 @@ s32 BtlCharApi_TestAnimFlag10(s32 objId) {
 
 /* Whether the fighter is in action 0x33. */
 s32 BtlCharApi_IsCircleDash(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return BtlAct_GetCurrent(chr) == 0x33;
@@ -1251,7 +1251,7 @@ s32 BtlCharApi_IsCircleDash(s32 objId) {
 
 /* Fighter flag 0x12B (raised when the fighter is bound to its object). */
 s32 BtlCharApi_IsModelNew(s32 objId) {
-    BtlCapiChr *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
         return BtlChar_TestFlag(chr, 0x12B);

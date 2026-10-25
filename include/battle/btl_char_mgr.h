@@ -9,9 +9,9 @@
  * reset, and the whole-roster phases Battle_Loop / Battle_Update call every frame. The phase order and what
  * each phase runs per fighter is described at the top of btl_char_mgr.c.
  *
- * The structures below are this module's partial views. The fighter object (0x1600 bytes) and the fighter's
- * BtlObj are shared with many modules that are not decompiled: the fields listed are only the ones this file
- * reads or writes. All names are guesses unless the comment says how they are known.
+ * The structures below are this module's partial views; the fighter object (0x1600 bytes) is BtlFighter
+ * (battle/btl_fighter.h). The fighter's BtlObj is shared with many modules: the fields listed are only the
+ * ones this file reads or writes. All names are guesses unless the comment says how they are known.
  */
 
 #define BTL_CHR_MEMBER_MAX 5
@@ -31,36 +31,21 @@
 /* BtlCharMgr.flags */
 #define BTL_CHARS_STARTED 1 /* set the first frame the sequence is in Ready (2) or Fight (3) */
 
-/* Gauges of one team member: member entry + 0x40 (BtlMember_GetActiveGauge returns this for the current member). */
-typedef BtlMemberGauge BtlMgrGauge;
-
-/* One team member inside the fighter: fighter + 0x9A4 + n * 0xA4 (BtlMember_Get). */
-typedef BtlMember BtlMgrMember;
-
-/* The pose block at fighter + 0x10 (BtlChar_GetPos); copied whole to fighter + 0x100 at the start of a frame. */
-typedef BtlFighterPose BtlMgrPose;
-
-/* Nine bytes at fighter + 0x1262, copied to + 0x126B and cleared at the start of a frame. */
-typedef BtlFighterFxBits BtlMgrBytes9;
-
 /* The fighter's display / collision object (BtlObj_Get(objId)): only the fields used here. */
 typedef struct BtlMgrObj {
     /* 0x0000 */ u8 unk0[0xA4];
     /* 0x00A4 */ u32 *file[3];   /* three loaded data files; word 3 of each is the byte offset of a table */
     /* 0x00B0 */ u8 unkB0[0xA40 - 0xB0];
     /* 0x0A40 */ u32 flags;      /* bit 1: drawn in front / highlighted (see BtlChars_UpdateObjFlag2),
-                                    bit 30: BtlMgrGauge.unk20 */
+                                    bit 30: BtlMemberGauge.variant != 0 */
     /* 0x0A44 */ u8 unkA44[0x1660 - 0xA44];
     /* 0x1660 */ u8 *charaWork;    /* block whose word at + 0x18028 mirrors BtlChar_IsBodyChanged() */
 } BtlMgrObj;
 
-/* Partial view of a fighter (0x1600 bytes, BtlChar_Get). */
-typedef BtlFighter BtlMgrChr;
-
 /* The roster: gBtlChars -> 0x280 bytes. */
 typedef struct BtlCharMgr {
     /* 0x000 */ s32 count;       /* number of fighters (Battle_Init passes 2) */
-    /* 0x004 */ BtlMgrChr *chars; /* count * 0x1600 */
+    /* 0x004 */ BtlFighter *chars; /* count * 0x1600 */
     /* 0x008 */ void *sounds;      /* count * 0x34 bytes: per side, four 0xC-byte slots (BtlCharSnd_GetSet) */
     /* 0x00C */ void *loopSounds;      /* count * 0x34 bytes: per side, four sound handle slots (BtlCharSnd_GetLoopSet) */
     /* 0x010 */ s32 flags;       /* BTL_CHARS_* */
@@ -78,37 +63,37 @@ typedef struct BtlCharMgr {
 
 extern BtlCharMgr *gBtlChars;
 
-void BtlChar_BindObject(BtlMgrChr *chr);
-void BtlChar_CopyMemberBonus(BtlMgrChr *chr, s32 idx);
-void BtlChar_CopyAllBonus(BtlMgrChr *chr);
-void BtlChar_CopyMemberAbility(BtlMgrChr *chr, s32 idx);
-void BtlChar_CopyAllAbility(BtlMgrChr *chr);
-void BtlChar_Reset(BtlMgrChr *chr);
-void BtlChar_OnModelLoaded(BtlMgrChr *chr);
-void BtlChar_OnStageLoaded(BtlMgrChr *chr);
-void BtlChar_ResetRound(BtlMgrChr *chr);
-void BtlChar_ResetObjWork(BtlMgrChr *chr);
+void BtlChar_BindObject(BtlFighter *chr);
+void BtlChar_CopyMemberBonus(BtlFighter *chr, s32 idx);
+void BtlChar_CopyAllBonus(BtlFighter *chr);
+void BtlChar_CopyMemberAbility(BtlFighter *chr, s32 idx);
+void BtlChar_CopyAllAbility(BtlFighter *chr);
+void BtlChar_Reset(BtlFighter *chr);
+void BtlChar_OnModelLoaded(BtlFighter *chr);
+void BtlChar_OnStageLoaded(BtlFighter *chr);
+void BtlChar_ResetRound(BtlFighter *chr);
+void BtlChar_ResetObjWork(BtlFighter *chr);
 void BtlChars_UpdateFreeze(void);
 void BtlChars_UpdateObjFlag2(void);
 void BtlChars_ClearObjFlag2(void);
 void BtlChars_UpdateCollision(void);
-void BtlChar_RaiseEvents(BtlMgrChr *chr);
+void BtlChar_RaiseEvents(BtlFighter *chr);
 void BtlChars_CheckRoundReset(void);
-void BtlChar_ApplyBonusRequests(BtlMgrChr *chr);
-void BtlChar_ApplyAbilityRequests(BtlMgrChr *chr);
-void BtlChar_SampleInput(BtlMgrChr *chr);
-void BtlChar_BeginFrame(BtlMgrChr *chr);
-void BtlChar_UpdateSeqFlags(BtlMgrChr *chr);
-void BtlChar_UpdateMotion(BtlMgrChr *chr);
-void BtlChar_UpdateStage6(BtlMgrChr *chr);
-void BtlChar_UpdateStage7(BtlMgrChr *chr);
-void BtlChar_UpdateStage8(BtlMgrChr *chr);
-void BtlChar_UpdateStage9(BtlMgrChr *chr);
-void BtlChar_UpdateCamera(BtlMgrChr *chr);
-void BtlChar_UpdateStage10(BtlMgrChr *chr);
-void BtlChar_PostScene(BtlMgrChr *chr);
-void BtlChar_UpdateLate(BtlMgrChr *chr);
-void BtlChar_EndFrame(BtlMgrChr *chr);
+void BtlChar_ApplyBonusRequests(BtlFighter *chr);
+void BtlChar_ApplyAbilityRequests(BtlFighter *chr);
+void BtlChar_SampleInput(BtlFighter *chr);
+void BtlChar_BeginFrame(BtlFighter *chr);
+void BtlChar_UpdateSeqFlags(BtlFighter *chr);
+void BtlChar_UpdateMotion(BtlFighter *chr);
+void BtlChar_UpdateStage6(BtlFighter *chr);
+void BtlChar_UpdateStage7(BtlFighter *chr);
+void BtlChar_UpdateStage8(BtlFighter *chr);
+void BtlChar_UpdateStage9(BtlFighter *chr);
+void BtlChar_UpdateCamera(BtlFighter *chr);
+void BtlChar_UpdateStage10(BtlFighter *chr);
+void BtlChar_PostScene(BtlFighter *chr);
+void BtlChar_UpdateLate(BtlFighter *chr);
+void BtlChar_EndFrame(BtlFighter *chr);
 void BtlChar_AllocAll(s32 count);
 void BtlChar_FreeAll(void);
 void BtlChar_ResetAll(void);

@@ -42,53 +42,53 @@ extern f32 BtlUtil_ClampF(f32 v, f32 lo, f32 hi);
 extern f32 BtlUtil_MinF(f32 a, f32 b);
 extern f32 BtlUtil_MaxF(f32 a, f32 b);
 
-extern s32 BtlChar_TestFlag(BtlMoveChr *chr, s32 flag);
-extern void BtlChar_SetFlag(BtlMoveChr *chr, s32 flag);
-extern void BtlChar_SetHeldFlag(BtlMoveChr *chr, s32 flag);
-extern void BtlChar_ClearFlag(BtlMoveChr *chr, s32 flag);
-extern BtlMovePose *BtlChar_GetPos(BtlMoveChr *chr);
-extern BtlMoveObj *BtlChar_GetObj(BtlMoveChr *chr);
-extern void BtlChar_PlayVoice(BtlMoveChr *chr, s32 kind);
-extern s32 BtlInput_IsHeld(BtlMoveChr *chr, u32 mask);
+extern s32 BtlChar_TestFlag(BtlFighter *chr, s32 flag);
+extern void BtlChar_SetFlag(BtlFighter *chr, s32 flag);
+extern void BtlChar_SetHeldFlag(BtlFighter *chr, s32 flag);
+extern void BtlChar_ClearFlag(BtlFighter *chr, s32 flag);
+extern BtlFighterPose *BtlChar_GetPos(BtlFighter *chr);
+extern BtlMoveObj *BtlChar_GetObj(BtlFighter *chr);
+extern void BtlChar_PlayVoice(BtlFighter *chr, s32 kind);
+extern s32 BtlInput_IsHeld(BtlFighter *chr, u32 mask);
 
-extern s32 BtlAnim_TestAttr(BtlMoveChr *chr, u64 mask);
-extern void BtlCharSnd_PlayStream(BtlMoveChr *chr, s32 id);
-extern void BtlAnim_SetSubMix(BtlMoveChr *chr, f32 mix);
-extern void BtlAnim_SetStep(BtlMoveChr *chr, f32 step);
-extern void BtlAnim_ApplyBlend(BtlMoveChr *chr);
-extern void BtlAct_Update(BtlMoveChr *chr);
+extern s32 BtlAnim_TestAttr(BtlFighter *chr, u64 mask);
+extern void BtlCharSnd_PlayStream(BtlFighter *chr, s32 id);
+extern void BtlAnim_SetSubMix(BtlFighter *chr, f32 mix);
+extern void BtlAnim_SetStep(BtlFighter *chr, f32 step);
+extern void BtlAnim_ApplyBlend(BtlFighter *chr);
+extern void BtlAct_Update(BtlFighter *chr);
 extern BtlMoveBlastList *EftHit_GetList(void);
-extern s32 BtlParam_GetBlastLimitA(BtlMoveChr *chr);
-extern s32 BtlParam_GetBlastLimitB(BtlMoveChr *chr);
-extern f32 BtlInput_GetStickX(BtlMoveChr *chr);
-extern f32 BtlInput_GetStickY(BtlMoveChr *chr);
-extern f32 BtlOpp_GetYaw(BtlMoveChr *chr);
-extern void BtlOpp_GetTargetRot(BtlMoveChr *chr, Vec4 *out);
-extern void BtlOpp_GetDelta(BtlMoveChr *chr, Vec4 *out);
-extern void BtlOpp_GetPoseVec30(BtlMoveChr *chr, Vec4 *out);
-extern f32 BtlOpp_GetHalfHeightDiff(BtlMoveChr *chr);
-extern f32 BtlOpp_GetRadius(BtlMoveChr *chr);
+extern s32 BtlParam_GetBlastLimitA(BtlFighter *chr);
+extern s32 BtlParam_GetBlastLimitB(BtlFighter *chr);
+extern f32 BtlInput_GetStickX(BtlFighter *chr);
+extern f32 BtlInput_GetStickY(BtlFighter *chr);
+extern f32 BtlOpp_GetYaw(BtlFighter *chr);
+extern void BtlOpp_GetTargetRot(BtlFighter *chr, Vec4 *out);
+extern void BtlOpp_GetDelta(BtlFighter *chr, Vec4 *out);
+extern void BtlOpp_GetPoseVec30(BtlFighter *chr, Vec4 *out);
+extern f32 BtlOpp_GetHalfHeightDiff(BtlFighter *chr);
+extern f32 BtlOpp_GetRadius(BtlFighter *chr);
 extern f32 BtlCharApi_GetRadius(s32 objId);
-extern void BtlOpp_GetTargetPos(BtlMoveChr *chr, Vec4 *out);
-extern void BtlOpp_GetVelocity(BtlMoveChr *chr, Vec4 *out);
-extern void BtlOpp_GetObjVecFA0(BtlMoveChr *chr, Vec4 *out);
+extern void BtlOpp_GetTargetPos(BtlFighter *chr, Vec4 *out);
+extern void BtlOpp_GetVelocity(BtlFighter *chr, Vec4 *out);
+extern void BtlOpp_GetObjVecFA0(BtlFighter *chr, Vec4 *out);
 extern void BtlCharApi_GetBodyPos(s32 objId, Vec4 *out);
-extern void BtlChar_RequestBodyWarp(BtlMoveChr *chr, Vec4 *pos);
+extern void BtlChar_RequestBodyWarp(BtlFighter *chr, Vec4 *pos);
 extern f32 BtlStage_GetInnerRadius(void);
 extern f32 BtlStage_GetTop(void);
 extern f32 BtlStage_GetBottom(void);
 extern f32 BtlCharApi_GetHeight(s32 objId);
-extern f32 BtlOpp_GetHeight(BtlMoveChr *chr);
-extern void BtlChar_GetSnapPos(BtlMoveChr *chr, Vec4 *out, s32 slot);
-extern void BtlOpp_GetSnapPos(BtlMoveChr *chr, Vec4 *out, s32 slot);
-extern void BtlChar_GetSnapDelta(BtlMoveChr *chr, Vec4 *out, s32 from, s32 to);
+extern f32 BtlOpp_GetHeight(BtlFighter *chr);
+extern void BtlChar_GetSnapPos(BtlFighter *chr, Vec4 *out, s32 slot);
+extern void BtlOpp_GetSnapPos(BtlFighter *chr, Vec4 *out, s32 slot);
+extern void BtlChar_GetSnapDelta(BtlFighter *chr, Vec4 *out, s32 from, s32 to);
 extern s32 BtlChars_IsTimeStopped(void);
-extern s32 BtlInput_TestAction(BtlMoveChr *chr, s32 id, s32 want);
-extern f32 BtlMember_GetHealthRatio(BtlMoveChr *chr);
-extern s32 BtlMember_HasAbility(BtlMoveChr *chr, s32 ability);
-extern s32 BtlParam_GetFlags2(BtlMoveChr *chr);
-extern s32 BtlChar_IsDead(BtlMoveChr *chr);
-extern s32 BtlChar_IsFree(BtlMoveChr *chr);
+extern s32 BtlInput_TestAction(BtlFighter *chr, s32 id, s32 want);
+extern f32 BtlMember_GetHealthRatio(BtlFighter *chr);
+extern s32 BtlMember_HasAbility(BtlFighter *chr, s32 ability);
+extern s32 BtlParam_GetFlags2(BtlFighter *chr);
+extern s32 BtlChar_IsDead(BtlFighter *chr);
+extern s32 BtlChar_IsFree(BtlFighter *chr);
 extern s32 BtlChar_IsStage4Or27(void);
 extern void ColSeg_Set(BtlMoveSeg *seg, Vec4 *a, Vec4 *b);
 extern s32 StgCol_TraceSegment(BtlMoveSeg *seg);
@@ -96,7 +96,7 @@ extern void StgCol_GetHitPos(Vec4 *out);
 
 /* Late per-frame voice triggers: with flags 0x12F..0x133 the current animation's attribute bits pick a voice kind
    (0xE, 0x34..0x37) or a stream (0x8D35, 0x8D37, 0x8D41, 0x8D42). Called from BtlChar_UpdateLate. */
-void BtlMove_UpdateAnimVoice(BtlMoveChr *chr) {
+void BtlMove_UpdateAnimVoice(BtlFighter *chr) {
     s32 kind = -1;
 
     if (BtlChar_TestFlag(chr, 0x12F)) {
@@ -142,14 +142,14 @@ void BtlMove_UpdateAnimVoice(BtlMoveChr *chr) {
 }
 
 /* Resets the object's animation rates before the action handlers run: obj+0xC8C = 0, step (obj+0xC80) = 2. */
-void BtlMove_ResetAnimStep(BtlMoveChr *chr) {
+void BtlMove_ResetAnimStep(BtlFighter *chr) {
     BtlAnim_SetSubMix(chr, 0.0f);
     BtlAnim_SetStep(chr, 2.0f);
 }
 
 /* First call of a fighter's main update (BtlChar_UpdateMotion): runs the action state machine between the
    animation rate reset and the blend update. */
-void BtlMove_UpdateAction(BtlMoveChr *chr) {
+void BtlMove_UpdateAction(BtlFighter *chr) {
     BtlMove_ResetAnimStep(chr);
     BtlAct_Update(chr);
     BtlAnim_ApplyBlend(chr);
@@ -159,10 +159,10 @@ void BtlMove_UpdateAction(BtlMoveChr *chr) {
    object's second contact (flag 0x1F without 0x20, normal at work+0x18070). floor = 1 keeps normals within 45 degrees
    of straight up (n.y <= -0.707), floor = 0 keeps the others. Returns 1 when one is kept and the direction of travel
    points into it by more than cos(angle) (angle = -2 pi: any direction). */
-s32 BtlMove_TestContact(BtlMoveChr *chr, s32 floor, f32 angle) {
+s32 BtlMove_TestContact(BtlFighter *chr, s32 floor, f32 angle) {
     Vec4 n;
     BtlMoveObj *obj = BtlChar_GetObj(chr);
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
     BtlMoveContact *hit = (BtlMoveContact *)(obj->work + 0x18060);
     s32 i;
 
@@ -207,18 +207,18 @@ s32 BtlMove_TestContact(BtlMoveChr *chr, s32 floor, f32 angle) {
 }
 
 /* The contact test for floor-like surfaces. */
-s32 BtlMove_IsHeadingIntoFloor(BtlMoveChr *chr, f32 angle) {
+s32 BtlMove_IsHeadingIntoFloor(BtlFighter *chr, f32 angle) {
     return BtlMove_TestContact(chr, 1, angle);
 }
 
 /* The contact test for wall-like surfaces. */
-s32 BtlMove_IsHeadingIntoWall(BtlMoveChr *chr, f32 angle) {
+s32 BtlMove_IsHeadingIntoWall(BtlFighter *chr, f32 angle) {
     return BtlMove_TestContact(chr, 0, angle);
 }
 
 /* Counts the fighter's live blasts of one class (0: definition kinds 0, 4, 8; 1: the others), stores the count and
    returns 1 while it is below the character's limit for the class (BtlParam_GetBlastLimitA / BtlParam_GetBlastLimitB). */
-s32 BtlMove_CanFireBlast(BtlMoveChr *chr, s32 mode, s32 *outCount) {
+s32 BtlMove_CanFireBlast(BtlFighter *chr, s32 mode, s32 *outCount) {
     s32 n = 0;
     BtlMoveBlastList *list = EftHit_GetList();
     s32 i;
@@ -275,7 +275,7 @@ s32 BtlMove_CanFireBlast(BtlMoveChr *chr, s32 mode, s32 *outCount) {
 
 /* Returns 1 when a live blast record of an enabled class (uncharged: definition kinds 0/4/8, otherBlasts: the other kinds, techniques: type-1 records) is
    moving towards the fighter and would reach it within `limit` frames at its current speed. */
-s32 BtlMove_IsBlastIncoming(BtlMoveChr *chr, s32 uncharged, s32 otherBlasts, s32 techniques, f32 limit) {
+s32 BtlMove_IsBlastIncoming(BtlFighter *chr, s32 uncharged, s32 otherBlasts, s32 techniques, f32 limit) {
     Vec4 step;
     Vec4 d;
     BtlMoveBlastList *list = EftHit_GetList();
@@ -341,7 +341,7 @@ s32 BtlMove_IsBlastIncoming(BtlMoveChr *chr, s32 uncharged, s32 otherBlasts, s32
 }
 
 /* Number of type-1 blast records whose source belongs to this fighter. */
-s32 BtlMove_CountOwnBeams(BtlMoveChr *chr) {
+s32 BtlMove_CountOwnBeams(BtlFighter *chr) {
     BtlMoveBlastList *list = EftHit_GetList();
     s32 n = 0;
     s32 i;
@@ -394,9 +394,9 @@ s32 BtlMove_ClipToRadius(Vec4 *out, Vec4 *from, Vec4 *to, f32 radius) {
 /* Turns the heading yaw towards a target by at most maxStep. Modes: 0 stick relative to the camera yaw,
    1 stick x as a turn rate, 2 / 4 towards the opponent, 3 away from it, 7 towards the stage centre, 8 away from the
    centre, 9 the opponent's own yaw, 5 / 6 keep. Also clears the yaw steering offset. */
-void BtlMove_TurnYaw(BtlMoveChr *chr, s32 mode, f32 maxStep) {
+void BtlMove_TurnYaw(BtlFighter *chr, s32 mode, f32 maxStep) {
     Vec4 rot;
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
     f32 target = pose->yaw;
     f32 d;
 
@@ -449,14 +449,14 @@ void BtlMove_TurnYaw(BtlMoveChr *chr, s32 mode, f32 maxStep) {
 /* Turns the heading pitch towards a target by at most maxStep. Modes: 0 stick y as a rate (clamped to +-(pi/2 - 0.01)),
    1..4 at the opponent (2 scaled by the stick, 3 doubled height, 4 flattened under 50 m), with the height
    difference reduced when the two are about to meet; 5 level; 6 keep. Also clears the pitch steering offset. */
-void BtlMove_TurnPitch(BtlMoveChr *chr, s32 mode, f32 maxStep) {
+void BtlMove_TurnPitch(BtlFighter *chr, s32 mode, f32 maxStep) {
     Vec4 to;
     Vec4 vel;
     Vec4 oppVel;
     Vec4 n;
     Vec4 nOpp;
     Vec4 nTo;
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
     f32 target = pose->pitch;
     f32 d;
 
@@ -550,12 +550,12 @@ void BtlMove_TurnPitch(BtlMoveChr *chr, s32 mode, f32 maxStep) {
 /* Homing dash: heads for the opponent with a stick-controlled offset. The offset goal is (pi/2 * stick), scaled down
    when under 2 frames from contact, clamped to yawMax / pitchMax and approached by yawAccel / pitchAccel per frame.
    Without lock-on only clears the offsets. */
-void BtlMove_SteerAtOpponent(BtlMoveChr *chr, f32 closeSpeed, f32 yawAccel, f32 pitchAccel, f32 yawMax, f32 pitchMax, f32 maxStep) {
+void BtlMove_SteerAtOpponent(BtlFighter *chr, f32 closeSpeed, f32 yawAccel, f32 pitchAccel, f32 yawMax, f32 pitchMax, f32 maxStep) {
     Vec4 to;
     Vec4 vel;
     Vec4 oppVel;
     Vec4 n;
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
     f32 dist;
     f32 speed;
     f32 oppSpeed;
@@ -628,8 +628,8 @@ void BtlMove_SteerAtOpponent(BtlMoveChr *chr, f32 closeSpeed, f32 yawAccel, f32 
 }
 
 /* Turns the model yaw (rot.y) towards the heading yaw: step = |difference| * rate, at least 1.8 degrees, at most maxStep. */
-void BtlMove_TurnModelYaw(BtlMoveChr *chr, f32 maxStep, f32 rate) {
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+void BtlMove_TurnModelYaw(BtlFighter *chr, f32 maxStep, f32 rate) {
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
     f32 d = BtlUtil_WrapAngle(pose->yaw - pose->rot.y);
     f32 step = __builtin_fabsf(d) * rate;
 
@@ -649,8 +649,8 @@ void BtlMove_TurnModelYaw(BtlMoveChr *chr, f32 maxStep, f32 rate) {
 }
 
 /* Sets heading yaw and pitch, and the model yaw, at once. */
-void BtlMove_SetHeading(BtlMoveChr *chr, f32 yaw, f32 pitch) {
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+void BtlMove_SetHeading(BtlFighter *chr, f32 yaw, f32 pitch) {
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
 
     pose->yaw = yaw;
     pose->rot.y = yaw;
@@ -658,9 +658,9 @@ void BtlMove_SetHeading(BtlMoveChr *chr, f32 yaw, f32 pitch) {
 }
 
 /* Turns the heading towards a world point by at most yawStep / pitchStep and clears the steering offsets. */
-void BtlMove_TurnToPoint(BtlMoveChr *chr, Vec4 *target, f32 yawStep, f32 pitchStep) {
+void BtlMove_TurnToPoint(BtlFighter *chr, Vec4 *target, f32 yawStep, f32 pitchStep) {
     Vec4 d;
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
     f32 eps;
     f32 ang;
     f32 pitch;
@@ -690,9 +690,9 @@ void BtlMove_TurnToPoint(BtlMoveChr *chr, Vec4 *target, f32 yawStep, f32 pitchSt
 /* Builds the unit direction of travel. Modes: 0 stick rotated by the camera yaw (horizontal), 1 the same tilted by
    the heading pitch, 2 heading yaw, 3 heading yaw and pitch, 4 / 5 the reverse of 2 / 3, 6 keep (horizontal part),
    7 keep. With no stick input modes 0 / 1 keep the old direction. */
-void BtlMove_SetDirection(BtlMoveChr *chr, s32 mode) {
+void BtlMove_SetDirection(BtlFighter *chr, s32 mode) {
     Vec4 v;
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
     Vec4 *dir = &pose->dir;
     f32 c;
     f32 s;
@@ -776,9 +776,9 @@ void BtlMove_SetDirection(BtlMoveChr *chr, s32 mode) {
 }
 
 /* The integration step: speed approaches the target by accel, then pos += dir * speed. */
-void BtlMove_Advance(BtlMoveChr *chr, f32 speed, f32 accel) {
+void BtlMove_Advance(BtlFighter *chr, f32 speed, f32 accel) {
     Vec4 step;
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
 
     pose->speed = BtlUtil_ApproachF(pose->speed, speed, accel);
     Vec4_Scale(&step, &pose->dir, pose->speed);
@@ -788,7 +788,7 @@ void BtlMove_Advance(BtlMoveChr *chr, f32 speed, f32 accel) {
 
 /* One frame of ordinary movement, used by most action handlers: turn the heading instantly, turn the model
    (36 degrees per frame at most), rebuild the direction, advance. */
-void BtlMove_Step(BtlMoveChr *chr, s32 yawMode, s32 pitchMode, s32 dirMode, f32 speed, f32 accel) {
+void BtlMove_Step(BtlFighter *chr, s32 yawMode, s32 pitchMode, s32 dirMode, f32 speed, f32 accel) {
     BtlMove_TurnYaw(chr, yawMode, 3.14159265f);
     BtlMove_TurnPitch(chr, pitchMode, 3.14159265f);
     BtlMove_TurnModelYaw(chr, BTL_DEG(36.0f), 0.3f);
@@ -797,13 +797,13 @@ void BtlMove_Step(BtlMoveChr *chr, s32 yawMode, s32 pitchMode, s32 dirMode, f32 
 }
 
 /* Lock-on only: places the fighter on the opponent's path, `lead` frames ahead plus both radii, inside the stage radius. */
-void BtlMove_WarpAheadOfOpponent(BtlMoveChr *chr, f32 lead) {
+void BtlMove_WarpAheadOfOpponent(BtlFighter *chr, f32 lead) {
     Vec4 opp;
     Vec4 oppVel;
     Vec4 old;
     Vec4 ofs;
     Vec4 rot;
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
 
     if (BtlChar_TestFlag(chr, 5)) {
         f32 min;
@@ -844,7 +844,7 @@ void BtlMove_WarpAheadOfOpponent(BtlMoveChr *chr, f32 lead) {
 }
 
 /* Lock-on only: places the fighter behind the opponent (its next position, both radii plus gap away). */
-void BtlMove_WarpBehindOpponent(BtlMoveChr *chr, f32 gap) {
+void BtlMove_WarpBehindOpponent(BtlFighter *chr, f32 gap) {
     Vec4 opp;
     Vec4 rot;
     Vec4 vel;
@@ -868,7 +868,7 @@ void BtlMove_WarpBehindOpponent(BtlMoveChr *chr, f32 gap) {
 }
 
 /* Lock-on only: places the fighter in front of the opponent. */
-void BtlMove_WarpInFrontOfOpponent(BtlMoveChr *chr, f32 gap) {
+void BtlMove_WarpInFrontOfOpponent(BtlFighter *chr, f32 gap) {
     Vec4 opp;
     Vec4 rot;
     Vec4 vel;
@@ -893,11 +893,11 @@ void BtlMove_WarpInFrontOfOpponent(BtlMoveChr *chr, f32 gap) {
 
 /* Moves the fighter so that its object's body point coincides with the opponent's, stops it and raises flags 0x3F
    (no push-out), 0x24 (no velocity this frame) and 0x55 with the point saved at chr+0x1310. */
-void BtlMove_SnapToOpponent(BtlMoveChr *chr) {
+void BtlMove_SnapToOpponent(BtlFighter *chr) {
     Vec4 own;
     Vec4 opp;
     Vec4 d;
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
 
     BtlCharApi_GetBodyPos(chr->objId, &own);
     BtlOpp_GetObjVecFA0(chr, &opp);
@@ -913,7 +913,7 @@ void BtlMove_SnapToOpponent(BtlMoveChr *chr) {
 
 /* Flies around the opponent on a 200 m circle towards the point opposite baseYaw (side 0 / 1 picks the way round),
    clipped to the stage radius. Returns 1 on the frame the target point is reached. */
-s32 BtlMove_CircleOpponent(BtlMoveChr *chr, s32 side, s32 lead, f32 baseYaw, f32 speed) {
+s32 BtlMove_CircleOpponent(BtlFighter *chr, s32 side, s32 lead, f32 baseYaw, f32 speed) {
     Vec4 tgt;
     Vec4 opp;
     Vec4 d;
@@ -921,7 +921,7 @@ s32 BtlMove_CircleOpponent(BtlMoveChr *chr, s32 side, s32 lead, f32 baseYaw, f32
     Vec4 hit;
     Vec4 step;
     s32 ret = 0;
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
     f32 radius;
     f32 diff;
     f32 scale;
@@ -986,7 +986,7 @@ s32 BtlMove_CircleOpponent(BtlMoveChr *chr, s32 side, s32 lead, f32 baseYaw, f32
 /* Computes where to go to attack the opponent from a given elevation angle: the opponent's predicted position
    (lead frames ahead, stopped by the stage, kept between the stage's top and bottom), and a point `dist` away
    from it on the fighter's side. */
-void BtlMove_CalcApproachPoint(BtlMoveChr *chr, Vec4 *out, Vec4 *outTarget, f32 dist, f32 angle, f32 distScale, f32 lead) {
+void BtlMove_CalcApproachPoint(BtlFighter *chr, Vec4 *out, Vec4 *outTarget, f32 dist, f32 angle, f32 distScale, f32 lead) {
     Vec4 opp;
     Vec4 tgt;
     Vec4 vel;
@@ -1094,8 +1094,8 @@ void BtlMove_CalcApproachPoint(BtlMoveChr *chr, Vec4 *out, Vec4 *outTarget, f32 
 }
 
 /* Gravity: vertical speed += 50 km/h per frame up to 3000 km/h, then y += speed (+Y is down). */
-void BtlMove_Fall(BtlMoveChr *chr) {
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+void BtlMove_Fall(BtlFighter *chr) {
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
 
     pose->fallSpeed += BTL_KMH(50.0f);
     if (BTL_KMH(3000.0f) < pose->fallSpeed) {
@@ -1105,20 +1105,20 @@ void BtlMove_Fall(BtlMoveChr *chr) {
 }
 
 /* Vertical speed approaches a target by accel, then y += speed. */
-void BtlMove_MoveVertical(BtlMoveChr *chr, f32 speed, f32 accel) {
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+void BtlMove_MoveVertical(BtlFighter *chr, f32 speed, f32 accel) {
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
 
     pose->fallSpeed = BtlUtil_ApproachF(pose->fallSpeed, speed, accel);
     pose->pos.y += pose->fallSpeed;
 }
 
 /* Brings the vertical speed to 0 by 100 km/h per frame. */
-void BtlMove_BrakeVertical(BtlMoveChr *chr) {
+void BtlMove_BrakeVertical(BtlFighter *chr) {
     BtlMove_MoveVertical(chr, 0.0f, BTL_KMH(100.0f));
 }
 
 /* Vertical part of ordinary movement: in flight (flag 0xE) the vertical speed is braked, otherwise the fighter falls. */
-void BtlMove_ApplyGravity(BtlMoveChr *chr) {
+void BtlMove_ApplyGravity(BtlFighter *chr) {
     if (BtlChar_TestFlag(chr, 0xE)) {
         BtlMove_BrakeVertical(chr);
     } else {
@@ -1127,8 +1127,8 @@ void BtlMove_ApplyGravity(BtlMoveChr *chr) {
 }
 
 /* Sets the model's forward lean, clamped to +-(pi/2 - 0.01). */
-void BtlMove_SetLeanX(BtlMoveChr *chr, f32 angle) {
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+void BtlMove_SetLeanX(BtlFighter *chr, f32 angle) {
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
 
     if (angle < -BTL_PITCH_MAX) {
         angle = -BTL_PITCH_MAX;
@@ -1140,12 +1140,12 @@ void BtlMove_SetLeanX(BtlMoveChr *chr, f32 angle) {
 }
 
 /* Sets the model's sideways lean. */
-void BtlMove_SetLeanZ(BtlMoveChr *chr, f32 angle) {
+void BtlMove_SetLeanZ(BtlFighter *chr, f32 angle) {
     BtlChar_GetPos(chr)->leanZ = angle;
 }
 
 /* 1 when the push-out moved the fighter this frame (flag 0x5E) and the two overlap in height (or flag 0x5F). */
-s32 BtlMove_IsBlockedByOpponent(BtlMoveChr *chr) {
+s32 BtlMove_IsBlockedByOpponent(BtlFighter *chr) {
     Vec4 to;
 
     if (BtlChar_TestFlag(chr, 0x5E)) {
@@ -1168,8 +1168,8 @@ s32 BtlMove_IsBlockedByOpponent(BtlMoveChr *chr) {
 
 /* Stage 8: keeps the position inside the stage's limit cylinder and raises the contact flags: 0x14 radius,
    0x15 top, 0x16 bottom, 0x17 the y = -10 limit of stages 4 / 27. */
-void BtlMove_ClampToStage(BtlMoveChr *chr) {
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+void BtlMove_ClampToStage(BtlFighter *chr) {
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
     f32 r = BtlUtil_LengthXZ(&pose->pos);
     f32 rad = BtlChar_GetObj(chr)->bodySphere->radius;
     f32 lim = BtlStage_GetInnerRadius() - rad;
@@ -1221,8 +1221,8 @@ void BtlMove_ClampToStage(BtlMoveChr *chr) {
 }
 
 /* Lock-on only: asks for this frame's movement to be bent into an orbit (flag 0x19) between two distances. */
-void BtlMove_RequestOrbit(BtlMoveChr *chr, f32 near, f32 far) {
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+void BtlMove_RequestOrbit(BtlFighter *chr, f32 near, f32 far) {
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
 
     if (BtlChar_TestFlag(chr, 5)) {
         BtlChar_SetFlag(chr, 0x19);
@@ -1233,7 +1233,7 @@ void BtlMove_RequestOrbit(BtlMoveChr *chr, f32 near, f32 far) {
 
 /* Stage 7: with flag 0x19, removes the change of distance to the opponent from this frame's movement and turns
    the heading by the angle travelled, fully beyond `far`, not at all inside `near`. */
-void BtlMove_ApplyOrbit(BtlMoveChr *chr) {
+void BtlMove_ApplyOrbit(BtlFighter *chr) {
     Vec4 cur;
     Vec4 base;
     Vec4 opp;
@@ -1243,7 +1243,7 @@ void BtlMove_ApplyOrbit(BtlMoveChr *chr) {
     Vec4 s;
     Vec4 g;
     Vec4 ang;
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
     f32 near = pose->orbitNear;
     f32 far = pose->orbitFar;
 
@@ -1303,7 +1303,7 @@ void BtlMove_ApplyOrbit(BtlMoveChr *chr) {
 
 /* Stage 7: keeps the fighter out of the opponent's body: a vertical plane between the two, placed by both radii,
    shared between them in proportion to how much each moved towards the other this frame. */
-s32 BtlMove_PushOut(BtlMoveChr *chr) {
+s32 BtlMove_PushOut(BtlFighter *chr) {
     Vec4 base;
     Vec4 d;
     Vec4 n;
@@ -1318,7 +1318,7 @@ s32 BtlMove_PushOut(BtlMoveChr *chr) {
     Vec4 rel;
     Vec4 oppC;
     Vec4 push;
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
     s32 checkHeight;
     f32 len;
     f32 inv;
@@ -1438,7 +1438,7 @@ f32 BtlMove_CalcVerticalSpeed(f32 height, f32 extra) {
 }
 
 /* Sets the vertical speed so that the fighter ends at the opponent's height. */
-void BtlMove_AimVerticalAtOpponent(BtlMoveChr *chr, s32 lead) {
+void BtlMove_AimVerticalAtOpponent(BtlFighter *chr, s32 lead) {
     Vec4 to;
     Vec4 vel;
     f32 v;
@@ -1454,7 +1454,7 @@ void BtlMove_AimVerticalAtOpponent(BtlMoveChr *chr, s32 lead) {
 }
 
 /* Take-off: once (flag 0x8A) faces the opponent, enters flight (0xE) and aims for its height; raises 0x81, 0x82, 0x8A. */
-void BtlMove_BeginRiseToOpponent(BtlMoveChr *chr) {
+void BtlMove_BeginRiseToOpponent(BtlFighter *chr) {
     if (!BtlChar_TestFlag(chr, 0x8A)) {
         if (BtlChar_TestFlag(chr, 5)) {
             BtlMove_TurnYaw(chr, 2, 3.14159265f);
@@ -1485,7 +1485,7 @@ f32 BtlMove_CalcJumpSpeed(f32 height) {
 }
 
 /* Sets the impulse velocity (knock-back) unless the current one is larger. */
-void BtlMove_SetImpulse(BtlMoveChr *chr, Vec4 *vel) {
+void BtlMove_SetImpulse(BtlFighter *chr, Vec4 *vel) {
     Vec4 *cur = &BtlChar_GetPos(chr)->impulse;
 
     if (Vec3_Length(cur) < Vec3_Length(vel)) {
@@ -1494,7 +1494,7 @@ void BtlMove_SetImpulse(BtlMoveChr *chr, Vec4 *vel) {
 }
 
 /* Impulse along a direction. */
-void BtlMove_SetImpulseDir(BtlMoveChr *chr, Vec4 *dir, f32 speed) {
+void BtlMove_SetImpulseDir(BtlFighter *chr, Vec4 *dir, f32 speed) {
     Vec4 vel;
 
     Vec4_Scale(&vel, dir, speed);
@@ -1502,7 +1502,7 @@ void BtlMove_SetImpulseDir(BtlMoveChr *chr, Vec4 *dir, f32 speed) {
 }
 
 /* Horizontal impulse along a yaw. */
-void BtlMove_SetImpulseYaw(BtlMoveChr *chr, f32 yaw, f32 speed) {
+void BtlMove_SetImpulseYaw(BtlFighter *chr, f32 yaw, f32 speed) {
     Vec4 dir;
 
     dir.x = Mathf_Sin(yaw);
@@ -1513,8 +1513,8 @@ void BtlMove_SetImpulseYaw(BtlMoveChr *chr, f32 yaw, f32 speed) {
 }
 
 /* After touching the stage limit: heads along the wall (or the reverse), and removes the pitch into the top / bottom. */
-void BtlMove_DeflectAtStageLimit(BtlMoveChr *chr, s32 back) {
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+void BtlMove_DeflectAtStageLimit(BtlFighter *chr, s32 back) {
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
 
     if (BtlChar_TestFlag(chr, 0x14) && 0.0f < BtlUtil_LengthXZ(&pose->pos)) {
         f32 a;
@@ -1555,8 +1555,8 @@ void BtlMove_DeflectAtStageLimit(BtlMoveChr *chr, s32 back) {
 
 /* Per frame: pos += impulse, then the impulse loses BTL_IMPULSE_DECEL of length. Declared int with no return value:
    the original does not tail-call. */
-s32 BtlMove_ApplyImpulse(BtlMoveChr *chr) {
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+s32 BtlMove_ApplyImpulse(BtlFighter *chr) {
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
 
     if (!BtlChars_IsTimeStopped()) {
         Vec4 *vel = &pose->impulse;
@@ -1574,8 +1574,8 @@ s32 BtlMove_ApplyImpulse(BtlMoveChr *chr) {
 }
 
 /* Per frame: the display offset (pose+0x20): hover bob 2 * sin(phase) while flying idle, and a sideways shake. */
-void BtlMove_UpdateHoverOffset(BtlMoveChr *chr) {
-    BtlMovePose *pose = BtlChar_GetPos(chr);
+void BtlMove_UpdateHoverOffset(BtlFighter *chr) {
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
     f32 a;
 
     Vec4_SetZero(&pose->dispOfs);
@@ -1617,7 +1617,7 @@ void BtlMove_UpdateHoverOffset(BtlMoveChr *chr) {
 }
 
 /* Per frame: the seven defence windows at chr+0x1068: each counts down to a floor and is re-opened by its input. */
-void BtlMove_UpdateDefenseTimers(BtlMoveChr *chr) {
+void BtlMove_UpdateDefenseTimers(BtlFighter *chr) {
     s32 on = BtlInput_TestAction(chr, 0x27, 1);
     f32 hp = BtlMember_GetHealthRatio(chr);
 

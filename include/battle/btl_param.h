@@ -13,7 +13,7 @@
  *   0x20C9F0..0x20E090  BtlAtk_*    the current attack id and the 0x30-byte attack record it selects
  *   0x20E090..0x20F0E8  BtlParam_*  the character parameter block (battle object + 0x91C); continued in btl_tech.c
  *
- * All structures are partial views local to this module.
+ * All structures are partial views local to this module; the fighter is BtlFighter (battle/btl_fighter.h).
  */
 
 /* ---- attack record --------------------------------------------------------------------------------------------- */
@@ -80,7 +80,7 @@ typedef struct BtlAtkRecord {
     /* 0x1D */ s8 reactD;       /* BtlAtk_GetReactionD: defender animation flag 0x1000; 0 = use react */
     /* 0x1E */ s8 reactE;       /* BtlAtk_GetReactionE: defender animation flag 0x2000; 0 = use react */
     /* 0x1F */ s8 reactC;       /* BtlAtk_GetReactionC: defender animation flag 0x4000 or action 0xDF; 0 = use react */
-    /* 0x20 */ s8 reactSub;     /* BtlAtk_GetReactionSub: raw, no fallback (HitReact.unk4) */
+    /* 0x20 */ s8 reactSub;     /* BtlAtk_GetReactionSub: raw, no fallback (react.reactSub) */
     /* 0x21 */ s8 reactF;       /* BtlAtk_GetReactionF: defender animation flag 0x100 from the front; 0 = use react */
     /* 0x22 */ s8 reactG;       /* BtlAtk_GetReactionG: defender animation 0xAE / 0xAF or flag 0x200; 0 = use react */
     /* 0x23 */ s8 hitFx;        /* BtlAtk_GetHitFxKind: raw; 1, 2 | 3, 4 | 10 pick the hit effect (btl_char_member.c) */
@@ -164,20 +164,11 @@ typedef struct BtlTechObj {
     /* 0xCAD */ s8 hitNo;           /* number of the current hit: 0 = first, 0 or -1 = "first" for animation 0x37 */
 } BtlTechObj;
 
-/* Member entry (BtlMember_Get / BtlMember_GetActive). */
-typedef BtlMember BtlTechMember;
-
-/* Gauge block of the active member (BtlMember_GetActiveGauge). */
-typedef BtlMemberGauge BtlTechGauge;
-
 /* The pad the fighter reads (BtlChar_GetPad). */
 typedef struct BtlTechPad {
     /* 0x000 */ u8 unk0[0x184];
     /* 0x184 */ s32 lastStatus;     /* Pad.lastStatus (sys/pad.h) */
 } BtlTechPad;
-
-/* Partial view of a fighter (0x1600 bytes). */
-typedef BtlFighter BtlTechChr;
 
 /* roster + 0x2C: one entry per attack action 0x70..0xAD (BtlAct_IsAttackId). */
 typedef struct BtlTechAtkAction {
@@ -251,102 +242,102 @@ void BtlCtrl_SetCpuLevel(s32 player, s32 level);
 s32 BtlCtrl_IsMemberBodyChanged(s32 player);
 
 /* attack */
-s32 BtlAtk_GetId(BtlTechChr *chr);
-BtlAtkRecord *BtlAtk_GetRecord(BtlTechChr *chr, s32 *id);
-BtlAtkRecord *BtlAtk_GetRecordOf(BtlTechChr *chr, u32 id);
-s32 BtlAtk_ApplyAbilities(BtlTechChr *chr, s32 val, u32 id);
-s32 BtlAtk_GetPriority(BtlTechChr *chr);
-s32 BtlAtk_GetDamage(BtlTechChr *chr);
-s32 BtlAtk_GetGuardDamage(BtlTechChr *chr);
-s32 BtlAtk_GetThrowParamC(BtlTechChr *chr);
-s32 BtlAtk_GetThrowParamE(BtlTechChr *chr);
-s32 BtlAtk_GetKiGain(BtlTechChr *chr);
-s32 BtlAtk_GetGuardKiCost(BtlTechChr *chr);
-s32 BtlAtk_GetChargeGaugeGain(BtlTechChr *chr);
-s32 BtlAtk_GetReaction(BtlTechChr *chr);
-s32 BtlAtk_GetReactionB(BtlTechChr *chr);
-s32 BtlAtk_GetReactionC(BtlTechChr *chr);
-s32 BtlAtk_GetReactionD(BtlTechChr *chr);
-s32 BtlAtk_GetReactionE(BtlTechChr *chr);
-s32 BtlAtk_GetReactionSub(BtlTechChr *chr);
-s32 BtlAtk_GetReactionF(BtlTechChr *chr);
-s32 BtlAtk_GetReactionG(BtlTechChr *chr);
-u32 BtlAtk_GetFlags(BtlTechChr *chr);
-f32 BtlAtk_GetPushOnHit(BtlTechChr *chr);
-f32 BtlAtk_GetPushOnGuard(BtlTechChr *chr);
-f32 BtlAtk_GetLaunchSpeed(BtlTechChr *chr);
-f32 BtlAtk_GetLaunchAngleA(BtlTechChr *chr);
-f32 BtlAtk_GetLaunchAngleAOf(BtlTechChr *chr, u32 id);
-f32 BtlAtk_GetLaunchAngleB(BtlTechChr *chr);
-f32 BtlAtk_GetLaunchAngleBOf(BtlTechChr *chr, u32 id);
-f32 BtlAtk_GetShakePower(BtlTechChr *chr);
-f32 BtlAtk_GetShakeTime(BtlTechChr *chr);
-f32 BtlAtk_GetShakePowerB(BtlTechChr *chr);
-f32 BtlAtk_GetShakeTimeB(BtlTechChr *chr);
-s32 BtlAtk_GetHitFxKind(BtlTechChr *chr);
-s32 BtlAtk_GetHitSoundLevel(BtlTechChr *chr);
-s32 BtlAtk_GetVoiceKind(BtlTechChr *chr);
-s32 BtlAtk_GetGuardKindA(BtlTechChr *chr);
-s32 BtlAtk_GetGuardKindB(BtlTechChr *chr);
-s32 BtlAtk_GetGuardKindC(BtlTechChr *chr);
+s32 BtlAtk_GetId(BtlFighter *chr);
+BtlAtkRecord *BtlAtk_GetRecord(BtlFighter *chr, s32 *id);
+BtlAtkRecord *BtlAtk_GetRecordOf(BtlFighter *chr, u32 id);
+s32 BtlAtk_ApplyAbilities(BtlFighter *chr, s32 val, u32 id);
+s32 BtlAtk_GetPriority(BtlFighter *chr);
+s32 BtlAtk_GetDamage(BtlFighter *chr);
+s32 BtlAtk_GetGuardDamage(BtlFighter *chr);
+s32 BtlAtk_GetThrowParamC(BtlFighter *chr);
+s32 BtlAtk_GetThrowParamE(BtlFighter *chr);
+s32 BtlAtk_GetKiGain(BtlFighter *chr);
+s32 BtlAtk_GetGuardKiCost(BtlFighter *chr);
+s32 BtlAtk_GetChargeGaugeGain(BtlFighter *chr);
+s32 BtlAtk_GetReaction(BtlFighter *chr);
+s32 BtlAtk_GetReactionB(BtlFighter *chr);
+s32 BtlAtk_GetReactionC(BtlFighter *chr);
+s32 BtlAtk_GetReactionD(BtlFighter *chr);
+s32 BtlAtk_GetReactionE(BtlFighter *chr);
+s32 BtlAtk_GetReactionSub(BtlFighter *chr);
+s32 BtlAtk_GetReactionF(BtlFighter *chr);
+s32 BtlAtk_GetReactionG(BtlFighter *chr);
+u32 BtlAtk_GetFlags(BtlFighter *chr);
+f32 BtlAtk_GetPushOnHit(BtlFighter *chr);
+f32 BtlAtk_GetPushOnGuard(BtlFighter *chr);
+f32 BtlAtk_GetLaunchSpeed(BtlFighter *chr);
+f32 BtlAtk_GetLaunchAngleA(BtlFighter *chr);
+f32 BtlAtk_GetLaunchAngleAOf(BtlFighter *chr, u32 id);
+f32 BtlAtk_GetLaunchAngleB(BtlFighter *chr);
+f32 BtlAtk_GetLaunchAngleBOf(BtlFighter *chr, u32 id);
+f32 BtlAtk_GetShakePower(BtlFighter *chr);
+f32 BtlAtk_GetShakeTime(BtlFighter *chr);
+f32 BtlAtk_GetShakePowerB(BtlFighter *chr);
+f32 BtlAtk_GetShakeTimeB(BtlFighter *chr);
+s32 BtlAtk_GetHitFxKind(BtlFighter *chr);
+s32 BtlAtk_GetHitSoundLevel(BtlFighter *chr);
+s32 BtlAtk_GetVoiceKind(BtlFighter *chr);
+s32 BtlAtk_GetGuardKindA(BtlFighter *chr);
+s32 BtlAtk_GetGuardKindB(BtlFighter *chr);
+s32 BtlAtk_GetGuardKindC(BtlFighter *chr);
 s32 BtlAtk_RankGuardKind(u32 kind);
-s32 BtlAtk_GetBestGuardKind(BtlTechChr *chr);
-s32 BtlAtk_GetGuardKindE(BtlTechChr *chr);
-s32 BtlAtk_GetGuardFlagSel(BtlTechChr *chr);
-s32 BtlAtk_GetArmorIgnore(BtlTechChr *chr);
-s32 BtlAtk_GetArmorIgnoreOf(BtlTechChr *chr, u32 id);
-s32 BtlParam_ScaleKiCharge(BtlTechChr *chr, s32 val);
+s32 BtlAtk_GetBestGuardKind(BtlFighter *chr);
+s32 BtlAtk_GetGuardKindE(BtlFighter *chr);
+s32 BtlAtk_GetGuardFlagSel(BtlFighter *chr);
+s32 BtlAtk_GetArmorIgnore(BtlFighter *chr);
+s32 BtlAtk_GetArmorIgnoreOf(BtlFighter *chr, u32 id);
+s32 BtlParam_ScaleKiCharge(BtlFighter *chr, s32 val);
 
 /* parameter block */
-u32 BtlParam_GetFlags(BtlTechChr *chr);
-u32 BtlParam_GetFlags2(BtlTechChr *chr);
-u32 BtlParam_GetFlags3(BtlTechChr *chr);
-s32 BtlParam_GetCharaFlags(BtlTechChr *chr);
-s32 BtlParam_GetSizeClass(BtlTechChr *chr);
-s32 BtlParam_GetDefaultSlot(BtlTechChr *chr);
-s32 BtlParam_GetSlotId(BtlTechChr *chr, s32 slot);
-s32 BtlParam_GetSlotCost(BtlTechChr *chr, s32 slot);
-s32 BtlParam_GetSlotA0(BtlTechChr *chr, s32 slot);
-s32 BtlParam_GetSlotA4(BtlTechChr *chr, s32 slot);
-s32 BtlParam_GetSlotA8(BtlTechChr *chr, s32 slot);
-s32 BtlParam_GetFormFlags(BtlTechChr *chr);
-s32 BtlParam_CountSlots(BtlTechChr *chr);
-s32 BtlParam_TestSlotResetsVariant(BtlTechChr *chr, s32 n);
-s32 BtlParam_GetFusionResult(BtlTechChr *chr, s32 n);
-s32 BtlParam_GetUnkB7(BtlTechChr *chr, s32 n);
-s32 BtlParam_GetFusionPartner(BtlTechChr *chr, s32 n, s32 m);
-s32 BtlParam_GetCostAE(BtlTechChr *chr, s32 n);
-s32 BtlParam_GetUnkC6(BtlTechChr *chr);
-s32 BtlParam_GetFusionSequence(BtlTechChr *chr, s32 n);
-s32 BtlParam_GetAuraKind(BtlTechChr *chr);
-s32 BtlParam_GetType(BtlTechChr *chr);
-f32 BtlParam_GetTypeValueA(BtlTechChr *chr);
-f32 BtlParam_GetTypeValueB(BtlTechChr *chr);
-f32 BtlParam_GetTypeValueC(BtlTechChr *chr);
-s32 BtlParam_IsType2to4(BtlTechChr *chr);
-s32 BtlParam_IsTypeSetA(BtlTechChr *chr);
-s32 BtlParam_IsTypeSetB(BtlTechChr *chr);
-s32 BtlParam_GetBlastLimitA(BtlTechChr *chr);
-s32 BtlParam_GetBlastLimitB(BtlTechChr *chr);
-s32 BtlParam_GetRushFinisher(BtlTechChr *chr, u32 n);
-s32 BtlParam_GetChainKind(BtlTechChr *chr, u32 n);
-s32 BtlParam_GetFinisherChoice(BtlTechChr *chr, u32 n);
-s32 BtlParam_GetUnk1C(BtlTechChr *chr);
-s32 BtlParam_GetUnk20(BtlTechChr *chr);
-s32 BtlParam_GetUnk24(BtlTechChr *chr);
-s32 BtlParam_GetKiRegenLimit(BtlTechChr *chr);
-s32 BtlParam_GetGaugeB(BtlTechChr *chr);
-s32 BtlParam_GetUnk40(BtlTechChr *chr);
-s32 BtlParam_GetRateA(BtlTechChr *chr);
-s32 BtlParam_GetRateB(BtlTechChr *chr);
-s32 BtlParam_GetKiRegenRate(BtlTechChr *chr);
-s32 BtlParam_GetKiRecoverRate(BtlTechChr *chr);
-s32 BtlParam_GetKiDrain67(BtlTechChr *chr);
-s32 BtlParam_GetRecoverKiCost(BtlTechChr *chr);
-s32 BtlParam_GetAmountA(BtlTechChr *chr);
-s32 BtlParam_GetAmountB(BtlTechChr *chr);
-s32 BtlParam_GetBlastGainRate(BtlTechChr *chr);
-s32 BtlParam_GetStepA(BtlTechChr *chr);
-s32 BtlParam_GetMaxPowerDrain(BtlTechChr *chr);
+u32 BtlParam_GetFlags(BtlFighter *chr);
+u32 BtlParam_GetFlags2(BtlFighter *chr);
+u32 BtlParam_GetFlags3(BtlFighter *chr);
+s32 BtlParam_GetCharaFlags(BtlFighter *chr);
+s32 BtlParam_GetSizeClass(BtlFighter *chr);
+s32 BtlParam_GetDefaultSlot(BtlFighter *chr);
+s32 BtlParam_GetSlotId(BtlFighter *chr, s32 slot);
+s32 BtlParam_GetSlotCost(BtlFighter *chr, s32 slot);
+s32 BtlParam_GetSlotA0(BtlFighter *chr, s32 slot);
+s32 BtlParam_GetSlotA4(BtlFighter *chr, s32 slot);
+s32 BtlParam_GetSlotA8(BtlFighter *chr, s32 slot);
+s32 BtlParam_GetFormFlags(BtlFighter *chr);
+s32 BtlParam_CountSlots(BtlFighter *chr);
+s32 BtlParam_TestSlotResetsVariant(BtlFighter *chr, s32 n);
+s32 BtlParam_GetFusionResult(BtlFighter *chr, s32 n);
+s32 BtlParam_GetUnkB7(BtlFighter *chr, s32 n);
+s32 BtlParam_GetFusionPartner(BtlFighter *chr, s32 n, s32 m);
+s32 BtlParam_GetCostAE(BtlFighter *chr, s32 n);
+s32 BtlParam_GetUnkC6(BtlFighter *chr);
+s32 BtlParam_GetFusionSequence(BtlFighter *chr, s32 n);
+s32 BtlParam_GetAuraKind(BtlFighter *chr);
+s32 BtlParam_GetType(BtlFighter *chr);
+f32 BtlParam_GetTypeValueA(BtlFighter *chr);
+f32 BtlParam_GetTypeValueB(BtlFighter *chr);
+f32 BtlParam_GetTypeValueC(BtlFighter *chr);
+s32 BtlParam_IsType2to4(BtlFighter *chr);
+s32 BtlParam_IsTypeSetA(BtlFighter *chr);
+s32 BtlParam_IsTypeSetB(BtlFighter *chr);
+s32 BtlParam_GetBlastLimitA(BtlFighter *chr);
+s32 BtlParam_GetBlastLimitB(BtlFighter *chr);
+s32 BtlParam_GetRushFinisher(BtlFighter *chr, u32 n);
+s32 BtlParam_GetChainKind(BtlFighter *chr, u32 n);
+s32 BtlParam_GetFinisherChoice(BtlFighter *chr, u32 n);
+s32 BtlParam_GetUnk1C(BtlFighter *chr);
+s32 BtlParam_GetUnk20(BtlFighter *chr);
+s32 BtlParam_GetUnk24(BtlFighter *chr);
+s32 BtlParam_GetKiRegenLimit(BtlFighter *chr);
+s32 BtlParam_GetGaugeB(BtlFighter *chr);
+s32 BtlParam_GetUnk40(BtlFighter *chr);
+s32 BtlParam_GetRateA(BtlFighter *chr);
+s32 BtlParam_GetRateB(BtlFighter *chr);
+s32 BtlParam_GetKiRegenRate(BtlFighter *chr);
+s32 BtlParam_GetKiRecoverRate(BtlFighter *chr);
+s32 BtlParam_GetKiDrain67(BtlFighter *chr);
+s32 BtlParam_GetRecoverKiCost(BtlFighter *chr);
+s32 BtlParam_GetAmountA(BtlFighter *chr);
+s32 BtlParam_GetAmountB(BtlFighter *chr);
+s32 BtlParam_GetBlastGainRate(BtlFighter *chr);
+s32 BtlParam_GetStepA(BtlFighter *chr);
+s32 BtlParam_GetMaxPowerDrain(BtlFighter *chr);
 
 #endif

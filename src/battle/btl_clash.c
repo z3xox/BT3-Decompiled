@@ -20,21 +20,21 @@ extern void Vec3_Normalize(Vec4 *dst, Vec4 *src);
 extern void Vec4_Lerp(Vec4 *dst, Vec4 *a, Vec4 *b, f32 t); /* a + (b - a) * t */
 extern f32 BtlUtil_WrapAngle(f32 a);
 extern f32 BtlUtil_ClampF(f32 v, f32 lo, f32 hi);
-extern BtlFlagChr *BtlChar_Get(s32 i);
-extern BtlFlagPose *BtlChar_GetPos(BtlFlagChr *chr);
+extern BtlFighter *BtlChar_Get(s32 i);
+extern BtlFighterPose *BtlChar_GetPos(BtlFighter *chr);
 extern s32 BtlChar_FrameMod(s32 n);
 extern u32 BtlChar_Rand(void);
-extern void BtlChar_PlayVoice(BtlFlagChr *chr, s32 kind);
+extern void BtlChar_PlayVoice(BtlFighter *chr, s32 kind);
 extern s32 Battle_GetMode(void);
-extern void ChrCam_SetCut(BtlFlagChr *chr, Vec4 *vecA, Vec4 *vecADelta, Vec4 *vecB, Vec4 *vecBDelta, Vec4 *vecC,
+extern void ChrCam_SetCut(BtlFighter *chr, Vec4 *vecA, Vec4 *vecADelta, Vec4 *vecB, Vec4 *vecBDelta, Vec4 *vecC,
                           Vec4 *vecCDelta, s32 nodeA, f32 valA, f32 valADelta, f32 valB, f32 valBDelta, f32 valC,
                           f32 valCDelta, s32 nodeA2, s32 nodeC, s32 nodeC2, s32 time, s32 flags);
-extern void ChrCam_RequestCut(BtlFlagChr *chr, s32 table, s32 index);
-extern void ChrCam_EndCut(BtlFlagChr *chr);
+extern void ChrCam_RequestCut(BtlFighter *chr, s32 table, s32 index);
+extern void ChrCam_EndCut(BtlFighter *chr);
 extern s32 BtlCharApi_IsInClashA(s32 objId);                                  /* action id in 0x130..0x132 */
-extern s32 BtlAct_GetCurrent(BtlFlagChr *chr);                            /* action id */
-extern s32 BtlAct_GetCurrentClass(BtlFlagChr *chr);                            /* class of the technique in use (0..4), or -1 */
-extern void BtlAct_CountAndMarkOpponent(BtlFlagChr *chr);                           /* chr->clashCountB++, opponent +0xD4C = 1 */
+extern s32 BtlAct_GetCurrent(BtlFighter *chr);                            /* action id */
+extern s32 BtlAct_GetCurrentClass(BtlFighter *chr);                            /* class of the technique in use (0..4), or -1 */
+extern void BtlAct_CountAndMarkOpponent(BtlFighter *chr);                           /* chr->clashCountB++, opponent +0xD4C = 1 */
 extern f32 BtlCharApi_GetHeight(s32 objId);                                  /* height */
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out);            /* world position of a model node */
 extern f32 EftStruggle_GetCamDist(s32 side, s32 type);
@@ -42,11 +42,11 @@ extern f32 EftStruggle_GetMidDist(void);
 extern void EftStruggle_End(s32 objId);
 extern s32 BtlStage_GetPathCount(void);                                       /* number of stage paths */
 extern BtlClashPath *BtlStage_GetPath(s32 n);                            /* stage path n */
-extern s32 BtlSuper_IsThrow(BtlFlagChr *chr, s32 cls);
-extern s32 BtlSuper_GetFlags(BtlFlagChr *chr, s32 cls);                   /* attribute word of the technique */
-extern s32 BtlSuper_GetDamage(BtlFlagChr *chr, s32 cls, s32 guard, s32 total); /* damage of the technique */
-extern void BtlColl_StartThrow(BtlFlagChr *chr, BtlFlagChr *target, s32 cls, s32 attr);
-extern void BtlMember_Damage(BtlFlagChr *chr, s32 damage, s32 flags);    /* applies damage */
+extern s32 BtlSuper_IsThrow(BtlFighter *chr, s32 cls);
+extern s32 BtlSuper_GetFlags(BtlFighter *chr, s32 cls);                   /* attribute word of the technique */
+extern s32 BtlSuper_GetDamage(BtlFighter *chr, s32 cls, s32 guard, s32 total); /* damage of the technique */
+extern void BtlColl_StartThrow(BtlFighter *chr, BtlFighter *target, s32 cls, s32 attr);
+extern void BtlMember_Damage(BtlFighter *chr, s32 damage, s32 flags);    /* applies damage */
 
 extern BtlFlagRoster *gBtlChars;
 extern Vec4 gVu0ZeroVec; /* zero vector */
@@ -84,7 +84,7 @@ s32 BtlClash_BothInActionFA(void) {
 
 /* Raises flag 0xBF on a fighter still in action 0xFA (ends it). */
 void BtlClash_EndActionFA(s32 player) {
-    BtlFlagChr *chr = BtlChar_Get(player);
+    BtlFighter *chr = BtlChar_Get(player);
 
     if (BtlAct_GetCurrent(chr) == 0xFA) {
         BtlChar_SetFlag(chr, 0xBF);
@@ -113,7 +113,7 @@ s32 BtlClash_BothInActionFC(void) {
 
 /* Raises flag 0xC6 on a fighter still in action 0xFC (ends it). */
 void BtlClash_EndActionFC(s32 player) {
-    BtlFlagChr *chr = BtlChar_Get(player);
+    BtlFighter *chr = BtlChar_Get(player);
 
     if (BtlAct_GetCurrent(chr) == 0xFC) {
         BtlChar_SetFlag(chr, 0xC6);
@@ -123,7 +123,7 @@ void BtlClash_EndActionFC(s32 player) {
 /* Clash A camera: a one-frame cut orbiting one fighter (type 0 wide, 1 from the side, 2 close on node 0x30). */
 void BtlClash_SetOrbitCut(s32 player, s32 type) {
     Vec4 d;
-    BtlFlagChr *chr;
+    BtlFighter *chr;
     s32 nodeA = 3;
     s32 nodeB = 0x11;
     f32 pitch;
@@ -179,7 +179,7 @@ void BtlClash_SetMidCut(Vec4 *mid, f32 bias) {
     Vec4 look;
     Vec4 a;
     Vec4 b;
-    BtlFlagChr *chr = BtlChar_Get(0);
+    BtlFighter *chr = BtlChar_Get(0);
     f32 ang = 1.5707963f;
     f32 half;
     f32 base;
@@ -237,8 +237,8 @@ s32 BtlClash_UpdateA(s32 state) {
     Vec4 a;
     Vec4 b;
     BtlFlagRoster *roster = gBtlChars;
-    BtlFlagChr *chr0 = BtlChar_Get(0);
-    BtlFlagChr *chr1 = BtlChar_Get(1);
+    BtlFighter *chr0 = BtlChar_Get(0);
+    BtlFighter *chr1 = BtlChar_Get(1);
     s32 count0 = chr0->clashCountA;
     BtlClashA *c = &roster->clashA;
     s32 count1 = chr1->clashCountA;
@@ -318,8 +318,8 @@ s32 BtlClash_UpdateA(s32 state) {
         break;
     case 5:
         if (c->timer == 0) {
-            BtlFlagChr *winner;
-            BtlFlagChr *loser;
+            BtlFighter *winner;
+            BtlFighter *loser;
             s32 flags = 0;
             s32 cls;
             s32 loserCls;
@@ -386,8 +386,8 @@ s32 BtlClash_UpdateA(s32 state) {
 /* Clash B, one frame. Returns the next state (0 when it is over). */
 s32 BtlClash_UpdateB(s32 state) {
     BtlClashB *c = &gBtlChars->clashB;
-    BtlFlagChr *chr0 = BtlChar_Get(0);
-    BtlFlagChr *chr1 = BtlChar_Get(1);
+    BtlFighter *chr0 = BtlChar_Get(0);
+    BtlFighter *chr1 = BtlChar_Get(1);
 
     switch (state) {
     case 6:
@@ -417,8 +417,8 @@ s32 BtlClash_UpdateB(s32 state) {
         if (c->timer == 0) {
             s32 win;
             s32 lose;
-            BtlFlagChr *winner;
-            BtlFlagChr *loser;
+            BtlFighter *winner;
+            BtlFighter *loser;
 
             if (chr1->clashCountB < chr0->clashCountB) {
                 win = 0;
@@ -449,11 +449,11 @@ s32 BtlClash_UpdateB(s32 state) {
 /* Clash C, one frame: every exchange moves the pair to a random point of a random stage path. */
 s32 BtlClash_UpdateC(s32 state) {
     BtlClashC *c = &gBtlChars->clashC;
-    BtlFlagChr *chr0 = BtlChar_Get(0);
-    BtlFlagChr *chr1 = BtlChar_Get(1);
+    BtlFighter *chr0 = BtlChar_Get(0);
+    BtlFighter *chr1 = BtlChar_Get(1);
     BtlClashPath *path;
-    BtlFlagChr *winner;
-    BtlFlagChr *loser;
+    BtlFighter *winner;
+    BtlFighter *loser;
 
     switch (state) {
     case 9:

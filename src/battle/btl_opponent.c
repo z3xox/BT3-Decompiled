@@ -16,16 +16,16 @@ extern f32 Vec3_Length(Vec4 *v);
 extern f32 BtlUtil_WrapAngle(f32 a);
 extern f32 BtlUtil_LengthXZ(Vec4 *v);
 extern f32 BtlUtil_MaxF(f32 a, f32 b);
-extern BtlFlagChr *BtlChar_Get(s32 i);
-extern BtlFlagPose *BtlChar_GetPos(BtlFlagChr *chr);
-extern void *BtlChar_GetObj(BtlFlagChr *chr);
-extern s32 BtlChar_IsDead(BtlFlagChr *chr);
+extern BtlFighter *BtlChar_Get(s32 i);
+extern BtlFighterPose *BtlChar_GetPos(BtlFighter *chr);
+extern void *BtlChar_GetObj(BtlFighter *chr);
+extern s32 BtlChar_IsDead(BtlFighter *chr);
 extern void *BtlObj_Get(s32 id);
-extern void ChrCam_EndCut(BtlFlagChr *chr);
-extern void BtlChar_GetSnapPos(BtlFlagChr *chr, Vec4 *out, s32 slot); /* override position `slot` when its bit of +0x3C0 is set, else the position */
-extern void BtlChar_GetSnapRot(BtlFlagChr *chr, Vec4 *out, s32 slot); /* the same for the rotation */
-extern s32 BtlMember_HasAbility(BtlFlagChr *chr, s32 ability);
-extern s32 BtlAct_GetCurrent(BtlFlagChr *chr);                        /* action id */
+extern void ChrCam_EndCut(BtlFighter *chr);
+extern void BtlChar_GetSnapPos(BtlFighter *chr, Vec4 *out, s32 slot); /* override position `slot` when its bit of +0x3C0 is set, else the position */
+extern void BtlChar_GetSnapRot(BtlFighter *chr, Vec4 *out, s32 slot); /* the same for the rotation */
+extern s32 BtlMember_HasAbility(BtlFighter *chr, s32 ability);
+extern s32 BtlAct_GetCurrent(BtlFighter *chr);                        /* action id */
 extern s32 BtlAct_IsTechniqueId(s32 action);                             /* action is 0x105..0x132 */
 extern f32 BtlCharApi_GetHeight(s32 objId);                              /* object +0xFF4: height (10 without object) */
 extern f32 BtlCharApi_GetBodyUnkFF8(s32 objId);                              /* object +0xFF8 (10 without object) */
@@ -33,34 +33,34 @@ extern f32 BtlCharApi_GetCenterHeight(s32 objId);                              /
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out);        /* world position of a model node */
 extern f32 BtlCharApi_GetRadius(s32 objId);                              /* body radius */
 extern s32 BtlCharApi_IsInSkill(s32 objId);                              /* action is 0xFD..0x102 */
-extern s32 BtlParam_GetCharaFlags(BtlFlagChr *chr);                        /* u16 at +0 of the object's parameter block */
-extern s32 BtlParam_GetSizeClass(BtlFlagChr *chr);                        /* s8 at +2 of the object's parameter block */
-extern f32 BtlParam_GetUnkC7Scale(BtlFlagChr *chr);
+extern s32 BtlParam_GetCharaFlags(BtlFighter *chr);                        /* u16 at +0 of the object's parameter block */
+extern s32 BtlParam_GetSizeClass(BtlFighter *chr);                        /* s8 at +2 of the object's parameter block */
+extern f32 BtlParam_GetUnkC7Scale(BtlFighter *chr);
 
 #define OPPONENT(chr) ((chr)->player == 0 ? BtlChar_Get(1) : BtlChar_Get(0))
 
 /* Where to aim at the opponent: its override position 6 when set, else its position. */
-void BtlOpp_GetTargetPos(BtlFlagChr *chr, Vec4 *out) {
+void BtlOpp_GetTargetPos(BtlFighter *chr, Vec4 *out) {
     BtlChar_GetSnapPos(OPPONENT(chr), out, 6);
 }
 
 /* The opponent's override position `slot` when set, else its position. */
-void BtlOpp_GetSnapPos(BtlFlagChr *chr, Vec4 *out, s32 slot) {
+void BtlOpp_GetSnapPos(BtlFighter *chr, Vec4 *out, s32 slot) {
     BtlChar_GetSnapPos(OPPONENT(chr), out, slot);
 }
 
 /* The opponent's override rotation 6 when set, else its rotation. */
-void BtlOpp_GetTargetRot(BtlFlagChr *chr, Vec4 *out) {
+void BtlOpp_GetTargetRot(BtlFighter *chr, Vec4 *out) {
     BtlChar_GetSnapRot(OPPONENT(chr), out, 6);
 }
 
 /* The opponent's override rotation `slot` when set, else its rotation. */
-void BtlOpp_GetSnapRot(BtlFlagChr *chr, Vec4 *out, s32 slot) {
+void BtlOpp_GetSnapRot(BtlFighter *chr, Vec4 *out, s32 slot) {
     BtlChar_GetSnapRot(OPPONENT(chr), out, slot);
 }
 
 /* Y angle of BtlOpp_GetTargetRot. */
-f32 BtlOpp_GetTargetYaw(BtlFlagChr *chr) {
+f32 BtlOpp_GetTargetYaw(BtlFighter *chr) {
     Vec4 rot;
 
     BtlChar_GetSnapRot(OPPONENT(chr), &rot, 6);
@@ -68,7 +68,7 @@ f32 BtlOpp_GetTargetYaw(BtlFlagChr *chr) {
 }
 
 /* Vector from the fighter to the opponent's target position. */
-void BtlOpp_GetDelta(BtlFlagChr *chr, Vec4 *out) {
+void BtlOpp_GetDelta(BtlFighter *chr, Vec4 *out) {
     Vec4 pos;
 
     BtlOpp_GetTargetPos(chr, &pos);
@@ -76,17 +76,17 @@ void BtlOpp_GetDelta(BtlFlagChr *chr, Vec4 *out) {
 }
 
 /* Copies the vector at +0x30 of the opponent's pose. */
-void BtlOpp_GetPoseVec30(BtlFlagChr *chr, Vec4 *out) {
+void BtlOpp_GetPoseVec30(BtlFighter *chr, Vec4 *out) {
     Vec4_Copy(out, &BtlChar_GetPos(OPPONENT(chr))->vel);
 }
 
 /* Copies the opponent's velocity (pose +0x40). */
-void BtlOpp_GetVelocity(BtlFlagChr *chr, Vec4 *out) {
+void BtlOpp_GetVelocity(BtlFighter *chr, Vec4 *out) {
     Vec4_Copy(out, &BtlChar_GetPos(OPPONENT(chr))->move);
 }
 
 /* Distance to the opponent. */
-f32 BtlOpp_GetDistance(BtlFlagChr *chr) {
+f32 BtlOpp_GetDistance(BtlFighter *chr) {
     Vec4 d;
 
     BtlOpp_GetDelta(chr, &d);
@@ -94,7 +94,7 @@ f32 BtlOpp_GetDistance(BtlFlagChr *chr) {
 }
 
 /* Horizontal distance to the opponent. */
-f32 BtlOpp_GetDistanceXZ(BtlFlagChr *chr) {
+f32 BtlOpp_GetDistanceXZ(BtlFighter *chr) {
     Vec4 d;
 
     BtlOpp_GetDelta(chr, &d);
@@ -102,7 +102,7 @@ f32 BtlOpp_GetDistanceXZ(BtlFlagChr *chr) {
 }
 
 /* Horizontal distance between the two bodies: distance minus both radii, never negative. */
-f32 BtlOpp_GetGapXZ(BtlFlagChr *chr) {
+f32 BtlOpp_GetGapXZ(BtlFighter *chr) {
     f32 d = BtlOpp_GetDistanceXZ(chr);
 
     d -= BtlCharApi_GetRadius(chr->objId);
@@ -111,7 +111,7 @@ f32 BtlOpp_GetGapXZ(BtlFlagChr *chr) {
 }
 
 /* Yaw of the direction to the opponent; 0 when it is straight above or below. */
-f32 BtlOpp_GetYaw(BtlFlagChr *chr) {
+f32 BtlOpp_GetYaw(BtlFighter *chr) {
     Vec4 d;
 
     BtlOpp_GetDelta(chr, &d);
@@ -122,22 +122,22 @@ f32 BtlOpp_GetYaw(BtlFlagChr *chr) {
 }
 
 /* Yaw to the opponent relative to the fighter's own rotation. */
-f32 BtlOpp_GetYawFromFacing(BtlFlagChr *chr) {
+f32 BtlOpp_GetYawFromFacing(BtlFighter *chr) {
     f32 yaw = BtlOpp_GetYaw(chr);
-    BtlFlagPose *pose = BtlChar_GetPos(chr);
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
 
     return BtlUtil_WrapAngle(yaw - BtlUtil_WrapAngle(pose->rot.y + BtlChar_GetPos(chr)->rootRot.y));
 }
 
 /* Yaw to the opponent relative to the opponent's rotation. */
-f32 BtlOpp_GetYawFromItsFacing(BtlFlagChr *chr) {
+f32 BtlOpp_GetYawFromItsFacing(BtlFighter *chr) {
     f32 yaw = BtlOpp_GetYaw(chr);
 
     return BtlUtil_WrapAngle(yaw - BtlOpp_GetTargetYaw(chr));
 }
 
 /* Pitch of the direction to the opponent (positive when it is higher: +Y is down). */
-f32 BtlOpp_GetPitch(BtlFlagChr *chr) {
+f32 BtlOpp_GetPitch(BtlFighter *chr) {
     Vec4 d;
     f32 len;
     f32 pitch;
@@ -153,7 +153,7 @@ f32 BtlOpp_GetPitch(BtlFlagChr *chr) {
 }
 
 /* The same after adding half the height difference to the vertical offset. */
-f32 BtlOpp_GetPitchAdjusted(BtlFlagChr *chr) {
+f32 BtlOpp_GetPitchAdjusted(BtlFighter *chr) {
     Vec4 d;
     f32 len;
     f32 pitch;
@@ -170,56 +170,56 @@ f32 BtlOpp_GetPitchAdjusted(BtlFlagChr *chr) {
 }
 
 /* Half the fighter's height minus half the opponent's. */
-f32 BtlOpp_GetHalfHeightDiff(BtlFlagChr *chr) {
-    BtlFlagChr *opp = OPPONENT(chr);
+f32 BtlOpp_GetHalfHeightDiff(BtlFighter *chr) {
+    BtlFighter *opp = OPPONENT(chr);
     f32 own = BtlCharApi_GetHeight(chr->objId);
 
     return own * 0.5f - BtlCharApi_GetHeight(opp->objId) * 0.5f;
 }
 
 /* The opponent's body radius. */
-f32 BtlOpp_GetRadius(BtlFlagChr *chr) {
+f32 BtlOpp_GetRadius(BtlFighter *chr) {
     return BtlCharApi_GetRadius(OPPONENT(chr)->objId);
 }
 
 /* Signed byte +2 of the opponent's parameter block. */
-s32 BtlOpp_GetParamByte2(BtlFlagChr *chr) {
+s32 BtlOpp_GetParamByte2(BtlFighter *chr) {
     return BtlParam_GetSizeClass(OPPONENT(chr));
 }
 
 /* The opponent's height (object +0xFF4). */
-f32 BtlOpp_GetHeight(BtlFlagChr *chr) {
+f32 BtlOpp_GetHeight(BtlFighter *chr) {
     return BtlCharApi_GetHeight(OPPONENT(chr)->objId);
 }
 
 /* The opponent's object +0xFFC. */
-f32 BtlOpp_GetCenterHeight(BtlFlagChr *chr) {
+f32 BtlOpp_GetCenterHeight(BtlFighter *chr) {
     return BtlCharApi_GetCenterHeight(OPPONENT(chr)->objId);
 }
 
 /* Word +0 of the opponent's parameter block. */
-s32 BtlOpp_GetParamWord0(BtlFlagChr *chr) {
+s32 BtlOpp_GetParamWord0(BtlFighter *chr) {
     return BtlParam_GetCharaFlags(OPPONENT(chr));
 }
 
 /* The opponent's player index. */
-s32 BtlOpp_GetPlayer(BtlFlagChr *chr) {
+s32 BtlOpp_GetPlayer(BtlFighter *chr) {
     return OPPONENT(chr)->player;
 }
 
 /* The opponent's battle object id. */
-s32 BtlOpp_GetObjId(BtlFlagChr *chr) {
+s32 BtlOpp_GetObjId(BtlFighter *chr) {
     return OPPONENT(chr)->objId;
 }
 
 /* The opponent's battle object. */
-void *BtlOpp_GetObj(BtlFlagChr *chr) {
+void *BtlOpp_GetObj(BtlFighter *chr) {
     return BtlChar_GetObj(OPPONENT(chr));
 }
 
 /* The opponent's action as this frame should see it: last frame's until both fighters have reached stage 6. */
-s32 BtlOpp_GetSeenAction(BtlFlagChr *chr) {
-    BtlFlagChr *opp = OPPONENT(chr);
+s32 BtlOpp_GetSeenAction(BtlFighter *chr) {
+    BtlFighter *opp = OPPONENT(chr);
 
     if (BtlChar_GetStage(chr) < 6 || BtlChar_GetStage(opp) < 6) {
         return opp->act.prev;
@@ -228,8 +228,8 @@ s32 BtlOpp_GetSeenAction(BtlFlagChr *chr) {
 }
 
 /* The same choice for the opponent's +0x964 / +0x968. */
-s32 BtlOpp_GetSeenActionFrame(BtlFlagChr *chr) {
-    BtlFlagChr *opp = OPPONENT(chr);
+s32 BtlOpp_GetSeenActionFrame(BtlFighter *chr) {
+    BtlFighter *opp = OPPONENT(chr);
 
     if (BtlChar_GetStage(chr) < 6 || BtlChar_GetStage(opp) < 6) {
         return opp->prevActionFrame;
@@ -238,34 +238,34 @@ s32 BtlOpp_GetSeenActionFrame(BtlFlagChr *chr) {
 }
 
 /* The opponent's object +0xFF8. */
-f32 BtlOpp_GetObjUnkFF8(BtlFlagChr *chr) {
+f32 BtlOpp_GetObjUnkFF8(BtlFighter *chr) {
     return BtlCharApi_GetBodyUnkFF8(OPPONENT(chr)->objId);
 }
 
 /* Copies the opponent's vector at +0x15A0. */
-void BtlOpp_GetLookOffset(BtlFlagChr *chr, Vec4 *out) {
-    BtlFlagChr *opp = OPPONENT(chr);
+void BtlOpp_GetLookOffset(BtlFighter *chr, Vec4 *out) {
+    BtlFighter *opp = OPPONENT(chr);
 
     Vec4_Copy(out, &opp->look.offset);
 }
 
 /* World position of a node of the opponent's model. */
-void BtlOpp_GetNodePos(BtlFlagChr *chr, s32 node, Vec4 *out) {
+void BtlOpp_GetNodePos(BtlFighter *chr, s32 node, Vec4 *out) {
     BtlCharApi_GetNodePos(OPPONENT(chr)->objId, node, out);
 }
 
 /* Copies the vector the opponent's object points at with +0xFA0. */
-void BtlOpp_GetObjVecFA0(BtlFlagChr *chr, Vec4 *out) {
+void BtlOpp_GetObjVecFA0(BtlFighter *chr, Vec4 *out) {
     Vec4_Copy(out, *(Vec4 **)((u8 *)BtlObj_Get(OPPONENT(chr)->objId) + 0xFA0));
 }
 
 /* The opponent's +0xD88. */
-s32 BtlOpp_GetEvasionCount(BtlFlagChr *chr) {
+s32 BtlOpp_GetEvasionCount(BtlFighter *chr) {
     return OPPONENT(chr)->evasionCount;
 }
 
 /* Seconds until the two fighters meet at their current velocities; 10000000 when they are not closing. */
-f32 BtlOpp_GetClosingTime(BtlFlagChr *chr) {
+f32 BtlOpp_GetClosingTime(BtlFighter *chr) {
     Vec4 pos;
     Vec4 vel;
     Vec4 oppPos;
@@ -300,23 +300,23 @@ f32 BtlOpp_GetClosingTime(BtlFlagChr *chr) {
 }
 
 /* BtlMember_HasAbility on the opponent. */
-s32 BtlOpp_HasAbility(BtlFlagChr *chr, s32 ability) {
+s32 BtlOpp_HasAbility(BtlFighter *chr, s32 ability) {
     return BtlMember_HasAbility(OPPONENT(chr), ability);
 }
 
 /* BtlParam_GetUnkC7Scale on the opponent. */
-f32 BtlOpp_GetUnk20F318(BtlFlagChr *chr) {
+f32 BtlOpp_GetUnk20F318(BtlFighter *chr) {
     return BtlParam_GetUnkC7Scale(OPPONENT(chr));
 }
 
 /* The opponent's clash counter (+0xE50). */
-s32 BtlOpp_GetClashCountB(BtlFlagChr *chr) {
+s32 BtlOpp_GetClashCountB(BtlFighter *chr) {
     return OPPONENT(chr)->clashCountB;
 }
 
 /* Copies what the opponent is doing into this fighter's flags 0xAC..0xB9 and 0xD6. */
-void BtlOpp_MirrorFlags(BtlFlagChr *chr) {
-    BtlFlagChr *opp;
+void BtlOpp_MirrorFlags(BtlFighter *chr) {
+    BtlFighter *opp;
 
     if (chr->player == 0) {
         opp = BtlChar_Get(1);

@@ -7,7 +7,8 @@
 
 /*
  * Team members, parameters and gauges of a fighter (src/battle/btl_char_member.c, 0x1CDCA8..0x1D00D8).
- * The structures are this module's own partial views of shared objects (fighter, roster, battle setup).
+ * The structures are this module's own partial views of shared objects (roster, battle setup); the fighter and
+ * its member entries are BtlFighter and BtlMember (battle/btl_fighter.h).
  */
 
 /* Units. */
@@ -34,12 +35,6 @@
 #define BTL_DMG_KO_EV52_B    0x1000000
 #define BTL_DMG_KO_EV51      0x2000000 /* on a KO raise event 0x51 */
 #define BTL_DMG_GUARD_MASK   0x3800000 /* with fighter state 0x4C the second defense multiplier is skipped */
-
-/* Damage a fighter has queued against its opponent: fighter + 0xD94. */
-typedef BtlFighterQueue BtlMemberQueue;
-
-/* Partial view of a fighter (0x1600 bytes). */
-typedef BtlFighter BtlMemberChr;
 
 /* Character parameters: gBtlChars->paramTbl[chara] (roster + 0x30, a table inside common file 2). */
 typedef struct BtlMemberParam {
@@ -76,9 +71,6 @@ typedef struct BtlMemberObj {
     /* 0xC9C */ u32 nodeMask;
 } BtlMemberObj;
 
-/* Pose block at fighter + 0x10 (BtlChar_GetPos). */
-typedef BtlFighterPose BtlMemberPose;
-
 /* Request built by BtlChar_SpawnFxBits3C for EftShot_Request. */
 typedef struct BtlMemberAuraReq {
     /* 0x00 */ s32 objId;
@@ -106,57 +98,57 @@ typedef struct BtlMemberHitFxReq {
 } BtlMemberHitFxReq;
 
 /* Register use: a0 chr, a1 member, a2 init, a3 variant, f12 healthPct. */
-void BtlMember_LoadParams(BtlMemberChr *chr, s32 member, s32 init, f32 healthPct, s32 variant);
-BtlMember *BtlMember_Get(BtlMemberChr *chr, s32 member);
-BtlMember *BtlMember_GetActive(BtlMemberChr *chr);
-BtlMember *BtlMember_FindPresent(BtlMemberChr *chr, s32 chara);
-s32 BtlMember_FindPresentIndex(BtlMemberChr *chr, s32 chara);
-BtlMemberGauge *BtlMember_GetGauge(BtlMemberChr *chr, s32 member);
-BtlMemberGauge *BtlMember_GetActiveGauge(BtlMemberChr *chr);
-s32 BtlMember_Replace(BtlMemberChr *chr, BtlMemberSetup *src);
-s32 BtlMember_FindIndex(BtlMemberChr *chr, s32 chara);
-void BtlMember_SetActiveIndex(BtlMemberChr *chr, s32 member);
-s32 BtlMember_CountAlive(BtlMemberChr *chr);
-s32 BtlMember_GetActiveIndex(BtlMemberChr *chr);
-s32 BtlMember_GetSwitchTarget(BtlMemberChr *chr);
-s32 BtlMember_SetSwitchTarget(BtlMemberChr *chr, s32 member);
-void BtlMember_NextSwitchTarget(BtlMemberChr *chr);
-void BtlMember_PrevSwitchTarget(BtlMemberChr *chr);
-s32 BtlMember_Damage(BtlMemberChr *chr, s32 amount, s32 flags);
-void BtlMember_AddHealth(BtlMemberChr *chr, s32 amount);
-s32 BtlMember_HasHealth(BtlMemberChr *chr, s32 amount);
-s32 BtlMember_AddKi(BtlMemberChr *chr, s32 amount);
-s32 BtlMember_HasKi(BtlMemberChr *chr, s32 amount);
-s32 BtlMember_SpendKi(BtlMemberChr *chr, s32 amount, s32 force);
-s32 BtlMember_DrainKi(BtlMemberChr *chr, s32 amount);
-void BtlMember_AddBlast(BtlMemberChr *chr, s32 amount);
-s32 BtlMember_HasBlast(BtlMemberChr *chr, s32 amount);
-void BtlMember_SubBlast(BtlMemberChr *chr, s32 amount);
-void BtlMember_AddMaxPower(BtlMemberChr *chr, s32 amount);
-void BtlMember_SubMaxPower(BtlMemberChr *chr, s32 amount);
-void BtlMember_SetMaxPower(BtlMemberChr *chr, s32 value);
-f32 BtlMember_GetHealthRatio(BtlMemberChr *chr);
-f32 BtlMember_GetTeamHealthRatio(BtlMemberChr *chr);
-f32 BtlMember_GetKiRatio(BtlMemberChr *chr);
-s32 BtlMember_IsHealthFull(BtlMemberChr *chr);
-s32 BtlMember_IsKiFull(BtlMemberChr *chr);
-s32 BtlMember_IsMaxPowerFull(BtlMemberChr *chr);
-s32 BtlMember_IsHealthEmpty(BtlMemberChr *chr);
-s32 BtlMember_IsKiEmpty(BtlMemberChr *chr);
-s32 BtlMember_IsMaxPowerEmpty(BtlMemberChr *chr);
-s32 BtlMember_HasAbility(BtlMemberChr *chr, s32 ability);
-s32 BtlMember_HasAbilityOf(BtlMemberChr *chr, s32 member, s32 ability);
-s32 BtlMember_HasAnyListedAbility(BtlMemberChr *chr);
+void BtlMember_LoadParams(BtlFighter *chr, s32 member, s32 init, f32 healthPct, s32 variant);
+BtlMember *BtlMember_Get(BtlFighter *chr, s32 member);
+BtlMember *BtlMember_GetActive(BtlFighter *chr);
+BtlMember *BtlMember_FindPresent(BtlFighter *chr, s32 chara);
+s32 BtlMember_FindPresentIndex(BtlFighter *chr, s32 chara);
+BtlMemberGauge *BtlMember_GetGauge(BtlFighter *chr, s32 member);
+BtlMemberGauge *BtlMember_GetActiveGauge(BtlFighter *chr);
+s32 BtlMember_Replace(BtlFighter *chr, BtlMemberSetup *src);
+s32 BtlMember_FindIndex(BtlFighter *chr, s32 chara);
+void BtlMember_SetActiveIndex(BtlFighter *chr, s32 member);
+s32 BtlMember_CountAlive(BtlFighter *chr);
+s32 BtlMember_GetActiveIndex(BtlFighter *chr);
+s32 BtlMember_GetSwitchTarget(BtlFighter *chr);
+s32 BtlMember_SetSwitchTarget(BtlFighter *chr, s32 member);
+void BtlMember_NextSwitchTarget(BtlFighter *chr);
+void BtlMember_PrevSwitchTarget(BtlFighter *chr);
+s32 BtlMember_Damage(BtlFighter *chr, s32 amount, s32 flags);
+void BtlMember_AddHealth(BtlFighter *chr, s32 amount);
+s32 BtlMember_HasHealth(BtlFighter *chr, s32 amount);
+s32 BtlMember_AddKi(BtlFighter *chr, s32 amount);
+s32 BtlMember_HasKi(BtlFighter *chr, s32 amount);
+s32 BtlMember_SpendKi(BtlFighter *chr, s32 amount, s32 force);
+s32 BtlMember_DrainKi(BtlFighter *chr, s32 amount);
+void BtlMember_AddBlast(BtlFighter *chr, s32 amount);
+s32 BtlMember_HasBlast(BtlFighter *chr, s32 amount);
+void BtlMember_SubBlast(BtlFighter *chr, s32 amount);
+void BtlMember_AddMaxPower(BtlFighter *chr, s32 amount);
+void BtlMember_SubMaxPower(BtlFighter *chr, s32 amount);
+void BtlMember_SetMaxPower(BtlFighter *chr, s32 value);
+f32 BtlMember_GetHealthRatio(BtlFighter *chr);
+f32 BtlMember_GetTeamHealthRatio(BtlFighter *chr);
+f32 BtlMember_GetKiRatio(BtlFighter *chr);
+s32 BtlMember_IsHealthFull(BtlFighter *chr);
+s32 BtlMember_IsKiFull(BtlFighter *chr);
+s32 BtlMember_IsMaxPowerFull(BtlFighter *chr);
+s32 BtlMember_IsHealthEmpty(BtlFighter *chr);
+s32 BtlMember_IsKiEmpty(BtlFighter *chr);
+s32 BtlMember_IsMaxPowerEmpty(BtlFighter *chr);
+s32 BtlMember_HasAbility(BtlFighter *chr, s32 ability);
+s32 BtlMember_HasAbilityOf(BtlFighter *chr, s32 member, s32 ability);
+s32 BtlMember_HasAnyListedAbility(BtlFighter *chr);
 void BtlMembers_UpdateQueuedDamage(void);
-void BtlChar_SetFxBit(BtlMemberChr *chr, s32 bit);
-void BtlChar_ClearFxBit(BtlMemberChr *chr, s32 bit);
-s32 BtlChar_TestFxBit(BtlMemberChr *chr, s32 bit);
-s32 BtlChar_TestPrevFxBit(BtlMemberChr *chr, s32 bit);
-s32 BtlChar_IsFxBitNew(BtlMemberChr *chr, s32 bit);
-s32 BtlChar_IsFxBitEnded(BtlMemberChr *chr, s32 bit);
+void BtlChar_SetFxBit(BtlFighter *chr, s32 bit);
+void BtlChar_ClearFxBit(BtlFighter *chr, s32 bit);
+s32 BtlChar_TestFxBit(BtlFighter *chr, s32 bit);
+s32 BtlChar_TestPrevFxBit(BtlFighter *chr, s32 bit);
+s32 BtlChar_IsFxBitNew(BtlFighter *chr, s32 bit);
+s32 BtlChar_IsFxBitEnded(BtlFighter *chr, s32 bit);
 s32 BtlChar_GetHitSoundLine(s32 kind);
-void BtlChar_SpawnFxBits3C(BtlMemberChr *chr);
-void BtlChar_SpawnFxBits0(BtlMemberChr *chr);
-void BtlChar_SpawnHitFx(BtlMemberChr *chr);
+void BtlChar_SpawnFxBits3C(BtlFighter *chr);
+void BtlChar_SpawnFxBits0(BtlFighter *chr);
+void BtlChar_SpawnHitFx(BtlFighter *chr);
 
 #endif

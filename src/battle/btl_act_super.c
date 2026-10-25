@@ -37,72 +37,72 @@
 
 #define BTL_KMH(x) ((x) * 1000.0f / 3600.0f * (1.0f / 30.0f))
 
-extern BtlSuperObj *BtlChar_GetObj(BtlSuperChr *chr);
-extern BtlSuperPose *BtlChar_GetPos(BtlSuperChr *chr);
-extern s32 BtlChar_TestFlag(BtlSuperChr *chr, s32 bit);
-extern void BtlChar_SetFlag(BtlSuperChr *chr, s32 bit);
-extern void BtlChar_SetHeldFlag(BtlSuperChr *chr, s32 bit);
-extern void BtlChar_ClearFlag(BtlSuperChr *chr, s32 bit);
-extern void BtlChar_ClearFlagRange(BtlSuperChr *chr, u32 a, u32 b);
-extern s32 BtlChar_IsFlagRaised(BtlSuperChr *chr, u32 n);
-extern void BtlChar_SetFxBit(BtlSuperChr *chr, s32 n);
-extern void BtlCharSnd_PlayCommon(BtlSuperChr *chr, s32 id);
-extern void ChrCam_RequestCut(BtlSuperChr *chr, s32 table, s32 index);
-extern void ChrCam_EndCut(BtlSuperChr *chr);
-extern void ChrCam_AddShake(BtlSuperChr *chr, f32 strength, f32 time);
+extern BtlSuperObj *BtlChar_GetObj(BtlFighter *chr);
+extern BtlFighterPose *BtlChar_GetPos(BtlFighter *chr);
+extern s32 BtlChar_TestFlag(BtlFighter *chr, s32 bit);
+extern void BtlChar_SetFlag(BtlFighter *chr, s32 bit);
+extern void BtlChar_SetHeldFlag(BtlFighter *chr, s32 bit);
+extern void BtlChar_ClearFlag(BtlFighter *chr, s32 bit);
+extern void BtlChar_ClearFlagRange(BtlFighter *chr, u32 a, u32 b);
+extern s32 BtlChar_IsFlagRaised(BtlFighter *chr, u32 n);
+extern void BtlChar_SetFxBit(BtlFighter *chr, s32 n);
+extern void BtlCharSnd_PlayCommon(BtlFighter *chr, s32 id);
+extern void ChrCam_RequestCut(BtlFighter *chr, s32 table, s32 index);
+extern void ChrCam_EndCut(BtlFighter *chr);
+extern void ChrCam_AddShake(BtlFighter *chr, f32 strength, f32 time);
 extern void BtlCharApi_RumbleNear(Vec4 *pos, f32 near, f32 far, f32 power, f32 time);
 extern void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 strength, f32 time);
-extern void BtlChar_SetVibration(BtlSuperChr *chr, f32 power, f32 seconds);
-extern void BtlChar_Vibrate(BtlSuperChr *chr, f32 power, f32 seconds);
+extern void BtlChar_SetVibration(BtlFighter *chr, f32 power, f32 seconds);
+extern void BtlChar_Vibrate(BtlFighter *chr, f32 power, f32 seconds);
 extern f32 BtlUtil_WrapAngle(f32 a);
 extern s32 BtlUtil_Min(s32 a, s32 b);
 extern s32 BtlUtil_Clamp(s32 v, s32 lo, s32 hi);
-extern void BtlAct_Request(BtlSuperChr *chr, s32 id);
-extern s32 BtlAct_GetRequested(BtlSuperChr *chr);
+extern void BtlAct_Request(BtlFighter *chr, s32 id);
+extern s32 BtlAct_GetRequested(BtlFighter *chr);
 extern s32 BtlAct_IsTechniqueId(s32 id);
-extern void BtlAct_PushAngle(BtlSuperChr *chr, f32 angle, f32 speed, f32 max);
-extern void BtlAct_AddSway(BtlSuperChr *chr, f32 a, f32 b);
-extern void BtlAnim_PlaySub(BtlSuperChr *chr, s32 anim);
-extern void BtlAnim_SetStep(BtlSuperChr *chr, f32 step);
-extern void BtlAnim_SetDuration(BtlSuperChr *chr, f32 seconds);
-extern f32 BtlAnim_GetFrame(BtlSuperChr *chr);
-extern s32 BtlAnim_TestAttr(BtlSuperChr *chr, u64 mask);
-extern s32 BtlAnim_PassedFrame(BtlSuperChr *chr, f32 frame);
-extern BtlSuperGauge *BtlMember_GetActiveGauge(BtlSuperChr *chr);
-extern s32 BtlOpp_GetParamWord0(BtlSuperChr *chr);
-extern void BtlOpp_GetTargetRot(BtlSuperChr *chr, Vec4 *out);
-extern void BtlOpp_GetObjVecFA0(BtlSuperChr *chr, Vec4 *out);
-extern void BtlMove_SetHeading(BtlSuperChr *chr, f32 yaw, f32 pitch);
-extern void BtlChar_RequestBodyWarp(BtlSuperChr *chr, Vec4 *v);
+extern void BtlAct_PushAngle(BtlFighter *chr, f32 angle, f32 speed, f32 max);
+extern void BtlAct_AddSway(BtlFighter *chr, f32 a, f32 b);
+extern void BtlAnim_PlaySub(BtlFighter *chr, s32 anim);
+extern void BtlAnim_SetStep(BtlFighter *chr, f32 step);
+extern void BtlAnim_SetDuration(BtlFighter *chr, f32 seconds);
+extern f32 BtlAnim_GetFrame(BtlFighter *chr);
+extern s32 BtlAnim_TestAttr(BtlFighter *chr, u64 mask);
+extern s32 BtlAnim_PassedFrame(BtlFighter *chr, f32 frame);
+extern BtlMemberGauge *BtlMember_GetActiveGauge(BtlFighter *chr);
+extern s32 BtlOpp_GetParamWord0(BtlFighter *chr);
+extern void BtlOpp_GetTargetRot(BtlFighter *chr, Vec4 *out);
+extern void BtlOpp_GetObjVecFA0(BtlFighter *chr, Vec4 *out);
+extern void BtlMove_SetHeading(BtlFighter *chr, f32 yaw, f32 pitch);
+extern void BtlChar_RequestBodyWarp(BtlFighter *chr, Vec4 *v);
 
-extern s32 BtlAct_GetCurrentClass(BtlSuperChr *chr);
-extern s32 BtlAct_GetPrev(BtlSuperChr *chr);
-extern void BtlAct_SetFormCurrent(BtlSuperChr *chr);
-extern void BtlAct_SetPitchMotion(BtlSuperChr *chr, s32 motionUp, s32 motionDown, s32 recalc);
-extern void BtlAnim_Play(BtlSuperChr *chr, s32 anim, f32 blend);
-extern void BtlAnim_Request(BtlSuperChr *chr, s32 anim, f32 blend);
-extern s32 BtlAnim_GetId(BtlSuperChr *chr);
-extern s32 BtlAnim_Advance(BtlSuperChr *chr, s32 flags);
+extern s32 BtlAct_GetCurrentClass(BtlFighter *chr);
+extern s32 BtlAct_GetPrev(BtlFighter *chr);
+extern void BtlAct_SetFormCurrent(BtlFighter *chr);
+extern void BtlAct_SetPitchMotion(BtlFighter *chr, s32 motionUp, s32 motionDown, s32 recalc);
+extern void BtlAnim_Play(BtlFighter *chr, s32 anim, f32 blend);
+extern void BtlAnim_Request(BtlFighter *chr, s32 anim, f32 blend);
+extern s32 BtlAnim_GetId(BtlFighter *chr);
+extern s32 BtlAnim_Advance(BtlFighter *chr, s32 flags);
 /* The blend time is the third parameter: with it last (as btl_stats.h has it) the two quick handlers
    set up $a2 and $f12 in the wrong order. Both orders pass the same registers. */
-extern s32 BtlAnim_AdvanceThen(BtlSuperChr *chr, s32 next, f32 blend, s32 flags);
-extern void BtlAnim_AdvanceLoop(BtlSuperChr *chr, s32 flags);
-extern s32 BtlAnim_IsNew(BtlSuperChr *chr);
-extern void BtlMove_TurnYaw(BtlSuperChr *chr, s32 mode, f32 maxStep);
-extern void BtlMove_TurnPitch(BtlSuperChr *chr, s32 mode, f32 maxStep);
-extern void BtlMove_TurnModelYaw(BtlSuperChr *chr, f32 maxStep, f32 rate);
-extern void BtlMove_SetDirection(BtlSuperChr *chr, s32 mode);
-extern void BtlMove_Step(BtlSuperChr *chr, s32 yawMode, s32 pitchMode, s32 dirMode, f32 speed, f32 accel);
-extern void BtlMove_ApplyGravity(BtlSuperChr *chr);
-extern void BtlMove_WarpInFrontOfOpponent(BtlSuperChr *chr, f32 gap);
-extern void BtlMove_SnapToOpponent(BtlSuperChr *chr);
-extern s32 BtlMove_CountOwnBeams(BtlSuperChr *chr);
-extern s32 BtlMember_SpendKi(BtlSuperChr *chr, s32 amount, s32 force);
-extern s32 BtlMember_Damage(BtlSuperChr *chr, s32 amount, s32 flags);
-extern s32 BtlMember_HasAbility(BtlSuperChr *chr, s32 n);
-extern void BtlChar_ResetLook(BtlSuperChr *chr);
-extern void BtlChar_SavePlacement(BtlSuperChr *chr);
-extern s32 BtlInput_TestAction(BtlSuperChr *chr, s32 id, s32 want);
+extern s32 BtlAnim_AdvanceThen(BtlFighter *chr, s32 next, f32 blend, s32 flags);
+extern void BtlAnim_AdvanceLoop(BtlFighter *chr, s32 flags);
+extern s32 BtlAnim_IsNew(BtlFighter *chr);
+extern void BtlMove_TurnYaw(BtlFighter *chr, s32 mode, f32 maxStep);
+extern void BtlMove_TurnPitch(BtlFighter *chr, s32 mode, f32 maxStep);
+extern void BtlMove_TurnModelYaw(BtlFighter *chr, f32 maxStep, f32 rate);
+extern void BtlMove_SetDirection(BtlFighter *chr, s32 mode);
+extern void BtlMove_Step(BtlFighter *chr, s32 yawMode, s32 pitchMode, s32 dirMode, f32 speed, f32 accel);
+extern void BtlMove_ApplyGravity(BtlFighter *chr);
+extern void BtlMove_WarpInFrontOfOpponent(BtlFighter *chr, f32 gap);
+extern void BtlMove_SnapToOpponent(BtlFighter *chr);
+extern s32 BtlMove_CountOwnBeams(BtlFighter *chr);
+extern s32 BtlMember_SpendKi(BtlFighter *chr, s32 amount, s32 force);
+extern s32 BtlMember_Damage(BtlFighter *chr, s32 amount, s32 flags);
+extern s32 BtlMember_HasAbility(BtlFighter *chr, s32 n);
+extern void BtlChar_ResetLook(BtlFighter *chr);
+extern void BtlChar_SavePlacement(BtlFighter *chr);
+extern s32 BtlInput_TestAction(BtlFighter *chr, s32 id, s32 want);
 extern void BtlChange_RequestChara(s32 player, s32 chara, s32 costume, s32 variant, s32 animChara, s32 anim1Chara,
                                    s32 voiceChara);
 extern s32 BtlChange_IsLoadedFor(s32 player);
@@ -110,26 +110,26 @@ extern void BtlChange_SetReady(s32 player);
 extern void BtlChange_SetDone(s32 player);
 
 /* Technique parameter readers (0x210D48.., another module): the block at object + 0x92C, arrays by class - 2. */
-extern s32 BtlSuper_GetFlagsA(BtlSuperChr *chr, s32 cls);  /* flag word A of a class 2..4 technique */
-extern s32 BtlSuper_GetFlags(BtlSuperChr *chr, s32 cls);  /* flag word B */
-extern s32 BtlSuper_GetId(BtlSuperChr *chr, s32 cls);  /* technique id (s16) */
-extern f32 BtlSuper_GetShotTime(BtlSuperChr *chr, s32 cls);  /* a time in seconds */
-extern s32 BtlSuper_GetShots(BtlSuperChr *chr, s32 cls);  /* shot limit, at least 1 */
-extern s32 BtlSuper_GetRecoilDamage(BtlSuperChr *chr, s32 cls);  /* health cost per shot */
-extern s32 BtlSuper_GetHitDirKind(BtlSuperChr *chr, s32 cls);  /* kind 0..9 (s8) */
-extern s32 BtlSuper_GetStepCount(BtlSuperChr *chr, s32 cls);  /* number of rush steps, at least 1 */
-extern s32 BtlSuper_GetDrain(BtlSuperChr *chr, s32 cls);  /* health drained */
-extern s32 BtlSuper_GetCooldownFrames(BtlSuperChr *chr, s32 cls);  /* cooldown: seconds * 30 */
-extern s32 BtlSuper_GetChargeLimitFrames(BtlSuperChr *chr, s32 cls);  /* charge time: seconds * 30 */
-extern s32 BtlSuper_GetDamage(BtlSuperChr *chr, s32 cls, s32 guard, s32 total); /* damage */
-extern s32 BtlSuper_GetKiCost(BtlSuperChr *chr, s32 cls);  /* ki cost (halved with ability 0x2B) */
-extern s32 BtlSuper_IsThrow(BtlSuperChr *chr, s32 cls);  /* one of the technique's four reactions is 0x22 (a catch) */
+extern s32 BtlSuper_GetFlagsA(BtlFighter *chr, s32 cls);  /* flag word A of a class 2..4 technique */
+extern s32 BtlSuper_GetFlags(BtlFighter *chr, s32 cls);  /* flag word B */
+extern s32 BtlSuper_GetId(BtlFighter *chr, s32 cls);  /* technique id (s16) */
+extern f32 BtlSuper_GetShotTime(BtlFighter *chr, s32 cls);  /* a time in seconds */
+extern s32 BtlSuper_GetShots(BtlFighter *chr, s32 cls);  /* shot limit, at least 1 */
+extern s32 BtlSuper_GetRecoilDamage(BtlFighter *chr, s32 cls);  /* health cost per shot */
+extern s32 BtlSuper_GetHitDirKind(BtlFighter *chr, s32 cls);  /* kind 0..9 (s8) */
+extern s32 BtlSuper_GetStepCount(BtlFighter *chr, s32 cls);  /* number of rush steps, at least 1 */
+extern s32 BtlSuper_GetDrain(BtlFighter *chr, s32 cls);  /* health drained */
+extern s32 BtlSuper_GetCooldownFrames(BtlFighter *chr, s32 cls);  /* cooldown: seconds * 30 */
+extern s32 BtlSuper_GetChargeLimitFrames(BtlFighter *chr, s32 cls);  /* charge time: seconds * 30 */
+extern s32 BtlSuper_GetDamage(BtlFighter *chr, s32 cls, s32 guard, s32 total); /* damage */
+extern s32 BtlSuper_GetKiCost(BtlFighter *chr, s32 cls);  /* ki cost (halved with ability 0x2B) */
+extern s32 BtlSuper_IsThrow(BtlFighter *chr, s32 cls);  /* one of the technique's four reactions is 0x22 (a catch) */
 /* Animation event query on the object: mode 0 = frame of the first event with `mask`, 3 = how many. */
 extern s32 BtlObjAnim_QueryEvent(BtlSuperObj *obj, u64 mask, s32 layer, s32 mode);
 extern void BtlObj_SetColorMode(BtlSuperObj *obj, s32 bit, s32 on);
 
 /* Requests the camera cut of a technique: cut 0, 1 or 2 for class 2, 3 or 4. */
-void BtlSuper_RequestCut(BtlSuperChr *chr, s32 cls) {
+void BtlSuper_RequestCut(BtlFighter *chr, s32 cls) {
     s32 cut = 0;
 
     switch (cls) {
@@ -147,7 +147,7 @@ void BtlSuper_RequestCut(BtlSuperChr *chr, s32 cls) {
 }
 
 /* Raises the start effect bit of a technique: 0x3E, 0x3F or 0x40 by class. */
-void BtlSuper_SetStartFx(BtlSuperChr *chr, s32 cls) {
+void BtlSuper_SetStartFx(BtlFighter *chr, s32 cls) {
     s32 bit = 0;
 
     switch (cls) {
@@ -165,7 +165,7 @@ void BtlSuper_SetStartFx(BtlSuperChr *chr, s32 cls) {
 }
 
 /* Raises flag 0xE0, 0xE1 or 0xE2 by class; class 4 only when `force` is set. */
-void BtlSuper_SetClassFlag(BtlSuperChr *chr, s32 cls, s32 force) {
+void BtlSuper_SetClassFlag(BtlFighter *chr, s32 cls, s32 force) {
     s32 flag = 0;
 
     if (force == 0 && cls == 4) {
@@ -186,7 +186,7 @@ void BtlSuper_SetClassFlag(BtlSuperChr *chr, s32 cls, s32 force) {
 }
 
 /* Requests hit-stop for this frame: level 2 (flag 0x125) with the full flag set, or level 1 (flag 0x126). */
-void BtlSuper_RequestHitStop(BtlSuperChr *chr, s32 light) {
+void BtlSuper_RequestHitStop(BtlFighter *chr, s32 light) {
     if (light) {
         BtlChar_SetFlag(chr, 0x44);
         BtlChar_SetFlag(chr, 0x45);
@@ -204,7 +204,7 @@ void BtlSuper_RequestHitStop(BtlSuperChr *chr, s32 light) {
 }
 
 /* Per-frame flags of a technique in progress: 0xD5, 0xBB, the hit-stop exemption 0x127, and held flag 0xE. */
-void BtlSuper_SetFiringFlags(BtlSuperChr *chr) {
+void BtlSuper_SetFiringFlags(BtlFighter *chr) {
     BtlChar_SetFlag(chr, 0xD5);
     BtlChar_SetFlag(chr, 0xBB);
     BtlChar_SetFlag(chr, 0x127);
@@ -215,12 +215,12 @@ void BtlSuper_SetFiringFlags(BtlSuperChr *chr) {
 
 /* Enables the technique's button command for the next input frame: fighter + 0x1594 = class (BtlInput_TestSwitch
    then sets command bit 0x1000, which input condition 0x6F reads). */
-void BtlSuper_SetClass(BtlSuperChr *chr, s32 cls) {
+void BtlSuper_SetClass(BtlFighter *chr, s32 cls) {
     chr->techClass = cls;
 }
 
 /* Per-frame flags of the cinematic part of a technique. */
-void BtlSuper_SetRushFlags(BtlSuperChr *chr) {
+void BtlSuper_SetRushFlags(BtlFighter *chr) {
     BtlChar_SetFlag(chr, 0xD5);
     BtlChar_SetFlag(chr, 0x1A);
     BtlChar_SetFlag(chr, 0x3F);
@@ -231,7 +231,7 @@ void BtlSuper_SetRushFlags(BtlSuperChr *chr) {
 }
 
 /* Camera shake and rumble of a technique: at the animation's 0x400 event (kind 0) or every frame (kind 1). */
-void BtlSuper_ShakeOnEvent(BtlSuperChr *chr, s32 cls, s32 kind) {
+void BtlSuper_ShakeOnEvent(BtlFighter *chr, s32 cls, s32 kind) {
     BtlSuperObj *obj = BtlChar_GetObj(chr);
     u32 flags = BtlSuper_GetFlagsA(chr, cls);
 
@@ -283,7 +283,7 @@ void BtlSuper_ShakeOnEvent(BtlSuperChr *chr, s32 cls, s32 kind) {
 }
 
 /* Stretches the animation so its 0x400 event falls `seconds` from now (0.1 s animation when it has none). */
-void BtlSuper_FitAnimToEvent(BtlSuperChr *chr, f32 seconds) {
+void BtlSuper_FitAnimToEvent(BtlFighter *chr, f32 seconds) {
     f32 event = BtlObjAnim_QueryEvent(BtlChar_GetObj(chr), 0x400, 0, 0);
     f32 frame;
     f32 step;
@@ -310,18 +310,18 @@ void BtlSuper_FitAnimToEvent(BtlSuperChr *chr, f32 seconds) {
 }
 
 /* Forwards 0.2 and 2.0 to BtlAct_AddSway. */
-void BtlSuper_AddSway(BtlSuperChr *chr) {
+void BtlSuper_AddSway(BtlFighter *chr) {
     BtlAct_AddSway(chr, 0.2f, 2.0f);
 }
 
 /* Charge rumble: power 0.8 for 0.1 s. */
-void BtlSuper_VibrateCharge(BtlSuperChr *chr) {
+void BtlSuper_VibrateCharge(BtlFighter *chr) {
     BtlChar_SetVibration(chr, 0.8f, 0.1f);
 }
 
 /* Recoil while firing: pushes the fighter backwards, always for kinds 0 and 9, only on the fire animation for
    kinds 1..4, 6 and 8, never for 5 and 7. */
-void BtlSuper_Recoil(BtlSuperChr *chr, s32 cls, s32 loop) {
+void BtlSuper_Recoil(BtlFighter *chr, s32 cls, s32 loop) {
     s32 push = 0;
 
     switch (BtlSuper_GetHitDirKind(chr, cls)) {
@@ -348,7 +348,7 @@ void BtlSuper_Recoil(BtlSuperChr *chr, s32 cls, s32 loop) {
 
 /* Plays step `step` of a rush technique's animation chain on the sub layer and adds up what it contains: hits,
    total length and the frames of its 0x20000 / 0x40000 events. Called once per frame with the action frame. */
-void BtlSuper_MeasureRushStep(BtlSuperChr *chr, s32 cls, s32 step) {
+void BtlSuper_MeasureRushStep(BtlFighter *chr, s32 cls, s32 step) {
     s32 count = BtlSuper_GetStepCount(chr, cls);
     BtlSuperObj *obj;
 
@@ -391,7 +391,7 @@ void BtlSuper_MeasureRushStep(BtlSuperChr *chr, s32 cls, s32 step) {
 
 /* Start of a technique action: stops vertical motion, clears the technique flags, counts the use and marks the
    fighter (flag 0x29, held flag 0xE). Class 4 only when `force` is set. */
-void BtlSuper_Begin(BtlSuperChr *chr, s32 cls, s32 force) {
+void BtlSuper_Begin(BtlFighter *chr, s32 cls, s32 force) {
     if (force == 0 && cls == 4) {
         return;
     }
@@ -412,7 +412,7 @@ void BtlSuper_Begin(BtlSuperChr *chr, s32 cls, s32 force) {
 }
 
 /* Start sound of a technique (common sound 0x2B). Class 4 only when `force` is set. */
-void BtlSuper_PlayStartSound(BtlSuperChr *chr, s32 cls, s32 force) {
+void BtlSuper_PlayStartSound(BtlFighter *chr, s32 cls, s32 force) {
     if (force == 0 && cls == 4) {
         return;
     }
@@ -421,7 +421,7 @@ void BtlSuper_PlayStartSound(BtlSuperChr *chr, s32 cls, s32 force) {
 
 /* Leave phase of every technique action: unless another technique action follows, starts the cooldown at
    + 0xE40, clears the effect requests 0xA7..0xAA and the input lock 0x11F, and undoes object bit 2. */
-void BtlSuper_Leave(BtlSuperChr *chr, s32 cls) {
+void BtlSuper_Leave(BtlFighter *chr, s32 cls) {
     BtlSuperObj *obj;
 
     if (BtlAct_IsTechniqueId(BtlAct_GetRequested(chr))) {
@@ -448,7 +448,7 @@ void BtlSuper_Leave(BtlSuperChr *chr, s32 cls) {
 
 /* Fills the damage queue (fighter + 0xD94) of a rush technique: total damage, damage per hit, the health drain
    and its frame window, from the technique parameters and the measured animation chain. */
-void BtlSuper_SetupRushDamage(BtlSuperChr *chr, s32 cls, s32 fromAnim) {
+void BtlSuper_SetupRushDamage(BtlFighter *chr, s32 cls, s32 fromAnim) {
     Vec4 v;
     Vec4 rot;
     s32 damage;
@@ -560,7 +560,7 @@ void BtlSuper_SetupRushDamage(BtlSuperChr *chr, s32 cls, s32 fromAnim) {
 }
 
 /* Ends a technique: back to the neutral action 0xB, or to action 0xD9 when the technique has flag 0x4000. */
-void BtlSuper_Finish(BtlSuperChr *chr, s32 cls) {
+void BtlSuper_Finish(BtlFighter *chr, s32 cls) {
     if (BtlSuper_GetFlags(chr, cls) & 0x4000) {
         BtlChar_SetHeldFlag(chr, 0x1D);
         BtlChar_SetHeldFlag(chr, 0x1E);
@@ -578,7 +578,7 @@ void BtlSuper_Finish(BtlSuperChr *chr, s32 cls) {
  * Actions 0x106..0x108: a beam technique. Start animation (level 2 hit-stop) -> charge loop until the effect
  * raises flag 0xA7 (150 frames at most) -> fire -> firing loop until flag 0xA8 (150 frames at most) -> end.
  */
-void BtlAct_SuperBeamHandler(BtlSuperChr *chr, s32 phase) {
+void BtlAct_SuperBeamHandler(BtlFighter *chr, s32 phase) {
     s32 *timer = &chr->work[2];
     s32 cls = BtlAct_GetCurrentClass(chr);
     u32 flagsB = BtlSuper_GetFlags(chr, cls);
@@ -738,7 +738,7 @@ void BtlAct_SuperBeamHandler(BtlSuperChr *chr, s32 phase) {
  * Actions 0x109..0x10B: a beam technique fired after a teleport. The charge loop runs five stages after the
  * effect's flag 0xA7: vanish, warp in front of the opponent, reappear, then fire as the plain beam does.
  */
-void BtlAct_SuperWarpBeamHandler(BtlSuperChr *chr, s32 phase) {
+void BtlAct_SuperWarpBeamHandler(BtlFighter *chr, s32 phase) {
     s32 *sub = &chr->work[3];
     s32 *stage = &chr->work[4];
     s32 *timer = &chr->work[2];
@@ -925,7 +925,7 @@ void BtlAct_SuperWarpBeamHandler(BtlSuperChr *chr, s32 phase) {
  * Actions 0x10C..0x10E: a beam technique with a second firing stage. As the plain beam, but the firing loop
  * (until flag 0xA8) is followed by another animation and loop (until flag 0xA9) before the end animation.
  */
-void BtlAct_SuperLongBeamHandler(BtlSuperChr *chr, s32 phase) {
+void BtlAct_SuperLongBeamHandler(BtlFighter *chr, s32 phase) {
     s32 *timer = &chr->work[2];
     s32 cls = BtlAct_GetCurrentClass(chr);
 
@@ -1064,7 +1064,7 @@ void BtlAct_SuperLongBeamHandler(BtlSuperChr *chr, s32 phase) {
  * condition 0x6F) or the technique's charge time is over; fighter + 0xE44 is the charge level, full after half
  * the charge time (a third with ability 0x4A).
  */
-void BtlAct_SuperChargeHandler(BtlSuperChr *chr, s32 phase) {
+void BtlAct_SuperChargeHandler(BtlFighter *chr, s32 phase) {
     s32 *timer = &chr->work[2];
     s32 cls = BtlAct_GetCurrentClass(chr);
 
@@ -1212,7 +1212,7 @@ void BtlAct_SuperChargeHandler(BtlSuperChr *chr, s32 phase) {
 }
 
 /* Whether no further shot may be fired: 1 health left, or the technique's shot limit reached. */
-static inline s32 BtlSuper_IsLastShot(BtlSuperChr *chr, s32 cls, s32 *shots) {
+static inline s32 BtlSuper_IsLastShot(BtlFighter *chr, s32 cls, s32 *shots) {
     if (BtlMember_GetActiveGauge(chr)->health == 1) {
         return 1;
     }
@@ -1226,7 +1226,7 @@ static inline s32 BtlSuper_IsLastShot(BtlSuperChr *chr, s32 cls, s32 *shots) {
  * Actions 0x112..0x114: a technique fired in repeated shots. Every shot costs health (not ki); while the fire
  * loop runs, the button fires the next shot until the technique's shot limit, its time limit or 1 health.
  */
-void BtlAct_SuperRepeatHandler(BtlSuperChr *chr, s32 phase) {
+void BtlAct_SuperRepeatHandler(BtlFighter *chr, s32 phase) {
     s32 *timer = &chr->work[2];
     s32 *shots = &chr->work[3];
     s32 cls = BtlAct_GetCurrentClass(chr);
@@ -1411,7 +1411,7 @@ void BtlAct_SuperRepeatHandler(BtlSuperChr *chr, s32 phase) {
  * Actions 0x115..0x117: the quick form of the beam technique (flag 0xA4: 30% damage). No ki cost, no hit-stop
  * and no charge: the start animation is cut to 0.1 s and leads straight to the fire animation.
  */
-void BtlAct_SuperQuickBeamHandler(BtlSuperChr *chr, s32 phase) {
+void BtlAct_SuperQuickBeamHandler(BtlFighter *chr, s32 phase) {
     s32 *timer = &chr->work[2];
     s32 cls = BtlAct_GetCurrentClass(chr);
 
@@ -1501,7 +1501,7 @@ void BtlAct_SuperQuickBeamHandler(BtlSuperChr *chr, s32 phase) {
  * Actions 0x118..0x11A: the quick form of the two-stage beam technique (flag 0xA4: 30% damage): start cut to
  * 0.1 s -> fire -> second stage and its loop until flag 0xA9 (150 frames at most) -> end.
  */
-void BtlAct_SuperQuickLongBeamHandler(BtlSuperChr *chr, s32 phase) {
+void BtlAct_SuperQuickLongBeamHandler(BtlFighter *chr, s32 phase) {
     s32 *timer = &chr->work[2];
     s32 cls = BtlAct_GetCurrentClass(chr);
 
@@ -1639,121 +1639,121 @@ extern f32 BtlUtil_WrapAngle(f32 a);
 extern f32 BtlUtil_MinF(f32 a, f32 b);
 extern f32 BtlUtil_ClampF(f32 v, f32 lo, f32 hi);
 
-#define BtlChar_GetObj ((ActGObj *(*)(ActGChr *chr))BtlChar_GetObj)
-#define BtlChar_GetPos ((ActGPose *(*)(ActGChr *chr))BtlChar_GetPos)
-#define BtlChar_TestFlag ((s32 (*)(ActGChr *chr, s32 bit))BtlChar_TestFlag)
-#define BtlChar_SetFlag ((void (*)(ActGChr *chr, s32 bit))BtlChar_SetFlag)
-#define BtlChar_SetHeldFlag ((void (*)(ActGChr *chr, s32 bit))BtlChar_SetHeldFlag)
-#define BtlChar_ClearFlag ((void (*)(ActGChr *chr, s32 bit))BtlChar_ClearFlag)
-#define BtlChar_IsFlagRaised ((s32 (*)(ActGChr *chr, s32 bit))BtlChar_IsFlagRaised)
-#define BtlChar_SetFxBit ((void (*)(ActGChr *chr, s32 bit))BtlChar_SetFxBit)
-#define BtlCharSnd_PlayCommon ((void (*)(ActGChr *chr, s32 id))BtlCharSnd_PlayCommon)
-#define BtlChar_Vibrate ((void (*)(ActGChr *chr, f32 power, f32 seconds))BtlChar_Vibrate)
-extern void BtlChar_SetSmallVibration(ActGChr *chr, f32 seconds);
-#define BtlChar_ResetLook ((void (*)(ActGChr *chr))BtlChar_ResetLook)
-#define ChrCam_EndCut ((void (*)(ActGChr *chr))ChrCam_EndCut)
-#define ChrCam_RequestCut ((void (*)(ActGChr *chr, s32 table, s32 index))ChrCam_RequestCut)
-#define BtlInput_TestAction ((s32 (*)(ActGChr *chr, s32 id, s32 want))BtlInput_TestAction)
-#define BtlMember_SpendKi ((void (*)(ActGChr *chr, s32 amount, s32 force))BtlMember_SpendKi)
-extern f32 BtlOpp_GetGapXZ(ActGChr *chr);
-extern void BtlColl_SetFramesToReach(ActGChr *chr, f32 scale);
+#define BtlChar_GetObj ((ActGObj *(*)(BtlFighter *chr))BtlChar_GetObj)
+#define BtlChar_GetPos ((BtlFighterPose *(*)(BtlFighter *chr))BtlChar_GetPos)
+#define BtlChar_TestFlag ((s32 (*)(BtlFighter *chr, s32 bit))BtlChar_TestFlag)
+#define BtlChar_SetFlag ((void (*)(BtlFighter *chr, s32 bit))BtlChar_SetFlag)
+#define BtlChar_SetHeldFlag ((void (*)(BtlFighter *chr, s32 bit))BtlChar_SetHeldFlag)
+#define BtlChar_ClearFlag ((void (*)(BtlFighter *chr, s32 bit))BtlChar_ClearFlag)
+#define BtlChar_IsFlagRaised ((s32 (*)(BtlFighter *chr, s32 bit))BtlChar_IsFlagRaised)
+#define BtlChar_SetFxBit ((void (*)(BtlFighter *chr, s32 bit))BtlChar_SetFxBit)
+#define BtlCharSnd_PlayCommon ((void (*)(BtlFighter *chr, s32 id))BtlCharSnd_PlayCommon)
+#define BtlChar_Vibrate ((void (*)(BtlFighter *chr, f32 power, f32 seconds))BtlChar_Vibrate)
+extern void BtlChar_SetSmallVibration(BtlFighter *chr, f32 seconds);
+#define BtlChar_ResetLook ((void (*)(BtlFighter *chr))BtlChar_ResetLook)
+#define ChrCam_EndCut ((void (*)(BtlFighter *chr))ChrCam_EndCut)
+#define ChrCam_RequestCut ((void (*)(BtlFighter *chr, s32 table, s32 index))ChrCam_RequestCut)
+#define BtlInput_TestAction ((s32 (*)(BtlFighter *chr, s32 id, s32 want))BtlInput_TestAction)
+#define BtlMember_SpendKi ((void (*)(BtlFighter *chr, s32 amount, s32 force))BtlMember_SpendKi)
+extern f32 BtlOpp_GetGapXZ(BtlFighter *chr);
+extern void BtlColl_SetFramesToReach(BtlFighter *chr, f32 scale);
 
-#define BtlAct_Request ((void (*)(ActGChr *chr, s32 id))BtlAct_Request)
-extern s32 BtlAct_GetCurrent(ActGChr *chr);
-#define BtlAct_GetCurrentClass ((s32 (*)(ActGChr *chr))BtlAct_GetCurrentClass)
-extern s32 BtlAct_GetQueued(ActGChr *chr);
-#define BtlAct_GetPrev ((s32 (*)(ActGChr *chr))BtlAct_GetPrev)
+#define BtlAct_Request ((void (*)(BtlFighter *chr, s32 id))BtlAct_Request)
+extern s32 BtlAct_GetCurrent(BtlFighter *chr);
+#define BtlAct_GetCurrentClass ((s32 (*)(BtlFighter *chr))BtlAct_GetCurrentClass)
+extern s32 BtlAct_GetQueued(BtlFighter *chr);
+#define BtlAct_GetPrev ((s32 (*)(BtlFighter *chr))BtlAct_GetPrev)
 
-#define BtlAnim_Play ((void (*)(ActGChr *chr, s32 anim, f32 blend))BtlAnim_Play)
-#define BtlAnim_Request ((void (*)(ActGChr *chr, s32 anim, f32 blend))BtlAnim_Request)
-#define BtlAnim_Advance ((s32 (*)(ActGChr *chr, s32 flags))BtlAnim_Advance)
-#define BtlAnim_AdvanceThen ((s32 (*)(ActGChr *chr, s32 next, f32 blend, s32 flags))BtlAnim_AdvanceThen)
-#define BtlAnim_AdvanceLoop ((void (*)(ActGChr *chr, s32 flags))BtlAnim_AdvanceLoop)
-#define BtlAnim_GetId ((s32 (*)(ActGChr *chr))BtlAnim_GetId)
-#define BtlAnim_IsNew ((s32 (*)(ActGChr *chr))BtlAnim_IsNew)
-extern s32 BtlAnim_WasNew(ActGChr *chr);
-extern f32 BtlAnim_GetProgress(ActGChr *chr);
+#define BtlAnim_Play ((void (*)(BtlFighter *chr, s32 anim, f32 blend))BtlAnim_Play)
+#define BtlAnim_Request ((void (*)(BtlFighter *chr, s32 anim, f32 blend))BtlAnim_Request)
+#define BtlAnim_Advance ((s32 (*)(BtlFighter *chr, s32 flags))BtlAnim_Advance)
+#define BtlAnim_AdvanceThen ((s32 (*)(BtlFighter *chr, s32 next, f32 blend, s32 flags))BtlAnim_AdvanceThen)
+#define BtlAnim_AdvanceLoop ((void (*)(BtlFighter *chr, s32 flags))BtlAnim_AdvanceLoop)
+#define BtlAnim_GetId ((s32 (*)(BtlFighter *chr))BtlAnim_GetId)
+#define BtlAnim_IsNew ((s32 (*)(BtlFighter *chr))BtlAnim_IsNew)
+extern s32 BtlAnim_WasNew(BtlFighter *chr);
+extern f32 BtlAnim_GetProgress(BtlFighter *chr);
 
-#define BtlMove_Step ((void (*)(ActGChr *chr, s32 yawMode, s32 pitchMode, s32 dirMode, f32 speed, f32 accel))BtlMove_Step)
-#define BtlMove_TurnYaw ((void (*)(ActGChr *chr, s32 mode, f32 maxStep))BtlMove_TurnYaw)
-#define BtlMove_TurnPitch ((void (*)(ActGChr *chr, s32 mode, f32 maxStep))BtlMove_TurnPitch)
-#define BtlMove_TurnModelYaw ((void (*)(ActGChr *chr, f32 maxStep, f32 rate))BtlMove_TurnModelYaw)
-#define BtlMove_ApplyGravity ((void (*)(ActGChr *chr))BtlMove_ApplyGravity)
-#define BtlMove_SetDirection ((void (*)(ActGChr *chr, s32 mode))BtlMove_SetDirection)
-extern void BtlMove_Advance(ActGChr *chr, f32 speed, f32 accel);
-extern void BtlMove_SetLeanX(ActGChr *chr, f32 v);
-extern void BtlMove_SteerAtOpponent(ActGChr *chr, f32 closeSpeed, f32 yawAccel, f32 pitchAccel, f32 yawMax, f32 pitchMax, f32 maxStep);
+#define BtlMove_Step ((void (*)(BtlFighter *chr, s32 yawMode, s32 pitchMode, s32 dirMode, f32 speed, f32 accel))BtlMove_Step)
+#define BtlMove_TurnYaw ((void (*)(BtlFighter *chr, s32 mode, f32 maxStep))BtlMove_TurnYaw)
+#define BtlMove_TurnPitch ((void (*)(BtlFighter *chr, s32 mode, f32 maxStep))BtlMove_TurnPitch)
+#define BtlMove_TurnModelYaw ((void (*)(BtlFighter *chr, f32 maxStep, f32 rate))BtlMove_TurnModelYaw)
+#define BtlMove_ApplyGravity ((void (*)(BtlFighter *chr))BtlMove_ApplyGravity)
+#define BtlMove_SetDirection ((void (*)(BtlFighter *chr, s32 mode))BtlMove_SetDirection)
+extern void BtlMove_Advance(BtlFighter *chr, f32 speed, f32 accel);
+extern void BtlMove_SetLeanX(BtlFighter *chr, f32 v);
+extern void BtlMove_SteerAtOpponent(BtlFighter *chr, f32 closeSpeed, f32 yawAccel, f32 pitchAccel, f32 yawMax, f32 pitchMax, f32 maxStep);
 
 /* Rush-technique helpers of the previous file (0x1F5460..0x1F6510). */
-#define BtlSuper_RequestCut ((void (*)(ActGChr *chr, s32 slot))BtlSuper_RequestCut)
-#define BtlSuper_SetStartFx ((void (*)(ActGChr *chr, s32 slot))BtlSuper_SetStartFx)
-#define BtlSuper_SetClassFlag ((void (*)(ActGChr *chr, s32 slot, s32 always))BtlSuper_SetClassFlag)
-#define BtlSuper_RequestHitStop ((void (*)(ActGChr *chr, s32 light))BtlSuper_RequestHitStop)
-#define BtlSuper_SetClass ((void (*)(ActGChr *chr, s32 slot))BtlSuper_SetClass)
-#define BtlSuper_MeasureRushStep ((void (*)(ActGChr *chr, s32 slot, s32 frame))BtlSuper_MeasureRushStep)
-#define BtlSuper_Begin ((void (*)(ActGChr *chr, s32 slot, s32 always))BtlSuper_Begin)
-#define BtlSuper_PlayStartSound ((void (*)(ActGChr *chr, s32 slot, s32 always))BtlSuper_PlayStartSound)
-#define BtlSuper_Leave ((void (*)(ActGChr *chr, s32 slot))BtlSuper_Leave)
-#define BtlSuper_Finish ((void (*)(ActGChr *chr, s32 slot))BtlSuper_Finish)
-#define BtlSuper_SetRushFlags ((void (*)(ActGChr *chr))BtlSuper_SetRushFlags)
-extern s32 BtlAct_GetLandingAction(ActGChr *chr, s32 slot, s32 kind);
-extern f32 BtlOpp_GetTargetYaw(ActGChr *chr);
-#define BtlMove_SetHeading ((void (*)(ActGChr *chr, f32 yaw, f32 pitch))BtlMove_SetHeading)
-extern void BtlMove_MoveVertical(ActGChr *chr, f32 speed, f32 accel);
-extern s32 BtlSuper_GetClashPower(ActGChr *chr, s32 slot);
-#define BtlSuper_GetHitDirKind ((s32 (*)(ActGChr *chr, s32 slot))BtlSuper_GetHitDirKind)
-#define BtlMember_HasAbility ((s32 (*)(ActGChr *chr, s32 n))BtlMember_HasAbility)
-#define BtlMember_GetActiveGauge ((ActGGauge *(*)(ActGChr *chr))BtlMember_GetActiveGauge)
-#define BtlAct_SetPitchMotion ((void (*)(ActGChr *chr, s32 motionUp, s32 motionDown, s32 recalc))BtlAct_SetPitchMotion)
-#define BtlAct_PushAngle ((void (*)(ActGChr *chr, f32 angle, f32 speed, f32 max))BtlAct_PushAngle)
-#define BtlAct_SetFormCurrent ((void (*)(ActGChr *chr))BtlAct_SetFormCurrent)
-extern void BtlAct_SetFormRandom(ActGChr *chr);
-#define ChrCam_AddShake ((void (*)(ActGChr *chr, f32 strength, f32 time))ChrCam_AddShake)
-#define BtlChar_ClearFlagRange ((void (*)(ActGChr *chr, u32 a, u32 b))BtlChar_ClearFlagRange)
-#define BtlChar_SavePlacement ((void (*)(ActGChr *chr))BtlChar_SavePlacement)
+#define BtlSuper_RequestCut ((void (*)(BtlFighter *chr, s32 slot))BtlSuper_RequestCut)
+#define BtlSuper_SetStartFx ((void (*)(BtlFighter *chr, s32 slot))BtlSuper_SetStartFx)
+#define BtlSuper_SetClassFlag ((void (*)(BtlFighter *chr, s32 slot, s32 always))BtlSuper_SetClassFlag)
+#define BtlSuper_RequestHitStop ((void (*)(BtlFighter *chr, s32 light))BtlSuper_RequestHitStop)
+#define BtlSuper_SetClass ((void (*)(BtlFighter *chr, s32 slot))BtlSuper_SetClass)
+#define BtlSuper_MeasureRushStep ((void (*)(BtlFighter *chr, s32 slot, s32 frame))BtlSuper_MeasureRushStep)
+#define BtlSuper_Begin ((void (*)(BtlFighter *chr, s32 slot, s32 always))BtlSuper_Begin)
+#define BtlSuper_PlayStartSound ((void (*)(BtlFighter *chr, s32 slot, s32 always))BtlSuper_PlayStartSound)
+#define BtlSuper_Leave ((void (*)(BtlFighter *chr, s32 slot))BtlSuper_Leave)
+#define BtlSuper_Finish ((void (*)(BtlFighter *chr, s32 slot))BtlSuper_Finish)
+#define BtlSuper_SetRushFlags ((void (*)(BtlFighter *chr))BtlSuper_SetRushFlags)
+extern s32 BtlAct_GetLandingAction(BtlFighter *chr, s32 slot, s32 kind);
+extern f32 BtlOpp_GetTargetYaw(BtlFighter *chr);
+#define BtlMove_SetHeading ((void (*)(BtlFighter *chr, f32 yaw, f32 pitch))BtlMove_SetHeading)
+extern void BtlMove_MoveVertical(BtlFighter *chr, f32 speed, f32 accel);
+extern s32 BtlSuper_GetClashPower(BtlFighter *chr, s32 slot);
+#define BtlSuper_GetHitDirKind ((s32 (*)(BtlFighter *chr, s32 slot))BtlSuper_GetHitDirKind)
+#define BtlMember_HasAbility ((s32 (*)(BtlFighter *chr, s32 n))BtlMember_HasAbility)
+#define BtlMember_GetActiveGauge ((BtlMemberGauge *(*)(BtlFighter *chr))BtlMember_GetActiveGauge)
+#define BtlAct_SetPitchMotion ((void (*)(BtlFighter *chr, s32 motionUp, s32 motionDown, s32 recalc))BtlAct_SetPitchMotion)
+#define BtlAct_PushAngle ((void (*)(BtlFighter *chr, f32 angle, f32 speed, f32 max))BtlAct_PushAngle)
+#define BtlAct_SetFormCurrent ((void (*)(BtlFighter *chr))BtlAct_SetFormCurrent)
+extern void BtlAct_SetFormRandom(BtlFighter *chr);
+#define ChrCam_AddShake ((void (*)(BtlFighter *chr, f32 strength, f32 time))ChrCam_AddShake)
+#define BtlChar_ClearFlagRange ((void (*)(BtlFighter *chr, u32 a, u32 b))BtlChar_ClearFlagRange)
+#define BtlChar_SavePlacement ((void (*)(BtlFighter *chr))BtlChar_SavePlacement)
 extern void BtlChange_RequestChara(s32 player, s32 chara, s32 costume, s32 variant, s32 animChara, s32 anim1Chara, s32 voiceChara);
 extern s32 BtlChange_IsLoadedFor(s32 player);
 extern void BtlChange_SetReady(s32 player);
 extern void BtlChange_SetDone(s32 player);
-extern void BtlAnim_JumpToEnd(ActGChr *chr);
-extern void BtlAnim_EnableHandle(ActGChr *chr);
+extern void BtlAnim_JumpToEnd(BtlFighter *chr);
+extern void BtlAnim_EnableHandle(BtlFighter *chr);
 #define BtlObjAnim_QueryEvent ((s32 (*)(ActGObj *obj, u64 mask, s32 layer, s32 mode))BtlObjAnim_QueryEvent)
-extern s32 BtlAtk_GetDamage(ActGChr *chr);
-extern s32 BtlAtk_GetThrowParamC(ActGChr *chr);
-extern s32 BtlAtk_GetThrowParamE(ActGChr *chr);
-#define BtlOpp_GetParamWord0 ((s32 (*)(ActGChr *chr))BtlOpp_GetParamWord0)
-extern s32 BtlOpp_GetPlayer(ActGChr *chr);
-extern ActGChr *BtlChar_Get(s32 i);
-extern s32 BtlChar_IsDead(ActGChr *chr);
-extern void BtlChar_RequestPlaceRelative(ActGChr *chr, s32 slot, s32 step, s32 self);
-extern void BtlChar_ResetBodyWarp(ActGChr *chr);
+extern s32 BtlAtk_GetDamage(BtlFighter *chr);
+extern s32 BtlAtk_GetThrowParamC(BtlFighter *chr);
+extern s32 BtlAtk_GetThrowParamE(BtlFighter *chr);
+#define BtlOpp_GetParamWord0 ((s32 (*)(BtlFighter *chr))BtlOpp_GetParamWord0)
+extern s32 BtlOpp_GetPlayer(BtlFighter *chr);
+extern BtlFighter *BtlChar_Get(s32 i);
+extern s32 BtlChar_IsDead(BtlFighter *chr);
+extern void BtlChar_RequestPlaceRelative(BtlFighter *chr, s32 slot, s32 step, s32 self);
+extern void BtlChar_ResetBodyWarp(BtlFighter *chr);
 extern void BtlChange_RequestObject(s32 player, s32 id, s32 costume, s32 variant, s32 slot);
-extern void BtlPartner_LinkToOwner(ActGChr *chr);
-extern void BtlPartner_SetFlag80(ActGChr *chr, s32 on);
-extern void BtlPartner_PlayAnim(ActGChr *chr, s32 anim);
-extern s32 BtlPartner_StepAnim(ActGChr *chr);
-extern void BtlPartner_Release(ActGChr *chr);
-#define BtlMember_Damage ((void (*)(ActGChr *chr, s32 amount, s32 flags))BtlMember_Damage)
-#define BtlAnim_GetFrame ((f32 (*)(ActGChr *chr))BtlAnim_GetFrame)
-extern s32 BtlAct_GetMotionLevel(ActGChr *chr, s32 motion);
-#define BtlSuper_GetFlagsA ((s32 (*)(ActGChr *chr, s32 slot))BtlSuper_GetFlagsA)
-extern s32 BtlSuper_GetStageFxEndStep(ActGChr *chr, s32 slot);
-#define BtlSuper_SetupRushDamage ((void (*)(ActGChr *chr, s32 slot, s32 fromAnim))BtlSuper_SetupRushDamage)
-extern s32 BtlSuper_GetFrames22C(ActGChr *chr, s32 slot);
-extern s32 BtlSuper_GetFrames238(ActGChr *chr, s32 slot);
+extern void BtlPartner_LinkToOwner(BtlFighter *chr);
+extern void BtlPartner_SetFlag80(BtlFighter *chr, s32 on);
+extern void BtlPartner_PlayAnim(BtlFighter *chr, s32 anim);
+extern s32 BtlPartner_StepAnim(BtlFighter *chr);
+extern void BtlPartner_Release(BtlFighter *chr);
+#define BtlMember_Damage ((void (*)(BtlFighter *chr, s32 amount, s32 flags))BtlMember_Damage)
+#define BtlAnim_GetFrame ((f32 (*)(BtlFighter *chr))BtlAnim_GetFrame)
+extern s32 BtlAct_GetMotionLevel(BtlFighter *chr, s32 motion);
+#define BtlSuper_GetFlagsA ((s32 (*)(BtlFighter *chr, s32 slot))BtlSuper_GetFlagsA)
+extern s32 BtlSuper_GetStageFxEndStep(BtlFighter *chr, s32 slot);
+#define BtlSuper_SetupRushDamage ((void (*)(BtlFighter *chr, s32 slot, s32 fromAnim))BtlSuper_SetupRushDamage)
+extern s32 BtlSuper_GetFrames22C(BtlFighter *chr, s32 slot);
+extern s32 BtlSuper_GetFrames238(BtlFighter *chr, s32 slot);
 extern f32 BtlCharApi_GetGroundY(s32 objId);
-extern f32 BtlAct_GetHeight(ActGChr *chr);
+extern f32 BtlAct_GetHeight(BtlFighter *chr);
 extern void BtlChar_AddStageTimer(f32 seconds);
-extern void BtlMove_BrakeVertical(ActGChr *chr);
-#define BtlAnim_SetDuration ((void (*)(ActGChr *chr, f32 seconds))BtlAnim_SetDuration)
+extern void BtlMove_BrakeVertical(BtlFighter *chr);
+#define BtlAnim_SetDuration ((void (*)(BtlFighter *chr, f32 seconds))BtlAnim_SetDuration)
 
 /* Technique parameter readers (0x210xxx..0x211xxx, not decompiled). */
-extern f32 BtlMoveParam_GetTurnAccel(ActGChr *chr, s32 n);
-extern f32 BtlMoveParam_GetTurnMax(ActGChr *chr, s32 n);
-#define BtlSuper_GetFlags ((s32 (*)(ActGChr *chr, s32 slot))BtlSuper_GetFlags)
-#define BtlSuper_GetShotTime ((f32 (*)(ActGChr *chr, s32 slot))BtlSuper_GetShotTime)
-#define BtlSuper_GetKiCost ((s32 (*)(ActGChr *chr, s32 slot))BtlSuper_GetKiCost)
-extern f32 BtlSuper_GetRushSpeed(ActGChr *chr, s32 slot);
+extern f32 BtlMoveParam_GetTurnAccel(BtlFighter *chr, s32 n);
+extern f32 BtlMoveParam_GetTurnMax(BtlFighter *chr, s32 n);
+#define BtlSuper_GetFlags ((s32 (*)(BtlFighter *chr, s32 slot))BtlSuper_GetFlags)
+#define BtlSuper_GetShotTime ((f32 (*)(BtlFighter *chr, s32 slot))BtlSuper_GetShotTime)
+#define BtlSuper_GetKiCost ((s32 (*)(BtlFighter *chr, s32 slot))BtlSuper_GetKiCost)
+extern f32 BtlSuper_GetRushSpeed(BtlFighter *chr, s32 slot);
 
 /*
  * Actions 0x11B..0x11D (technique kinds 4, 5) and 0x11E..0x120 (kind 6: work[0] bit 0, no homing): a rush technique.
@@ -1779,7 +1779,7 @@ extern f32 BtlSuper_GetRushSpeed(ActGChr *chr, s32 slot);
  * btl_act_g.c was) the `beqz` after BtlChar_TestFlag(chr, 5) comes out as `beqzl` with the target's
  * `lw a2,0x964(s0)` in its delay slot instead of the fall-through's `move a0,s0`.
  */
-void BtlAct_SuperRushDashHandler(ActGChr *chr, s32 phase) {
+void BtlAct_SuperRushDashHandler(BtlFighter *chr, s32 phase) {
     s32 *still = &chr->work[2];
     s32 *frames = &chr->work[3];
     s32 slot = BtlAct_GetCurrentClass(chr);
@@ -1806,7 +1806,7 @@ void BtlAct_SuperRushDashHandler(ActGChr *chr, s32 phase) {
         }
     }
     if (phase == 1) {
-        ActGPose *pose = BtlChar_GetPos(chr);
+        BtlFighterPose *pose = BtlChar_GetPos(chr);
         s32 moving = 0;
         f32 lean = 0.0f;
         f32 blend;
@@ -1911,7 +1911,7 @@ void BtlAct_SuperRushDashHandler(ActGChr *chr, s32 phase) {
         }
     }
     if (phase == 2) {
-        ActGPose *pose = BtlChar_GetPos(chr);
+        BtlFighterPose *pose = BtlChar_GetPos(chr);
 
         switch (BtlAnim_GetId(chr)) {
             case 0x105:
@@ -1986,7 +1986,7 @@ void BtlAct_SuperRushDashHandler(ActGChr *chr, s32 phase) {
  * called and the attack is live (flag 0x49) in its second half. Flags 0xA5 and 0x53 every frame.
  * decide: work[1] -> 0xB; flag 0x7A -> 0xCA; flag 0x64 -> flag 0x36 and 0xCF; flag 0x72 -> the sequence.
  */
-void BtlAct_SuperRushStrikeHandler(ActGChr *chr, s32 phase) {
+void BtlAct_SuperRushStrikeHandler(BtlFighter *chr, s32 phase) {
     s32 slot = BtlAct_GetCurrentClass(chr);
 
     if (phase == 0) {
@@ -2126,7 +2126,7 @@ void BtlAct_SuperRushStrikeHandler(ActGChr *chr, s32 phase) {
  * held flag 0xE,
  * releases the partner object and adds 3 s to the stage timer.
  */
-void BtlAct_SuperRushSequenceHandler(ActGChr *chr, s32 phase) {
+void BtlAct_SuperRushSequenceHandler(BtlFighter *chr, s32 phase) {
     s32 *stepA = &chr->work[3];
     s32 *stepB = &chr->work[2];
     s32 slot = BtlAct_GetCurrentClass(chr);
@@ -2439,7 +2439,7 @@ void BtlAct_SuperRushSequenceHandler(ActGChr *chr, s32 phase) {
         if (chr->work[0] & 1) {
             BtlSuper_Leave(chr, slot);
             if (chr->thr.raiseAtEnd != 0) {
-                ActGPose *pose = BtlChar_GetPos(chr);
+                BtlFighterPose *pose = BtlChar_GetPos(chr);
 
                 pose->pos.y += BtlAct_GetHeight(chr);
             } else {
@@ -2459,7 +2459,7 @@ void BtlAct_SuperRushSequenceHandler(ActGChr *chr, s32 phase) {
  * degrees per frame) and BtlMove_TurnPitch mode 0 (5.4 degrees per frame). Flag 0x1A every frame. The loop ends
  * (animation 6) on flag 0xA8, raised by the technique's effect, or when lock-on is lost; then BtlSuper_Finish.
  */
-void BtlAct_SuperRushFlyHandler(ActGChr *chr, s32 phase) {
+void BtlAct_SuperRushFlyHandler(BtlFighter *chr, s32 phase) {
     s32 slot = BtlAct_GetCurrentClass(chr);
 
     if (phase == 0) {
@@ -2564,7 +2564,7 @@ void BtlAct_SuperRushFlyHandler(ActGChr *chr, s32 phase) {
         }
     }
     if (phase == 2) {
-        ActGPose *pose = BtlChar_GetPos(chr);
+        BtlFighterPose *pose = BtlChar_GetPos(chr);
 
         switch (BtlAnim_GetId(chr)) {
             case 0x105:
@@ -2617,8 +2617,8 @@ void BtlAct_SuperRushFlyHandler(ActGChr *chr, s32 phase) {
  * the translation unit (a declaration added or removed anywhere above is enough), so it is the compiler's state
  * that decides, not the code. With the file as it stands the function matches only with one more declaration in
  * front of it. Re-check with fdiff after any change to this file or its headers; remove the line if it flips. */
-void BtlAct_SuperRushFollowHandler(ActGChr *chr, s32 phase);
-void BtlAct_SuperRushFollowHandler(ActGChr *chr, s32 phase) {
+void BtlAct_SuperRushFollowHandler(BtlFighter *chr, s32 phase);
+void BtlAct_SuperRushFollowHandler(BtlFighter *chr, s32 phase) {
     s32 slot = BtlAct_GetCurrentClass(chr);
 
     if (phase == 0) {
@@ -2701,7 +2701,7 @@ void BtlAct_SuperRushFollowHandler(ActGChr *chr, s32 phase) {
         }
     }
     if (phase == 2) {
-        ActGPose *pose = BtlChar_GetPos(chr);
+        BtlFighterPose *pose = BtlChar_GetPos(chr);
 
         switch (BtlAnim_GetId(chr)) {
             case 0x105:
@@ -2751,7 +2751,7 @@ void BtlAct_SuperRushFollowHandler(ActGChr *chr, s32 phase) {
  * block unk38: flags 0x8B and 9. At the end: flags 0x8C and 0x33, BtlSuper_Finish. Leaving adds 3 s to the stage
  * timer and lands the fighter when it is less than 5 m above the ground.
  */
-void BtlAct_SuperRushFinishHandler(ActGChr *chr, s32 phase) {
+void BtlAct_SuperRushFinishHandler(BtlFighter *chr, s32 phase) {
     s32 slot = BtlAct_GetCurrentClass(chr);
 
     if (phase == 0) {
@@ -2803,7 +2803,7 @@ void BtlAct_SuperRushFinishHandler(ActGChr *chr, s32 phase) {
         BtlSuper_Leave(chr, slot);
         BtlChar_AddStageTimer(3.0f);
         if (BtlAct_GetHeight(chr) < 5.0f) {
-            ActGPose *pose;
+            BtlFighterPose *pose;
 
             BtlChar_SetHeldFlag(chr, 0xF);
             pose = BtlChar_GetPos(chr);
@@ -2823,7 +2823,7 @@ void BtlAct_SuperRushFinishHandler(ActGChr *chr, s32 phase) {
  * throw block (turnVictim, turnYaw, turnPitch) around the direction to the opponent, flag 0x35 when hit from behind, and
  * the landing action BtlAct_GetLandingAction(chr, slot, thr.landingKind). Leaving raises flag 0x33.
  */
-void BtlAct_SuperRushCaughtHandler(ActGChr *chr, s32 phase) {
+void BtlAct_SuperRushCaughtHandler(BtlFighter *chr, s32 phase) {
     s32 slot = BtlAct_GetCurrentClass(chr);
 
     if (phase == 0) {
@@ -2918,7 +2918,7 @@ void BtlAct_SuperRushCaughtHandler(ActGChr *chr, s32 phase) {
  * cut 3 and level 2 hit-stop on every frame, so the whole battle is frozen around the pose. Ends on the animation
  * event flag 0x31 by starting the queued technique action. Raises flag 0xA3 when that action is 0x114.
  */
-s32 BtlAct_UltimateStartHandler(ActGChr *chr, s32 phase) {
+s32 BtlAct_UltimateStartHandler(BtlFighter *chr, s32 phase) {
     s32 slot = BtlAct_GetCurrentClass(chr);
 
     if (phase == 0) {
@@ -2975,7 +2975,7 @@ s32 BtlAct_UltimateStartHandler(ActGChr *chr, s32 phase) {
  * sequence.
  * Every frame: camera shake 5.0, vibration, recoil backwards, flags 0x42..0x46, 0x134, 0x128.
  */
-void BtlAct_ClashStruggleHandler(ActGChr *chr, s32 phase) {
+void BtlAct_ClashStruggleHandler(BtlFighter *chr, s32 phase) {
     s32 slot = BtlAct_GetCurrentClass(chr);
 
     if (phase == 0) {
@@ -3070,7 +3070,7 @@ void BtlAct_ClashStruggleHandler(ActGChr *chr, s32 phase) {
  * action then also waits for BtlChange_IsLoadedFor before it ends. Next action 0xD9; leaving adds 4 s to the
  * stage timer and clears the clash flags 0xBF..0xC3.
  */
-void BtlAct_ClashLostHandler(ActGChr *chr, s32 phase) {
+void BtlAct_ClashLostHandler(BtlFighter *chr, s32 phase) {
     s32 *step = &chr->work[2];
 
     if (phase == 0) {
@@ -3146,7 +3146,7 @@ void BtlAct_ClashLostHandler(ActGChr *chr, s32 phase) {
  * Actions 0x136..0x138 (queued for hit reaction 0x29, slot from the reaction block): motion 0x21 of the slot while
  * moving straight up at 1500 km/h; flags 0xD5, 0x95, 0x96. Action 0xD0 when the motion ends.
  */
-s32 BtlAct_SuperLaunchedUpHandler(ActGChr *chr, s32 phase) {
+s32 BtlAct_SuperLaunchedUpHandler(BtlFighter *chr, s32 phase) {
     s32 slot = BtlAct_GetCurrentClass(chr);
 
     if (phase == 0) {
@@ -3170,7 +3170,7 @@ s32 BtlAct_SuperLaunchedUpHandler(ActGChr *chr, s32 phase) {
  * BtlChar_FrameMod(6)), waits for the load, swaps (flags 0xF5, 0x55) and returns to action 0xB. Level 2 hit-stop
  * on every frame: the battle is frozen until the model has loaded.
  */
-s32 BtlAct_ChangeRandomCharaHandler(ActGChr *chr, s32 phase) {
+s32 BtlAct_ChangeRandomCharaHandler(BtlFighter *chr, s32 phase) {
     s32 *step = &chr->work[2];
 
     if (phase == 1) {
@@ -3217,7 +3217,7 @@ s32 BtlAct_ChangeRandomCharaHandler(ActGChr *chr, s32 phase) {
  * 10 when that does not exceed the total. Unless the opponent's parameter word has bit 0x80, health and ki drains
  * (BtlAtk_GetThrowParamC / E) run between the animation's 0x20000 and 0x40000 events.
  */
-void BtlActThrow_SetupDamage(ActGChr *chr, s32 extraHit) {
+void BtlActThrow_SetupDamage(BtlFighter *chr, s32 extraHit) {
     ActGObj *obj = BtlChar_GetObj(chr);
     s32 damage;
     s32 rem;
@@ -3280,7 +3280,7 @@ void BtlActThrow_SetupDamage(ActGChr *chr, s32 extraHit) {
 }
 
 /* Turns the heading by minus the yaw of the first root rotation key of the current animation. */
-void BtlActThrow_TurnByRootYaw(ActGChr *chr) {
+void BtlActThrow_TurnByRootYaw(BtlFighter *chr) {
     ActGAnim *anim;
     ActGTrack *track;
     Quat q;

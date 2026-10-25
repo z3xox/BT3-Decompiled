@@ -15,24 +15,24 @@
 extern Vec4 gVu0ZeroVec; /* zero vector */
 
 extern s32 BtlChar_GetCount(void);
-extern BtlCollChr *BtlChar_Get(s32 i);
-extern BtlCollChr *BtlChar_FindByObjId(s32 objId);
-extern BtlCollObj *BtlChar_GetObj(BtlCollChr *chr);
-extern BtlCollPose *BtlChar_GetPos(BtlCollChr *chr);
-extern s32 BtlChar_IsFrozen(BtlCollChr *chr);
-extern s32 BtlChar_IsFree(BtlCollChr *chr);
-extern s32 BtlChar_IsDead(BtlCollChr *chr);
+extern BtlFighter *BtlChar_Get(s32 i);
+extern BtlFighter *BtlChar_FindByObjId(s32 objId);
+extern BtlCollObj *BtlChar_GetObj(BtlFighter *chr);
+extern BtlFighterPose *BtlChar_GetPos(BtlFighter *chr);
+extern s32 BtlChar_IsFrozen(BtlFighter *chr);
+extern s32 BtlChar_IsFree(BtlFighter *chr);
+extern s32 BtlChar_IsDead(BtlFighter *chr);
 extern s32 BtlChar_FrameMod(s32 n);
 extern s32 BtlChar_IsStage4Or27(void);
 extern void BtlChar_AddStageTimer(f32 seconds);
-extern void BtlChar_Vibrate(BtlCollChr *chr, f32 power, f32 seconds);
-extern void BtlChar_PlayVoice(BtlCollChr *chr, s32 kind);
-extern s32 BtlChar_TestFlag(BtlCollChr *chr, s32 flag);
-extern void BtlChar_SetFlag(BtlCollChr *chr, s32 flag);
-extern void BtlChar_SetHeldFlag(BtlCollChr *chr, s32 flag);
-extern void BtlChar_ClearFlag(BtlCollChr *chr, s32 flag);
-extern s32 BtlInput_IsHeld(BtlCollChr *chr, u32 mask);
-extern void ChrCam_AddShake(BtlCollChr *chr, f32 strength, f32 time);
+extern void BtlChar_Vibrate(BtlFighter *chr, f32 power, f32 seconds);
+extern void BtlChar_PlayVoice(BtlFighter *chr, s32 kind);
+extern s32 BtlChar_TestFlag(BtlFighter *chr, s32 flag);
+extern void BtlChar_SetFlag(BtlFighter *chr, s32 flag);
+extern void BtlChar_SetHeldFlag(BtlFighter *chr, s32 flag);
+extern void BtlChar_ClearFlag(BtlFighter *chr, s32 flag);
+extern s32 BtlInput_IsHeld(BtlFighter *chr, u32 mask);
+extern void ChrCam_AddShake(BtlFighter *chr, f32 strength, f32 time);
 extern void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 strength, f32 time);
 extern void BtlCharApi_RumbleNear(Vec4 *pos, f32 near, f32 far, f32 power, f32 time);
 extern void BtlEvent_Raise(s32 side, s32 ev);
@@ -46,38 +46,38 @@ extern f32 Vec3_Length(Vec4 *v);
 extern void Vec3_Normalize(Vec4 *dst, Vec4 *src);
 extern f32 atan2f(f32 y, f32 x);
 
-extern s32 BtlColl_GetGuardKind(BtlCollChr *chr); /* guard kind; btl_char_hit.c; must stay external, see above */
+extern s32 BtlColl_GetGuardKind(BtlFighter *chr); /* guard kind; btl_char_hit.c; must stay external, see above */
 
-extern s32 BtlAnim_GetId(BtlCollChr *chr);            /* chr->unk974: state id */
+extern s32 BtlAnim_GetId(BtlFighter *chr);            /* chr->unk974: state id */
 extern u32 BtlAnim_GetFlags(s32 state);                  /* roster tbl[0][state]: flag word of the state */
-extern f32 BtlAnim_GetFrame(BtlCollChr *chr);
-extern f32 BtlAnim_GetLength(BtlCollChr *chr);
-extern f32 BtlAnim_GetStep(BtlCollChr *chr);
-extern BtlCollGauge *BtlMember_GetActiveGauge(BtlCollChr *chr);  /* active member's gauge block */
-extern s32 BtlMember_Damage(BtlCollChr *chr, s32 damage, s32 flags); /* applies damage */
-extern s32 BtlMember_AddKi(BtlCollChr *chr, s32 n);     /* gauge +0xC += n, returns the overflow */
-extern void BtlMember_AddBlast(BtlCollChr *chr, s32 n);    /* gauge +0x14 += n, clamped */
-extern void BtlMember_AddMaxPower(BtlCollChr *chr, s32 n);    /* gauge +0x1C += n, clamped to 30000 */
-extern s32 BtlMember_HasAbility(BtlCollChr *chr, s32 n);     /* active member has ability n */
-extern void BtlChar_SetFxBit(BtlCollChr *chr, s32 n);    /* sets bit n of the byte set at chr + 0x1262 */
-extern void BtlChar_GetSnapDelta(BtlCollChr *chr, Vec4 *out, s32 from, s32 to);
+extern f32 BtlAnim_GetFrame(BtlFighter *chr);
+extern f32 BtlAnim_GetLength(BtlFighter *chr);
+extern f32 BtlAnim_GetStep(BtlFighter *chr);
+extern BtlMemberGauge *BtlMember_GetActiveGauge(BtlFighter *chr);  /* active member's gauge block */
+extern s32 BtlMember_Damage(BtlFighter *chr, s32 damage, s32 flags); /* applies damage */
+extern s32 BtlMember_AddKi(BtlFighter *chr, s32 n);     /* gauge +0xC += n, returns the overflow */
+extern void BtlMember_AddBlast(BtlFighter *chr, s32 n);    /* gauge +0x14 += n, clamped */
+extern void BtlMember_AddMaxPower(BtlFighter *chr, s32 n);    /* gauge +0x1C += n, clamped to 30000 */
+extern s32 BtlMember_HasAbility(BtlFighter *chr, s32 n);     /* active member has ability n */
+extern void BtlChar_SetFxBit(BtlFighter *chr, s32 n);    /* sets bit n of the byte set at chr + 0x1262 */
+extern void BtlChar_GetSnapDelta(BtlFighter *chr, Vec4 *out, s32 from, s32 to);
 extern void BtlCharSnd_RequestAt(Vec4 *pos, s32 kind, s32 sound, f32 near, f32 far); /* positional sound */
-extern void BtlCharSnd_PlayCommon(BtlCollChr *chr, s32 sound); /* sound at the fighter */
-extern s32 BtlChar_IsFlagRaised(BtlCollChr *chr, s32 flag);  /* flag rose this frame */
-extern void BtlChar_RaiseFirstClash(BtlCollChr *chr);           /* first-hit bookkeeping (flag 0xE3, event 0x3C) */
-extern void BtlOpp_GetDelta(BtlCollChr *chr, Vec4 *out);
-extern f32 BtlOpp_GetYawFromFacing(BtlCollChr *chr);
-extern f32 BtlOpp_GetHalfHeightDiff(BtlCollChr *chr);
-extern void BtlMove_SetImpulseDir(BtlCollChr *chr, Vec4 *dir, f32 power); /* knock-back push */
-extern s32 BtlAct_GetCurrent(BtlCollChr *chr);            /* chr->action */
+extern void BtlCharSnd_PlayCommon(BtlFighter *chr, s32 sound); /* sound at the fighter */
+extern s32 BtlChar_IsFlagRaised(BtlFighter *chr, s32 flag);  /* flag rose this frame */
+extern void BtlChar_RaiseFirstClash(BtlFighter *chr);           /* first-hit bookkeeping (flag 0xE3, event 0x3C) */
+extern void BtlOpp_GetDelta(BtlFighter *chr, Vec4 *out);
+extern f32 BtlOpp_GetYawFromFacing(BtlFighter *chr);
+extern f32 BtlOpp_GetHalfHeightDiff(BtlFighter *chr);
+extern void BtlMove_SetImpulseDir(BtlFighter *chr, Vec4 *dir, f32 power); /* knock-back push */
+extern s32 BtlAct_GetCurrent(BtlFighter *chr);            /* chr->action */
 extern s32 BtlAct_IsTechniqueId(s32 action);
-extern s32 BtlAct_GetCurrentClass(BtlCollChr *chr);            /* class number of the action */
-extern s32 BtlAct_TestPoweredSkill(BtlCollChr *chr, s32 mask);
+extern s32 BtlAct_GetCurrentClass(BtlFighter *chr);            /* class number of the action */
+extern s32 BtlAct_TestPoweredSkill(BtlFighter *chr, s32 mask);
 extern f32 BtlCharApi_GetHeight(s32 objId);
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out); /* world position of a model node */
-extern s32 BtlParam_GetFlags(BtlCollChr *chr);            /* parameter word +0x10 of the fighter's object */
-extern s32 BtlParam_GetSizeClass(BtlCollChr *chr);
-extern f32 BtlParam_GetUnkC7Scale(BtlCollChr *chr);
+extern s32 BtlParam_GetFlags(BtlFighter *chr);            /* parameter word +0x10 of the fighter's object */
+extern s32 BtlParam_GetSizeClass(BtlFighter *chr);
+extern f32 BtlParam_GetUnkC7Scale(BtlFighter *chr);
 extern s32 BtlObjAnim_QueryEvent(BtlCollObj *obj, u64 mask, s32 layer, s32 what);
 extern s32 BtlStage_GetWaterLevel(f32 *height);
 extern s32 EftHit_GetHitCount(BtlCollHit *hit);
@@ -96,50 +96,50 @@ extern f32 BtlKiBlast_GetPushOfHit(BtlCollHit *hit);            /* push */
 extern f32 BtlKiBlast_GetGuardPushOfHit(BtlCollHit *hit);
 
 /* Rush-attack parameter readers (attacker, slot 2..4). */
-extern s32 BtlSuper_GetFlagsA(BtlCollChr *chr, s32 slot);
-extern u32 BtlSuper_GetFlags(BtlCollChr *chr, s32 slot);  /* technique flag word */
-extern s32 BtlSuper_GetId(BtlCollChr *chr, s32 slot);  /* technique id */
-extern s32 BtlSuper_GetClashPower(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetShots(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetHitsB(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetHitDirKind(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetType(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetReact(BtlCollChr *chr, s32 slot);  /* reaction ids */
-extern s32 BtlSuper_GetReactAlt(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetReactS800(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetReactAltS800(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetLandingKind(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetGuardKind(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetHitSound(BtlCollChr *chr, s32 slot, s32 alt); /* hit sound kind */
-extern s32 BtlSuper_GetStepCount(BtlCollChr *chr, s32 slot);
-extern f32 BtlSuper_GetPush(BtlCollChr *chr, s32 slot);
-extern f32 BtlSuper_GetGuardPush(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetKiCost(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetRecoilDamage(BtlCollChr *chr, s32 slot);  /* recoil damage to the attacker */
-extern f32 BtlSuper_GetThrowAngleA(BtlCollChr *chr, s32 slot);
-extern f32 BtlSuper_GetThrowAngleB(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetThrowChara(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetThrowCostume(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetThrowGauge20(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetThrowPartnerStep(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetThrowObjectSlot(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetLastStep(BtlCollChr *chr, s32 slot);
-extern s32 BtlSuper_GetDamage(BtlCollChr *chr, s32 slot, s32 guard, s32 total); /* damage */
+extern s32 BtlSuper_GetFlagsA(BtlFighter *chr, s32 slot);
+extern u32 BtlSuper_GetFlags(BtlFighter *chr, s32 slot);  /* technique flag word */
+extern s32 BtlSuper_GetId(BtlFighter *chr, s32 slot);  /* technique id */
+extern s32 BtlSuper_GetClashPower(BtlFighter *chr, s32 slot);
+extern s32 BtlSuper_GetShots(BtlFighter *chr, s32 slot);
+extern s32 BtlSuper_GetHitsB(BtlFighter *chr, s32 slot);
+extern s32 BtlSuper_GetHitDirKind(BtlFighter *chr, s32 slot);
+extern s32 BtlSuper_GetType(BtlFighter *chr, s32 slot);
+extern s32 BtlSuper_GetReact(BtlFighter *chr, s32 slot);  /* reaction ids */
+extern s32 BtlSuper_GetReactAlt(BtlFighter *chr, s32 slot);
+extern s32 BtlSuper_GetReactS800(BtlFighter *chr, s32 slot);
+extern s32 BtlSuper_GetReactAltS800(BtlFighter *chr, s32 slot);
+extern s32 BtlSuper_GetLandingKind(BtlFighter *chr, s32 slot);
+extern s32 BtlSuper_GetGuardKind(BtlFighter *chr, s32 slot);
+extern s32 BtlSuper_GetHitSound(BtlFighter *chr, s32 slot, s32 alt); /* hit sound kind */
+extern s32 BtlSuper_GetStepCount(BtlFighter *chr, s32 slot);
+extern f32 BtlSuper_GetPush(BtlFighter *chr, s32 slot);
+extern f32 BtlSuper_GetGuardPush(BtlFighter *chr, s32 slot);
+extern s32 BtlSuper_GetKiCost(BtlFighter *chr, s32 slot);
+extern s32 BtlSuper_GetRecoilDamage(BtlFighter *chr, s32 slot);  /* recoil damage to the attacker */
+extern f32 BtlSuper_GetThrowAngleA(BtlFighter *chr, s32 slot);
+extern f32 BtlSuper_GetThrowAngleB(BtlFighter *chr, s32 slot);
+extern s32 BtlSuper_GetThrowChara(BtlFighter *chr, s32 slot);
+extern s32 BtlSuper_GetThrowCostume(BtlFighter *chr, s32 slot);
+extern s32 BtlSuper_GetThrowGauge20(BtlFighter *chr, s32 slot);
+extern s32 BtlSuper_GetThrowPartnerStep(BtlFighter *chr, s32 slot);
+extern s32 BtlSuper_GetThrowObjectSlot(BtlFighter *chr, s32 slot);
+extern s32 BtlSuper_GetLastStep(BtlFighter *chr, s32 slot);
+extern s32 BtlSuper_GetDamage(BtlFighter *chr, s32 slot, s32 guard, s32 total); /* damage */
 
 /* Strike parameter readers (attacker, slot 0..1). */
-extern u32 BtlSkill_GetFlags(BtlCollChr *chr, s32 slot);  /* flag word */
-extern s32 BtlSkill_GetHitDirKind(BtlCollChr *chr, s32 slot);
-extern s32 BtlSkill_GetReact(BtlCollChr *chr, s32 slot);  /* reaction ids */
-extern s32 BtlSkill_GetReactS800(BtlCollChr *chr, s32 slot);
-extern s32 BtlSkill_GetHitSound(BtlCollChr *chr, s32 slot);  /* hit sound kind */
-extern f32 BtlSkill_GetPush(BtlCollChr *chr, s32 slot);  /* push */
-extern f32 BtlSkill_GetGuardPush(BtlCollChr *chr, s32 slot);
-extern s32 BtlSkill_GetDamage(BtlCollChr *chr, s32 slot, s32 total); /* damage */
-extern s32 BtlSkill_GetGuardDamage(BtlCollChr *chr, s32 slot, s32 total);
-extern s32 BtlSkill_GetFrames(BtlCollChr *chr, s32 slot);  /* stun frames */
+extern u32 BtlSkill_GetFlags(BtlFighter *chr, s32 slot);  /* flag word */
+extern s32 BtlSkill_GetHitDirKind(BtlFighter *chr, s32 slot);
+extern s32 BtlSkill_GetReact(BtlFighter *chr, s32 slot);  /* reaction ids */
+extern s32 BtlSkill_GetReactS800(BtlFighter *chr, s32 slot);
+extern s32 BtlSkill_GetHitSound(BtlFighter *chr, s32 slot);  /* hit sound kind */
+extern f32 BtlSkill_GetPush(BtlFighter *chr, s32 slot);  /* push */
+extern f32 BtlSkill_GetGuardPush(BtlFighter *chr, s32 slot);
+extern s32 BtlSkill_GetDamage(BtlFighter *chr, s32 slot, s32 total); /* damage */
+extern s32 BtlSkill_GetGuardDamage(BtlFighter *chr, s32 slot, s32 total);
+extern s32 BtlSkill_GetFrames(BtlFighter *chr, s32 slot);  /* stun frames */
 
 /* Starts a throw: fills the attacker's throw block, copies it to the victim and marks both. */
-s32 BtlColl_StartThrow(BtlCollChr *atk, BtlCollChr *def, s32 slot, u32 techFlags) {
+s32 BtlColl_StartThrow(BtlFighter *atk, BtlFighter *def, s32 slot, u32 techFlags) {
     s32 pick = 0;
     s32 back;
     f32 yaw;
@@ -277,7 +277,7 @@ s32 BtlColl_StartThrow(BtlCollChr *atk, BtlCollChr *def, s32 slot, u32 techFlags
 
 /* 1 when `yaw` (the direction a hit travels in) is within 90 degrees of the fighter's model yaw: the hit comes
  * from behind. Guards, deflects, reflects and absorbs all fail in that case. */
-s32 BtlColl_IsFacing(BtlCollChr *chr, f32 yaw) {
+s32 BtlColl_IsFacing(BtlFighter *chr, f32 yaw) {
     if (__builtin_fabsf(BtlUtil_WrapAngle(BtlChar_GetPos(chr)->rot.y - yaw)) < 1.5707963f) {
         return 1;
     }
@@ -285,12 +285,12 @@ s32 BtlColl_IsFacing(BtlCollChr *chr, f32 yaw) {
 }
 
 /* Direction a hit pushes the fighter in: returns its yaw and optionally the unit vector. */
-f32 BtlColl_GetHitDir(BtlCollChr *chr, BtlCollHit *hit, Vec4 *outDir) {
+f32 BtlColl_GetHitDir(BtlFighter *chr, BtlCollHit *hit, Vec4 *outDir) {
     Vec4 dir;
     Vec4 p;
     s32 fromPos = 0;
     s32 fromAtk = 0;
-    BtlCollChr *atk;
+    BtlFighter *atk;
     s32 slot;
     f32 yaw;
 
@@ -339,7 +339,7 @@ f32 BtlColl_GetHitDir(BtlCollChr *chr, BtlCollHit *hit, Vec4 *outDir) {
 }
 
 /* Plays the sound of a technique hit at the hit position and the victim's voice. */
-void BtlColl_PlayHitSound(BtlCollChr *chr, BtlCollHit *hit, u32 kind) {
+void BtlColl_PlayHitSound(BtlFighter *chr, BtlCollHit *hit, u32 kind) {
     switch (kind) {
     case 0:
         if (chr != NULL) {
@@ -383,7 +383,7 @@ void BtlColl_PlayHitSound(BtlCollChr *chr, BtlCollHit *hit, u32 kind) {
 
 /* A blast hits a fighter that is guarding (guard kind 1..4) from the front: chip damage (BtlMember_Damage flag 0xC),
  * flag 0x66 and a push; no reaction. Returns 0 when the guard does not apply and the hit goes through. */
-s32 BtlColl_GuardBlast(BtlCollChr *chr, BtlCollHit *hit) {
+s32 BtlColl_GuardBlast(BtlFighter *chr, BtlCollHit *hit) {
     Vec4 dir;
     s32 kind;
     f32 yaw;
@@ -431,10 +431,10 @@ s32 BtlColl_GuardBlast(BtlCollChr *chr, BtlCollHit *hit) {
 }
 
 /* A strike (slot 0, 1) hits a guarding fighter: same as BtlColl_GuardBlast, unless the strike has flag 0x200000. */
-s32 BtlColl_GuardStrike(BtlCollChr *chr, BtlCollHit *hit) {
+s32 BtlColl_GuardStrike(BtlFighter *chr, BtlCollHit *hit) {
     Vec4 dir;
     s32 kind;
-    BtlCollChr *atk;
+    BtlFighter *atk;
     s32 slot;
     s32 dmg;
     f32 yaw;
@@ -474,10 +474,10 @@ s32 BtlColl_GuardStrike(BtlCollChr *chr, BtlCollHit *hit) {
 
 /* A rush attack (slot 2..4) hits a guarding fighter. Catch reactions (0x1D, 0x1E, 0x22) are swallowed with only a
  * sound when BtlParam_GetSizeClass is 4 and the technique lacks bit 0x8000000; unblockable techniques (bit 1) go through. */
-s32 BtlColl_GuardRush(BtlCollChr *chr, BtlCollHit *hit) {
+s32 BtlColl_GuardRush(BtlFighter *chr, BtlCollHit *hit) {
     Vec4 dir;
     s32 weak = 0;
-    BtlCollChr *atk;
+    BtlFighter *atk;
     s32 slot;
     s32 kind;
     s32 alt;
@@ -569,11 +569,11 @@ s32 BtlColl_GuardRush(BtlCollChr *chr, BtlCollHit *hit) {
 
 /* A blast hits a fighter: chooses "no flinch" (reaction 2) or a reaction from the blast's tables, then applies the
  * push, sound, damage, shake and rumble. Returns 1 when the record was consumed. */
-s32 BtlColl_HitByBlast(BtlCollChr *chr, BtlCollHit *hit) {
+s32 BtlColl_HitByBlast(BtlFighter *chr, BtlCollHit *hit) {
     Vec4 dir;
     BtlCollObj *obj = BtlChar_GetObj(chr);
     u32 stFlags;
-    BtlCollChr *atk;
+    BtlFighter *atk;
     f32 yaw;
     s32 front;
     s32 react;
@@ -650,12 +650,12 @@ s32 BtlColl_HitByBlast(BtlCollChr *chr, BtlCollHit *hit) {
         }
     }
     if (react == BTL_REACT_NOFLINCH) {
-        BtlCollReact *g = &chr->react;
+        BtlFighterReact *g = &chr->react;
 
         g->reaction = react;
         g->shakeTimer = 3;
     } else {
-        BtlCollReact *r = &chr->react;
+        BtlFighterReact *r = &chr->react;
 
         r->reaction = react;
         r->scale = 0;
@@ -692,14 +692,14 @@ s32 BtlColl_HitByBlast(BtlCollChr *chr, BtlCollHit *hit) {
 }
 
 /* A strike (slot 0, 1) hits a fighter. */
-s32 BtlColl_HitByStrike(BtlCollChr *chr, BtlCollHit *hit) {
+s32 BtlColl_HitByStrike(BtlFighter *chr, BtlCollHit *hit) {
     Vec4 dir;
     f32 yaw;
     s32 front;
-    BtlCollChr *atk;
+    BtlFighter *atk;
     s32 slot;
     s32 react;
-    BtlCollReact *r;
+    BtlFighterReact *r;
     s32 fl;
     s32 dmg;
     f32 time;
@@ -789,8 +789,8 @@ s32 BtlColl_HitByStrike(BtlCollChr *chr, BtlCollHit *hit) {
 }
 
 /* A rush attack lands: reaction, facing, damage, shake, recoil, and the stage timer. */
-void BtlColl_ApplyRushHit(BtlCollChr *chr, BtlCollChr *atk, BtlCollHit *hit, s32 react, f32 yaw, s32 front, Vec4 *dir) {
-    BtlCollReact *r = &chr->react;
+void BtlColl_ApplyRushHit(BtlFighter *chr, BtlFighter *atk, BtlCollHit *hit, s32 react, f32 yaw, s32 front, Vec4 *dir) {
+    BtlFighterReact *r = &chr->react;
     s32 slot = hit->owner->slot;
     s32 alt;
     s32 fl;
@@ -867,9 +867,9 @@ void BtlColl_ApplyRushHit(BtlCollChr *chr, BtlCollChr *atk, BtlCollHit *hit, s32
 }
 
 /* A rush attack lands on a fighter that does not flinch (reaction 2): damage, recoil, shake; no facing change. */
-void BtlColl_ApplyRushNoFlinch(BtlCollChr *chr, BtlCollChr *atk, BtlCollHit *hit, f32 yaw, s32 front) {
+void BtlColl_ApplyRushNoFlinch(BtlFighter *chr, BtlFighter *atk, BtlCollHit *hit, f32 yaw, s32 front) {
     s32 fl = 0x100;
-    BtlCollReact *r = &chr->react;
+    BtlFighterReact *r = &chr->react;
     s32 slot = hit->owner->slot;
     s32 alt;
     s32 dmg;
@@ -905,8 +905,8 @@ void BtlColl_ApplyRushNoFlinch(BtlCollChr *chr, BtlCollChr *atk, BtlCollHit *hit
 }
 
 /* A rush attack with a catch reaction (0x1D, 0x1E) lands: fills the throw block of both fighters. */
-s32 BtlColl_StartRushCatch(BtlCollChr *chr, BtlCollChr *atk, BtlCollHit *hit, s32 react, f32 yaw) {
-    BtlCollReact *r = &chr->react;
+s32 BtlColl_StartRushCatch(BtlFighter *chr, BtlFighter *atk, BtlCollHit *hit, s32 react, f32 yaw) {
+    BtlFighterReact *r = &chr->react;
     s32 slot = hit->owner->slot;
     s32 back;
     u32 tf;
@@ -1003,11 +1003,11 @@ s32 BtlColl_StartRushCatch(BtlCollChr *chr, BtlCollChr *atk, BtlCollHit *hit, s3
 }
 
 /* A rush attack (slot 2..4) hits a fighter: no-flinch, catch, throw or a plain hit. */
-s32 BtlColl_HitByRush(BtlCollChr *chr, BtlCollHit *hit) {
+s32 BtlColl_HitByRush(BtlFighter *chr, BtlCollHit *hit) {
     Vec4 dir;
     f32 yaw;
     s32 front;
-    BtlCollChr *atk;
+    BtlFighter *atk;
     s32 slot;
     s32 react;
 
@@ -1079,8 +1079,8 @@ s32 BtlColl_HitByRush(BtlCollChr *chr, BtlCollHit *hit) {
 
 /* Asks the fighter whether a hit about to land is avoided: invulnerability, or an automatic dodge. */
 s32 BtlColl_TryDodge(s32 objId, BtlCollHit *hit) {
-    BtlCollChr *chr = BtlChar_FindByObjId(objId);
-    BtlCollChr *atk;
+    BtlFighter *chr = BtlChar_FindByObjId(objId);
+    BtlFighter *atk;
     s32 slot;
     s32 canDodge;
     s32 rush;
@@ -1217,7 +1217,7 @@ s32 BtlColl_TryDodge(s32 objId, BtlCollHit *hit) {
 
 /* Asks the fighter whether it knocks a blast away (deflect); sets the direction the blast leaves in. */
 s32 BtlColl_TryDeflect(s32 objId, BtlCollHit *hit) {
-    BtlCollChr *chr;
+    BtlFighter *chr;
     s32 perfect = 0;
     Vec4 *vel;
     f32 len;
@@ -1305,7 +1305,7 @@ s32 BtlColl_TryDeflect(s32 objId, BtlCollHit *hit) {
 
 /* Asks the fighter whether it sends a blast back (flag 0x52); sets the direction the blast leaves in. */
 s32 BtlColl_TryReflect(s32 objId, BtlCollHit *hit) {
-    BtlCollChr *chr;
+    BtlFighter *chr;
     Vec4 *vel;
     f32 len;
 
@@ -1357,8 +1357,8 @@ s32 BtlColl_TryReflect(s32 objId, BtlCollHit *hit) {
 
 /* Asks the fighter whether it absorbs a hit (flag 0x54): the hit's energy is added to a gauge. */
 s32 BtlColl_TryAbsorb(s32 objId, BtlCollHit *hit) {
-    BtlCollChr *chr;
-    BtlCollChr *atk;
+    BtlFighter *chr;
+    BtlFighter *atk;
     s32 slot;
     s32 amount = 0;
     s32 alt = 0;
@@ -1436,7 +1436,7 @@ s32 BtlColl_TryAbsorb(s32 objId, BtlCollHit *hit) {
 /* First attempt of the hit detection for a landed hit: the guard. Returns 1 when the hit was guarded (or the
  * fighter has flag 0x59), 0 when BtlColl_Hit must handle it. */
 s32 BtlColl_TryGuard(s32 objId, BtlCollHit *hit) {
-    BtlCollChr *chr;
+    BtlFighter *chr;
     s32 ret = 0;
 
     chr = BtlChar_FindByObjId(objId);
@@ -1464,7 +1464,7 @@ s32 BtlColl_TryGuard(s32 objId, BtlCollHit *hit) {
 /* A hit lands on a fighter: dispatch by kind of hit, unless the pending reaction is one that cannot be replaced
  * (then the hit is consumed without effect). A hit that lands runs BtlChar_RaiseFirstClash on the attacker. */
 s32 BtlColl_Hit(s32 objId, BtlCollHit *hit) {
-    BtlCollChr *chr;
+    BtlFighter *chr;
     s32 ret = 0;
 
     chr = BtlChar_FindByObjId(objId);
@@ -1515,7 +1515,7 @@ s32 BtlColl_Hit(s32 objId, BtlCollHit *hit) {
 
 /* Plays only the contact sound of a hit (no fighter involved). */
 void BtlColl_PlayContactSound(BtlCollHit *hit) {
-    BtlCollChr *atk;
+    BtlFighter *atk;
     s32 slot;
     s32 sound;
 
@@ -1554,12 +1554,12 @@ void BtlColl_PlayContactSound(BtlCollHit *hit) {
 }
 
 /* Keeps the fighter on the ground query result and derives the ground / water / ring-out flags. */
-void BtlColl_UpdateGround(BtlCollChr *chr) {
+void BtlColl_UpdateGround(BtlFighter *chr) {
     Vec4 vel;
     f32 water;
     s32 landed = 0;
     BtlCollObj *obj = BtlChar_GetObj(chr);
-    BtlCollPose *pose = BtlChar_GetPos(chr);
+    BtlFighterPose *pose = BtlChar_GetPos(chr);
     BtlCollGround *g = &obj->work->ground;
     f32 margin;
     f32 floorY;
@@ -1668,13 +1668,13 @@ void BtlColl_UpdateGround(BtlCollChr *chr) {
 }
 
 /* Begin-frame reset of the action-class bits. */
-void BtlColl_ClearActionBits(BtlCollChr *chr) {
+void BtlColl_ClearActionBits(BtlFighter *chr) {
     chr->actBits = 0;
     BtlColl_SetFramesLeftOverride(chr, -1);
 }
 
 /* Records the class of an action started this frame as one bit of chr->actBits. */
-void BtlColl_AddActionBit(BtlCollChr *chr, s32 action) {
+void BtlColl_AddActionBit(BtlFighter *chr, s32 action) {
     u64 bit = 0;
 
     switch (action) {
@@ -1817,12 +1817,12 @@ void BtlColl_AddActionBit(BtlCollChr *chr, s32 action) {
 }
 
 /* Sets chr->framesLeftOverride (fighter +0x1294). */
-void BtlColl_SetFramesLeftOverride(BtlCollChr *chr, s32 frames) {
+void BtlColl_SetFramesLeftOverride(BtlFighter *chr, s32 frames) {
     chr->framesLeftOverride = frames;
 }
 
 /* Sets framesLeftOverride to the number of frames the animation needs to reach `scale` times its length (rounded up). */
-void BtlColl_SetFramesToReach(BtlCollChr *chr, f32 scale) {
+void BtlColl_SetFramesToReach(BtlFighter *chr, f32 scale) {
     f32 len;
     f32 have;
     f32 rate;

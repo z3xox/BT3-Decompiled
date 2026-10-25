@@ -11,7 +11,8 @@
  *   src/battle/btl_char_sound.c    0x1D9A20..0x1DA8B8
  *   src/battle/btl_char_flag.c        0x1DA8B8..0x1DB048
  *   src/battle/btl_opponent.c    0x1DB048..0x1DBF20
- * The structures are partial views local to these files: only the fields they touch.
+ * The structures are partial views local to these files: only the fields they touch. The fighter is BtlFighter
+ * (battle/btl_fighter.h).
  *
  * ---- Fighter flags ----
  * A fighter has BTL_FLAG_COUNT (0x13D = 317) flags, numbered from 0, kept as bit arrays of 0x28 bytes
@@ -105,16 +106,10 @@ typedef struct BtlClashPath {
     /* 0x8 */ s32 first;    /* first usable point */
 } BtlClashPath;
 
-/* What BtlChar_GetPos returns: the fighter's pose block (fighter +0x10). */
-typedef BtlFighterPose BtlFlagPose;
-
-/* Fighter (0x1600 bytes). */
-typedef BtlFighter BtlFlagChr;
-
 /* Fighter roster (gBtlChars, 0x280 bytes). */
 typedef struct BtlFlagRoster {
     /* 0x00 */ s32 count;
-    /* 0x04 */ BtlFlagChr *chars;
+    /* 0x04 */ BtlFighter *chars;
     /* 0x08 */ BtlFlagSoundSet *sounds;     /* one-shot sounds, one set per side */
     /* 0x0C */ BtlFlagSoundSet *loopSounds; /* looping sounds, one set per side */
     /* 0x10 */ u8 unk10[0x40 - 0x10];
@@ -146,87 +141,87 @@ s32 BtlClash_UpdateC(s32 state);
 void BtlClash_Update(void);
 
 /* btl_char_sound.c */
-BtlFlagSoundSet *BtlCharSnd_GetSet(BtlFlagChr *chr);
-BtlFlagSoundSet *BtlCharSnd_GetLoopSet(BtlFlagChr *chr);
+BtlFlagSoundSet *BtlCharSnd_GetSet(BtlFighter *chr);
+BtlFlagSoundSet *BtlCharSnd_GetLoopSet(BtlFighter *chr);
 s32 BtlCharSnd_IsLoopPlaying(s32 player, s32 kind, s32 id);
 s32 BtlCharSnd_IsRequested(s32 owner, s32 kind, s32 id);
 void BtlCharSnd_Request(Vec4 *pos, s32 owner, s32 kind, f32 near, f32 far, s32 id);
 void BtlCharSnd_StoreHandle(BtlFlagSoundSet *set, s32 handle, s32 player, s32 kind, s32 id, s32 force);
-void BtlCharSnd_StopUnrequestedLoops(BtlFlagChr *chr);
+void BtlCharSnd_StopUnrequestedLoops(BtlFighter *chr);
 void BtlCharSnd_CalcVolPan(Vec4 *pos, s32 *vol, s32 *pan, f32 near, f32 far);
 void BtlCharSnd_Init(void);
 void BtlCharSnd_ClearRequests(void);
 void BtlCharSnd_PlayRequests(void);
 void BtlCharSnd_RequestAt(Vec4 *pos, s32 kind, s32 id, f32 near, f32 far);
-void BtlCharSnd_PlayCommon(BtlFlagChr *chr, s32 id);
-void BtlCharSnd_PlayCommonFar(BtlFlagChr *chr, s32 id);
-void BtlCharSnd_PlayBank8(BtlFlagChr *chr, s32 id);
-void BtlCharSnd_PlayOwn(BtlFlagChr *chr, s32 id);
-void BtlCharSnd_PlayStream(BtlFlagChr *chr, s32 id);
-void BtlCharSnd_PlayVoice(BtlFlagChr *chr, s32 line);
-void BtlCharSnd_PlayTechSounds(BtlFlagChr *chr);
-void BtlCharSnd_Stop(BtlFlagChr *chr, s32 kind, s32 id);
-void BtlCharSnd_StopCommon(BtlFlagChr *chr, s32 id);
-void BtlCharSnd_StopOwn(BtlFlagChr *chr, s32 id);
+void BtlCharSnd_PlayCommon(BtlFighter *chr, s32 id);
+void BtlCharSnd_PlayCommonFar(BtlFighter *chr, s32 id);
+void BtlCharSnd_PlayBank8(BtlFighter *chr, s32 id);
+void BtlCharSnd_PlayOwn(BtlFighter *chr, s32 id);
+void BtlCharSnd_PlayStream(BtlFighter *chr, s32 id);
+void BtlCharSnd_PlayVoice(BtlFighter *chr, s32 line);
+void BtlCharSnd_PlayTechSounds(BtlFighter *chr);
+void BtlCharSnd_Stop(BtlFighter *chr, s32 kind, s32 id);
+void BtlCharSnd_StopCommon(BtlFighter *chr, s32 id);
+void BtlCharSnd_StopOwn(BtlFighter *chr, s32 id);
 s32 BtlCharSnd_GetBankMask(s32 kind);
 
 /* btl_char_flag.c */
-void BtlChar_PromoteFlags(BtlFlagChr *chr, u8 stage);
-void BtlChar_SetStage(BtlFlagChr *chr, u8 stage);
-u32 BtlChar_GetStage(BtlFlagChr *chr);
-void BtlChar_SetHeldFlag(BtlFlagChr *chr, u32 n);
-void BtlChar_ClearFlag(BtlFlagChr *chr, u32 n);
-void BtlChar_ClearFlagRange(BtlFlagChr *chr, u32 first, u32 last);
-void BtlChar_ToggleHeldFlag(BtlFlagChr *chr, u32 n);
-void BtlChar_SetFlag(BtlFlagChr *chr, u32 n);
-s32 BtlChar_TestFlag(BtlFlagChr *chr, u32 n);
-s32 BtlChar_TestPrevFlag(BtlFlagChr *chr, u32 n);
-s32 BtlChar_IsFlagRaised(BtlFlagChr *chr, u32 n);
-s32 BtlChar_IsFlagDropped(BtlFlagChr *chr, u32 n);
-void BtlChar_UpdateLockOn(BtlFlagChr *chr);
+void BtlChar_PromoteFlags(BtlFighter *chr, u8 stage);
+void BtlChar_SetStage(BtlFighter *chr, u8 stage);
+u32 BtlChar_GetStage(BtlFighter *chr);
+void BtlChar_SetHeldFlag(BtlFighter *chr, u32 n);
+void BtlChar_ClearFlag(BtlFighter *chr, u32 n);
+void BtlChar_ClearFlagRange(BtlFighter *chr, u32 first, u32 last);
+void BtlChar_ToggleHeldFlag(BtlFighter *chr, u32 n);
+void BtlChar_SetFlag(BtlFighter *chr, u32 n);
+s32 BtlChar_TestFlag(BtlFighter *chr, u32 n);
+s32 BtlChar_TestPrevFlag(BtlFighter *chr, u32 n);
+s32 BtlChar_IsFlagRaised(BtlFighter *chr, u32 n);
+s32 BtlChar_IsFlagDropped(BtlFighter *chr, u32 n);
+void BtlChar_UpdateLockOn(BtlFighter *chr);
 void BtlChars_UpdateSightFlag(void);
-void BtlChar_SetOnceBit(BtlFlagChr *chr, s32 n);
-s32 BtlChar_TestOnceBit(BtlFlagChr *chr, s32 n);
-void BtlChar_SetFrameBits(BtlFlagChr *chr, u64 bits);
-void BtlChar_RaiseFirstClash(BtlFlagChr *chr);
+void BtlChar_SetOnceBit(BtlFighter *chr, s32 n);
+s32 BtlChar_TestOnceBit(BtlFighter *chr, s32 n);
+void BtlChar_SetFrameBits(BtlFighter *chr, u64 bits);
+void BtlChar_RaiseFirstClash(BtlFighter *chr);
 
 /* btl_opponent.c */
-void BtlOpp_GetTargetPos(BtlFlagChr *chr, Vec4 *out);
-void BtlOpp_GetSnapPos(BtlFlagChr *chr, Vec4 *out, s32 slot);
-void BtlOpp_GetTargetRot(BtlFlagChr *chr, Vec4 *out);
-void BtlOpp_GetSnapRot(BtlFlagChr *chr, Vec4 *out, s32 slot);
-f32 BtlOpp_GetTargetYaw(BtlFlagChr *chr);
-void BtlOpp_GetDelta(BtlFlagChr *chr, Vec4 *out);
-void BtlOpp_GetPoseVec30(BtlFlagChr *chr, Vec4 *out);
-void BtlOpp_GetVelocity(BtlFlagChr *chr, Vec4 *out);
-f32 BtlOpp_GetDistance(BtlFlagChr *chr);
-f32 BtlOpp_GetDistanceXZ(BtlFlagChr *chr);
-f32 BtlOpp_GetGapXZ(BtlFlagChr *chr);
-f32 BtlOpp_GetYaw(BtlFlagChr *chr);
-f32 BtlOpp_GetYawFromFacing(BtlFlagChr *chr);
-f32 BtlOpp_GetYawFromItsFacing(BtlFlagChr *chr);
-f32 BtlOpp_GetPitch(BtlFlagChr *chr);
-f32 BtlOpp_GetPitchAdjusted(BtlFlagChr *chr);
-f32 BtlOpp_GetHalfHeightDiff(BtlFlagChr *chr);
-f32 BtlOpp_GetRadius(BtlFlagChr *chr);
-s32 BtlOpp_GetParamByte2(BtlFlagChr *chr);
-f32 BtlOpp_GetHeight(BtlFlagChr *chr);
-f32 BtlOpp_GetCenterHeight(BtlFlagChr *chr);
-s32 BtlOpp_GetParamWord0(BtlFlagChr *chr);
-s32 BtlOpp_GetPlayer(BtlFlagChr *chr);
-s32 BtlOpp_GetObjId(BtlFlagChr *chr);
-void *BtlOpp_GetObj(BtlFlagChr *chr);
-s32 BtlOpp_GetSeenAction(BtlFlagChr *chr);
-s32 BtlOpp_GetSeenActionFrame(BtlFlagChr *chr);
-f32 BtlOpp_GetObjUnkFF8(BtlFlagChr *chr);
-void BtlOpp_GetLookOffset(BtlFlagChr *chr, Vec4 *out);
-void BtlOpp_GetNodePos(BtlFlagChr *chr, s32 node, Vec4 *out);
-void BtlOpp_GetObjVecFA0(BtlFlagChr *chr, Vec4 *out);
-s32 BtlOpp_GetEvasionCount(BtlFlagChr *chr);
-f32 BtlOpp_GetClosingTime(BtlFlagChr *chr);
-s32 BtlOpp_HasAbility(BtlFlagChr *chr, s32 ability);
-f32 BtlOpp_GetUnk20F318(BtlFlagChr *chr);
-s32 BtlOpp_GetClashCountB(BtlFlagChr *chr);
-void BtlOpp_MirrorFlags(BtlFlagChr *chr);
+void BtlOpp_GetTargetPos(BtlFighter *chr, Vec4 *out);
+void BtlOpp_GetSnapPos(BtlFighter *chr, Vec4 *out, s32 slot);
+void BtlOpp_GetTargetRot(BtlFighter *chr, Vec4 *out);
+void BtlOpp_GetSnapRot(BtlFighter *chr, Vec4 *out, s32 slot);
+f32 BtlOpp_GetTargetYaw(BtlFighter *chr);
+void BtlOpp_GetDelta(BtlFighter *chr, Vec4 *out);
+void BtlOpp_GetPoseVec30(BtlFighter *chr, Vec4 *out);
+void BtlOpp_GetVelocity(BtlFighter *chr, Vec4 *out);
+f32 BtlOpp_GetDistance(BtlFighter *chr);
+f32 BtlOpp_GetDistanceXZ(BtlFighter *chr);
+f32 BtlOpp_GetGapXZ(BtlFighter *chr);
+f32 BtlOpp_GetYaw(BtlFighter *chr);
+f32 BtlOpp_GetYawFromFacing(BtlFighter *chr);
+f32 BtlOpp_GetYawFromItsFacing(BtlFighter *chr);
+f32 BtlOpp_GetPitch(BtlFighter *chr);
+f32 BtlOpp_GetPitchAdjusted(BtlFighter *chr);
+f32 BtlOpp_GetHalfHeightDiff(BtlFighter *chr);
+f32 BtlOpp_GetRadius(BtlFighter *chr);
+s32 BtlOpp_GetParamByte2(BtlFighter *chr);
+f32 BtlOpp_GetHeight(BtlFighter *chr);
+f32 BtlOpp_GetCenterHeight(BtlFighter *chr);
+s32 BtlOpp_GetParamWord0(BtlFighter *chr);
+s32 BtlOpp_GetPlayer(BtlFighter *chr);
+s32 BtlOpp_GetObjId(BtlFighter *chr);
+void *BtlOpp_GetObj(BtlFighter *chr);
+s32 BtlOpp_GetSeenAction(BtlFighter *chr);
+s32 BtlOpp_GetSeenActionFrame(BtlFighter *chr);
+f32 BtlOpp_GetObjUnkFF8(BtlFighter *chr);
+void BtlOpp_GetLookOffset(BtlFighter *chr, Vec4 *out);
+void BtlOpp_GetNodePos(BtlFighter *chr, s32 node, Vec4 *out);
+void BtlOpp_GetObjVecFA0(BtlFighter *chr, Vec4 *out);
+s32 BtlOpp_GetEvasionCount(BtlFighter *chr);
+f32 BtlOpp_GetClosingTime(BtlFighter *chr);
+s32 BtlOpp_HasAbility(BtlFighter *chr, s32 ability);
+f32 BtlOpp_GetUnk20F318(BtlFighter *chr);
+s32 BtlOpp_GetClashCountB(BtlFighter *chr);
+void BtlOpp_MirrorFlags(BtlFighter *chr);
 
 #endif

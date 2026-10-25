@@ -20,22 +20,22 @@
  * BtlStat_GetRateN / BtlStat_GetScaleN are what the gauge, damage and movement code call.
  */
 
-extern s32 BtlSkill_GetStatKind(BtlStatChr *chr, s32 slot);    /* the slot's skill kind: (obj + 0x930)[0x66 + slot] */
-extern s32 BtlAct_GetCurrent(BtlStatChr *chr);              /* current action */
-extern s32 BtlAct_GetPrev(BtlStatChr *chr);              /* previous action */
+extern s32 BtlSkill_GetStatKind(BtlFighter *chr, s32 slot);    /* the slot's skill kind: (obj + 0x930)[0x66 + slot] */
+extern s32 BtlAct_GetCurrent(BtlFighter *chr);              /* current action */
+extern s32 BtlAct_GetPrev(BtlFighter *chr);              /* previous action */
 extern s32 BtlAct_IsTechniqueId(s32 action);                   /* action is 0x105..0x132 */
-extern s32 BtlChar_TestPrevFlag(BtlStatChr *chr, s32 flag);    /* the flag in the second pair of flag arrays */
-extern s32 BtlChar_TestFlag(BtlStatChr *chr, s32 flag);
-extern BtlStatMember *BtlMember_GetActive(BtlStatChr *chr);   /* the active member */
-extern BtlStatGauge *BtlMember_GetActiveGauge(BtlStatChr *chr);    /* its gauge block */
-extern s32 BtlMember_HasAbility(BtlStatChr *chr, s32 ability); /* the active member has ability bit n */
+extern s32 BtlChar_TestPrevFlag(BtlFighter *chr, s32 flag);    /* the flag in the second pair of flag arrays */
+extern s32 BtlChar_TestFlag(BtlFighter *chr, s32 flag);
+extern BtlMember *BtlMember_GetActive(BtlFighter *chr);   /* the active member */
+extern BtlMemberGauge *BtlMember_GetActiveGauge(BtlFighter *chr);    /* its gauge block */
+extern s32 BtlMember_HasAbility(BtlFighter *chr, s32 ability); /* the active member has ability bit n */
 extern s32 Battle_GetStage(void);
 extern s32 BtlUtil_Clamp(s32 v, s32 lo, s32 hi);
 
 extern f32 gBtlStatCurve[BTL_STAT_CURVE_ROWS][3]; /* 0x2EE7C0, in this file's .rodata */
 
 /* Marks the slot's skill as no longer active if its kind is `kind`. */
-void BtlStat_ClearSlotOn(BtlStatChr *chr, s32 slot, s32 kind) {
+void BtlStat_ClearSlotOn(BtlFighter *chr, s32 slot, s32 kind) {
     s32 i = slot != 0;
 
     if (BtlSkill_GetStatKind(chr, slot) == kind) {
@@ -44,7 +44,7 @@ void BtlStat_ClearSlotOn(BtlStatChr *chr, s32 slot, s32 kind) {
 }
 
 /* Removes the kind-2 modifiers of every stat. */
-void BtlStat_EndKind2(BtlStatChr *chr) {
+void BtlStat_EndKind2(BtlFighter *chr) {
     s32 i;
 
     for (i = 0; i < BTL_STAT_COUNT; i++) {
@@ -57,7 +57,7 @@ void BtlStat_EndKind2(BtlStatChr *chr) {
 }
 
 /* Removes the kind-3 modifiers of every stat. */
-void BtlStat_EndKind3(BtlStatChr *chr) {
+void BtlStat_EndKind3(BtlFighter *chr) {
     s32 i;
 
     for (i = 0; i < BTL_STAT_COUNT; i++) {
@@ -70,7 +70,7 @@ void BtlStat_EndKind3(BtlStatChr *chr) {
 }
 
 /* Removes the kind-4 modifiers of every stat. */
-void BtlStat_EndKind4(BtlStatChr *chr) {
+void BtlStat_EndKind4(BtlFighter *chr) {
     s32 i;
 
     for (i = 0; i < BTL_STAT_COUNT; i++) {
@@ -82,7 +82,7 @@ void BtlStat_EndKind4(BtlStatChr *chr) {
 }
 
 /* Removes the penalties of every stat. */
-void BtlStat_ClearPenalty(BtlStatChr *chr) {
+void BtlStat_ClearPenalty(BtlFighter *chr) {
     s32 i;
 
     for (i = 0; i < BTL_STAT_COUNT; i++) {
@@ -92,7 +92,7 @@ void BtlStat_ClearPenalty(BtlStatChr *chr) {
 }
 
 /* Clears the one-frame modifier of every stat (start of each frame). */
-void BtlStat_ClearFrameMods(BtlStatChr *chr) {
+void BtlStat_ClearFrameMods(BtlFighter *chr) {
     s32 i;
 
     for (i = BTL_STAT_COUNT - 1; i >= 0; i--) {
@@ -101,7 +101,7 @@ void BtlStat_ClearFrameMods(BtlStatChr *chr) {
 }
 
 /* Clears the whole modifier table. */
-void BtlStat_Reset(BtlStatChr *chr) {
+void BtlStat_Reset(BtlFighter *chr) {
     s32 i;
     s32 j;
 
@@ -120,7 +120,7 @@ void BtlStat_Reset(BtlStatChr *chr) {
 }
 
 /* Per frame: runs the timers of the timed modifiers and ends the kind-2 ones when action group 0x105..0x132 is left. */
-void BtlStat_Update(BtlStatChr *chr) {
+void BtlStat_Update(BtlFighter *chr) {
     s32 i;
     s32 j;
 
@@ -140,7 +140,7 @@ void BtlStat_Update(BtlStatChr *chr) {
 }
 
 /* Sets (or adds to) the kept modifier of a stat for a skill slot. */
-void BtlStat_SetBase(BtlStatChr *chr, s32 stat, s32 slot, s32 val, s32 add) {
+void BtlStat_SetBase(BtlFighter *chr, s32 stat, s32 slot, s32 val, s32 add) {
     if (add) {
         chr->stat[stat].base[slot] += val;
     } else {
@@ -149,7 +149,7 @@ void BtlStat_SetBase(BtlStatChr *chr, s32 stat, s32 slot, s32 val, s32 add) {
 }
 
 /* Sets (or adds to) the one-frame modifier of a stat. */
-void BtlStat_SetFrameMod(BtlStatChr *chr, s32 stat, s32 val, s32 add) {
+void BtlStat_SetFrameMod(BtlFighter *chr, s32 stat, s32 val, s32 add) {
     if (add) {
         chr->stat[stat].frame += val;
     } else {
@@ -158,7 +158,7 @@ void BtlStat_SetFrameMod(BtlStatChr *chr, s32 stat, s32 val, s32 add) {
 }
 
 /* Sets (or adds to) the timed modifier of a stat for a skill slot and starts its timer. */
-void BtlStat_SetTimed(BtlStatChr *chr, s32 stat, s32 slot, s32 val, s32 add, s32 time) {
+void BtlStat_SetTimed(BtlFighter *chr, s32 stat, s32 slot, s32 val, s32 add, s32 time) {
     if (add) {
         chr->stat[stat].timed[slot] += val;
     } else {
@@ -168,7 +168,7 @@ void BtlStat_SetTimed(BtlStatChr *chr, s32 stat, s32 slot, s32 val, s32 add, s32
 }
 
 /* Sets (or adds to) the kind-2 modifier of a stat for a skill slot. */
-void BtlStat_SetKind2(BtlStatChr *chr, s32 stat, s32 slot, s32 val, s32 add) {
+void BtlStat_SetKind2(BtlFighter *chr, s32 stat, s32 slot, s32 val, s32 add) {
     if (add) {
         chr->stat[stat].untilA[slot] += val;
     } else {
@@ -177,7 +177,7 @@ void BtlStat_SetKind2(BtlStatChr *chr, s32 stat, s32 slot, s32 val, s32 add) {
 }
 
 /* Sets (or adds to) the kind-3 modifier of a stat for a skill slot. */
-void BtlStat_SetKind3(BtlStatChr *chr, s32 stat, s32 slot, s32 val, s32 add) {
+void BtlStat_SetKind3(BtlFighter *chr, s32 stat, s32 slot, s32 val, s32 add) {
     if (add) {
         chr->stat[stat].untilB[slot] += val;
     } else {
@@ -186,7 +186,7 @@ void BtlStat_SetKind3(BtlStatChr *chr, s32 stat, s32 slot, s32 val, s32 add) {
 }
 
 /* Sets (or adds to) the kind-4 modifier of a stat for a skill slot. */
-void BtlStat_SetKind4(BtlStatChr *chr, s32 stat, s32 slot, s32 val, s32 add) {
+void BtlStat_SetKind4(BtlFighter *chr, s32 stat, s32 slot, s32 val, s32 add) {
     if (add) {
         chr->stat[stat].untilC[slot] += val;
     } else {
@@ -195,12 +195,12 @@ void BtlStat_SetKind4(BtlStatChr *chr, s32 stat, s32 slot, s32 val, s32 add) {
 }
 
 /* Sets the penalty of a stat for a skill slot. */
-void BtlStat_SetPenalty(BtlStatChr *chr, s32 stat, s32 slot, s32 val) {
+void BtlStat_SetPenalty(BtlFighter *chr, s32 stat, s32 slot, s32 val) {
     chr->stat[stat].penalty[slot] = val;
 }
 
 /* Total modifier level of a stat, -20..20: the table, plus 3 per lost health bar and a stage bonus with the matching abilities. */
-s32 BtlStat_GetMod(BtlStatChr *chr, s32 stat) {
+s32 BtlStat_GetMod(BtlFighter *chr, s32 stat) {
     BtlStatMod *m;
     s32 i;
     s32 sum;
@@ -271,49 +271,49 @@ s32 BtlStat_GetMod(BtlStatChr *chr, s32 stat) {
 }
 
 /* Level -20..80 of bonus 0 with stat 2. */
-s32 BtlStat_GetLevel0(BtlStatChr *chr) {
+s32 BtlStat_GetLevel0(BtlFighter *chr) {
     s32 bonus = BtlMember_GetActive(chr)->bonus[0];
 
     return BtlUtil_Clamp(bonus + BtlStat_GetMod(chr, BTL_STAT_2), -20, 80);
 }
 
 /* Level -20..80 of bonus 1 with stat 0. */
-s32 BtlStat_GetLevel1(BtlStatChr *chr) {
+s32 BtlStat_GetLevel1(BtlFighter *chr) {
     s32 bonus = BtlMember_GetActive(chr)->bonus[1];
 
     return BtlUtil_Clamp(bonus + BtlStat_GetMod(chr, BTL_STAT_0), -20, 80);
 }
 
 /* Level -20..80 of bonus 2 with stat 1. */
-s32 BtlStat_GetLevel2(BtlStatChr *chr) {
+s32 BtlStat_GetLevel2(BtlFighter *chr) {
     s32 bonus = BtlMember_GetActive(chr)->bonus[2];
 
     return BtlUtil_Clamp(bonus + BtlStat_GetMod(chr, BTL_STAT_1), -20, 80);
 }
 
 /* Level -20..80 of bonus 3 with stat 2. */
-s32 BtlStat_GetLevel3(BtlStatChr *chr) {
+s32 BtlStat_GetLevel3(BtlFighter *chr) {
     s32 bonus = BtlMember_GetActive(chr)->bonus[3];
 
     return BtlUtil_Clamp(bonus + BtlStat_GetMod(chr, BTL_STAT_2), -20, 80);
 }
 
 /* Level -20..80 of bonus 4 with stat 3. */
-s32 BtlStat_GetLevel4(BtlStatChr *chr) {
+s32 BtlStat_GetLevel4(BtlFighter *chr) {
     s32 bonus = BtlMember_GetActive(chr)->bonus[4];
 
     return BtlUtil_Clamp(bonus + BtlStat_GetMod(chr, BTL_STAT_3), -20, 80);
 }
 
 /* Level -20..80 of bonus 5 with stat 3. */
-s32 BtlStat_GetLevel5(BtlStatChr *chr) {
+s32 BtlStat_GetLevel5(BtlFighter *chr) {
     s32 bonus = BtlMember_GetActive(chr)->bonus[5];
 
     return BtlUtil_Clamp(bonus + BtlStat_GetMod(chr, BTL_STAT_3), -20, 80);
 }
 
 /* Level -20..80 of bonus 6 with stat 3. */
-s32 BtlStat_GetLevel6(BtlStatChr *chr) {
+s32 BtlStat_GetLevel6(BtlFighter *chr) {
     s32 bonus = BtlMember_GetActive(chr)->bonus[6];
 
     return BtlUtil_Clamp(bonus + BtlStat_GetMod(chr, BTL_STAT_3), -20, 80);
@@ -330,66 +330,66 @@ f32 BtlStat_EvalCurve(s32 level, s32 row) {
 }
 
 /* Curve row 0 at level 0, per frame (per-second value / 30). */
-s32 BtlStat_GetKiChargeBonus(BtlStatChr *chr) {
+s32 BtlStat_GetKiChargeBonus(BtlFighter *chr) {
     return BtlStat_EvalCurve(BtlStat_GetLevel0(chr), 0) / 30.0f;
 }
 
 /* Curve row 1 at level 0, per frame. */
-s32 BtlStat_GetKiRegenBonus(BtlStatChr *chr) {
+s32 BtlStat_GetKiRegenBonus(BtlFighter *chr) {
     return BtlStat_EvalCurve(BtlStat_GetLevel0(chr), 1) / 30.0f;
 }
 
 /* Curve row 2 at level 0, per frame. */
-s32 BtlStat_GetKiRecoverBonus(BtlStatChr *chr) {
+s32 BtlStat_GetKiRecoverBonus(BtlFighter *chr) {
     return BtlStat_EvalCurve(BtlStat_GetLevel0(chr), 2) / 30.0f;
 }
 
 /* Curve row 3 at level 4, per frame. */
-s32 BtlStat_GetBlastGainBonus(BtlStatChr *chr) {
+s32 BtlStat_GetBlastGainBonus(BtlFighter *chr) {
     return BtlStat_EvalCurve(BtlStat_GetLevel4(chr), 3) / 30.0f;
 }
 
 /* Curve row 4 at level 1. */
-f32 BtlStat_GetMeleeDamageScale(BtlStatChr *chr) {
+f32 BtlStat_GetMeleeDamageScale(BtlFighter *chr) {
     return BtlStat_EvalCurve(BtlStat_GetLevel1(chr), 4);
 }
 
 /* Curve row 5 at level 1. */
-f32 BtlStat_GetGuardKiCostScale(BtlStatChr *chr) {
+f32 BtlStat_GetGuardKiCostScale(BtlFighter *chr) {
     return BtlStat_EvalCurve(BtlStat_GetLevel1(chr), 5);
 }
 
 /* Curve row 6 at level 1. */
-f32 BtlStat_GetKiBlastDamageScale(BtlStatChr *chr) {
+f32 BtlStat_GetKiBlastDamageScale(BtlFighter *chr) {
     return BtlStat_EvalCurve(BtlStat_GetLevel1(chr), 6);
 }
 
 /* Curve row 7 at level 2. */
-f32 BtlStat_GetScale7(BtlStatChr *chr) {
+f32 BtlStat_GetScale7(BtlFighter *chr) {
     return BtlStat_EvalCurve(BtlStat_GetLevel2(chr), 7);
 }
 
 /* Curve row 8 at level 3. */
-f32 BtlStat_GetSpeedScale(BtlStatChr *chr) {
+f32 BtlStat_GetSpeedScale(BtlFighter *chr) {
     return BtlStat_EvalCurve(BtlStat_GetLevel3(chr), 8);
 }
 
 /* Curve row 9 at level 5. */
-f32 BtlStat_GetBlast2DamageScale(BtlStatChr *chr) {
+f32 BtlStat_GetBlast2DamageScale(BtlFighter *chr) {
     return BtlStat_EvalCurve(BtlStat_GetLevel5(chr), 9);
 }
 
 /* Curve row 10 at level 6. */
-f32 BtlStat_GetUltimateDamageScale(BtlStatChr *chr) {
+f32 BtlStat_GetUltimateDamageScale(BtlFighter *chr) {
     return BtlStat_EvalCurve(BtlStat_GetLevel6(chr), 10);
 }
 
 /* Curve row 11 at level 0. */
-f32 BtlStat_GetMaxPowerChargeScale(BtlStatChr *chr) {
+f32 BtlStat_GetMaxPowerChargeScale(BtlFighter *chr) {
     return BtlStat_EvalCurve(BtlStat_GetLevel0(chr), 11);
 }
 
 /* Curve row 12 at level 0. */
-f32 BtlStat_GetMaxPowerExtraTime(BtlStatChr *chr) {
+f32 BtlStat_GetMaxPowerExtraTime(BtlFighter *chr) {
     return BtlStat_EvalCurve(BtlStat_GetLevel0(chr), 12);
 }

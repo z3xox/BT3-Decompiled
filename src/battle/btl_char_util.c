@@ -12,17 +12,17 @@ extern f32 sqrtf(f32 x);
 extern f32 sinf(f32 x);
 extern void *BtlObj_Get(s32 id);
 extern void BtlObj_SetSubState(void *obj, s32 state, s32 arg);
-extern s32 BtlChar_TestFlag(BtlCharGetChr *chr, s32 bit);
+extern s32 BtlChar_TestFlag(BtlFighter *chr, s32 bit);
 extern s32 BattleReplay_IsActive(void);
 extern s32 Battle_GetStage(void);
 extern s32 Battle_GetMode(void);
 extern s32 Voice_IsStopped(s32 voice);
 extern void Voice_Stop(s32 voice);
-extern BtlCharGetVitals *BtlMember_GetActiveGauge(BtlCharGetChr *chr); /* active member's block + 0x40 */
+extern BtlMemberGauge *BtlMember_GetActiveGauge(BtlFighter *chr); /* active member's block + 0x40 */
 extern s32 BtlChars_IsTimeStopped(void);                             /* gBtlChars + 0x274 */
-extern void BtlCharSnd_PlayOwn(BtlCharGetChr *chr, s32 line);    /* sound request, channel chr->player + 2 */
-extern void BtlCharSnd_PlayVoice(BtlCharGetChr *chr, s32 line);    /* sound request, channel chr->player + 5 */
-extern void BtlCharSnd_StopOwn(BtlCharGetChr *chr, s32 line);
+extern void BtlCharSnd_PlayOwn(BtlFighter *chr, s32 line);    /* sound request, channel chr->player + 2 */
+extern void BtlCharSnd_PlayVoice(BtlFighter *chr, s32 line);    /* sound request, channel chr->player + 5 */
+extern void BtlCharSnd_StopOwn(BtlFighter *chr, s32 line);
 extern s32 BtlScript_IsTextShown(void);
 
 extern BtlCharGetRoster *gBtlChars;
@@ -159,19 +159,19 @@ s32 BtlChar_GetCount(void) {
 }
 
 /* Fighter i. */
-BtlCharGetChr *BtlChar_Get(s32 i) {
+BtlFighter *BtlChar_Get(s32 i) {
     return &gBtlChars->chars[i];
 }
 
 /* Fighter that owns battle object objId, or NULL. */
-BtlCharGetChr *BtlChar_FindByObjId(s32 objId) {
+BtlFighter *BtlChar_FindByObjId(s32 objId) {
     s32 i;
 
     if (gBtlChars == NULL) {
         return NULL;
     }
     for (i = 0; i < BtlChar_GetCount(); i++) {
-        BtlCharGetChr *chr = BtlChar_Get(i);
+        BtlFighter *chr = BtlChar_Get(i);
 
         if (chr->objId == objId) {
             return chr;
@@ -181,14 +181,14 @@ BtlCharGetChr *BtlChar_FindByObjId(s32 objId) {
 }
 
 /* Fighter whose side word is `side`, or NULL. */
-BtlCharGetChr *BtlChar_FindBySide(s32 side) {
+BtlFighter *BtlChar_FindBySide(s32 side) {
     s32 i;
 
     if (gBtlChars == NULL) {
         return NULL;
     }
     for (i = 0; i < BtlChar_GetCount(); i++) {
-        BtlCharGetChr *chr = BtlChar_Get(i);
+        BtlFighter *chr = BtlChar_Get(i);
 
         if (chr->side == side) {
             return chr;
@@ -198,27 +198,27 @@ BtlCharGetChr *BtlChar_FindBySide(s32 side) {
 }
 
 /* The fighter's battle object. */
-void *BtlChar_GetObj(BtlCharGetChr *chr) {
+void *BtlChar_GetObj(BtlFighter *chr) {
     return BtlObj_Get(chr->objId);
 }
 
 /* Address of the fighter's position. */
-Vec4 *BtlChar_GetPos(BtlCharGetChr *chr) {
+Vec4 *BtlChar_GetPos(BtlFighter *chr) {
     return &chr->pose.pos;
 }
 
 /* The fighter's controller. */
-Pad *BtlChar_GetPad(BtlCharGetChr *chr) {
+Pad *BtlChar_GetPad(BtlFighter *chr) {
     return &gPad[chr->pad];
 }
 
 /* 1 while the fighter's freeze counter is running. */
-s32 BtlChar_IsFrozen(BtlCharGetChr *chr) {
+s32 BtlChar_IsFrozen(BtlFighter *chr) {
     return chr->freeze > 0;
 }
 
 /* 1 when the fighter is alive, flag 0xBE is clear and counter 0xFE0 has run out. */
-s32 BtlChar_IsFree(BtlCharGetChr *chr) {
+s32 BtlChar_IsFree(BtlFighter *chr) {
     if (BtlChar_IsDead(chr) || BtlChar_TestFlag(chr, 0xBE)) {
         return 0;
     }
@@ -226,12 +226,12 @@ s32 BtlChar_IsFree(BtlCharGetChr *chr) {
 }
 
 /* 1 when the active member has no health left. */
-s32 BtlChar_IsDead(BtlCharGetChr *chr) {
+s32 BtlChar_IsDead(BtlFighter *chr) {
     return BtlMember_GetActiveGauge(chr)->health <= 0;
 }
 
 /* 1 when the active member's word 0x70 is set. */
-s32 BtlChar_IsBodyChanged(BtlCharGetChr *chr) {
+s32 BtlChar_IsBodyChanged(BtlFighter *chr) {
     return BtlMember_GetActiveGauge(chr)->bodyChanged != 0;
 }
 
@@ -284,7 +284,7 @@ void BtlChar_AddStageTimer(f32 seconds) {
 }
 
 /* Asks for big-motor vibration; a weaker request does not replace a running stronger one. */
-void BtlChar_SetVibration(BtlCharGetChr *chr, f32 power, f32 seconds) {
+void BtlChar_SetVibration(BtlFighter *chr, f32 power, f32 seconds) {
     BtlCharVib *vib = &chr->vib;
 
     if (power > 1.0f) {
@@ -297,7 +297,7 @@ void BtlChar_SetVibration(BtlCharGetChr *chr, f32 power, f32 seconds) {
 }
 
 /* Asks for small-motor vibration; only ever lengthens it. */
-void BtlChar_SetSmallVibration(BtlCharGetChr *chr, f32 seconds) {
+void BtlChar_SetSmallVibration(BtlFighter *chr, f32 seconds) {
     BtlCharVib *vib = &chr->vib;
     s32 frames = seconds * 30.0f;
 
@@ -307,13 +307,13 @@ void BtlChar_SetSmallVibration(BtlCharGetChr *chr, f32 seconds) {
 }
 
 /* Both motors. */
-void BtlChar_Vibrate(BtlCharGetChr *chr, f32 power, f32 seconds) {
+void BtlChar_Vibrate(BtlFighter *chr, f32 power, f32 seconds) {
     BtlChar_SetVibration(chr, power, seconds);
     BtlChar_SetSmallVibration(chr, seconds);
 }
 
 /* Per frame: sends the fighter's vibration to its pad. Nothing when disabled, in a replay or for a CPU. */
-void BtlChar_UpdateVibration(BtlCharGetChr *chr) {
+void BtlChar_UpdateVibration(BtlFighter *chr) {
     BtlCharVib *vib = &chr->vib;
 
     if (!vib->enabled || BattleReplay_IsActive() || chr->injectOn) {
@@ -360,7 +360,7 @@ BtlVoiceEntry *BtlChar_GetVoiceEntry(s32 kind) {
 }
 
 /* Plays one of the lines of a voice kind unless the fighter is dead or the kind is cooling down. */
-void BtlChar_PlayVoice(BtlCharGetChr *chr, s32 kind) {
+void BtlChar_PlayVoice(BtlFighter *chr, s32 kind) {
     void *obj = BtlChar_GetObj(chr);
     BtlVoiceEntry *ent;
     s32 line;
@@ -400,7 +400,7 @@ void BtlChar_PlayVoice(BtlCharGetChr *chr, s32 kind) {
 }
 
 /* Stops the fighter's voice while flag 0x129 is set (in mode 1 only when BtlScript_IsTextShown returns 0). */
-void BtlChar_StopVoiceOnFlag(BtlCharGetChr *chr) {
+void BtlChar_StopVoiceOnFlag(BtlFighter *chr) {
     if (Battle_GetMode() == 1) {
         if (BtlScript_IsTextShown()) {
             return;
@@ -412,7 +412,7 @@ void BtlChar_StopVoiceOnFlag(BtlCharGetChr *chr) {
 }
 
 /* Per frame: counts the voice cooldowns down. */
-void BtlChar_TickVoiceTimers(BtlCharGetChr *chr) {
+void BtlChar_TickVoiceTimers(BtlFighter *chr) {
     s32 i;
 
     for (i = 0; i < BTL_VOICE_KINDS; i++) {
@@ -423,7 +423,7 @@ void BtlChar_TickVoiceTimers(BtlCharGetChr *chr) {
 }
 
 /* Plays the line of a voice kind that has only one, through BtlCharSnd_StopOwn. */
-void BtlChar_PlayVoiceSingle(BtlCharGetChr *chr, s32 kind) {
+void BtlChar_PlayVoiceSingle(BtlFighter *chr, s32 kind) {
     BtlVoiceEntry *ent = BtlChar_GetVoiceEntry(kind);
 
     if (ent->count < 2) {
