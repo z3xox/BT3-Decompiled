@@ -3440,7 +3440,7 @@ s32 BtlAct_DragonDashHandler(BtlActEChr *chr, s32 phase) {
                 anim = 0x2D;
                 break;
         }
-        if (chr->unkFF0 > 0) {
+        if (chr->react.unk40 > 0) {
             anim = 0x18;
         }
         BtlAnim_Play(chr, anim, 0.15f);
@@ -4681,11 +4681,11 @@ void BtlAct_ClashBlowsHandler(BtlActEChr *chr, s32 phase) {
                         BtlAct_CountAndMarkOpponent(chr);
                     }
                 }
-                chr->comboTimer = 30;
+                chr->combo.timer = 30;
                 if (BtlChar_TestFlag(chr, 0xBF)) {
                     BtlAnim_Request(chr, 0x175, 0.15f);
                     BtlAct_CountAndMarkOpponent(chr);
-                    chr->comboTimer = 0;
+                    chr->combo.timer = 0;
                     if (*bonus > 0) {
                         BtlMember_AddKi(chr, *bonus);
                         if (BtlChar_TestFlag(chr, 6)) {
@@ -4865,7 +4865,7 @@ s32 BtlAct_ClashExchangeHandler(BtlActEChr *chr, s32 phase) {
                         if (BtlInput_IsPressed(chr, 0x78000000)) {
                             if (BtlInput_IsPressed(chr, 0x8000000 << c->pick)) {
                                 chr->clashAnswerFrame = chr->actionFrame;
-                                if (!chr->injected) {
+                                if (!chr->injectOn) {
                                     BtlCharSnd_PlayCommonFar(chr, 0x14);
                                 }
                             } else if (c->prevPick < 0 || !BtlInput_IsPressed(chr, 0x8000000 << c->prevPick)) {
@@ -4875,7 +4875,7 @@ s32 BtlAct_ClashExchangeHandler(BtlActEChr *chr, s32 phase) {
                     }
                 }
                 BtlChar_SetFlag(chr, 0x18);
-                chr->comboTimer = 30;
+                chr->combo.timer = 30;
                 break;
             case 0x175:
                 if (BtlAnim_Advance(chr, 0)) {
@@ -4916,7 +4916,7 @@ s32 BtlAct_ClashExchangeHandler(BtlActEChr *chr, s32 phase) {
         }
         if (BtlChar_TestFlag(chr, 0xC7)) {
             BtlAnim_Request(chr, 0x175, 0.0f);
-            chr->comboTimer = 0;
+            chr->combo.timer = 0;
         }
         if (BtlChar_TestFlag(chr, 0xC8)) {
             BtlAnim_Request(chr, 0x176, 0.0f);

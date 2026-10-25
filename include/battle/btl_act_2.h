@@ -208,17 +208,7 @@ typedef struct BtlActEGauge {
 } BtlActEGauge;
 
 /* Attack parameter block (see BtlActAttack in btl_char_action.h). */
-typedef struct BtlActEAttack {
-    /* 0x00 */ s32 flags;
-    /* 0x04 */ s16 motion[2];  /* one motion per part */
-    /* 0x08 */ s8 parts;
-    /* 0x09 */ u8 unk9[7];
-    /* 0x10 */ f32 rate;
-    /* 0x14 */ f32 cancelAt;
-    /* 0x18 */ f32 leadTime;      /* lead time in frames, built up by BtlAct_PlayAttackPart */
-    /* 0x1C */ f32 speed;
-    /* 0x20 */ s32 chained;
-} BtlActEAttack; /* size 0x24 */
+typedef BtlFighterAttack BtlActEAttack;
 
 /* Battle object of a fighter (BtlChar_GetObj). */
 typedef struct BtlActEObj {
@@ -227,30 +217,7 @@ typedef struct BtlActEObj {
 } BtlActEObj;
 
 /* Fighter (0x1600 bytes). */
-typedef struct BtlActEChr {
-    /* 0x0000 */ s32 player;
-    /* 0x0004 */ s32 pad;
-    /* 0x0008 */ s32 side;
-    /* 0x000C */ s32 objId;
-    /* 0x0010 */ u8 unk10[0x3D0 - 0x10];
-    /* 0x03D0 */ s32 work[0x14];    /* per-action scratch, zeroed when an action starts */
-    /* 0x0420 */ u8 unk420[0x964 - 0x420];
-    /* 0x0964 */ s32 actionFrame;   /* frames spent in the current action */
-    /* 0x0968 */ u8 unk968[0xCF8 - 0x968];
-    /* 0x0CF8 */ BtlActEAttack attack;     /* latched when the attack action starts */
-    /* 0x0D1C */ BtlActEAttack nextAttack; /* prepared when the attack is queued */
-    /* 0x0D40 */ u8 unkD40[0xD48 - 0xD40];
-    /* 0x0D48 */ s32 comboTimer;        /* countdown (see btl_char_action.h); held at 30 during clash B */
-    /* 0x0D4C */ u8 unkD4C[0xE50 - 0xD4C];
-    /* 0x0E50 */ s32 clashCountB;   /* inputs counted in clashes B and C */
-    /* 0x0E54 */ s32 clashExchanges;        /* consecutive clash C exchanges: picks the strike animation */
-    /* 0x0E58 */ s32 clashAnswerFrame;        /* clash C answer: -1 none yet, -2 wrong button, else the frame it was pressed */
-    /* 0x0E5C */ u8 unkE5C[0xFF0 - 0xE5C];
-    /* 0x0FF0 */ s32 unkFF0;
-    /* 0x0FF4 */ u8 unkFF4[0x1278 - 0xFF4];
-    /* 0x1278 */ s32 injected;      /* input is injected (CPU) */
-    /* 0x127C */ u8 unk127C[0x1600 - 0x127C];
-} BtlActEChr; /* size 0x1600 */
+typedef BtlFighter BtlActEChr;
 
 /* Clash C state (roster + 0x7C; see BtlClashC in btl_char_flag.h). */
 typedef struct BtlActEClashC {

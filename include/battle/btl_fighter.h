@@ -459,12 +459,11 @@ typedef struct BtlFighter {
     /* 0x0350 */ Vec4 snapRot[BTL_SNAP_COUNT + 1]; /* the same for the rotation */
     /* 0x03C0 */ u32 snapMask;          /* bit n: snapshot n was taken this frame; bit 6: any */
     /* 0x03C4 */ u8 unk3C4[0x3D0 - 0x3C4];
-    /* 0x03D0 */ union {
-        s32 work[0x14];                 /* per-action scratch, zeroed when an action starts; the use of each word is
-                                           listed per handler in the action files */
-        f32 workF[0x14];                /* the same words as floats ([6]: animation progress after which a queued
-                                           action starts, btl_act_1.c) */
-    };
+    /* 0x03D0 */ s32 work[0x14];        /* per-action scratch, zeroed when an action starts; the use of each word is listed
+                                           per handler in the action files. Some handlers keep floats in it (btl_act_1.c:
+                                           [6] is the animation progress after which a queued action starts) and take
+                                           the word's address as an f32 *: an f32 member in a union with work[] would
+                                           compile differently */
     /* 0x0420 */ ChrCam cam;            /* the fighter camera */
     /* 0x04C0 */ ChrCamCut cut;         /* its camera cut */
     /* 0x0570 */ BtlCharInput input;
