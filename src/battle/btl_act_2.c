@@ -2574,7 +2574,7 @@ s32 BtlAct_JumpStartHandler(BtlActDChr *chr, s32 phase) {
         BtlAnim_Play(chr, 0x1F, 0.1f);
         BtlChar_ClearFlag(chr, 0xE);
         BtlCharSnd_PlayCommon(chr, 0x31);
-        chr->unkFF0 = 0;
+        chr->react.unk40 = 0;
         if (BtlAct_GetCurrent(chr) == 0x12) {
             chr->work[0] |= 1;
         }
@@ -2740,7 +2740,7 @@ s32 BtlAct_AscendHandler(BtlActDChr *chr, s32 phase) {
 
     if (phase == PHASE_ENTER) {
         motion = 0x2B;
-        if (chr->unkFF0 > 0) {
+        if (chr->react.unk40 > 0) {
             motion = 0x2E;
             BtlCharSnd_PlayCommon(chr, 0x1F);
         }
@@ -2794,7 +2794,7 @@ s32 BtlAct_DescendHandler(BtlActDChr *chr, s32 phase) {
 
     if (phase == PHASE_ENTER) {
         motion = 0x2C;
-        if (chr->unkFF0 > 0) {
+        if (chr->react.unk40 > 0) {
             motion = 0x1F;
             BtlCharSnd_PlayCommon(chr, 0x1F);
         }
@@ -2915,7 +2915,7 @@ s32 BtlAct_FastAscendHandler(BtlActDChr *chr, s32 phase) {
     if (phase == PHASE_ENTER) {
         BtlAnim_Play(chr, 0x2E, 0.15f);
         BtlChar_SetHeldFlag(chr, 0xE);
-        if (chr->unkFF0 > 0) {
+        if (chr->react.unk40 > 0) {
             chr->work[0] |= 1;
         }
     }
@@ -2990,7 +2990,7 @@ s32 BtlAct_FastDescendHandler(BtlActDChr *chr, s32 phase) {
     if (phase == PHASE_ENTER) {
         BtlAnim_Play(chr, 0x31, 0.15f);
         BtlChar_SetHeldFlag(chr, 0xE);
-        if (chr->unkFF0 > 0) {
+        if (chr->react.unk40 > 0) {
             chr->work[0] |= 1;
         }
     }

@@ -125,21 +125,7 @@ typedef struct BtlActDPose {
 } BtlActDPose;
 
 /* Latched attack parameters (chr + 0xCF8), see BtlActAttack in btl_char_action.h. */
-typedef struct BtlActDAttack {
-    /* 0x00 */ s32 flags;
-    /* 0x04 */ s16 motion;
-    /* 0x06 */ s16 motion2;
-    /* 0x08 */ s8 parts;
-    /* 0x09 */ s8 level;
-    /* 0x0A */ s8 cut;
-    /* 0x0B */ s8 follow[2];
-    /* 0x0D */ u8 padD[3];
-    /* 0x10 */ f32 rate;
-    /* 0x14 */ f32 cancelAt;
-    /* 0x18 */ f32 leadTime;
-    /* 0x1C */ f32 speed;
-    /* 0x20 */ s32 chained;
-} BtlActDAttack; /* size 0x24 */
+typedef BtlFighterAttack BtlActDAttack;
 
 /* Active member's gauge block (BtlMember_GetActiveGauge). */
 typedef struct BtlActDGauge {
@@ -161,34 +147,7 @@ typedef struct BtlActDMember {
 } BtlActDMember;
 
 /* Fighter (0x1600 bytes). */
-typedef struct BtlActDChr {
-    /* 0x0000 */ s32 player;
-    /* 0x0004 */ s32 pad;
-    /* 0x0008 */ s32 side;
-    /* 0x000C */ s32 objId;
-    /* 0x0010 */ u8 unk10[0x3D0 - 0x10];
-    /* 0x03D0 */ s32 work[0x14];    /* per-action scratch, zeroed when an action starts */
-    /* 0x0420 */ u8 unk420[0x948 - 0x420];
-    /* 0x0948 */ s32 action;
-    /* 0x094C */ s32 request;
-    /* 0x0950 */ s32 prev;
-    /* 0x0954 */ s32 queue[4];
-    /* 0x0964 */ s32 actionFrame;
-    /* 0x0968 */ u8 unk968[0xCF8 - 0x968];
-    /* 0x0CF8 */ BtlActDAttack attack;
-    /* 0x0D1C */ u8 unkD1C[0xD68 - 0xD1C];
-    /* 0x0D68 */ s32 dashCount;       /* counter: homing dashes started out of an attack or actions 0x47..0x57, 0x5A..0x5D, 0x6B..0x6F */
-    /* 0x0D6C */ u8 unkD6C[0xDD0 - 0xD6C];
-    /* 0x0DD0 */ Vec4 aimDir;      /* direction a ki blast is fired in */
-    /* 0x0DE0 */ s32 blastShots;       /* ki blasts fired: += the shots of motion 0x7A, or 1 */
-    /* 0x0DE4 */ s32 blastResetTimer;       /* set to 30 with it (countdown in BtlAct_UpdateTimers) */
-    /* 0x0DE8 */ s32 blastAltHand;
-    /* 0x0DEC */ f32 blastCharge;       /* progress of the charge motion 0x8E */
-    /* 0x0DF0 */ s32 blastNode;       /* result of BtlAct_PlaySubAnim */
-    /* 0x0DF4 */ u8 unkDF4[0xFF0 - 0xDF4];
-    /* 0x0FF0 */ s32 unkFF0;       /* countdown (BtlAct_UpdateTimers); > 0 selects the quick start of actions 0x14, 0x15, 0x17, 0x18; cleared by a jump */
-    /* 0x0FF4 */ u8 unkFF4[0x1600 - 0xFF4];
-} BtlActDChr; /* size 0x1600 */
+typedef BtlFighter BtlActDChr;
 
 s32 BtlAct_KiBlastB2(BtlActDChr *chr, s32 phase);
 s32 BtlAct_KiBlastChargeB3(BtlActDChr *chr, s32 phase);
