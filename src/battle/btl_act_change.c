@@ -1685,7 +1685,7 @@ s32 BtlAct_KoSwitchLoad(BtlActIChr *chr, s32 phase) {
     if (phase == 1) {
         if (chr->actionFrame == 1) {
             BtlChange_RequestChara(chr->player, chr->switchChara, chr->switchCostume, chr->switchVariant,
-                                   chr->switchAnimChara, chr->switchUnk18, chr->switchVoiceChara);
+                                   chr->switchAnimChara, chr->switchAnim1Chara, chr->switchVoiceChara);
         } else if (chr->actionFrame >= 2 && BtlChange_IsLoadedFor(chr->player)) {
             BtlAct_Request(chr, 0xF7);
             BtlChange_SetReady(chr->player);
@@ -1908,9 +1908,9 @@ void BtlSkill_Apply(BtlActIChr *chr, s32 slot) {
     case 0xC:
     case 0x32:
         if (add) {
-            chr->skillStackA = BtlUtil_Min(chr->skillStackA + 1, 3);
+            chr->dodges = BtlUtil_Min(chr->dodges + 1, 3);
         } else {
-            chr->skillStackA = 1;
+            chr->dodges = 1;
         }
         chr->skillSlot = slot;
         break;
@@ -1920,9 +1920,9 @@ void BtlSkill_Apply(BtlActIChr *chr, s32 slot) {
         break;
     case 0x37:
         if (add) {
-            chr->skillStackB = BtlUtil_Min(chr->skillStackB + 1, 3);
+            chr->dodgesB = BtlUtil_Min(chr->dodgesB + 1, 3);
         } else {
-            chr->skillStackB = 1;
+            chr->dodgesB = 1;
         }
         chr->skillSlot = slot;
         break;
@@ -1969,7 +1969,7 @@ void BtlSkill_Apply(BtlActIChr *chr, s32 slot) {
         }
     }
     if (attr & 0x400) {
-        chr->skillTimerD = time;
+        chr->noFlinch = time;
     }
     if (health > 0) {
         BtlMember_AddHealth(chr, health);
@@ -2022,7 +2022,7 @@ void BtlSkill_Apply(BtlActIChr *chr, s32 slot) {
         chr->skillTimerE = time;
     }
     if (valF > 0) {
-        chr->skillValF = valF;
+        chr->rateBonus = valF;
         chr->skillTimerF = time;
     }
     BtlMember_GetActiveGauge(chr)->skillUses[slot]++;
@@ -2043,7 +2043,7 @@ void BtlSkill_UpdateTimers(BtlActIChr *chr) {
     }
     if (--chr->skillTimerF < 0) {
         chr->skillTimerF = 0;
-        chr->skillValF = 0;
+        chr->rateBonus = 0;
     }
     chr->skillTimerC--;
     if (chr->skillTimerC < 0) {
@@ -2055,9 +2055,9 @@ void BtlSkill_UpdateTimers(BtlActIChr *chr) {
     if (chr->kind3On != 0) {
         chr->skillTimerC = 1;
     }
-    chr->skillTimerD--;
-    if (chr->skillTimerD < 0) {
-        chr->skillTimerD = 0;
+    chr->noFlinch--;
+    if (chr->noFlinch < 0) {
+        chr->noFlinch = 0;
     }
     if (chr->skillTimer > 0) {
         chr->skillTimer--;
@@ -2252,7 +2252,7 @@ s32 BtlAct_SkillInstant(BtlActIChr *chr, s32 phase) {
  * Queues the action in slot 0 and returns 1.
  */
 s32 BtlDecide_Common(BtlActIChr *chr, s32 mask) {
-    if ((mask & 8) && chr->stunTimer > 0) {
+    if ((mask & 8) && chr->react.stunTimer > 0) {
         BtlAct_SetQueue(chr, 0, 0xD3);
         return 1;
     }

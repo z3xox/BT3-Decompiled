@@ -389,52 +389,7 @@ s32 BtlAct_SwitchLeave(BtlActHChr *chr, s32 phase);
  */
 
 /* Partial view of a fighter (0x1600 bytes). */
-typedef struct BtlActIChr {
-    /* 0x0000 */ s32 player;
-    /* 0x0004 */ u8 unk4[0x3D0 - 0x4];
-    /* 0x03D0 */ s32 work[0x14];     /* per-action scratch, zeroed on every action switch */
-    /* 0x0420 */ u8 unk420[0x964 - 0x420];
-    /* 0x0964 */ s32 actionFrame;    /* frames spent in the current action */
-    /* 0x0968 */ u8 unk968[0xCDC - 0x968];
-    /* 0x0CDC */ s32 switchChara;    /* member switch target: the arguments of BtlChange_RequestChara */
-    /* 0x0CE0 */ s32 switchCostume;
-    /* 0x0CE4 */ s32 switchVariant;
-    /* 0x0CE8 */ s32 switchAnimChara;
-    /* 0x0CEC */ s32 switchUnk18;
-    /* 0x0CF0 */ s32 switchVoiceChara;
-    /* 0x0CF4 */ u8 unkCF4[0xD60 - 0xCF4];
-    /* 0x0D60 */ s32 rushStep;         /* rush combo step: < 5 picks action 0x4B over 0x4C; (rushStep + 4) % 5 indexes parameter +0x84 */
-    /* 0x0D64 */ s32 rushRapidStep;
-    /* 0x0D68 */ s32 dashCount;         /* counter with limit dashLimit: action 0x19 from the attack table needs dashCount < dashLimit */
-    /* 0x0D6C */ s32 dashLimit;
-    /* 0x0D70 */ s32 vanishCount;         /* counter with limit vanishLimit: below it actions 0x5A..0x5D, else the combo finisher */
-    /* 0x0D74 */ s32 vanishLimit;
-    /* 0x0D78 */ u8 unkD78[0xDE0 - 0xD78];
-    /* 0x0DE0 */ s32 blastShots;         /* ki blasts fired in a row: must be below BtlParam_GetBlastLimitA to fire another */
-    /* 0x0DE4 */ u8 unkDE4[0xE00 - 0xDE4];
-    /* 0x0E00 */ s32 skillStackA;    /* skill ids 0x0C / 0x32: 1 on use, +1 up to 3 when the skill stacks */
-    /* 0x0E04 */ s32 skillStackB;    /* skill id 0x37: the same */
-    /* 0x0E08 */ s32 skillTimer;     /* skill id 0x33: frames left; flag 0x56 every frame while > 0 */
-    /* 0x0E0C */ s32 skillSlot;      /* slot of the skill that set one of the three fields above */
-    /* 0x0E10 */ s32 skillKiRate;    /* skill id 0x18: ki maximum / duration */
-    /* 0x0E14 */ s32 skillTimerC;    /* frames left of a kind 1 skill with attribute 0x800; held at 1 while kind2On / kind3On */
-    /* 0x0E18 */ s32 skillTimerD;    /* frames left of a skill with attribute 0x400 */
-    /* 0x0E1C */ s32 skillTimerE;    /* frames left for skillValE */
-    /* 0x0E20 */ s32 skillValE;      /* BtlSkill_GetValE when positive; 0 when its timer runs out */
-    /* 0x0E24 */ s32 skillTimerF;    /* frames left for skillValF */
-    /* 0x0E28 */ s32 skillValF;      /* BtlSkill_GetValF when positive */
-    /* 0x0E2C */ s32 unkE2C;
-    /* 0x0E30 */ s32 kind2On;        /* set by a kind 2 skill with attribute 0x800 (cleared by BtlStat_EndKind2) */
-    /* 0x0E34 */ s32 kind3On;        /* the same for kind 3 */
-    /* 0x0E38 */ s32 slotOn[2];      /* 1 once a skill of kind != 0 was applied from the slot */
-    /* 0x0E40 */ u8 unkE40[0xE5C - 0xE40];
-    /* 0x0E5C */ s32 skillCount3;    /* skill id 0x41: +1, clamped to 0..3 */
-    /* 0x0E60 */ u8 unkE60[0xFE0 - 0xE60];
-    /* 0x0FE0 */ s32 stunTimer;      /* > 0: BtlDecide_Common(mask 8) queues action 0xD3 */
-    /* 0x0FE4 */ u8 unkFE4[0x1080 - 0xFE4];
-    /* 0x1080 */ s32 unk1080;        /* > 0 needed (with flag 0xB3) for action 0x24 */
-    /* 0x1084 */ u8 unk1084[0x1600 - 0x1084];
-} BtlActIChr; /* 0x1600 */
+typedef BtlFighter BtlActIChr;
 
 /* Pose block (BtlChar_GetPos). */
 typedef struct BtlActIPose {
