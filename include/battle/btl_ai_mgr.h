@@ -2,6 +2,7 @@
 #define BATTLE_BTL_AI_MGR_H
 
 #include "types.h"
+#include "battle/btl_fighter.h"
 #include "sys/math3d.h"
 #include "battle/btl_ai.h"
 
@@ -38,10 +39,7 @@ typedef struct BtlAiHit {
 #define BTLAI_BTN_DESCEND 0x1000
 
 /* Partial view of a fighter (BtlChar_Get): the one field this file reads directly. */
-typedef struct BtlAiMgrChr {
-    /* 0x000 */ u8 unk000[0x444];
-    /* 0x444 */ f32 yaw;         /* angle the stick directions are relative to */
-} BtlAiMgrChr;
+typedef BtlFighter BtlAiMgrChr;
 
 void BtlAiMgr_Reset(void);
 void BtlAiMgr_ResetSide(s32 side);

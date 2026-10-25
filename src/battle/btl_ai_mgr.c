@@ -551,7 +551,7 @@ void BtlAiMove_Steer(BtlAiWork *s, BtlAiVec *to, s32 kind) {
         len = BtlCharApi_GetRadius(s->objId);
     }
     Vec3_Normalize(&d, &d);
-    yaw = chr->yaw;
+    yaw = chr->cam.rot.y;
     x = Mathf_Cos(yaw) * d.x - Mathf_Sin(yaw) * d.z;
     y = -(Mathf_Sin(yaw) * d.x + Mathf_Cos(yaw) * d.z);
     if (1.0f < x) {

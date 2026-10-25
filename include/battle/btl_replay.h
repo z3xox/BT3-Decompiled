@@ -2,6 +2,7 @@
 #define BATTLE_BTL_REPLAY_H
 
 #include "types.h"
+#include "battle/btl_fighter.h"
 
 /*
  * Replay input tracks: what lives in gBattleReplay.data (battle/battle_setup.h declares that part as an
@@ -49,9 +50,7 @@ typedef struct BtlReplayRoster {
 } BtlReplayRoster;
 
 /* Partial view of a fighter. */
-typedef struct BtlReplayChr {
-    /* 0x0000 */ s32 player; /* track index */
-} BtlReplayChr;
+typedef BtlFighter BtlReplayChr;
 
 void BtlReplay_Rewind(BtlReplayChr *chr);
 void BtlReplay_Record(BtlReplayChr *chr, u32 buttons, u32 commands, u8 *stick);
