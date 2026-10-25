@@ -2074,7 +2074,7 @@ void EftRayMgr_Term(EftTTask *task) {
 
 /* Update callback of the manager class: steps the texture animation while a burst exists. */
 void EftRayMgr_Update(EftTTask *task) {
-    if (task->children->head != 0) { /* `count` is the list's head pointer (BtlTaskList.head): list not empty */
+    if (task->children->head != 0) { /* the list's first task (BtlTaskList.head): list not empty */
         EftRay_StepTexture();
     }
 }

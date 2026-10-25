@@ -360,7 +360,7 @@ typedef struct EftBlastObjArg {
     /* 0x14 */ s32 index;    /* number of this shot */
     /* 0x18 */ s32 count;    /* shots of the technique */
     /* 0x1C */ s32 kind;     /* sel[0].kind */
-    /* 0x20 */ s32 evtIdx;   /* sel[0].node: 0..4 = the shot's own node slot is refreshed from the fighter */
+    /* 0x20 */ s32 nodeSlot;  /* sel[0].node: 0..4 = the shot's own node slot is refreshed from the fighter */
     /* 0x24 */ f32 life;     /* seconds; 0 = until stopped */
     /* 0x28 */ f32 scale;
     /* 0x2C */ f32 speed;    /* per frame */

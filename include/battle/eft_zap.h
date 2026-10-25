@@ -158,7 +158,7 @@ typedef struct EftZap {
     /* 0x168 */ f32 fadeFrame;  /* frames LEFT of the fade: counted down by EftZap_Update (`fadeFrame` in eft_ribbon.h) */
     /* 0x16C */ f32 fadeTime;      /* length of the fade in frames; > 0 makes a stop gradual (`fadeTime` in eft_ribbon.h) */
     /* 0x170 */ f32 frame;
-    /* 0x174 */ f32 life; /* arg.rate x 30: the life in frames, counted down by EftZap_Update (`life` in eft_ribbon.h) */
+    /* 0x174 */ f32 life; /* arg.life x 30: the life in frames, counted down by EftZap_Update (`life` in eft_ribbon.h) */
     /* 0x178 */ u8 texIdx;     /* which image of the texture object */
     /* 0x179 */ u8 pad179[3];
     /* 0x17C */ s32 flags;     /* EFT_ZAP_* */

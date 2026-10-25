@@ -25,7 +25,7 @@ typedef struct StgData {
     /* 0x10 */ s32 infoCount;
     /* 0x14 */ StgInfo *info;
     /* 0x18 */ u8 unk18[0xC];
-    /* 0x24 */ Vec4 *lightDir; /* StgDataA.points in stg.h */
+    /* 0x24 */ Vec4 *lightDir; /* StgDataA.lightDirs in stg.h: entry 0 is the light direction */
     /* 0x28 */ s32 startCount;
     /* 0x2C */ f32 *starts;    /* StgDataA.starts in stg.h (StgPlace: pos, target), read as floats: pos.x, pos.z at
                                  [0], [2] and target.x, target.z at [4], [6] */

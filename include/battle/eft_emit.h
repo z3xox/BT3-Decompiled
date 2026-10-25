@@ -55,7 +55,10 @@ typedef struct EftHTask {
     /* 0x0A */ u8 unkA[0x16];
     /* 0x20 */ void *list;     /* list the task is in; 0x1ADB98 returns *list, the task owning that list */
     /* 0x24 */ void *children; /* child list (BtlTask_CreateChildList) */
-    /* 0x28 */ void *unk28[4];
+    /* 0x28 */ void *cls;      /* the BtlTask words (eft_sprite_anim.h): class, prev, next, nextFree */
+    /* 0x2C */ void *prev;
+    /* 0x30 */ void *next;
+    /* 0x34 */ void *nextFree;
     /* 0x38 */ void *data;     /* instance data, size given to BtlTask_CreateChildList by the parent */
     /* 0x3C */ s32 unk3C;
 } EftHTask; /* size 0x40 */
@@ -154,8 +157,8 @@ typedef struct EftShotClassRow {
 
 /* Views of the character data EftShot_BuildParam reads (BtlSkillData / BtlSuperData in btl_tech.h). */
 typedef struct EftSkillSrc {
-    /* 0x00 */ s32 flags[2];
-    /* 0x08 */ s32 unk8[2];
+    /* 0x00 */ s32 flagsA[2];
+    /* 0x08 */ s32 flags[2];
     /* 0x10 */ u16 id[2];
     /* 0x14 */ u16 level[2];
     /* 0x18 */ f32 time[2];
@@ -180,8 +183,8 @@ typedef struct EftSkillSrc {
 } EftSkillSrc;
 
 typedef struct EftSuperSrc {
-    /* 0x000 */ s32 flags[3];
-    /* 0x00C */ s32 unkC[3];
+    /* 0x000 */ s32 flagsA[3];
+    /* 0x00C */ s32 flags[3];
     /* 0x018 */ u16 id[3];
     /* 0x01E */ u16 level[3];
     /* 0x024 */ f32 time[3];
@@ -466,7 +469,10 @@ typedef struct EftVolleyPose {
 typedef struct EftVolleyShot {
     /* 0x00 */ Vec4 pos;
     /* 0x10 */ Vec4 dir;
-    /* 0x20 */ Vec4 unk20;
+    /* 0x20 */ s32 script;  /* EftVolleyAimShot (eft_detect.h): steering script, -1 none */
+    /* 0x24 */ f32 speed;
+    /* 0x28 */ f32 maxTurn;
+    /* 0x2C */ s32 unk2C;
     /* 0x30 */ Vec4 offset;
     /* 0x40 */ s32 flags;   /* 1 fired, 2, 4 */
     /* 0x44 */ f32 time;    /* frames since fired */

@@ -647,8 +647,10 @@ typedef struct EftLinkWork {
 /* gEftLink (0x106E0 bytes). */
 typedef struct EftLinkMgr {
     /* 0x00000 */ void *list;          /* task list, 6 chains */
-    /* 0x00004 */ u8 unk4[0x1C];
-    /* 0x00020 */ EftLinkNode node[EFT_LINK_NODES];
+    /* 0x00004 */ u8 unk4[0xC];
+    /* 0x00010 */ EftLinkNode node[EFT_LINK_NODES]; /* at 0x10 as in EftWLinkMgr (eft_link_2.c indexes it there) */
+    /* 0x10690 */ s32 next;             /* EftWLinkMgr.next: where the search for a free node starts */
+    /* 0x10694 */ u8 unk10694[0xC];
     /* 0x106A0 */ EftVMtx identity;
 } EftLinkMgr;
 

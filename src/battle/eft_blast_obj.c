@@ -365,7 +365,7 @@ void EftBlastObj_Init(EftOTask *task, EftBlastObjArg *arg) {
     w->scaleArg = arg->scale;
     w->speed = arg->speed;
     w->sel[0].kind = arg->kind;
-    w->sel[0].node = arg->evtIdx;
+    w->sel[0].node = arg->nodeSlot;
     w->selCount = 1;
     {
         s32 slots[7] = { 0, 1, 3, 4, 5, -1, -1 };

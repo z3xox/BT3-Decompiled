@@ -7,6 +7,16 @@
 - AI: BtlAiWork.costMin / costMax, BtlAiPlan.rolls[].acc, BtlAiOutput.accX / accY and the act10Dist words are f32, BtlAiStatus.hitPendingTimer.
 - AI: the AI arrays of group 02 were already split; docs/systems/ai.md describes the four decompiled files.
 - Object +0xCAD is hitNo in the btl_char_api_2.h views; BtlChange_RequestChara / BtlChange_GetArgs / BtlChangeReq call the second animation file anim1Chara.
+- Effects: BtlStage_GetFxCount0..2 / GetFxList0..2 (counts s32), BtlParam_GetKiRecoverGoal, BtlSkill_GetShotScale, BtlSuper_GetShotScale, BtlSkill_GetClashPower, EftRibbon_SetNode, EftShotFx_Init.
+- Effects: 0x2EC2E0 is gVu0AxisYW (vu0 constants; gVu0OneVec 0x2EC2B0 and gVu0AxisXW 0x2EC2D0 declared); every class table is void *[6]; the EftLine_* helpers of gEftBillClass keep their prefix, the comments say so.
+- Effects: texture sets: `ready` mask, entry +8 `def`; definition +0x04 / +0x05 kind / sub in every view; +0x18 of the emitter definition is `life` (and the spawn helpers' parameter).
+- Effects: part 10 / 9 pulse fields mul*, EftPart10.emitLife, dist, sizeMul, vel / accel, COLOR_RAMP; EftUPtclDef angX..spinZRange; EftLinkNode dir / origin / rotZ; EftKDef.level; EftJFlashArg / EftFlashArg hold f32.
+- Effects: the launch block views take EftRArg's names (FxHitArg2 srcId / objId / kind / level, EftHitAtk.node, EftDiscAtk.texVariant).
+- Prototypes: EftGndDust_SpawnPieceEx (eft_ground_dust.h) agrees with the definition and replaces the asm-label aliases; the EftEmit_SpawnOwn externs use the definition's parameter names.
+- Already settled by earlier passes: the rush-sequence frame comment, the EftJPart / EftJSrc / EftJDef views, the hand comment, the zap type byte, EftDetStageCtx.delta, BtlKiBlastData.radius, the aura spark views (comment fixed), BtlScriptCmdWindow.shadowColor (unk30 commented).
+- Effects: EftSkillSrc / EftSuperSrc flagsA + flags as in btl_tech.h; EftHTask cls / prev / next / nextFree; EftVolleyShot script / speed / maxTurn; EftBlastObjArg.nodeSlot; the geyser locals' accel.
+- Effects: EftLinkMgr puts node[] at 0x10 and `next` at 0x10690 like EftWLinkMgr (eft_link_2.c indexes it there; nothing reads EftLinkMgr.node).
+- Already settled: EftEmitRayArg, EftSetHead widths, EftTTaskList.head, the EftTTask comments, EftShotParam.sub comment, EftGndDustStage, spinB / hold, EftWLinkNode, the EftEmitArg texture blocks, EftSurfTex / EftBurstTex, specular, EftTechArg.chr, the zap work names, the obj_gs_env.h words, StgView scissorY0 (stg.c:371 / 382 compare scissorY0 - scissorX0: the original's own code).
 
 ## Resolved by the fighter merge (2026-10-25)
 
@@ -29,13 +39,9 @@ CPU opponent:
 - Two AI functions were left as Unk (step 23, condition 11): both hinge on "stage 4 or 27" and pose bit 0x80, whose meaning is not known.
 
 Effects, stage, objects:
-- The comment above the rush-sequence frame getter (btl_char_api_2.c, about line 503) is wrong: animation frame plus the lengths of the earlier steps.
-- BtlParam_GetGaugeB returns kiRecoverGoal: a weak name.
-- eft_quad_2.h:16 and :495 call the class at 0x2C40F0 the "EftLine" / "line task" class; its callbacks are EftBill_*.
-- The class at 0x2C3EC0 has EftShotFxMgr_Init as its init among EftShotFx_* callbacks: one prefix is probably wrong.
-- eft_trail.c:728 declares the class at 0x2C3E00 as u8[0x18]; the other class tables are void *[6].
-- eft_detect.c:157 and stg_collision.c:96 describe the vector at 0x2EC2E0 differently, with two struct types.
-- Setters of fields nothing reads were left as Unk: EftRibbon_SetUnkD8, EftZap_SetUnk40, HudNode_SetUnk8, EftBill_SetUnkD8.
+- Setters left as Unk: HudNode_SetUnk8 (HudDNode +0x08 / +0x0C, which HudNode_Draw does not read) and EftBill_SetUnkD8
+  (EftBill +0xD8: when > 0 at the end, flag 0x800 is set, and nothing tests 0x800). (EftRibbon_SetUnkD8 is EftRibbon_SetNode;
+  EftZap_SetUnk40 no longer exists.)
 
 Fighter:
 - BtlAnim_SetRate (btl_anim.c) writes fighter +0x988, the model scale that BtlChar_PoseToObj copies into the object transform
@@ -47,7 +53,6 @@ Fighter:
 - btl_obj_anim.c, above BtlObjFace_PickJawKeys: "eye direction tracks" are jaw rotation tracks (node 0x31).
 - btl_act_super.c:2097: technique 0x280 "a random character": the character comes from the technique table.
 - btl_scene.c:548 "rule word 0x18" is rule word 0x10 (setup + 0x18).
-- The two zero vectors at 0x2EC2A0 / 0x2EC2C0 each cover 0x20 bytes: a second unreferenced vector follows each ((1,1,1,1) and (1,0,0,1)).
 - Fields to follow the renamed accessors: unk44FC4 (default animation step, btl_obj.h; its comment "getter / setter only" is out of date), unkB30 (alphaAdd), rule.unk10,
   BattleSide.unk1FC / unk200 and the parameters of BattleSetup_SetSide in the menu files (team_select.c calls the first `handicap[]`).
 - btl_char_fx_1.c, BtlFx_FireKiBlast: the local `react` holds ki blast record +0x31, the volley spread mode.
@@ -74,99 +79,33 @@ System, menu support:
 Group 02 (btl_act_super.h .. btl_cam.h):
 
 Group 09 (eft_rays.h .. eft_stage_1.h):
-- Technique definition +0x04 / +0x05: eft_core.h and eft_shot.h have cls@4, kind@5; eft_emit.h and eft_obj_tech.h have kind@4, unk5 / sub@5.
-  EftShot_BuildParam shows +0x04 is 0 skill / 1 technique / 2 ultimate. One scheme should be picked for all views.
-- Texture set word +0x204: `stepped` (eft_disc.h), `kept` (eft_sprite_anim.h:116), `uploaded` / `loaded` / `ready` in the 16-entry sets.
-- Texture entry `u64 unk8`: other headers declare `void *image` plus `s32 unkC`: retype, not only rename.
-- EftUPtclDef.unk280[12] would be better split into the twelve fields eft_particle_unused.h names (angX, angXRange, spinX, ...).
-- EftMulti.unk390[4]: element [0] is the `hand` vector of EftBlast / EftPropShot: needs a split.
-- EftJFlashArg.unk14 -> hold is s32 in this view, `f32 hold` in eft_trail.h.
-- eft_shot_tech.h:40 `s16 recType; /* copied to the hit record's type */`: eft_core.c:122 does rec->level = rec->src->def->level: it is `level`.
-- eft_core.h:97: the comment on `cls` says 0 is the "rush" class; 0 is the skill class.
-- eft_shot_tech.h:80, 82: EftJPart has type@8 and kind@0xA; the same record in eft_sweep.h / eft_rays.h has kind@8, node@0xA: EftMulti_IsPartKind5
-  most likely tests the node slot.
-- eft_shot_tech.h:73: EftJSrc.objId20 is the field every other view names `chr`.
-- eft_disc.h:104: the `hand` comment reads as inverted (eft_body_fx.c:344: non-zero means nodes 0x14 / 0x15).
-- eft_zap.h:124 against eft_ribbon.h:291: the zap argument's +0x40 byte is unk40 in one and `type` in the other.
 
 Group 01 (battle.h .. btl_act_decide.h):
 - Found: BattleRule.unk18 and BattleResult.unk44 are the Dragon Ball drop (1 + the first unset of the seven dragon-ball bits; stg_parts.c
   moves it to the result with a 1-in-8 chance when a stage object breaks; history_result.c sets the bit). BattleRes.unk8 is the HUD sprite file.
 
 Group 06 (btl_script_cmd.h .. eft_disc.h):
-- eft_aura.h, EftAuraCfgSpark against EftAuraDataSpark: two views of one table shifted by 4 bytes; EftAuraCfgSpark.kind is the emitter node.
 - eft_aura.h, EftAuraCfg.flame[EFT_AURA_SPARKS] at 0x410: the table has 10 entries (EFT_AURA_PARTS); entries 10 and 11 overlap fadeNode[].
 - eft_aura.h, EftAuraCfgFlame.unk0 (u8) and .node: in EftAuraDataPart the record is s32 node, nodeEnd, nodeRef: this `node` is the other's nodeEnd.
-- eft_detect.h, EftDetStageCtx.unk50 comment ("the place of the hit"): it is the sweep's movement vector (CpSweep.delta).
-- btl_script_cmd.h, BtlScriptCmdWindow.color28 is FontStyle's shadowColor; its unk30[0x18] covers FontStyle's clip rectangle, userFlags and
-  three callbacks; x / y at 0x48 lie past the 0x48-byte FontStyle.
-- eft_disc.h, EftDiscAtk: 0x1B is `level` while FxHitArg2 / EftKiPropArg call 0x18 `level` and EftHitAtk / BtlCollAtk call 0x18 `kind`: two
-  conventions for one launch block; its `node` at 0x14 is `code` elsewhere; objId at 0x12 against objId at 0x10 + objId2 at 0x12 in FxHitArg2.
-- eft_core.h, EftHitAtk.level at 0x30: FxHitArg2 calls that word `size` (0..3).
-- btl_tech.h, BtlKiBlastData.unk28: getter BtlKiBlast_GetRadius, but the effect views call the slot `scale`.
-- btl_tech.h, BtlTechBParam.unk8F[0xC7 - 0x8F] runs over fields BtlParam names from 0x98 on (transTarget and others).
-- The word after `count` in the texture sets: `stepped` (eft_disc.h, eft_rays.h), `ready` (eft_orb_tail.h, eft_part10.h), `built` (eft_chain.h).
 - Ten MEDIUM names in btl_tech.h follow the existing getter's name only (poweredDashLimit, landingKind, throwObjectSlot, ...).
 
 Group 08 (eft_obj_tech.h .. eft_quad_2.h):
-- eft_part10.h:195: EftPart10Ptcl.speed (0xC0) is the particle's distance from the emitter (eft_link_2.h: dist); the speed / speedRange /
-  speedBase tracks (lines 119-121, 263-265) are dist / distRange / distBase.
-- eft_part10.h:212-215, 288-294, 166-169: the stretch* members are a colour multiplier pulse (eft_link_2.h: mulD / mul0 / mulT / mulTime);
-  the flags EFT_PART10_P_SCALEX/Y/Z are per-channel pulse flags. The same for the part-9 quad at :410, 418-420, 486-488
-  (colorOscAmp / colorMul / colorOscTime / colorOscPeriod in eft_quad_2.h).
-- eft_part10.h:423: EftPart9Ptcl.size (0x13C) is the multiplier sizeMul; the base size is 0x138; dir (0x20) / vel (0x30) are vel / accel.
-- eft_part10.h:242, 349: `rate` ("seconds between bursts") is a life in seconds (eft_link_2.h: life).
 - eft_part10.h:151, 156: layer (0x1FB) / drawMode (0x20C) are blend / mode in eft_link_2.h: which is right was not determined.
-- eft_part10.h:86: EFT_PART10_P_UNK80 is "the colour ramps", selected by def->unk20D.
 - eft_obj_tech.h:247: EftObjTech.nodes[2] is the 0x10-byte header of the EftEmitNodes block plus slot 0's id and padding, not two positions;
   the Vec4 arrays unk390[3] (line 249) and EftRushShot.unk360[3] (line 306) are id / padding / position mixes.
-- eft_obj_tech.h:78 against src/battle/eft_obj_tech.c:1212: the comment calls EftKPart.unk18 a life; eft_sweep.h names it `rate`.
-- eft_tech_modules.h:166: EftRushShotWork.unk390 "position of the start node" is slot 1 (FIRE); slot 0 (START) is at 0x350.
-- eft_particle_unused.h:373: "unk84 / unk90: jitter along the chain" has no backing in code. :443, 435-436: EftLinkNode.rot is rotZ,
-  offset / pos are dir / origin in eft_link_2.h.
-- Unused byte-array gaps with exact names in sibling views: EftPart10.unk29C = uv[16][4], EftPart9.unk298 = animSplit, EftPtcl.unk50 = accel,
-  EftLinkNode.unk0 = corner[4].
 
 Group 07 (eft_draw_modules.h .. eft_link_2.h):
-- src/battle/eft_emit.c:1458 has a local twin of EftEmitLightArg, EftEmitRayArg, with the same unk20..unk50 fields: same renames wanted.
-- Type problems, not names: EftSetHead.unkC[2] / unk30[2] are width1 / width2 and b1 / b2 in eft_sweep.h; EftHTask.unk28[4] is cls / prev /
-  next / nextFree; EftVolleyShot.unk20 (Vec4) is {s32 script; f32 speed; f32 maxTurn} in eft_detect.h.
-- EftSkillSrc.unk8 and EftSuperSrc.unkC are `flags` in btl_tech.h, but `flags` is taken by offset 0 (btl_tech.h: flagsA).
-- eft_draw_modules.h:50: EftTTaskList.count ("live children") is BtlTaskList.head, a pointer; the test at eft_chain.c:2078 is "list not empty".
-- eft_draw_modules.h:38-39: EftTTask.unk8 / unk18 comments ("texture animation state A/B") are wrong (BtlTask: pos at 0x10, list at 0x20).
 - eft_draw_modules.h:103: EftChainStrand.mtx (Mtx44 at 0x00) is four vectors in EftArcChain (pos, drift, unk20, color).
-- eft_emit.h:69: the comment on EftShotParam.unk5 says "super +0x141[i]": the code reads d->unk13B[n] (hitDirKind in btl_tech.h).
-- eft_shot.h:57-58 against eft_emit.h / EftKDef: the two "kind"s are different fields: 0x04 is skill / technique / ultimate, 0x05 the sub-kind.
-- eft_ground_dust.h:262: EftGndDustStage.unk54 sits at offset 0x10 (named after the field it is copied to).
-- eft_link_2.h:352: EftPart10.stopDelay at 0x25C is spinB in eft_part10.h. :356: timer at 0x3A8 is `hold` there.
-- eft_link_2.h:246: EftWLinkMgr.ptcl at 0x10 disagrees with EftLinkMgr.node at 0x20: both views of gEftLink cannot be right.
-- eft_link_2.h:117-119: EftWLinkNode 0x40 / 0x50 / 0x60 are ofs / dir / origin; EftLinkNode has unk40 / offset / pos.
-- eft_emit.h:409-410, 423-424: EftEmitArgA.texA / texB and EftEmitArg17.texA are definition blocks in the receiving modules; `res` is the texture set.
 
 Group 10 (eft_stage_2.h .. eft_water.h):
-- eft_shot_tech.h:42: EftJDef.recType is `level` (EftHit_Add copies definition +0x02 to rec->level; rec->type is the constant EFT_HIT_TECH).
-- eft_shot_tech.h:347: EftJShotArg.evtIdx is a node slot index (EftBlastObj_Init stores it in sel[0].node).
-- eft_sweep.h:170-171: EftEmitSet.tex33 / tex17 are the 16-texture and 8-texture sets (entries of 0x108 and 0x88 bytes): 33 and 17 look
-  like size / 8; eft_emit.h has them as array[1] / array[2].
-- eft_sweep.h:63 against eft_emit.h:292: definition +0x08 is `kind` in one and `phase` in the other; `phase` fits beside endPhase at +0x09.
-- eft_stage_2.h:198-203 and eft_surface_out.h:63-73: ofs0 / ofs4 / ptr0 / ptr4 of EftSurfTex and EftBurstTex: the record has the layout of
-  EftVramImage (eft_detect.h), +0x38 / +0x3C are image / clut; EftSurfTex.tex0 at +0x28 is the per-frame result, the record's own TEX0 is at +0x30.
-- eft_surface_out.h:50: EftSurfD.param30 is `specular` (the last argument of EftGfx_LightClutSpecular).
-- eft_stage_2.h:105: EftGeyserSteamArg.gravity is `accel` in EftSteamArg. eft_struggle.h:82: EftRList.first is BtlTaskList.head.
-- eft_tech_modules.h:81: EftTechArg.side at +0x20 is EftHSlot.chr.
 - eft_trail.h:72, 77-78, 83 against eft_disc.h: the views of the glow work disagree (paramFlags / type / type2 / fadeFrom against unk8 /
   unk1C[2] / alpha); eft_trail.h:126 EftGlowMgr.live at +0x18 is unk18[2] in EftPGlowMgr. Not determined which is right.
-- src/battle/eft_stage_2.c:180-201: the local EftGeyserSmokeInit / EftGeyserSteamInit have the same unk30..unk50 fields as the header's
-  EftGeyserSmokeArg / EftGeyserSteamArg and would take the same names.
-- Definition +0x04 is `kind` in EftShotParam and `cls` in EftHitDef (which uses `kind` for +0x05): see group 09's note.
 
 Group 04 (btl_char_coll.h .. btl_char_member.h):
 - btl_char_ctl.h:117-118: BtlCtlNode.mtx at +0x50 is the parent's world matrix (the node's own is at +0x10); `pos` at +0x90 is the local translation.
 - btl_char_coll.h:165 and btl_char_member.h:98: fighter +0x00 is `side` in BtlCollChr / BtlMemberChr, `player` (and +0x08 `side`) elsewhere.
 - btl_char_coll.h:150, 153: BtlCollReact.dirYaw / faceYaw are yaw / turnYaw in HitReact and ActGReact, `id` is `reaction`; unk18 is s32 here, f32 scale there;
   its four two-word arrays (unk4[2], unk10[2], unk28[2], unk3C[2]) each cover two different fields of HitReact.
-- btl_char_fx_1.h:150-162: FxHitArg2 against the callee's view EftRArg (eft_struggle.h:285): objId@0x10 is srcId, objId2 is objId, code is node,
-  level@0x18 is kind, size@0x30 is level. :23: unk98 "reference speed" is the plain speed along dir.
 - BtlFlagPose.unk30 (btl_char_flag.h:119) is `vel` in BtlCapiPose, but this structure uses `vel` for +0x40 (FxPose too; BtlCapiPose: move;
   BtlActBPose / ActGPose: moved): the views need settling together.
 - Competing names chosen: skill block 0xE00..0xE18 after BtlActIChr (skillTimer, skillSlot, skillKiRate, skillTimerC), HitChr.unkE18 noFlinch
@@ -219,16 +158,6 @@ Group 12 (overlay_common.h .. memcard_flow.h; the menu overlay and sys):
 - McCardIconSys.unk4 / unk8 -> reserved1 / reserved2 rests on the agent's memory of Sony's sceMcIconSys, not on the repo.
 
 Group 11 (eft_water_part2.h .. option.h; stage, HUD, object renderer, menu overlay):
-- stg.h:259: StgView.x1 at +0x208: View (btl_cam.h:75-78) and ViewScissor (main.h) have +0x204 scissorX1, +0x208 scissorY0: stg.c:371 and
-  :382 `(view->x1 - view->x0) > 256` compare scissorY0 - scissorX0. A misnamed field, or a bug of the original.
-- eft_zap.h:155-160 against eft_ribbon.h:377-382: the EftZap work block is named differently at four offsets (+0x164 fadeDelay / holdTime,
-  +0x168 fadeTime / fadeFrame, +0x16C fade / fadeTime, +0x174 rateFrames / life), and EftZapArg.rate (+0x34) against EftZapInit.life: the
-  ribbon side has the supporting code (w->life = arg->life * 30, counted down at eft_ribbon.c:1445-1500).
-- eft_zap.h:81-82: EftZapMgr.nodeCur at +0x1EA1; eft_ribbon.h EftZapPool has nextLine at +0x1EA0 and unk1EA1[0xF] (a used byte in the gap).
-- stg_ambient.h:28: StgData.lightDir at +0x24 is StgDataA.points in stg.h:117; BtlStage_GetLightDir reads entry 0 of that list as the light
-  direction, so `points` is probably the misnomer. :29: StgData.place at +0x2C is StgDataA.starts ("one per player").
-- obj_gs_env.h:44-46 against obj_render.h:65-67: model file +0x60 cbp2 / clutTbp, +0x64 tbp2 / fadeTbp (obj_render.h backed by use).
-- obj_gs_env.h:100: ObjShadowView.color at view +0x30 is the flat shadow's colour (BtlObjView / ObjDrawView have `color` at +0x20).
 - dc_password_replay.h:95: ZaChrEntry.slots at +0x0E is baseLevel in ChrTblEntry and VChrEntry.
 - evo_z.h:124 against evo_z_items.h:165: +0xB0 of one work is `bg` in UEvoZ and chipTex in EvoZ; +0x1A64 `fits` has two opposite comments.
 - history_result.c:59 still says "BattleResult.unk44" (dragonBallFound).

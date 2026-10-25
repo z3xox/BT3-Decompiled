@@ -222,7 +222,7 @@ void EftShot_BuildParam(s32 chr, s32 slot, EftShotParam *p, s32 blank) {
         p->scale = d->scale[n];
         p->speed = d->shotSpeed[n];
         p->homing = d->shotTurn[n];
-        p->flags = d->flags[n];
+        p->flags = d->flagsA[n];
         p->impactFx = (s8)d->impactFx[n];
         p->groundFx = (s8)d->groundFx[n];
         p->volley = (s8)d->hitsB[n];
@@ -277,7 +277,7 @@ void EftShot_BuildParam(s32 chr, s32 slot, EftShotParam *p, s32 blank) {
         p->scale = d->scale[n];
         p->speed = d->shotSpeed[n];
         p->homing = d->shotTurn[n];
-        p->flags = d->flags[n];
+        p->flags = d->flagsA[n];
         p->impactFx = (s8)d->impactFx[n];
         p->groundFx = (s8)d->groundFx[n];
         p->volley = (s8)d->hitsB[n];
