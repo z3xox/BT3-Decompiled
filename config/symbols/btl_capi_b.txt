@@ -39,7 +39,7 @@ BtlCharApi_GetBlastMax = 0x00208D10; // type:func
 BtlCharApi_GetMaxPower = 0x00208D48; // type:func // guess
 BtlCharApi_GetSwitchGauge = 0x00208D80; // type:func // guess
 BtlCharApi_IsBlockedByOpponent = 0x00208DA8; // type:func // guess
-BtlCharApi_HasParamBit80 = 0x00208DE0; // type:func
+BtlCharApi_HasCharaFlag80 = 0x00208DE0; // type:func
 // Form changes. 0x208E18: BtlAct_CanTransform(parameter byte +0xAC, 1, 1). 0x208E78: BtlAct_CanFuse for any of the
 // three slots. 0x208EF0: BtlAct_CanSwitch(1, 1). 0x208F30 / 0x208F68: active member +0x38 / +0x3C (cpuLevel / aiType,
 // names from btl_char_mgr). 0x208FA0: fighter +0x1070 != -30. 0x208FD8: cost of the +0xAC transformation.
@@ -90,7 +90,7 @@ BtlCharApi_GetPromptButtons = 0x002099E8; // type:func // guess
 BtlCharApi_GetStoryAiForce = 0x00209AC0; // type:func (guess)
 BtlCharApi_IsDodgeWindowReady = 0x00209B08; // type:func (guess)
 BtlCharApi_GetArmorBreakLevel = 0x00209B38; // type:func // guess
-BtlCharApi_GetParamByte2 = 0x00209CA8; // type:func
+BtlCharApi_GetSizeClass = 0x00209CA8; // type:func
 BtlCharApi_GetTechChargeB = 0x00209CE0; // type:func
 BtlCharApi_GetVanishStrikesLeft = 0x00209D08; // type:func (guess)
 BtlCharApi_IsAnimFlag2800 = 0x00209D48; // type:func
@@ -98,7 +98,7 @@ BtlCharApi_TestPoseBit80 = 0x00209D98; // type:func
 BtlCharApi_TestFlag98 = 0x00209DF8; // type:func
 BtlCharApi_TestFlagBE = 0x00209E38; // type:func
 BtlCharApi_GetTechniqueCooldown = 0x00209E78; // type:func
-BtlCharApi_GetParamByte8F = 0x00209EA0; // type:func
+BtlCharApi_GetComboFinish = 0x00209EA0; // type:func
 // --- keyed by player index (BtlChar_Get) ---
 // Sequence poses (callers: btl_seq.c): one-frame flags 0xEF / 0xF0 / 0xF1 / 0xF2 force actions 1 (entrance), its end,
 // 2 (win) and 3 (lose); 0x209FC8: animation 0x181 / 0x183, or 0x184 with flag 0x31.

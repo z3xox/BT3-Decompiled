@@ -122,7 +122,7 @@ extern void BtlStat_SetFrameMod(BtlFighter *chr, s32 idx, s32 val, s32 add);
 extern void BtlAnim_Play(BtlFighter *chr, s32 anim, f32 blend);
 extern void BtlAnim_FlushRequest(BtlFighter *chr);
 extern void BtlAnim_SetObjRate(BtlFighter *chr, f32 rate);
-extern void BtlAnim_SetRate(BtlFighter *chr, f32 rate);
+extern void BtlAnim_SetScale(BtlFighter *chr, f32 scale);
 extern s32 BtlAnim_GetId(BtlFighter *chr);
 extern s32 BtlAnim_GetFlags(s32 idx);
 extern void ChrCam_UpdateInput(BtlFighter *chr);
@@ -1008,7 +1008,7 @@ void BtlChar_BeginFrame(BtlFighter *chr) {
     chr->prevActionFrame = chr->actionFrame;
     chr->anim.prev = chr->anim.cur;
     BtlAnim_SetObjRate(chr, 1.0f);
-    BtlAnim_SetRate(chr, 1.0f);
+    BtlAnim_SetScale(chr, 1.0f);
     chr->combo.newHit = 0;
     chr->combo.changed = 0;
     BtlChar_SetLookEnabled(chr, 0);

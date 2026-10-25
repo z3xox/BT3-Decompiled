@@ -109,9 +109,9 @@ s32 BtlCharApi_IsInputInjected(s32 objId);
 void BtlCharApi_SetInjectedInput(s32 objId, u32 buttons, f32 stickX, f32 stickY);
 s32 BtlCharApi_TestFlag0F(s32 objId);
 s32 BtlCharApi_TestFlag05(s32 objId);
-s32 BtlCharApi_GetParamByte84(s32 objId, u32 n);
-s32 BtlCharApi_GetParamByte8A(s32 objId);
-s32 BtlCharApi_GetParamByte8D(s32 objId);
+s32 BtlCharApi_GetRushFinisher(s32 objId, u32 n);
+s32 BtlCharApi_GetFinisherChoice0(s32 objId);
+s32 BtlCharApi_GetFinisherChoice3(s32 objId);
 u64 BtlCharApi_GetActionBits(s32 objId);
 s32 BtlCharApi_IsAttackHitPending(s32 objId);
 s32 BtlCharApi_TestFlag60(s32 objId);
@@ -138,10 +138,10 @@ s32 BtlCharApi_TestFlag60(s32 objId);
  * file touches, or that its direct callees show, are named.
  */
 
-/* Character parameter block (battle object +0x91C); read here only through BtlCharApi_GetParamByte2 / Flags /
-   Unk14 / Unk18. The rest is what the callees of this file read (0x20DF80..0x20F3C8). */
+/* Character parameter block (battle object +0x91C); read here only through BtlCharApi_GetSizeClass and
+   BtlCharApi_GetParamFlags / Flags2 / Flags3. The rest is what the callees of this file read (0x20DF80..0x20F3C8). */
 typedef struct BtlCapiBParam {
-    /* 0x00 */ u16 charaFlags;            /* bit 0x80: BtlCharApi_HasParamBit80 */
+    /* 0x00 */ u16 charaFlags;            /* bit 0x80: BtlCharApi_HasCharaFlag80 */
     /* 0x02 */ s8 sizeClass;
     /* 0x03 */ u8 unk3[0x10 - 0x3];
     /* 0x10 */ s32 flags;           /* bits 4 / 8: armour level of BtlCharApi_GetArmorBreakLevel */
@@ -157,7 +157,7 @@ typedef struct BtlCapiBParam {
     /* 0xA0 */ u8 unkA0[0xAC - 0xA0];
     /* 0xAC */ s8 transformSlot;    /* the slot the AI uses, -1 none (BtlParam_GetDefaultSlot) */
     /* 0xAD */ u8 formFlags;
-    /* 0xAE */ u8 fusionCost[3];    /* blast stocks (BtlParam_GetCostAE) */
+    /* 0xAE */ u8 fusionCost[3];    /* blast stocks (BtlParam_GetFusionCost) */
     /* 0xB1 */ u8 unkB1[3];
     /* 0xB4 */ u8 fusionId[3];      /* (BtlParam_GetFusionResult) */
 } BtlCapiBParam;
@@ -294,7 +294,7 @@ s32 BtlCharApi_GetBlastMax(s32 objId);
 s32 BtlCharApi_GetMaxPower(s32 objId);
 s32 BtlCharApi_GetSwitchGauge(s32 objId);
 s32 BtlCharApi_IsBlockedByOpponent(s32 objId);
-s32 BtlCharApi_HasParamBit80(s32 objId);
+s32 BtlCharApi_HasCharaFlag80(s32 objId);
 s32 BtlCharApi_CanTransform(s32 objId);
 s32 BtlCharApi_CanFuse(s32 objId);
 s32 BtlCharApi_CanSwitch(s32 objId);
@@ -327,7 +327,7 @@ s32 BtlCharApi_GetPromptButtons(s32 objId);
 s32 BtlCharApi_GetStoryAiForce(s32 objId);
 s32 BtlCharApi_IsDodgeWindowReady(s32 objId);
 s32 BtlCharApi_GetArmorBreakLevel(s32 objId);
-s32 BtlCharApi_GetParamByte2(s32 objId);
+s32 BtlCharApi_GetSizeClass(s32 objId);
 f32 BtlCharApi_GetTechChargeB(s32 objId);
 s32 BtlCharApi_GetVanishStrikesLeft(s32 objId);
 s32 BtlCharApi_IsAnimFlag2800(s32 objId);
@@ -335,7 +335,7 @@ s32 BtlCharApi_TestPoseBit80(s32 objId, s32 always);
 s32 BtlCharApi_TestFlag98(s32 objId);
 s32 BtlCharApi_TestFlagBE(s32 objId);
 s32 BtlCharApi_GetTechniqueCooldown(s32 objId);
-s32 BtlCharApi_GetParamByte8F(s32 objId, s32 n);
+s32 BtlCharApi_GetComboFinish(s32 objId, s32 n);
 
 /* --- by player index: sequence poses --- */
 void BtlCtrl_StartEntrance(s32 player);

@@ -102,7 +102,7 @@ extern void BtlMove_TurnYaw(BtlFighter *chr, s32 mode, f32 maxStep);
 
 extern f32 BtlOpp_GetDistanceXZ(BtlFighter *chr);
 extern f32 BtlOpp_GetGapXZ(BtlFighter *chr);
-extern s32 BtlOpp_GetParamWord0(BtlFighter *chr);
+extern s32 BtlOpp_GetCharaFlags(BtlFighter *chr);
 extern s32 BtlOpp_GetSeenAction(BtlFighter *chr);
 extern f32 BtlOpp_GetYawFromFacing(BtlFighter *chr);
 extern void BtlStat_ClearPenalty(BtlFighter *chr);
@@ -524,7 +524,7 @@ s32 BtlAct_GrowSearchWindow(BtlFighter *chr, f32 limit) {
     f32 dRange;
     f32 old;
 
-    slow = (BtlOpp_GetParamWord0(chr) >> 7) & 1;
+    slow = (BtlOpp_GetCharaFlags(chr) >> 7) & 1;
     dAngle = BtlParam_GetTypeValueA(chr);
     dRange = BtlParam_GetTypeValueB(chr);
     if (slow) {
@@ -560,7 +560,7 @@ s32 BtlAct_IsOppInSearchWindow(BtlFighter *chr) {
     if (BtlChar_TestFlag(chr, 0xB2)) {
         return 0;
     }
-    BtlOpp_GetParamWord0(chr);
+    BtlOpp_GetCharaFlags(chr);
     flag = BtlChar_TestFlag(chr, 0xBA);
     dist = BtlOpp_GetDistanceXZ(chr);
     yaw = __builtin_fabsf(BtlOpp_GetYawFromFacing(chr));
@@ -1729,7 +1729,6 @@ extern f32 Mathf_Cos(f32 a);
 extern f32 Vec3_Length(Vec4 *v);
 extern s32 Battle_GetMode(void);
 
-#define BtlChar_GetObj ((void *(*)(BtlFighter *chr))BtlChar_GetObj)
 extern s32 BtlChar_IsStage4Or27(void);
 extern s32 BtlChar_IsFlagRaised(BtlFighter *chr, s32 n);
 extern void BtlCharApi_RumbleNear(Vec4 *pos, f32 near, f32 far, f32 power, f32 time);
@@ -1739,7 +1738,6 @@ extern void ChrCam_EndCut(BtlFighter *chr);
 extern f32 BtlInput_GetStickY(BtlFighter *chr);
 extern f32 BtlInput_GetStickLength(BtlFighter *chr);
 
-#define BtlMember_GetActive ((void *(*)(BtlFighter *chr))BtlMember_GetActive)
 
 extern s32 BtlAct_GetRequested(BtlFighter *chr);
 extern s32 BtlAct_IsAttackId(s32 id);
@@ -1760,7 +1758,6 @@ extern f32 BtlMove_CalcJumpSpeed(f32 height);
 extern f32 BtlUtil_ApproachF(f32 cur, f32 target, f32 step);
 extern f32 BtlUtil_MinF(f32 a, f32 b);
 
-#define BtlParam_GetFlags ((s32 (*)(BtlFighter *chr))BtlParam_GetFlags)
 extern s32 BtlParam_GetSizeClass(BtlFighter *chr);
 extern void BtlCharApi_GetNodePos(s32 objId, s32 node, Vec4 *out);
 extern void BtlCharApi_CalcAimDir(s32 objId, s32 node, Vec4 *pos, Vec4 *out, f32 a, f32 b);
@@ -3267,7 +3264,6 @@ extern f32 floorf(f32 x);
 extern s32 BtlParam_GetRecoverKiCost(BtlFighter *chr);               /* character parameter: a ki cost */
 #define BtlObjAnim_QueryEvent ((s32 (*)(BtlActEObj *obj, u64 a, s32 b, s32 c))BtlObjAnim_QueryEvent)
 
-#define BtlChar_GetObj ((BtlActEObj *(*)(BtlFighter *chr))BtlChar_GetObj)
 extern f32 BtlOpp_GetYaw(BtlFighter *chr);
 extern f32 BtlOpp_GetClosingTime(BtlFighter *chr);
 extern void BtlCharSnd_PlayCommonFar(BtlFighter *chr, s32 id);

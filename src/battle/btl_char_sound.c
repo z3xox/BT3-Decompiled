@@ -364,12 +364,12 @@ void BtlCharSnd_PlayTechSounds(BtlFighter *chr) {
             BtlCharSnd_PlayOwn(chr, se);
         }
         if (BtlAnim_TestAttr(chr, 0x20000)) {
-            if (!(BtlOpp_GetParamWord0(chr) & 0x80) || !(BtlSuper_GetFlags(chr, slot) & 0x20)) {
+            if (!(BtlOpp_GetCharaFlags(chr) & 0x80) || !(BtlSuper_GetFlags(chr, slot) & 0x20)) {
                 BtlCharSnd_PlayOwn(chr, se + 1);
             }
         }
         if (BtlAnim_TestAttr(chr, 0x40000)) {
-            if (!(BtlOpp_GetParamWord0(chr) & 0x80) || !(BtlSuper_GetFlags(chr, slot) & 0x40)) {
+            if (!(BtlOpp_GetCharaFlags(chr) & 0x80) || !(BtlSuper_GetFlags(chr, slot) & 0x40)) {
                 BtlCharSnd_PlayOwn(chr, se + 2);
             }
         }

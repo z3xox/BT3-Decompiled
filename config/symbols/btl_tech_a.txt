@@ -166,9 +166,9 @@ BtlParam_GetSlotId = 0x0020E180; // type:func // guess
 // Parameter +0x9C + slot, times 100000: blast gauge a transformation costs.
 BtlParam_GetSlotCost = 0x0020E1B0; // type:func // guess
 // Parameter +0xA0 + slot.
-BtlParam_GetSlotA0 = 0x0020E1F0; // type:func // guess
+BtlParam_GetTransSeq = 0x0020E1F0; // type:func // guess
 // Parameter +0xA4 + slot.
-BtlParam_GetSlotA4 = 0x0020E220; // type:func // guess
+BtlParam_GetTransKind = 0x0020E220; // type:func // guess
 // Parameter +0xA8 + slot.
 BtlParam_GetSlotA8 = 0x0020E250; // type:func // guess
 // Parameter +0xAD.
@@ -184,7 +184,7 @@ BtlParam_GetUnkB7 = 0x0020E370; // type:func // guess
 // Parameter +0xBA + n * 4 + m: partner m of fusion n.
 BtlParam_GetFusionPartner = 0x0020E3A0; // type:func // guess
 // Parameter +0xAE + n, times 100000: blast gauge fusion n costs.
-BtlParam_GetCostAE = 0x0020E3E8; // type:func // guess
+BtlParam_GetFusionCost = 0x0020E3E8; // type:func // guess
 // Parameter +0xC6.
 BtlParam_GetUnkC6 = 0x0020E428; // type:func // guess
 // Parameter +0xB1 + n: fusion n.

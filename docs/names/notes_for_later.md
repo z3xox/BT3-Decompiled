@@ -17,6 +17,10 @@
 - Effects: EftSkillSrc / EftSuperSrc flagsA + flags as in btl_tech.h; EftHTask cls / prev / next / nextFree; EftVolleyShot script / speed / maxTurn; EftBlastObjArg.nodeSlot; the geyser locals' accel.
 - Effects: EftLinkMgr puts node[] at 0x10 and `next` at 0x10690 like EftWLinkMgr (eft_link_2.c indexes it there; nothing reads EftLinkMgr.node).
 - Already settled: EftEmitRayArg, EftSetHead widths, EftTTaskList.head, the EftTTask comments, EftShotParam.sub comment, EftGndDustStage, spinB / hold, EftWLinkNode, the EftEmitArg texture blocks, EftSurfTex / EftBurstTex, specular, EftTechArg.chr, the zap work names, the obj_gs_env.h words, StgView scissorY0 (stg.c:371 / 382 compare scissorY0 - scissorX0: the original's own code).
+- Fighter: BtlAnim_SetScale (fighter +0x988); BtlCharApi_GetPlayerCharPack returns s32 * like its caller declares it; 61 of the 66 cast macros of fighter functions are gone (the 5 left change the return type to a local object view, or the code).
+- Fighter: accessors after their fields: BtlParam_GetTransSeq / GetTransKind / GetFusionCost, BtlOpp_GetSizeClass / GetCharaFlags, BtlCharApi_GetSizeClass / GetRushFinisher / GetFinisherChoice0 / 3 / GetComboFinish / HasCharaFlag80.
+- Fighter: comments fixed or already right: GetTechniqueFramesLeft, the jaw tracks, technique 0x280 (six fixed characters by the frame counter), rule word 0x10, the spread local, GetOppTechniqueKind / GetOppSkillKind, mix, BtlObjMdl.anims; BobjFace.blinkFrames, BobjParam charaFlags / sizeClass / auraKind.
+- Fighter views of groups 03, 04, 05 (BtlCtlNode, BtlCollReact, BtlFlagPose, BtlActVitals, the camera words, player / side, padFlagA, the prev* placeholders, switchPrompt, the competing names): settled by the merge into BtlFighter (docs/names/fighter/canonical.tsv).
 
 ## Resolved by the fighter merge (2026-10-25)
 
@@ -44,23 +48,6 @@ Effects, stage, objects:
   EftZap_SetUnk40 no longer exists.)
 
 Fighter:
-- BtlAnim_SetRate (btl_anim.c) writes fighter +0x988, the model scale that BtlChar_PoseToObj copies into the object transform
-  (the uniform scale of its matrix): a scale setter, misnamed (found by the fighter merge, 2026-10-25).
-- btl_act_1.c, btl_act_2.c, btl_act_super.c, btl_act_change.c, btl_char_fx_1.c, btl_char_api_2.c still re-declare some fighter
-  functions with cast macros that change an object or parameter type (79 left after the merge removed the 218 identical ones).
-- BtlCharApi_GetTechniqueProgress (btl_char_api_2.c, about line 1151) is misnamed: (event frame - current frame) / step = updates left until an animation event.
-- btl_char_api_1.c:335 "No caller" for the character pack getter: BtlScene_GetCharPackEntry (btl_scene.c:254) calls it; the prototypes disagree (s32 / s32 *).
-- btl_obj_anim.c, above BtlObjFace_PickJawKeys: "eye direction tracks" are jaw rotation tracks (node 0x31).
-- btl_act_super.c:2097: technique 0x280 "a random character": the character comes from the technique table.
-- btl_scene.c:548 "rule word 0x18" is rule word 0x10 (setup + 0x18).
-- Fields to follow the renamed accessors: unk44FC4 (default animation step, btl_obj.h; its comment "getter / setter only" is out of date), unkB30 (alphaAdd), rule.unk10,
-  BattleSide.unk1FC / unk200 and the parameters of BattleSetup_SetSide in the menu files (team_select.c calls the first `handicap[]`).
-- btl_char_fx_1.c, BtlFx_FireKiBlast: the local `react` holds ki blast record +0x31, the volley spread mode.
-- BtlCharApi_GetOppSkillKind reads the technique table (slots 2..4) and BtlCharApi_GetOppMoveKind the skill table (slots 0..1): the names are
-  crossed relative to the module prefixes; the extern comments at btl_char_api_2.c:912 / 914 have the same mix-up.
-- btl_stats.h has unk14C where btl_obj_anim.h has mix.
-- Accessors still named by offset that have named fields: BtlParam_GetSlotA0 / A4 (transSeq / transKind), BtlParam_GetCostAE (fusionCost),
-  BtlOpp_GetParamByte2, BtlOpp_GetParamWord0, BtlCharApi_GetParamByte84 / 8A / 8D, BtlCharApi_HasParamBit80.
 - "Body changed" (the member flag at +0x70, technique 0x280, character 0x56) is a reading, not a confirmed name.
 
 System, menu support:
@@ -102,45 +89,16 @@ Group 10 (eft_stage_2.h .. eft_water.h):
   unk1C[2] / alpha); eft_trail.h:126 EftGlowMgr.live at +0x18 is unk18[2] in EftPGlowMgr. Not determined which is right.
 
 Group 04 (btl_char_coll.h .. btl_char_member.h):
-- btl_char_ctl.h:117-118: BtlCtlNode.mtx at +0x50 is the parent's world matrix (the node's own is at +0x10); `pos` at +0x90 is the local translation.
-- btl_char_coll.h:165 and btl_char_member.h:98: fighter +0x00 is `side` in BtlCollChr / BtlMemberChr, `player` (and +0x08 `side`) elsewhere.
-- btl_char_coll.h:150, 153: BtlCollReact.dirYaw / faceYaw are yaw / turnYaw in HitReact and ActGReact, `id` is `reaction`; unk18 is s32 here, f32 scale there;
-  its four two-word arrays (unk4[2], unk10[2], unk28[2], unk3C[2]) each cover two different fields of HitReact.
-- BtlFlagPose.unk30 (btl_char_flag.h:119) is `vel` in BtlCapiPose, but this structure uses `vel` for +0x40 (FxPose too; BtlCapiPose: move;
-  BtlActBPose / ActGPose: moved): the views need settling together.
-- Competing names chosen: skill block 0xE00..0xE18 after BtlActIChr (skillTimer, skillSlot, skillKiRate, skillTimerC), HitChr.unkE18 noFlinch
-  (BtlActIChr: skillTimerD; BtlCapiBChr 0xE0C: dodgeKind); 0xE44 techCharge (BtlSuperChr: charge) against the attack charge at 0xD78;
-  pose +0x20 dispOfs (BtlCtlPose: move); object +0xCAD hitNo (BobjHit: hitIndex); the six defence timers 0x1068..0x107C named from
-  BtlMove_UpdateDefenseTimers (dodgeWindow, blastDodgeWindow, counterWindow, deflectWindow, throwBreakWindow, rushBreakWindow), all uncertain.
 
 Group 03 (btl_char_action.h .. btl_char_cam.h):
-- Pose +0x90 is the heading pitch (BtlMove_SetHeading; six views; combat.md line 445), named `speed` in BtlActPose, BtlActCPose, BtlActEPose,
-  BtlCtlPose; the real speed is +0x98. Also +0x80 `vel` is `dir`, +0x94 `facing` is `yaw`.
-- btl_char_action.h:91-92: BtlActVitals gaugeB / gaugeBMax are ki / kiMax. :161: switchUnk20 is the member's model variant.
-- btl_char_action.h:272: BtlAct_IsAirMotion with useSaved returns fighter +0xFBC, which is HitReact.back (hit from behind).
-- btl_char_api_2.h:110: BtlCharApiMgr +0x0C `sounds` is the looping set (the one-shot set is +0x08). :90: attrCount at +0xCAE is eventCount.
-- btl_char_api_2.h:35-45: camUnk420 / 460 / 494 / 4A0 are ChrCam.eye, bodyPos, hit, yaw. btl_char_api_1.h:76: flags0 is charaFlags;
-  :58-63 thrUnk10 / 1C / 48 / 4C are still unknowns under a prefix.
-- Fighter +0x00 / +0x08: player / side (BtlActChr, BtlCapiChr, BtlCapiBChr) against side / index (BtlMgrChr, BtlMemberChr, ChrCamChr,
-  BtlCharApiChr): one must win before a shared fighter header.
-- Choices: +0xE40 techDelay (BtlSuperChr: cooldown, and the accessor is ...GetTechniqueCooldown); attack block +0x09 leadIn (BtlActBAttack: level);
-  +0x974 motion (BtlStatChr: anim.cur); +0x1550..0x1558 scriptMotion / Blend / Loop in BtlActChr (BtlCapiBChr: motion / motionBlend / motionLoop).
+- BtlAct_IsAirMotion (btl_char_action.c) returns, with useSaved, react.back (fighter +0xFBC, hit from behind) and otherwise motion
+  flag 0x8000: the comment says so, but what the function as a whole answers (and so its name) is not settled.
 
 Group 05 (btl_char_mgr.h .. btl_script.h):
-- btl_char_mgr.h:173: padFlagA (+0x15D0) is BtlCharVib.enabled; the following unk15D4[5] is the rest of that structure (power, time,
-  smallTime, phase, toggle; the first an f32): the pair is better replaced by BtlCharVib.
-- btl_char_mgr.h:187: the comment on unkA0 says "four 0x20-byte records at +0xB0": the records start at +0xA0 (BtlFlagSndReqList.req).
-- btl_char_mgr.h placeholders that are not `unk`: prev964 (+0x968) prevActionFrame, prev974 (+0x97C) prevMotion, prev1262 (+0x126B) prevFxBits,
-  new20 (+0x12E0) newVariant. :130 unkE00[5] covers five words other views name separately (and disagree on: dodges / skillStackA, ...).
-- btl_char_api_2.h:282: switchPrompt (+0x1594) is the technique class being watched (techClass in btl_param.h, inputClass in btl_act_super.h).
-- btl_obj_anim.h BobjParam is BtlParam (object +0x91C): unk00 is typed f32 but overlays charaFlags (u16), sizeClass, auraKind; height (+4)
-  and radius (+8) fall inside BtlParam.unk4[], which could take those names.
-- btl_obj.h:146: BtlObjMdl.anims (+0x98) holds the camera animations DemoCam_PlayObjAnim plays; the motion table is BObjMdl.anims at +0xA8.
-- BobjFace (btl_obj_anim.h) against BObjFace (btl_obj_anim_part2.h): blinkTime / blinkFrames, jawKeys / jawTable, talkKeys / talkTable.
-- btl_char_move.h:110: BtlMoveBlastRec.def (+0x68) is `atk` in EftHitRec / EftDetRec, with `src` at +0x64. :53: BtlMovePose.unkD0 is f32
-  here, `s32 groundFlags` in BtlCollPose. btl_obj_anim.h:117: BobjPart.unk0C is s32 here, `u8 active` + padding elsewhere.
-- Choices: fighter +0x1594 techClass; +0xE14 / +0xE18 skillTimerC / skillTimerD (btl_char_coll.h: noFlinch for +0xE18: group 04 chose that);
-  object +0x1660 charaWork (four views: work); object +0xFA0 bodySphere (EftDetObj: bodyPos); object +0x14 res (BObj: slot).
+- BtlParam.unk4[8] (+0x04..+0x0B) against BobjParam height (+4) / radius (+8): BtlParam has its own `radius` at +0x0C, so which
+  word is the radius is not settled (BobjParam took charaFlags / sizeClass / auraKind at +0..3 in names-pass-3).
+- BobjPart.active (+0x0C) is s32 here and `u8 active` + padding in btl_obj.h / btl_obj_anim_part2.h: the code stores words through
+  this view, so a u8 would change it. (BtlMoveBlastRec.atk and pose.groundFlags were settled earlier.)
 - DemoCamPose.unk1C sits in the anonymous struct `f` inside the union.
 
 Group 12 (overlay_common.h .. memcard_flow.h; the menu overlay and sys):

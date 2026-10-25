@@ -109,10 +109,10 @@ BtlOpp_GetPitchAdjusted = 0x001DB518; // type:func
 // (own func_00204EA0 - opponent's) / 2; plain forwards of object / parameter getters to the opponent.
 BtlOpp_GetHalfHeightDiff = 0x001DB5A8; // type:func // guess
 BtlOpp_GetRadius = 0x001DB630; // type:func // guess
-BtlOpp_GetParamByte2 = 0x001DB670; // type:func // guess
+BtlOpp_GetSizeClass = 0x001DB670; // type:func // guess
 BtlOpp_GetHeight = 0x001DB6B0; // type:func // guess
 BtlOpp_GetCenterHeight = 0x001DB6F0; // type:func // guess
-BtlOpp_GetParamWord0 = 0x001DB730; // type:func // guess
+BtlOpp_GetCharaFlags = 0x001DB730; // type:func // guess
 // opp->player, opp->objId, BtlChar_GetObj(opp).
 BtlOpp_GetPlayer = 0x001DB770; // type:func
 BtlOpp_GetObjId = 0x001DB7B0; // type:func

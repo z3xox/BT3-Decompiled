@@ -104,7 +104,7 @@ extern void BtlChar_ClearFlagRange(BtlFighter *chr, s32 first, s32 last); /* cle
 extern s32 BtlChar_TestPrevFlag(BtlFighter *chr, s32 bit);
 extern void BtlOpp_GetDelta(BtlFighter *chr, Vec4 *out);
 extern f32 BtlOpp_GetDistanceXZ(BtlFighter *chr);
-extern s32 BtlOpp_GetParamByte2(BtlFighter *chr);
+extern s32 BtlOpp_GetSizeClass(BtlFighter *chr);
 extern s32 BtlOpp_GetPlayer(BtlFighter *chr);
 extern void BtlOpp_GetNodePos(BtlFighter *chr, s32 node, Vec4 *out);
 extern void BtlMove_SetHeading(BtlFighter *chr, f32 yaw, f32 pitch);
@@ -1109,7 +1109,7 @@ void BtlAct_UpdateTimers(BtlFighter *chr) {
             chr->evasionCount = 0;
             break;
     }
-    kind = BtlOpp_GetParamByte2(chr);
+    kind = BtlOpp_GetSizeClass(chr);
     if (kind == 4) {
         if (BtlParam_GetSizeClass(chr) == kind) {
             BtlAnim_SetObjRate(chr, BtlAnim_GetObjRate(chr) * 2.0f);

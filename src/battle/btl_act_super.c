@@ -69,7 +69,7 @@ extern f32 BtlAnim_GetFrame(BtlFighter *chr);
 extern s32 BtlAnim_TestAttr(BtlFighter *chr, u64 mask);
 extern s32 BtlAnim_PassedFrame(BtlFighter *chr, f32 frame);
 extern BtlMemberGauge *BtlMember_GetActiveGauge(BtlFighter *chr);
-extern s32 BtlOpp_GetParamWord0(BtlFighter *chr);
+extern s32 BtlOpp_GetCharaFlags(BtlFighter *chr);
 extern void BtlOpp_GetTargetRot(BtlFighter *chr, Vec4 *out);
 extern void BtlOpp_GetObjVecFA0(BtlFighter *chr, Vec4 *out);
 extern void BtlMove_SetHeading(BtlFighter *chr, f32 yaw, f32 pitch);
@@ -510,7 +510,7 @@ void BtlSuper_SetupRushDamage(BtlFighter *chr, s32 cls, s32 fromAnim) {
         if (rem) {
             chr->queue.perHit = chr->queue.perHit - rem + 10;
         }
-        immune = BtlOpp_GetParamWord0(chr) & 0x80;
+        immune = BtlOpp_GetCharaFlags(chr) & 0x80;
         if (!immune) {
             drain = BtlSuper_GetDrain(chr, cls);
             if (drain > 0) {
@@ -553,7 +553,7 @@ void BtlSuper_SetupRushDamage(BtlFighter *chr, s32 cls, s32 fromAnim) {
         BtlChar_RequestBodyWarp(chr, &v);
     }
     if (BtlSuper_GetId(chr, cls) == 0x2EF) {
-        if (!(BtlOpp_GetParamWord0(chr) & 0x80)) {
+        if (!(BtlOpp_GetCharaFlags(chr) & 0x80)) {
             chr->boostStock = BtlUtil_Clamp(chr->boostStock + 5, 0, 10);
         }
     }
@@ -1640,9 +1640,7 @@ extern f32 BtlUtil_MinF(f32 a, f32 b);
 extern f32 BtlUtil_ClampF(f32 v, f32 lo, f32 hi);
 
 #define BtlChar_GetObj ((ActGObj *(*)(BtlFighter *chr))BtlChar_GetObj)
-#define BtlChar_IsFlagRaised ((s32 (*)(BtlFighter *chr, s32 bit))BtlChar_IsFlagRaised)
 extern void BtlChar_SetSmallVibration(BtlFighter *chr, f32 seconds);
-#define BtlMember_SpendKi ((void (*)(BtlFighter *chr, s32 amount, s32 force))BtlMember_SpendKi)
 extern f32 BtlOpp_GetGapXZ(BtlFighter *chr);
 extern void BtlColl_SetFramesToReach(BtlFighter *chr, f32 scale);
 
@@ -1657,17 +1655,6 @@ extern void BtlMove_SetLeanX(BtlFighter *chr, f32 v);
 extern void BtlMove_SteerAtOpponent(BtlFighter *chr, f32 closeSpeed, f32 yawAccel, f32 pitchAccel, f32 yawMax, f32 pitchMax, f32 maxStep);
 
 /* Rush-technique helpers of the previous file (0x1F5460..0x1F6510). */
-#define BtlSuper_RequestCut ((void (*)(BtlFighter *chr, s32 slot))BtlSuper_RequestCut)
-#define BtlSuper_SetStartFx ((void (*)(BtlFighter *chr, s32 slot))BtlSuper_SetStartFx)
-#define BtlSuper_SetClassFlag ((void (*)(BtlFighter *chr, s32 slot, s32 always))BtlSuper_SetClassFlag)
-#define BtlSuper_RequestHitStop ((void (*)(BtlFighter *chr, s32 light))BtlSuper_RequestHitStop)
-#define BtlSuper_SetClass ((void (*)(BtlFighter *chr, s32 slot))BtlSuper_SetClass)
-#define BtlSuper_MeasureRushStep ((void (*)(BtlFighter *chr, s32 slot, s32 frame))BtlSuper_MeasureRushStep)
-#define BtlSuper_Begin ((void (*)(BtlFighter *chr, s32 slot, s32 always))BtlSuper_Begin)
-#define BtlSuper_PlayStartSound ((void (*)(BtlFighter *chr, s32 slot, s32 always))BtlSuper_PlayStartSound)
-#define BtlSuper_Leave ((void (*)(BtlFighter *chr, s32 slot))BtlSuper_Leave)
-#define BtlSuper_Finish ((void (*)(BtlFighter *chr, s32 slot))BtlSuper_Finish)
-#define BtlSuper_SetRushFlags ((void (*)(BtlFighter *chr))BtlSuper_SetRushFlags)
 extern s32 BtlAct_GetLandingAction(BtlFighter *chr, s32 slot, s32 kind);
 extern f32 BtlOpp_GetTargetYaw(BtlFighter *chr);
 extern void BtlMove_MoveVertical(BtlFighter *chr, f32 speed, f32 accel);
@@ -1694,10 +1681,8 @@ extern void BtlPartner_SetFlag80(BtlFighter *chr, s32 on);
 extern void BtlPartner_PlayAnim(BtlFighter *chr, s32 anim);
 extern s32 BtlPartner_StepAnim(BtlFighter *chr);
 extern void BtlPartner_Release(BtlFighter *chr);
-#define BtlMember_Damage ((void (*)(BtlFighter *chr, s32 amount, s32 flags))BtlMember_Damage)
 extern s32 BtlAct_GetMotionLevel(BtlFighter *chr, s32 motion);
 extern s32 BtlSuper_GetStageFxEndStep(BtlFighter *chr, s32 slot);
-#define BtlSuper_SetupRushDamage ((void (*)(BtlFighter *chr, s32 slot, s32 fromAnim))BtlSuper_SetupRushDamage)
 extern s32 BtlSuper_GetFrames22C(BtlFighter *chr, s32 slot);
 extern s32 BtlSuper_GetFrames238(BtlFighter *chr, s32 slot);
 extern f32 BtlCharApi_GetGroundY(s32 objId);
@@ -3211,7 +3196,7 @@ void BtlActThrow_SetupDamage(BtlFighter *chr, s32 extraHit) {
     chr->queue.drainKiStep = 0;
     chr->queue.drainFrom = -1;
     chr->queue.drainTo = -1;
-    immune = BtlOpp_GetParamWord0(chr) & 0x80;
+    immune = BtlOpp_GetCharaFlags(chr) & 0x80;
     if (!immune) {
         drainHealth = BtlAtk_GetThrowParamC(chr);
         drainKi = BtlAtk_GetThrowParamE(chr);

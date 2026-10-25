@@ -62,15 +62,15 @@ extern s32 BtlDecide_QueueAttack(BtlFighter *chr, s32 attack); /* builds the que
 extern s32 BtlParam_GetDefaultSlot(BtlFighter *chr);                       /* s8 + 0xAC: default transformation index */
 extern s32 BtlParam_GetSlotId(BtlFighter *chr, s32 index);            /* u8 + 0x98[index]: transformation target character, 0xFF = none */
 extern s32 BtlParam_GetSlotCost(BtlFighter *chr, s32 index);            /* u8 + 0x9C[index] * 100000: transformation blast cost */
-extern s32 BtlParam_GetSlotA0(BtlFighter *chr, s32 index);            /* u8 + 0xA0[index]: transformation sequence 0..4 */
-extern s32 BtlParam_GetSlotA4(BtlFighter *chr, s32 index);            /* u8 + 0xA4[index]: transformation kind (3 needs the stage flag) */
+extern s32 BtlParam_GetTransSeq(BtlFighter *chr, s32 index);            /* u8 + 0xA0[index]: transformation sequence 0..4 */
+extern s32 BtlParam_GetTransKind(BtlFighter *chr, s32 index);            /* u8 + 0xA4[index]: transformation kind (3 needs the stage flag) */
 extern s32 BtlParam_GetSlotA8(BtlFighter *chr, s32 index);            /* u8 + 0xA8[index] */
 extern s32 BtlParam_CountSlots(BtlFighter *chr);                       /* number of transformation targets that are not 0xFF */
 extern s32 BtlParam_TestSlotResetsVariant(BtlFighter *chr, s32 index);            /* u8 + 0xAD & (0x10 << index) */
 extern s32 BtlParam_GetFusionResult(BtlFighter *chr, s32 index);            /* u8 + 0xB4[index]: fusion result character, 0xFF = none */
 extern s32 BtlParam_GetUnkB7(BtlFighter *chr, s32 index);            /* u8 + 0xB7[index] */
 extern s32 BtlParam_GetFusionPartner(BtlFighter *chr, s32 index, s32 n);     /* u8 + 0xBA[index][n]: fusion partner characters */
-extern s32 BtlParam_GetCostAE(BtlFighter *chr, s32 index);            /* u8 + 0xAE[index] * 100000: fusion blast cost */
+extern s32 BtlParam_GetFusionCost(BtlFighter *chr, s32 index);            /* u8 + 0xAE[index] * 100000: fusion blast cost */
 extern s32 BtlParam_GetFusionSequence(BtlFighter *chr, s32 index);            /* u8 + 0xB1[index]: fusion sequence 1 / 2 */
 extern s32 BtlParam_GetComboFinish(BtlFighter *chr, s32 index);            /* u8 + 0x8F[index]: combo finisher mode 0..5 */
 extern s32 BtlParam_CanFly(BtlFighter *chr);                       /* parameter flag 0x1000 clear, or ability 0x36 */
@@ -213,7 +213,7 @@ s32 BtlAct_CanTransform(BtlFighter *chr, u32 index, s32 needBlast, s32 needAllow
     }
     chara = BtlParam_GetSlotId(chr, index);
     cost = BtlParam_GetSlotCost(chr, index);
-    kind = BtlParam_GetSlotA4(chr, index);
+    kind = BtlParam_GetTransKind(chr, index);
     if (chara == 0xFF) {
         return 0;
     }
@@ -268,8 +268,8 @@ s32 BtlAct_CheckTransformInput(BtlFighter *chr) {
 s32 BtlAct_QueueTransform(BtlFighter *chr, s32 index) {
     s32 chara = BtlParam_GetSlotId(chr, index);
     s32 cost = BtlParam_GetSlotCost(chr, index);
-    s32 seq = BtlParam_GetSlotA0(chr, index);
-    s32 kind = BtlParam_GetSlotA4(chr, index);
+    s32 seq = BtlParam_GetTransSeq(chr, index);
+    s32 kind = BtlParam_GetTransKind(chr, index);
     s32 objId = BtlParam_GetSlotA8(chr, index);
     s32 action;
 
@@ -339,7 +339,7 @@ s32 BtlAct_CanFuse(BtlFighter *chr, s32 index, s32 needBlast, s32 needAllowed, s
         return 0;
     }
     chara = BtlParam_GetFusionResult(chr, index);
-    cost = BtlParam_GetCostAE(chr, index);
+    cost = BtlParam_GetFusionCost(chr, index);
     if (chara == 0xFF) {
         return 0;
     }
@@ -401,7 +401,7 @@ s32 BtlAct_CheckFusionInput(BtlFighter *chr) {
  */
 s32 BtlAct_QueueFusion(BtlFighter *chr, s32 index, s32 partner) {
     s32 chara = BtlParam_GetFusionResult(chr, index);
-    s32 cost = BtlParam_GetCostAE(chr, index);
+    s32 cost = BtlParam_GetFusionCost(chr, index);
     s32 seq = BtlParam_GetFusionSequence(chr, index);
     s32 objId = BtlParam_GetUnkB7(chr, index);
     s32 i;

@@ -1360,13 +1360,13 @@ s32 BtlParam_GetSlotCost(BtlFighter *chr, s32 slot) {
     return BtlChar_GetObj(chr)->param->transCost[slot] * 100000;
 }
 
-/* Parameter +0xA0 + slot. */
-s32 BtlParam_GetSlotA0(BtlFighter *chr, s32 slot) {
+/* Transformation sequence of slot `slot` (parameter +0xA0 + slot, 0..4). */
+s32 BtlParam_GetTransSeq(BtlFighter *chr, s32 slot) {
     return BtlChar_GetObj(chr)->param->transSeq[slot];
 }
 
-/* Parameter +0xA4 + slot. */
-s32 BtlParam_GetSlotA4(BtlFighter *chr, s32 slot) {
+/* Transformation kind of slot `slot` (parameter +0xA4 + slot; 3 needs the stage flag). */
+s32 BtlParam_GetTransKind(BtlFighter *chr, s32 slot) {
     return BtlChar_GetObj(chr)->param->transKind[slot];
 }
 
@@ -1415,7 +1415,7 @@ s32 BtlParam_GetFusionPartner(BtlFighter *chr, s32 n, s32 m) {
 }
 
 /* Parameter +0xAE + n, times 100000: blast gauge fusion n costs. */
-s32 BtlParam_GetCostAE(BtlFighter *chr, s32 n) {
+s32 BtlParam_GetFusionCost(BtlFighter *chr, s32 n) {
     return BtlChar_GetObj(chr)->param->fusionCost[n] * 100000;
 }
 

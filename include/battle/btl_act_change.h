@@ -130,7 +130,7 @@ extern s32 BtlMember_HasAbilityOf(BtlFighter *chr, s32 member, s32 n);
 
 extern s32 BtlOpp_GetPlayer(BtlFighter *chr);
 extern s32 BtlOpp_GetSeenAction(BtlFighter *chr);
-extern s32 BtlOpp_GetParamWord0(BtlFighter *chr);
+extern s32 BtlOpp_GetCharaFlags(BtlFighter *chr);
 extern f32 BtlOpp_GetHeight(BtlFighter *chr);
 extern void BtlOpp_GetTargetPos(BtlFighter *chr, Vec4 *out);
 extern void BtlOpp_GetPoseVec30(BtlFighter *chr, Vec4 *out);

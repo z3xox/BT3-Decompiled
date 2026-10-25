@@ -286,7 +286,9 @@ typedef struct BobjModelHdr {
 
 /* Object parameter block (BobjMdl.param). */
 typedef struct BobjParam {
-    /* 0x00 */ f32 unk00;
+    /* 0x00 */ u16 charaFlags;   /* BtlParam (btl_param.h) */
+    /* 0x02 */ s8 sizeClass;
+    /* 0x03 */ s8 auraKind;
     /* 0x04 */ f32 height;      /* scale of the vertical root motion */
     /* 0x08 */ f32 radius;      /* body sphere radius; <= 0: use 2 * model size[3] */
 } BobjParam;
@@ -381,7 +383,7 @@ typedef struct BobjTalkStep {
 typedef struct BobjFace {
     /* 0x00 */ u8 unk00[8];
     /* 0x08 */ s32 blinkWait;   /* updates until the next blink */
-    /* 0x0C */ s32 blinkTime;   /* updates the eyes stay shut */
+    /* 0x0C */ s32 blinkFrames;   /* updates the eyes stay shut */
     /* 0x10 */ s32 eye;         /* eye texture: 1 = shut, 0 = the model's own, or the forced number */
     /* 0x14 */ s32 eyeForced;
     /* 0x18 */ s32 mode;        /* mouth mode 0..14 (BOBJ_MOUTH_* of btl_obj_anim_part2.h) */

@@ -747,8 +747,8 @@ s32 BtlCharApi_TestFlag05(s32 objId) {
     return 0;
 }
 
-/* Byte 0x84 + n (n < 4) of the fighter's parameter block. */
-s32 BtlCharApi_GetParamByte84(s32 objId, u32 n) {
+/* Rush finisher n (n < 4; parameter byte 0x84 + n). */
+s32 BtlCharApi_GetRushFinisher(s32 objId, u32 n) {
     BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
@@ -757,8 +757,8 @@ s32 BtlCharApi_GetParamByte84(s32 objId, u32 n) {
     return 0;
 }
 
-/* Byte 0x8A of the fighter's parameter block. */
-s32 BtlCharApi_GetParamByte8A(s32 objId) {
+/* Finisher choice 0 (parameter byte 0x8A). */
+s32 BtlCharApi_GetFinisherChoice0(s32 objId) {
     BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
@@ -767,8 +767,8 @@ s32 BtlCharApi_GetParamByte8A(s32 objId) {
     return 0;
 }
 
-/* Byte 0x8D of the fighter's parameter block. */
-s32 BtlCharApi_GetParamByte8D(s32 objId) {
+/* Finisher choice 3 (parameter byte 0x8D). */
+s32 BtlCharApi_GetFinisherChoice3(s32 objId) {
     BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
@@ -891,7 +891,7 @@ extern s32 BtlParam_GetSlotId(BtlFighter *chr, s32 slot);      /* param->transfo
 extern s32 BtlParam_GetSlotCost(BtlFighter *chr, s32 slot);      /* param->transformCost[slot] * 100000 */
 extern s32 BtlParam_CountSlots(BtlFighter *chr);                /* number of transformId[] entries != 0xFF */
 extern s32 BtlParam_GetFusionResult(BtlFighter *chr, s32 slot);      /* param->fusionId[slot] */
-extern s32 BtlParam_GetCostAE(BtlFighter *chr, s32 slot);      /* param->fusionCost[slot] * 100000 */
+extern s32 BtlParam_GetFusionCost(BtlFighter *chr, s32 slot);      /* param->fusionCost[slot] * 100000 */
 extern s32 BtlParam_GetBlastLimitA(BtlFighter *chr);                /* param->blastLimit less abilities 0x11 / 0x10 / 0xF */
 extern s32 BtlParam_GetBlastLimitB(BtlFighter *chr);                /* param->blastLimitB */
 extern s32 BtlParam_GetKiRecoverGoal(BtlFighter *chr);                /* param word +0x2C */
@@ -1137,7 +1137,7 @@ void BtlCharApi_MarkIncomingBlast(s32 objId) {
     }
 }
 
-/* Not a progress: the number of updates left until the next animation event with attribute bit 1. Fighter +0x1294
+/* The number of updates left until the next animation event with attribute bit 1. Fighter +0x1294
    when it is >= 0, else (frame of that event, BtlCharApi_ObjQueryAnimEvent(objId, 1, 1), - the current frame, object
    +0xC78) / the frame step, object +0xC80; -1 when no such event is ahead. */
 f32 BtlCharApi_GetTechniqueFramesLeft(s32 objId) {
@@ -1288,7 +1288,7 @@ s32 BtlCharApi_IsBlockedByOpponent(s32 objId) {
 }
 
 /* Bit 0x80 of the first word of the character's parameter block. */
-s32 BtlCharApi_HasParamBit80(s32 objId) {
+s32 BtlCharApi_HasCharaFlag80(s32 objId) {
     BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
@@ -1401,7 +1401,7 @@ s32 BtlCharApi_PickFusionSlot(s32 objId) {
         return 0;
     }
     for (i = 0; i < 3; i++) {
-        cost = BtlParam_GetCostAE(chr, i);
+        cost = BtlParam_GetFusionCost(chr, i);
         if (cost != 0 && !(blast < cost)) {
             list[n] = i;
             n++;
@@ -1622,8 +1622,8 @@ s32 BtlCharApi_GetMemberKiPercent(s32 objId, s32 member) {
     return 0;
 }
 
-/* Kind byte of the technique the opponent is performing, -1 if it is not in a technique action. Despite the
-   "Skill" of the name this reads the technique table (BtlSuper_*, object +0x92C). */
+/* Kind byte of the technique the opponent is performing, -1 if it is not in a technique action (the technique
+   table, BtlSuper_*, object +0x92C). */
 s32 BtlCharApi_GetOppTechniqueKind(s32 objId) {
     BtlFighter *chr = BtlChar_FindByObjId(objId);
     BtlFighter *opp;
@@ -1888,8 +1888,8 @@ s32 BtlCharApi_GetArmorBreakLevel(s32 objId) {
     return 4;
 }
 
-/* Byte +2 of the character's parameter block. */
-s32 BtlCharApi_GetParamByte2(s32 objId) {
+/* The character's size class (byte +2 of its parameter block). */
+s32 BtlCharApi_GetSizeClass(s32 objId) {
     BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
@@ -1982,8 +1982,8 @@ s32 BtlCharApi_GetTechniqueCooldown(s32 objId) {
     return 0;
 }
 
-/* Byte 0x8F + n of the character's parameter block. */
-s32 BtlCharApi_GetParamByte8F(s32 objId, s32 n) {
+/* Combo finish n (parameter byte 0x8F + n). */
+s32 BtlCharApi_GetComboFinish(s32 objId, s32 n) {
     BtlFighter *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
@@ -2455,7 +2455,7 @@ s32 BtlCtrl_Fuse(s32 player, s32 id) {
             return 0;
         }
         g = BtlMember_GetActiveGauge(chr);
-        g->blast = BtlUtil_Clamp(BtlParam_GetCostAE(chr, slot), g->blast, g->blastMax);
+        g->blast = BtlUtil_Clamp(BtlParam_GetFusionCost(chr, slot), g->blast, g->blastMax);
         BtlChar_SetHeldFlag(chr, slot + 0x11A);
         BtlChar_ClearFlag(chr, 0xBE);
         chr->react.stunTimer = 0;

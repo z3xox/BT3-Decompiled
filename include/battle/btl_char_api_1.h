@@ -59,7 +59,7 @@ typedef struct BtlCapiObj {
     /* 0x000 */ u8 unk0[0xC];
     /* 0x00C */ s32 chara;          /* character id */
     /* 0x010 */ u8 unk10[0x58 - 0x10];
-    /* 0x058 */ s32 charPack;
+    /* 0x058 */ s32 *charPack;
     /* 0x05C */ u8 unk5C[0x9C - 0x5C];
     /* 0x09C */ s32 effectPacks[5];       /* five pointers of the model data block */
     /* 0x0B0 */ u8 unkB0[0x91C - 0xB0];
@@ -113,7 +113,7 @@ s32 BtlCharApi_GetPartnerObjId(s32 objId);
 s32 BtlCharApi_GetPlayerEffectPack(s32 player, u32 n);
 void *BtlCharApi_GetPlayerSuperData(s32 player);
 void *BtlCharApi_GetPlayerSkillData(s32 player);
-s32 BtlCharApi_GetPlayerCharPack(s32 player);
+s32 *BtlCharApi_GetPlayerCharPack(s32 player);
 void BtlCharApi_GetPos(s32 objId, Vec4 *out);
 void BtlCharApi_GetBasePos(s32 objId, Vec4 *out);
 void BtlCharApi_GetRot(s32 objId, Vec4 *out);

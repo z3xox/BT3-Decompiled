@@ -148,12 +148,12 @@ typedef struct BtlParam {
     /* 0x8F */ u8 comboFinish[0x98 - 0x8F];
     /* 0x98 */ u8 transTarget[4]; /* BtlParam_GetSlotId: transformation targets; 0xFF = none (BtlParam_CountSlots) */
     /* 0x9C */ u8 transCost[4];   /* BtlParam_GetSlotCost: blast stocks, returned * 100000 */
-    /* 0xA0 */ u8 transSeq[4];    /* BtlParam_GetSlotA0 */
-    /* 0xA4 */ u8 transKind[4];   /* BtlParam_GetSlotA4 */
+    /* 0xA0 */ u8 transSeq[4];    /* BtlParam_GetTransSeq */
+    /* 0xA4 */ u8 transKind[4];   /* BtlParam_GetTransKind */
     /* 0xA8 */ u8 transA8[4];     /* BtlParam_GetSlotA8 */
     /* 0xAC */ s8 transDefault;   /* BtlParam_GetDefaultSlot: the target a neutral input picks */
     /* 0xAD */ u8 formFlags;          /* BtlParam_GetFormFlags; bit 4 + n: BtlParam_TestSlotResetsVariant(n) (caller: BtlAct_QueueTransform) */
-    /* 0xAE */ u8 fusionCost[3];  /* BtlParam_GetCostAE: blast stocks, returned * 100000 */
+    /* 0xAE */ u8 fusionCost[3];  /* BtlParam_GetFusionCost: blast stocks, returned * 100000 */
     /* 0xB1 */ u8 fusionSeq[3];   /* BtlParam_GetFusionSequence */
     /* 0xB4 */ u8 fusionResult[3]; /* BtlParam_GetFusionResult */
     /* 0xB7 */ u8 fusionB7[3];    /* BtlParam_GetUnkB7 */
@@ -307,8 +307,8 @@ s32 BtlParam_GetSizeClass(BtlFighter *chr);
 s32 BtlParam_GetDefaultSlot(BtlFighter *chr);
 s32 BtlParam_GetSlotId(BtlFighter *chr, s32 slot);
 s32 BtlParam_GetSlotCost(BtlFighter *chr, s32 slot);
-s32 BtlParam_GetSlotA0(BtlFighter *chr, s32 slot);
-s32 BtlParam_GetSlotA4(BtlFighter *chr, s32 slot);
+s32 BtlParam_GetTransSeq(BtlFighter *chr, s32 slot);
+s32 BtlParam_GetTransKind(BtlFighter *chr, s32 slot);
 s32 BtlParam_GetSlotA8(BtlFighter *chr, s32 slot);
 s32 BtlParam_GetFormFlags(BtlFighter *chr);
 s32 BtlParam_CountSlots(BtlFighter *chr);
@@ -316,7 +316,7 @@ s32 BtlParam_TestSlotResetsVariant(BtlFighter *chr, s32 n);
 s32 BtlParam_GetFusionResult(BtlFighter *chr, s32 n);
 s32 BtlParam_GetUnkB7(BtlFighter *chr, s32 n);
 s32 BtlParam_GetFusionPartner(BtlFighter *chr, s32 n, s32 m);
-s32 BtlParam_GetCostAE(BtlFighter *chr, s32 n);
+s32 BtlParam_GetFusionCost(BtlFighter *chr, s32 n);
 s32 BtlParam_GetUnkC6(BtlFighter *chr);
 s32 BtlParam_GetFusionSequence(BtlFighter *chr, s32 n);
 s32 BtlParam_GetAuraKind(BtlFighter *chr);

@@ -280,9 +280,9 @@ void BtlAnim_SetObjRate(BtlFighter *chr, f32 rate) {
     BtlChar_GetObj(chr)->anim.rate = rate;
 }
 
-/* Sets fighter + 0x988 (1.0 from the manager every frame). */
-void BtlAnim_SetRate(BtlFighter *chr, f32 rate) {
-    chr->scale = rate;
+/* Sets the model scale, fighter + 0x988 (1.0 from the manager every frame). */
+void BtlAnim_SetScale(BtlFighter *chr, f32 scale) {
+    chr->scale = scale;
 }
 
 /* Puts the animation on its last frame, with no blend, and holds the end flag 0x31. */

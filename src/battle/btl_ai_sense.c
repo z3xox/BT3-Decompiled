@@ -73,9 +73,9 @@ extern s32 BtlAiSeq_IsInterrupted(AiActSide *s, s32 actionId); /* the action mus
 extern s32 BtlCharApi_GetAnimId(s32 objId);            /* animation id */
 extern u64 BtlCharApi_GetActionBits(s32 objId);           /* 64-bit word at fighter +0x1288 */
 extern s32 BtlCharApi_IsAttackHitPending(s32 objId);
-extern s32 BtlCharApi_GetParamByte84(s32 objId, u32 n);
-extern s32 BtlCharApi_GetParamByte8A(s32 objId);
-extern s32 BtlCharApi_GetParamByte8D(s32 objId);
+extern s32 BtlCharApi_GetRushFinisher(s32 objId, u32 n);
+extern s32 BtlCharApi_GetFinisherChoice0(s32 objId);
+extern s32 BtlCharApi_GetFinisherChoice3(s32 objId);
 extern s32 BtlCharApi_TestFlag05(s32 objId);
 extern void BtlCharApi_GetPos(s32 objId, AiActVec *out);   /* position */
 extern void BtlCharApi_GetRot(s32 objId, AiActVec *out);   /* rotation (fighter +0x20) */
@@ -109,7 +109,7 @@ extern s32 BtlCharApi_GetPromptButtons(s32 objId);                   /* buttons 
 extern s32 BtlCharApi_GetStoryAiForce(s32 objId);
 extern s32 BtlCharApi_IsDodgeWindowReady(s32 objId);                   /* fighter +0x106C < -29 */
 extern s32 BtlCharApi_GetArmorBreakLevel(s32 objId);
-extern s32 BtlCharApi_GetParamByte2(s32 objId);                   /* parameter byte +2 */
+extern s32 BtlCharApi_GetSizeClass(s32 objId);                   /* parameter byte +2, sizeClass */
 extern s32 BtlCharApi_TestFlagBE(s32 objId);                   /* fighter flag 0xBE */
 extern s32 BtlSide_GetKi(s32 side);                    /* gauge block +0xC */
 extern s32 BtlSide_GetBlast(s32 side);                    /* gauge block +0x14 */
@@ -345,13 +345,13 @@ void BtlAiAtk_SetInput(AiActSide *s, u32 kind) {
     f32 t;
 
     if ((u32)(anim - 0x37) < 4 || (u32)(anim - 0x3C) < 4) {
-        row = BtlCharApi_GetParamByte84(s->side, anim < 0x3C ? anim - 0x37 : anim - 0x3C);
+        row = BtlCharApi_GetRushFinisher(s->side, anim < 0x3C ? anim - 0x37 : anim - 0x3C);
     } else if (anim == 0x1B) {
         if (kind == 0) {
             if (action == 0x1F) {
-                row = BtlCharApi_GetParamByte8D(s->side) / 2;
+                row = BtlCharApi_GetFinisherChoice3(s->side) / 2;
             } else {
-                row = BtlCharApi_GetParamByte8A(s->side) / 2;
+                row = BtlCharApi_GetFinisherChoice0(s->side) / 2;
             }
         }
     } else {
@@ -939,7 +939,7 @@ s32 BtlAiSense_CheckBit60(AiActSide *s) {
 
 /* Situation bit 61: the opponent's parameter byte +2 is 4. */
 s32 BtlAiSense_CheckBit61(AiActSide *s) {
-    return BtlCharApi_GetParamByte2(s->side ^ 1) == 4;
+    return BtlCharApi_GetSizeClass(s->side ^ 1) == 4;
 }
 
 /* 1 when the opponent's facing direction and the direction from this fighter to the opponent agree: this

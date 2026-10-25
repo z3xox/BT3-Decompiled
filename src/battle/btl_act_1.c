@@ -1883,16 +1883,11 @@ extern f32 BtlUtil_WrapAngle(f32 a);
 extern f32 BtlUtil_ClampF(f32 v, f32 lo, f32 hi);
 extern f32 BtlUtil_ApproachF(f32 cur, f32 target, f32 step);
 
-#define BtlChar_GetObj ((void *(*)(BtlFighter *chr))BtlChar_GetObj)
 extern s32 BtlChar_IsFree(BtlFighter *chr);
 extern s32 BtlChar_IsDead(BtlFighter *chr);
 extern s32 BtlChar_IsStage4Or27(void);
-#define BtlChar_TestFlag ((s32 (*)(BtlFighter *chr, s32 bit))BtlChar_TestFlag)
 extern s32 BtlChar_TestPrevFlag(BtlFighter *chr, s32 bit);
 extern s32 BtlChar_IsFlagRaised(BtlFighter *chr, s32 bit);
-#define BtlChar_SetFlag ((void (*)(BtlFighter *chr, s32 bit))BtlChar_SetFlag)
-#define BtlChar_SetHeldFlag ((void (*)(BtlFighter *chr, s32 bit))BtlChar_SetHeldFlag)
-#define BtlChar_ClearFlag ((void (*)(BtlFighter *chr, s32 bit))BtlChar_ClearFlag)
 extern s32 BtlInput_IsHeld(BtlFighter *chr, u32 mask);
 extern s32 BtlInput_IsPressed(BtlFighter *chr, u32 mask);
 
@@ -1925,7 +1920,6 @@ extern void BtlAct_LatchAttack(BtlFighter *chr);
 #define BtlAct_PlayPickedVoice ((void (*)(BtlFighter *chr))BtlAct_PlayPickedVoice)                          /* voice kind BtlAtk_GetVoiceKind picks, if any */
 #define BtlAct_DecideAttackFollow ((void (*)(BtlFighter *chr, BtlFighterAttack *atk))BtlAct_DecideAttackFollow)   /* decide phase of an attack: follow-up inputs */
 /* Ends an attack: action 0xB, or 0xC under flag 0x5C when the attack has flag 0x400. */
-#define BtlAct_RequestAttackEnd ((void (*)(BtlFighter *chr, BtlFighterAttack *atk))BtlAct_RequestAttackEnd)
 
 /* Decision functions and parameter readers (0x2013E0..0x20F4E8). */
 extern s32 BtlAct_GetChainAction(BtlFighter *chr, s32 kind);

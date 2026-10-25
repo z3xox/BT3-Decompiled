@@ -332,9 +332,8 @@ void *BtlCharApi_GetPlayerSkillData(s32 player) {
     return NULL;
 }
 
-/* Word +0x58 of fighter `player`'s object: the character pack. Called by BtlScene_GetCharPackEntry (btl_scene.c),
-   which declares the result as a pointer (s32 *); here it is an s32. */
-s32 BtlCharApi_GetPlayerCharPack(s32 player) {
+/* Word +0x58 of fighter `player`'s object: the character pack. Called by BtlScene_GetCharPackEntry (btl_scene.c). */
+s32 *BtlCharApi_GetPlayerCharPack(s32 player) {
     BtlFighter *chr = BtlChar_Get(player);
     BtlCapiObj *obj;
 
@@ -343,9 +342,9 @@ s32 BtlCharApi_GetPlayerCharPack(s32 player) {
         if (obj != NULL) {
             return obj->charPack;
         }
-        return 0;
+        return NULL;
     }
-    return 0;
+    return NULL;
 }
 
 /* Position: for a fighter its position plus the display offset (hover bob and shake), else the object's +0x970. */

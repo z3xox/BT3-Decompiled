@@ -39,7 +39,7 @@
  *      is was not established.
  *   3  two menu screens (0x372560, 0x388EE0): one pad member against the opponent pool (BattleMemberPool,
  *      up to 50 members, bonus levels up to +60); pool entry 0 becomes side 1's member 0.
- *   4  menu 0x36A720: one member per side, split-screen allowed, rule.unk10 = 1.
+ *   4  menu 0x36A720: one member per side, split-screen allowed, rule.stageChange = 1.
  *   5  menu 0x35CFD0: no time limit, announcer 7, both sides one member; short sequence table.
  *   6  the versus menu when gProgress->0x18 == 0x2D: no time limit, one member per side, side 0 pad,
  *      side 1 CPU with cpuLevel -1 (does nothing), restart on result reason bit 2: training (inference).

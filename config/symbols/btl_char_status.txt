@@ -108,7 +108,7 @@ BtlAnim_SetSubMix = 0x001C44D0; // type:func // guess
 BtlAnim_SetStep = 0x001C44F8; // type:func // guess
 BtlAnim_SetDuration = 0x001C4520; // type:func // guess
 BtlAnim_SetObjRate = 0x001C4580; // type:func // guess
-BtlAnim_SetRate = 0x001C45A8; // type:func // guess
+BtlAnim_SetScale = 0x001C45A8; // type:func
 // 0x1C45B0(chr): frame = prev frame = length, blend counter 0, clears flag 0x34, holds 0x31.
 BtlAnim_JumpToEnd = 0x001C45B0; // type:func // guess
 // 0x1C4608(chr): func_0024C728(obj +0xB40 handle, 1, 1, 1).

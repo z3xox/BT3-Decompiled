@@ -739,7 +739,7 @@ extern void BtlCharApi_GetPos(s32 objId, AiThVec *out);
 extern f32 BtlCharApi_GetCloseRange(s32 objId);
 extern f32 BtlCharApi_GetRadius(s32 objId);
 extern s32 BtlCharApi_GetHp(s32 objId);
-extern s32 BtlCharApi_HasParamBit80(s32 objId);
+extern s32 BtlCharApi_HasCharaFlag80(s32 objId);
 extern s32 BtlCharApi_GetCpuLevel(s32 objId);
 extern s32 BtlCharApi_GetAiType(s32 objId);
 extern s32 BtlCharApi_GetParamFlags2(s32 objId);
@@ -2269,7 +2269,7 @@ void AiThink_BindData(s32 owned) {
     }
 }
 
-/* Reads what the fighter's kit offers: move kinds 6 / 7, BtlCharApi_HasParamBit80, and the cheapest / dearest of the first
+/* Reads what the fighter's kit offers: move kinds 6 / 7, BtlCharApi_HasCharaFlag80, and the cheapest / dearest of the first
  * two skills in thousands. */
 void AiThink_ReadKit(AiThWork *ai) {
     AiThChrMoves *moves = BtlCharApi_GetMoveTable(ai->objId);
@@ -2288,7 +2288,7 @@ void AiThink_ReadKit(AiThWork *ai) {
     if ((ai->kit & 3) == 3) {
         ai->kit &= ~AITH_KIT_MOVE7;
     }
-    if (BtlCharApi_HasParamBit80(ai->objId) != 0) {
+    if (BtlCharApi_HasCharaFlag80(ai->objId) != 0) {
         ai->kit |= AITH_KIT_UNK4;
     }
     ai->costMin = (skills->cost[0] < skills->cost[1] ? skills->cost[0] : skills->cost[1]) / 1000;

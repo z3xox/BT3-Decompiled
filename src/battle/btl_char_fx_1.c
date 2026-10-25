@@ -498,8 +498,6 @@ extern f32 Vec3_Length(Vec4 *v);
 extern f32 BtlUtil_WrapAngle(f32 a);
 #define BtlChar_GetObj ((FxObj *(*)(BtlFighter *chr))BtlChar_GetObj)
 extern s32 BtlChar_IsBodyChanged(BtlFighter *chr);
-#define BtlMember_GetActiveGauge ((BtlMemberGauge *(*)(BtlFighter *chr))BtlMember_GetActiveGauge)
-#define BtlMember_HasAnyListedAbility ((s32 (*)(BtlFighter *chr))BtlMember_HasAnyListedAbility)
 #define BtlChar_TestFxBit ((s32 (*)(BtlFighter *chr, s32 bit))BtlChar_TestFxBit)           /* test */
 #define BtlChar_IsFxBitNew ((s32 (*)(BtlFighter *chr, s32 bit))BtlChar_IsFxBitNew)           /* set now, clear last frame */
 #define BtlChar_IsFxBitEnded ((s32 (*)(BtlFighter *chr, s32 bit))BtlChar_IsFxBitEnded)           /* clear now, set last frame */
@@ -809,7 +807,6 @@ extern f32 Vec3_Length(Vec4 *v);
 extern f32 Mathf_Sin(f32 a);
 extern f32 Mathf_Cos(f32 a);
 extern f32 BtlUtil_WrapAngle(f32 a);
-#define BtlChar_GetObj ((FxObj *(*)(BtlFighter *chr))BtlChar_GetObj)
 extern s32 BtlChar_IsBodyChanged(BtlFighter *chr);
 #define BtlChar_SetFxBit ((void (*)(BtlFighter *chr, s32 bit))BtlChar_SetFxBit)          /* set */
 #define BtlChar_ClearFxBit ((void (*)(BtlFighter *chr, s32 bit))BtlChar_ClearFxBit)          /* clear */
@@ -851,7 +848,6 @@ extern void Vec4_Lerp(Vec4 *out, Vec4 *a, Vec4 *b, f32 t);
 extern s32 BtlOpp_GetObjId(BtlFighter *chr);
 extern s32 BtlCharApi_IsModelNew(s32 objId);
 #define BtlMember_GetActive ((s32 *(*)(BtlFighter *chr))BtlMember_GetActive)
-#define BtlMember_HasAbility ((s32 (*)(BtlFighter *chr, s32 param))BtlMember_HasAbility)
 extern void BtlCharApi_ShakeCamsNear(Vec4 *pos, f32 near, f32 far, f32 strength, f32 time);
 extern void BtlObjFlash_Start(FxObj *obj, s32 kind);
 extern void BtlObj_SetEyeFrame(FxObj *obj, s32 frame);

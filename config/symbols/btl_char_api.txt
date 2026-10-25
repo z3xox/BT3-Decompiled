@@ -94,8 +94,8 @@ BtlCharApi_SetInjectedInput = 0x00208198; // type:func // guess
 BtlCharApi_GetActionBits = 0x00208330; // type:func // guess
 // 0x208268(id, n): byte 0x84 + n (n < 4, else 0) of the object's parameter block (+0x91C). 0x2082B0 / 0x2082F0(id): bytes
 // 0x8A / 0x8D of it (func_0020EA60(chr, 0 / 3)).
-BtlCharApi_GetParamByte84 = 0x00208268; // type:func // guess
-BtlCharApi_GetParamByte8A = 0x002082B0; // type:func // guess
-BtlCharApi_GetParamByte8D = 0x002082F0; // type:func // guess
+BtlCharApi_GetRushFinisher = 0x00208268; // type:func // guess
+BtlCharApi_GetFinisherChoice0 = 0x002082B0; // type:func // guess
+BtlCharApi_GetFinisherChoice3 = 0x002082F0; // type:func // guess
 // 0x208360(id): object bytes +0xCAC / +0xCAD: 1 if CAD != ~CAC; else 0 with flag 0x60; else CAD >= 0.
 BtlCharApi_IsAttackHitPending = 0x00208360; // type:func // guess

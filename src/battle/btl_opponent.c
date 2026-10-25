@@ -182,8 +182,8 @@ f32 BtlOpp_GetRadius(BtlFighter *chr) {
     return BtlCharApi_GetRadius(OPPONENT(chr)->objId);
 }
 
-/* Signed byte +2 of the opponent's parameter block. */
-s32 BtlOpp_GetParamByte2(BtlFighter *chr) {
+/* The opponent's size class (signed byte +2 of its parameter block). */
+s32 BtlOpp_GetSizeClass(BtlFighter *chr) {
     return BtlParam_GetSizeClass(OPPONENT(chr));
 }
 
@@ -197,8 +197,8 @@ f32 BtlOpp_GetCenterHeight(BtlFighter *chr) {
     return BtlCharApi_GetCenterHeight(OPPONENT(chr)->objId);
 }
 
-/* Word +0 of the opponent's parameter block. */
-s32 BtlOpp_GetParamWord0(BtlFighter *chr) {
+/* The opponent's character flags (word +0 of its parameter block). */
+s32 BtlOpp_GetCharaFlags(BtlFighter *chr) {
     return BtlParam_GetCharaFlags(OPPONENT(chr));
 }
 

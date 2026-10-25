@@ -122,7 +122,7 @@ typedef struct AiThWork {
 
 #define AITH_KIT_MOVE6 1 /* one of the two move slots has kind 6 */
 #define AITH_KIT_MOVE7 2 /* one has kind 7 (cleared when both are present) */
-#define AITH_KIT_UNK4 4  /* BtlCharApi_HasParamBit80(side) is non-zero */
+#define AITH_KIT_UNK4 4  /* BtlCharApi_HasCharaFlag80(side) is non-zero */
 
 /*
  * A rule. (m) for every field listed; the rest of the record is read by the action starter BtlAiSeq_PushRule.

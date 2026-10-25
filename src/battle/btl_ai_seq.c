@@ -1542,7 +1542,7 @@ s32 BtlAiStep_Unk23(BtlAiWork *ai) {
     default:
         return 0;
     }
-    if (p->kind[BtlCharApi_GetParamByte8F(ai->objId, n)] != 5) {
+    if (p->kind[BtlCharApi_GetComboFinish(ai->objId, n)] != 5) {
         return 1;
     }
     seq->step = 0;

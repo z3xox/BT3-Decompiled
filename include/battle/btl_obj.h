@@ -143,7 +143,7 @@ typedef struct BtlObjMdl {
     /* 0x28 */ BtlObjModel *model;  /* BtlObj + 0x40 */
     /* 0x2C */ BtlObjBound *bounds; /* BtlObj + 0x44 */
     /* 0x30 */ u8 unk30[0x68];
-    /* 0x98 */ void **anims;        /* BtlObj + 0xB0: animation table (DemoCam_PlayObjAnim) */
+    /* 0x98 */ void **anims;        /* BtlObj + 0xB0: the camera animations DemoCam_PlayObjAnim plays (the motion table is BObjMdl.anims, +0xA8) */
 } BtlObjMdl;
 
 /* Draw state of an object (BtlObj + 0xA40). */

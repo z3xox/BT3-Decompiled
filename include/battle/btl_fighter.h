@@ -490,7 +490,7 @@ typedef struct BtlFighter {
                                            BtlAnim_GetFlags) */
     /* 0x0984 */ f32 blendTime;         /* seconds; valid with flag 0x32 */
     /* 0x0988 */ f32 scale;             /* model scale, copied to the object (+0xA20) by BtlChar_PoseToObj: the uniform scale
-                                           of its matrix; BtlAnim_SetRate writes it, the manager sets 1.0 every frame */
+                                           of its matrix; BtlAnim_SetScale writes it, the manager sets 1.0 every frame */
     /* 0x098C */ s32 stall;             /* animation advances in a row that left the frame unchanged */
     /* 0x0990 */ s32 prevStall;         /* stall before the last advance; > 0 turns the attribute test off
                                            (BtlAnim_TestAttr, BtlCharApi_ObjTestAttr) */

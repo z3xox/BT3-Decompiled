@@ -1519,7 +1519,7 @@ void BtlObj_SetAlphaAdd(BobjObj *obj, s32 value) {
     obj->alphaAdd = value;
 }
 
-/* Stops the mouth animation; keep == 0 also resets the mouth state and the eye direction. */
+/* Stops the mouth animation; keep == 0 also resets the mouth state and the jaw rotation (face->jaw). */
 void BtlObjFace_Reset(BobjFace *face, s32 keep) {
     face->talkEnd = 0.0f;
     face->shape = 0;
@@ -1638,12 +1638,12 @@ void BtlObjFace_StepBlink(BobjObj *obj, BobjFace *face) {
         face->eye = 1;
     } else {
         if (face->blinkWait-- < 0) {
-            face->blinkTime = rand() % 3 + 3;
+            face->blinkFrames = rand() % 3 + 3;
             face->blinkWait = rand() % 90 + 90;
         }
-        if (face->blinkTime != 0) {
-            if (face->blinkTime-- < 0) {
-                face->blinkTime = 0;
+        if (face->blinkFrames != 0) {
+            if (face->blinkFrames-- < 0) {
+                face->blinkFrames = 0;
                 face->eye = 0;
             } else {
                 face->eye = 1;

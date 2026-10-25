@@ -151,7 +151,7 @@ void BtlAnim_SetSubMix(BtlFighter *chr, f32 v);
 void BtlAnim_SetStep(BtlFighter *chr, f32 step);
 void BtlAnim_SetDuration(BtlFighter *chr, f32 seconds);
 void BtlAnim_SetObjRate(BtlFighter *chr, f32 rate);
-void BtlAnim_SetRate(BtlFighter *chr, f32 rate);
+void BtlAnim_SetScale(BtlFighter *chr, f32 scale);
 void BtlAnim_JumpToEnd(BtlFighter *chr);
 void BtlAnim_EnableHandle(BtlFighter *chr);
 s32 BtlAnim_GetId(BtlFighter *chr);
