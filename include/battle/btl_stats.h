@@ -97,25 +97,7 @@ typedef struct BtlStatMember {
 } BtlStatMember;
 
 /* Partial view of a fighter (0x1600 bytes). */
-typedef struct BtlStatChr {
-    /* 0x0000 */ u8 unk0[0xC];
-    /* 0x000C */ s32 objId;
-    /* 0x0010 */ u8 unk10[0x974 - 0x10];
-    /* 0x0974 */ BtlAnimIds anim;
-    /* 0x0984 */ f32 blendTime;   /* seconds; valid with flag 0x32 */
-    /* 0x0988 */ f32 animRate;    /* BtlAnim_SetRate, 1.0 every frame */
-    /* 0x098C */ s32 stall;       /* advances in a row that left the frame unchanged */
-    /* 0x0990 */ s32 prevStall;   /* stall before the last advance; > 0 turns the attribute test off */
-    /* 0x0994 */ u8 unk994[0xE30 - 0x994];
-    /* 0x0E30 */ s32 kind2On;     /* 1 when a kind-2 skill was used; 0 when its modifiers end */
-    /* 0x0E34 */ s32 kind3On;     /* the same for kind 3 */
-    /* 0x0E38 */ s32 slotOn[BTL_STAT_SLOTS]; /* 1 while the slot's (non-kept) modifier is active */
-    /* 0x0E40 */ u8 unkE40[0xEE4 - 0xE40];
-    /* 0x0EE4 */ s32 unkEE4;      /* passed to BtlObjAnim_PlayFrom when BtlCharApi_IsInRushSequence(objId) is set */
-    /* 0x0EE8 */ u8 unkEE8[0xF50 - 0xEE8];
-    /* 0x0F50 */ BtlStatMod stat[BTL_STAT_COUNT];
-    /* 0x0FB0 */ u8 unkFB0[0x1600 - 0xFB0];
-} BtlStatChr; /* size 0x1600 */
+typedef BtlFighter BtlStatChr;
 
 /* Fighter roster (gBtlChars): only the animation flag table. */
 typedef struct BtlStatRoster {

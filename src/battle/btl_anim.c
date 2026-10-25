@@ -103,7 +103,7 @@ void BtlAnim_Play(BtlStatChr *chr, s32 anim, f32 blend) {
         BtlStatObj *obj2;
 
         if (BtlCharApi_IsInRushSequence(chr->objId)) {
-            useTable = chr->unkEE4;
+            useTable = chr->thr.unk54;
         }
         obj2 = BtlChar_GetObj(chr);
         BtlObjAnim_PlayFrom(obj2, BtlOpp_GetObj(chr), anim, useTable);
@@ -282,7 +282,7 @@ void BtlAnim_SetObjRate(BtlStatChr *chr, f32 rate) {
 
 /* Sets fighter + 0x988 (1.0 from the manager every frame). */
 void BtlAnim_SetRate(BtlStatChr *chr, f32 rate) {
-    chr->animRate = rate;
+    chr->scale = rate;
 }
 
 /* Puts the animation on its last frame, with no blend, and holds the end flag 0x31. */
