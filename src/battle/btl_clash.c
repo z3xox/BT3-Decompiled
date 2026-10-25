@@ -53,7 +53,7 @@ extern Vec4 gVu0ZeroVec; /* zero vector */
 
 typedef struct BtlClashProgress {
     /* 0x00 */ u8 unk0[0x3C];
-    /* 0x3C */ s32 difficulty; /* difficulty */
+    /* 0x3C */ s32 difficulty; /* the history mode level 0..2 (HistProgress.difficulty) */
 } BtlClashProgress;
 extern BtlClashProgress *gProgress;
 

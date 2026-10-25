@@ -73,7 +73,7 @@ extern void ChrGrid_Build(s32 *outCount, BrkCell *out, s32 *inCount, BrkCell *in
 
 /* TourMenu (the former menu_k.c, 0x364358..0x364DA8) is now part of tour_menu.c; its view is TourMenu of tour_entry.h. */
 
-/* gSaveData->unkA08 */
+/* gSaveData->tourFlags */
 #define TOUR_SAVE_STARTED 0x20  /* the first-visit speech was heard */
 
 /* What the tournament keeps of one entrant: gProgress + 0x98, 0x28 bytes each (TourEntrant of tour_entry.h). */
@@ -154,7 +154,7 @@ typedef struct TourProgress2 {
 #define TOUR_ENT_HIDDEN 8        /* chip hidden while the move animation of this match plays */
 #define TOUR_ENT_REC 0x10        /* a saved custom character (menu_j): the versus panel shows name line 0xA3 */
 
-/* gSaveData->unkA08, continued */
+/* gSaveData->tourFlags, continued */
 #define TOUR_SAVE_EXPLAINED 0x40 /* the guide's long explanation was heard */
 
 /* ---- Bracket (bracket.c, tour_background.c, menu_l) ---- */

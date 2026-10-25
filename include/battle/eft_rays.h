@@ -322,7 +322,7 @@ typedef struct EftOGroupDef {
 
 typedef struct EftOGroup {
     /* 0x00 */ EftOGroupDef *def;
-    /* 0x04 */ s32 parts;
+    /* 0x04 */ void *parts;   /* the group's EftSetDef records */
     /* 0x08 */ u8 first;
     /* 0x09 */ u8 firstPair;
     /* 0x0A */ u8 firstRes;

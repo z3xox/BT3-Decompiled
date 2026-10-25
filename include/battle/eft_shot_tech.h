@@ -87,7 +87,7 @@ typedef struct EftJPart {
 
 typedef struct EftJGroup {
     /* 0x00 */ u8 *info; /* [0] group id, [1] part count */
-    /* 0x04 */ s32 parts;
+    /* 0x04 */ void *parts;   /* the group's EftSetDef records */
     /* 0x08 */ u8 base;  /* first part of the group */
     /* 0x09 */ u8 unk9[7];
 } EftJGroup; /* size 0x10 */

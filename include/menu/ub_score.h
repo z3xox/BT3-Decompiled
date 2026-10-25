@@ -215,7 +215,8 @@ typedef struct UbSaveBody {
     /* 0x0288 */ s32 simCleared;
     /* 0x028C */ UbSaveBest mission[100];
     /* 0x073C */ UbSaveBestB bestB[5];
-    /* 0x0778 */ s32 unk778[2];
+    /* 0x0778 */ s32 unk778;
+    /* 0x077C */ s32 ladderRank;     /* the ladder rank (SaveData.rank) */
     /* 0x0780 */ UbSaveBest bestC[54];
 } UbSaveBody;
 

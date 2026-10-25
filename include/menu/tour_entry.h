@@ -315,11 +315,11 @@ typedef struct TourMenu {
 #define TOURMENU_GREETED 8      /* the opening step was chosen once the movie accepted input */
 #define TOURMENU_INVITE 0x10    /* an invitation arrived: its picture is loaded */
 
-/* gSaveData->unkA08: bit n (0..4) = tournament n is the open one; 0x20 = the mode was visited (the clock runs) */
+/* gSaveData->tourFlags: bit n (0..4) = tournament n is the open one; 0x20 = the mode was visited (the clock runs) */
 #define TOUR_SAVE_INVITE_MASK 0x1F
 #define TOUR_SAVE_STARTED 0x20  /* the first-visit speech was heard */
 #define TOUR_SAVE_EXPLAINED 0x40 /* the guide's long explanation was heard */
-#define TOUR_HOURS 24           /* gSaveData->unkA0C, the mode's clock, runs 0..23 */
+#define TOUR_HOURS 24           /* gSaveData->tourHour, the mode's clock, runs 0..23 */
 
 extern TourMenu *gTourMenu;      /* 0x3B5914 */
 

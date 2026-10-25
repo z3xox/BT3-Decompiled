@@ -113,7 +113,7 @@ typedef struct EftHStartArg {
     /* 0x00 */ s32 chr;   /* character index = fighter object id */
     /* 0x04 */ s32 slot;  /* technique slot 0..4 */
     /* 0x08 */ s32 area;
-    /* 0x0C */ s32 scale;
+    /* 0x0C */ f32 scale;  /* f32 at the sender (EftShot_Start's callers); not read here */
     /* 0x10 */ f32 time;  /* seconds; replaces EftShotParam.life */
     /* 0x14 */ f32 speed; /* replaces EftShotParam.speed */
     /* 0x18 */ f32 homing; /* replaces EftShotParam.homing */

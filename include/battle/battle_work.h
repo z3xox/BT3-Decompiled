@@ -96,7 +96,7 @@
 typedef struct BattleRes {
     /* 0x00 */ s32 unk0;
     /* 0x04 */ void *stage;        /* stage model file 0x171 + stage (0x198 + stage in split-screen) */
-    /* 0x08 */ void *hudFile;         /* file 6 + gProgress->unk0[0] */
+    /* 0x08 */ void *hudFile;         /* file 6 + gProgress->language */
     /* 0x0C */ void *bank;         /* sound bank file being (re)loaded: 0x14E + stage, 0xBDA / 0xC7B + character */
     /* 0x10 */ void *script;       /* file 0x1FF + n, only when setup.script != 0 */
     /* 0x14 */ void *transition;   /* file 0x1BF / 0x1C0 during a stage change */

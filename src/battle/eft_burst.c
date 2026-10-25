@@ -1133,15 +1133,15 @@ typedef struct EftStageState {
 extern EftStageState *gBtlStage;
 
 /* The view being drawn (btl_cam.h); only the matrices and position used here. */
-typedef struct EftView {
+typedef struct EftViewE {
     /* 0x000 */ Mtx44 world2view;
     /* 0x040 */ Mtx44 world2view2;
     /* 0x080 */ u8 unk80[0xC0];
     /* 0x140 */ Mtx44 world2screen;
     /* 0x180 */ u8 unk180[0xA0];
     /* 0x220 */ Vec4 pos;
-} EftView;
-#define gBtlCamView ((EftView *)gBtlCamView)
+} EftViewE;
+#define gBtlCamView ((EftViewE *)gBtlCamView)
 
 extern f32 sqrtf(f32 x);
 extern f32 atan2f(f32 y, f32 x);

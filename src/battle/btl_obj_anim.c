@@ -1891,7 +1891,7 @@ typedef struct BObjSave {
 } BObjSave;
 
 typedef struct BObjCommon {
-    /* 0x00 */ s32 boot;
+    /* 0x00 */ void *boot;
     /* 0x04 */ BObjFile file3; /* only buf is real: the pointers of the three common files follow each other */
 } BObjCommon;
 

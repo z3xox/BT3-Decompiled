@@ -8,28 +8,45 @@ saving.
 
 ## Layout (verified by matching code unless marked)
 
+`include/sys/save.h` is the reference; the menu overlay's views of the same block are listed at its fields.
+
 | Offset | Field | Notes |
 |---|---|---|
-| 0x0008 | `unlockFlags` | 7 bits (plus bit 9 used by the menu); meaning unknown |
+| 0x0000 | `sumHigh`, `sumLow` | checksum of the bytes from +8 (see the memory-card flows below) |
+| 0x0008 | `unlockFlags` | bits 0-6 (plus bit 9 used by the menu); meaning unknown |
+| 0x000C | `level` | history mode difficulty 0..2 (1 by default), copied to `gProgress` +0x3C (`difficulty`) |
 | 0x0010 | `slot[9]`, 0x10 each | flags + three values; probably per-mode progress (inferred) |
+| 0x0208 | `ubFlags` | Ultimate Battle flags |
+| 0x020C | `missionPages` | 5 by default, 20 after `Save_UnlockAll` |
+| 0x0210 | `simRank[10]`, 0xC each | ranking of the mode 22 ladder: character, score, cleared |
+| 0x0288 | `simCleared` | the reward of a finished ladder was given |
+| 0x028C | `mission[100]`, 0xC each | best result of a mission (`SaveBest`: cleared, rank, time, total) |
+| 0x073C | `survival[5][0xC]` | best result of a survival course (kept as bytes: see save.h) |
+| 0x077C | `rank` | 99 by default |
+| 0x0780 | `course[5]`, 0xC each | best result of an Ultimate Battle Z course |
+| 0x0A08 | `tourFlags`, `tourHour`, `tourLevel` | tournament mode: open tournament bits, the mode's clock (0..23), level |
 | 0x0C10 | `charaBits[3]` (u64) | 161 character unlock bits |
 | 0x0C28 | `stageBits` (u64) | 35 stage unlock bits |
 | 0x0C30 | `bgmBits` | 20 bits of a 25-entry list; "BGM" is a guess |
 | 0x0C34 | `rule[6]` | "battle rules" is a guess; defaults 3, 2, 2, 0, 0, 0 |
+| 0x0E0C | `trainClear[3]` | "lesson cleared" bits per training class |
+| 0x1008 | `shopFlags`, `stockLevel` | shop |
+| 0x1208 | `dcFlags` | flags of the menu `DcMenu_Start` runs |
 | 0x1608 | `flags` | see below |
 | 0x160C | `key[2][8]` | battle button assignment per player |
 | 0x164C | `keyEdit[2][8]` | the copy the controller menu edits |
-| 0x1694, 0x1698 | unknown | copied per side into the battle option block |
+| 0x1694 | `camDistMode` | camera distance preset (0..2), copied per side into the battle options |
+| 0x1698 | `camShakeOff` | camera shake off (0 / 1), copied the same way |
 | 0x169C, 0x16A0 | `screenX`, `screenY` | display position |
 | 0x16A4 | `soundMode` | 0 stereo, 1 mono |
 | 0x16A8 | `bgmVolume` | 0..9 |
 | 0x16AC | `seVolume` | 0..9 |
-| 0x1808 | `custom[97]`, 0x38 each | three sets of seven item slots, plus a level |
-| 0x2D40 | `rec[14]`, 0x1C each | level and character (-1 = empty); saved custom characters (inferred) |
+| 0x1808 | `custom[97]`, 0x38 each | three sets of seven item slots (plus a zero terminator), experience, a level |
+| 0x2D40 | `rec[14]`, 0x1C each | item ids, level and character (-1 = empty); saved custom characters (inferred) |
 | 0x2EC8 | `item[350]` | bit 0 owned, bit 1 set on first acquisition ("new" is a guess) |
 | 0x3028 | `money` | 0..9,999,999 |
 
-Everything else is unidentified.
+The gaps between these fields are unidentified.
 
 `flags` at 0x1608:
 - bit 0: voice set. Set selects the file base 0xCC32, clear 0x8D4E. It is on by default, so set
@@ -58,20 +75,18 @@ Everything else is unidentified.
 
 ## Notes
 
-- About 210 references to the save block in the overlay are not symbolised (they appear as
-  `lui 0x30` / `lw -0xD74`), so grepping for the name misses most menu uses.
-- `func_002BD950`..`func_002BECC0` in the trailing block of the main executable also grant items
-  and money (a reward path); not analysed.
+- The menu overlay reaches the block through `gSaveData` and through its own views of it (`MSAVE` in
+  history.h and the other menu headers), so grepping for `gSaveData` alone misses part of the menu uses.
 
-## Memory-card flows (0x1198D8..0x11EC10; src/sys/mcflow_a.c, linked; names in config/symbols/mcflow_a.txt)
+## Memory-card flows (0x1198D8..0x11EC10; src/sys/memcard_flow.c; names in config/symbols/mcflow_a.txt)
 Linked layout: `.rodata` 0x2EBD30 (0x518), `.sdata` 0x2FE940 (`gMcFlow`, defined in the file, then "DBZT3" / "DBZT3R").
-The file's private aliases for the card layer are gone: it calls the `McCard_*` names of stgm_a_b.c.
+The file's private aliases for the card layer are gone: it calls the `McCard_*` names of memcard.c.
 
-All 22 functions match. One module (`McFlow_*`, final name sys/mc_flow.c): a heap work area
-`gMcFlow` (0x2FE940, 0x39F90 bytes; layout in include/sys/mcflow_a.h) and eight state machines
+All 22 functions match. One module (`McFlow_*`): a heap work area
+`gMcFlow` (0x2FE940, 0x39F90 bytes; layout in include/sys/memcard_flow.h) and eight state machines
 chosen by `McFlow_Start(mode)`: 0 / 4 save, 1 load, 2 boot load, 3 new save, 5 replay save,
 6 replay load, 7 / 9 replay scan, 8 replay question. `McFlow_Update` runs one frame and
-returns the state (0 = finished). The full state tables are in the comments of mcflow_a.c.
+returns the state (0 = finished). The full state tables are in the comments of memcard_flow.c.
 
 Verified by matching C:
 - The system save is the raw 0x4000-byte `SaveData`; its first 8 bytes are a checksum (bytes
@@ -99,7 +114,7 @@ library calls in 0x116BA0..0x1190C8 (the neighbouring range).
 For linking: define `McFlow *gMcFlow = NULL;` at the top of the file (it is `.sdata` at
 0x2FE940 before "DBZT3" / "DBZT3R"); `.rodata` 0x2EBD30..0x2EC248.
 
-## Memory-card layer (0x116B98..0x1198D8; src/battle/stgm_a_b.c, linked; final name sys/mcard.c)
+## Memory-card layer (0x116B98..0x1198D8; src/sys/memcard.c; names in config/symbols/stgm_a.txt)
 Linked layout: `.rodata` 0x2EBA80 (0x2B0), `.sdata` 0x2FE918 (`gMcCardStep`, `gMcCardCmd`, defined in the file, then its
 strings from 0x2FE920).
 
@@ -121,13 +136,13 @@ over Sony libmc: each call makes one library call or one `sceMcSync` poll; state
 - For linking: define `s32 gMcCardStep = 0; s32 gMcCardCmd = 0;` first in the file; `.rodata`
   at 0x2EBA80, `.sdata` from 0x2FE918.
 
-## Character password codec (0x252F68..0x254A20; src/sys/misc_a.c, misc_a_b.c, linked; names in config/symbols/misc_a.txt)
-Linked layout: misc_a.c `.rodata` 0x2F2AA0, `.sdata` 0x2FEC50; misc_a_b.c `.rodata` 0x2F2CB0, `.sdata` 0x2FEE58 (0x20A and
+## Character password codec (0x252F68..0x254A20; src/sys/password_old.c, password_chara.c; names in config/symbols/misc_a.txt)
+Linked layout: password_old.c `.rodata` 0x2F2AA0, `.sdata` 0x2FEC50; password_chara.c `.rodata` 0x2F2CB0, `.sdata` 0x2FEE58 (0x20A and
 0x202 bytes each).
 
 All 35 functions match. Two builds of one codec, called only by the menu overlay: `OldPass_*`
 (0x252F68, 32- and 20-character texts) and `ChrPass_*` (0x253ED8, the 34-character text).
-Final names menu/pass_old.c, menu/pass.c. Most of the range is dead code (old encoders, the
+Most of the range is dead code (old encoders, the
 20-character format, random test fillers, "No Debug\n" getters).
 
 Verified by matching C:

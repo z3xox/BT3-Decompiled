@@ -767,7 +767,7 @@ s32 HistSel_Run(s32 section) {
                     ColorFade_StartOut(0xFF, 0xFF, 0xFF, 0x14);
                 }
                 gProgress->subMenu = gHistSel->items[gHistSel->cursor[1]];
-                HPROG->level = MSAVE->level;
+                HPROG->difficulty = MSAVE->level;
             }
         } else if (gHistSel->script == 0) {
             HistSel_Input(&result);

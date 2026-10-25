@@ -101,7 +101,8 @@ typedef struct QSaveBody {
     /* 0x0288 */ s32 simCleared;
     /* 0x028C */ QSaveBest mission[100];
     /* 0x073C */ QSaveBestB bestB[5];
-    /* 0x0778 */ s32 unk778[2];              /* [1] (0x77C): the ladder rank (rank in the other menu views) */
+    /* 0x0778 */ s32 unk778;
+    /* 0x077C */ s32 ladderRank;              /* the ladder rank (SaveData.rank) */
     /* 0x0780 */ QSaveBest bestC[54];
     /* 0x0A08 */ u8 unkA08[0x2EC8 - 0xA08];
     /* 0x2EC8 */ u8 item[0x15E];        /* bit 0: owned */

@@ -380,11 +380,11 @@ the `TourMenu` object (continues in menu_k.c).
 Verified by matching C:
 - `Tour_Main` (0x362160): mode 33 `TourMenu_Run(1)` (BGM 0x10B19; zero -> mode 4), 34
   `EntrySel_Run(2)` (BGM 0x10B1B; zero -> 33), 35 `Bracket_Run(0)` (non-zero = leave for the
-  battle; zero -> 33 and the tournament clock `gSaveData->unkA0C` advances by one, wrapping
+  battle; zero -> 33 and the tournament clock `gSaveData->tourHour` advances by one, wrapping
   at 24). Archive 4 = file baseFile + 2.
-- **Tournament clock**: `unkA0C` is shown as an hour ("mc_timer"); `TourMenu_CheckInvite`
+- **Tournament clock**: `tourHour` is shown as an hour ("mc_timer"); `TourMenu_CheckInvite`
   opens tournament 0 at hours 7..12, 1 at 13..18, 2 at 19..23, 3 at 0..4, 4 at 5..6 (one of
-  `unkA08` bits 0..4) with a level `unkA10 = Rand_Range(3)`. The same counter is bumped by
+  `tourFlags` bits 0..4) with a level `tourLevel = Rand_Range(3)`. The same counter is bumped by
   every main-menu confirm (chunk 1), so it is the game's shared "time of day".
 - `gProgress + 0x7C` is the tournament session block (0x3C4 bytes, what
   `Progress_ClearSession` clears): +0x80 entry, +0x84 tournament, +0x88 level, +0x8C entrant
@@ -792,7 +792,8 @@ Verified by matching C:
   custom keys on); `+0x160C` `key[pad][0..7]` (what the battle reads: a copy of `keyEdit`
   when the per-pad bit `8 << pad` is on, else the default {2, 1, 0, 3, 4, 5, 6, 7});
   `+0x164C` `keyEdit[pad][0..3]` (a permutation of 0..3, swapped on change); `+0x1694` (0..2)
-  and `+0x1698` (0 / 1), copied per side into the battle option block (meaning unknown);
+  and `+0x1698` (0 / 1), copied per side into the battle option block (`camDistMode`, the camera distance preset, and
+  `camShakeOff`, camera shake off);
   `+0x169C` / `+0x16A0` screen position (-16..16); `+0x16A4` sound mode (stereo / mono, then
   `SndOpt_Apply()`); `+0x16A8` / `+0x16AC` BGM / SE volume (0..9).
 - Sound test: `Bgm_Play(id + 0x10B16)`, gated by `bgmBits`.

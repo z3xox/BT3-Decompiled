@@ -28,7 +28,7 @@ extern void StreamSe_FadeOutStep(s32 se);
         gSaveData->tourLevel = Rand_Range(3); \
     }
 
-/* Which tournament is held at the current hour of the mode's clock (gSaveData->unkA0C, 0..23). */
+/* Which tournament is held at the current hour of the mode's clock (gSaveData->tourHour, 0..23). */
 void TourMenu_CheckInvite(void) {
     s32 hour = gSaveData->tourHour;
 

@@ -87,9 +87,9 @@ void HistResult_BuildRewards(void) {
         }
     }
     if (MSAVE->item[0x88] & 1) {
-        gHistResult->pointsTotal = rw->points[HPROG->level] * 2;
+        gHistResult->pointsTotal = rw->points[HPROG->difficulty] * 2;
     } else {
-        gHistResult->pointsTotal = rw->points[HPROG->level];
+        gHistResult->pointsTotal = rw->points[HPROG->difficulty];
     }
     for (i = 0; i < 3; i++) {
         id = rw->item[i];

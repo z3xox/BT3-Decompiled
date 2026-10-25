@@ -210,7 +210,7 @@ typedef struct EftArg12 {
     /* 0x34 */ f32 life;
     /* 0x38 */ s32 texIdx;
     /* 0x3C */ s32 objId;
-    /* 0x40 */ u8 type[1];
+    /* 0x40 */ u8 type[1];  /* EftZapArg.type; an array because a plain u8 changes the code of the initialiser below */
 } EftArg12; /* size 0x50 */
 extern void *EftZap_Create(EftArg12 *arg);
 extern void EftZap_Kill(void *h);

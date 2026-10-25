@@ -37,7 +37,7 @@ extern HudPromptIconDef gHudPromptCueDefs[4];
 /* The side's fighter object: only what HudPrompt_DrawNames reads. */
 typedef struct HudPromptObj {
     /* 0x00 */ u8 unk0[0xBC];
-    /* 0xBC */ s32 skillText;        /* handed to BtlMenu_SetScript2 before the name is drawn */
+    /* 0xBC */ u16 *skillText;        /* handed to BtlMenu_SetScript2 before the name is drawn */
 } HudPromptObj;
 
 /* Sprite / node library at 0x224B50.. (neighbouring ranges). */
@@ -55,7 +55,7 @@ extern void HudSprite_DrawAt(HudESprite *spr, HudERes *res, s32 additive, s32 a,
 extern void HudSprite_Draw(HudESprite *spr, HudERes *res, s32 additive);     /* HudSprite_Draw */
 extern void HudNode_Show(HudENode *node, s32 show);                        /* HudNode_Show */
 extern void HudNode_SetPos(HudENode *node, s32 x, s32 y);                    /* HudNode_SetPos */
-extern void BtlMenu_SetScript2(s32 text);
+extern void BtlMenu_SetScript2(u16 *text);
 extern HudPromptObj *BtlCtrl_GetObj(s32 side);
 extern HudERes *FontIcon_GetRes(void);
 extern HudPromptIconDef *FontIcon_GetDefs(void);

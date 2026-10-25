@@ -40,7 +40,7 @@ typedef struct HistProgress {
     /* 0x20 */ s32 unk20[5];
     /* 0x34 */ s32 subMenu;
     /* 0x38 */ s32 subMenuItem;
-    /* 0x3C */ s32 level;
+    /* 0x3C */ s32 difficulty;   /* the history level chosen (MSave level 0..2); the battle script adds 6 / 9 to the CPU level for 1 / 2 */
     /* 0x40 */ HistReward reward;
 } HistProgress;
 

@@ -38,7 +38,7 @@ typedef struct McCardInfo {
     /* 0x14 */ s32 format;
     /* 0x18 */ s32 fd;
     /* 0x1C */ s32 size;         /* clusters the save still needs (McCard_CalcNeed) */
-    /* 0x20 */ s32 buf;
+    /* 0x20 */ void *buf;
 } McCardInfo; /* size 0x24 */
 
 extern McFlowProgress *gProgress;

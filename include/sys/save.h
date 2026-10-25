@@ -61,7 +61,8 @@ typedef struct SaveCustom {
 
 /* 0x1C bytes; fourteen of them at 0x2D40. */
 typedef struct SaveRec {
-    /* 0x00 */ u8 item[0x14];  /* u16 item[8] (item ids, 1-based, 0 = empty) and a word at +0x10: ZSaveRec in menu/dc.h */
+    /* 0x00 */ u16 item[8];   /* item ids, 1-based, 0 = empty (ZSaveRec in menu/dc.h) */
+    /* 0x10 */ s32 unk10;
     /* 0x14 */ u16 level;  /* used instead of SaveCustom.level when ChrTbl_GetItemSlots is asked for one of these */
     /* 0x16 */ u16 unk16;
     /* 0x18 */ s32 chara;  /* character id, -1 = empty (defaults; ChrGrid_Build appends the non-empty ones to the character list) */

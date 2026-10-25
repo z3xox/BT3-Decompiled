@@ -21,6 +21,12 @@
 - Fighter: accessors after their fields: BtlParam_GetTransSeq / GetTransKind / GetFusionCost, BtlOpp_GetSizeClass / GetCharaFlags, BtlCharApi_GetSizeClass / GetRushFinisher / GetFinisherChoice0 / 3 / GetComboFinish / HasCharaFlag80.
 - Fighter: comments fixed or already right: GetTechniqueFramesLeft, the jaw tracks, technique 0x280 (six fixed characters by the frame counter), rule word 0x10, the spread local, GetOppTechniqueKind / GetOppSkillKind, mix, BtlObjMdl.anims; BobjFace.blinkFrames, BobjParam charaFlags / sizeClass / auraKind.
 - Fighter views of groups 03, 04, 05 (BtlCtlNode, BtlCollReact, BtlFlagPose, BtlActVitals, the camera words, player / side, padFlagA, the prev* placeholders, switchPrompt, the competing names): settled by the merge into BtlFighter (docs/names/fighter/canonical.tsv).
+- Progress / save: gProgress +0x3C is `difficulty` in every view (HistProgress.level renamed); the stale gSaveData->unkA08 / unkA0C mentions say tourFlags / tourHour (tour_menu.c, bracket.h, tour_entry.h, menu_overlay.md); the menu save views split unk778[2] into unk778 / ladderRank; SaveRec.item is u16[8] + unk10.
+- docs/systems/save_data.md: the layout table follows include/sys/save.h (camDistMode / camShakeOff, the tournament, mission, course and shop words) and the file names of the card and password sections are the current ones; menu_overlay.md names +0x1694 / +0x1698.
+- Types: McCardInfo.buf and BObjCommon.boot are pointers, HudPromptObj.skillText is u16 * (with BtlMenu_SetScript2's real parameter), EftHStartArg.scale f32, the group `parts` words void *, EftWaterView.tex[].image a pointer; EftArg12.type stays u8[1] (a plain u8 changes the initialiser's code).
+- Already settled by earlier passes: the System / menu support items (adx voice slots, padBit, the gfx_screen extern, the rigid literal, TextBox, SetMaxSize, the memcard and vu1_packet headers), the battle_setup parameters and menu comments, UbScore.line, McFlowReq (commented), TourInfo (commented), 0x640 cursor / 0x684 ubFlags, save ubFlags / rank / missionPages, the slot / baseLevel comments, EvoZ bg, dragonBallFound, the MsgWin_Init blocks (commented), the unk locals, EftWLinkArg.texIdxA, EftKCamArg.anim, skillText, players, replaySlot[7], the zap texIdx / type. eft_burst.c's second view is spelled EftViewE.
+- Group 20 function names: the BtlStage_GetFx*, shot scale, clash power and EftRibbon_SetNode renames are done; BtlParam_GetUnkC7Scale stays (what +0xC7 scales is not known).
+- Already settled: BattleRule.dragonBall / BattleResult.dragonBallFound / BattleRes.hudFile (its comment says gProgress->language now), EftAuraCfg.flame[] (commented in place), EftAuraCfgFlame partNode / nodeEnd / nodeRef.
 
 ## Resolved by the fighter merge (2026-10-25)
 
@@ -36,8 +42,10 @@ timers it overlaps (they are one BtlFighterReact), the pose views (velY, speed /
 +0xE00 / +0xE04 (dodges / dodgesB), unkD88 (evasionCount), unkD44 (combo.hits), BtlActJForm.unk24..30,
 the member gauge word +0x20 (gauge.variant) and the damage queue words (BtlFighterQueue).
 
+## Still open
+
 Reported by the five agents that proposed the names of docs/names/renamed_2026_10_08.tsv. Not acted on yet,
-except where a rename of that list covers it. For the pass over fields and local variables.
+except where a rename of that list covers it. What is left below could not be settled from the code, or would change it.
 
 CPU opponent:
 - Two AI functions were left as Unk (step 23, condition 11): both hinge on "stage 4 or 27" and pose bit 0x80, whose meaning is not known.
@@ -50,30 +58,9 @@ Effects, stage, objects:
 Fighter:
 - "Body changed" (the member flag at +0x70, technique 0x280, character 0x56) is a reading, not a confirmed name.
 
-System, menu support:
-- src/sys/adx.c:17 cites an array at 0x334788 [voice][kind]: it is gBtlScript.voice (0x333BC0 + 0xBC8), indexed [side * 2 + window].
-- include/sys/game_pad.h:75: the table at 0x2EF050 is the rodata copy of the local padBit[] in BtlInput_GetKeyMask, not a global.
-- include/sys/gfx_screen.h:92: an unused extern for the constant-pool word 224 of GfxWater_DrawView: delete.
-- src/sys/rigid.c:423: the "variable" at 0x2FE818 is a .lit4 literal (3 pi / 4).
-- include/ui/reward_window.h: its TextBox struct has unkC, unk10, unk50, unk80, color2, rect where TextBoxFull (menu_support.h) has x, y,
-  draw.align, draw.noFlush, shadow, clip: TextBox_SetColor2 is the shadow colour, TextBox_SetRect the font clip rectangle.
-- src/ui/menu_util_1.c: the comment on TextBox_SetMaxSize mentions an `unused` parameter that does not exist.
-- src/sys/memcard.c: the header comment still calls the file stem a placeholder.
-- src/sys/vu1_packet.c: the header numbers the second variant of program 2 as "prog 3"; the listings and docs call it 2b.
-
 ## From the field-name groups
 
-Group 02 (btl_act_super.h .. btl_cam.h):
-
-Group 09 (eft_rays.h .. eft_stage_1.h):
-
-Group 01 (battle.h .. btl_act_decide.h):
-- Found: BattleRule.unk18 and BattleResult.unk44 are the Dragon Ball drop (1 + the first unset of the seven dragon-ball bits; stg_parts.c
-  moves it to the result with a 1-in-8 chance when a stage object breaks; history_result.c sets the bit). BattleRes.unk8 is the HUD sprite file.
-
 Group 06 (btl_script_cmd.h .. eft_disc.h):
-- eft_aura.h, EftAuraCfg.flame[EFT_AURA_SPARKS] at 0x410: the table has 10 entries (EFT_AURA_PARTS); entries 10 and 11 overlap fadeNode[].
-- eft_aura.h, EftAuraCfgFlame.unk0 (u8) and .node: in EftAuraDataPart the record is s32 node, nodeEnd, nodeRef: this `node` is the other's nodeEnd.
 - Ten MEDIUM names in btl_tech.h follow the existing getter's name only (poweredDashLimit, landingKind, throwObjectSlot, ...).
 
 Group 08 (eft_obj_tech.h .. eft_quad_2.h):
@@ -88,8 +75,6 @@ Group 10 (eft_stage_2.h .. eft_water.h):
 - eft_trail.h:72, 77-78, 83 against eft_disc.h: the views of the glow work disagree (paramFlags / type / type2 / fadeFrom against unk8 /
   unk1C[2] / alpha); eft_trail.h:126 EftGlowMgr.live at +0x18 is unk18[2] in EftPGlowMgr. Not determined which is right.
 
-Group 04 (btl_char_coll.h .. btl_char_member.h):
-
 Group 03 (btl_char_action.h .. btl_char_cam.h):
 - BtlAct_IsAirMotion (btl_char_action.c) returns, with useSaved, react.back (fighter +0xFBC, hit from behind) and otherwise motion
   flag 0x8000: the comment says so, but what the function as a whole answers (and so its name) is not settled.
@@ -102,45 +87,11 @@ Group 05 (btl_char_mgr.h .. btl_script.h):
 - DemoCamPose.unk1C sits in the anonymous struct `f` inside the union.
 
 Group 12 (overlay_common.h .. memcard_flow.h; the menu overlay and sys):
-- battle_setup.h:133-134 (and sim_day.h:49-50, survival.h:44-45): the prototype parameters unk10, unk1FC, unk200 are rule->stageChange,
-  side->changeAllowed, side->switchEnabled; the comments "BattleSetup_SetRule's last argument" / "side 1's unk1FC" in sim_day.h:184, 188,
-  survival.h:153, 157, ub.h:346, 350, ub_rank.h:122, 126 are stale.
-- ub_score.h:145: UbScore.line "health, unk24, unk1C, battle time": those are maxComboHits and maxComboDamage of BattleResult.
-- memcard_flow.h:56-61 against memcard.h:47-61 describe the same request block differently (title.text[0x100] + s32 titleBreak against
-  title[0x44], iconName[3][0x40], u16 titleBreak): McFlowReq.unk418 is the tail of iconName[2].
-- tour_entry.h:281-285: TourInfo has prize[2][3] + unk28[15]; tournament.h:216-219 has the same record as prize[7][3].
-- sim_day.h:101 and ub_score.h:215: `s32 unk288` where sim_top.h:114 has `u8 simCleared`; unk778[2] element 1 is 0x77C, the ladder rank.
-- gProgress 0x640 has three names: cursor (ub.h, survival.h), ubKind (ub_rank.h:71), misRow (ub_score.h:122); 0x684 is discFlags / ubFlags.
-- sys/save.h:77, 80: unk208 and unk77C are ubFlags and rank in the menu views; unk20C ("a capacity, guess") is missionPages.
 - gProgress +0x00 `language` is a reading (it picks the story text file set and is added to HUD file 6).
 - McCardIconSys.unk4 / unk8 -> reserved1 / reserved2 rests on the agent's memory of Sony's sceMcIconSys, not on the repo.
 
 Group 11 (eft_water_part2.h .. option.h; stage, HUD, object renderer, menu overlay):
-- dc_password_replay.h:95: ZaChrEntry.slots at +0x0E is baseLevel in ChrTblEntry and VChrEntry.
-- evo_z.h:124 against evo_z_items.h:165: +0xB0 of one work is `bg` in UEvoZ and chipTex in EvoZ; +0x1A64 `fits` has two opposite comments.
-- history_result.c:59 still says "BattleResult.unk44" (dragonBallFound).
-- The 0x3C-byte blocks DcList.unkC44, DcMenu.unk88, DcPassView.unk17C, Option.unk1B0 are only passed as a fourth argument MsgWin_Init does not take.
 - Relocated but never read: StgTimer.unk4, StgColZone.unk10, StgOctNode.unk00 / StgMCell.unk0.
-
-Group 13 (movie.h .. shen_scene.c; sys, ui, and the structures local to C files):
-- Locals named unk… (not fields): battle_load.c:652 unk1C (anim1Chara), btl_char_fx_1.c:173 unkA24 (area), btl_char_cam.c:958-959 and
-  1028-1033, btl_obj.c:569, 571, eft_char_parts.c:272-273, eft_ribbon.c:674, 676, char_select.c:1560, mission_select.c:52-53,
-  survival_select.c:26-27.
-- src/battle/eft_burst.c defines EftView twice (lines 65 and 1135).
-- menu_support.h:101 ChrTblEntry.baseLevel (+0x0E), VChrEntry.baseLevel (evo_z_items.h:78), against ZaChrEntry.slots: PassChk_IsValid checks
-  slots + extraSlots <= 7 and DcPass_Decode stores extraSlots into rec.level: the saved "level" looks like extra item slots and "baseLevel"
-  like the base slot count. To be reconciled.
-- eft_link_2.h:165: EftWLinkArg.frame (+0x38): the only caller (eft_sweep.c:397) passes the texture index it gives EftPart10Arg.texIdxA.
-- eft_obj_tech.h:167: EftKCamArg.pack (+0) is `anim` in EftCamArg (eft_core.h:210).
-- hud_combo.c:83 skillScript against pause_menu.c:50 skillText for object +0xBC (text entry 0x2D + language: skillText fits).
-- duel.h:93 `versus` against `players` (team_select.h:76, char_select.h:125) for progress +0x620.
-- menu_support.h:200: MenuUtilProgress.team[7] of ProgressTeam at +0x69C are replay slots (ReplaySlot replay[], McFlowSlotInfo slot[8]): the
-  count differs (7 against 8).
-- ub.h:132 and ub_rank.h:100 still call save +0x208 unk208 (ubFlags elsewhere). eft_zap.h:122, 124: EftZapArg.unk38 / unk40 are texIdx / type.
-- docs/systems/save_data.md:22 and menu_overlay.md:795 say save +0x1694 / +0x1698 are unknown: the camera distance preset and camera shake off.
-- sys/save.h:63: SaveRec.unk0[0x14] hides u16 item[8] and a word at +0x10 (ZSaveRec in dc.h:81).
-- Type differences behind a name: McCardInfo.unk20 (s32 / void *buf), BObjCommon.unk00 (s32 / void *boot), EftFlashArg.unk14 (s32 / f32 hold),
-  HudPromptObj.unkBC (s32 / pointer), EftArg12.unk40 (a u8[1] array).
 
 Group 20 (names pass 3: engine, menu, effects / stages, battle; lists in docs/names/fields/group20_*.tsv):
 - The compiler's output can depend on declarations a file does not use: declaring the survival record type
@@ -162,12 +113,6 @@ Group 20 (names pass 3: engine, menu, effects / stages, battle; lists in docs/na
   drawFlags (s32 over ObjDrawPart's u16 flags + u16), ObjDrawPkt.texRegHi, DemoCamAnim.extraData, the
   TextBox draw* fields (0x50..0x8B is a TextBoxDraw; replacing the flat fields by `TextBoxDraw draw` would be
   cleaner), Num_DrawEx parent / child (with child NULL, parent is the format of the digit clips themselves).
-- Types the new names show to be wrong (not changed): StgFxRes.count0..2 are counts typed void * (their getters
-  BtlStage_GetFxResA / B / C return void *); EftHStartArg.scale is s32, f32 at the sender; EftKGroup.parts /
-  EftOGroup.parts / EftJGroup.parts are s32 for an EftSetDef *; EftWaterView.tex[].image is a u64.
-- Function names left: EftRibbon_SetUnkD8 sets the node (EftRibbon_SetNode); BtlStage_GetFxResA / B / C / A2 / B2 /
-  C2 return count0 / list0 ...; BtlSkill_GetShotUnk30 / BtlSuper_GetShotUnk6C return the shot scale;
-  BtlSkill_GetUnk14 the clash power; BtlParam_GetUnkC7Scale.
 - Views that should be replaced by the real structure: TextBoxClipProp (FlashProp), DialogFlash (Flash), the ui
   Flash view (sys/flash.h Flash).
 - Reported, not changed (would change what the compiler sees): a possible argument swap in an EftPrim_DrawTriangle
