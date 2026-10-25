@@ -101,20 +101,7 @@ typedef struct BtlActBGauge {
 } BtlActBGauge;
 
 /* Latched attack parameters (chr + 0xCF8); BtlActAttack in btl_char_action.h. */
-typedef struct BtlActBAttack {
-    /* 0x00 */ s32 flags;      /* 0x40 end the camera cut on contact, 0x80 raise flag 0xCD, 0x400 end in action 0xC */
-    /* 0x04 */ s16 motion[2];  /* one animation per part */
-    /* 0x08 */ s8 parts;
-    /* 0x09 */ s8 level;       /* 1..3: effect request 0xD at the start */
-    /* 0x0A */ s8 cut;         /* camera cut, < 0 = none */
-    /* 0x0B */ s8 follow[2];
-    /* 0x0D */ u8 padD[3];
-    /* 0x10 */ f32 rate;       /* animation step = rate * 2 while a further part follows */
-    /* 0x14 */ f32 cancelAt;
-    /* 0x18 */ f32 leadTime;
-    /* 0x1C */ f32 speed;      /* advance speed, metres per frame (0 = stand still) */
-    /* 0x20 */ s32 chained;
-} BtlActBAttack; /* size 0x24 */
+typedef BtlFighterAttack BtlActBAttack;
 
 /* The fighter's battle object (BtlChar_GetObj). */
 typedef struct BtlActBObjSub {
@@ -128,35 +115,7 @@ typedef struct BtlActBObj {
 } BtlActBObj;
 
 /* Fighter (0x1600 bytes). */
-typedef struct BtlActBChr {
-    /* 0x0000 */ s32 player;        /* passed to BtlEvent_Raise by action 0xD8 */
-    /* 0x0004 */ s32 pad;
-    /* 0x0008 */ s32 side;
-    /* 0x000C */ s32 objId;
-    /* 0x0010 */ u8 unk10[0x3D0 - 0x10];
-    /* 0x03D0 */ s32 work[0x14];    /* per-action scratch, zeroed when an action starts; uses are listed per handler
-                                       in btl_act_b.c ([0] bits, [1] done, [2] counter, [3] / [4] counters, [6] float) */
-    /* 0x0420 */ u8 unk420[0x964 - 0x420];
-    /* 0x0964 */ s32 actionFrame;   /* frames spent in the current action */
-    /* 0x0968 */ u8 unk968[0xCF8 - 0x968];
-    /* 0x0CF8 */ BtlActBAttack attack;
-    /* 0x0D1C */ u8 unkD1C[0xD68 - 0xD1C];
-    /* 0x0D68 */ s32 dashCount;        /* > 0: actions 0x6B..0x6F request camera cut 0x20 */
-    /* 0x0D6C */ u8 unkD6C[0xD78 - 0xD6C];
-    /* 0x0D78 */ f32 charge;        /* set to 1.0 every frame by the attack handler and by action 0x6A */
-    /* 0x0D7C */ u8 unkD7C[0xFB8 - 0xD7C];
-    /* 0x0FB8 */ s32 animCycle;     /* stagger animation variant counter (BtlActB_NextVariant) */
-    /* 0x0FBC */ u8 unkFBC[0xFC8 - 0xFBC];
-    /* 0x0FC8 */ f32 reactScale;        /* reaction strength 0..1 (inferred): scales launch speed, knock-back time and
-                                       how much mashing helps */
-    /* 0x0FCC */ u8 unkFCC[0xFE0 - 0xFCC];
-    /* 0x0FE0 */ s32 stunTimer;        /* countdown; > 0 = action 0xE0 */
-    /* 0x0FE4 */ u8 unkFE4[0xFF0 - 0xFE4];
-    /* 0x0FF0 */ s32 unkFF0;        /* countdown, set to 15 when a stagger action is left */
-    /* 0x0FF4 */ u8 unkFF4[0x1000 - 0xFF4];
-    /* 0x1000 */ s32 mashLeft;       /* presses still owed before a downed fighter may act, while gauge +0x28 is set */
-    /* 0x1004 */ u8 unk1004[0x1600 - 0x1004];
-} BtlActBChr; /* size 0x1600 */
+typedef BtlFighter BtlActBChr;
 
 /* Helpers other slices call. */
 s32 BtlActB_NextVariant(BtlActBChr *chr, s32 n);

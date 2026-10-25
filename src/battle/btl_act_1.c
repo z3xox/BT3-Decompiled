@@ -2525,9 +2525,9 @@ s32 BtlActB_NextVariant(BtlActBChr *chr, s32 n) {
     if (n < 2) {
         return 0;
     }
-    chr->animCycle++;
-    chr->animCycle %= n;
-    return chr->animCycle;
+    chr->react.animCycle++;
+    chr->react.animCycle %= n;
+    return chr->react.animCycle;
 }
 
 /* Flags every damage action raises each frame: 0xD5, 0x95, 0x96, and flight mode (0xE) while in water (flag 0x11). */
@@ -2566,7 +2566,7 @@ void BtlActB_UpdateMashRate(BtlActBChr *chr, f32 *rate, s32 scaled) {
 
     if (scaled) {
         if (BtlAnim_GetProgress(chr) > 0.2f) {
-            add = (1.0f - chr->reactScale) * 0.5f + 0.5f;
+            add = (1.0f - chr->react.scale) * 0.5f + 0.5f;
         }
     }
     target = add * 2.0f;
@@ -2690,7 +2690,7 @@ s32 BtlAct_HitStaggerHandler(BtlActBChr *chr, s32 phase) {
     }
     if (phase == 3) {
         BtlChar_SetFlag(chr, 0x33);
-        chr->unkFF0 = 15;
+        chr->react.unk40 = 15;
     }
 }
 
@@ -2747,7 +2747,7 @@ s32 BtlAct_ActionCBtoCC(BtlActBChr *chr, s32 phase) {
         }
     }
     if (phase == 3) {
-        chr->unkFF0 = 15;
+        chr->react.unk40 = 15;
     }
 }
 
@@ -2835,7 +2835,7 @@ s32 BtlAct_LaunchedHandler(BtlActBChr *chr, s32 phase) {
             chr->work[0] |= 1;
         }
         BtlAnim_Play(chr, 0xDA, 0.0f);
-        BtlChar_GetPos(chr)->fallSpeed = (chr->reactScale * 0.3f + 0.7f) * -BTL_KMH(1200.0f);
+        BtlChar_GetPos(chr)->fallSpeed = (chr->react.scale * 0.3f + 0.7f) * -BTL_KMH(1200.0f);
         BtlChar_ClearFlag(chr, 0xE);
     }
     if (phase == 1) {
@@ -3064,7 +3064,7 @@ s32 BtlAct_KnockBackHandler(BtlActBChr *chr, s32 phase) {
 
     if (phase == 0) {
         BtlAnim_Play(chr, BtlAct_IsAirMotion(chr, 1) ? 0xC0 : 0xBD, 0.0f);
-        *timer = chr->reactScale * 15.0f;
+        *timer = chr->react.scale * 15.0f;
         if (BtlChar_IsStage4Or27()) {
             *timer = *timer * (1.0f - BtlMember_GetHealthRatio(chr));
         }
@@ -3474,7 +3474,7 @@ s32 BtlAct_LieDownHandler(BtlActBChr *chr, s32 phase) {
                 }
             }
         }
-        if (chr->stunTimer > 0) {
+        if (chr->react.stunTimer > 0) {
             BtlAct_Request(chr, 0xE0);
         }
     }
