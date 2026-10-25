@@ -2,6 +2,7 @@
 #define BATTLE_BTL_CAPI_A_H
 
 #include "types.h"
+#include "battle/btl_fighter.h"
 #include "sys/math3d.h"
 
 /*
@@ -21,55 +22,10 @@
 
 /* Pose block (fighter +0x10, what BtlChar_GetPos returns). Same layout as BtlMovePose in btl_char_move.h, where
    the writers are. */
-typedef struct BtlCapiPose {
-    /* 0x00 */ Vec4 pos;       /* world position */
-    /* 0x10 */ Vec4 rot;       /* model rotation, y = model yaw */
-    /* 0x20 */ Vec4 dispOfs;   /* display offset rebuilt every frame: hover bob (y) and shake (x, z) */
-    /* 0x30 */ Vec4 vel;       /* movement of the previous frame between snapshots 0 and 1 */
-    /* 0x40 */ Vec4 move;      /* whole movement of the previous frame */
-    /* 0x50 */ Vec4 rootPos;   /* root motion position */
-    /* 0x60 */ Vec4 rootRot;   /* root motion rotation */
-    /* 0x70 */ Vec4 impulse;   /* knock-back velocity */
-    /* 0x80 */ Vec4 dir;       /* unit direction of travel */
-    /* 0x90 */ f32 pitch;      /* heading pitch */
-    /* 0x94 */ f32 yaw;        /* heading yaw */
-    /* 0x98 */ f32 speed;      /* per frame along dir */
-    /* 0x9C */ f32 fallSpeed;  /* vertical speed, positive = down */
-    /* 0xA0 */ u8 unkA0[0xB0 - 0xA0];
-    /* 0xB0 */ Vec4 ground;    /* ground point below the fighter */
-    /* 0xC0 */ u8 unkC0[0xF0 - 0xC0];
-} BtlCapiPose; /* size 0xF0 */
+typedef BtlFighterPose BtlCapiPose;
 
 /* Fighter (0x1600 bytes). */
-typedef struct BtlCapiChr {
-    /* 0x0000 */ s32 player;        /* roster index */
-    /* 0x0004 */ s32 pad;
-    /* 0x0008 */ s32 side;
-    /* 0x000C */ s32 objId;         /* battle object id */
-    /* 0x0010 */ BtlCapiPose pose;
-    /* 0x0100 */ u8 unk100[0xD78 - 0x100];
-    /* 0x0D78 */ f32 charge;        /* 0..1: how far the current attack was charged (btl_param.h) */
-    /* 0x0D7C */ u8 unkD7C[0xDEC - 0xD7C];
-    /* 0x0DEC */ f32 blastCharge;   /* 0..1: progress of the charged ki blast (btl_act_2_part2.h) */
-    /* 0x0DF0 */ u8 unkDF0[0xE90 - 0xDF0];
-    /* 0x0E90 */ s32 thrTech;       /* +0xE90 is the throw / rush description (BtlCollThrow in btl_char_coll.h) */
-    /* 0x0E94 */ s32 thrAtkSide;    /* player index of the attacker */
-    /* 0x0E98 */ u8 unkE98[0xEA0 - 0xE98];
-    /* 0x0EA0 */ s32 thrUnk10;      /* attacker: the marked rush step + 1 */
-    /* 0x0EA4 */ u8 unkEA4[0xEAC - 0xEA4];
-    /* 0x0EAC */ s32 thrUnk1C;      /* victim: the marked rush step, or -1 */
-    /* 0x0EB0 */ u8 unkEB0[0xED8 - 0xEB0];
-    /* 0x0ED8 */ s32 thrUnk48;      /* technique bit 0x2000 and attacker gauge word +0x20 == 0 */
-    /* 0x0EDC */ s32 thrUnk4C;      /* technique bit 0x80000 and victim gauge word +0x20 == 0 */
-    /* 0x0EE0 */ u8 unkEE0[0xFFC - 0xEE0];
-    /* 0x0FFC */ s32 blindLevel;        /* follows twice the countdown at +0xFF8 by 15 per frame (BtlAct_UpdateTimers);
-                                       BtlCharApi_GetBlindRatio gives it as a ratio of 90 */
-    /* 0x1000 */ u8 unk1000[0x1330 - 0x1000];
-    /* 0x1330 */ s32 partnerOn;     /* the fighter has a partner object (a second character model) */
-    /* 0x1334 */ u8 unk1334[0x1338 - 0x1334];
-    /* 0x1338 */ s32 partnerObjId;  /* its battle object id */
-    /* 0x133C */ u8 unk133C[0x1600 - 0x133C];
-} BtlCapiChr; /* size 0x1600 */
+typedef BtlFighter BtlCapiChr;
 
 /* General parameters of the character (object +0x91C); BtlParam / BtlTechBParam in btl_param.h / btl_tech.h. */
 typedef struct BtlCapiParam {

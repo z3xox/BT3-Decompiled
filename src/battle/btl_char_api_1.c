@@ -278,10 +278,10 @@ s32 BtlCharApi_GetPartnerObjId(s32 objId) {
     if (chr == NULL) {
         return objId;
     }
-    if (chr->partnerOn == 0) {
+    if (chr->partner.active == 0) {
         return objId;
     }
-    return chr->partnerObjId;
+    return chr->partner.objId;
 }
 
 /* Pointer n (0..4) of the five at +0x9C of fighter `player`'s object. */
@@ -502,7 +502,7 @@ f32 BtlCharApi_GetGroundY(s32 objId) {
     BtlCapiChr *chr = BtlChar_FindByObjId(objId);
 
     if (chr != NULL) {
-        return BtlChar_GetPos(chr)->ground.y;
+        return BtlChar_GetPos(chr)->groundPos.y;
     }
     return 0.0f;
 }
@@ -830,13 +830,13 @@ s32 BtlCharApi_GetRushFinishPhase(s32 objId) {
     if (!BtlCharApi_IsInRushSequence(objId)) {
         return -1;
     }
-    if (chr->player == chr->thrAtkSide) {
-        if (chr->thrUnk48 != 0) {
-            level = chr->thrUnk10 - 1;
+    if (chr->player == chr->thr.atkSide) {
+        if (chr->thr.atkFormChange != 0) {
+            level = chr->thr.stepCount - 1;
         }
     } else {
-        if (chr->thrUnk4C != 0) {
-            level = chr->thrUnk1C;
+        if (chr->thr.defFormChange != 0) {
+            level = chr->thr.defFormStep;
         }
     }
     if (level < 0) {
