@@ -2,6 +2,7 @@
 #define BATTLE_BTL_TECH_B_H
 
 #include "types.h"
+#include "battle/btl_fighter.h"
 #include "sys/math3d.h"
 
 /*
@@ -272,18 +273,7 @@ typedef struct BtlTechBGauge {
 } BtlTechBGauge;
 
 /* Fighter (0x1600 bytes). */
-typedef struct BtlTechBChr {
-    /* 0x0000 */ u8 unk0[0xDEC];
-    /* 0x0DEC */ f32 kiBlastCharge;  /* 0..1: charge of the ki blast being fired */
-    /* 0x0DF0 */ u8 unkDF0[0xE44 - 0xDF0];
-    /* 0x0E44 */ f32 techCharge;     /* 0..1: charge of the technique */
-    /* 0x0E48 */ u8 unkE48[0xE5C - 0xE48];
-    /* 0x0E5C */ s32 skillCount3;         /* 0..3 (skill 0x41 raises it): scales technique 0x268 */
-    /* 0x0E60 */ s32 unkE60;         /* 0..5: scales technique 0x2CD by 20 % each */
-    /* 0x0E64 */ u8 unkE64[0x15E8 - 0xE64];
-    /* 0x15E8 */ BtlTechPlaceTbl *place[3]; /* by slot - 2: tables inside the object's three files */
-    /* 0x15F4 */ u8 unk15F4[0x1600 - 0x15F4];
-} BtlTechBChr; /* size 0x1600 */
+typedef BtlFighter BtlTechBChr;
 
 /* ---- general parameters ---- */
 f32 BtlParam_GetUnk5C(BtlTechBChr *chr);

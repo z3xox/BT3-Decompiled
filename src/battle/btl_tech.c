@@ -357,10 +357,10 @@ s32 BtlKiBlast_GetCurrentKind(BtlTechBChr *chr) {
     case 0x7C:
         return 1;
     case 0x7D:
-        if (chr->kiBlastCharge < lo) {
+        if (chr->blastCharge < lo) {
             return 1;
         }
-        if (chr->kiBlastCharge < hi) {
+        if (chr->blastCharge < hi) {
             return 2;
         }
         return 3;
@@ -378,10 +378,10 @@ s32 BtlKiBlast_GetCurrentKind(BtlTechBChr *chr) {
     case 0x86:
     case 0x89:
     case 0x8C:
-        if (chr->kiBlastCharge < lo) {
+        if (chr->blastCharge < lo) {
             return 5;
         }
-        if (chr->kiBlastCharge < hi) {
+        if (chr->blastCharge < hi) {
             return 6;
         }
         return 7;
@@ -391,10 +391,10 @@ s32 BtlKiBlast_GetCurrentKind(BtlTechBChr *chr) {
     case 0x8E:
         return 9;
     case 0x8F:
-        if (chr->kiBlastCharge < lo) {
+        if (chr->blastCharge < lo) {
             return 9;
         }
-        if (chr->kiBlastCharge < hi) {
+        if (chr->blastCharge < hi) {
             return 10;
         }
         return 11;
@@ -1381,7 +1381,7 @@ s32 BtlSuper_GetDamage(BtlTechBChr *chr, s32 slot, s32 guard, s32 total) {
         damage = BtlUtil_RoundUp(damage, 10);
         break;
     case 0x2CD:
-        damage = BtlUtil_RoundUp(damage + damage * chr->unkE60 / 5, 10);
+        damage = BtlUtil_RoundUp(damage + damage * chr->boostStock / 5, 10);
         break;
     case 0x2D5:
         damage = BtlUtil_RoundUp(damage * BtlOpp_GetUnk20F318(chr), 10);
