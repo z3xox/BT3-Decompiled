@@ -964,7 +964,7 @@ void BtlChars_CheckRoundReset(void) {
 void BtlChar_ApplyBonusRequests(BtlFighter *chr) {
     s32 i;
 
-    for (i = 0; i < BTL_CHR_MEMBER_MAX; i++) {
+    for (i = 0; i < BTL_MEMBER_SLOTS; i++) {
         if (BtlChar_TestFlag(chr, i + 0x103)) {
             BtlChar_CopyMemberBonus(chr, i);
             BtlChar_ClearFlag(chr, i + 0x103);
@@ -976,7 +976,7 @@ void BtlChar_ApplyBonusRequests(BtlFighter *chr) {
 void BtlChar_ApplyAbilityRequests(BtlFighter *chr) {
     s32 i;
 
-    for (i = 0; i < BTL_CHR_MEMBER_MAX; i++) {
+    for (i = 0; i < BTL_MEMBER_SLOTS; i++) {
         if (BtlChar_TestFlag(chr, i + 0x108)) {
             BtlChar_CopyMemberAbility(chr, i);
             BtlChar_ClearFlag(chr, i + 0x108);

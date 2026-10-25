@@ -14,8 +14,6 @@
  * ones this file reads or writes. All names are guesses unless the comment says how they are known.
  */
 
-#define BTL_CHR_MEMBER_MAX 5
-
 /* Sequence stage passed to BtlChar_SetStage (stored in the byte at fighter + 0x1084): which phase the fighter is in. */
 #define BTL_CHR_STAGE_RESET    1
 #define BTL_CHR_STAGE_SAMPLE   2
