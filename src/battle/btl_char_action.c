@@ -269,7 +269,7 @@ s32 BtlAct_GetMotionLevel(BtlActChr *chr, s32 motion) {
 
 /* Returns pose + 0xB4 (ground height below the fighter). */
 f32 BtlAct_GetGroundY(BtlActChr *chr) {
-    return BtlChar_GetPos(chr)->groundY;
+    return BtlChar_GetPos(chr)->groundPos.y;
 }
 
 /* Height above the ground (+Y is down). */
@@ -309,7 +309,7 @@ f32 BtlAct_GetFramesToGround(BtlActChr *chr) {
     if (BtlChar_TestFlag(chr, 0xF)) {
         return 0.0f;
     }
-    fall = BtlChar_GetPos(chr)->moveY;
+    fall = BtlChar_GetPos(chr)->move.y;
     if (fall < 0.001f) {
         return 1000000.0f;
     }
@@ -327,14 +327,14 @@ f32 BtlAct_GetRotYRelCam(BtlActChr *chr) {
 
 /* Facing of the fighter relative to its camera yaw. */
 f32 BtlAct_GetFacingRelCam(BtlActChr *chr) {
-    return BtlUtil_WrapAngle(BtlChar_GetPos(chr)->facing - chr->cam.yaw);
+    return BtlUtil_WrapAngle(BtlChar_GetPos(chr)->yaw - chr->cam.yaw);
 }
 
 /* Direction of travel relative to the camera yaw. */
 f32 BtlAct_GetVelDirRelCam(BtlActChr *chr) {
     BtlActPose *pose = BtlChar_GetPos(chr);
 
-    return BtlUtil_WrapAngle(atan2f(pose->vel.x, pose->vel.z) - chr->cam.yaw);
+    return BtlUtil_WrapAngle(atan2f(pose->dir.x, pose->dir.z) - chr->cam.yaw);
 }
 
 /* In lock-on, within range of the opponent: scales the speed down by distance unless moving along the line to it. */
@@ -354,7 +354,7 @@ f32 BtlAct_ScaleSpeedByApproach(BtlActChr *chr, f32 speed, f32 range) {
         dist = 0.01f;
     }
     if (dist < range) {
-        Vec3_Normalize(&dir, &BtlChar_GetPos(chr)->vel);
+        Vec3_Normalize(&dir, &BtlChar_GetPos(chr)->dir);
         dir.y = 0.0f;
         along = __builtin_fabsf(Vec3_Dot(&dir, &to) / dist);
         speed = speed * along + speed * (1.0f - along) * (dist / range);

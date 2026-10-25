@@ -218,10 +218,7 @@ typedef struct BtlTechBObj {
 } BtlTechBObj;
 
 /* Pose block (fighter + 0x10). */
-typedef struct BtlTechBPose {
-    /* 0x00 */ u8 unk0[0xAC];
-    /* 0xAC */ f32 unkAC;        /* multiplies speeds 4, 5 and turn rate 0 */
-} BtlTechBPose;
+typedef BtlFighterPose BtlTechBPose;
 
 /* The shot behind a hit record (BtlCollAtk in btl_char_coll.h). */
 typedef struct BtlTechBShot {

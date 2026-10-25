@@ -18,17 +18,7 @@
  */
 
 /* Pose block (BtlChar_GetPos, fighter + 0x10). */
-typedef struct BtlActHPose {
-    /* 0x00 */ Vec4 pos;
-    /* 0x10 */ Vec4 rot;       /* y = yaw */
-    /* 0x20 */ u8 unk20[0x60 - 0x20];
-    /* 0x60 */ Vec4 rootRot;   /* animation root rotation */
-    /* 0x70 */ u8 unk70[0x90 - 0x70];
-    /* 0x90 */ f32 pitch;      /* heading pitch: second argument of BtlMove_SetHeading as kept in the pose */
-    /* 0x94 */ f32 yaw;     /* heading yaw (first argument of BtlMove_SetHeading; `yaw` in the other pose views) */
-    /* 0x98 */ f32 speed;      /* zeroed when a change action starts */
-    /* 0x9C */ f32 fallSpeed;      /* zeroed when a change action starts */
-} BtlActHPose;
+typedef BtlFighterPose BtlActHPose;
 
 /* What the last hit does to this fighter (fighter + 0xFB0; HitReact in btl_char_hit.h). */
 typedef BtlFighterReact BtlActHReact;
@@ -392,12 +382,7 @@ s32 BtlAct_SwitchLeave(BtlActHChr *chr, s32 phase);
 typedef BtlFighter BtlActIChr;
 
 /* Pose block (BtlChar_GetPos). */
-typedef struct BtlActIPose {
-    /* 0x00 */ Vec4 pos;
-    /* 0x10 */ u8 unk10[0x98 - 0x10];
-    /* 0x98 */ f32 speed;
-    /* 0x9C */ f32 fallSpeed;
-} BtlActIPose;
+typedef BtlFighterPose BtlActIPose;
 
 /* Battle object (BtlChar_GetObj). */
 typedef struct BtlActIObj {

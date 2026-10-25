@@ -77,13 +77,7 @@ typedef struct BtlMemberObj {
 } BtlMemberObj;
 
 /* Pose block at fighter + 0x10 (BtlChar_GetPos). */
-typedef struct BtlMemberPose {
-    /* 0x00 */ Vec4 pos;
-    /* 0x10 */ f32 rotX;
-    /* 0x14 */ f32 rotY;      /* an angle */
-    /* 0x18 */ u8 unk18[0x94 - 0x18];
-    /* 0x94 */ f32 yaw;        /* facing (fighter + 0xA4) */
-} BtlMemberPose;
+typedef BtlFighterPose BtlMemberPose;
 
 /* Request built by BtlChar_SpawnFxBits3C for EftShot_Request. */
 typedef struct BtlMemberAuraReq {

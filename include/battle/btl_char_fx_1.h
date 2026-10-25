@@ -12,21 +12,7 @@
  */
 
 /* The pose block at fighter + 0x10 (BtlChar_GetPos returns it). Offsets in [] are fighter offsets. */
-typedef struct FxPose {
-    /* 0x00 [0x010] */ Vec4 pos;      /* world position */
-    /* 0x10 [0x020] */ Vec4 rot;      /* rotation; .y is the yaw the effects are aimed along */
-    /* 0x20 [0x030] */ u8 unk20[0x40 - 0x20];
-    /* 0x40 [0x050] */ Vec4 vel;      /* velocity: its length is compared with speed limits, .y scales the splash */
-    /* 0x50 [0x060] */ u8 unk50[0x80 - 0x50];
-    /* 0x80 [0x090] */ Vec4 dir;    /* a vector every "flash" effect gets as its second vector */
-    /* 0x90 [0x0A0] */ f32 pitch;
-    /* 0x94 [0x0A4] */ f32 yaw;       /* facing */
-    /* 0x98 [0x0A8] */ f32 speed;     /* the pose's speed along dir: |vel| / speed > 0.5 starts the fast-move effect */
-    /* 0x9C [0x0AC] */ u8 unk9C[0xB0 - 0x9C];
-    /* 0xB0 [0x0C0] */ Vec4 ground;    /* ground point under the fighter; .y is compared with the water level */
-    /* 0xC0 [0x0D0] */ Vec4 groundNormal;    /* passed with ground to the ground dust (the ground normal: inferred) */
-    /* 0xD0 [0x0E0] */ u32 groundFlags;     /* state bits; any of 0x30000065 cancels the ground effects */
-} FxPose;
+typedef BtlFighterPose FxPose;
 
 /* What BtlMember_GetActiveGauge returns: the active member's gauge block. */
 typedef struct FxGauge {

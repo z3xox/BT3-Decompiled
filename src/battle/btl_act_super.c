@@ -1937,7 +1937,7 @@ void BtlAct_SuperRushDashHandler(ActGChr *chr, s32 phase) {
             case 0x14C: {
                 s32 stop = 0;
 
-                if (Vec3_Length(&pose->moved) < BTL_KMH(100.0f)) {
+                if (Vec3_Length(&pose->move) < BTL_KMH(100.0f)) {
                     if (++*still >= 16) {
                         pose->speed = 0.0f;
                         stop = 1;

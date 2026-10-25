@@ -106,17 +106,7 @@ typedef struct BtlClashPath {
 } BtlClashPath;
 
 /* What BtlChar_GetPos returns: the fighter's pose block (fighter +0x10). */
-typedef struct BtlFlagPose {
-    /* 0x00 [0x10] */ Vec4 pos;
-    /* 0x10 [0x20] */ Vec4 rot;
-    /* 0x20 [0x30] */ Vec4 dispOfs;
-    /* 0x30 [0x40] */ Vec4 unk30;
-    /* 0x40 [0x50] */ Vec4 vel;   /* movement per second (inferred from BtlOpp_GetClosingTime) */
-    /* 0x50 [0x60] */ u8 unk50[0x64 - 0x50];
-    /* 0x64 [0x74] */ f32 rootYaw;  /* yaw offset added to rot.y */
-    /* 0x68 [0x78] */ u8 unk68[0x94 - 0x68];
-    /* 0x94 [0xA4] */ f32 yaw;    /* facing */
-} BtlFlagPose;
+typedef BtlFighterPose BtlFlagPose;
 
 /* Fighter (0x1600 bytes). */
 typedef BtlFighter BtlFlagChr;

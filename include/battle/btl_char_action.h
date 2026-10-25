@@ -29,23 +29,7 @@
 typedef s32 (*BtlActHandler)(BtlFighter *chr, s32 phase);
 
 /* Pose block (chr + 0x10, what BtlChar_GetPos returns). */
-typedef struct BtlActPose {
-    /* 0x00 */ Vec4 pos;
-    /* 0x10 */ Vec4 rot;       /* y = yaw */
-    /* 0x20 */ u8 unk20[0x44 - 0x20];
-    /* 0x44 */ f32 moveY;      /* divides the height in BtlAct_GetFramesToGround: a fall pitch */
-    /* 0x48 */ u8 unk48[0x70 - 0x48];
-    /* 0x70 */ Vec4 impulse;     /* zeroed by action 4 */
-    /* 0x80 */ Vec4 vel;       /* direction of travel (x, z used with atan2f) */
-    /* 0x90 */ f32 pitch;
-    /* 0x94 */ f32 facing;     /* yaw the fighter faces */
-    /* 0x98 */ f32 speed;
-    /* 0x9C */ f32 fallSpeed;
-    /* 0xA0 */ u8 unkA0[0xAC - 0xA0];
-    /* 0xAC */ f32 dashBoost;      /* forced to 1.0 except in actions 0xF, 0x3E, 0x58, 0xB0, 0xB1 (kept >= 1.0) */
-    /* 0xB0 */ f32 groundX;
-    /* 0xB4 */ f32 groundY;    /* height of the ground below (inferred) */
-} BtlActPose;
+typedef BtlFighterPose BtlActPose;
 
 /* Attack parameters built from an attack table record (0x24 bytes; pending at chr + 0xD1C, latched at + 0xCF8). */
 typedef BtlFighterAttack BtlActAttack;

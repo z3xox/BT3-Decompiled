@@ -19,13 +19,7 @@
 #define BTL_SUPER_TIMEOUT       150  /* frames after which the handlers raise those three flags themselves */
 
 /* Pose block (chr + 0x10, BtlChar_GetPos). */
-typedef struct BtlSuperPose {
-    /* 0x00 */ Vec4 pos;
-    /* 0x10 */ Vec4 rot;       /* rot.y = model yaw */
-    /* 0x20 */ u8 unk20[0x98 - 0x20];
-    /* 0x98 */ f32 speed;      /* zeroed with velY when a technique starts */
-    /* 0x9C */ f32 fallSpeed;       /* vertical speed, positive = down (`fallSpeed` in the other pose views, ActGPose included) */
-} BtlSuperPose;
+typedef BtlFighterPose BtlSuperPose;
 
 /* Animation data of one layer of the object. */
 typedef struct BtlSuperAnimData {
@@ -95,21 +89,7 @@ void BtlAct_SuperQuickLongBeamHandler(BtlSuperChr *chr, s32 phase);
  */
 
 /* Pose block of a fighter (chr + 0x10, BtlChar_GetPos). Same layout as BtlMovePose; only what this file reads. */
-typedef struct ActGPose {
-    /* 0x00 */ Vec4 pos;
-    /* 0x10 */ Vec4 rot;
-    /* 0x20 */ Vec4 dispOfs;
-    /* 0x30 */ Vec4 vel;
-    /* 0x40 */ Vec4 moved;      /* whole movement of the previous frame */
-    /* 0x50 */ Vec4 rootPos;
-    /* 0x60 */ Vec4 rootRot;
-    /* 0x70 */ Vec4 impulse;
-    /* 0x80 */ Vec4 dir;
-    /* 0x90 */ f32 pitch;       /* heading pitch */
-    /* 0x94 */ f32 yaw;         /* heading yaw */
-    /* 0x98 */ f32 speed;
-    /* 0x9C */ f32 fallSpeed;
-} ActGPose;
+typedef BtlFighterPose ActGPose;
 
 /* Rush / throw description shared by the two fighters (chr + 0xE90). Same layout as BtlCollThrow. */
 typedef BtlFighterThrow ActGThrow;

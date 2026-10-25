@@ -454,9 +454,9 @@ void BtlChar_SpawnHitFx(BtlMemberChr *chr) {
                 f32 d;
 
                 BtlCharApi_GetNodePos(chr->objId, BtlObjAnim_MaskToNode(hit), &req.pos);
-                fwd.x = Mathf_Sin(pose->rotY);
+                fwd.x = Mathf_Sin(pose->rot.y);
                 fwd.y = 0.0f;
-                fwd.z = Mathf_Cos(pose->rotY);
+                fwd.z = Mathf_Cos(pose->rot.y);
                 Vec4_Scale(&tmp, &fwd, 5.0f);
                 Vec4_Add(&point, &pose->pos, &tmp);
                 fwd.w = -Vec3_Dot(&fwd, &point);
@@ -760,7 +760,7 @@ void BtlFx_SpawnFastMoveFx(FxChr *chr) {
     if (BtlChar_TestFxBit(chr, 0xB)) {
         pose = BtlChar_GetPos(chr);
         if (pose->speed > 0.01f) {
-            if (Vec3_Length(&pose->vel) / pose->speed > 0.5f) {
+            if (Vec3_Length(&pose->move) / pose->speed > 0.5f) {
                 EftSpdLine_SpawnBodyTrails(chr->objId);
             }
         }
@@ -952,14 +952,14 @@ void BtlFx_UpdateGroundFx(FxChr *chr) {
         water = 0.0f;
         under = 0;
         if (BtlStage_GetWaterLevel(&water)) {
-            if (BtlChar_GetPos(chr)->ground.y > water) {
+            if (BtlChar_GetPos(chr)->groundPos.y > water) {
                 under = 1;
             }
         }
         if (under) {
             EftGndDust_SpawnBurst(chr->objId, 1.0f, 1.0f);
         } else {
-            EftGndDust_SpawnLanding(chr->objId, &BtlChar_GetPos(chr)->ground, &BtlChar_GetPos(chr)->groundNormal, 1.0f);
+            EftGndDust_SpawnLanding(chr->objId, (Vec4 *)&BtlChar_GetPos(chr)->groundPos, (Vec4 *)&BtlChar_GetPos(chr)->groundNrm, 1.0f);
         }
     }
     if (BtlChar_TestFxBit(chr, 0x31)) {
@@ -967,9 +967,9 @@ void BtlFx_UpdateGroundFx(FxChr *chr) {
     }
     if (BtlChar_TestFxBit(chr, 0x32)) {
         BtlCharApi_GetNodePos(chr->objId, 0xF, &a);
-        a.y = BtlChar_GetPos(chr)->ground.y;
+        a.y = BtlChar_GetPos(chr)->groundPos.y;
         BtlCharApi_GetNodePos(chr->objId, 0xB, &b);
-        b.y = BtlChar_GetPos(chr)->ground.y;
+        b.y = BtlChar_GetPos(chr)->groundPos.y;
         Fx_FootDust(chr->objId, &a, 1.0f);
         Fx_FootDust(chr->objId, &b, 1.0f);
     }
@@ -988,7 +988,7 @@ void BtlFx_UpdateWaterFx(FxChr *chr) {
                 pos.y = water;
                 pos.z = pose->pos.z;
                 pos.w = 1.0f;
-                EftWater_AddSplashFor(chr->objId, &pos, 0, BtlChar_GetPos(chr)->vel.y);
+                EftWater_AddSplashFor(chr->objId, &pos, 0, BtlChar_GetPos(chr)->move.y);
                 if (BtlChar_TestFlag(chr, 0x11)) {
                     BtlCharSnd_PlayCommon(chr, 0x3A);
                 } else {
@@ -1001,7 +1001,7 @@ void BtlFx_UpdateWaterFx(FxChr *chr) {
         }
     }
     if (BtlChar_TestFlag(chr, 0x12)) {
-        if (Vec3_Length(&pose->vel) > 6.4814806f) {
+        if (Vec3_Length(&pose->move) > 6.4814806f) {
             BtlChar_SetFxBit(chr, 0x19);
         }
     }

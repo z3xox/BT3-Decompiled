@@ -12,25 +12,7 @@
  */
 
 /* Pose block (chr + 0x10, what BtlChar_GetPos returns). */
-typedef struct BtlActCPose {
-    /* 0x00 */ Vec4 pos;
-    /* 0x10 */ Vec4 rot;
-    /* 0x20 */ u8 unk20[0x40 - 0x20];
-    /* 0x40 */ Vec4 move;      /* whole movement of the previous frame (`moved` in BtlActBPose); its length is the real speed */
-    /* 0x50 */ u8 unk50[0x70 - 0x50];
-    /* 0x70 */ Vec4 impulse;
-    /* 0x80 */ Vec4 dir;       /* unit direction of travel (`dir` in the other pose views) */
-    /* 0x90 */ f32 pitch;      /* heading pitch */
-    /* 0x94 */ f32 yaw;     /* heading yaw (`yaw` in the other pose views) */
-    /* 0x98 */ f32 speed;      /* along the travel direction, per frame */
-    /* 0x9C */ f32 fallSpeed;
-    /* 0xA0 */ f32 leanX;
-    /* 0xA4 */ f32 leanZ;
-    /* 0xA8 */ f32 bobPhase;
-    /* 0xAC */ f32 unkAC;
-    /* 0xB0 */ f32 groundX;
-    /* 0xB4 */ f32 groundY;
-} BtlActCPose;
+typedef BtlFighterPose BtlActCPose;
 
 /* Active member's gauge block (what BtlMember_GetActiveGauge returns). */
 typedef struct BtlActCGauge {
@@ -102,27 +84,7 @@ s32 BtlAct_DashChargedKiBlastHandler(BtlActCChr *chr, s32 phase);
  */
 
 /* Pose block (chr + 0x10, what BtlChar_GetPos returns); names as in btl_char_move.h. */
-typedef struct BtlActDPose {
-    /* 0x00 */ Vec4 pos;
-    /* 0x10 */ Vec4 rot;
-    /* 0x20 */ u8 unk20[0x40 - 0x20];
-    /* 0x40 */ Vec4 moved;     /* whole movement of the previous frame (btl_char_move.h); its length is the real speed */
-    /* 0x50 */ u8 unk50[0x80 - 0x50];
-    /* 0x80 */ Vec4 dir;       /* unit direction of travel */
-    /* 0x90 */ f32 pitch;      /* heading pitch */
-    /* 0x94 */ f32 yaw;        /* heading yaw */
-    /* 0x98 */ f32 speed;      /* along dir, per frame */
-    /* 0x9C */ f32 fallSpeed;  /* vertical speed, positive = down */
-    /* 0xA0 */ f32 leanX;
-    /* 0xA4 */ f32 leanZ;
-    /* 0xA8 */ f32 bobPhase;
-    /* 0xAC */ f32 unkAC;
-    /* 0xB0 */ f32 groundX;
-    /* 0xB4 */ f32 groundY;
-    /* 0xB8 */ u8 unkB8[0xD0 - 0xB8];
-    /* 0xD0 */ s32 groundFlags;      /* bit word: 0x40 blocks the landing of action 0x15; 0x40000000 without 0x01000000
-                                  keeps the fast descend going near the ground */
-} BtlActDPose;
+typedef BtlFighterPose BtlActDPose;
 
 /* Latched attack parameters (chr + 0xCF8), see BtlActAttack in btl_char_action.h. */
 typedef BtlFighterAttack BtlActDAttack;
@@ -183,18 +145,7 @@ s32 BtlAct_HomingDashHandler(BtlActDChr *chr, s32 phase);
  */
 
 /* Pose block (chr + 0x10, what BtlChar_GetPos returns). */
-typedef struct BtlActEPose {
-    /* 0x00 */ Vec4 pos;
-    /* 0x10 */ Vec4 rot;
-    /* 0x20 */ u8 unk20[0x40 - 0x20];
-    /* 0x40 */ Vec4 moved;     /* whole movement of the previous frame: its length is compared with a speed */
-    /* 0x50 */ u8 unk50[0x80 - 0x50];
-    /* 0x80 */ Vec4 vel;       /* unit direction of travel (`dir` in the other pose views) */
-    /* 0x90 */ f32 pitch;      /* heading pitch */
-    /* 0x94 */ f32 facing;     /* heading yaw (`yaw` in the other pose views) */
-    /* 0x98 */ f32 speed;      /* forward speed */
-    /* 0x9C */ f32 fallSpeed;  /* vertical speed, positive = down */
-} BtlActEPose;
+typedef BtlFighterPose BtlActEPose;
 
 /* Active member's gauge block (BtlMember_GetActiveGauge). */
 typedef struct BtlActEGauge {

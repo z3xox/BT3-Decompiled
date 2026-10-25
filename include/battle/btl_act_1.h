@@ -11,16 +11,7 @@
  */
 
 /* Pose block (chr + 0x10, what BtlChar_GetPos returns). */
-typedef struct BtlActAPose {
-    /* 0x00 */ Vec4 pos;
-    /* 0x10 */ Vec4 rot;
-    /* 0x20 */ u8 unk20[0x80 - 0x20];
-    /* 0x80 */ Vec4 dir;       /* unit travel direction */
-    /* 0x90 */ f32 pitch;      /* heading pitch */
-    /* 0x94 */ f32 yaw;        /* heading yaw */
-    /* 0x98 */ f32 speed;
-    /* 0x9C */ f32 vspeed;     /* vertical speed, positive = down */
-} BtlActAPose;
+typedef BtlFighterPose BtlActAPose;
 
 /* Latched attack parameters (chr + 0xCF8); same layout as BtlActAttack in btl_char_action.h. */
 typedef BtlFighterAttack BtlActAAttack;
@@ -73,26 +64,7 @@ s32 BtlAct_RushFinishHandler(BtlActAChr *chr, s32 phase);
  */
 
 /* Pose block (chr + 0x10, what BtlChar_GetPos returns); the same layout as BtlMovePose. */
-typedef struct BtlActBPose {
-    /* 0x00 */ Vec4 pos;
-    /* 0x10 */ Vec4 rot;       /* y = model yaw */
-    /* 0x20 */ Vec4 dispOffset;
-    /* 0x30 */ Vec4 velocity;     /* movement of the previous frame ("my velocity" in btl_char_move.h) */
-    /* 0x40 */ Vec4 moved;     /* whole movement of the previous frame: its length is the real speed */
-    /* 0x50 */ u8 unk50[0x70 - 0x50];
-    /* 0x70 */ Vec4 impulse;   /* knock-back velocity, metres per frame */
-    /* 0x80 */ Vec4 dir;       /* unit direction of travel */
-    /* 0x90 */ f32 pitch;      /* heading pitch, positive = up */
-    /* 0x94 */ f32 yaw;        /* heading yaw */
-    /* 0x98 */ f32 speed;      /* metres per frame along dir */
-    /* 0x9C */ f32 fallSpeed;  /* vertical speed, positive = down */
-    /* 0xA0 */ f32 leanX;
-    /* 0xA4 */ f32 leanZ;
-    /* 0xA8 */ u8 unkA8[0xB0 - 0xA8];
-    /* 0xB0 */ Vec4 ground;    /* ground point below the fighter */
-    /* 0xC0 */ Vec4 groundNormal;
-    /* 0xD0 */ s32 groundFlags; /* bit 0x40 with pos.y below BtlStage_GetBottom(): landed out of the arena (action 0xD9) */
-} BtlActBPose;
+typedef BtlFighterPose BtlActBPose;
 
 /* Active member's gauge block (BtlMember_GetActiveGauge). */
 typedef struct BtlActBGauge {

@@ -138,7 +138,7 @@ s32 BtlAct_WaitHandler(BtlActAChr *chr, s32 phase) {
         BtlChar_SetHeldFlag(chr, 5);
         BtlChar_SetFlag(chr, 0x29);
         BtlChar_GetPos(chr)->speed = 0.0f;
-        BtlChar_GetPos(chr)->vspeed = 0.0f;
+        BtlChar_GetPos(chr)->fallSpeed = 0.0f;
         BtlMove_TurnYaw(chr, 2, turn);
         BtlMove_TurnPitch(chr, 5, turn);
         BtlMove_TurnModelYaw(chr, turn, 1.0f);
@@ -1301,7 +1301,7 @@ s32 BtlAct_LiftStrikeHandler(BtlActAChr *chr, s32 phase) {
         BtlAnim_Play(chr, 0x6E, 0.15f);
         BtlChar_ClearFlag(chr, 0xE);
         BtlCharSnd_PlayCommon(chr, 0x2E);
-        pose->vspeed = 0.0f;
+        pose->fallSpeed = 0.0f;
         if (BtlChar_TestFlag(chr, 5) && __builtin_fabsf(BtlOpp_GetYawFromFacing(chr)) < BtlMoveParam_GetAngle58(chr)) {
             turn = 3.14159265f;
             BtlMove_TurnYaw(chr, 2, turn);
@@ -1434,7 +1434,7 @@ s32 BtlAct_SmashVanishHandler(BtlActAChr *chr, s32 phase) {
         BtlCharSnd_PlayCommon(chr, 0x20);
         BtlChar_SetSmallVibration(chr, 0.2f);
         BtlChar_GetPos(chr)->speed = 0.0f;
-        BtlChar_GetPos(chr)->vspeed = 0.0f;
+        BtlChar_GetPos(chr)->fallSpeed = 0.0f;
         BtlChar_SetHeldFlag(chr, 0xE);
         chr->vanishCount++;
         chr->attackId = BtlAct_GetCurrent(chr);
@@ -2549,7 +2549,7 @@ s32 BtlActB_PickDownAnim(BtlActBChr *chr, s32 cur) {
 
     if (BtlChar_TestFlag(chr, 0x11)) {
         id = air ? 0xD8 : 0xD7;
-    } else if (Vec3_Length(&BtlChar_GetPos(chr)->moved) > BTL_KMH(300.0f)) {
+    } else if (Vec3_Length(&BtlChar_GetPos(chr)->move) > BTL_KMH(300.0f)) {
         id = air ? 0xD3 : 0xD2;
     } else {
         id = air ? 0xD6 : 0xD5;
@@ -2670,7 +2670,7 @@ s32 BtlAct_HitStaggerHandler(BtlActBChr *chr, s32 phase) {
         BtlActB_SetReactionFlags(chr);
         BtlChar_SetFlag(chr, 0x41);
         if (BtlChar_TestFlag(chr, 0xF)) {
-            if (Vec3_Length(&BtlChar_GetPos(chr)->moved) > BTL_KMH(200.0f)) {
+            if (Vec3_Length(&BtlChar_GetPos(chr)->move) > BTL_KMH(200.0f)) {
                 BtlChar_SetFxBit(chr, 0x32);
             }
         }
@@ -3311,7 +3311,7 @@ s32 BtlAct_BlowAwayHandler(BtlActBChr *chr, s32 phase) {
             }
         } else if (BtlChar_TestFlag(chr, 0x14)) {
             Vec3_Normalize(&a, &BtlChar_GetPos(chr)->pos);
-            Vec3_Normalize(&b, &BtlChar_GetPos(chr)->velocity);
+            Vec3_Normalize(&b, &BtlChar_GetPos(chr)->vel);
             if (Vec3_Dot(&a, &b) > 0.7f) {
                 if (BtlChar_IsFree(chr)) {
                     BtlAct_Request(chr, 0xE8);

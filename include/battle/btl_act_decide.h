@@ -17,10 +17,7 @@
  */
 
 /* Pose block (chr + 0x10, BtlChar_GetPos). */
-typedef struct BtlActJPose {
-    /* 0x00 */ Vec4 pos;
-    /* 0x10 */ Vec4 rot;       /* y = model yaw */
-} BtlActJPose;
+typedef BtlFighterPose BtlActJPose;
 
 /* First words of a member entry (BtlMember_Get / BtlMember_GetActive). */
 typedef struct BtlActJMember {

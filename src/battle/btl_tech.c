@@ -896,7 +896,7 @@ f32 BtlMoveParam_GetSpeed(BtlTechBChr *chr, s32 n) {
         break;
     case 4:
     case 5:
-        v *= BtlChar_GetPos(chr)->unkAC;
+        v *= BtlChar_GetPos(chr)->dashBoost;
         v *= BtlStat_GetSpeedScale(chr);
         break;
     default:
@@ -952,7 +952,7 @@ f32 BtlMoveParam_GetTurnRate(BtlTechBChr *chr, s32 n) {
     f32 v = BtlChar_GetObj(chr)->move->turnRate[n] * 3.14159265f / 180.0f * (1.0f / 30.0f);
 
     if (n == 0) {
-        v *= BtlChar_GetPos(chr)->unkAC;
+        v *= BtlChar_GetPos(chr)->dashBoost;
     }
     return v;
 }

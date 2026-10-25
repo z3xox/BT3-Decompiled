@@ -77,12 +77,12 @@ void BtlOpp_GetDelta(BtlFlagChr *chr, Vec4 *out) {
 
 /* Copies the vector at +0x30 of the opponent's pose. */
 void BtlOpp_GetPoseVec30(BtlFlagChr *chr, Vec4 *out) {
-    Vec4_Copy(out, &BtlChar_GetPos(OPPONENT(chr))->unk30);
+    Vec4_Copy(out, &BtlChar_GetPos(OPPONENT(chr))->vel);
 }
 
 /* Copies the opponent's velocity (pose +0x40). */
 void BtlOpp_GetVelocity(BtlFlagChr *chr, Vec4 *out) {
-    Vec4_Copy(out, &BtlChar_GetPos(OPPONENT(chr))->vel);
+    Vec4_Copy(out, &BtlChar_GetPos(OPPONENT(chr))->move);
 }
 
 /* Distance to the opponent. */
@@ -126,7 +126,7 @@ f32 BtlOpp_GetYawFromFacing(BtlFlagChr *chr) {
     f32 yaw = BtlOpp_GetYaw(chr);
     BtlFlagPose *pose = BtlChar_GetPos(chr);
 
-    return BtlUtil_WrapAngle(yaw - BtlUtil_WrapAngle(pose->rot.y + BtlChar_GetPos(chr)->rootYaw));
+    return BtlUtil_WrapAngle(yaw - BtlUtil_WrapAngle(pose->rot.y + BtlChar_GetPos(chr)->rootRot.y));
 }
 
 /* Yaw to the opponent relative to the opponent's rotation. */
@@ -286,7 +286,7 @@ f32 BtlOpp_GetClosingTime(BtlFlagChr *chr) {
         return 0.0f;
     }
     Vec4_Scale(&dir, &d, 1.0f / dist);
-    Vec4_Copy(&vel, &BtlChar_GetPos(chr)->vel);
+    Vec4_Copy(&vel, &BtlChar_GetPos(chr)->move);
     BtlOpp_GetVelocity(chr, &oppVel);
     speed = Vec3_Dot(&vel, &dir);
     if (speed < 0.0f) {
