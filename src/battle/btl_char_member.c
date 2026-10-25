@@ -107,7 +107,7 @@ void BtlColl_NextPoolMember(BtlMemberChr *chr) {
     BtlMemberPool *pool;
     s32 next;
 
-    if (chr->side != 1) {
+    if (chr->player != 1) {
         return;
     }
     pool = Battle_GetWork5A8();
@@ -182,7 +182,7 @@ BtlMember *BtlMember_Get(BtlMemberChr *chr, s32 member) {
 
 /* Returns the entry of the member that is fighting. */
 BtlMember *BtlMember_GetActive(BtlMemberChr *chr) {
-    return BtlMember_Get(chr, chr->active);
+    return BtlMember_Get(chr, chr->curMember);
 }
 
 /* Returns the present member that is the given character, or NULL. */
@@ -227,7 +227,7 @@ s32 BtlMember_Replace(BtlMemberChr *chr, BtlMemberSetup *src) {
     f32 health;
 
     for (i = 0; i < BTL_MEMBER_SLOTS; i++) {
-        if (chr->active != i && BtlMember_GetGauge(chr, i)->health <= 0) {
+        if (chr->curMember != i && BtlMember_GetGauge(chr, i)->health <= 0) {
             slot = i;
             break;
         }
@@ -271,7 +271,7 @@ s32 BtlMember_FindIndex(BtlMemberChr *chr, s32 chara) {
 
 /* Sets which member is fighting. */
 void BtlMember_SetActiveIndex(BtlMemberChr *chr, s32 member) {
-    chr->active = member;
+    chr->curMember = member;
 }
 
 /* Counts the present members that still have health. */
@@ -291,7 +291,7 @@ s32 BtlMember_CountAlive(BtlMemberChr *chr) {
 
 /* Returns which member is fighting. */
 s32 BtlMember_GetActiveIndex(BtlMemberChr *chr) {
-    return chr->active;
+    return chr->curMember;
 }
 
 /* Returns the switch candidate after moving it off a defeated member and off the active one. */
@@ -299,7 +299,7 @@ s32 BtlMember_GetSwitchTarget(BtlMemberChr *chr) {
     if (BtlMember_GetGauge(chr, chr->switchTarget)->health <= 0) {
         BtlMember_NextSwitchTarget(chr);
     }
-    if (chr->switchTarget == chr->active) {
+    if (chr->switchTarget == chr->curMember) {
         BtlMember_NextSwitchTarget(chr);
     }
     return chr->switchTarget;
@@ -318,7 +318,7 @@ void BtlMember_NextSwitchTarget(BtlMemberChr *chr) {
 
     for (i = 0; i < chr->memberCount; i++) {
         member = (chr->switchTarget + i + 1) % chr->memberCount;
-        if (member != chr->active && BtlMember_GetGauge(chr, member)->health > 0) {
+        if (member != chr->curMember && BtlMember_GetGauge(chr, member)->health > 0) {
             chr->switchTarget = member;
             return;
         }
@@ -332,7 +332,7 @@ void BtlMember_PrevSwitchTarget(BtlMemberChr *chr) {
 
     for (i = chr->memberCount - 1; i >= 0; i--) {
         member = (chr->switchTarget + i) % chr->memberCount;
-        if (member != chr->active && BtlMember_GetGauge(chr, member)->health > 0) {
+        if (member != chr->curMember && BtlMember_GetGauge(chr, member)->health > 0) {
             chr->switchTarget = member;
             return;
         }
@@ -476,7 +476,7 @@ s32 BtlMember_Damage(BtlMemberChr *chr, s32 amount, s32 flags) {
     if (before > 0 && health == 0) {
         s32 other = BtlOpp_GetPlayer(chr);
 
-        BtlEvent_Raise(chr->side, 0x4A);
+        BtlEvent_Raise(chr->player, 0x4A);
         BtlEvent_Raise(other, 0x48);
         if (flags & BTL_DMG_KO_EV53_A) {
             BtlEvent_Raise(other, 0x53);
@@ -495,13 +495,13 @@ s32 BtlMember_Damage(BtlMemberChr *chr, s32 amount, s32 flags) {
         }
     }
     if (amount > 0) {
-        BtlEvent_Raise(chr->side, 0x59);
+        BtlEvent_Raise(chr->player, 0x59);
     }
     if (g->health == 0) {
         g->ki = 0;
         g->blast = 0;
         g->maxPower = 0;
-        chr->stunTimer = 0;
+        chr->react.stunTimer = 0;
         BtlChar_ClearFlag(chr, 0xBE);
         if (Battle_GetMode() == 3) {
             if (BtlMember_CountAlive(chr) <= 0) {
@@ -779,9 +779,9 @@ void BtlMembers_UpdateQueuedDamage(void) {
                 BtlChar_Vibrate(other, 1.0f, 0.3f);
             }
             chr->queue.hits--;
-            other->unkFE4 = 30;
+            other->react.unk34 = 30;
             if (BtlChar_TestFlag(chr, 0x13B)) {
-                other->unkFE4 = 0;
+                other->react.unk34 = 0;
             }
         }
         active = 0;
@@ -817,7 +817,7 @@ void BtlMembers_UpdateQueuedDamage(void) {
                 if (!BtlChar_TestFlag(chr, 0x13C)) {
                     BtlMember_AddHealth(chr, lost);
                 }
-                other->unkFE4 = 30;
+                other->react.unk34 = 30;
             }
             if (chr->queue.drainKi > 0) {
                 s32 amount;
@@ -834,7 +834,7 @@ void BtlMembers_UpdateQueuedDamage(void) {
                 if (!BtlChar_TestFlag(chr, 0x13C)) {
                     BtlMember_AddKi(chr, lost);
                 }
-                other->unkFE4 = 30;
+                other->react.unk34 = 30;
             }
         }
         if (BtlChar_TestFlag(chr, 0x8C)) {

@@ -79,28 +79,28 @@ extern BtlMemberRoster *gBtlChars;
 
 /* Sets a one-frame effect request bit. */
 void BtlChar_SetFxBit(BtlMemberChr *chr, s32 bit) {
-    chr->fxBits[bit >> 3] |= 1 << (bit & 7);
+    chr->fxBits.bits[bit >> 3] |= 1 << (bit & 7);
 }
 
 /* Clears a one-frame effect request bit. */
 void BtlChar_ClearFxBit(BtlMemberChr *chr, s32 bit) {
     u8 mask = 1 << (bit & 7);
 
-    chr->fxBits[bit >> 3] &= ~mask;
+    chr->fxBits.bits[bit >> 3] &= ~mask;
 }
 
 /* Tests an effect request bit of this frame. */
 s32 BtlChar_TestFxBit(BtlMemberChr *chr, s32 bit) {
     u8 mask = 1 << (bit & 7);
 
-    return (chr->fxBits[bit >> 3] & mask) != 0;
+    return (chr->fxBits.bits[bit >> 3] & mask) != 0;
 }
 
 /* Tests an effect request bit of the frame before. */
 s32 BtlChar_TestPrevFxBit(BtlMemberChr *chr, s32 bit) {
     u8 mask = 1 << (bit & 7);
 
-    return (chr->prevFxBits[bit >> 3] & mask) != 0;
+    return (chr->prevFxBits.bits[bit >> 3] & mask) != 0;
 }
 
 /* Whether the bit is set now and was not last frame. */
@@ -204,7 +204,7 @@ void BtlChar_SpawnFxBits0(BtlMemberChr *chr) {
     if (BtlChar_TestFxBit(chr, 0)) {
         req.objId = chr->objId;
         req.kind = -1;
-        switch (chr->formKind) {
+        switch (chr->form.kind) {
         case 0:
             req.kind = -1;
             break;
@@ -246,10 +246,10 @@ void BtlChar_SpawnFxBits0(BtlMemberChr *chr) {
             EftTransform_Start(&req);
         }
     }
-    if (BtlChar_TestFxBit(chr, 1) && chr->formKind != 0) {
+    if (BtlChar_TestFxBit(chr, 1) && chr->form.kind != 0) {
         EftTransform_Flash();
     }
-    if (BtlChar_TestFxBit(chr, 2) && chr->formKind != 0) {
+    if (BtlChar_TestFxBit(chr, 2) && chr->form.kind != 0) {
         EftTransform_End();
     }
 }

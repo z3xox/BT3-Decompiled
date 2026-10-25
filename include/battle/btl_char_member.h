@@ -36,47 +36,10 @@
 #define BTL_DMG_GUARD_MASK   0x3800000 /* with fighter state 0x4C the second defense multiplier is skipped */
 
 /* Damage a fighter has queued against its opponent: fighter + 0xD94. */
-typedef struct BtlMemberQueue {
-    /* 0x00 */ s32 totalStart;       /* 0xD94 */
-    /* 0x04 */ s32 total;      /* 0xD98: health damage still to deal */
-    /* 0x08 */ s32 perHit;     /* 0xD9C: amount per trigger while more than one hit is left */
-    /* 0x0C */ s32 hits;       /* 0xDA0: triggers left */
-    /* 0x10 */ s32 flags;      /* 0xDA4: BTL_DMG_* */
-    /* 0x14 */ s32 drainHealthStart;      /* 0xDA8 */
-    /* 0x18 */ s32 drainHealth;     /* 0xDAC: health still to drain */
-    /* 0x1C */ s32 drainHealthStep; /* 0xDB0: per frame */
-    /* 0x20 */ s32 drainKiStart;      /* 0xDB4 */
-    /* 0x24 */ s32 drainKi;         /* 0xDB8: ki still to drain */
-    /* 0x28 */ s32 drainKiStep;     /* 0xDBC: per frame */
-    /* 0x2C */ s32 drainFrom;  /* 0xDC0: drain runs while the animation frame is past this */
-} BtlMemberQueue;
+typedef BtlFighterQueue BtlMemberQueue;
 
 /* Partial view of a fighter (0x1600 bytes). */
-typedef struct BtlMemberChr {
-    /* 0x0000 */ s32 side;
-    /* 0x0004 */ s32 pad;
-    /* 0x0008 */ s32 index;
-    /* 0x000C */ s32 objId;
-    /* 0x0010 */ u8 unk10[0x994 - 0x10];
-    /* 0x0994 */ s32 active;       /* index of the fighting member */
-    /* 0x0998 */ s32 memberCount;
-    /* 0x099C */ s32 switchGauge;
-    /* 0x09A0 */ s32 switchTarget; /* member a switch would bring in */
-    /* 0x09A4 */ BtlMember members[BTL_MEMBER_SLOTS];
-    /* 0x0CD8 */ u8 unkCD8[0xD40 - 0xCD8];
-    /* 0x0D40 */ BtlMemberCombo combo;
-    /* 0x0D58 */ u8 unkD58[0xD94 - 0xD58];
-    /* 0x0D94 */ BtlMemberQueue queue;
-    /* 0x0DC4 */ u8 unkDC4[0xFE0 - 0xDC4];
-    /* 0x0FE0 */ s32 stunTimer;       /* cleared on a KO (BtlChar_IsFree tests it) */
-    /* 0x0FE4 */ s32 unkFE4;       /* 30 after damage from the queue: a timer (inferred) */
-    /* 0x0FE8 */ u8 unkFE8[0x1262 - 0xFE8];
-    /* 0x1262 */ u8 fxBits[9];     /* one-frame request bits */
-    /* 0x126B */ u8 prevFxBits[9]; /* last frame's */
-    /* 0x1274 */ u8 unk1274[0x12DC - 0x1274];
-    /* 0x12DC */ s32 formKind;      /* 0..11: kind of the effect requested by fx bits 0..2 */
-    /* 0x12E0 */ u8 unk12E0[0x1600 - 0x12E0];
-} BtlMemberChr; /* size 0x1600 */
+typedef BtlFighter BtlMemberChr;
 
 /* Character parameters: gBtlChars->paramTbl[chara] (roster + 0x30, a table inside common file 2). */
 typedef struct BtlMemberParam {
