@@ -343,8 +343,8 @@ void EftLink_InitKeys(EftLinkWork *w) {
         w->val[8].delta = def->twist[k] - def->twist[k - 1];
         w->val[9].delta = def->ofsX[k] - def->ofsX[k - 1];
         w->val[10].delta = def->ofsY[k] - def->ofsY[k - 1];
-        w->val[11].delta = def->unk84[k] - def->unk84[k - 1];
-        w->val[12].delta = def->unk90[k] - def->unk90[k - 1];
+        w->val[11].delta = def->ofsAlongMin[k] - def->ofsAlongMin[k - 1];
+        w->val[12].delta = def->ofsAlongMax[k] - def->ofsAlongMax[k - 1];
         w->val[13].delta = def->dist[k] - def->dist[k - 1];
         w->val[14].delta = def->distRange[k] - def->distRange[k - 1];
         w->val[15].delta = def->distBase[k] - def->distBase[k - 1];
@@ -406,8 +406,8 @@ void EftLink_UpdateKeys(EftLinkWork *w) {
     w->val[8].cur = def->twist[k] + w->val[8].delta * t;
     w->val[9].cur = def->ofsX[k] + w->val[9].delta * t;
     w->val[10].cur = def->ofsY[k] + w->val[10].delta * t;
-    w->val[11].cur = def->unk84[k] + w->val[11].delta * t;
-    w->val[12].cur = def->unk90[k] + w->val[12].delta * t;
+    w->val[11].cur = def->ofsAlongMin[k] + w->val[11].delta * t;
+    w->val[12].cur = def->ofsAlongMax[k] + w->val[12].delta * t;
     w->val[13].cur = def->dist[k] + w->val[13].delta * t;
     w->val[14].cur = def->distRange[k] + w->val[14].delta * t;
     w->val[15].cur = def->distBase[k] + w->val[15].delta * t;

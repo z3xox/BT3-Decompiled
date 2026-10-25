@@ -228,7 +228,7 @@ typedef struct EftWaterView {
     /* 0x70 */ EftWaterMtx billboard;      /* multiplied into the drop corners (camera-facing rotation) */
     /* 0xB0 */ struct {
         /* 0x00 */ u64 tex0;              /* GS TEX0 of texture i (EftWater_UpdateTextures) */
-        /* 0x08 */ u64 unk8;
+        /* 0x08 */ u64 image;
     } tex[5];
 } EftWaterView;
 

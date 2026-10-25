@@ -86,7 +86,7 @@ typedef struct EftZapMgr {
 /* A texture object of an effect pack as this module uses it (0x108 bytes each in the pack's table). */
 typedef struct EftZapTexObj {
     /* 0x000 */ EftAdTex entry[16]; /* per image; tex0 is replaced by the full GS TEX0 on first use */
-    /* 0x100 */ s32 unk100;
+    /* 0x100 */ s32 count;
     /* 0x104 */ u32 loaded;      /* bit per image: tex0 is valid */
 } EftZapTexObj; /* 0x108 */
 

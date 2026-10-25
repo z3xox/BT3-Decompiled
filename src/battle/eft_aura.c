@@ -543,7 +543,7 @@ void EftAura_GetFlameSideDir(EftAura *aura, Vec4 *out, s32 objId, f32 power, f32
     Vec4 centre;
     f32 one = 1.0f;
 
-    side += gEftAuraCfg->unk1A0 * power * gEftAuraPrm->sideScale;
+    side += gEftAuraCfg->powerPush * power * gEftAuraPrm->sideScale;
     BtlCharApi_GetDir(objId, &dir);
     dir.y = 0.0f;
     dir.w = one;
@@ -591,7 +591,7 @@ void EftAura_GetFlameOutDir(EftAura *aura, Vec4 *out, s32 objId, s32 part, f32 p
     ratio = BtlCharApi_GetSpeed(objId) * gEftAuraPrm->speedRef;
     one = 1.0f;
     t = RANDF();
-    amount += gEftAuraCfg->unk1A0 * power;
+    amount += gEftAuraCfg->powerPush * power;
     if (one < ratio) {
         ratio = one;
     }
@@ -722,7 +722,7 @@ s32 EftAura_SpawnSpark(EftAura *aura, s32 objId, s32 emitter, s32 emitNode, Vec4
     s->follow = follow;
     Vec4_Copy(&s->offset, offset);
     Vec4_Set(&s->move, 0.0f, 0.0f, 0.0f, 0.0f);
-    s->unk7 = 1;
+    s->layer = 1;
     if (!(aura->flags & 0x20)) {
         Vec3_Copy(&s->color, &aura->sparkColor[color]);
         s->color.w = 0.0f;
@@ -906,7 +906,7 @@ void EftAura_DrawSparks(EftAura *aura, s32 objId, f32 alpha) {
         if (s->objId == objId) {
             EftSpr_DrawRot((u32)(s->color.x * 255.0f), (u32)(s->color.y * 255.0f), (u32)(s->color.z * 255.0f),
                           (u32)(s->color.w * 255.0f * a), s->pos.x, s->pos.y, s->pos.z, s->uv.x, s->uv.y, s->uv.z,
-                          s->uv.w, s->rot, 0, 0, 0x40, 0x40, 0, (u32)(s->size * 4096.0f), 0, s->unk7, tex);
+                          s->uv.w, s->rot, 0, 0, 0x40, 0x40, 0, (u32)(s->size * 4096.0f), 0, s->layer, tex);
         }
         link = &s->next;
     }
@@ -1754,7 +1754,7 @@ f32 EftAura_GetNodeFade(s32 objId, Vec4 *pos, Vec4 *nodes, f32 scale) {
     }
     best[0] = sqrtf(best[0]);
     best[1] = sqrtf(best[1]);
-    dist = best[0] * gEftAuraPrm->unk18 + best[1] * (1.0f - gEftAuraPrm->unk18);
+    dist = best[0] * gEftAuraPrm->nearWeight + best[1] * (1.0f - gEftAuraPrm->nearWeight);
     limit = scale * 4.5f;
     if (dist < limit) {
         ratio = dist / limit;

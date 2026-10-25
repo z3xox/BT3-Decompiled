@@ -73,8 +73,7 @@ typedef struct StgColSweep {
 /* Polygon header of a collision mesh (ColMesh_GetPoly). */
 typedef struct StgColPoly {
     /* 0x00 */ s32 flags;      /* STGCOL_POLY_* */
-    /* 0x04 */ s32 unk4;
-    /* 0x08 */ s32 unk8[2];
+    /* 0x04 */ s32 vtx[3];  /* indices into the mesh vertex array (ColPoly.vtx of battle/col_box.h, ColMesh_GetPolyVerts) */
     /* 0x10 */ StgColVec nrm;  /* plane: normal and distance (n . p = w) */
 } StgColPoly; /* size 0x20 */
 

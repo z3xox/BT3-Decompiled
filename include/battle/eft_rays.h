@@ -80,7 +80,7 @@ typedef struct EftOBoltPool {
     /* 0x000 */ s32 count;      /* BtlScene_GetCharCount() */
     /* 0x004 */ s32 max;        /* count * 100 */
     /* 0x008 */ void *pool;     /* max * 0x40 bytes */
-    /* 0x00C */ s32 unkC;
+    /* 0x00C */ s32 segNext;
     /* 0x010 */ EftOBoltTex tex[2];
     /* 0x470 */ EftOTask **tasks; /* one per fighter, NULL when off */
     /* 0x474 */ s32 *pack4;     /* common effect pack entry 4 */
@@ -276,19 +276,19 @@ typedef struct EftOEmitNodes {
 typedef struct EftOPart {
     /* 0x00 */ u8 unk0[8];
     /* 0x08 */ u8 kind;
-    /* 0x09 */ u8 unk9;
+    /* 0x09 */ u8 endPhase;
     /* 0x0A */ u8 node;
     /* 0x0B */ u8 unkB[0x35];
 } EftOPart; /* size 0x40 */
 
 typedef struct EftOGroupDef {
-    /* 0x00 */ u8 unk0;
+    /* 0x00 */ u8 kind;
     /* 0x01 */ u8 count;
 } EftOGroupDef;
 
 typedef struct EftOGroup {
     /* 0x00 */ EftOGroupDef *def;
-    /* 0x04 */ s32 unk4;
+    /* 0x04 */ s32 parts;
     /* 0x08 */ u8 first;
     /* 0x09 */ u8 unk9[7];
 } EftOGroup; /* size 0x10 */
@@ -296,7 +296,7 @@ typedef struct EftOGroup {
 /* Effect pack (EftEmitSet in eft_sweep.h). */
 typedef struct EftOSet {
     /* 0x000 */ u32 *mask;
-    /* 0x004 */ s32 unk4;
+    /* 0x004 */ s32 entries;
     /* 0x008 */ EftOPart *parts;
     /* 0x00C */ EftOGroup grp[19];
     /* 0x13C */ u8 unk13C[0x1E4];

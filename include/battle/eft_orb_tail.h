@@ -257,7 +257,7 @@ void EftOrbTail_Stub4(void);
 
 /* An emitter set of the effect pack library (eft_emit.h / eft_tech_modules.h EftModel); only what this file reads. */
 typedef struct EftAbPartDef {
-    /* 0x0 */ u8 unk0;
+    /* 0x0 */ u8 kind;
     /* 0x1 */ u8 count;            /* emitters in the group */
 } EftAbPartDef;
 

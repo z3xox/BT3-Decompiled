@@ -196,7 +196,7 @@ typedef struct EftAuraSpark {
     /* 0x04 */ u8 objId;
     /* 0x05 */ u8 emitter;
     /* 0x06 */ u8 emitNode;     /* the emitter's model node (set by EftAura_SpawnSpark; no reader found) */
-    /* 0x07 */ u8 unk7;     /* 1 */
+    /* 0x07 */ u8 layer;     /* 1 */
     /* 0x08 */ f32 age;
     /* 0x0C */ f32 life;
     /* 0x10 */ f32 rot;     /* -pi..pi */
@@ -250,7 +250,7 @@ typedef struct EftAuraCfg {
     /* 0x194 */ f32 fadeInTime;
     /* 0x198 */ f32 fadeOutTime;
     /* 0x19C */ f32 burstHold;
-    /* 0x1A0 */ f32 unk1A0;
+    /* 0x1A0 */ f32 powerPush;
     /* 0x1A4 */ f32 burstSpeed;
     /* 0x1A8 */ f32 sizeFadeInTime;
     /* 0x1AC */ f32 sizeFadeOutTime;
@@ -292,7 +292,7 @@ typedef struct EftAuraPrm {
     /* 0x00C */ f32 sparkRise;
     /* 0x010 */ f32 flameStep;
     /* 0x014 */ f32 lean;
-    /* 0x018 */ f32 unk18;
+    /* 0x018 */ f32 nearWeight;
     /* 0x01C */ f32 life[3];       /* base, range, long */
     /* 0x028 */ f32 unk28;
     /* 0x02C */ f32 fadeIn;

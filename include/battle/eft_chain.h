@@ -56,7 +56,7 @@ typedef struct EftKiPropArg {
     /* 0x10 */ s16 objId;     /* fighter that fired */
     /* 0x12 */ s16 owner;     /* fighter the blast currently belongs to (toggled when it is deflected) */
     /* 0x14 */ u16 code;
-    /* 0x16 */ u16 unk16;
+    /* 0x16 */ u16 area;
     /* 0x18 */ s16 level;
     /* 0x1A */ u8 type;
     /* 0x1B */ u8 unk1B;

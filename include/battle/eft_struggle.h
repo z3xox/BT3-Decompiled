@@ -163,7 +163,7 @@ typedef struct EftRRec {
     /* 0x004 */ s32 unk4[3];
     /* 0x010 */ EftRPose pose;
     /* 0x050 */ s32 flags;
-    /* 0x054 */ s32 unk54;    /* EftHit_Add overwrites it: 0 for a ki blast */
+    /* 0x054 */ s32 stationary;    /* EftHit_Add overwrites it: 0 for a ki blast */
     /* 0x058 */ s32 unk58;
     /* 0x05C */ u8 turned;
     /* 0x05D */ u8 unk5D[3];
@@ -288,7 +288,7 @@ typedef struct EftRArg {
     /* 0x12 */ s16 objId;             /* owner (the record's objId: the fighter it cannot hit); flips when the
                                          blast is deflected or reflected */
     /* 0x14 */ s16 node;              /* model node it leaves from */
-    /* 0x16 */ s16 unk16;
+    /* 0x16 */ s16 area;
     /* 0x18 */ s16 kind;              /* 0..12: BtlKiBlast_GetCurrentKind (0, 4, 8: blast class 0, else class 1) */
     /* 0x1A */ u8 type;               /* ki blast record type */
     /* 0x1B */ u8 unk1B;

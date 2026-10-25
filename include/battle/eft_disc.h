@@ -112,7 +112,7 @@ typedef struct EftDiscAtk {
     /* 0x10 */ u8 unk10[2];
     /* 0x12 */ s16 objId;
     /* 0x14 */ s16 node;
-    /* 0x16 */ s16 unk16;
+    /* 0x16 */ s16 area;
     /* 0x18 */ s16 kind;
     /* 0x1A */ u8 type;
     /* 0x1B */ u8 level;     /* 2, 4, 6: texture pair 1, 2, 3 */

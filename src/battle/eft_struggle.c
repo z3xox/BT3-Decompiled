@@ -1041,7 +1041,7 @@ void EftKiBlast_AddHitRecord(EftRTask *task) {
 
     rec->task = task;
     rec->pose = w->pose;
-    rec->unk54 = 0;
+    rec->stationary = 0;
     rec->turned = (w->flags >> 9) & 1;
     rec->atk = &w->arg;
     radius = w->radius * EftEmit_GetTrailWidth(&w->state);
@@ -1544,10 +1544,10 @@ void EftKiBomb_AddHitRecord(EftRTask *task) {
 
     rec->task = task;
     rec->pose = w->pose;
-    rec->unk54 = 0;
+    rec->stationary = 0;
     rec->turned = (w->flags >> 5) & 1;
     rec->flags |= 0x202;
-    rec->unk54 = (w->flags >> 9) & 1;
+    rec->stationary = (w->flags >> 9) & 1;
     rec->atk = w;
     radius = w->radius;
     a = EftHitArena_AllocSphere();
@@ -1902,7 +1902,7 @@ void EftKiObj_AddHitRecord(EftRTask *task) {
 
     rec->task = task;
     rec->pose = w->b.pose;
-    rec->unk54 = 0;
+    rec->stationary = 0;
     rec->turned = (w->b.flags >> 5) & 1;
     rec->flags |= 0x400;
     rec->atk = w;

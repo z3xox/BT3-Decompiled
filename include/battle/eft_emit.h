@@ -72,7 +72,7 @@ typedef struct EftShotParam {
     /* 0x08 */ s8 hitShape;       /*                                  skill +0x3E[i]   super +0x99[i] */
     /* 0x09 */ s8 shots;      /* number of shots                  skill +0x3A[i]   super +0x93[i] */
     /* 0x0A */ s8 maxHits;       /*                                  skill +0x40[i]   super +0x9C[i] */
-    /* 0x0B */ s8 unkB;       /*                                  skill +0x42[i]   super +0x9F[i] */
+    /* 0x0B */ s8 hitInterval;       /*                                  skill +0x42[i]   super +0x9F[i] */
     /* 0x0C */ s8 aimMode;
     /* 0x0D */ s8 type;       /* effect type, -1 none             skill +0x60[i]   super +0x138[i] */
     /* 0x0E */ s8 nodes[6];    /*                                  skill +0x48..    super +0xA8.. (stride 3) */
@@ -109,8 +109,8 @@ typedef struct EftShotParam {
 typedef struct EftHStartArg {
     /* 0x00 */ s32 chr;   /* character index = fighter object id */
     /* 0x04 */ s32 slot;  /* technique slot 0..4 */
-    /* 0x08 */ s32 unk8;
-    /* 0x0C */ s32 unkC;
+    /* 0x08 */ s32 area;
+    /* 0x0C */ s32 scale;
     /* 0x10 */ f32 time;  /* seconds; replaces EftShotParam.life */
     /* 0x14 */ f32 speed; /* replaces EftShotParam.speed */
     /* 0x18 */ f32 homing; /* replaces EftShotParam.homing */
@@ -124,7 +124,7 @@ typedef struct EftHSlot {
     /* 0x24 */ EftShotParam *param;
     /* 0x28 */ EftHTask *task;       /* group task */
     /* 0x2C */ u8 unk2C[0x14];
-    /* 0x40 */ s32 unk40;           /* zeroed by EftShot_Start */
+    /* 0x40 */ s32 aimFlags;           /* zeroed by EftShot_Start */
     /* 0x44 */ u8 unk44[0xC];
 } EftHSlot; /* size 0x50 */
 
@@ -166,7 +166,7 @@ typedef struct EftSkillSrc {
     /* 0x3C */ u8 hitsB[2];
     /* 0x3E */ u8 hitShape[2];
     /* 0x40 */ u8 hitsC[2];
-    /* 0x42 */ u8 unk42[2];
+    /* 0x42 */ u8 hitInterval[2];
     /* 0x44 */ u8 groundFx[2];
     /* 0x46 */ u8 impactFx[2];
     /* 0x48 */ u8 nodes[6][2];
@@ -197,7 +197,7 @@ typedef struct EftSuperSrc {
     /* 0x096 */ u8 hitsB[3];
     /* 0x099 */ u8 hitShape[3];
     /* 0x09C */ u8 hitsC[3];
-    /* 0x09F */ u8 unk9F[3];
+    /* 0x09F */ u8 hitInterval[3];
     /* 0x0A2 */ u8 groundFx[3];
     /* 0x0A5 */ u8 impactFx[3];
     /* 0x0A8 */ u8 nodes[6][3];
@@ -235,12 +235,12 @@ typedef struct EftSetHead {
     /* 0x1C */ f32 widthStep;
     /* 0x20 */ u8 endFrames;    /* frames the shots effect keeps running after its end was asked */
     /* 0x21 */ u8 flags;
-    /* 0x22 */ u8 unk22;
+    /* 0x22 */ u8 moveKind;
     /* 0x23 */ u8 unk23[2];
-    /* 0x25 */ u8 unk25;
-    /* 0x26 */ u8 unk26;
+    /* 0x25 */ u8 fireDirKind;
+    /* 0x26 */ u8 moveFlags;
     /* 0x27 */ u8 phaseMask; /* bit per phase (EftSetDef.phase) the pack has parts for */
-    /* 0x28 */ f32 unk28;
+    /* 0x28 */ f32 holdDist;
     /* 0x2C */ f32 b0;
     /* 0x30 */ f32 unk30[2];
     /* 0x38 */ f32 bTime;   /* seconds */

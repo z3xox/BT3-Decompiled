@@ -1510,7 +1510,7 @@ void EftShotTech_InitModel(EftJTask *task) {
 
     model->pack = mgr->modelPack;
     model->objId = EftObj_Create(w->model.arg, model->pack);
-    model->unk36 = -1;
+    model->step = -1;
     EftObj_SetVisible(model->objId, 0);
     EftObj_Nop(model->objId, 0);
 }

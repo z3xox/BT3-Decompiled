@@ -106,7 +106,7 @@ typedef struct EftHitDef {
     /* 0x0D */ u8 unkD[0x34 - 0xD];
     /* 0x34 */ f32 speed;    /* copied to EftHitRec.shape.unk8 */
     /* 0x38 */ s32 homing;
-    /* 0x3C */ s32 flags;    /* 0x2 -> EftHitRec.unk54; 0x20; 0x100 cannot clash; 0x200000 */
+    /* 0x3C */ s32 flags;    /* 0x2 -> EftHitRec.stationary; 0x20; 0x100 cannot clash; 0x200000 */
     /* 0x40 */ s16 impactFx; /* effect id of the impact on a fighter, < 0 none */
     /* 0x42 */ s16 groundFx; /* effect id of the impact on the stage, < 0 none */
     /* 0x44 */ u8 unk44[0x50 - 0x44];
@@ -120,7 +120,7 @@ typedef struct EftHitDef {
 typedef struct EftHitSrc {
     /* 0x00 */ s32 objId;
     /* 0x04 */ s32 slot;
-    /* 0x08 */ s32 unk8;     /* copied to EftHitRec.unkF0 */
+    /* 0x08 */ s32 area;     /* copied to EftHitRec.area */
     /* 0x0C */ u8 unkC[0x24 - 0xC];
     /* 0x24 */ EftHitDef *def;
     /* 0x28 */ u8 unk28[0x30 - 0x28];
@@ -133,7 +133,7 @@ typedef struct EftHitAtk {
     /* 0x00 */ u8 unk0[0x12];
     /* 0x12 */ s16 objId;
     /* 0x14 */ s16 code;
-    /* 0x16 */ s16 unk16;    /* copied to EftHitRec.unkF0 */
+    /* 0x16 */ s16 area;    /* copied to EftHitRec.area */
     /* 0x18 */ s16 kind;
     /* 0x1A */ u8 type;     /* 1: second impact variant */
     /* 0x1B */ u8 unk1B;     /* copied to EftHitRec.unk4 */
@@ -149,7 +149,7 @@ typedef struct EftHitAtk {
 typedef struct EftHitShape {
     /* 0x00 */ s32 type;     /* 0..6, see EftHit_SetShape* */
     /* 0x04 */ f32 scale;    /* EftHit_GetScale(rec): 0.1 for a blast, def->scale for a technique */
-    /* 0x08 */ f32 unk8;
+    /* 0x08 */ f32 speed;
     /* 0x0C */ void *a;
     /* 0x10 */ void *b;
 } EftHitShape;
@@ -162,7 +162,7 @@ typedef struct EftHitSphere {
 
 /* Box / capsule of a type 1 shape (0x30 bytes of the arena). */
 typedef struct EftHitBox {
-    /* 0x00 */ EftVec unk0;
+    /* 0x00 */ EftVec start;
     /* 0x10 */ EftVec pos;
     /* 0x20 */ f32 radius;
 } EftHitBox;
@@ -178,7 +178,7 @@ typedef struct EftHitRec {
     /* 0x030 */ EftVec prevPos;
     /* 0x040 */ EftVec vel;
     /* 0x050 */ s32 flags;    /* EFT_HIT_FLAG_* */
-    /* 0x054 */ s32 unk54;    /* technique: bit 1 of def->flags */
+    /* 0x054 */ s32 stationary;    /* technique: bit 1 of def->flags */
     /* 0x058 */ s32 unk58[2];
     /* 0x060 */ EftHitTask *task;
     /* 0x064 */ EftHitSrc *src;
@@ -186,7 +186,7 @@ typedef struct EftHitRec {
     /* 0x06C */ s32 unk6C;
     /* 0x070 */ EftHitShape shape;
     /* 0x084 */ u8 unk84[0xF0 - 0x84];
-    /* 0x0F0 */ s32 unkF0;    /* src->unk8 or atk->unk16 */
+    /* 0x0F0 */ s32 area;    /* src->area or atk->area: the stage zone of the fighter */
     /* 0x0F4 */ u8 unkF4[0x180 - 0xF4];
     /* 0x180 */ s32 seenByAi; /* cleared by EftHit_Add */
     /* 0x184 */ u8 unk184[0x190 - 0x184];

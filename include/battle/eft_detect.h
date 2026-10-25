@@ -88,7 +88,7 @@ typedef struct EftDetTri {
 typedef struct EftDetShape {
     /* 0x00 */ s32 type;
     /* 0x04 */ f32 scale;       /* multiplies the radius in the stage test only */
-    /* 0x08 */ f32 unk8;
+    /* 0x08 */ f32 speed;
     /* 0x0C */ void *a;
     /* 0x10 */ void *b;
     /* 0x14 */ s32 unk14[3];

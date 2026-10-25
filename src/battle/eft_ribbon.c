@@ -875,7 +875,7 @@ void EftRibbon_Init(EftAcTask *task, EftRibbonArg *arg) {
     w->arg = *arg;
     w->flags |= EFT_RIBBON_ALIVE;
     w->kind = prm->kind;
-    w->unkD8 = arg->texBase;
+    w->node = arg->texBase;
     if (arg->life <= 0.0f) {
         w->flags |= EFT_RIBBON_NO_LIFE;
     } else {
@@ -1372,7 +1372,7 @@ s32 EftRibbon_SetUnkD8(EftAcTask *task, s32 value) {
     if (!(w->flags & EFT_RIBBON_ALIVE)) {
         return 0;
     }
-    w->unkD8 = value;
+    w->node = value;
     return 1;
 }
 

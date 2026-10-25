@@ -71,7 +71,7 @@ typedef struct EftTCamView {
 /* One entry of a texture set (EftTexSet_Load32 / EftTexSet_Load4 / EftTexSet_Load8). */
 typedef struct EftTTex {
     /* 0x0 */ u64 tex0;
-    /* 0x8 */ u64 unk8;
+    /* 0x8 */ u64 image;
 } EftTTex;
 
 /* ---- chain module (part kind 18) -------------------------------------------------------------------------- */
@@ -212,7 +212,7 @@ typedef struct EftRayWork {
 typedef struct EftRayMgr {
     /* 0x000 */ EftTTex tex[32];  /* texture set of common entry 0xA; only tex[0] is used */
     /* 0x200 */ s32 texCount;
-    /* 0x204 */ s32 unk204;
+    /* 0x204 */ s32 stepped;
     /* 0x208 */ EftTTaskList *list; /* 4 tasks of 0x520 bytes */
     /* 0x20C */ s32 unk20C;
 } EftRayMgr; /* size 0x210 */

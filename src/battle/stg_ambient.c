@@ -186,7 +186,7 @@ void *BtlStage_GetFxResA(void) {
             if (gBtlStageFxRes == NULL) {
                 goto fail;
             }
-            ret = gBtlStageFxRes->a;
+            ret = gBtlStageFxRes->count0;
         }
     }
     return ret;
@@ -208,7 +208,7 @@ void *BtlStage_GetFxResB(void) {
             if (gBtlStageFxRes == NULL) {
                 goto fail;
             }
-            ret = gBtlStageFxRes->b;
+            ret = gBtlStageFxRes->count1;
         }
     }
     return ret;
@@ -230,7 +230,7 @@ void *BtlStage_GetFxResC(void) {
             if (gBtlStageFxRes == NULL) {
                 goto fail;
             }
-            ret = gBtlStageFxRes->c;
+            ret = gBtlStageFxRes->count2;
         }
     }
     return ret;
@@ -254,10 +254,10 @@ void *BtlStage_GetFxResA2(void) {
             if (res == NULL) {
                 goto fail;
             }
-            if (res->a == NULL) {
+            if (res->count0 == NULL) {
                 goto fail;
             }
-            ret = res->a2;
+            ret = res->list0;
         }
     }
     return ret;
@@ -281,10 +281,10 @@ void *BtlStage_GetFxResB2(void) {
             if (res == NULL) {
                 goto fail;
             }
-            if (res->b == NULL) {
+            if (res->count1 == NULL) {
                 goto fail;
             }
-            ret = res->b2;
+            ret = res->list1;
         }
     }
     return ret;
@@ -308,10 +308,10 @@ void *BtlStage_GetFxResC2(void) {
             if (res == NULL) {
                 goto fail;
             }
-            if (res->c == NULL) {
+            if (res->count2 == NULL) {
                 goto fail;
             }
-            ret = res->c2;
+            ret = res->list2;
         }
     }
     return ret;

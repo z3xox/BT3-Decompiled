@@ -116,12 +116,12 @@ void EftHit_Add(EftHitRec *rec) {
     }
     if (rec->src != NULL) {
         rec->objId = rec->src->objId;
-        rec->unkF0 = rec->src->unk8;
-        rec->shape.unk8 = rec->src->def->speed;
+        rec->area = rec->src->area;
+        rec->shape.speed = rec->src->def->speed;
         rec->unk4 = rec->src->def->node;
         rec->level = rec->src->def->level;
         rec->type = EFT_HIT_TECH;
-        rec->unk54 = (rec->src->def->flags >> 1) & 1;
+        rec->stationary = (rec->src->def->flags >> 1) & 1;
         rec->seenByAi = 0;
         rec->shape.scale = EftHit_GetScale(rec);
         if (rec->src->def->sub == 9) {
@@ -131,12 +131,12 @@ void EftHit_Add(EftHitRec *rec) {
     }
     if (rec->atk != NULL) {
         rec->objId = rec->atk->objId;
-        rec->unkF0 = rec->atk->unk16;
-        rec->shape.unk8 = rec->atk->speed;
+        rec->area = rec->atk->area;
+        rec->shape.speed = rec->atk->speed;
         rec->unk4 = rec->atk->unk1B;
         rec->level = rec->atk->level;
         rec->type = EFT_HIT_BLAST;
-        rec->unk54 = 0;
+        rec->stationary = 0;
         rec->seenByAi = 0;
         rec->shape.scale = EftHit_GetScale(rec);
     }

@@ -78,7 +78,7 @@ typedef struct EftPHitRec {
     /* 0x30 */ EftPVec prev;
     /* 0x40 */ EftPVec vel;
     /* 0x50 */ s32 flags;
-    /* 0x54 */ s32 unk54;
+    /* 0x54 */ s32 stationary;
     /* 0x58 */ s32 unk58[2];
     /* 0x60 */ EftPTask *task;
     /* 0x64 */ EftPSrc *src;
@@ -240,7 +240,7 @@ void EftDisc_AddHit(EftPTask *task) {
     Vec4_Copy(&rec->pos, &w->arg.pos);
     Vec4_Copy(&rec->prev, &w->prev);
     rec->task = task;
-    rec->unk54 = 0;
+    rec->stationary = 0;
     rec->objId = w->arg.objId;
     switch (w->arg.texB) {
     case 0:

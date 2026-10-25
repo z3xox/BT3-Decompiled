@@ -41,7 +41,7 @@ typedef struct EftJDef {
                                constant EFT_HIT_TECH) */
     /* 0x04 */ s8 kind;     /* non-zero: EftShot_SetHeldFlagA8(objId) when the item ends; zero: fire sound */
     /* 0x05 */ s8 sub;
-    /* 0x06 */ s8 unk6;
+    /* 0x06 */ s8 node;
     /* 0x07 */ s8 unk7;
     /* 0x08 */ s8 shape;    /* 0 two spheres, 1 two capsules along the beam */
     /* 0x09 */ s8 count;    /* number of pieces a multi-part effect fires */
@@ -68,7 +68,7 @@ typedef struct EftJDef {
 typedef struct EftJSrc {
     /* 0x00 */ s32 objId; /* object id of the fighter (0 or 1) */
     /* 0x04 */ s32 slot;
-    /* 0x08 */ s32 unk8;
+    /* 0x08 */ s32 area;
     /* 0x0C */ u8 unkC[0x10];
     /* 0x1C */ s32 *pack; /* the effect's resource pack */
     /* 0x20 */ s32 chr; /* the character index (`chr` in the other views of this record) */
@@ -79,21 +79,21 @@ typedef struct EftJSrc {
 typedef struct EftJPart {
     /* 0x00 */ u8 unk0[8];
     /* 0x08 */ u8 phase; /* the emitter's start phase (`phase` of EftSetDef, eft_emit.h); 4: "muzzle" emitter of the shots module */
-    /* 0x09 */ u8 unk9;
+    /* 0x09 */ u8 endPhase;
     /* 0x0A */ u8 node; /* the emitter's node slot (`node` of EftSetDef / EftEmitDef); 5: skipped by EftMulti_UpdateParts */
     /* 0x0B */ u8 unkB[0x35];
 } EftJPart; /* size 0x40 */
 
 typedef struct EftJGroup {
     /* 0x00 */ u8 *info; /* [0] group id, [1] part count */
-    /* 0x04 */ s32 unk4;
+    /* 0x04 */ s32 parts;
     /* 0x08 */ u8 base;  /* first part of the group */
     /* 0x09 */ u8 unk9[7];
 } EftJGroup; /* size 0x10 */
 
 typedef struct EftJSet {
     /* 0x00 */ u32 *mask; /* bit g: group g exists */
-    /* 0x04 */ s32 unk4;
+    /* 0x04 */ s32 entries;
     /* 0x08 */ EftJPart *parts;
     /* 0x0C */ EftJGroup grp[19];
 } EftJSet;
@@ -287,7 +287,7 @@ typedef struct EftJShotModel {
     /* 0x04 */ u8 arg[0x30];
     /* 0x34 */ u8 flags;
     /* 0x35 */ s8 objId; /* battle object id, -1 when none */
-    /* 0x36 */ s8 unk36;
+    /* 0x36 */ s8 step;
     /* 0x37 */ u8 unk37;
 } EftJShotModel; /* size 0x38 */
 

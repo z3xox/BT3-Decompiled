@@ -147,7 +147,7 @@ void EftShot_BuildParam(s32 chr, s32 slot, EftShotParam *p, s32 blank) {
         p->hitShape = 0;
         p->shots = 1;
         p->maxHits = 0;
-        p->unkB = 0;
+        p->hitInterval = 0;
         p->aimMode = 0;
         p->type = 0;
         p->nodes[0] = 3;
@@ -200,7 +200,7 @@ void EftShot_BuildParam(s32 chr, s32 slot, EftShotParam *p, s32 blank) {
         p->hitShape = d->hitShape[n];
         p->shots = d->shots[n];
         p->maxHits = d->hitsC[n];
-        p->unkB = d->unk42[n];
+        p->hitInterval = d->hitInterval[n];
         p->aimMode = 0;
         p->type = d->type[n];
         p->nodes[0] = d->nodes[0][n];
@@ -255,7 +255,7 @@ void EftShot_BuildParam(s32 chr, s32 slot, EftShotParam *p, s32 blank) {
         p->hitShape = d->hitShape[n];
         p->shots = d->shots[n];
         p->maxHits = d->hitsC[n];
-        p->unkB = d->unk9F[n];
+        p->hitInterval = d->hitInterval[n];
         p->aimMode = 0;
         p->type = d->type[n];
         p->nodes[0] = d->nodes[0][n];
@@ -335,7 +335,7 @@ void EftShot_Start(EftHStartArg *arg) {
     }
     group = s->task;
     s->arg = *arg;
-    s->unk40 = 0;
+    s->aimFlags = 0;
     s->param->life = arg->time * 30.0f;
     s->param->speed = arg->speed;
     s->param->homing = arg->homing;
@@ -1119,7 +1119,7 @@ s32 EftEmit_GetHead21(EftSet *set) {
 
 /* Header byte 0x26. */
 s32 EftEmit_GetHead26(EftSet *set) {
-    return set->head->unk26;
+    return set->head->moveFlags;
 }
 
 /* Header byte 6: how EftVolley_Aim bends the direction. */
@@ -1129,17 +1129,17 @@ s32 EftEmit_GetAimKind(EftSet *set) {
 
 /* Header byte 0x22. */
 s32 EftEmit_GetHead22(EftSet *set) {
-    return set->head->unk22;
+    return set->head->moveKind;
 }
 
 /* Header byte 0x25. */
 s32 EftEmit_GetHead25(EftSet *set) {
-    return set->head->unk25;
+    return set->head->fireDirKind;
 }
 
 /* Header float 0x28. */
 f32 EftEmit_GetHead28(EftSet *set) {
-    return set->head->unk28;
+    return set->head->holdDist;
 }
 
 /* Header byte 0x20: frames an instance lives on after its end was asked. */

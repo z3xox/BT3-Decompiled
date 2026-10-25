@@ -245,8 +245,8 @@ void EftShotTech_StartCam(EftKTask *task) {
     }
 }
 
-/* Aim kind 0: the target point flies on with the velocity (or sits on the opponent's node 3) until the
-   opponent's event 0x40. */
+/* Move kind 0 (EftSetHead.moveKind): the target point flies on with the velocity (or sits on the opponent's
+   node 3) until the opponent's event 0x40. */
 void EftShotTech_MoveStraight(EftKTask *task, s32 toTarget) {
     EftShotTech *w = task->work;
     EftKSrc *src = w->src;
@@ -267,7 +267,7 @@ void EftShotTech_MoveStraight(EftKTask *task, s32 toTarget) {
     }
 }
 
-/* Aim kind 1: flies with the velocity, then (event 0x10) sits at a fixed distance in front of the opponent on the
+/* Move kind 1: flies with the velocity, then (event 0x10) sits at a fixed distance in front of the opponent on the
    line to the fighter; event 0x20 makes it grow to twice the size; the opponent's event 0x40 ends it. */
 void EftShotTech_MoveFromTarget(EftKTask *task, s32 wait) {
     Vec4 d;
@@ -329,7 +329,7 @@ void EftShotTech_MoveFromTarget(EftKTask *task, s32 wait) {
     }
 }
 
-/* Aim kind 2: the target point is 30 past the opponent's node 3 on the line from the launch node; after event
+/* Move kind 2: the target point is 30 past the opponent's node 3 on the line from the launch node; after event
    0x10 it is 30 (18 for effect 0x2B4) along the line to the fighter's own node 0x1F. Stores the direction. */
 void EftShotTech_MoveAimed(EftKTask *task) {
     Vec4 d;
@@ -407,7 +407,7 @@ void EftShotTech_UpdateConnected(EftKTask *task) {
     }
 }
 
-/* Item init: clears the 0x900-byte work, reads speed and scale from the definition and the aim kind from the
+/* Item init: clears the 0x900-byte work, reads speed and scale from the definition and the move kind from the
    emitter set's header, creates the model when the manager loaded one. */
 void EftShotTech_Init(EftKTask *task, EftKSrc *src) {
     EftKTask *owner = BtlTask_GetParent(task);
@@ -1246,7 +1246,7 @@ void EftObjTech_UpdateEmitters(s32 objId, EftKTask *task, EftKSet *set) {
 
                 if (onTarget) {
                     end = endOnTarget;
-                    if (set->parts[idx].unk9 == 0 && set->parts[idx].rate > 0.0f) {
+                    if (set->parts[idx].endPhase == 0 && set->parts[idx].rate > 0.0f) {
                         end = 0;
                         fast = 0;
                     }

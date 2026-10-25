@@ -73,7 +73,7 @@ typedef struct EftKSrc {
 /* Emitter set of a module (built by EftEmit_LoadSet from the pack). */
 typedef struct EftKPart {
     /* 0x00 */ u8 unk0[9];
-    /* 0x09 */ u8 unk9;
+    /* 0x09 */ u8 endPhase;
     /* 0x0A */ u8 unkA[0xE];
     /* 0x18 */ f32 rate;
     /* 0x1C */ u8 unk1C[0x24];
@@ -81,14 +81,14 @@ typedef struct EftKPart {
 
 typedef struct EftKGroup {
     /* 0x00 */ u8 *info; /* [0] group id, [1] part count */
-    /* 0x04 */ s32 unk4;
+    /* 0x04 */ s32 parts;
     /* 0x08 */ u8 base;  /* first part of the group */
     /* 0x09 */ u8 unk9[7];
 } EftKGroup; /* size 0x10 */
 
 typedef struct EftKSet {
     /* 0x00 */ u32 *mask; /* bit g: group g exists */
-    /* 0x04 */ s32 unk4;
+    /* 0x04 */ s32 entries;
     /* 0x08 */ EftKPart *parts;
     /* 0x0C */ EftKGroup grp[19];
 } EftKSet;

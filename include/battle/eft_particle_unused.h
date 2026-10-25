@@ -272,7 +272,7 @@ typedef struct EftPtclMgr {
 
 /* Views of the effect pack library's objects (EftEmitSet / EftEmitState / EftEmitNodes in eft_sweep.h). */
 typedef struct EftVGroupDef {
-    /* 0x00 */ u8 unk0;
+    /* 0x00 */ u8 kind;
     /* 0x01 */ u8 count;
 } EftVGroupDef;
 
@@ -370,8 +370,8 @@ typedef struct EftLinkDef {
     /* 0x060 */ f32 twist[3];      /* twist per node (turns) */
     /* 0x06C */ f32 ofsX[3];
     /* 0x078 */ f32 ofsY[3];
-    /* 0x084 */ f32 unk84[3];      /* unk84 / unk90: jitter along the chain */
-    /* 0x090 */ f32 unk90[3];
+    /* 0x084 */ f32 ofsAlongMin[3];      /* ofsAlongMin / ofsAlongMax: jitter along the chain */
+    /* 0x090 */ f32 ofsAlongMax[3];
     /* 0x09C */ f32 dist[3];
     /* 0x0A8 */ f32 distRange[3];
     /* 0x0B4 */ f32 distBase[3];

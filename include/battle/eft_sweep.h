@@ -54,7 +54,7 @@ typedef struct EftEmitDef {
     /* 0x00 */ u8 flags;      /* 0x40 spawn at the node position (not offset along dir), 0x20 extra module call,
                                  0x08 take the node from EftEmitNodes.c[] */
     /* 0x01 */ u8 tex;        /* added to the group's texBase: index into EftEmitSet.tex33 / tex17 */
-    /* 0x02 */ u8 unk2;       /* module parameter */
+    /* 0x02 */ u8 texIdx;       /* module parameter */
     /* 0x03 */ u8 unk3;
     /* 0x04 */ u8 unk4;
     /* 0x05 */ u8 delay;       /* module parameters */

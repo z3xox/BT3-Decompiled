@@ -181,7 +181,7 @@ typedef struct EftSteamScr {
     /* 0x00 */ s32 x;
     /* 0x04 */ s32 y;
     /* 0x08 */ s32 z;
-    /* 0x0C */ s32 unkC;
+    /* 0x0C */ s32 w;
 } EftSteamScr; /* size 0x10 */
 extern void Vu0Cur_ProjectPoints(EftSteamScr *out, Vec4 *in, s32 count);
 

@@ -278,7 +278,7 @@ void EftEmit_SpawnType9(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s32
             EftQuad_SetDelay(H(n), def->delay);
             EftQuad_SetStopDelay(H(n), def->stopDelay);
             EftQuad_SetFade(H(n), def->fade);
-            EftQuad_SetTexPair(H(n), tex, def->unk2, def->unk2);
+            EftQuad_SetTexPair(H(n), tex, def->texIdx, def->texIdx);
             if (def->flags & 0x20) {
                 EftQuad_SetViewOnly(H(n));
             }
@@ -330,7 +330,7 @@ void EftEmit_SpawnType10(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s3
             void *tex = set->tex16 + (grp->texBase + def->tex) * 0x108;
             s32 res0 = EFT_EMIT_RES(set, grp->resFirst + idx).a;
             s32 res1 = EFT_EMIT_RES(set, grp->resFirst + idx).b;
-            EftArg10 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, rate, def->unk2, def->unk2, objId };
+            EftArg10 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, rate, def->texIdx, def->texIdx, objId };
 
             Vec4_Copy(&arg.dir, dir);
             if (def->flags & 0x40) {
@@ -394,7 +394,7 @@ void EftEmit_SpawnType15(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s3
             void *tex = set->tex16 + (grp->texBase + def->tex) * 0x108;
             s32 res0 = EFT_EMIT_RES(set, grp->resFirst + idx).a;
             s32 res1 = EFT_EMIT_RES(set, grp->resFirst + idx).b;
-            EftArg15 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, rate, def->unk2, 0, objId };
+            EftArg15 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, rate, def->texIdx, 0, objId };
 
             if (def->flags & 0x40) {
                 Vec4_Copy(&arg.pos, pos);
@@ -455,7 +455,7 @@ void EftEmit_SpawnType12(EftEmitSet *set, EftEmitHandles *handles, s32 flags, s3
             void *tex = set->tex16 + (grp->texBase + def->tex) * 0x108;
             s32 res0 = EFT_EMIT_RES(set, grp->resFirst + idx).a;
             s32 res1 = EFT_EMIT_RES(set, grp->resFirst + idx).b;
-            EftArg12 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, rate, def->unk2, objId, { srcKind } };
+            EftArg12 arg = { { res0, res1 }, tex, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, size, rate, def->texIdx, objId, { srcKind } };
 
             if (def->flags & 0x40) {
                 Vec4_Copy(&arg.pos, pos);

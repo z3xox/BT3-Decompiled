@@ -52,7 +52,7 @@ typedef struct EftWTask {
 
 typedef struct EftWTexEntry {
     /* 0x00 */ u64 tex0;
-    /* 0x08 */ u64 unk8;
+    /* 0x08 */ u64 image;
 } EftWTexEntry;
 
 typedef struct EftWTexSet {

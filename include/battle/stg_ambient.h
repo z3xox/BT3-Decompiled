@@ -78,16 +78,17 @@ typedef struct BtlStageMgr {
     /* 0x14 */ StgTimer *timers;
 } BtlStageMgr;
 
-/* Member 16 of the stage file (gBtlStageFxRes, gp 0x2FEBF4). */
+/* Member 16 of the stage file (gBtlStageFxRes, gp 0x2FEBF4): the MEF0 block, StgMef of battle/stg.h. The counts are
+   typed as pointers here because BtlStage_GetFxResA / B / C return them as void *; their callers take them as s32. */
 typedef struct StgFxRes {
-    /* 0x00 */ s32 unk0;
+    /* 0x00 */ s32 magic;    /* 'MEF0' */
     /* 0x04 */ s32 unk4;
-    /* 0x08 */ void *a;
-    /* 0x0C */ void *a2;
-    /* 0x10 */ void *b;
-    /* 0x14 */ void *b2;
-    /* 0x18 */ void *c;
-    /* 0x1C */ void *c2;
+    /* 0x08 */ void *count0; /* records of list0 (the geyser records of eft_stage_1.c) */
+    /* 0x0C */ void *list0;
+    /* 0x10 */ void *count1;
+    /* 0x14 */ void *list1;
+    /* 0x18 */ void *count2;
+    /* 0x1C */ void *list2;
 } StgFxRes;
 
 /* Stage ambience: the looping background sound of a stage and its per-frame volume handler. */

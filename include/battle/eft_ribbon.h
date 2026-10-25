@@ -168,7 +168,7 @@ typedef struct EftRibbon {
     /* 0x0C0 */ Vec4 scaleB;
     /* 0x0D0 */ s32 flags;     /* EFT_RIBBON_* */
     /* 0x0D4 */ s32 kind;
-    /* 0x0D8 */ s32 unkD8;
+    /* 0x0D8 */ s32 node;
     /* 0x0DC */ s32 maxNodes;
     /* 0x0E0 */ s32 wantNodes;
     /* 0x0E4 */ s32 numNodes;
