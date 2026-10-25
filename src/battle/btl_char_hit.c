@@ -141,7 +141,7 @@ extern s32 BtlUtil_Clamp(s32 v, s32 lo, s32 hi);
  * same way, so an attacker that is facing the defender stands behind it. */
 s32 BtlHit_IsFromBehind(HitChr *atk, HitChr *def) {
     HitPose *pd = BtlChar_GetPos(def);
-    f32 ang = BtlUtil_WrapAngle(pd->rot.y + BtlChar_GetPos(def)->rootYaw);
+    f32 ang = BtlUtil_WrapAngle(pd->rot.y + BtlChar_GetPos(def)->rootRot.y);
 
     ang = BtlUtil_WrapAngle(ang - BtlChar_GetPos(atk)->yaw);
     if (__builtin_fabsf(ang) < 1.5707963f) {
@@ -229,14 +229,14 @@ void BtlHit_ApplyGuard(HitChr *atk, HitChr *def, u32 result) {
     case 7:
         BtlChar_SetFxBit(atk, 0x24);
         BtlChar_SetFlag(atk, 0x6F);
-        atk->stopLen = 2;
-        atk->stopDelay = 1;
+        atk->freezeNext = 2;
+        atk->freezeDelay = 1;
         break;
     case 8:
         BtlChar_SetFxBit(atk, 0x21);
         BtlChar_SetFlag(atk, 0x6F);
-        atk->stopLen = 2;
-        atk->stopDelay = 1;
+        atk->freezeNext = 2;
+        atk->freezeDelay = 1;
         break;
     }
     scale = 1.0f;
@@ -270,13 +270,13 @@ void BtlHit_ApplyGuard(HitChr *atk, HitChr *def, u32 result) {
     case 7:
         BtlChar_SetFlag(def, 0x70);
         BtlChar_PlayVoice(def, 0x12);
-        def->stopLen = 3;
-        def->stopDelay = 0;
+        def->freezeNext = 3;
+        def->freezeDelay = 0;
         break;
     case 8:
         BtlChar_SetFlag(def, 0x7B);
-        def->stopLen = 3;
-        def->stopDelay = 0;
+        def->freezeNext = 3;
+        def->freezeDelay = 0;
         break;
     }
     pose = BtlChar_GetPos(atk);
@@ -845,19 +845,19 @@ s32 BtlHit_CheckClash(void) {
                 if (same) {
                     BtlChar_SetFlag(a, 0x61);
                     BtlChar_SetFlag(b, 0x61);
-                    a->stopLen = 6;
-                    b->stopLen = 6;
-                    a->stopDelay = 0;
-                    b->stopDelay = 0;
+                    a->freezeNext = 6;
+                    b->freezeNext = 6;
+                    a->freezeDelay = 0;
+                    b->freezeDelay = 0;
                     BtlCharSnd_PlayCommon(a, 0x4F);
                     BtlCharSnd_PlayCommon(b, 0x4B);
                 } else {
                     BtlChar_SetFlag(a, 0x62);
                     BtlChar_SetFlag(b, 0x62);
-                    a->stopLen = 2;
-                    b->stopLen = 2;
-                    a->stopDelay = 0;
-                    b->stopDelay = 0;
+                    a->freezeNext = 2;
+                    b->freezeNext = 2;
+                    a->freezeDelay = 0;
+                    b->freezeDelay = 0;
                     BtlCharSnd_PlayCommon(a, 0x4F);
                     BtlCharSnd_PlayCommon(b, 0x4B);
                     BtlChar_SetFxBit(a, 0x2C);
@@ -1226,9 +1226,9 @@ void BtlHit_ApplyHit(HitChr *atk) {
     }
     def->react.reaction = react;
     if (react != 2) {
-        def->react.reactionSub = BtlAtk_GetReactionSub(atk);
+        def->react.reactSub = BtlAtk_GetReactionSub(atk);
         if (BtlChar_IsBodyChanged(atk)) {
-            def->react.reactionSub = 0x13;
+            def->react.reactSub = 0x13;
         }
         def->react.silent = (atkFlags >> 10) & 1;
         if (react == 0x14) {
