@@ -2,6 +2,7 @@
 #define BATTLE_BTL_CHAR_MOVE_H
 
 #include "types.h"
+#include "battle/btl_fighter.h"
 #include "sys/math3d.h"
 
 /*
@@ -32,59 +33,10 @@
 
 /* Pose block of a fighter (chr + 0x10, 0xF0 bytes; BtlChar_GetPos returns it). Offsets in brackets are fighter
    offsets. Meanings marked (other) come from other modules' headers, not from this file. */
-typedef struct BtlMovePose {
-    /* 0x00 [0x010] */ Vec4 pos;       /* world position, w forced to 1 after a move */
-    /* 0x10 [0x020] */ Vec4 rot;       /* y = model yaw */
-    /* 0x20 [0x030] */ Vec4 dispOfs;     /* display offset rebuilt every frame: hover bob (y) and shake (x, z) */
-    /* 0x30 [0x040] */ Vec4 vel;     /* movement of the previous frame between snapshots 0 and 1 (written by
-                                          BtlChar_EndFrame); used here as "my velocity" */
-    /* 0x40 [0x050] */ Vec4 move;     /* whole movement of the previous frame (other); read here through BtlOpp_GetVelocity */
-    /* 0x50 [0x060] */ Vec4 rootPos;     /* root motion position (other) */
-    /* 0x60 [0x070] */ Vec4 rootRot;     /* root motion rotation (other) */
-    /* 0x70 [0x080] */ Vec4 impulse;     /* impulse velocity (knock-back), metres per frame */
-    /* 0x80 [0x090] */ Vec4 dir;       /* unit direction of travel, w = 0 */
-    /* 0x90 [0x0A0] */ f32 pitch;      /* heading pitch, positive = up */
-    /* 0x94 [0x0A4] */ f32 yaw;        /* heading yaw */
-    /* 0x98 [0x0A8] */ f32 speed;      /* metres per frame along dir */
-    /* 0x9C [0x0AC] */ f32 fallSpeed;  /* vertical speed, positive = down */
-    /* 0xA0 [0x0B0] */ f32 leanX;      /* model lean about x (BtlMove_SetLeanX) */
-    /* 0xA4 [0x0B4] */ f32 leanZ;      /* model lean about z (BtlMove_SetLeanZ) */
-    /* 0xA8 [0x0B8] */ f32 hoverPhase;      /* hover bob phase */
-    /* 0xAC [0x0BC] */ f32 unkAC;
-    /* 0xB0 [0x0C0] */ Vec4 groundPos;     /* ground point below the fighter (other) */
-    /* 0xC0 [0x0D0] */ Vec4 groundNrm;     /* ground normal, valid with flag 0xF */
-    /* 0xD0 [0x0E0] */ f32 groundFlags;
-    /* 0xD4 [0x0E4] */ f32 steerYaw;      /* yaw steering offset of the homing dash */
-    /* 0xD8 [0x0E8] */ f32 steerPitch;      /* pitch steering offset of the homing dash */
-    /* 0xDC [0x0EC] */ f32 orbitNear;  /* BtlMove_RequestOrbit */
-    /* 0xE0 [0x0F0] */ f32 orbitFar;
-    /* 0xE4 [0x0F4] */ u8 unkE4[0xF0 - 0xE4];
-} BtlMovePose; /* size 0xF0 */
+typedef BtlFighterPose BtlMovePose;
 
 /* Fighter (0x1600 bytes). */
-typedef struct BtlMoveChr {
-    /* 0x0000 */ s32 player;
-    /* 0x0004 */ s32 pad;
-    /* 0x0008 */ s32 side;
-    /* 0x000C */ s32 objId;
-    /* 0x0010 */ BtlMovePose pose;
-    /* 0x0100 */ BtlMovePose prev;
-    /* 0x01F0 */ u8 unk1F0[0x4A0 - 0x1F0];
-    /* 0x04A0 */ f32 camYaw;     /* yaw of the fighter camera: the only camera value this file reads */
-    /* 0x04A4 */ u8 unk4A4[0xFB0 - 0x4A4];
-    /* 0x0FB0 */ s32 reaction;     /* pending hit reaction id; != 1 closes the first defence window */
-    /* 0x0FB4 */ u8 unkFB4[0xFE8 - 0xFB4];
-    /* 0x0FE8 */ s32 shakeTimer;     /* > 0: the model shakes sideways, the side alternating with bit 0 */
-    /* 0x0FEC */ u8 unkFEC[0x1068 - 0xFEC];
-    /* 0x1068 */ s32 unk1068;    /* defence windows (see BtlMove_UpdateDefenseTimers): > 0 = open */
-    /* 0x106C */ s32 dodgeWindow;
-    /* 0x1070 */ s32 counterWindow;
-    /* 0x1074 */ s32 unk1074;
-    /* 0x1078 */ s32 throwBreakWindow;
-    /* 0x107C */ s32 rushBreakWindow;
-    /* 0x1080 */ s32 unk1080;
-    /* 0x1084 */ u8 unk1084[0x1600 - 0x1084];
-} BtlMoveChr; /* size 0x1600 */
+typedef BtlFighter BtlMoveChr;
 
 /* What obj + 0xFA0 points to. */
 typedef struct BtlMoveObjBody {

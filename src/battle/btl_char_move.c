@@ -174,7 +174,7 @@ s32 BtlMove_TestContact(BtlMoveChr *chr, s32 floor, f32 angle) {
         case 0:
             if (BtlChar_TestFlag(chr, 0xF)) {
                 found = 1;
-                Vec4_Copy(&n, &BtlChar_GetPos(chr)->groundNrm);
+                Vec4_Copy(&n, (Vec4 *)&BtlChar_GetPos(chr)->groundNrm);
             }
             break;
         case 1:
@@ -405,7 +405,7 @@ void BtlMove_TurnYaw(BtlMoveChr *chr, s32 mode, f32 maxStep) {
         if (BtlInput_IsHeld(chr, 0xF0)) {
             f32 x = BtlInput_GetStickX(chr);
             f32 y = BtlInput_GetStickY(chr);
-            f32 cam = chr->camYaw;
+            f32 cam = chr->cam.yaw;
 
             target = BtlUtil_WrapAngle(atan2f(x, -y) + cam);
         }
@@ -710,7 +710,7 @@ void BtlMove_SetDirection(BtlMoveChr *chr, s32 mode) {
         if (BtlInput_IsHeld(chr, 0xF0)) {
             f32 x = BtlInput_GetStickX(chr);
             f32 y = -BtlInput_GetStickY(chr);
-            f32 a = -chr->camYaw;
+            f32 a = -chr->cam.yaw;
 
             c = Mathf_Cos(a);
             s = Mathf_Sin(a);
@@ -1580,36 +1580,36 @@ void BtlMove_UpdateHoverOffset(BtlMoveChr *chr) {
 
     Vec4_SetZero(&pose->dispOfs);
     if (BtlChar_TestFlag(chr, 0x29)) {
-        pose->hoverPhase = 0.0f;
+        pose->bobPhase = 0.0f;
     }
     if (BtlChars_IsTimeStopped()) {
         return;
     }
     if (BtlChar_TestFlag(chr, 0xE) && BtlChar_TestFlag(chr, 0x1C)) {
-        pose->hoverPhase = BtlUtil_WrapAngle(pose->hoverPhase + BTL_DEG(6.0f));
+        pose->bobPhase = BtlUtil_WrapAngle(pose->bobPhase + BTL_DEG(6.0f));
     } else {
-        if (1.5707963f < pose->hoverPhase) {
-            pose->hoverPhase = 3.14159265f - pose->hoverPhase;
+        if (1.5707963f < pose->bobPhase) {
+            pose->bobPhase = 3.14159265f - pose->bobPhase;
         }
-        if (pose->hoverPhase < -1.5707963f) {
-            pose->hoverPhase = -3.14159265f - pose->hoverPhase;
+        if (pose->bobPhase < -1.5707963f) {
+            pose->bobPhase = -3.14159265f - pose->bobPhase;
         }
-        if (0.0f < pose->hoverPhase) {
-            pose->hoverPhase -= BTL_DEG(6.0f);
-            if (pose->hoverPhase < 0.0f) {
-                pose->hoverPhase = 0.0f;
+        if (0.0f < pose->bobPhase) {
+            pose->bobPhase -= BTL_DEG(6.0f);
+            if (pose->bobPhase < 0.0f) {
+                pose->bobPhase = 0.0f;
             }
         }
-        if (pose->hoverPhase < 0.0f) {
-            pose->hoverPhase += BTL_DEG(6.0f);
-            if (0.0f < pose->hoverPhase) {
-                pose->hoverPhase = 0.0f;
+        if (pose->bobPhase < 0.0f) {
+            pose->bobPhase += BTL_DEG(6.0f);
+            if (0.0f < pose->bobPhase) {
+                pose->bobPhase = 0.0f;
             }
         }
     }
-    pose->dispOfs.y = Mathf_Sin(pose->hoverPhase) * 2.0f;
-    if (chr->shakeTimer > 0) {
-        f32 k = ((f32)(chr->shakeTimer & 1) - 0.5f) * 0.5f;
+    pose->dispOfs.y = Mathf_Sin(pose->bobPhase) * 2.0f;
+    if (chr->react.shakeTimer > 0) {
+        f32 k = ((f32)(chr->react.shakeTimer & 1) - 0.5f) * 0.5f;
 
         pose->dispOfs.x = -Mathf_Cos(pose->yaw) * k;
         pose->dispOfs.z = Mathf_Sin(pose->yaw) * k;
@@ -1625,43 +1625,43 @@ void BtlMove_UpdateDefenseTimers(BtlMoveChr *chr) {
         on = 0;
     }
     if (BtlChar_TestFlag(chr, 0x12C)) {
-        chr->unk1068 = -30;
         chr->dodgeWindow = -30;
+        chr->blastDodgeWindow = -30;
         chr->rushBreakWindow = -30;
-    }
-    chr->unk1068--;
-    if (chr->unk1068 < -30) {
-        chr->unk1068 = -30;
-        if (on) {
-            if (hp < 0.3f) {
-                chr->unk1068 = 2;
-            } else if (hp < 0.7f) {
-                chr->unk1068 = 3;
-            } else {
-                chr->unk1068 = 4;
-            }
-        }
-    } else {
-        if (on) {
-            chr->unk1068 = -1;
-        }
-        if (chr->reaction != 1) {
-            chr->unk1068 = -30;
-        }
     }
     chr->dodgeWindow--;
     if (chr->dodgeWindow < -30) {
         chr->dodgeWindow = -30;
         if (on) {
-            if (BtlChar_TestFlag(chr, 0x138)) {
-                chr->dodgeWindow = 4;
-            } else {
+            if (hp < 0.3f) {
                 chr->dodgeWindow = 2;
+            } else if (hp < 0.7f) {
+                chr->dodgeWindow = 3;
+            } else {
+                chr->dodgeWindow = 4;
             }
         }
     } else {
         if (on) {
             chr->dodgeWindow = -1;
+        }
+        if (chr->react.reaction != 1) {
+            chr->dodgeWindow = -30;
+        }
+    }
+    chr->blastDodgeWindow--;
+    if (chr->blastDodgeWindow < -30) {
+        chr->blastDodgeWindow = -30;
+        if (on) {
+            if (BtlChar_TestFlag(chr, 0x138)) {
+                chr->blastDodgeWindow = 4;
+            } else {
+                chr->blastDodgeWindow = 2;
+            }
+        }
+    } else {
+        if (on) {
+            chr->blastDodgeWindow = -1;
         }
     }
     chr->counterWindow--;
@@ -1675,11 +1675,11 @@ void BtlMove_UpdateDefenseTimers(BtlMoveChr *chr) {
             chr->counterWindow = -1;
         }
     }
-    chr->unk1074--;
-    if (chr->unk1074 < -15) {
-        chr->unk1074 = -15;
+    chr->deflectWindow--;
+    if (chr->deflectWindow < -15) {
+        chr->deflectWindow = -15;
         if (BtlInput_TestAction(chr, 0x2B, 1) && (BtlParam_GetFlags2(chr) & 0x20)) {
-            chr->unk1074 = 5;
+            chr->deflectWindow = 5;
         }
     }
     chr->throwBreakWindow--;
@@ -1716,6 +1716,6 @@ void BtlMove_UpdateDefenseTimers(BtlMoveChr *chr) {
         chr->unk1080 = -1;
     }
     if (BtlChar_TestFlag(chr, 0x80) && BtlMember_HasAbility(chr, 0x38)) {
-        chr->dodgeWindow = 1;
+        chr->blastDodgeWindow = 1;
     }
 }
