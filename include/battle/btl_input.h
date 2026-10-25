@@ -124,20 +124,7 @@
 
 
 /* Partial view of a fighter (0x1600 bytes, BtlChar_Get): only what this file touches. */
-typedef struct BtlInputChr {
-    /* 0x0000 */ s32 player;        /* index into SaveData.key[] and the replay buffers; BtlInputRecord.player */
-    /* 0x0004 */ s32 pad;           /* index into gPad (BtlChar_GetPad) */
-    /* 0x0008 */ u8 unk8[0x570 - 0x8];
-    /* 0x0570 */ BtlCharInput input;
-    /* 0x0948 */ u8 unk948[0x1278 - 0x948];
-    /* 0x1278 */ s32 injectOn;      /* non-zero: the record is built from the three fields below, not from the pad */
-    /* 0x127C */ u32 injectButtons; /* BTLB_* */
-    /* 0x1280 */ f32 injectStickX;  /* -1..1 */
-    /* 0x1284 */ f32 injectStickY;
-    /* 0x1288 */ u8 unk1288[0x1594 - 0x1288];
-    /* 0x1594 */ s32 techClass;       /* >= 2 enables BTLC_SWITCH; passed to BtlSuper_GetPromptRow */
-    /* 0x1598 */ u8 unk1598[0x1600 - 0x1598];
-} BtlInputChr; /* 0x1600 */
+typedef BtlFighter BtlInputChr;
 
 /* Entry returned by BtlSuper_GetPromptRow (0x14 bytes; only the field read here). */
 typedef struct BtlInputSwitchEntry {
