@@ -2205,7 +2205,7 @@ void BtlAct_SuperRushSequenceHandler(ActGChr *chr, s32 phase) {
                         if ((chr->work[0] & 1) && BtlAnim_IsNew(chr)) {
                             BtlAct_SetFormRandom(chr);
                             BtlChange_RequestChara(chr->player, chr->form.chara, chr->form.costume, chr->form.variant,
-                                                   chr->form.animChara, chr->form.unk1C, chr->form.voiceChara);
+                                                   chr->form.animChara, chr->form.anim1Chara, chr->form.voiceChara);
                         }
                         if (BtlAnim_Advance(chr, 0)) {
                             ++*stepA;
@@ -2252,13 +2252,13 @@ void BtlAct_SuperRushSequenceHandler(ActGChr *chr, s32 phase) {
                 }
             }
             BtlAnim_Advance(chr, 0);
-            if (chr->thr.defReload != 0 && chr->thr.lastStep == level) {
+            if (chr->thr.defFormChange != 0 && chr->thr.defFormStep == level) {
                 switch (*stepB) {
                     case 0:
                         if (!(chr->work[0] & 1) && BtlAnim_IsNew(chr)) {
                             BtlAct_SetFormCurrent(chr);
                             BtlChange_RequestChara(chr->player, chr->form.chara, chr->form.costume, chr->form.variant,
-                                                   chr->form.animChara, chr->form.unk1C, chr->form.voiceChara);
+                                                   chr->form.animChara, chr->form.anim1Chara, chr->form.voiceChara);
                         }
                         if (BtlChar_TestFlag(chr, 0x31)) {
                             ++*stepB;
@@ -2290,13 +2290,13 @@ void BtlAct_SuperRushSequenceHandler(ActGChr *chr, s32 phase) {
             } else {
                 okB = 1;
             }
-            if (chr->thr.atkReload != 0 && chr->thr.stepCount - 1 == level) {
+            if (chr->thr.atkFormChange != 0 && chr->thr.stepCount - 1 == level) {
                 switch (*stepA) {
                     case 0:
                         if ((chr->work[0] & 1) && BtlAnim_IsNew(chr)) {
                             BtlAct_SetFormCurrent(chr);
                             BtlChange_RequestChara(chr->player, chr->form.chara, chr->form.costume, chr->form.variant,
-                                                   chr->form.animChara, chr->form.unk1C, chr->form.voiceChara);
+                                                   chr->form.animChara, chr->form.anim1Chara, chr->form.voiceChara);
                         }
                         if (BtlChar_TestFlag(chr, 0x31)) {
                             ++*stepA;
@@ -2402,15 +2402,15 @@ void BtlAct_SuperRushSequenceHandler(ActGChr *chr, s32 phase) {
                     BtlChar_SetHeldFlag(chr, 0x1D);
                     BtlChar_SetHeldFlag(chr, 0x1E);
                     next = BtlAct_GetLandingAction(chr, slot, chr->thr.landingKind);
-                    if (chr->thr.turnVictim != 0) {
+                    if (chr->thr.useAngles != 0) {
                         f32 yaw;
                         f32 addYaw;
                         f32 pitch;
 
                         BtlChar_SetFlag(chr, 0x94);
                         yaw = BtlChar_GetPos(chr)->rot.y;
-                        addYaw = chr->thr.turnYaw;
-                        pitch = chr->thr.turnPitch;
+                        addYaw = chr->thr.angleYaw;
+                        pitch = chr->thr.anglePitch;
                         if (chr->react.back != 0) {
                             chr->react.turnYaw = BtlUtil_WrapAngle(yaw + addYaw);
                             chr->react.turnPitch = pitch;
@@ -2777,7 +2777,7 @@ void BtlAct_SuperRushFinishHandler(ActGChr *chr, s32 phase) {
         BtlChar_SetFlag(chr, 0x46);
         BtlChar_SetFxBit(chr, 0x10);
         BtlChar_SetFlag(chr, 0x136);
-        if (chr->thr.unk38 != 0) {
+        if (chr->thr.holdVictim != 0) {
             BtlChar_SetFlag(chr, 0x8B);
             BtlChar_SetFlag(chr, 9);
         }
@@ -2862,7 +2862,7 @@ void BtlAct_SuperRushCaughtHandler(ActGChr *chr, s32 phase) {
             BtlChar_SetFlag(chr, 0x45);
             BtlChar_SetFlag(chr, 0x46);
         }
-        if (chr->thr.unk38 != 0) {
+        if (chr->thr.holdVictim != 0) {
             BtlChar_SetFlag(chr, 0x97);
             BtlChar_SetFlag(chr, 0xA);
         }
@@ -2879,15 +2879,15 @@ void BtlAct_SuperRushCaughtHandler(ActGChr *chr, s32 phase) {
             BtlChar_SetHeldFlag(chr, 0x1D);
             BtlChar_SetHeldFlag(chr, 0x1E);
             next = BtlAct_GetLandingAction(chr, slot, chr->thr.landingKind);
-            if (chr->thr.turnVictim != 0) {
+            if (chr->thr.useAngles != 0) {
                 f32 yaw;
                 f32 addYaw;
                 f32 pitch;
 
                 BtlChar_SetFlag(chr, 0x94);
                 yaw = BtlOpp_GetTargetYaw(chr);
-                addYaw = chr->thr.turnYaw;
-                pitch = chr->thr.turnPitch;
+                addYaw = chr->thr.angleYaw;
+                pitch = chr->thr.anglePitch;
                 if (chr->react.back != 0) {
                     chr->react.turnYaw = BtlUtil_WrapAngle(yaw + addYaw);
                     chr->react.turnPitch = pitch;
@@ -2988,20 +2988,20 @@ void BtlAct_ClashStruggleHandler(ActGChr *chr, s32 phase) {
         BtlChar_ClearFlag(chr, 0xAA);
         BtlChar_ClearFlagRange(chr, 0xBF, 0xC3);
         BtlChar_ClearFlag(chr, 0x11F);
-        chr->clashPower = BtlSuper_GetClashPower(chr, slot) / 20;
+        chr->clashCountA = BtlSuper_GetClashPower(chr, slot) / 20;
         if (BtlMember_HasAbility(chr, 0x14)) {
-            chr->clashPower += 10;
+            chr->clashCountA += 10;
         } else if (BtlMember_HasAbility(chr, 0x13)) {
-            chr->clashPower += 6;
+            chr->clashCountA += 6;
         } else if (BtlMember_HasAbility(chr, 0x12)) {
-            chr->clashPower += 3;
+            chr->clashCountA += 3;
         }
         if (BtlMember_HasAbility(chr, 0x6A)) {
-            chr->clashPower -= 10;
+            chr->clashCountA -= 10;
         } else if (BtlMember_HasAbility(chr, 0x69)) {
-            chr->clashPower -= 6;
+            chr->clashCountA -= 6;
         } else if (BtlMember_HasAbility(chr, 0x68)) {
-            chr->clashPower -= 3;
+            chr->clashCountA -= 3;
         }
     }
     if (phase == 1) {
@@ -3041,7 +3041,7 @@ void BtlAct_ClashStruggleHandler(ActGChr *chr, s32 phase) {
         BtlChar_SetFlag(chr, 0x46);
         BtlChar_SetFlag(chr, 0x134);
         if (chr->actionFrame >= 0x10 && BtlInput_TestAction(chr, 0x33, 1)) {
-            chr->clashPower++;
+            chr->clashCountA++;
         }
     }
     if (phase == 2) {
@@ -3058,7 +3058,7 @@ void BtlAct_ClashStruggleHandler(ActGChr *chr, s32 phase) {
     if (phase == 3) {
         BtlSuper_Leave(chr, slot);
         BtlChar_ClearFlagRange(chr, 0xBF, 0xC3);
-        chr->clashPower = 0;
+        chr->clashCountA = 0;
     }
 }
 
@@ -3085,7 +3085,7 @@ void BtlAct_ClashLostHandler(ActGChr *chr, s32 phase) {
         if ((chr->work[0] & 1) && chr->actionFrame == 1) {
             BtlChar_SavePlacement(chr);
             BtlChange_RequestChara(chr->player, chr->form.chara, chr->form.costume, chr->form.variant, chr->form.animChara,
-                                   chr->form.unk1C, chr->form.voiceChara);
+                                   chr->form.anim1Chara, chr->form.voiceChara);
         }
         if (BtlAnim_Advance(chr, 0)) {
             chr->work[0] |= 2;
@@ -3179,7 +3179,7 @@ s32 BtlAct_ChangeRandomCharaHandler(ActGChr *chr, s32 phase) {
                 BtlChar_SavePlacement(chr);
                 BtlAct_SetFormRandom(chr);
                 BtlChange_RequestChara(chr->player, chr->form.chara, chr->form.costume, chr->form.variant,
-                                       chr->form.animChara, chr->form.unk1C, chr->form.voiceChara);
+                                       chr->form.animChara, chr->form.anim1Chara, chr->form.voiceChara);
                 ++*step;
                 break;
             case 1:
