@@ -114,17 +114,29 @@ typedef struct BtlSuperData {
     /* 0x018 */ s16 id[3];            /* technique id; 0x268, 0x27F, 0x2CD, 0x2D5 are special-cased here */
     /* 0x01E */ s16 clashPower[3];
     /* 0x024 */ f32 shotTime[3];      /* seconds */
-    /* 0x030 */ u8 unk30[0x54 - 0x30];
+    /* 0x030 */ f32 shotLife[3];
+    /* 0x03C */ f32 power[3];
+    /* 0x048 */ f32 hitScale[3];
     /* 0x054 */ f32 shotSpeed[3];     /* 10 km/h */
     /* 0x060 */ f32 shotTurn[3];      /* degrees per second */
     /* 0x06C */ f32 shotScale[3];
-    /* 0x078 */ u8 unk78[0x90 - 0x78];
+    /* 0x078 */ f32 groundScale[3];
+    /* 0x084 */ f32 impactScale[3];
     /* 0x090 */ s8 unk90[3];
     /* 0x093 */ s8 shots[3];          /* hit factor 1: number of shots; < 1 counts as 1 */
     /* 0x096 */ s8 hitsB[3];          /* hit factor 2; < 1 counts as 1 */
     /* 0x099 */ s8 hitShape[3];
     /* 0x09C */ s8 hitsC[3];          /* hit factor 3, less 1 */
-    /* 0x09F */ u8 unk9F[0x13B - 0x9F];
+    /* 0x09F */ u8 unk9F[3];
+    /* 0x0A2 */ s8 groundFx[3];
+    /* 0x0A5 */ s8 impactFx[3];
+    /* 0x0A8 */ s8 nodes[6][3];
+    /* 0x0BA */ s8 subKind[8][3];
+    /* 0x0D2 */ u8 padD2[2];
+    /* 0x0D4 */ f32 subAngle[8][3];
+    /* 0x134 */ s8 subArg[3];
+    /* 0x137 */ u8 pad137;
+    /* 0x138 */ s8 effectType[3];
     /* 0x13B */ s8 hitDirKind[3];
     /* 0x13E */ s8 type[3];           /* BtlSuper_GetType */
     /* 0x141 */ s8 react[3];          /* reaction id */
@@ -135,7 +147,9 @@ typedef struct BtlSuperData {
     /* 0x150 */ s8 guardKind[3];
     /* 0x153 */ s8 hitSound[2][3];    /* [hit flag 0x10][slot - 2] */
     /* 0x159 */ s8 steps[3];          /* steps of a rush; < 1 counts as 1 */
-    /* 0x15C */ u8 unk15C[0x165 - 0x15C];
+    /* 0x15C */ s8 blurOn[3];
+    /* 0x15F */ s8 blurOff[3];
+    /* 0x162 */ s8 unk162[3];
     /* 0x165 */ s8 aiKind[3];
     /* 0x168 */ s8 lastStep[3];       /* < 0: steps - 1 */
     /* 0x16B */ u8 unk16B;
@@ -179,14 +193,21 @@ typedef struct BtlSkillData {
     /* 0x3C */ s8 hitsB[2];        /* hit factor 2; < 1 counts as 1 */
     /* 0x3E */ s8 hitShape[2];
     /* 0x40 */ s8 hitsC[2];        /* hit factor 3, less 1 */
-    /* 0x42 */ u8 unk42[0x62 - 0x42];
+    /* 0x42 */ u8 unk42[2];
+    /* 0x44 */ s8 groundFx[2];
+    /* 0x46 */ s8 impactFx[2];
+    /* 0x48 */ s8 nodes[6][2];
+    /* 0x54 */ s8 frames[6][2];
+    /* 0x60 */ s8 effectType[2];
     /* 0x62 */ s8 hitDirKind[2];
     /* 0x64 */ s8 sequence[2];     /* which action block runs the skill */
     /* 0x66 */ s8 statKind[2];     /* BTL_STAT_KIND_*: how long the stat levels last */
     /* 0x68 */ s8 react[2];        /* reaction id */
     /* 0x6A */ s8 reactS800[2];    /* victim state bit 0x800; <= 0: react */
     /* 0x6C */ s8 hitSound[2];
-    /* 0x6E */ u8 unk6E[0x74 - 0x6E];
+    /* 0x6E */ s8 blurOn[2];
+    /* 0x70 */ s8 blurOff[2];
+    /* 0x72 */ u8 pad72[2];
     /* 0x74 */ f32 push[2];        /* knock-back, total over all hits (used as stored) */
     /* 0x7C */ f32 guardPush[2];
     /* 0x84 */ s32 damage[2];      /* total over all hits */

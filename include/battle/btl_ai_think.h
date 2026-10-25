@@ -36,7 +36,9 @@ typedef struct AiThSeq {
     /* 0x14 */ AiThSeqEntry stack[8];
     /* 0x54 */ s32 timer;
     /* 0x58 */ s32 waitTimer;
-    /* 0x5C */ s32 unk5C[3];
+    /* 0x5C */ s32 startState;
+    /* 0x60 */ f32 charge;
+    /* 0x64 */ f32 startDist;
     /* 0x68 */ s32 ruleSet;    /* (m) rule list being evaluated (0..7) */
     /* 0x6C */ s32 firedSet;   /* (m) rule list of the rule that last fired */
     /* 0x70 */ s32 unk70;
@@ -150,7 +152,10 @@ typedef struct AiThRuleList {
 typedef struct AiThActTable {
     /* 0x000 */ s32 unk0;
     /* 0x004 */ void *steps;        /* (m) set at bind time to the table at +0x788 */
-    /* 0x008 */ u8 unk8[0x280];
+    /* 0x008 */ u16 first[0x80];
+    /* 0x108 */ u8 count[0x80];
+    /* 0x188 */ s8 pick[0x80];
+    /* 0x208 */ s8 timeout[0x80];
     /* 0x288 */ u16 seqFlags[0x80];
     /* 0x388 */ s8 actClass[0x400]; /* (m) per fighter action id */
     /* 0x788 */ u8 stepData[1];

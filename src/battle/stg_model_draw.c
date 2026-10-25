@@ -47,7 +47,7 @@ extern s32 StgOfsTable_GetCount(StgMOfsTable *t);
 extern void StgFrustum_Build(void *view, StgMFrustum *fr);
 extern s32 StgFrustum_TestBox(StgMFrustum *fr, f32 x, f32 y, f32 z, f32 r);
 extern s32 StgFrustum_TestPart(StgMPart *part, StgMFrustum *fr);
-extern f32 Stg_FadeRatio(f32 a, f32 b);
+extern f32 Stg_FadeRatio(f32 frame, f32 endFrame);
 extern f32 Stg_FadeByCamDist(Vec4 *pos, f32 value);
 extern void EftStageScroll_Draw(void);
 extern void Vu0Screen_StoreMtx(void *m);

@@ -326,7 +326,7 @@ f32 Stg_WrapRange(f32 lo, f32 hi, f32 v);
 void StgFrustum_Build(StgView *view, StgFrustum *fr);
 s32 StgFrustum_TestBox(StgFrustum *fr, f32 x, f32 y, f32 z, f32 r);
 s32 StgFrustum_TestPart(StgPart *part, StgFrustum *fr);
-f32 Stg_FadeRatio(f32 a, f32 b);
+f32 Stg_FadeRatio(f32 frame, f32 endFrame);
 f32 Stg_FadeByCamDist(Vec4 *pos, f32 value);
 void BtlStage_GetLightVecA(Vec4 *out);
 void BtlStage_GetLightVecB(Vec4 *out);

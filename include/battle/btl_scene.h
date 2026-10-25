@@ -111,7 +111,8 @@ typedef struct BtlScene {
 /* One record of the blast list of the next module (0x12DD80..); only what this file reads. */
 typedef struct BtlBlastRec {
     /* 0x00 */ s32 objId;   /* object id of the fighter it belongs to */
-    /* 0x04 */ s32 unk4[2];
+    /* 0x04 */ s32 unk4;
+    /* 0x08 */ s32 level;
     /* 0x0C */ s32 type;
     /* 0x10 */ u8 unk10[0x40];
     /* 0x50 */ s32 flags;   /* bit 0x10 tested, 0xA set by BtlScene_CheckStageChange */

@@ -50,16 +50,20 @@ typedef struct BtlAiSeq {
     /* 0x14 */ BtlAiSeqEntry stack[8];
     /* 0x54 */ s32 timer;      /* (m) per-step counter / parameter */
     /* 0x58 */ s32 waitTimer;      /* (m) cleared by step handler 17 */
-    /* 0x5C */ s32 unk5C[3];
+    /* 0x5C */ s32 startState;
+    /* 0x60 */ f32 charge;
+    /* 0x64 */ f32 startDist;
     /* 0x68 */ s32 ruleSet;    /* which of the eight rule lists the thinker is evaluating (0x1BAC30) */
-    /* 0x6C */ s32 unk6C[2];
+    /* 0x6C */ s32 firedSet;
+    /* 0x70 */ s32 unk70;
     /* 0x74 */ f32 dirX;
     /* 0x78 */ f32 dirZ;
     /* 0x7C */ s32 prevId;      /* (m) switched on by step handler 23 (0x22..0x35) */
     /* 0x80 */ s32 firedRule;
     /* 0x84 */ s32 roll;       /* (m) last percent roll (0..99) of a condition: debug trace, never read here */
     /* 0x88 */ s32 threshold;  /* (m) what that roll was compared with */
-    /* 0x8C */ s32 unk8C[3];
+    /* 0x8C */ s32 firedGroup;
+    /* 0x90 */ s32 unk90[2];
 } BtlAiSeq; /* size 0x98 */
 
 #define BTLAI_ACT_PATH 0x02          /* following the path instead of heading straight for the target */
@@ -89,9 +93,11 @@ typedef struct BtlAiMoveWork {
     /* 0x154 */ s32 mode;        /* entry arg / 10 when that is 1 or 2 */
     /* 0x158 */ s32 dir;         /* result of BtlAiMove_PickDir (0..4). Written here, not read here */
     /* 0x15C */ s32 flags;       /* bit 0: end the action (set outside this file) */
-    /* 0x160 */ u8 unk160[0x14];
+    /* 0x160 */ BtlAiVec lastPos;
+    /* 0x170 */ s32 stillTimer;
     /* 0x174 */ s32 stuckTimer;  /* frames since the action started or a path point was reached; ends at 61 */
-    /* 0x178 */ u8 unk178[0x30];
+    /* 0x178 */ u8 unk178[8];
+    /* 0x180 */ u8 atk[0x28];
 } BtlAiMoveWork; /* size 0x1A8 */
 
 /* The virtual pad, what the CPU "presses" this frame: work + 0x268. Cleared by BtlAiPad_Clear, filled by
@@ -134,7 +140,9 @@ typedef struct BtlAiPlan {
     } rolls[8];                /* eight Rand_Range(100) rolls drawn for every rule group that is tested */
     /* 0x54 */ s32 sub;      /* (m) written by condition 17 */
     /* 0x58 */ s8 rate[14];    /* (m) per virtual button (0..13): BtlAi_GetPairRate of the AI type's profile */
-    /* 0x66 */ u8 unk66[0x3E];
+    /* 0x66 */ u8 pad66[3];
+    /* 0x69 */ s8 total[4][14];
+    /* 0xA1 */ u8 padA1[3];
     /* 0xA4 */ s32 cooldown;   /* (m) counted down once per frame; step handler 15 sets 300 */
     /* 0xA8 */ u8 ruleNo;      /* index of the rule being tested */
     /* 0xA9 */ u8 lastRoll;
@@ -163,7 +171,12 @@ typedef struct BtlAiWork {
 
 /* Action tables inside the common AI data. */
 typedef struct BtlAiActTable {
-    /* 0x000 */ u8 unk0[0x288];
+    /* 0x000 */ s32 unk0;
+    /* 0x004 */ void *steps;
+    /* 0x008 */ u16 first[0x80];
+    /* 0x108 */ u8 count[0x80];
+    /* 0x188 */ s8 pick[0x80];
+    /* 0x208 */ s8 timeout[0x80];
     /* 0x288 */ u16 seqFlags[0x80]; /* (m) per sequence id; bit 2 is tested by condition 18 */
     /* 0x388 */ s8 actClass[1];     /* (m) per fighter action id (fighter + 0x974); 0, 10 and 11 are tested by the move action */
 } BtlAiActTable;

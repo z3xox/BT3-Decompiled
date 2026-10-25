@@ -109,7 +109,8 @@ typedef struct BtlParam {
     /* 0x00 */ u16 charaFlags;          /* BtlParam_GetCharaFlags: bit 0x80 is tested by seven callers */
     /* 0x02 */ s8 sizeClass;           /* BtlParam_GetSizeClass: 4 exempts the character from throws, rushes and some dodges */
     /* 0x03 */ s8 auraKind;       /* BtlParam_GetAuraKind: replaced by 0..10 by abilities 0x4D..0x56, 0x74 */
-    /* 0x04 */ u8 unk4[0x10 - 0x4];
+    /* 0x04 */ u8 unk4[8];
+    /* 0x0C */ f32 radius;
     /* 0x10 */ u32 flags;         /* BtlParam_GetFlags */
     /* 0x14 */ u32 flags2;        /* BtlParam_GetFlags2: skill bits (BtlAct_TestAttackSkill) */
     /* 0x18 */ u32 flags3;        /* BtlParam_GetFlags3: skill bits that need the powered-up mode (BtlAct_TestPoweredSkill) */
@@ -129,7 +130,16 @@ typedef struct BtlParam {
     /* 0x50 */ f32 maxPowerChargeTime; /* seconds to fill the max power gauge; BtlParam_GetStepA */
     /* 0x54 */ f32 maxPowerTime;  /* seconds the max power gauge lasts; BtlParam_GetMaxPowerDrain */
     /* 0x58 */ s8 searchType[4];  /* per costume; BtlParam_GetType */
-    /* 0x5C */ u8 unk5C[0x80 - 0x5C]; /* btl_tech.h */
+    /* 0x5C */ f32 unk5C; /* btl_tech.h */
+    /* 0x60 */ f32 hitReactScale;
+    /* 0x64 */ f32 gauge99CTime;
+    /* 0x68 */ f32 stepCancelRatio;
+    /* 0x6C */ f32 backStepCancelRatio;
+    /* 0x70 */ s16 poweredDashLimit;
+    /* 0x72 */ s16 poweredVanishLimit;
+    /* 0x74 */ f32 chargeRateA;
+    /* 0x78 */ f32 chargeRateB;
+    /* 0x7C */ f32 damageTaken;
     /* 0x80 */ s16 blastLimitA;   /* BtlParam_GetBlastLimitA: live ki blasts of class 0 allowed at once */
     /* 0x82 */ s16 blastLimitB;   /* BtlParam_GetBlastLimitB: the same for class 1 */
     /* 0x84 */ u8 rushFinisher[4];       /* BtlParam_GetRushFinisher */

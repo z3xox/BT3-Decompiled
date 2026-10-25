@@ -632,9 +632,10 @@ s32 StgNode_IsRigid(StgNode *node) {
     return node->keyCount == 1;
 }
 
-/* (b - a) / 30 when the difference is under 30, else 1. Used by the stage draw at 0x115A78. */
-f32 Stg_FadeRatio(f32 a, f32 b) {
-    f32 d = b - a;
+/* (endFrame - frame) / 30 when the difference is under 30, else 1: the fade over the last 30 frames of a stage
+   object's break animation (stage draw at 0x115A78). */
+f32 Stg_FadeRatio(f32 frame, f32 endFrame) {
+    f32 d = endFrame - frame;
 
     if (d < 30.0f) {
         return d / 30.0f;

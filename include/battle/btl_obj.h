@@ -119,9 +119,10 @@ typedef struct BtlObjBox8 {
 /* What one view sees of one object. Filled by BtlObj_UpdateView. */
 typedef struct BtlObjView {
     /* 0x00 */ u32 flags;   /* BTL_OBJ_FLAG_*, from BtlObjState.flags */
-    /* 0x04 */ u8 unk04[0x1C];
+    /* 0x04 */ u8 unk04[0xC];
+    /* 0x10 */ Vec4 lightDir;
     /* 0x20 */ Vec4 color;  /* light colour, 128 = 1.0 */
-    /* 0x30 */ u8 unk30[0x10];
+    /* 0x30 */ Vec4 shadowColor;
     /* 0x40 */ f32 fade;    /* 0..128 distance fade */
     /* 0x44 */ f32 dist;    /* horizontal distance from the camera to a corner of the bounds */
     /* 0x48 */ u8 unk48[8];
@@ -185,7 +186,9 @@ typedef struct BtlObj {
     /* 0x0F50 */ BtlObjBody body;
     /* 0x0FF8 */ u8 unkFF8[0x668];
     /* 0x1660 */ u8 *charaWork;  /* BtlObj_GetCharaWork(id) for a fighter */
-    /* 0x1664 */ u8 unk1664[0xC];
+    /* 0x1664 */ void *face;
+    /* 0x1668 */ void *shadow;
+    /* 0x166C */ s32 unk166C;
 } BtlObj; /* size 0x1670 */
 
 /* One file of a model resource slot. */

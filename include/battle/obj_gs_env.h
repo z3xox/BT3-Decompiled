@@ -284,7 +284,7 @@ void ObjGs_AddDefaultEnv(void);
 s32 ObjShadow_CalcPacketWords(s32 count);
 s32 ObjShadow_BuildPacket(u32 *pkt, s32 count, ObjShadowTri *tris, f32 *color);
 void ObjShadow_MakePlaneMtx(Mtx44 *out, Vec4 *plane, Vec4 *light, f32 bias);
-f32 ObjShadow_CalcScreenDist(Vec4 *a, Vec4 *b, f32 size, f32 half);
+f32 ObjShadow_CalcScreenDist(Vec4 *target, Vec4 *eye, f32 size, f32 half);
 void ObjShadow_AddTargetEnv(void);
 void ObjShadow_ResetEnv(void);
 void ObjShadow_Alloc(ObjMdlObj *obj);

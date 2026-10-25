@@ -359,7 +359,9 @@ typedef struct BobjObj {
     /* 0x0F50 */ BobjBody body;
     /* 0x1010 */ u8 unk1010[0x650];
     /* 0x1660 */ BobjWork *work;      /* the fighter buffer (BtlObj_GetCharaWork), NULL for other objects */
-    /* 0x1664 */ u8 unk1664[0xC];
+    /* 0x1664 */ void *face;
+    /* 0x1668 */ void *shadow;
+    /* 0x166C */ s32 unk166C;
 } BobjObj; /* size 0x1670 */
 
 /* Jaw rotation key and talk pattern step (tables at 0x2C6C20..0x2C6E58). */

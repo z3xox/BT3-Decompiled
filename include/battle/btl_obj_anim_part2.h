@@ -338,7 +338,8 @@ typedef struct BObj {
     /* 0x165C */ s32 unk165C;
     /* 0x1660 */ u8 *charaWork;
     /* 0x1664 */ BObjFace *face;      /* (v) NULL when the model has neither eyes nor a mouth */
-    /* 0x1668 */ u8 unk1668[8];
+    /* 0x1668 */ void *shadow;
+    /* 0x166C */ s32 unk166C;
 } BObj; /* size 0x1670 */
 
 /* face */

@@ -74,14 +74,16 @@ typedef struct BtlAiSeqA {
     /* 0x60 */ f32 charge;     /* (m) BtlCharApi_GetChargeRate when the step started / last frame */
     /* 0x64 */ f32 startDist;  /* (m) fighter distance when the step started; refreshed by step handler 2 */
     /* 0x68 */ s32 ruleSet;
-    /* 0x6C */ s32 unk6C[2];
+    /* 0x6C */ s32 firedSet;
+    /* 0x70 */ s32 unk70;
     /* 0x74 */ f32 dirX;       /* (m) the fighter's facing on the previous frame (step handler 12) */
     /* 0x78 */ f32 dirZ;       /* (m) */
     /* 0x7C */ s32 prevId;     /* (m) the action that just ended when action 0x43 is chained after it */
     /* 0x80 */ s32 firedRule;
     /* 0x84 */ s32 roll;
     /* 0x88 */ s32 threshold;
-    /* 0x8C */ s32 unk8C[3];
+    /* 0x8C */ s32 firedGroup;
+    /* 0x90 */ s32 unk90[2];
 } BtlAiSeqA; /* size 0x98 */
 
 /* Chooses which of the n alternative steps of the current group is played; arg is the stack entry's argument.

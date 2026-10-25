@@ -32,7 +32,8 @@ typedef struct AiActSeq {
                                    0x400 is tested by BtlAiSeq_IsInterrupted */
     /* 0x04 */ s32 depth;   /* (m) entries on the stack; the running one is stack[depth - 1] */
     /* 0x08 */ s32 phase;   /* (m) 0 init, 1 start, 2 run, 3 end */
-    /* 0x0C */ s32 unk0C[2];
+    /* 0x0C */ s32 stepCount;
+    /* 0x10 */ s32 step;
     /* 0x14 */ AiActEntry stack[8]; /* (m) */
     /* 0x54 */ u8 unk54[0x44];
 } AiActSeq; /* size 0x98 */

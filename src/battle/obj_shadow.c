@@ -431,13 +431,13 @@ void ObjShadow_MakePlaneMtx(Mtx44 *out, Vec4 *plane, Vec4 *light, f32 bias) {
     out->m[3][3] = a * lx + b * ly + c * lz;
 }
 
-/* Screen distance of a camera at distance |a - b| that makes a sphere of radius `size` fill `half` pixels. */
-f32 ObjShadow_CalcScreenDist(Vec4 *a, Vec4 *b, f32 size, f32 half) {
+/* Screen distance of a camera at distance |target - eye| that makes a sphere of radius `size` fill `half` pixels. */
+f32 ObjShadow_CalcScreenDist(Vec4 *target, Vec4 *eye, f32 size, f32 half) {
     Vec4 d;
     f32 dist;
     f32 s;
 
-    Vec4_Sub(&d, a, b);
+    Vec4_Sub(&d, target, eye);
     dist = sqrtf(Vec3_Dot(&d, &d));
     s = size / dist;
     return dist * sqrtf(1.0f - s * s) * half / (size + size);
