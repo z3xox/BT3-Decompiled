@@ -91,7 +91,7 @@ s32 BtlCtrl_IsOppComboDamageNew(s32 side) {
         if (Battle_GetWork()->flags & 0x2000) {
             return 0;
         }
-        return opp->comboChanged;
+        return opp->combo.changed;
     }
     return 0;
 }
@@ -147,7 +147,7 @@ s32 BtlCtrl_GetClashCount(s32 side) {
     BtlTechChr *chr = BtlChar_FindBySide(side);
 
     if (chr != NULL) {
-        return chr->clashCount;
+        return chr->clashCountB;
     }
     return 0;
 }
@@ -304,7 +304,7 @@ s32 BtlCtrl_TestTutorialFrameBit(void) {
     }
     chr = BtlChar_Get(0);
     if (chr != NULL) {
-        return (chr->frameBits >> gProgress->tutorial) & 1;
+        return (chr->bits.frame >> gProgress->tutorial) & 1;
     }
     return 0;
 }

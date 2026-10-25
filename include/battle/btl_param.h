@@ -2,6 +2,7 @@
 #define BATTLE_BTL_TECH_A_H
 
 #include "types.h"
+#include "battle/btl_fighter.h"
 
 /*
  * Fighter queries by side, the attack records and the character parameter block
@@ -184,30 +185,7 @@ typedef struct BtlTechPad {
 } BtlTechPad;
 
 /* Partial view of a fighter (0x1600 bytes). */
-typedef struct BtlTechChr {
-    /* 0x0000 */ u8 unk0[0x998];
-    /* 0x0998 */ s32 memberCount;
-    /* 0x099C */ u8 unk99C[0xD50 - 0x99C];
-    /* 0x0D50 */ s32 comboChanged;        /* BtlCtrl_IsOppComboDamageNew reads the opponent's */
-    /* 0x0D54 */ u8 unkD54[0xD68 - 0xD54];
-    /* 0x0D68 */ s32 dashCount;        /* non-zero selects attack ids 0x3E..0x42 instead of 0x34..0x3D */
-    /* 0x0D6C */ u8 unkD6C[0xD78 - 0xD6C];
-    /* 0x0D78 */ f32 charge;        /* 0..1: how far the current attack was charged */
-    /* 0x0D7C */ u8 unkD7C[0xE28 - 0xD7C];
-    /* 0x0E28 */ s32 rateBonus;     /* per second, added to the ki charge rate (BtlParam_GetRateA / B) */
-    /* 0x0E2C */ u8 unkE2C[0xE40 - 0xE2C];
-    /* 0x0E40 */ s32 techDelay;     /* > 0: no technique input (btl_act_decide.h); hides the technique prompt */
-    /* 0x0E44 */ u8 unkE44[0xE50 - 0xE44];
-    /* 0x0E50 */ s32 clashCount;    /* the clash counter of clashes B and C (btl_char_flag.h) */
-    /* 0x0E54 */ u8 unkE54[0x1278 - 0xE54];
-    /* 0x1278 */ s32 injectOn;      /* input is injected (CPU) */
-    /* 0x127C */ u8 unk127C[0x1538 - 0x127C];
-    /* 0x1538 */ u64 frameBits;     /* per-frame bit set */
-    /* 0x1540 */ u8 unk1540[0x1590 - 0x1540];
-    /* 0x1590 */ s32 dirHeld;       /* -1, or technique class 2..4 by the direction held (btl_char_action.c) */
-    /* 0x1594 */ s32 techClass;     /* -1, or the technique class 2..4 whose button is watched this frame */
-    /* 0x1598 */ u8 unk1598[0x1600 - 0x1598];
-} BtlTechChr; /* size 0x1600 */
+typedef BtlFighter BtlTechChr;
 
 /* roster + 0x2C: one entry per attack action 0x70..0xAD (BtlAct_IsAttackId). */
 typedef struct BtlTechAtkAction {
