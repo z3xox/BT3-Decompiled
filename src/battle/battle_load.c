@@ -537,7 +537,7 @@ s32 BtlLoad_StepInitial(BtlJob *job) {
                 m->buf[0] = File_Request3(m->chara * 2 + side + BTL_FILE_CHARA_DATA, m->buf[0], BTL_MEMBER_BUF_SIZE);
             }
         }
-        res->hudFile = File_Request3(gProgress->unk0[0] + 6, NULL, 0);
+        res->hudFile = File_Request3(gProgress->language + 6, NULL, 0);
         job->state++;
         break;
     case 5:

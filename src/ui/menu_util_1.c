@@ -60,16 +60,16 @@ void Progress_ClearSession(void) {
     s32 i;
 
     if (gProgress != NULL) {
-        memset(gProgress->unk30, 0, sizeof(gProgress->unk30));
+        memset(&gProgress->unk30, 0, 0x4C);
         memset(gProgress->unk7C, 0, sizeof(gProgress->unk7C));
-        memset(gProgress->unk440, 0, 0x1F4);
+        memset(gProgress->team0, 0, 0x1F4);
         memset(gProgress->unk634, 0, sizeof(gProgress->unk634));
-        memset(gProgress->unk68C, 0, sizeof(gProgress->unk68C));
-        gProgress->unk7D0 = 0;
-        memset(gProgress->unk7D4, 0, sizeof(gProgress->unk7D4));
+        memset(&gProgress->replayFlags, 0, 0x144);
+        gProgress->evoCursor = 0;
+        memset(&gProgress->trainFlags, 0, 0x28);
         for (i = 0; i < 5; i++) {
-            gProgress->unk440[i].unk0 = 0;
-            gProgress->unk530[i].unk0 = 1;
+            gProgress->team0[i].col = 0;
+            gProgress->team1[i].col = 1;
         }
     }
 }
@@ -191,7 +191,7 @@ void FlashAnim_Sheet(Flash *flash, FlashRef *ref, s32 *timer, s32 *frame, FlashU
     cell.y0 = uv->y0 + uv->y1 * row;
     cell.x1 = uv->x1 + uv->x1 * col;
     cell.y1 = uv->y1 + uv->y1 * row;
-    cell.unk10 = 0;
+    cell.tex = 0;
     Flash_ClipSetUv(flash, ref, &cell);
 }
 
@@ -435,7 +435,9 @@ s32 Num_CountDigits(s32 value) {
 }
 
 /* Num_Draw driven by a NumStyle: the clip naming follows the flags, and with NUM_FLAG_SIGN the clip in front
- * of the first digit shows cell 10 when the value is not zero. */
+ * of the first digit shows cell 10 when the value is not zero. With `child` NULL, `parent` is the sprintf format of
+ * the digit clips themselves (at the root); otherwise one of the two is the format (NUM_FLAG_PARENT_FMT /
+ * NUM_FLAG_CHILD_FMT) and the other a clip name. */
 /* Two source forms decide the registers here (both found from a decomp-permuter candidate that used
  * `digit++; digit--;` in the loop):
  * - the count is an if / else with the call first (`if (style->count == 0) count = f(); else count = style->count;`):
@@ -447,7 +449,7 @@ s32 Num_CountDigits(s32 value) {
  *   with the negated test the chain starts `digit = 0` (top), `digit = 0` (first arm), which is two doublings
  *   (556 = 4 x 139) and puts digit / flash / name in s7 / s5 / s6; with the blank arm first the second set is
  *   `digit = 10` carrying a note (280 = 2 x 140), the original's s5 / s6 / s7. */
-void Num_DrawEx(Flash *flash, NumStyle *style, char *a, char *b, s32 value) {
+void Num_DrawEx(Flash *flash, NumStyle *style, char *parent, char *child, s32 value) {
     FlashRef ref;
     char name[0x40];
     FlashUv uv;
@@ -480,15 +482,15 @@ void Num_DrawEx(Flash *flash, NumStyle *style, char *a, char *b, s32 value) {
     i = count - 1;
     value = value < 0 ? -value : value;
     for (; i >= 0; i--) {
-        if (b == NULL) {
-            sprintf(name, a, i + style->first);
+        if (child == NULL) {
+            sprintf(name, parent, i + style->first);
             Flash_FindLabel(flash, NULL, name, &ref);
         } else if (style->flags & NUM_FLAG_PARENT_FMT) {
-            sprintf(name, a, i + style->first);
-            Flash_FindLabel(flash, name, b, &ref);
+            sprintf(name, parent, i + style->first);
+            Flash_FindLabel(flash, name, child, &ref);
         } else if (style->flags & NUM_FLAG_CHILD_FMT) {
-            sprintf(name, b, i + style->first);
-            Flash_FindLabel(flash, a, name, &ref);
+            sprintf(name, child, i + style->first);
+            Flash_FindLabel(flash, parent, name, &ref);
         }
         flags = style->flags;
         if (flags & NUM_FLAG_BLANK) {

@@ -96,7 +96,8 @@ typedef union LoadScreen {
 
 /* The part of the 0x7FC-byte progress struct (gProgress) this module touches. */
 typedef struct Progress {
-    /* 0x00 */ s32 unk0[2];
+    /* 0x00 */ s32 language;         /* the menu headers' `language`: file ids of the text sets are added to it */
+    /* 0x04 */ s32 baseFile;         /* first file id of the common files */
     /* 0x08 */ void *loadPack;       /* buffer the packed loading-screen file is read into */
     /* 0x0C */ void *loadRes;        /* buffer it is unpacked into */
     /* 0x10 */ LoadSprite *loadSprites; /* room for LOAD_SPRITE_COUNT sprites */

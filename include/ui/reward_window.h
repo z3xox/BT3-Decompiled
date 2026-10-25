@@ -24,8 +24,10 @@
 
 /* A playing movie. */
 typedef struct Flash {
-    /* 0x00 */ s32 unk0[3]; /* [2] (+0x08) is Flash.flags of sys/flash.h: bit 1 (FLASH_PAD) is set and cleared by the
-                               movie itself (action "pad" "true" / "false"): the screen may take input */
+    /* 0x00 */ void *data;  /* Flash.data of sys/flash.h */
+    /* 0x04 */ void *tex;   /* Flash.tex */
+    /* 0x08 */ s32 flags;   /* Flash.flags: bit 1 (FLASH_PAD) is set and cleared by the movie itself (action "pad" "true" /
+                               "false"): the screen may take input */
     /* 0x0C */ s32 trig;   /* Flash.trig of sys/flash.h, not flags: bit n is set for one frame by the movie's action
                                "trig" "n". Bit 0 is what GetWin_IsAnimDone tests */
     /* 0x10 */ s32 unk10[7];
@@ -43,7 +45,7 @@ typedef struct FlashUv {
     /* 0x04 */ s32 y0;
     /* 0x08 */ s32 x1;
     /* 0x0C */ s32 y1;
-    /* 0x10 */ s32 unk10;
+    /* 0x10 */ s32 tex;
 } FlashUv; /* size 0x14 */
 
 /* Properties set with Flash_ClipSetFlags. */
@@ -74,15 +76,26 @@ typedef struct TextBox {
     /* 0x08 */ s32 unk8;
     /* 0x0C */ s32 x;          /* TextBox_SetOffset: added to every line's position (0 or 0x100 in the presets) */
     /* 0x10 */ s32 y;
-    /* 0x14 */ u8 unk14[0x1C];
+    /* 0x14 */ s32 lineY[5];   /* the fields from here on are set through the TextBoxFull view of ui/menu_support.h */
+    /* 0x28 */ s32 maxW;
+    /* 0x2C */ s32 maxH;
     /* 0x30 */ u8 color[4];    /* r, g, b, a */
     /* 0x34 */ u8 shadow[4];   /* TextBox_SetShadowColor: colour of the text's shadow */
     /* 0x38 */ s32 clip[4];    /* font clip x0, y0, x1, y1; TextBox_SetClip takes them as x0, x1, y0, y1 */
-    /* 0x48 */ u8 unk48[8];
+    /* 0x48 */ s32 spacingX;
+    /* 0x4C */ s32 spacingY;
     /* 0x50 */ s32 align;      /* Font_SetAlign value: 0 or 2 in the presets, 1 in the reward window */
-    /* 0x54 */ u8 unk54[0x2C];
+    /* 0x54 */ u16 *drawStr;   /* 0x50..0x8B is TextBoxDraw of ui/menu_support.h (TextBoxFull.draw), filled by TB_ATTACH */
+    /* 0x58 */ s32 drawX;
+    /* 0x5C */ s32 drawY;
+    /* 0x60 */ f32 drawScaleX;
+    /* 0x64 */ f32 drawScaleY;
+    /* 0x68 */ u8 drawColor[4];
+    /* 0x6C */ u8 drawShadow[4];
+    /* 0x70 */ s32 drawClip[4];
     /* 0x80 */ s32 noFlush;    /* 1: the text is left in the font queue instead of being drawn at once */
-    /* 0x84 */ u8 unk84[8];
+    /* 0x84 */ s32 drawSpacingX;
+    /* 0x88 */ s32 drawSpacingY;
 } TextBox; /* size 0x8C */
 
 void TextBox_Init(TextBox *box, void *text, u32 preset);
@@ -259,9 +272,16 @@ void ChrView_Term(void);
 
 /* 0x30 bytes; two arrays of five in the progress block. */
 typedef struct ProgressEntry {
-    /* 0x00 */ s32 unk0;
-    /* 0x04 */ s32 unk4[11];
-} ProgressEntry;
+    /* 0x00 */ s32 col;
+    /* 0x04 */ s32 row;
+    /* 0x08 */ s32 form;
+    /* 0x0C */ s32 customCol;
+    /* 0x10 */ s32 customRow;
+    /* 0x14 */ s32 plate;
+    /* 0x18 */ s32 color;
+    /* 0x1C */ s32 chara;
+    /* 0x20 */ u16 items[8];
+} ProgressEntry; /* the menu's views: UbMember (menu/ub_team_select.h), CharSelSide (menu/char_select.h), QMember */
 
 /* gProgress: the 0x7FC-byte block of state that survives between the menu and the battle. Local view. */
 typedef struct ViewProgress {
@@ -272,22 +292,39 @@ typedef struct ViewProgress {
     /* 0x010 */ void *loadSprites; /* 0x380 bytes */
     /* 0x014 */ s32 flags;         /* PROGRESS_FLAG_* */
     /* 0x018 */ s32 mode;          /* the menu screen / game mode */
-    /* 0x01C */ s32 unk1C[2];
+    /* 0x01C */ s32 prevMode;          /* the mode before the current one (menu history_outro.c / history_save.c) */
+    /* 0x020 */ s32 lastLoadType;      /* `lastLoadType` in menu/overlay_common.h */
     /* 0x024 */ s32 demoPick;         /* -1 at start: `demoPick` in ui/menu_support.h, the demo battle's last pairing */
-    /* 0x028 */ s32 unk28[2];
-    /* 0x030 */ u8 unk30[0x4C];    /* cleared per session */
+    /* 0x028 */ s32 demoCount;         /* attract demos shown since the opening movie */
+    /* 0x02C */ s32 mainMenuItem;      /* item the main menu was left on */
+    /* 0x030 */ s32 unk30;             /* 0x30..0x7B cleared per session */
+    /* 0x034 */ s32 subMenu;           /* which per-mode sub menu the mode menu shows */
+    /* 0x038 */ s32 subMenuItem;       /* item the sub menu was left on */
+    /* 0x03C */ s32 level;             /* `level` in menu/history.h; read by the battle too */
+    /* 0x040 */ s32 reward[15];        /* HistReward of menu/history.h, filled by script command 16 */
     /* 0x07C */ u8 unk7C[0x3C4];   /* cleared per session */
-    /* 0x440 */ ProgressEntry unk440[5]; /* cleared per session; language = 0 */
-    /* 0x530 */ ProgressEntry unk530[5]; /* language = 1 */
-    /* 0x620 */ s32 unk620;
+    /* 0x440 */ ProgressEntry team0[5]; /* cleared per session; col = 0: the picks of side 0 */
+    /* 0x530 */ ProgressEntry team1[5]; /* col = 1: the picks of side 1 */
+    /* 0x620 */ s32 players;           /* 0 1P against COM, 1 1P against 2P, 2 COM against COM (menu/duel.h) */
     /* 0x624 */ s32 battleType;        /* `battleType` in the menu headers; 2 in mode 0x28: the grid is built without the
                                       random cell (CHRGRID_NO_RANDOM in ChrGrid_Build) */
-    /* 0x628 */ s32 unk628[3];
+    /* 0x628 */ s32 stage;             /* index in the stage grid (menu/char_select.h) */
+    /* 0x62C */ s32 bgm;               /* id in the music list */
+    /* 0x630 */ s32 unk630;
     /* 0x634 */ u8 unk634[0x58];   /* cleared per session */
-    /* 0x68C */ u8 unk68C[0x144];  /* cleared per session; +0x68C replayFlags, +0x69C the seven replay slot entries
-                                      (McFlowSlotInfo in sys/memcard_flow.c, ProgressTeam in ui/menu_support.h) */
-    /* 0x7D0 */ s32 unk7D0;        /* cleared per session */
-    /* 0x7D4 */ u8 unk7D4[0x28];   /* cleared per session */
+    /* 0x68C */ s32 replayFlags;       /* 0x68C..0x7CF cleared per session */
+    /* 0x690 */ s32 dcVisits;
+    /* 0x694 */ s32 dcCursor;
+    /* 0x698 */ s32 replayCursor;      /* slot the replay list was left on */
+    /* 0x69C */ s32 replaySlot[7][11]; /* the seven replay slot entries (McFlowSlotInfo in sys/memcard_flow.c, ProgressTeam in
+                                          ui/menu_support.h) */
+    /* 0x7D0 */ s32 evoCursor;         /* cleared per session: the plate the Evolution Z top menu was left on */
+    /* 0x7D4 */ s32 trainFlags;        /* 0x7D4..0x7FB cleared per session: MenuProgressTrain of menu/training.h */
+    /* 0x7D8 */ s32 unk7D8;
+    /* 0x7DC */ s32 trainCursor[5];
+    /* 0x7F0 */ s32 unk7F0;
+    /* 0x7F4 */ s32 tutorial;          /* tutorial number */
+    /* 0x7F8 */ s32 unk7F8;
 } ViewProgress; /* size 0x7FC */
 
 /* Character grid: 7 columns. A cell is a character or a marker. */
@@ -316,8 +353,8 @@ typedef struct ChrGridCell {
 /* How Num_DrawEx finds and draws its digit clips. */
 #define NUM_FLAG_ZEROS 1       /* leading zeros are drawn */
 #define NUM_FLAG_SIGN 2        /* the clip in front of the first digit shows cell 10 when the value is not 0 */
-#define NUM_FLAG_CHILD_FMT 4   /* the format names a child of clip `a` */
-#define NUM_FLAG_PARENT_FMT 8  /* the format names the parent of clip `b` */
+#define NUM_FLAG_CHILD_FMT 4   /* the format (`child`) names a child of clip `parent` */
+#define NUM_FLAG_PARENT_FMT 8  /* the format (`parent`) names the parent of clip `child` */
 #define NUM_FLAG_BLANK 0x10    /* every digit shows cell 10 */
 
 typedef struct NumStyle {
@@ -344,7 +381,7 @@ void Num_Draw(Flash *flash, char *fmt, s32 first, s32 count, s32 value, s32 w, s
 void Num_DrawChild(Flash *flash, char *parent, char *fmt, s32 first, s32 count, s32 value, s32 w, s32 h, s32 mode,
                    s32 parentFmt);
 s32 Num_CountDigits(s32 value);
-void Num_DrawEx(Flash *flash, NumStyle *style, char *a, char *b, s32 value);
+void Num_DrawEx(Flash *flash, NumStyle *style, char *parent, char *child, s32 value);
 s32 ChrGrid_IsSelectable(ChrGridCell *cells, s32 index);
 s32 ChrGrid_MoveRight(ChrGridCell *cells, s32 *col, s32 row);
 s32 ChrGrid_MoveLeft(ChrGridCell *cells, s32 *col, s32 row);

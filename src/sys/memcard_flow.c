@@ -19,7 +19,7 @@ typedef struct McFlowSlotInfo {
 typedef struct McFlowProgress {
     /* 0x000 */ s32 language;
     /* 0x004 */ s32 baseFile;    /* first id of the common files */
-    /* 0x008 */ s32 unk8[3];
+    /* 0x008 */ s32 loadBuf[3];
     /* 0x014 */ s32 flags;       /* bit 2: "continue without saving" was chosen at boot; bit 3: a save was loaded at boot */
     /* 0x018 */ u8 unk18[0x674];
     /* 0x68C */ s32 replayFlags;      /* bit 0 picks the retry question of the scan flow */

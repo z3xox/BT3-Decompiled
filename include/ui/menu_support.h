@@ -120,9 +120,11 @@ typedef struct ChrTblEntry {
 /* Item entry, 0x28 bytes, section 2 of the file (ItemInfo in sys/save.h, GetWinItem in ui/reward_window.h). */
 typedef struct ItemTblEntry {
     /* 0x00 */ u8 type;         /* ITEMTBL_TYPE_* */
-    /* 0x01 */ u8 unk1[2];
+    /* 0x01 */ u8 group;        /* two items of the same type and group cannot be in one set (VItemEntry, menu/evo_z_items.h) */
+    /* 0x02 */ u8 picture;      /* picture of the details page */
     /* 0x03 */ u8 slots;        /* how many of a character's item slots it takes */
-    /* 0x04 */ u8 unk4[8];
+    /* 0x04 */ u8 unk4[4];
+    /* 0x08 */ u32 stockLevel;  /* the shop sells it once the save's stockLevel reaches this (menu shop.c) */
     /* 0x0C */ s16 stat[ITEMSET_STAT_COUNT];   /* change of four stats */
     /* 0x14 */ s32 flags;       /* ITEMTBL_FLAG_*; 2 = owned in a new save (sys/save.h) */
     /* 0x18 */ s32 ability[4];  /* ability bits */

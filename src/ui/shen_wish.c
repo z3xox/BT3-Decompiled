@@ -675,7 +675,7 @@ s32 Shen_UpdateTalk(ShenWork *work) {
             Flash_Play(work->flash, 1);
         }
         if (!(work->flags & SHEN_FLAG_LIST_ON)) {
-            if (work->flash[0].unk0[2] & 2) {
+            if (work->flash[0].flags & 2) {
                 Shen_SetPlate(work->flash, work->cursor, 1);
                 work->flags |= SHEN_FLAG_LIST_ON;
             }
@@ -722,7 +722,7 @@ void Shen_Update(ShenWork *work) {
     if (Shen_UpdateTalk(work)) {
         return;
     }
-    if (!(work->flash[0].unk0[2] & 2)) {
+    if (!(work->flash[0].flags & 2)) {
         return;
     }
     switch (work->state) {

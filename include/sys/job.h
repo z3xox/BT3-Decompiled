@@ -8,7 +8,7 @@
 
 /* A queued job: any object whose second word is its step function. */
 typedef struct Job {
-    /* 0x00 */ s32 unk0;
+    /* 0x00 */ s32 link;
     /* 0x04 */ s32 (*step)(struct Job *job); /* called once per frame; returns 1 when the job is finished */
 } Job;
 

@@ -75,7 +75,7 @@ typedef struct McCardIconSys {
     /* 0x104 */ char viewName[0x40];
     /* 0x144 */ char copyName[0x40];
     /* 0x184 */ char delName[0x40];
-    /* 0x1C4 */ u8 unk1C4[0x200];
+    /* 0x1C4 */ u8 reserved3[0x200];
 } McCardIconSys; /* size 0x3C4 */
 
 s32 McCard_GetStep(void);
