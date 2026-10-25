@@ -222,7 +222,7 @@ s32 BtlOpp_GetSeenAction(BtlFlagChr *chr) {
     BtlFlagChr *opp = OPPONENT(chr);
 
     if (BtlChar_GetStage(chr) < 6 || BtlChar_GetStage(opp) < 6) {
-        return opp->prevAction;
+        return opp->act.prev;
     }
     return BtlAct_GetCurrent(opp);
 }
@@ -246,7 +246,7 @@ f32 BtlOpp_GetObjUnkFF8(BtlFlagChr *chr) {
 void BtlOpp_GetLookOffset(BtlFlagChr *chr, Vec4 *out) {
     BtlFlagChr *opp = OPPONENT(chr);
 
-    Vec4_Copy(out, &opp->lookOffset);
+    Vec4_Copy(out, &opp->look.offset);
 }
 
 /* World position of a node of the opponent's model. */

@@ -119,38 +119,7 @@ typedef struct BtlFlagPose {
 } BtlFlagPose;
 
 /* Fighter (0x1600 bytes). */
-typedef struct BtlFlagChr {
-    /* 0x0000 */ s32 player;  /* roster index */
-    /* 0x0004 */ s32 pad;
-    /* 0x0008 */ s32 side;
-    /* 0x000C */ s32 objId;   /* battle object id */
-    /* 0x0010 */ u8 unk10[0x950 - 0x10];
-    /* 0x0950 */ s32 prevAction;
-    /* 0x0954 */ u8 unk954[0x964 - 0x954];
-    /* 0x0964 */ s32 actionFrame;
-    /* 0x0968 */ s32 prevActionFrame;  /* last frame's actionFrame (inferred from the pairing with prevAction) */
-    /* 0x096C */ u8 unk96C[0xD88 - 0x96C];
-    /* 0x0D88 */ s32 evasionCount;
-    /* 0x0D8C */ u8 unkD8C[0xE4C - 0xD8C];
-    /* 0x0E4C */ s32 clashCountA; /* compared between the two fighters each frame of clash A */
-    /* 0x0E50 */ s32 clashCountB; /* compared to pick the winner of clashes B and C */
-    /* 0x0E54 */ u8 unkE54[0xE58 - 0xE54];
-    /* 0x0E58 */ s32 clashAnswer;
-    /* 0x0E5C */ u8 unkE5C[0xFB0 - 0xE5C];
-    /* 0x0FB0 */ s32 reaction;
-    /* 0x0FB4 */ u8 unkFB4[0x1084 - 0xFB4];
-    /* 0x1084 */ u8 stage;                       /* current stage of the frame */
-    /* 0x1085 */ u8 held[BTL_FLAG_BYTES];
-    /* 0x10AD */ u8 pulse[BTL_FLAG_BYTES];
-    /* 0x10D5 */ u8 prevHeld[BTL_FLAG_BYTES];
-    /* 0x10FD */ u8 prevPulse[BTL_FLAG_BYTES];
-    /* 0x1125 */ u8 stamp[BTL_FLAG_COUNT];
-    /* 0x1262 */ u8 unk1262[0x1538 - 0x1262];
-    /* 0x1538 */ BtlFlagBits bits;
-    /* 0x1548 */ u8 unk1548[0x15A0 - 0x1548];
-    /* 0x15A0 */ Vec4 lookOffset;
-    /* 0x15B0 */ u8 unk15B0[0x1600 - 0x15B0];
-} BtlFlagChr; /* size 0x1600 */
+typedef BtlFighter BtlFlagChr;
 
 /* Fighter roster (gBtlChars, 0x280 bytes). */
 typedef struct BtlFlagRoster {
