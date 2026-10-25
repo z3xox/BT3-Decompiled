@@ -1,0 +1,208 @@
+include/battle/battle.h	BtlClock	unkE	KEEP	KEEP	no code reads or writes it (grep unkE / raw +0xE in src); tail padding of the 0x10-byte clock (same verdict as docs/names/fields/group01.tsv)
+include/battle/battle.h	BattleSide	unk20C	KEEP	KEEP	no reader or writer besides the whole-setup memset/copies; no raw 0x20C access in src/battle
+include/battle/battle.h	BattleOption	unk14	KEEP	KEEP	only BattleSetup_SetOption14 / Battle_GetOption14 (battle_load.c:1446, :1694) touch it and neither has a caller in src or asm
+include/battle/battle.h	BattleSetup	unk5A4	KEEP	KEEP	no reader or writer found (grep unk5A4 / 0x5A4); only copied with the whole setup
+include/battle/battle.h	BattleResult	unkC	KEEP	KEEP	no reader or writer found; BattleResult_Clear memsets the block
+include/battle/battle.h	BattleWork	unk19FC	KEEP	KEEP	no access; tail padding of the 0x1A00 block after running
+include/battle/battle_setup.h	BtlReplay	unk1ABA4	KEEP	KEEP	only written: BattleReplay_GetBuffer clears it together with loaded (battle_load.c:1626); btl_replay.h:17 also lists it as unknown
+include/battle/battle_setup.h	BtlReplayData	unk0	KEEP	KEEP	not applied: the u64 view gives the block copy its 8-byte alignment; BtlReplayTrack is not visible from battle_setup.h. btl_replay.h:8-35 says this opaque block is two BtlReplayTrack of 0xD2F8 (= 0x1A5F0) read through BtlReplayTracks; caveat battle_setup.h:74: the u64 type gives the 8-byte alignment the block copy needs (ld/sd), so keep the alignment (or leave the u64 view) if splitting breaks the match
+include/battle/battle_work.h	BattleRes	unk0	KEEP	KEEP	no access through BATTLE_RES (battle_load.c) or gCommonRes + 0x20 anywhere; every other BattleRes field is used
+include/battle/battle_work.h	BattleRes	unk28	KEEP	KEEP	no access (res->unk28 / gCommonRes + 0x48 not found); sits between sndChara[2] and stageSize
+include/battle/battle_work.h	BattleRes	unk30	KEEP	KEEP	no access (res->unk30 / gCommonRes + 0x50 not found); sits between stageSize and bankSize
+include/battle/btl_act_1.h	BtlActAObj	unkBDC	subLength	HIGH	object + 0xB40 is the animation player (btl_obj_anim.h:138-146, BobjAnimLayer 0x98 bytes: data, f32 length); layer[1] starts at 0xBD8 (btl_stats.h:87 subHandle, btl_act_super.h:40 subAnim), so +0xBDC = anim.layer[1].length (set from data->length, btl_obj_anim.c:743); read at btl_act_1.c:1450. The comment "frames at 60 Hz" should say: length of the second-layer animation
+include/battle/btl_act_2.h	BtlActEObj	unkBDC	subLength	HIGH	same object offset as BtlActAObj.unkBDC: anim.layer[1].length (btl_obj_anim.h:138-146, btl_obj_anim.c:743); read at btl_act_2.c:4009 for the lead time
+include/battle/btl_act_2.h	BtlActCGauge	unk8	KEEP	KEEP	member gauge +0x08: no code in src/battle reads or writes it (BtlMemberGauge.unk8 comment btl_char_member.h:43 "not touched")
+include/battle/btl_act_2.h	BtlActDGauge	unk8	KEEP	KEEP	member gauge +0x08, never accessed (see BtlActCGauge.unk8)
+include/battle/btl_act_2.h	BtlActEGauge	unk8	KEEP	KEEP	member gauge +0x08, never accessed (see BtlActCGauge.unk8)
+include/battle/btl_act_change.h	BtlActIGauge	unk8	KEEP	KEEP	member gauge +0x08, never accessed (see BtlActCGauge.unk8)
+include/battle/btl_act_super.h	ActGGauge	unk8	KEEP	KEEP	member gauge +0x08, never accessed (see BtlActCGauge.unk8)
+include/battle/btl_act_change.h	BtlActIAttackRec	unk3	KEEP	KEEP	attack record byte 3: BtlDecide_QueueAttack (btl_act_change.c:2892-2961) reads only speed/leadIn/inputKind/parts/kind; btl_char_action.h:68 BtlActAttackRec also leaves bytes 2..3 unnamed
+include/battle/btl_act_super.h	BtlSuperAnimData	unk0	KEEP	KEEP	not read; covers BobjAnim bytes 0 (unk00) and 1 (eventCount) of btl_obj_anim.h:89 as one u16 (only frames at +2 is read, btl_act_super.c:373-384)
+include/battle/btl_cam.h	View	unk25C	KEEP	KEEP	no reader or writer (grep unk25C / 0x25C); last word before the 16-aligned size 0x260, probably padding
+include/battle/btl_cam.h	BtlCamView	unk28C	KEEP	KEEP	no reader or writer (grep unk28C / 0x28C); last word of the 0x290 view, probably padding
+include/battle/btl_demo_cam.h	DemoCamChannel	unkC	KEEP	KEEP	DemoCam_FixupAnim / DemoCam_EvalAnim (btl_demo_cam.c:31-97) read index, keys, keyCount only
+include/battle/btl_demo_cam.h	DemoCamPose	unk1C	KEEP	KEEP	eighth word v[7] of the anonymous struct in union DemoCamPose; a channel may write it through v[index] (btl_demo_cam.c:83-91) but DemoCam_Update reads only pos and rot (btl_demo_cam.c:214-260)
+include/battle/btl_demo_cam.h	DemoCamAnim	unk0	KEEP	KEEP	file header word never read (btl_demo_cam.c)
+include/battle/btl_demo_cam.h	DemoCamAnim	unk10	KEEP	KEEP	file header word never read (btl_demo_cam.c)
+include/battle/btl_demo_cam.h	DemoCamAnim	unk1C	extraData	MEDIUM	optional block: a file offset relocated by DemoCam_FixupAnim when non-NULL and forced to NULL when version < 2 (btl_demo_cam.c:38-43); its contents are never read
+include/battle/btl_demo_cam.h	DemoCam	unk2F8	KEEP	KEEP	only cleared, together with unk2FC, by DemoCam_SetAnim (btl_demo_cam.c:129-130); never read
+include/battle/btl_demo_cam.h	DemoCam	unk2FC	KEEP	KEEP	only cleared by DemoCam_SetAnim (btl_demo_cam.c:130); never read
+include/battle/btl_facade.h	BtlFacadeItem	unk2	KEEP	KEEP	BtlFacade_SetMemberItems (btl_facade.c:212) reads only id; the header says so
+include/battle/btl_input.h	BtlInputRecord	unk5	KEEP	KEEP	only written 0 (btl_input.c:443) and never read; probably padding after player
+include/battle/btl_scene.h	BtlBlastRec	active	type	HIGH	WRONG: +0x0C of the 0x190-byte hit record is type, 0 = ki blast (atk set), 1 = technique (src set): eft_core.h:49-50,175, eft_detect.h:127, BtlMoveBlastRec / BtlCapiBBlastRec .type; so `rec->active != 0` in BtlScene_CheckStageChange (btl_scene.c:583) means "technique records only"
+include/battle/btl_scene.h	BtlBlastRec	unk4	SPLIT: 0x04 s32 unk4; 0x08 s32 level	MEDIUM	same record as EftHitRec (eft_core.h:172-174: +4 def->unk6 or atk->unk1B, +8 level, the stronger record wins a clash) and EftDetRec (eft_detect.h:125-126); not read through this view
+include/battle/btl_script.h	BtlScriptCamKey	unk8	KEEP	KEEP	s32[2] between time and pos; the key writers (btl_script_cmd.c:146-167) and the camera step (btl_script.c:191-215) never touch it
+include/battle/btl_script.h	BtlScriptCam	unkC	KEEP	KEEP	the camera code (btl_script.c:191-215, btl_script_cmd.c:62-182) uses active, time, index and key only
+include/battle/btl_ai.h	BtlAiSeq	unk5C	SPLIT: 0x5C s32 startState; 0x60 f32 charge; 0x64 f32 startDist	HIGH	same block as BtlAiSeqA (btl_ai_seq.h), whose three fields are written at btl_ai_seq.c:327-329 (BtlCharApi_GetAnimId, BtlCharApi_GetChargeRate, gBtlAi->dist) and read at :391, :940, :1046; two of the three are floats, so the s32[3] needs splitting and retyping
+include/battle/btl_ai.h	BtlAiSeq	unk6C	SPLIT: 0x6C s32 firedSet; 0x70 s32 unk70	HIGH	+0x6C is AiThSeq.firedSet, written at btl_ai_think.c:2164 (seq->firedSet = seq->ruleSet) next to firedRule / firedGroup; +0x70 is unread in every view
+include/battle/btl_ai.h	BtlAiSeq	unk8C	SPLIT: 0x8C s32 firedGroup; 0x90 s32 unk90[2]	HIGH	+0x8C is AiThSeq.firedGroup, written at btl_ai_think.c:2163 (rule->group); +0x90 / +0x94 unread in every view
+include/battle/btl_ai.h	BtlAiMoveWork	unk160	SPLIT: 0x160 BtlAiVec lastPos; 0x170 s32 stillTimer	HIGH	AiActMove (btl_ai_sense.h) at the same work + 0xC0 names them; btl_ai_sense.c:211-220 compares the fighter position with lastPos and counts stillTimer up to 30
+include/battle/btl_ai.h	BtlAiMoveWork	unk178	SPLIT: 0x178 u8 unk178[8]; 0x180 u8 atk[0x28]	MEDIUM	AiActSide (btl_ai_sense.h) puts the attack work AiActAtk at side + 0x240 = move + 0x180 and ends AiActMove at 0x180: the last 0x28 bytes of this 0x1A8 block are the attack work of btl_ai_sense.c, not part of the move work
+include/battle/btl_ai.h	BtlAiOutput	unk50	KEEP	KEEP	no code reads or writes +0x50 (BtlAiPad_Clear / AiActPad code in btl_ai_sense.c:140-160 clears the other fields only); unk50 in AiActPad too
+include/battle/btl_ai.h	BtlAiPlan	unk66	SPLIT: 0x66 u8 pad66[3]; 0x69 s8 total[4][14]; 0xA1 u8 padA1[3]	MEDIUM	AiThPlan (btl_ai_think.h) names +0x69 total[4][14], filled by AiThink_BuildTotals and read by AiThink_GetRollRange in btl_ai_think.c; this view only lacks the split
+include/battle/btl_ai.h	BtlAiWork	unk1C	KEEP	KEEP	s32[2] at +0x1C: unknown in every view (AiThWork.unk1C, AiActSide.unk01C) and no code reads or writes it
+include/battle/btl_ai.h	BtlAiActTable	unk0	SPLIT: 0x000 s32 unk0; 0x004 BtlAiSeqStep *steps; 0x008 u16 first[0x80]; 0x108 u8 count[0x80]; 0x188 s8 pick[0x80]; 0x208 s8 timeout[0x80]	MEDIUM	applied with void *steps (BtlAiSeqStep is declared in btl_ai_seq.h). the same block is BtlAiSeqActTable / BtlAiSeqBody in btl_ai_seq.h (steps set at bind time, btl_ai_think.c:2252; first / count / pick / timeout read by the generic sequence in btl_ai_seq.c); BtlAiSeqStep is declared in btl_ai_seq.h, so the type may need a forward declaration
+include/battle/btl_ai.h	BtlAi	unkA58	KEEP	KEEP	no code touches it (the manager is memset to 0xA60 at btl_ai_mgr.c:132); tail of the block
+include/battle/btl_ai_sense.h	AiActSeq	unk0C	SPLIT: 0x0C s32 stepCount; 0x10 s32 step	HIGH	BtlAiSeq / BtlAiSeqA at the same side + 0x28 name +0x0C stepCount (group) and +0x10 step, both written by the generic sequence (btl_ai_seq.c); btl_ai_sense.c does not read them
+include/battle/btl_ai_sense.h	AiActPad	unk50	KEEP	KEEP	no reader or writer in btl_ai_sense.c (lines 140-290 handle every other pad field); unk50 in BtlAiOutput too
+include/battle/btl_ai_seq.h	BtlAiSeqActTable	unk0	KEEP	KEEP	first word of the action table section; AiThink_BindData (btl_ai_think.c:2251-2252) sets only steps; never read
+include/battle/btl_ai_seq.h	BtlAiSeqA	unk6C	SPLIT: 0x6C s32 firedSet; 0x70 s32 unk70	HIGH	+0x6C is AiThSeq.firedSet, written at btl_ai_think.c:2164; +0x70 unread in every view
+include/battle/btl_ai_seq.h	BtlAiSeqA	unk8C	SPLIT: 0x8C s32 firedGroup; 0x90 s32 unk90[2]	HIGH	+0x8C is AiThSeq.firedGroup, written at btl_ai_think.c:2163; +0x90 / +0x94 unread in every view
+include/battle/btl_ai_think.h	AiThSeq	unk5C	SPLIT: 0x5C s32 startState; 0x60 f32 charge; 0x64 f32 startDist	HIGH	BtlAiSeqA names them; written at btl_ai_seq.c:327-329 (anim id, charge rate, fighter distance) and read at :391, :940, :1046
+include/battle/btl_ai_think.h	AiThSeq	unk70	KEEP	KEEP	unknown in every view (BtlAiSeq / BtlAiSeqA cover it with unk6C[2]); no code reads or writes it
+include/battle/btl_ai_think.h	AiThSeq	unk90	KEEP	KEEP	s32[2] after firedGroup: unknown in every view; no code touches it
+include/battle/btl_ai_think.h	AiThPlan	unk234	KEEP	KEEP	last word of the plan after nextCount[14][6] (0xE4 + 0x150); no code touches it
+include/battle/btl_ai_think.h	AiThWork	unk1C	KEEP	KEEP	s32[2] at +0x1C: unknown in every view and unused
+include/battle/btl_ai_think.h	AiThActTable	unk0	KEEP	KEEP	first word of the action table section; AiThink_BindData (btl_ai_think.c:2251-2252) sets only steps; never read
+include/battle/btl_ai_think.h	AiThActTable	unk8	SPLIT: 0x008 u16 first[0x80]; 0x108 u8 count[0x80]; 0x188 s8 pick[0x80]; 0x208 s8 timeout[0x80]	MEDIUM	same bytes as BtlAiSeqBody (btl_ai_seq.h, table + 8), whose arrays the generic sequence reads in btl_ai_seq.c
+include/battle/btl_ai_think.h	AiThProfile	unk0	KEEP	KEEP	first word of a profile before the two AiThRates blocks; the rate code indexes from +4 / +0x2C4 only; never read
+include/battle/btl_ai_think.h	AiThMgr	unkA58	KEEP	KEEP	no code touches it; tail of the 0xA60 block
+include/battle/btl_char_api_1.h	BtlCapiParam	unkC8	KEEP	KEEP	returned by BtlCharApi_GetParamUnkC8 (btl_char_api_1.c:173) and BtlParam_GetUnkC8 (btl_tech.c:157); neither has a caller
+include/battle/btl_char_api_1.h	BtlCapiObj	unkFF0	baseRadius	HIGH	object + 0xF50 + 0xA0 = BobjBody.baseRadius (btl_obj_anim.h:241, body data + 4); BtlCharApi_GetRadius (btl_char_api_1.c:879-890) uses it * 1.8 as the default body radius
+include/battle/btl_char_api_1.h	BtlCapiObj	unkFF8	KEEP	KEEP	BobjBody.size[1] (model header +0x1C, copied at btl_obj_anim.c:1146); only forwarded by BtlCharApi_GetBodyUnkFF8 and BtlOpp_GetObjUnkFF8 (btl_opponent.c:241), which has no caller
+include/battle/btl_char_api_2.h	BtlCharApiMgr	unk1C	stageTimer	HIGH	the roster word +0x1C is stageTimer in btl_char_mgr.h:189 and btl_char_util.h:72; BtlChar_AddStageTimer (btl_char_util.c:278) adds seconds * 30 capped at 150 on stages 4 / 27, btl_char_mgr.c counts it down; BtlCharApi_GetMgrTimerRatio (btl_char_api_2.c:426) returns it / 90
+include/battle/btl_char_api_2.h	BtlCapiBGauge	unk8	KEEP	KEEP	member gauge +0x08: no reader or writer found in any module (BtlMemberGauge.unk8 says "not touched"; member init btl_char_member.c:135-157 sets health / healthMax only)
+include/battle/btl_char_api_2.h	BtlCapiBBlastRec	unk54	stationary	MEDIUM	applied as stationary (EftHitRec), not held. set from bit 1 of the technique definition flags (eft_core.c:124), the bit eft_body_fx.c:450 reads as `hold`; 1 makes the AI skip the record (btl_char_api_2.c:1039), clash / deflect tests ignore it (btl_hit_reaction.c:1232, :1319, :1371) and a non-zero value takes the hit direction from the position instead of the velocity (:297); eft_struggle.c:1550 sets it from its own flag 0x200
+include/battle/btl_param.h	BtlParam	unk4	SPLIT: 0x04 u8 unk4[8]; 0x0C f32 radius	HIGH	BtlCapiParam (btl_char_api_1.h:80) names +0x0C radius; BtlCharApi_GetRadius (btl_char_api_1.c:886) reads it and falls back to object +0xFF0 * 1.8 when <= 0
+include/battle/btl_param.h	BtlParam	unk1C	KEEP	KEEP	only BtlParam_GetUnk1C (btl_param.c:1625) reads it; no caller
+include/battle/btl_param.h	BtlParam	unk20	KEEP	KEEP	only BtlParam_GetUnk20 (btl_param.c:1630) reads it; no caller
+include/battle/btl_param.h	BtlParam	unk24	KEEP	KEEP	only BtlParam_GetUnk24 (btl_param.c:1635) reads it; no caller
+include/battle/btl_param.h	BtlParam	unk40	KEEP	KEEP	only BtlParam_GetUnk40 (btl_param.c:1663) reads it; no caller
+include/battle/btl_param.h	BtlParam	unk5C	SPLIT: 0x5C f32 unk5C; 0x60 f32 hitReactScale; 0x64 f32 gauge99CTime; 0x68 f32 stepCancelRatio; 0x6C f32 backStepCancelRatio; 0x70 s16 poweredDashLimit; 0x72 s16 poweredVanishLimit; 0x74 f32 chargeRateA; 0x78 f32 chargeRateB; 0x7C f32 damageTaken	MEDIUM	the header comment sends the reader to btl_tech.h, whose BtlTechBParam names these words from their accessors in btl_tech.c; splitting makes the two views agree (or leave the block and keep the pointer comment)
+include/battle/btl_param.h	BtlParam	unk8F	comboFinish	HIGH	u8[9] at +0x8F..+0x97: BtlParam_GetComboFinish (btl_tech.c:162) returns param +0x8F + n; BtlTechBParam / BtlCapiBParam call the same bytes comboFinish
+include/battle/btl_param.h	BtlParam	unkC6	KEEP	KEEP	only BtlParam_GetUnkC6 (btl_param.c:1423) reads it; no caller
+include/battle/btl_tech.h	BtlTechBParam	unk5C	KEEP	KEEP	only BtlParam_GetUnk5C reads it; no caller
+include/battle/btl_tech.h	BtlTechBParam	unkC7	KEEP	KEEP	not applied: tech2D5DamagePct names a technique id that is not known; kept for later. percent (BtlParam_GetUnkC7Scale, btl_tech.c:144: * 0.01, x0.5 with ability 0x48, x1.5 with 0x49) that multiplies the damage of technique 0x2D5 against this character (btl_tech.c:1386 via BtlOpp_GetUnk20F318); below 0.001 the 0x2D5 hit is ignored (btl_hit_reaction.c:509). Which technique 0x2D5 is was not found (a guess: Spirit Bomb, which spares the pure-hearted)
+include/battle/btl_tech.h	BtlTechBParam	unkC8	KEEP	KEEP	BtlParam_GetUnkC8 (btl_tech.c:157) and BtlCharApi_GetParamUnkC8 (btl_char_api_1.c:173) have no caller
+include/battle/btl_tech.h	BtlKiBlastData	unk3	KEEP	KEEP	BtlKiBlast_GetUnk3 (btl_tech.c:757) feeds the fx launch arg +0x1B (btl_char_fx_1.c:1321), which eft_core.c:136 copies to hit record +0x04 (never read) and eft_disc.h:118 reads as a level 2 / 4 / 6 choosing a texture pair; it is the ki blast counterpart of BtlSuperData.unk90 / BtlSkillData.unk38; meaning unclear
+include/battle/btl_tech.h	BtlKiBlastData	unk2C	KEEP	KEEP	BtlKiBlast_GetUnk2C (btl_tech.c:802) feeds the fx launch arg +0x2C (btl_char_fx_1.c:1327); only eft_struggle.c:1143 stores it (unk5C0), nothing reads it
+include/battle/btl_tech.h	BtlSuperData	unk30	SPLIT: 0x30 f32 shotLife[3]; 0x3C f32 power[3]; 0x48 f32 hitScale[3]	MEDIUM	EftShot_BuildParam (eft_emit.c:274-295) copies super +0x30 / +0x3C / +0x48 [slot - 2] into EftShotParam.shotLife / power / hitScale (EftSuperSrc in eft_emit.h names them); the names are the effect view's
+include/battle/btl_tech.h	BtlSuperData	shotUnk6C	shotScale	MEDIUM	placeholder name: EftShot_BuildParam (eft_emit.c:276) copies it to EftShotParam.scale (EftSuperSrc.scale); the skill counterpart is BtlSkillData.shotUnk30
+include/battle/btl_tech.h	BtlSuperData	unk78	SPLIT: 0x78 f32 groundScale[3]; 0x84 f32 impactScale[3]	MEDIUM	EftShot_BuildParam (eft_emit.c:286-287) copies them to EftShotParam.groundScale / impactScale (EftSuperSrc names; 1.0 for skills)
+include/battle/btl_tech.h	BtlSuperData	unk90	KEEP	KEEP	BtlSuper_GetUnk90 (btl_tech.c:1035) has no caller; EftShot_BuildParam copies it to EftShotParam.node (eft_emit.c:252), which only lands in hit record +0x04 (eft_core.c:121), never read; the effect view's name `node` is not supported by any use
+include/battle/btl_tech.h	BtlSuperData	unk99	hitShape	HIGH	EftShot_BuildParam (eft_emit.c:254) copies super +0x99 [slot - 2] to EftShotParam.hitShape, which picks two spheres (0) or two capsules (1) for the hit volume (eft_ring_shot.c:630, eft_sweep.c:1419)
+include/battle/btl_tech.h	BtlSuperData	unk9F	SPLIT: 0x9F u8 unk9F[3]; 0xA2 s8 groundFx[3]; 0xA5 s8 impactFx[3]; 0xA8 s8 nodes[6][3]; 0xBA s8 subKind[8][3]; 0xD2 u8 padD2[2]; 0xD4 f32 subAngle[8][3]; 0x134 s8 subArg[3]; 0x137 u8 pad137; 0x138 s8 effectType[3]	MEDIUM	every field is read by EftShot_BuildParam (eft_emit.c:256-293) through EftSuperSrc (eft_emit.h); effectType avoids a clash with the existing `type` at +0x13E (EftShotParam.type, the effect class row of gEftShotClass)
+include/battle/btl_tech.h	BtlSuperData	unk15C	SPLIT: 0x15C s8 blurOn[3]; 0x15F s8 blurOff[3]; 0x162 s8 unk162[3]	MEDIUM	read by EftShot_BuildParam (eft_emit.c:283-288) into EftShotParam.blurOn / blurOff / unk14 (EftSuperSrc names)
+include/battle/btl_tech.h	BtlSuperData	unk16B	KEEP	KEEP	a single byte between lastStep[3] and the 4-aligned push[3]; never read (padding)
+include/battle/btl_tech.h	BtlSkillData	unk14	clashPower	HIGH	EftShot_BuildParam (eft_emit.c, skill branch) copies skill +0x14 [slot] and super +0x1E into the same EftShotParam.level, which eft_core.c:122 stores as hit record level ("the stronger record wins a clash", BtlColl_TryDodge compares it with BtlSuper_GetClashPower); BtlSuperData calls +0x1E clashPower. BtlSkill_GetUnk14 (btl_tech.c:1457) has no caller
+include/battle/btl_tech.h	BtlSkillData	shotUnk30	shotScale	MEDIUM	placeholder name: EftShot_BuildParam copies it to EftShotParam.scale (EftSkillSrc.scale, eft_emit.h); counterpart of BtlSuperData.shotUnk6C
+include/battle/btl_tech.h	BtlSkillData	unk38	KEEP	KEEP	BtlSkill_GetUnk38 (btl_tech.c:1482) has no caller; EftShot_BuildParam copies it to EftShotParam.node, which only lands in hit record +0x04 (eft_core.c:121), never read
+include/battle/btl_tech.h	BtlSkillData	unk3E	hitShape	HIGH	EftShot_BuildParam (eft_emit.c, skill branch) copies skill +0x3E [slot] to EftShotParam.hitShape: 0 spheres, 1 capsules for the hit volume (eft_ring_shot.c:630, eft_sweep.c:1419)
+include/battle/btl_tech.h	BtlSkillData	unk42	SPLIT: 0x42 u8 unk42[2]; 0x44 s8 groundFx[2]; 0x46 s8 impactFx[2]; 0x48 s8 nodes[6][2]; 0x54 s8 frames[6][2]; 0x60 s8 effectType[2]	MEDIUM	read by EftShot_BuildParam (skill branch of eft_emit.c) through EftSkillSrc (eft_emit.h); effectType = EftShotParam.type, the gEftShotClass row
+include/battle/btl_tech.h	BtlSkillData	unk6E	SPLIT: 0x6E s8 blurOn[2]; 0x70 s8 blurOff[2]; 0x72 u8 pad72[2]	MEDIUM	read by EftShot_BuildParam (skill branch) into EftShotParam.blurOn / blurOff (EftSkillSrc names); +0x72 is the gap before the f32 push[2]
+include/battle/btl_char_action.h	BtlActVitals	unk8	KEEP	KEEP	member gauge +0x08 (same block as BtlMemberGauge, btl_char_member.h:43); no reader or writer found in src/ under any gauge view (grep Gauge(...)->unk8 / g->unk8)
+include/battle/btl_char_action.h	BtlActVitals	unk2C	KEEP	KEEP	member gauge +0x2C, after lowHealthIdle; no reader or writer found in src/ (BtlMgrGauge / BtlMemberGauge views also leave it unnamed)
+include/battle/btl_char_fx_1.h	FxGauge	unk8	KEEP	KEEP	member gauge +0x08 (BtlMember_GetActiveGauge); btl_char_fx_1.c only reads ki / kiMax (line ~607); no user anywhere
+include/battle/btl_char_hit.h	HitGauge	unk8	KEEP	KEEP	member gauge +0x08; no reader or writer found in src/
+include/battle/btl_char_member.h	BtlMemberGauge	unk8	KEEP	KEEP	the header itself says "not touched by this module"; no reader or writer found in src/ under any of the five gauge views
+include/battle/btl_char_member.h	BtlMemberGauge	unk2C	KEEP	KEEP	no reader or writer found in src/; neighbours lowHealth / lowHealthIdle are set in btl_char_mgr.c:1216-1224 but +0x2C is not
+include/battle/btl_char_mgr.h	BtlMgrGauge	unk8	KEEP	KEEP	member gauge +0x08; no reader or writer found
+include/battle/btl_char_mgr.h	BtlMgrGauge	unk2C	KEEP	KEEP	member gauge +0x2C; no reader or writer found (btl_char_mgr.c:1216-1224 sets only lowHealth / lowHealthIdle)
+include/battle/btl_char_member.h	BtlMemberParam	unk8	KEEP	KEEP	character table gBtlChars->tbl[4] (paramTbl, roster +0x30): btl_char_member.c:135/153/158 and btl_char_mgr.c:450 read words 0, 1, 3 only; word 2 has no reader
+include/battle/btl_char_member.h	BtlMemberAuraReq	unkC	KEEP	KEEP	set from BtlSkill_GetShotUnk30 / BtlSuper_GetShotUnk6C (btl_char_fx_1.c:182,190 area BtlChar_SpawnFxBits3C); the callee's view EftHStartArg.unkC (eft_emit.h:113, typed s32 there) has no reader in eft_emit.c / eft_shot.c / eft_obj_tech.c
+include/battle/btl_char_member.h	BtlMemberHitFxReq	unk28	KEEP	KEEP	always 0 (btl_char_fx_1.c:266); callee EftImpactArg.unk28 (eft_particle_unused.h:305) is never read by EftImpact_Init (eft_impact.c:109-150)
+include/battle/btl_char_fx_1.h	FxPosArg	unk28	KEEP	KEEP	always 0 (btl_char_fx_1.c:544,559,1089,1153; btl_char_fx_2.c:147,252,615); EftImpact_Init (eft_impact.c:109-150) never reads arg->unk28
+include/battle/btl_char_fx_1.h	FxPosArg	unk2C	KEEP	KEEP	never written by the fighter layer and never read by EftImpact_Init (eft_impact.c:109-150)
+include/battle/btl_char_fx_1.h	FxHitArg	unk18	texVariant	MEDIUM	= BtlKiBlast_GetUnk3 (btl_char_fx_1.c:578, ki blast record +3); the type-4 callee EftDisc_SpawnHeld switches on it (EftDiscHeldArg.level, eft_disc.c:524: 1/2/4/6 -> texB 0..3, the disc's second texture); EftBlastCharge only copies it (eft_struggle.c:1385)
+include/battle/btl_char_fx_1.h	FxHitArg2	unk1B	texVariant	MEDIUM	= BtlKiBlast_GetUnk3 (btl_char_fx_1.c:1321, ki blast record +3, same value as FxHitArg.unk18); EftDisc_Throw / SpawnFromNode switch on it to pick the texture pair (EftDiscAtk.level, eft_disc.c:616); also copied to the hit record +4 (eft_core.h:173 "atk->unk1B") and EftKiBlast.unk5B8 (never read)
+include/battle/btl_char_fx_1.h	FxHitArg2	unk2C	KEEP	KEEP	= BtlKiBlast_GetUnk2C (btl_char_fx_1.c:1327, ki blast record +0x2C, unnamed in btl_tech.h:91); EftKiBlast_Init copies it to unk5C0 (eft_struggle.c:1143) which nothing reads
+include/battle/btl_char_fx_1.h	FxHitArg2	unk34	KEEP	KEEP	always 1 (btl_char_fx_1.c:1328); EftRArg.unk34 / EftKiPropArg / EftDiscAtk have no reader of +0x34
+include/battle/btl_char_fx_1.h	FxHitArg2	unk3C	KEEP	KEEP	= bit 5 (0x20) of the ki blast record flags (btl_char_fx_1.c:1330; btl_tech.h flags comment "0x20: copied into the spawn request"); no reader of +0x3C found in the eft launchers or the hit code
+include/battle/btl_char_fx_1.h	FxHitArg2	unk40	KEEP	KEEP	never written by BtlFx_FireKiBlast and never read (EftRArg.unk40[0x10], eft_struggle.h:303)
+include/battle/btl_char_fx_1.h	FxHitArg2	unk41	shotCount	HIGH	= BtlObjAnim_QueryEvent(obj, 4, 0, 3) (btl_char_fx_1.c:1331): what=3 is "how many" events with attribute 4 (fire) the motion has (btl_obj_anim.c:955-958); the same byte is BtlCollAtk.hits (btl_char_coll.h:36, atk +0x41) by which btl_hit_reaction.c:407,676 divide the damage
+include/battle/btl_char_fx_1.h	FxArg3	unkC	KEEP	KEEP	never written (BtlFx request 0x1A); the callee's EftBodyFxArg is only 0xC bytes (eft_rays.h:404-408), so +0xC is past the argument
+include/battle/btl_char_fx_1.h	FxArg2	unk8	KEEP	KEEP	never written in btl_char_fx_1.c; the callee's EftAbsorbOwner is only the first 8 bytes (eft_tech_modules.h:288-292)
+include/battle/btl_char_fx_1.h	FxDirArg	unk1C	KEEP	KEEP	never written in btl_char_fx_1.c; EftRushBurstArg.unk1C (eft_trail.h:187) is unnamed and no reader found
+include/battle/btl_char_fx_1.h	FxAnimHead	unk0	KEEP	KEEP	not read in btl_char_fx_*.c; in the full header view BobjAnim (btl_obj_anim.h:90-91) these two bytes are u8 unk00 + u8 eventCount, so a rename should rather split it
+include/battle/btl_char_coll.h	BtlCollHit	unk4	KEEP	KEEP	no reader in the battle code (no hit->unk4 / rec->unk4 outside eft_); the effect side writes def->unk6 or atk->unk1B (FxHitArg2.unk1B, the ki blast texture variant) per eft_core.h:173
+include/battle/btl_char_coll.h	BtlCollHit	unk54	stationary	MEDIUM	applied as stationary, the name of the effect views of the same record word (EftHitRec), not noDeflect. == 1 refuses deflect / reflect / absorb (btl_hit_reaction.c:1232,1319,1371), != 0 takes the hit direction from the position (btl_hit_reaction.c:297), and such records are not counted as incoming by BtlMove (btl_char_move.c:240,289) or the AI (btl_char_api_2.c:1040,1125); written from technique def flags bit 1 (eft_core.c:124) and blast flags bit 9 (eft_struggle.c:1550). Same field as BtlMoveBlastRec.unk54
+include/battle/btl_char_move.h	BtlMoveBlastRec	unk54	stationary	MEDIUM	applied as stationary (EftHitRec), not noDeflect. same record field as BtlCollHit.unk54 (blast record +0x54): btl_char_move.c:240,289 skip records with 1 when counting incoming blasts; btl_hit_reaction.c:1232,1319,1371 refuse deflect / reflect / absorb for 1
+include/battle/btl_char_ctl.h	BtlChangeQueue	unk134	KEEP	KEEP	roster +0x26C; no access found (btl_change.c uses only req / cur / write / read / state / loaded / timeStop)
+include/battle/btl_char_ctl.h	BtlChangeQueue	unk138	KEEP	KEEP	roster +0x270; no access found in btl_change.c or elsewhere
+include/battle/btl_char_move.h	BtlMoveContact	unk0	KEEP	KEEP	not read (btl_char_move.c:166-184 uses only .normal); per stg_collision.h:247 work +0x18060 is a StgColPoly whose first 0x10 bytes are flags / unk4 / unk8[2] (stg_collision.h:74-79), not a Vec4; BtlCollObjWork.contactFlags (btl_char_coll.h:100) is the same +0x18060 word
+include/battle/btl_obj.h	BtlObjBound	unk0C	drawFlags	MEDIUM	same records as ObjDrawPart (obj_render.h:79 names its low half `flags`, bit 0 = drawn by the fade pass, tested at obj_render.c:557; upper half is ObjDrawPart.unk0E). Nothing in btl_obj.c reads it; MEDIUM because the s32 width hides the u16 split
+include/battle/btl_obj.h	BtlObjBound	unk20	KEEP	KEEP	only copied into the VU1 draw packet as ObjDrawPart.ofsB -> pkt->ofsB (obj_render.c:549, 567, 594, 615); what the microprogram does with it is not known (ofsA at +0x10 is `origin`)
+include/battle/btl_obj.h	BtlObjNode	unk0C	KEEP	KEEP	BtlObj_InitTable (btl_obj.c:373) only writes link and id; nothing reads +0x0C; looks like padding that puts the object at +0x10
+include/battle/btl_obj.h	BtlObjTable	unk44FC0	KEEP	KEEP	no reader or writer besides the memset in BtlObj_InitTable (btl_obj.c:379); no raw 0x44FC0 offset anywhere
+include/battle/btl_obj.h	BtlObjView	unk04	SPLIT: 0x04 u8 unk04[0xC]; 0x10 Vec4 lightDir	HIGH	the same 0x50-byte view record is ObjDrawView (obj_render.h:111); +0x10 lightDir is written by ObjDraw_SetLight and read by Mtx_MakeNormalLight at obj_render.c:82 and :550
+include/battle/btl_obj.h	BtlObjView	unk30	SPLIT: 0x30 Vec4 shadowColor	HIGH	ObjDrawView.shadowColor (obj_render.h:114): set to 128 x4 at obj_shadow.c:650-653, BtlObjLight_GetColor at obj_shadow.c:756, read at obj_render.c:528 for the flat shadow pass
+include/battle/btl_obj.h	BtlObj	unk1664	SPLIT: 0x1664 void *face; 0x1668 void *shadow; 0x166C s32 unk166C	HIGH	+0x1664 is BObj.face (btl_obj_anim_part2.h:339, BtlObj_CreateFace / BtlObj_FreeFace); +0x1668 is ObjMdlObj.shadow (obj_gs_env.h:125, allocated at obj_shadow.c:660, read at :636)
+include/battle/btl_obj_anim.h	BobjAnim	unk00	KEEP	KEEP	header byte 0 of an animation file; no code in btl_obj_anim.c (Load, Retarget, RebaseRoot, SamplePose, UpdateEvents) reads it
+include/battle/btl_obj_anim.h	BobjAnim	unk04	KEEP	KEEP	header half-word +4 of an animation file; never read (only length +2 and eventCount +1 are used)
+include/battle/btl_obj_anim.h	BobjAnimShape	unk0C	KEEP	KEEP	the volume record's 4th float; BtlObjAnim_UpdateEvents (btl_obj_anim.c:648-655) reads x, y, z, r0..r2 only; the file comment (btl_obj_anim.h:38) already says "unused"
+include/battle/btl_obj_anim.h	BobjBone	unk0C	drawFlags	MEDIUM	same records as BtlObjBound / ObjDrawPart: low half-word is ObjDrawPart.flags (bit 0 = drawn by the fade pass, obj_render.c:557); not read in btl_obj_anim.c; keep the name equal to BtlObjBound/BObjBound
+include/battle/btl_obj_anim.h	BobjBone	unk20	KEEP	KEEP	ObjDrawPart.ofsB, only copied into the VU1 draw packet (obj_render.c:549); meaning not known
+include/battle/btl_obj_anim.h	BobjHit	unk1F	KEEP	KEEP	object +0xCAF; no reader or writer found in btl_obj_anim.c or by raw offset; the byte after eventCount, likely padding
+include/battle/btl_obj_anim.h	BobjHit	unk2C	KEEP	KEEP	object +0xCBC; never accessed (BtlObjAnim_Init sets only scale = 1.0 at btl_obj_anim.c:381); likely padding before the u64 event[] at +0x30
+include/battle/btl_obj_anim.h	BobjSphere	unk18	KEEP	KEEP	ColSphere_Set (col_primitives.c:1324) writes pos, radius, radiusSq only; CpSphere.unk18 is commented "never written"; padding to 0x20
+include/battle/btl_obj_anim.h	BobjBodyData	unk00	KEEP	KEEP	BtlObjBody_Init (btl_obj_anim.c:1137) reads baseRadius (+4) and part (+0x10) only
+include/battle/btl_obj_anim.h	BobjBody	unkB8	KEEP	KEEP	object +0x1008; only written (= 4.1 when the model has body data, btl_obj_anim.c:1160); no reader found, no raw 0x1008 offset in the battle code
+include/battle/btl_obj_anim.h	BobjParam	unk00	KEEP	KEEP	never read here; the same block (object +0x91C) is BtlParam / BtlCapiParam, whose bytes 0..3 are charaFlags / sizeClass / auraKind (btl_param.h:108-110), so this is not one f32
+include/battle/btl_obj_anim.h	BobjMdl	unk38	KEEP	KEEP	object +0x50 = model file entry 1, relocated in place by BtlObj_BindTables (btl_obj_anim.c:2341-2343); no reader found
+include/battle/btl_obj_anim.h	BobjMdl	unk40	charPack	HIGH	object +0x58 = BtlCapiObj.charPack (btl_char_api_1.h:113, read by BtlCharApi_GetPlayerCharPack btl_char_api_1.c:344 for BtlScene_GetCharPackEntry); written as animation file 2 entry 6 by BtlObj_BindTables (btl_obj_anim.c:2339)
+include/battle/btl_obj_anim.h	BobjObj	unk1664	SPLIT: 0x1664 void *face; 0x1668 void *shadow; 0x166C s32 unk166C	HIGH	+0x1664 BObj.face (btl_obj_anim_part2.h:339; BobjFace's own comment says "object + 0x1664"); +0x1668 ObjMdlObj.shadow (obj_gs_env.h:125, obj_shadow.c:636/660)
+include/battle/btl_obj_anim.h	BobjFace	unk4C	KEEP	KEEP	no access in the face code (btl_obj_anim.c) or elsewhere; same as BObjFace.unk4C
+include/battle/btl_obj_anim_part2.h	BObjBound	unk0C	drawFlags	MEDIUM	same record as BtlObjBound / ObjDrawPart: low half-word = ObjDrawPart.flags, bit 0 drawn by the fade pass (obj_render.c:557); not read in this module
+include/battle/btl_obj_anim_part2.h	BObjBound	unk20	KEEP	KEEP	ObjDrawPart.ofsB, only copied into the VU1 packet (obj_render.c:549); meaning not known
+include/battle/btl_obj_anim_part2.h	BObjFace	unk4C	KEEP	KEEP	no reader or writer in the face code (BObjFace_* / BtlObj_*Face, btl_obj_anim.c) besides the pool clear
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk38	KEEP	KEEP	model file entry 1, relocated in place (btl_obj_anim.c:2341-2343); nothing reads object +0x50
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk40	charPack	HIGH	object +0x58 = BtlCapiObj.charPack (btl_char_api_1.h:113, BtlCharApi_GetPlayerCharPack btl_char_api_1.c:344 -> BtlScene_GetCharPackEntry); written from animation file 2 entry 6 (btl_obj_anim.c:2339)
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk84	effectPacks	HIGH	object +0x9C..+0xAF = BtlCapiObj.effectPacks[5] (btl_char_api_1.h:115, read by BtlCharApi_GetPlayerEffectPack btl_char_api_1.c:298); written from animation file 2 entries 1..5 (btl_obj_anim.c:2336-2337)
+include/battle/btl_obj_anim_part2.h	BObjMdl	unkA0	loseCamAnim	HIGH	object +0xB8 = camera animation 2 of the table at object +0xB0 (camAnims, written from entries 0x29..0x2B at btl_obj_anim.c:2318-2319); DemoCam_PlayObjAnim(side, 2) is called with BtlCtrl_StartLosePose (btl_seq.c:1204-1205), index 1 (common9C) with the win pose
+include/battle/btl_obj_anim_part2.h	BObjMdl	unkA4	skillText	HIGH	object +0xBC = PauseMenuObj.skillText (pause_menu.c:50), given to BtlMenu_SetScript for the pause skill list (pause_menu.c:310); written as model entry 0x2D + gProgress->language (btl_obj_anim.c:2327)
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk8D0	KEEP	KEEP	model entries 0x1D..0x24 again (btl_obj_anim.c:2321-2322, the same as modelAnims); nothing reads object +0x8E8 by name or raw offset (BtlObjAnim_Load's run-on index (tbl+anim)[0x2A] can reach it only for anim >= 0x1A6)
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk920	camCuts	HIGH	object +0x938 = model entry 0x1C (btl_obj_anim.c:2353); btl_char_cam.c:1053 reads it as the character's ChrCamCutDef table (`*(ChrCamCutDef **)(obj + 0x938)`, cf. comment btl_char_cam.h:128)
+include/battle/btl_obj_anim_part2.h	BObjMdl	unk924	talkTable	HIGH	object +0x93C = model entry 0x16 (btl_obj_anim.c:2345); BtlSeqObj.talkTbl (btl_seq.c:705): 4 bytes per opponent character id, intro / win line numbers for the pre- and post-battle talk
+include/battle/btl_obj_anim_part2.h	BObj	unk165C	KEEP	KEEP	no access in btl_obj_chain.c / btl_obj_anim.c (pushed at +0x1658 is the neighbour) and no raw 0x165C anywhere
+include/battle/btl_obj_anim_part2.h	BObj	unk1668	SPLIT: 0x1668 void *shadow; 0x166C s32 unk166C	HIGH	+0x1668 is ObjMdlObj.shadow (obj_gs_env.h:125): allocated by BtlObjPool3_Alloc at obj_shadow.c:660, read at obj_shadow.c:636
+include/battle/col_box.h	ColMesh	unk4	KEEP	KEEP	never read: col_box.c uses only nodeCount, nodeOfs, polyOfs, vtxOfs (grep mesh-> in col_box.c); likely a count of polygons or vertices but nothing shows which
+include/battle/col_box.h	ColMesh	unk8	KEEP	KEEP	never read in col_box.c and stg_collision.c treats the mesh as opaque (stg_collision.h:24)
+include/battle/col_primitives.h	CpSphere	unk18	KEEP	KEEP	never written or read in col_primitives.c (tail of the 0x20-byte record)
+include/battle/col_primitives.h	CpCapsule	unk24	KEEP	KEEP	never written or read in col_primitives.c (tail of the 0x30-byte record)
+include/battle/hud.h	HudRes	unk4	KEEP	KEEP	three header words of the sprite sheet between texCount and tex; no hud source reads them
+include/battle/hud.h	HudNode	unk8	KEEP	KEEP	two words = HudDNode.unk8 / unkC: written only by HudNode_SetUnk8 (hud_sprite.c:646, no caller in the repository) and zeroed at hud_notice_2.c:160/356; HudNode_Draw does not read them
+include/battle/hud_gauge_3.h	HudCTex	unk2C	KEEP	KEEP	not read or written by the hud sources (mark at +0x28 is the word Hud_ClearTexMarks clears)
+include/battle/hud_gauge_3.h	HudCRes	unk4	KEEP	KEEP	same three unread header words as HudRes.unk4
+include/battle/hud_gauge_3.h	HudCNode	unk8	KEEP	KEEP	same two words as HudNode.unk8: set by HudNode_SetUnk8 (no caller), never read
+include/battle/hud_node.h	HudDNode	unk8	KEEP	KEEP	HudNode_SetUnk8 (hud_sprite.c:646, no caller) writes it, hud_notice_2.c:160/356 reset it to 0.0 (so not a scale), HudNode_Draw never reads it
+include/battle/hud_node.h	HudDNode	unkC	KEEP	KEEP	second argument of HudNode_SetUnk8; reset to 0.0 by hud_notice_2.c:161/357; never read
+include/battle/hud_notice_2.h	HudENode	unk8	KEEP	KEEP	zeroed at hud_notice_2.c:160 and :356 next to rot, never read
+include/battle/hud_notice_2.h	HudENode	unkC	KEEP	KEEP	zeroed with unk8 (hud_notice_2.c:161, :357), never read
+include/battle/hud_notice_2.h	HudERes	unk4	KEEP	KEEP	same three unread header words as HudRes.unk4
+include/battle/obj_gs_env.h	ObjMdlMesh	unk04	KEEP	KEEP	unk04 in every view of the mesh record (BtlObjBound, ObjDrawPart) and never read
+include/battle/obj_gs_env.h	ObjMdlPart	unk04	KEEP	KEEP	only zeroed by BtlObjMdl_AllocParts (obj_shadow.c:205); no view names it
+include/battle/obj_gs_env.h	ObjMdlObj	unk166C	KEEP	KEEP	not read or written; btl_obj.h:188 and btl_obj_anim.h:362 keep +0x1664..0x166F as a pad, btl_obj_anim_part2.h:341 too
+include/battle/obj_gs_env.h	ObjShadow	unk2014	KEEP	KEEP	only zeroed together with count and alpha at the start of ObjShadow_Update (obj_shadow.c:689); never read
+include/battle/obj_gs_env.h	ObjShadow	unk201C	KEEP	KEEP	not read or written anywhere
+include/battle/obj_gs_env.h	StgOctNode	unk00	KEEP	KEEP	a file offset turned into a pointer by the octree relocation (stg_reloc.c:22) when not 0, but nothing reads the target
+include/battle/obj_gs_env.h	StgRelocTimer	unk00	KEEP	KEEP	one s32 covering u16 flags + u16 unk2 of StgTimer (stg_ambient.h); one name does not fit and the relocation does not use it
+include/battle/obj_gs_env.h	StgRelocTimer	unk08	KEEP	KEEP	two words covering StgTimer.time and .period (stg_ambient.h); an array of two cannot take both names
+include/battle/obj_gs_env.h	StgRelocA2	unk00	KEEP	KEEP	two words covering several small fields of StgMMesh (stg_model_draw.h); not used by the relocation
+include/battle/obj_gs_env.h	StgRelocA1	unk0C	KEEP	KEEP	covers u16 cur and u16 unkE of StgMMat in one s32; not used here
+include/battle/obj_gs_env.h	StgRelocA	unk00	KEEP	KEEP	StgMGroup.unk0 in stg_model_draw.h, unread in both views
+include/battle/obj_gs_env.h	StgRelocD1	unk00	KEEP	KEEP	two words covering StgColRec.broken and StgColRec.obj (stg_collision.h); an array of two cannot take both names
+include/battle/obj_gs_env.h	StgRelocD1	unk0C	KEEP	KEEP	StgColRec.unkC in stg_collision.h, unread
+include/battle/obj_render.h	ObjDrawPart	unk04	KEEP	KEEP	unk04 in every view of the record and never read
+include/battle/obj_render.h	ObjDrawPart	unk0E	KEEP	KEEP	not read by obj_render.c (upper half of BtlObjBound.unk0C)
+include/battle/obj_render.h	ObjDrawPkt	unk1BC	texRegHi	MEDIUM	obj_render.c:560-563 fills the A+D qword at +0x1B0: tex0[0..1] = 64-bit TEX0 data, texReg = 7 (GS register TEX0_2) then unk1BC = 0: the upper word of the 64-bit register-address half of the A+D pair
+include/battle/screen_fx.h	StgCurveKey	unk30	KEEP	KEEP	not read or written by screen_fx.c (StgCurve_Build writes only tanOut / tanIn)
+include/battle/screen_fx.h	StgTintWork	unk180	KEEP	KEEP	only zeroed at init (screen_fx.c:722)
+include/battle/screen_fx.h	StgBlur	unk0	KEEP	KEEP	cleared by StgBlur_Reset (screen_fx.c:963) and never read
+include/battle/stg.h	StgOfsTable	unk0	KEEP	KEEP	header word of the offset table, never read
+include/battle/stg.h	StgOfsTable	unk4	KEEP	KEEP	header word of the offset table, never read
+include/battle/stg.h	StgPath	unkC	KEEP	KEEP	not read by stg.c or stg_parts.c
+include/battle/stg.h	StgPathTable	unk0	KEEP	KEEP	header word, never read
+include/battle/stg.h	StgPathTable	unk4	KEEP	KEEP	header word, never read
+include/battle/stg.h	StgMef	unk4	KEEP	KEEP	word after the 'MEF0' magic, never read
+include/battle/stg.h	StgDataA	unk0	KEEP	KEEP	first word of the stage parameter block, unread in every view (StgMData, StgAnimData, StgData)
+include/battle/stg.h	StgDataA	unk4	KEEP	KEEP	second word of the stage parameter block, unread in every view
+include/battle/stg.h	StgKey	unk1C	KEEP	KEEP	not read by stg.c / stg_parts.c (probably padding after rx, ry, rz)
+include/battle/stg.h	StgObj	unk4	KEEP	KEEP	not read by stg.c / stg_parts.c; StgMObj (stg_model_draw.h:107) keeps +0x04 inside a pad
+include/battle/stg.h	StgObj	unk3C	KEEP	KEEP	not read by stg.c / stg_parts.c / stg_model_draw.c (probably padding before the 16-aligned hitPos)
+include/battle/stg.h	BtlStage	unk0	KEEP	KEEP	first word of the stage object, unread in every view (BtlStageMgr.unk0 in stg_ambient.h:72)
+include/battle/stg.h	BtlStage	unkC	KEEP	KEEP	unread in every view (BtlStageMgr.unkC in stg_ambient.h:76)
+include/battle/stg.h	StgBreakInfo	unk1C	KEEP	KEEP	tail padding of the 0x20-byte record, never written
+PARAM	src/battle/obj_shadow.c	ObjShadow_CalcScreenDist	a	target	HIGH	only caller obj_shadow.c:623 passes &work->target, &work->eye; the function takes |a - b| as the camera distance
+PARAM	src/battle/obj_shadow.c	ObjShadow_CalcScreenDist	b	eye	HIGH	same call: second argument is &work->eye
+PARAM	src/battle/stg.c	Stg_FadeRatio	a	frame	HIGH	only caller stg_model_draw.c:246 passes (f32)objs[i].frame; returns (b - a) / 30 = fade over the last 30 frames of the break animation
+PARAM	src/battle/stg.c	Stg_FadeRatio	b	endFrame	HIGH	same call passes (f32)objs[i].animEnd (StgObj.animEnd, length of the break animation in frames)

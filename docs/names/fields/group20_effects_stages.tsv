@@ -1,0 +1,591 @@
+include/battle/eft_aura.h	EftSpdTex	unk8	KEEP	KEEP	second doubleword of a texture set entry; no reader in eft_aura.c; eft_detect.h EftTexSetEntry splits the same 8 bytes as image pointer + s32 unkC, which a u64 cannot take
+include/battle/eft_aura.h	EftAura	unk14	KEEP	KEEP	only write is eft_aura.c:2103 aura->unk14 = type (a second copy of the aura type); never read
+include/battle/eft_aura.h	EftAuraFlame	unk3C	KEEP	KEEP	no read or write by name in eft_aura.c or any other effect file
+include/battle/eft_aura.h	EftAuraSpark	unk7	layer	HIGH	set to 1 at eft_aura.c:725 and passed at eft_aura.c:909 as the 20th argument of EftSpr_DrawRot, which eft_sprite.c:175-176 names `layer` (order table layer: l = layer, minus 2 when >= 2, eft_sprite.c:266-268)
+include/battle/eft_aura.h	EftAuraCfg	unk1A0	powerPush	MEDIUM	eft_aura.c:546 side += unk1A0 * power * sideScale and :594 amount += unk1A0 * power: extra push of the flame per unit of power, added to both the sideways and the outward term
+include/battle/eft_aura.h	EftAuraPrm	unk18	nearWeight	MEDIUM	eft_aura.c:1757 dist = best[0] * unk18 + best[1] * (1 - unk18): weight of the nearest fade node distance against the second nearest
+include/battle/eft_aura.h	EftAuraPrm	unk28	KEEP	KEEP	no read or write by name in the effect files
+include/battle/eft_aura.h	EftAuraPrm	unkB8	KEEP	KEEP	no read or write by name in the effect files
+include/battle/eft_aura.h	EftAuraWork	unk14	KEEP	KEEP	same block as EftAura: written once with the aura type (eft_aura.c:2103), never read
+include/battle/eft_aura.h	EftAuraWork	unk6C	KEEP	KEEP	no read or write by name
+include/battle/eft_aura.h	EftAuraWork	unk50C	KEEP	KEEP	no read or write by name
+include/battle/eft_aura.h	EftNTexEntry	unk8	KEEP	KEEP	second doubleword of a texture set entry (u64; eft_detect.h EftTexSetEntry has image + unkC there); not read
+include/battle/eft_aura.h	EftAuraTexGroup	unk24	KEEP	KEEP	no read or write by name
+include/battle/eft_aura.h	EftAuraMgr	unk2C	KEEP	KEEP	no read or write by name
+include/battle/eft_aura.h	EftAuraDataSpark	unk0	KEEP	KEEP	this view is shifted by 4 against EftAuraCfgSpark (group 06 note): the word is a different field for spark[0] and the others; do not name
+include/battle/eft_aura.h	EftBolt	unk40	KEEP	KEEP	no read or write by name
+include/battle/eft_aura.h	EftBoltFlash	unk2C	KEEP	KEEP	no read or write by name
+src/battle/eft_aura.c	EftBoltA	unk0	KEEP	KEEP	a three-word array over EftBolt.head / shown / count (eft_aura.h); one name cannot cover it and this view only reads flags
+include/battle/eft_chain.h	EftTask	unk8	KEEP	KEEP	u32[2] over BtlTask (eft_sprite_anim.h:55-58) result / countA / hitCount / unkC: an array mixing four fields; not used here
+include/battle/eft_chain.h	EftTask	unk3C	KEEP	KEEP	BtlTask.unk3C (eft_sprite_anim.h:67) is unknown too; not used here
+include/battle/eft_chain.h	EftSTexEntry	unk8	KEEP	KEEP	second doubleword of a texture set entry; not read
+include/battle/eft_chain.h	EftKiPropArg	unk16	area	HIGH	the same 0x50-byte launch block as FxHitArg2, which names +0x16 `area` (btl_char_fx_1.h:153); the fighter stores obj->area there (btl_char_fx_1.c:1319), the stage zone of the fighter (eft_detect.h:245, btl_char_ctl.h:142)
+include/battle/eft_chain.h	EftKiPropArg	unk1B	KEEP	KEEP	BtlKiBlast_GetUnk3 (btl_char_fx_1.c:1321), record +0x03 that btl_tech.h:77 leaves unknown; copied to EftHitRec.unk4 (eft_core.c:136); eft_disc.h calls this byte level, a name already used here at 0x18
+include/battle/eft_chain.h	EftKiPropArg	unk1E	KEEP	KEEP	FxHitArg2 has s16 life at 0x1C and nothing declared at 0x1E: padding after `frames`; never written
+include/battle/eft_chain.h	EftKiPropArg	unk2C	KEEP	KEEP	BtlKiBlast_GetUnk2C (btl_char_fx_1.c:1327), BtlKiBlastData.unk2C, unknown at the source too; no reader of the copy
+include/battle/eft_chain.h	EftKiPropArg	unk30	KEEP	KEEP	array of 8 over FxHitArg2's size, unk34, canHit, unk3C, unk40..: several fields, not used here
+include/battle/eft_chain.h	EftKiProp	unkD8	KEEP	KEEP	no read or write in C (the EftKiObj_* functions that fill the block are not in eft_chain.c)
+include/battle/eft_chain.h	EftKiProp	unkE4	KEEP	KEEP	"scale * 5" per the comment, but no C code reads or writes it to confirm a purpose
+include/battle/eft_chain.h	EftKiProp	unkF6	KEEP	KEEP	no read or write in C
+include/battle/eft_chain.h	EftKiProp	unkF8	KEEP	KEEP	no read or write in C
+include/battle/eft_chain.h	EftKiProp	unkFA	KEEP	KEEP	no read or write in C
+include/battle/eft_chain.h	EftKiPropRes	unk0	KEEP	KEEP	not used
+include/battle/eft_chain.h	EftArcParam	unk7	KEEP	KEEP	not read
+include/battle/eft_chain.h	EftArcArg	unk3C	KEEP	KEEP	not read
+include/battle/eft_chain.h	EftArcNode	unk58	KEEP	KEEP	tail of the 0x60-byte node; not read
+include/battle/eft_chain.h	EftArcChain	unk20	KEEP	KEEP	not read by name (group 07 note: EftChainStrand's view calls this block a matrix row)
+include/battle/eft_chain.h	EftArcChain	unkC8	KEEP	KEEP	tail of the 0xD0-byte chain; not read
+include/battle/eft_chain.h	EftArc	unkF08	KEEP	KEEP	not read
+include/battle/eft_char_parts.h	EftGroundTexEntry	unk8	KEEP	KEEP	second doubleword of a texture set entry; not read
+include/battle/eft_char_parts.h	EftBladeTrail	unk1284	KEEP	KEEP	only write eft_char_parts.c:794 (rand() % 30 + 60); never read
+include/battle/eft_char_parts.h	EftBladeTrail	unk1288	KEEP	KEEP	no read or write
+include/battle/eft_char_parts.h	EftBlade	unk12A0	KEEP	KEEP	eft_char_parts.c:870-873 sets (rand * 20, -10, rand * 20, 1); never read
+src/battle/eft_char_parts.c	EftDelaySeArg	unk8	KEEP	KEEP	member of the anonymous struct `s` (eft_char_parts.c:576); padding after the 8-byte EftDelaySeDef: the task work EftDelaySe (eft_char_parts.h:179) is only objId / seId / delay
+include/battle/eft_core.h	EftHitTask	unk0	KEEP	KEEP	an s32 over BtlTask's bits / chr / index (u8, u8, u16; eft_sprite_anim.h:51-53); cannot take one name
+include/battle/eft_core.h	EftHitTask	unkC	KEEP	KEEP	BtlTask.unkC is unknown too; not used
+include/battle/eft_core.h	EftHitDef	unk7	KEEP	KEEP	not read
+include/battle/eft_core.h	EftHitSrc	unk8	area	HIGH	EftShot_Start (eft_emit.c:337) copies the whole EftHStartArg into the slot (s->arg = *arg; EftHSlot.arg at +0x00 is the object EftHitSrc views); BtlChar_SpawnFxBits3C (btl_char_fx_1.c:176-178) sets start-arg +0x08 to the fighter object's area (stage zone); copied on to EftHitRec.unkF0 (eft_core.c:119)
+include/battle/eft_core.h	EftHitAtk	unk16	area	HIGH	FxHitArg2 (the same launch block, btl_char_fx_1.h:153) names +0x16 `area`; btl_char_fx_1.c:1319 stores obj->area (the fighter's stage zone, eft_detect.h:245)
+include/battle/eft_core.h	EftHitAtk	unk1B	KEEP	KEEP	BtlKiBlast_GetUnk3 (record +0x03, unknown in btl_tech.h:77); eft_disc.h names the byte level, which this struct already uses at 0x30
+include/battle/eft_core.h	EftHitAtk	unk1C	KEEP	KEEP	an s32 over FxHitArg2's s16 life (0x1C) plus 2 bytes of padding; renaming to life would hide the type difference; not read here
+include/battle/eft_core.h	EftHitShape	unk8	speed	HIGH	eft_core.c:120 rec->shape.unk8 = def->speed (technique) and :135 = atk->speed (ki blast): the record's speed in both cases
+include/battle/eft_core.h	EftHitBox	unk0	start	HIGH	EftDetCapsule (eft_detect.h:51-54), the detection's view of this 0x30-byte arena volume, names 0x00 start, 0x10 end, 0x20 radius (ColCapsule_Set); here 0x10 is pos, the head end
+include/battle/eft_core.h	EftHitRec	unk4	KEEP	KEEP	def->node (eft_core.c:121), atk->unk1B (:136) or 1 / 2 / 4 / 6 by the disc's texture (eft_disc.c:246-259); no reader in C (BtlCollHit.unk4 and EftDetRec.unk4 unread too)
+include/battle/eft_core.h	EftHitRec	unk54	stationary	MEDIUM	one word of the hit record (EftHitRec / EftPHitRec / EftRRec are views of it): 0 for a ki blast, (flags >> 9) & 1 = EFT_KIBOMB_REST (the ki bomb came to rest) at eft_struggle.c:1550, def->flags bit 1 for a technique (eft_core.c:123); btl_hit_reaction.c:297 takes the reaction direction from the hit position (as for a zero velocity) when non-zero, and :1232 / :1319 / :1371 refuse deflect / reflect / absorb when == 1. Name reconciles the two readings (dirFromPos / noDeflect proposed separately)
+include/battle/eft_core.h	EftHitRec	unk58	KEEP	KEEP	not read or written
+include/battle/eft_core.h	EftHitRec	unk6C	KEEP	KEEP	not read or written
+include/battle/eft_core.h	EftHitRec	unkF0	area	HIGH	both writers store the fighter's stage zone: eft_core.c:119 rec->unkF0 = src->unk8 (start-arg +0x08 = object area, btl_char_fx_1.c:176-178, copied by EftShot_Start eft_emit.c:337) and eft_core.c:134 = atk->unk16 (FxHitArg2.area, btl_char_fx_1.c:1319); no reader found
+src/battle/eft_core.c	EftImpactArg	unk28	KEEP	KEEP	every view of this argument (EftImpactArg in eft_particle_unused.h, FxPosArg, BtlMemberHitFxReq) leaves +0x28 unknown; callers pass 0
+include/battle/eft_detect.h	EftDetSphere	unk14	KEEP	KEEP	tail of the 0x20-byte sphere; CpSphere's [0] is radiusSq; an array, not read here
+include/battle/eft_detect.h	EftDetCapsule	unk24	KEEP	KEEP	tail of the 0x30-byte capsule; not read
+include/battle/eft_detect.h	EftDetShape	unk8	speed	HIGH	same word as EftHitShape.unk8 (record + 0x78): eft_core.c:120 / :135 store def->speed / atk->speed there
+include/battle/eft_detect.h	EftDetShape	unk14	KEEP	KEEP	three words between the task's part and hitPos; not read
+include/battle/eft_detect.h	EftDetShape	unk9C	KEEP	KEEP	not read
+include/battle/eft_detect.h	EftDetRec	unk4	KEEP	KEEP	see EftHitRec.unk4; not read in eft_detect.c
+include/battle/eft_detect.h	EftDetRec	unk54	KEEP	KEEP	three words over EftHitRec.unk54 (stationary) and unk58[2]; an array, not read here
+include/battle/eft_detect.h	EftDetRec	unk6C	KEEP	KEEP	not read
+include/battle/eft_detect.h	EftDetStageCtx	unk0	KEEP	KEEP	the CpSweep's capsule ends (start, end; ColSweep_FromCapsule); an array of two vectors, not read by name
+include/battle/eft_detect.h	EftDetStageCtx	unk24	KEEP	KEEP	tail of the CpSweep capsule; not read
+include/battle/eft_detect.h	EftDetStageCtx	unk30	KEEP	KEEP	the CpSweep's start sphere (position, radius); array of two vectors, not read by name
+include/battle/eft_detect.h	EftDetStageCtx	unk74	KEEP	KEEP	tail of the CpSweep; not read
+include/battle/eft_detect.h	EftDetStageCtx	unk8C	KEEP	KEEP	not read
+include/battle/eft_detect.h	EftDetObj	unk950	KEEP	KEEP	byte block used only as a base pointer: eft_detect.c:1449 blk = obj->unk950, :1460 reads *(s32 *)(blk + 0xD4) = obj + 0xA24, which is the already named `area` (the form is probably for matching); nothing inside 0x950..0x970 is read
+include/battle/eft_detect.h	EftTexSetEntry	unkC	KEEP	KEEP	not read
+include/battle/eft_detect.h	EftTexPack	unk4	KEEP	KEEP	not read
+include/battle/eft_detect.h	EftVram	unk808	KEEP	KEEP	not read
+include/battle/eft_disc.h	EftPTask	unk3C	KEEP	KEEP	BtlTask.unk3C is unknown too
+include/battle/eft_disc.h	EftPPart	unk9	KEEP	KEEP	unknown in EftJPart (eft_shot_tech.h) too; not read
+include/battle/eft_disc.h	EftPGroup	unk4	KEEP	KEEP	unknown in EftJGroup too; not read
+include/battle/eft_disc.h	EftPSet	unk4	KEEP	KEEP	unknown in EftJSet too; not read
+include/battle/eft_disc.h	EftPTexEntry	unk8	KEEP	KEEP	second doubleword of a texture set entry; not read
+include/battle/eft_disc.h	EftDiscAtk	unk16	area	HIGH	FxHitArg2 (btl_char_fx_1.h:153, the same launch block per eft_disc.h:108) names +0x16 `area`: btl_char_fx_1.c:1319 stores obj->area, the fighter's stage zone
+include/battle/eft_disc.h	EftDiscAtk	unk1E	KEEP	KEEP	padding after the s16 life at 0x1C (FxHitArg2 declares nothing at 0x1E); not read
+include/battle/eft_disc.h	EftPGlow	unk1C	KEEP	KEEP	EftGlow (eft_trail.h:77-78, the same work) names the two words type and type2 (aura type, twice); an array of two, not read through this view in eft_glow.c
+include/battle/eft_disc.h	EftPGlowPart	unkF	KEEP	KEEP	not read
+include/battle/eft_disc.h	EftPGlowMgr	unk18	KEEP	KEEP	EftGlowMgr (eft_trail.h:126) names the first word live (eft_glow.c:232 / :242 count it); the second is unknown; an array of two
+include/battle/eft_disc.h	EftPGlowCfg	unk1BC	KEEP	KEEP	not read
+include/battle/eft_disc.h	EftPGlowCfg2	unk24	KEEP	KEEP	not read
+src/battle/eft_disc.c	EftPHitRec	unk4	KEEP	KEEP	set to 1 / 2 / 4 / 6 by arg.texB (eft_disc.c:245-259); EftHitRec.unk4 has no reader
+src/battle/eft_disc.c	EftPHitRec	unk54	stationary	MEDIUM	one word of the hit record (EftHitRec / EftPHitRec / EftRRec are views of it): 0 for a ki blast, (flags >> 9) & 1 = EFT_KIBOMB_REST (the ki bomb came to rest) at eft_struggle.c:1550, def->flags bit 1 for a technique (eft_core.c:123); btl_hit_reaction.c:297 takes the reaction direction from the hit position (as for a zero velocity) when non-zero, and :1232 / :1319 / :1371 refuse deflect / reflect / absorb when == 1. Name reconciles the two readings (dirFromPos / noDeflect proposed separately); eft_disc.c:243 clears it
+src/battle/eft_disc.c	EftPHitRec	unk58	KEEP	KEEP	not touched
+PARAM	src/battle/eft_core.c	EftGfx_DrawPolyAvgZ	arg2	unused1	HIGH	only passed on to EftPrim_DrawTriangle's 10th argument, which the definition (eft_stage_1.c:520-521) names unused1 and never reads
+PARAM	src/battle/eft_core.c	EftGfx_DrawPolyAvgZ	arg3	unused2	HIGH	only passed on to EftPrim_DrawTriangle's 11th argument, unused2 in eft_stage_1.c:521, never read
+PARAM	src/battle/eft_core.c	EftGfx_DrawPolyFixedZ	arg2	unused1	HIGH	as EftGfx_DrawPolyAvgZ: forwarded to EftPrim_DrawTriangle's unused1
+PARAM	src/battle/eft_core.c	EftGfx_DrawPolyFixedZ	arg3	unused2	HIGH	forwarded to EftPrim_DrawTriangle's unused2
+PARAM	src/battle/eft_core.c	EftGfx_DrawPolyAvgZFront	arg2	unused1	HIGH	forwarded to EftPrim_DrawTriangle's unused1
+PARAM	src/battle/eft_core.c	EftGfx_DrawPolyAvgZFront	arg3	unused2	HIGH	forwarded to EftPrim_DrawTriangle's unused2
+PARAM	src/battle/eft_core.c	EftGfx_DrawPolyScaledZ	arg2	unused1	HIGH	forwarded to EftPrim_DrawTriangle's unused1
+PARAM	src/battle/eft_core.c	EftGfx_DrawPolyScaledZ	arg3	unused2	HIGH	forwarded to EftPrim_DrawTriangle's unused2
+PARAM	include/battle/eft_core.h	EftGfx_DrawPolyAvgZ	arg2	unused1	HIGH	prototype of the eft_core.c:1555 definition (see there)
+PARAM	include/battle/eft_core.h	EftGfx_DrawPolyAvgZ	arg3	unused2	HIGH	prototype of the eft_core.c:1555 definition
+PARAM	include/battle/eft_core.h	EftGfx_DrawPolyFixedZ	arg2	unused1	HIGH	prototype of eft_core.c:1583
+PARAM	include/battle/eft_core.h	EftGfx_DrawPolyFixedZ	arg3	unused2	HIGH	prototype of eft_core.c:1583
+PARAM	include/battle/eft_core.h	EftGfx_DrawPolyAvgZFront	arg2	unused1	HIGH	prototype of eft_core.c:1610
+PARAM	include/battle/eft_core.h	EftGfx_DrawPolyAvgZFront	arg3	unused2	HIGH	prototype of eft_core.c:1610
+PARAM	include/battle/eft_core.h	EftGfx_DrawPolyScaledZ	arg2	unused1	HIGH	prototype of eft_core.c:1640
+PARAM	include/battle/eft_core.h	EftGfx_DrawPolyScaledZ	arg3	unused2	HIGH	prototype of eft_core.c:1640
+PARAM	src/battle/eft_core.c	EftPrim_DrawTriangle	arg9	unused1	HIGH	extern at eft_core.c:38; the definition (eft_stage_1.c:520-521) names this parameter unused1 and never reads it
+PARAM	src/battle/eft_core.c	EftPrim_DrawTriangle	arg10	unused2	HIGH	extern at eft_core.c:38; unused2 in the definition, never read
+PARAM	src/battle/eft_chain.c	EftPrim_DrawTriangle	a9	unused1	HIGH	extern at eft_chain.c:1520; the definition (eft_stage_1.c:521) names it unused1 and never reads it
+PARAM	src/battle/eft_chain.c	EftPrim_DrawTriangle	a10	unused2	HIGH	extern at eft_chain.c:1520; unused2 in the definition
+PARAM	src/battle/eft_chain.c	EftGfx_DrawPolyScaledZ	a2	unused1	HIGH	extern at eft_chain.c:61; the definition (eft_core.c:1640) only forwards it to EftPrim_DrawTriangle's unused1
+PARAM	src/battle/eft_chain.c	EftGfx_DrawPolyScaledZ	a3	unused2	HIGH	extern at eft_chain.c:61; forwarded to EftPrim_DrawTriangle's unused2
+PARAM	src/battle/eft_aura.c	EftGfx_DrawPolyAvgZFront	a2	unused1	HIGH	extern at eft_aura.c:55; the definition (eft_core.c:1610) only forwards it to EftPrim_DrawTriangle's unused1
+PARAM	src/battle/eft_aura.c	EftGfx_DrawPolyAvgZFront	a3	unused2	HIGH	extern at eft_aura.c:55; forwarded to EftPrim_DrawTriangle's unused2
+PARAM	src/battle/eft_blast_obj.c	EftObj_Nop	a1	unused	HIGH	extern at eft_blast_obj.c:137; the definition is EftObj_Nop(void) (eft_mesh.c:796): the 0 every caller passes is ignored
+include/battle/eft_draw_modules.h	EftTTask	unk3C	KEEP	KEEP	no read or write in eft_chain.c / eft_streak.c / eft_shot_fx.c; BtlTask (eft_sprite_anim.h:67) also leaves +0x3C unknown
+include/battle/eft_draw_modules.h	EftTTex	unk8	image	HIGH	same 0x10-byte texture-set entry as EftTexEntry (eft_shot.h:42 `u64 image`), eft_ribbon.h:49, eft_zap.h:34; EftTexSet_Load32 stores the image header pointer there (eft_detect.c:176 set->tex[i].image = &hdr->images[i])
+include/battle/eft_draw_modules.h	EftRayArg	unk54	KEEP	KEEP	three trailing words of the 0x60 argument; no code reads or writes them (EftEmitLightArg ends at 0x50 too)
+include/battle/eft_draw_modules.h	EftRay	unkC	KEEP	KEEP	no read or write in the ray code of eft_chain.c
+include/battle/eft_draw_modules.h	EftRayMgr	unk204	stepped	MEDIUM	word after the count of a 32-entry texture set: EftTexSet (eft_shot.h:47) names it `stepped`, the per-frame bit mask of entries already advanced (eft_rays.c:701-703, eft_disc.c:412-422); not used by the ray code itself (only tex[0] is drawn)
+include/battle/eft_draw_modules.h	EftRayMgr	unk20C	KEEP	KEEP	never used; trailing word of the 0x210 block
+include/battle/eft_draw_modules.h	EftStreak	unk38	KEEP	KEEP	never used; padding of the 0x40 pool entry
+include/battle/eft_draw_modules.h	EftStreakWork	unk78	KEEP	KEEP	never used; padding at the end of the 0x80 work
+include/battle/eft_draw_modules.h	EftStreakMgr	unkB8	KEEP	KEEP	never used; padding in front of the 16-byte aligned pool at 0xC0
+include/battle/eft_draw_modules.h	EftStreakMgr	unk5AC4	KEEP	KEEP	never used; padding at the end of the 0x5AD0 work
+include/battle/eft_emit.h	EftHTask	unk8	KEEP	KEEP	only use is the bit-4 test in EftVolley_PostUpdate (eft_emit.c:857); BtlTask (eft_sprite_anim.h:55) calls +0x08 `result` but no C code shows who sets bit 4
+include/battle/eft_emit.h	EftHTask	unk28	KEEP	KEEP	four pointers that BtlTask (eft_sprite_anim.h:62-65) has as cls / prev / next / nextFree: a type change, not one name; not used here
+include/battle/eft_emit.h	EftHTask	unk3C	KEEP	KEEP	never used; BtlTask also leaves +0x3C unknown
+include/battle/eft_emit.h	EftShotParam	unk7	KEEP	KEEP	always written 0 by EftShot_BuildParam (eft_emit.c:146, 199, 254) and never read; EftHitDef / EftJDef also leave +0x07 unknown
+include/battle/eft_emit.h	EftShotParam	unkB	hitInterval	HIGH	same record as EftHitDef (eft_core.h:104 `hitInterval`, the slot's param pointer at +0x24 is EftHitSrc.def): EftHit_GetHitInterval (eft_core.c:431) returns it and EftDet_HitFighterMulti (eft_detect.c:896-903) reports only "in contact" while fewer frames than this have passed since the last hit
+include/battle/eft_emit.h	EftShotParam	unk14	KEEP	KEEP	-1 for skills, super +0x162[i] for techniques (eft_emit.c:181, 234, 289); no reader found in any view of the definition, and BtlSuperData leaves +0x162 unnamed
+include/battle/eft_emit.h	EftShotParam	unk15	KEEP	KEEP	never written or read (byte before frames[] at 0x16)
+include/battle/eft_emit.h	EftShotParam	unk22	KEEP	KEEP	always written 0 (eft_emit.c:165, 218, 273), never read
+include/battle/eft_emit.h	EftShotParam	unk24	KEEP	KEEP	always written 0 (eft_emit.c:166, 219, 274), never read
+include/battle/eft_emit.h	EftShotParam	unk26	KEEP	KEEP	never used (alignment pad in front of life at 0x28)
+include/battle/eft_emit.h	EftShotParam	unk46	KEEP	KEEP	never written or read; EftJDef (eft_shot_tech.h:58) also leaves it unk46
+include/battle/eft_emit.h	EftShotParam	unk82	KEEP	KEEP	never written or read (pad after subArg)
+include/battle/eft_emit.h	EftHStartArg	unk8	area	HIGH	EftShot_Request (eft_shot.c:1607) passes BtlMemberAuraReq straight to EftShot_Start; BtlChar_SpawnFxBits3C (btl_char_fx_1.c:176-178) sets +0x08 to the fighter object's `area` (object +0xA24, stage zone; btl_char_member.h:171)
+include/battle/eft_emit.h	EftHStartArg	unkC	scale	HIGH	BtlChar_SpawnFxBits3C (btl_char_fx_1.c:183, 189) fills +0x0C from BtlSkill_GetShotUnk30 / BtlSuper_GetShotUnk6C: skill +0x30 / super +0x6C, the same source fields EftShot_BuildParam copies into EftShotParam.scale (eft_emit.c:222, 277); stored as f32 by the sender (BtlMemberAuraReq.unkC), so the type here should be f32; no reader in the effect code
+include/battle/eft_emit.h	EftHSlot	unk40	aimFlags	HIGH	EftHSlot is the object EftHitSrc (eft_core.h:120-128) views: +0x40 is aimFlags there, bit 2 set by EftAim_GetDirKeep once aimDir is valid (eft_core.c:1444-1447); EftShot_Start zeroes it at each start (eft_emit.c:338) so the aim is taken again
+include/battle/eft_emit.h	EftHSlot	unk2C	SPLIT: 0x2C u8 unk2C[4]; 0x30 f32 aimDir[4]	MEDIUM	EftHitSrc.aimDir (eft_core.h:126, EftVec at +0x30) is written and read by EftAim_GetDirKeep (eft_core.c:1440-1450) on this same slot object; f32[4] instead of Vec4 to keep the slot's alignment unchanged
+include/battle/eft_emit.h	EftShotClassRow	unk8	KEEP	KEEP	third word of a gEftShotClass row, never read; eft_shot_tech.c:7 describes the rows as {manager class, item class, 0}
+include/battle/eft_emit.h	EftSkillSrc	unk8	KEEP	KEEP	is BtlSkillData.flags (btl_tech.h:168, behaviour flags 0x100 / 0x200) but this view already calls +0x00 (btl_tech.h flagsA) `flags`; not read by EftShot_BuildParam. Renaming would need both fields renamed together (flags -> flagsA, unk8 -> flags)
+include/battle/eft_emit.h	EftSkillSrc	unk42	hitInterval	HIGH	copied to EftShotParam +0x0B (eft_emit.c:203), the definition's hitInterval (eft_core.h:104, read by EftDet_HitFighterMulti eft_detect.c:896)
+include/battle/eft_emit.h	EftSuperSrc	unkC	KEEP	KEEP	is BtlSuperData.flags (btl_tech.h:112, BtlSuper_GetFlags) but this view's `flags` is +0x00 (flagsA in btl_tech.h); not read by EftShot_BuildParam
+include/battle/eft_emit.h	EftSuperSrc	unk9F	hitInterval	HIGH	copied to EftShotParam +0x0B (eft_emit.c:258), the definition's hitInterval (eft_core.h:104, eft_detect.c:896-903)
+include/battle/eft_emit.h	EftSuperSrc	unk137	KEEP	KEEP	never read (byte between subArg[3] and type[3])
+include/battle/eft_emit.h	EftSuperSrc	unk214	KEEP	KEEP	copied to EftShotParam.shotSpeed (eft_emit.c:284), which EftShotTech_Init uses as its initial w->speed (eft_obj_tech.c:422); `shotSpeed` is already taken in this view by +0x054 and BtlSuperData leaves +0x214 unnamed, so what distinguishes the two speeds is not shown
+include/battle/eft_emit.h	EftSetHead	unk7	KEEP	KEEP	never read; EftEmitHdr (eft_sweep.h:137) covers 0x04..0x07 with one unk4
+include/battle/eft_emit.h	EftSetHead	unkC	SPLIT: 0x0C f32 width1; 0x10 f32 width2	HIGH	EftEmitHdr (eft_sweep.h:139-140), the same pack header, names them width1 / width2 and eft_sweep.c:1199-1217 reads both (width0 -> width1 -> width2 animation)
+include/battle/eft_emit.h	EftSetHead	unk22	moveKind	HIGH	EftEmit_GetHead22 (eft_emit.c:1131) is only used by EftShotTech: 0 -> EftShotTech_MoveStraight, 1 -> MoveFromTarget, 2 -> MoveAimed (eft_obj_tech.c:523-534); value 2 also picks node 0x15 (eft_obj_tech.c:427); comment above MoveFromTarget calls it "aim kind 1" but aimKind is taken by +0x06
+include/battle/eft_emit.h	EftSetHead	unk25	fireDirKind	HIGH	EftEmit_GetHead25 (eft_emit.c:1136) is the switch of EftShotTech_CalcDir (eft_shot_tech.c:1546): 0 at the opponent's node 3, 1 node 0x2E -> 3, 2 EftAim_GetDir, 3 node 0x22 -> 0x23, 4 node 0x14 -> 0x15, 5 node 0x36's -Z axis: the firing direction mode
+include/battle/eft_emit.h	EftSetHead	unk26	moveFlags	MEDIUM	EftEmit_GetHead26 (eft_emit.c:1121) bits: 1 record node 0x36 muzzle (eft_obj_tech.c:219, eft_shot_tech.c:1627), 2 straight move sits on the target, 4 start on event 0x10, 8 wait for event 0x10 (eft_obj_tech.c:426-532), 0x10 retarget shots at w->pos (eft_shot_tech.c:1723), 0x20 sets work flag 0x20000; mixed movement / firing bits, hence MEDIUM
+include/battle/eft_emit.h	EftSetHead	unk28	holdDist	HIGH	EftEmit_GetHead28 (eft_emit.c:1141) is only read by EftShotTech_MoveFromTarget (eft_obj_tech.c:279-300): the point is placed `dist` in front of the opponent on the line to the fighter
+include/battle/eft_emit.h	EftSetHead	unk30	SPLIT: 0x30 f32 b1; 0x34 f32 b2	HIGH	EftEmitHdr (eft_sweep.h:148-149) names them b1 / b2 and eft_sweep.c:1251-1253 reads them (second width animation b0 -> b1 -> b2)
+include/battle/eft_emit.h	EftSetDef	unkB	SPLIT: 0x0B u8 dirMode; 0x0C f32 spread	HIGH	the same 0x40-byte part record as EftEmitDef (eft_sweep.h:65-67; its comment ties `phase` to EftSetDef.phase), whose dirMode / spread eft_sweep.c reads when it spawns
+include/battle/eft_emit.h	EftSetDef	unk20	SPLIT: 0x20 f32 scale1; 0x24 f32 scale2; 0x28 f32 scaleTime; 0x2C f32 scaleSplit; 0x30 f32 scaleStep	HIGH	EftEmitDef (eft_sweep.h:72-76) names these; eft_sweep.c:720-730 animates EftEmitState.scale[n] from scale0 through them
+include/battle/eft_emit.h	EftSetDef	unk37	SPLIT: 0x37 u8 scaleMode; 0x38 u8 unk38[8]	HIGH	EftEmitDef.scaleMode (eft_sweep.h:81: 0 caller's scale, 1 owner's body scale, 2 opponent's), read by the sweep spawner
+include/battle/eft_emit.h	EftSetState	unk208	SPLIT: 0x208 f32 time[40]	HIGH	EftEmitState (eft_sweep.h:188) has f32 time[EFT_EMIT_MAX] here: frames since a part's scale animation started, incremented at eft_sweep.c:722-723; exactly 0xA0 bytes
+include/battle/eft_emit.h	EftEmitArg2	unk3	KEEP	KEEP	never set by the pack library beyond the memset; EftRaysArg also leaves it unk3
+include/battle/eft_emit.h	EftVolleyShot	unk20	KEEP	KEEP	declared Vec4 but EftVolleyAimShot (eft_detect.h) has s32 script / f32 speed / f32 maxTurn there: a type change, not a name; not used through this view
+include/battle/eft_emit.h	EftVolleyShot	unk4C	KEEP	KEEP	never used (padding of the 0x50 entry)
+include/battle/eft_emit.h	EftVolleyWork	unkC	KEEP	KEEP	set to the param's scale in EftVolley_Init (eft_emit.c:737) and only copied to unk14 (:739); never read otherwise
+include/battle/eft_emit.h	EftVolleyWork	unk14	KEEP	KEEP	third copy of the scale (eft_emit.c:739), never read
+include/battle/eft_emit.h	EftVolleyWork	unk18	KEEP	KEEP	never used
+include/battle/eft_emit.h	EftVolleyWork	unk13CC	KEEP	KEEP	never used (pad to 0x13D0)
+include/battle/eft_emit.h	EftShotNullWork	unk0	KEEP	KEEP	only cleared by the init's memset
+include/battle/eft_ground_dust.h	EftBill	unkD8	KEEP	KEEP	set by EftBill_SetUnkD8 (eft_ground_dust.c:877, no caller in C); > 0 sets EFT_BILL_UNK800 when the sprite stops (:628, :747), and nothing tests that flag
+include/battle/eft_ground_dust.h	EftGndDustPart	unkA2	KEEP	KEEP	never used (pad after scale)
+include/battle/eft_link_2.h	EftWTexEntry	unk8	image	HIGH	same texture-set entry as EftTexEntry (eft_shot.h:42 `image`); EftTexSet_Load* store the image header pointer at +0x8 (eft_detect.c:176, 193, 210)
+include/battle/eft_link_2.h	EftWLinkNode	unk70	KEEP	KEEP	set to (0, 0, 1, 1) by EftLink_InitNode (eft_link_2.c:396) and never read
+include/battle/eft_link_2.h	EftWLinkMgr	unk4	KEEP	KEEP	never used (pad in front of the pool at 0x10)
+include/battle/eft_link_2.h	EftWLinkMgr	unk10694	KEEP	KEEP	never used (pad in front of camMtx)
+include/battle/eft_obj_tech.h	EftKTask	unk3C	KEEP	KEEP	never used; BtlTask and the other task views also leave +0x3C unknown
+include/battle/eft_obj_tech.h	EftKPart	unk9	endPhase	HIGH	same part record as EftSetDef / EftEmitDef (eft_emit.h:269, eft_sweep.h:63 `endPhase`, the event that stops a part; rate at 0x18 matches too); eft_obj_tech.c:1249 keeps a part with no end event (0) and a positive rate running instead of ending it
+include/battle/eft_obj_tech.h	EftKGroup	unk4	parts	HIGH	same record as EftSetGroup (eft_emit.h:285, `EftSetDef *parts`): EftEmit_LoadSet writes g->parts = &parts[nPart] (eft_emit.c:974); EftEmitGroup (eft_sweep.h) calls it parts too; the type here should be EftKPart *
+include/battle/eft_obj_tech.h	EftKSet	unk4	entries	HIGH	same object as EftSet (eft_emit.h:262, `EftSetGroupDef *entries`): set->entries = defs at eft_emit.c:959, the group definitions after the header (mask here is set->head, whose first word is the mask)
+include/battle/eft_obj_tech.h	EftKModel	unk37	KEEP	KEEP	never used; also unk37 in EftJShotModel (eft_shot_tech.h:291)
+include/battle/eft_obj_tech.h	EftShotTech	unk530	KEEP	KEEP	not used through this view; EftJShotTech (eft_shot_tech.h) splits it into shotDir (0x530) / blurDir (0x540): one name cannot cover the array
+include/battle/eft_obj_tech.h	EftTechEvtEntry	unk8	KEEP	KEEP	never read or written
+include/battle/eft_obj_tech.h	EftObjTechMgr	unk32C	KEEP	KEEP	never used
+include/battle/eft_obj_tech.h	EftObjTech	unk390	KEEP	KEEP	not used through this view; covers n[0][1] (id, pad, pos) and n[1][0].id of the EftEmitNodes block (comment on the line): needs a type change
+include/battle/eft_obj_tech.h	EftObjTech	unk5CC	KEEP	KEEP	never used
+include/battle/eft_obj_tech.h	EftObjTech	unk5D8	KEEP	KEEP	never used
+include/battle/eft_obj_tech.h	EftRushShotObj	unk38	KEEP	KEEP	never used
+include/battle/eft_obj_tech.h	EftRushShotObj	unk3C	KEEP	KEEP	set to 0 or a random 0..4 when the model is placed (eft_obj_tech.c:1845-1847, same pattern as delay) and never read
+include/battle/eft_obj_tech.h	EftRushShotObj	unk58	KEEP	KEEP	set to 1.0 when the model is placed (eft_obj_tech.c:1863) and never read
+include/battle/eft_obj_tech.h	EftRushShotObj	unk5C	KEEP	KEEP	never used
+include/battle/eft_obj_tech.h	EftRushShot	unk360	KEEP	KEEP	not used; covers n[0][1] and n[1][0].id of the node block, not three vectors
+PARAM	src/battle/eft_emit.c	EftEmit_SpawnOwn	a	pos	HIGH	definition eft_sweep.c:503 (EftEmitSet *set, EftEmitState *state, EftEmitNodes *nodes, Vec4 *pos, Vec4 *dir, ...); eft_emit.c:711 passes &w->pos
+PARAM	src/battle/eft_emit.c	EftBlastObj_SetSel	a	n	HIGH	definition eft_blast_obj.c:617 EftBlastObj_SetSel(EftOTask *task, s32 n, s32 kind, s32 node)
+PARAM	src/battle/eft_emit.c	EftBlastObj_SetSel	b	kind	HIGH	definition eft_blast_obj.c:617
+PARAM	src/battle/eft_emit.c	EftBlastObj_SetSel	c	node	HIGH	definition eft_blast_obj.c:617
+PARAM	src/battle/eft_emit.c	EftVolleyAim_Spread	a	kind	HIGH	definition eft_detect.c:333 (s32 objId, EftDetVec *dir, s32 kind, s32 lockedOn, s32 side, s32 index, s32 count)
+PARAM	src/battle/eft_emit.c	EftVolleyAim_Spread	b	lockedOn	HIGH	definition eft_detect.c:333; its caller passes BtlCharApi_IsLockedOn(objId) (eft_detect.c:324)
+PARAM	src/battle/eft_emit.c	EftVolleyAim_Spread	c	side	HIGH	definition eft_detect.c:333
+PARAM	src/battle/eft_emit.c	EftVolleyAim_Update	a	speed	HIGH	definition eft_detect.c:560 (..., s32 exact, f32 time, f32 speed, f32 maxTurn)
+PARAM	src/battle/eft_emit.c	EftVolleyAim_Update	b	maxTurn	HIGH	definition eft_detect.c:560
+PARAM	src/battle/eft_obj_tech.c	EftObj_Nop	a1	unused	HIGH	the definition takes no parameters (eft_mesh.c:796 `void EftObj_Nop(void)`); eft_shot_tech.c:100 already names the second one `unused`
+PARAM	src/battle/eft_obj_tech.c	EftStreak_Start	arg2	color	HIGH	definition eft_streak.c:704 EftStreak_Start(s32 objId, s32 kind, s32 color, f32 angle); the caller passes `color` (eft_obj_tech.c:2108)
+PARAM	src/battle/eft_obj_tech.c	EftEmit_GetFlagsFromReq	f1	ending	HIGH	definition eft_emit.c:1238 (..., s32 type, s32 idx, s32 ending, s32 kill)
+PARAM	src/battle/eft_obj_tech.c	EftEmit_GetFlagsFromReq	f8	kill	HIGH	definition eft_emit.c:1238
+PARAM	src/battle/eft_obj_tech.c	EftEmit_SpawnOwn	res	flags	HIGH	WRONG: definition eft_sweep.c:503 has (..., s32 type, s32 idx, s32 flags, f32 scale): the 8th parameter is flags, not a resource
+PARAM	src/battle/eft_obj_tech.c	EftEmit_SpawnOwn	work	dir	HIGH	WRONG: 5th parameter of the definition (eft_sweep.c:503) is Vec4 *dir
+PARAM	src/battle/eft_ground_dust.c	EftGndDust_SpawnPieceX	unkB8	growDamp	HIGH	alias of EftGndDust_SpawnPieceEx (eft_ground_dust.c:1636 and :1808, same prototype twice); the definition eft_char_parts.c:218-220 names it growDamp, the value lands in part +0xB8 (EftGndDustPart.growDamp, eft_ground_dust.c:1946)
+PARAM	include/battle/eft_ground_dust.h	EftGndDust_SpawnPieceEx	f12	sizeX	HIGH	definition eft_char_parts.c:218-220: floats sizeX, sizeY, growX, growY, speed, drag, rot, spin, then s16 life, fade, tex, then f32 growDamp, gravity, s32 flags
+PARAM	include/battle/eft_ground_dust.h	EftGndDust_SpawnPieceEx	f13	sizeY	HIGH	definition eft_char_parts.c:218-220
+PARAM	include/battle/eft_ground_dust.h	EftGndDust_SpawnPieceEx	f14	growX	HIGH	definition eft_char_parts.c:218-220
+PARAM	include/battle/eft_ground_dust.h	EftGndDust_SpawnPieceEx	f15	growY	HIGH	definition eft_char_parts.c:218-220
+PARAM	include/battle/eft_ground_dust.h	EftGndDust_SpawnPieceEx	f16	speed	HIGH	definition eft_char_parts.c:218-220
+PARAM	include/battle/eft_ground_dust.h	EftGndDust_SpawnPieceEx	f17	drag	HIGH	definition eft_char_parts.c:218-220
+PARAM	include/battle/eft_ground_dust.h	EftGndDust_SpawnPieceEx	spin	rot	HIGH	WRONG: the 7th float of the definition (eft_char_parts.c:219) is rot; spin is the 8th (here f19). Rename f19 -> spin in the same step
+PARAM	include/battle/eft_ground_dust.h	EftGndDust_SpawnPieceEx	f19	spin	HIGH	definition eft_char_parts.c:220 (after rot); apply after renaming the current `spin` to rot
+PARAM	include/battle/eft_ground_dust.h	EftGndDust_SpawnPieceEx	size	tex	HIGH	WRONG: the third integer of the definition (eft_char_parts.c:220) is s16 tex; callers pass 10 / 350 there (eft_ground_dust.c:1697, 1715)
+PARAM	include/battle/eft_ground_dust.h	EftGndDust_SpawnPieceEx	s0	growDamp	HIGH	definition eft_char_parts.c:220
+PARAM	include/battle/eft_ground_dust.h	EftGndDust_SpawnPieceEx	grow	gravity	HIGH	WRONG: the last float of the definition (eft_char_parts.c:220) is gravity
+PARAM	include/battle/eft_ground_dust.h	EftGndDust_SpawnPiece	a	size	HIGH	definition eft_char_parts.c:180 EftGndDust_SpawnPiece(EftGroundWork *w, EftGroundDef *def, s32 flags, f32 size, f32 rot)
+PARAM	include/battle/eft_ground_dust.h	EftGndDust_SpawnBodyDust	a	scale	HIGH	definition eft_char_parts.c:261 EftGndDust_SpawnBodyDust(EftGroundWork *w, EftGroundDef *def, f32 scale)
+PARAM	include/battle/eft_ground_dust.h	EftGndDust_SpawnBodyDust	b	unused	MEDIUM	the definition (eft_char_parts.c:261) takes only three parameters; the one caller (eft_ground_dust.c:1566) passes 1.0f here, which is ignored
+PARAM	include/battle/eft_ground_dust.h	EftGndDust_SpawnChip	a5	life	HIGH	definition eft_char_parts.c:342-343 (..., s32 life, s32 fade); the caller passes 5, 10 (eft_ground_dust.c:1425)
+PARAM	include/battle/eft_ground_dust.h	EftGndDust_SpawnChip	a6	fade	HIGH	definition eft_char_parts.c:342-343
+include/battle/eft_orb_tail.h	EftOrbTailParam	unk7A	KEEP	KEEP	no reader in eft_orb_tail.c (the only user); the byte before otZ (0x7B)
+include/battle/eft_orb_tail.h	EftOrbTailArg	unk10	KEEP	KEEP	EftOrbTail_Create writes (0, 0, 0, 1) and nothing reads it
+include/battle/eft_orb_tail.h	EftOrbTailNode	unk68	KEEP	KEEP	never accessed; tail of the 0x70-byte node after prev
+include/battle/eft_orb_tail.h	EftOrbTailStreak	unk98	KEEP	KEEP	never accessed; tail of the 0xA0-byte streak
+include/battle/eft_orb_tail.h	EftOrbTail	unk4	KEEP	KEEP	never accessed by eft_orb_tail.c
+include/battle/eft_orb_tail.h	EftOrbTail	unk28	KEEP	KEEP	never accessed; EftWLink / EftPart10 (eft_link_2.h, eft_part10.h) have the same unknown 8 bytes after their two texture entries
+include/battle/eft_orb_tail.h	EftOrbTail	unk1B3	KEEP	KEEP	never accessed
+include/battle/eft_orb_tail.h	EftOrbTail	unk1D4	KEEP	KEEP	never accessed
+include/battle/eft_orb_tail.h	EftOrbTailMgr	unkB95C	KEEP	KEEP	never accessed
+include/battle/eft_orb_tail.h	EftAbPartDef	unk0	kind	HIGH	same record as EftSetGroupDef (eft_emit.h:252, kind) and EftEmitGroupDef.kind (eft_sweep.h:86): EftEmit_LoadSet indexes the group table by it (eft_emit.c:973 g = &set->group[def->kind]; :979 EftEmit_TypeToResKind(def->kind)). Note: EftAbPartDef / EftAbPart are really the group def / group
+include/battle/eft_orb_tail.h	EftAbPart	unk4	SPLIT: 0x4 s32 parts; 0x8 u8 firstPart; 0x9 u8 firstPair; 0xA u8 firstRes; 0xB u8 cat; 0xC u8 catFirst; 0xD u8 unkD[3]	MEDIUM	the 0x10-byte group of the pack (EftSetGroup, eft_emit.h:283-291); EftEmit_LoadSet writes parts at eft_emit.c:974 and the index bytes after it; not accessed through this view
+include/battle/eft_orb_tail.h	EftAbSet	unk4	SPLIT: 0x004 s32 entries; 0x008 s32 parts	HIGH	EftSet.entries / .parts (eft_emit.h:309-310): EftEmit_LoadSet stores the group-definition table and the part-definition table there (eft_emit.c:958-962)
+include/battle/eft_orb_tail.h	EftAbSet	unk13C	SPLIT: 0x13C s32 *res[32]; 0x1BC s32 *pair[40][2]; 0x2FC u8 *array[4]; 0x30C s32 count[4]; 0x31C void *owner	MEDIUM	tail of EftSet (eft_emit.h:313-320): res / pair / array / count tables and owner; not accessed through this view
+include/battle/eft_orb_tail.h	EftTransform	unk56C	KEEP	KEEP	never accessed; last word of the 0x570 work
+include/battle/eft_orb_tail.h	EftRbnAnim	unk30	KEEP	KEEP	EftRibbon_LoadKey / UpdateKeys (eft_ribbon.c:119-200) read color, pulseR/G/B and pulseTime only; 0x30..0x60 is never read
+include/battle/eft_orb_tail.h	EftRbnCur	unk44	KEEP	KEEP	never accessed; EftRibbonCur (eft_ribbon.h) leaves 0x44 unknown too
+include/battle/eft_orb_tail.h	EftRbnNode	unk48	KEEP	KEEP	never accessed; tail of the 0x50-byte node
+include/battle/eft_orb_tail.h	EftRbn	unk8	KEEP	KEEP	never accessed; EftRibbon (eft_ribbon.h:163) also has unk8[2]
+include/battle/eft_orb_tail.h	EftRbn	unkD4	SPLIT: 0x0D4 s32 kind; 0x0D8 s32 unkD8	MEDIUM	EftRibbon (eft_ribbon.h:170-171) has kind at 0xD4 and unkD8 at 0xD8 (eft_ribbon.c:878 w->unkD8 = arg->texBase); not accessed through this view
+include/battle/eft_orb_tail.h	EftRbn	unkE8	SPLIT: 0x0E8 f32 life; 0x0EC f32 delay; 0x0F0 f32 fadeDelay; 0x0F4 f32 fadeTime	MEDIUM	EftRibbon (eft_ribbon.h:175-178) names these four floats; not accessed through this view
+include/battle/eft_orb_tail.h	EftRbn	unk108	SPLIT: 0x108 f32 widthFrame; 0x10C f32 pulseFrame; 0x110 f32 fadeInFrame	MEDIUM	EftRibbon (eft_ribbon.h:183-185); not accessed through this view
+src/battle/eft_orb_tail.c	EftOrbBurstArg	unk3C	KEEP	KEEP	last word of the 0x40 block; no code writes or reads it
+include/battle/eft_part10.h	EftPart10	unk29C	SPLIT: 0x29C f32 uv[16][4]	HIGH	the same task work (0x3D0, class 0x2C3F80) is EftPart10 in eft_link_2.h:361 (uv[16][4]); its init EftPart10_Init fills the sheet frames there (eft_link_2.c:1376-1390); this header comment already says "texture grid cells (init at 0x18C238)"
+include/battle/eft_part10.h	EftPart9Def	unk238	KEEP	KEEP	EftQuadDef (eft_quad_2.h:238) has u8 interval[3] at 0x238 and count[3] at 0x23B: these two bytes are keys 0-1 of the array whose key 2 this view names `interval`; wants a type change, not a rename
+include/battle/eft_part10.h	EftPart9Def	unk23B	KEEP	KEEP	keys 0-1 of EftQuadDef.count[3] (eft_quad_2.h:239); the named `count` at 0x23D is key 2: a type change, not a rename
+include/battle/eft_part10.h	EftPart9Ptcl	unk80	SPLIT: 0x080 Vec4 corner[4]	MEDIUM	EftQuad.corner[4] (eft_quad_2.h:179), view-space corners built by EftQuad_BuildCorners and drawn at eft_quad_2.c:316; not accessed through this view (eft_quad_1.c)
+include/battle/eft_part10.h	EftPart9	unkC	SPLIT: 0x00C s32 unkC; 0x010 EftXTexEntry texA; 0x020 EftXTexEntry texB	MEDIUM	EftQuadWork (eft_quad_2.h:326-328): unknown word, then tex0 / tex1 copies of the pack entries written at eft_quad_2.c:765-766
+include/battle/eft_part10.h	EftPart9	unk78	SPLIT: 0x078 f32 uv[16][4]; 0x178 u8 delta[0x11C]	MEDIUM	EftQuadWork.uv[16][4] (sheet frames, read at eft_quad_2.c:216-230) and EftQuadDelta delta (eft_quad_2.h:339-340)
+include/battle/eft_part10.h	EftPart9	unk298	SPLIT: 0x298 f32 animSplit	HIGH	EftQuadWork.animSplit (eft_quad_2.h:342): w->animSplit = w->animEnd * def->split (eft_quad_2.c:456), compared with age at :458, :536-539
+include/battle/eft_particle_unused.h	EftPtclDef	unk8	SPLIT: 0x008 u8 originKind; 0x009 u8 accelKind	HIGH	same pack block as EftUPtclDef (eft_shot_fx_particle.h:179-180), whose originKind / accelKind the first half of the module reads (eft_particle.c)
+include/battle/eft_particle_unused.h	EftPtclDef	unk1C	SPLIT: 0x01C s16 count[3]; 0x022 s16 countRange[3]; 0x028 f32 interval[3]; 0x034 f32 life[3]; 0x040 f32 lifeRange[3]; 0x04C f32 split[3]; 0x058 f32 speed[3][3]; 0x07C f32 speedRange[3][3]; 0x0A0 f32 width[3][3]; 0x0C4 f32 widthRange[3][3]; 0x0E8 f32 height[3][3]; 0x10C f32 heightRange[3][3]; 0x130 f32 widthPulseLo[3]; 0x13C f32 widthPulseHi[3]; 0x148 f32 widthPulseTime[3]; 0x154 f32 heightPulseLo[3]; 0x160 f32 heightPulseHi[3]; 0x16C f32 heightPulseTime[3]; 0x178 f32 drift[3]; 0x184 f32 gravity[3]; 0x190 f32 radius[3]; 0x19C f32 radiusRange[3]; 0x1A8 f32 ring[3]; 0x1B4 f32 ringRange[3]; 0x1C0 f32 along[3]; 0x1CC f32 coneA[3]; 0x1D8 f32 coneB[3]; 0x1E4 f32 roll[3]; 0x1F0 f32 rollRange[3]; 0x1FC f32 startDist[3]; 0x208 f32 startDistRange[3]; 0x214 f32 flatten[3]; 0x220 f32 fadeIn[3]; 0x22C f32 fadeOut[3]; 0x238 f32 rot[3]; 0x244 f32 rotRange[3]; 0x250 f32 spin[3]; 0x25C f32 spinRange[3]; 0x268 f32 spin2[3]; 0x274 f32 spin2Range[3]	MEDIUM	copied from EftUPtclDef (eft_shot_fx_particle.h:181-227), the full view of the same block read by EftPtcl_SetKey / BlendKeys in eft_particle.c; not accessed through this view
+include/battle/eft_particle_unused.h	EftPtclCur	unk0	SPLIT: 0x00 EftVVec color; 0x10 EftVVec colorRange; 0x20 EftVVec colorEnd; 0x30 EftVVec colorEndRange; 0x40 f32 pulseLo[3]; 0x4C f32 pulseRange[3]; 0x58 f32 pulseTime	HIGH	EftUPtclCur (eft_shot_fx_particle.h:266-272), same 0x130 block at EftPtclWork +0x40, written by EftPtcl_SetKey / BlendKeys (eft_particle.c)
+include/battle/eft_particle_unused.h	EftPtclCur	unk68	SPLIT: 0x68 f32 life; 0x6C f32 lifeRange; 0x70 f32 split; 0x74 f32 speed[3]; 0x80 f32 speedRange[3]; 0x8C f32 width[3]; 0x98 f32 widthRange[3]; 0xA4 f32 height[3]; 0xB0 f32 heightRange[3]; 0xBC f32 widthPulseLo; 0xC0 f32 widthPulseRange; 0xC4 f32 widthPulseTime; 0xC8 f32 heightPulseLo; 0xCC f32 heightPulseRange; 0xD0 f32 heightPulseTime; 0xD4 f32 drift; 0xD8 f32 gravity; 0xDC f32 radius; 0xE0 f32 radiusRange; 0xE4 f32 ring; 0xE8 f32 ringRange; 0xEC f32 along; 0xF0 f32 coneA; 0xF4 f32 coneB	HIGH	EftUPtclCur 0x68..0xF8 (eft_shot_fx_particle.h:276-299), the same block; read by EftPtcl_Spawn (eft_particle.c)
+include/battle/eft_particle_unused.h	EftPtclCur	unk100	SPLIT: 0x100 f32 startDist; 0x104 f32 startDistRange; 0x108 f32 flatten; 0x10C f32 fadeIn; 0x110 f32 fadeOut; 0x114 f32 rot; 0x118 f32 rotRange; 0x11C f32 spin; 0x120 f32 spinRange; 0x124 f32 spin2; 0x128 f32 spin2Range; 0x12C f32 pad12C	HIGH	EftUPtclCur 0x100..0x130 (eft_shot_fx_particle.h:302-313), the same block
+include/battle/eft_particle_unused.h	EftPtcl	unk50	SPLIT: 0x050 EftVVec accel	HIGH	EftUPtcl.accel (eft_shot_fx_particle.h:316, "added to the axis every frame"), same 500-entry pool (gEftPtcl->pool); used 14 times in eft_particle.c
+include/battle/eft_particle_unused.h	EftPtcl	unk80	SPLIT: 0x080 EftVVec colorStart; 0x090 EftVVec colorDelta	HIGH	EftUPtcl.colorStart / colorDelta (eft_shot_fx_particle.h:322-323), same particle record
+include/battle/eft_particle_unused.h	EftPtcl	unkA4	SPLIT: 0x0A4 f32 animT; 0x0A8 f32 age; 0x0AC f32 life; 0x0B0 f32 split; 0x0B4 f32 fadeOutAt; 0x0B8 f32 fadeInT; 0x0BC f32 fadeOutT; 0x0C0 f32 fadeIn; 0x0C4 f32 fadeOut; 0x0C8 f32 speed; 0x0CC f32 speedKey[3]	HIGH	EftUPtcl 0xA4..0xD8 (eft_shot_fx_particle.h:325-335), same particle record
+include/battle/eft_particle_unused.h	EftPtcl	unkDC	SPLIT: 0x0DC f32 widthKey[3]	HIGH	EftUPtcl.widthKey[3] (eft_shot_fx_particle.h:337), same record
+include/battle/eft_particle_unused.h	EftPtcl	unkEC	SPLIT: 0x0EC f32 heightKey[3]	HIGH	EftUPtcl.heightKey[3] (eft_shot_fx_particle.h:339), same record
+include/battle/eft_particle_unused.h	EftPtcl	unkFC	SPLIT: 0x0FC f32 spin; 0x100 f32 widthPulseT; 0x104 f32 widthPulseRange; 0x108 f32 widthPulseTime; 0x10C f32 heightPulseT; 0x110 f32 heightPulseRange; 0x114 f32 heightPulseTime; 0x118 f32 colorPulseT	HIGH	EftUPtcl 0xFC..0x11C (eft_shot_fx_particle.h:341-348), same record
+include/battle/eft_particle_unused.h	EftPtcl	unk120	SPLIT: 0x120 struct EftPtcl *prev; 0x124 s32 unk124[3]	HIGH	EftUPtcl.prev (eft_shot_fx_particle.h:350), list back link used by EftPtcl_UnlinkPtcl
+include/battle/eft_particle_unused.h	EftPtclWork	unk1DF	KEEP	KEEP	never accessed; unknown in EftUPtclWork too
+include/battle/eft_particle_unused.h	EftPtclWork	unk1EC	KEEP	KEEP	never accessed; unknown in EftUPtclWork too
+include/battle/eft_particle_unused.h	EftPtclWork	unk218	KEEP	KEEP	never accessed; unknown in EftUPtclWork too
+include/battle/eft_particle_unused.h	EftPtclWork	unk228	SPLIT: 0x228 EftVTex texA; 0x238 EftVTex texB	HIGH	EftUPtclWork.texA / texB (eft_shot_fx_particle.h:391-392: image and palette entry) filled by EftPtcl_PickTexture (eft_particle.c)
+include/battle/eft_particle_unused.h	EftPtclMgr	unk4C	KEEP	KEEP	never accessed; unknown in EftUPtclMgr too
+include/battle/eft_particle_unused.h	EftVGroupDef	unk0	kind	HIGH	EftSetGroupDef.kind / EftEmitGroupDef.kind: EftEmit_LoadSet indexes the group table by it (eft_emit.c:973 g = &set->group[def->kind])
+include/battle/eft_particle_unused.h	EftVGroup	unk4	SPLIT: 0x04 s32 parts; 0x08 u8 firstPart; 0x09 u8 firstPair; 0x0A u8 firstRes; 0x0B u8 cat; 0x0C u8 catFirst; 0x0D u8 unkD[3]	MEDIUM	EftSetGroup (eft_emit.h:283-291), filled by EftEmit_LoadSet (eft_emit.c:974 g->parts ...); not accessed through this view
+include/battle/eft_particle_unused.h	EftVSet	unk4	SPLIT: 0x004 s32 entries; 0x008 s32 parts	HIGH	EftSet.entries / .parts (eft_emit.h:309-310) stored by EftEmit_LoadSet (eft_emit.c:958-962)
+include/battle/eft_particle_unused.h	EftVSet	unk13C	SPLIT: 0x13C s32 *res[32]; 0x1BC s32 *pair[40][2]; 0x2FC u8 *array[4]; 0x30C s32 count[4]; 0x31C void *owner	MEDIUM	tail of EftSet (eft_emit.h:313-320); not accessed through this view
+include/battle/eft_particle_unused.h	EftImpactArg	unk28	KEEP	KEEP	never read by the impact module; FxPosArg, BtlMemberHitFxReq and EftRBlastFx leave +0x28 unknown too (callers pass 0)
+include/battle/eft_particle_unused.h	EftImpactArg	unk2C	KEEP	KEEP	never read; unknown in FxPosArg too
+include/battle/eft_particle_unused.h	EftLinkDef	unk84	ofsAlongMin	HIGH	eft_link_1.c:346 / :409 animate it into val[11]; :258 offsets each sprite along the chain direction by Rand_FloatRange(val[11], val[12]); EftWLinkDef in eft_link_2.h:77 already names it ofsAlongMin (the earlier KEEP "never read" was wrong)
+include/battle/eft_particle_unused.h	EftLinkDef	unk90	ofsAlongMax	HIGH	upper bound of the same random offset (val[12], eft_link_1.c:347, :410, :258); EftWLinkDef.ofsAlongMax (eft_link_2.h:78)
+include/battle/eft_particle_unused.h	EftLinkNode	unk0	SPLIT: 0x000 EftVVec corner[4]	HIGH	EftWLinkNode.corner[4] (eft_link_2.h:116), the same 0x150-byte sprite of the 200-node pool; used 10 times in eft_link_2.c (EftLink_BuildCorners / draw)
+include/battle/eft_particle_unused.h	EftLinkNode	unk90	SPLIT: 0x090 EftVVec col0; 0x0A0 EftVVec colDelta	MEDIUM	EftWLinkNode.col0 / colDelta (eft_link_2.h:122-123); used in eft_link_2.c
+include/battle/eft_particle_unused.h	EftLinkNode	unkE4	SPLIT: 0x0E4 f32 sizeVel0; 0x0E8 f32 sizeVel1; 0x0EC f32 fadeIn; 0x0F0 f32 fadeOut; 0x0F4 f32 age; 0x0F8 f32 life	MEDIUM	EftWLinkNode 0xE4..0xFC (eft_link_2.h:130-135)
+include/battle/eft_particle_unused.h	EftLinkNode	unk100	SPLIT: 0x100 f32 pulseT; 0x104 f32 pulseTime; 0x108 f32 pulse0; 0x10C f32 pulseD; 0x110 f32 mulTime; 0x114 f32 mulT; 0x118 f32 mulD[3]; 0x124 f32 mul0[3]; 0x130 f32 fadeT; 0x134 f32 fadeTime; 0x138 f32 texFrame; 0x13C f32 delay	MEDIUM	EftWLinkNode 0x100..0x140 (eft_link_2.h:137-148)
+include/battle/eft_particle_unused.h	EftLinkNode	unk148	SPLIT: 0x148 struct EftLinkNode *prev; 0x14C s32 pad14C	HIGH	EftWLinkNode.prev (eft_link_2.h:151): the list back link
+include/battle/eft_particle_unused.h	EftLinkWork	unk0	SPLIT: 0x000 u8 unk0[8]; 0x008 EftVTex tex; 0x018 EftVTex clut; 0x028 u8 unk28[8]	MEDIUM	EftWLink.tex / .clut (eft_link_2.h:165-166): the chain module copies the image and palette entries there and uploads them (eft_link_2.c:332-344)
+include/battle/eft_quad_2.h	EftQuad	unk5C	KEEP	KEEP	never accessed (the hit in eft_ground_dust.c:1817 is another struct); fourth float after colorRamp
+include/battle/eft_quad_2.h	EftQuad	unk7C	KEEP	KEEP	never accessed; fourth float after rot
+include/battle/eft_quad_2.h	EftQuadDelta	unk224	KEEP	KEEP	never accessed by EftQuad_CalcKeyDeltas
+include/battle/eft_quad_2.h	EftQuadCur	unk34C	KEEP	KEEP	never accessed
+include/battle/eft_quad_2.h	EftQuadWork	unkC	KEEP	KEEP	never accessed; the creation argument has padding at the same place
+include/battle/eft_quad_2.h	EftLineDef	unk5	SPLIT: 0x05 u8 shape; 0x06 u8 cols; 0x07 u8 rows; 0x08 f32 frameTime	MEDIUM	the header says EftLineWork is the EftBill block; EftBillDef (eft_ground_dust.h:50-53) has shape, cols, rows, frameTime here, read by EftBill_* in eft_ground_dust.c
+include/battle/eft_quad_2.h	EftLineArg	unk3C	KEEP	KEEP	never used; last word of the 0x40-byte block (EftBillArg ends at 0x3C)
+include/battle/eft_quad_2.h	EftLineWork	unkB4	SPLIT: 0x0B4 u8 type; 0x0B5 u8 unkB5[2]; 0x0B7 u8 frame; 0x0B8 s32 frameCount	MEDIUM	EftBill (eft_ground_dust.h:115-118), the same work block (comment at eft_quad_2.h:494); type / frame / frameCount used by EftBill_* in eft_ground_dust.c
+include/battle/eft_quad_2.h	EftLineWork	unkC4	SPLIT: 0x0C4 f32 frameTimer; 0x0C8 f32 frameTime; 0x0CC f32 life; 0x0D0 f32 delay; 0x0D4 f32 endDelay; 0x0D8 f32 unkD8	MEDIUM	EftBill 0xC4..0xDC (eft_ground_dust.h:121-126)
+include/battle/eft_quad_2.h	EftLineWork	unkE8	SPLIT: 0x0E8 f32 angle; 0x0EC f32 spin	MEDIUM	EftBill.angle / spin (eft_ground_dust.h:130-131), used by EftBill_* (w->angle 5 uses in eft_ground_dust.c)
+include/battle/eft_quad_2.h	EftLineWork	unkF8	SPLIT: 0x0F8 f32 pulseWTimer; 0x0FC f32 pulseHTimer; 0x100 f32 pulseColTimer; 0x104 f32 fadeIn; 0x108 f32 fadeOut; 0x10C f32 fadeInLen; 0x110 f32 fadeOutLen; 0x114 u8 unk114[4]	MEDIUM	EftBill 0xF8..0x118 (eft_ground_dust.h:134-141)
+include/battle/eft_rays.h	EftOTask	unk3C	KEEP	KEEP	last word of the 0x40-byte task; BtlTask.unk3C (eft_sprite_anim.h:67) is unknown too
+include/battle/eft_rays.h	EftOBoltTex	unk4	KEEP	KEEP	no code reads or writes it
+include/battle/eft_rays.h	EftOBoltTex	unkC	KEEP	KEEP	no code reads or writes it
+include/battle/eft_rays.h	EftOBoltTex	unk24	KEEP	KEEP	no code reads or writes it
+include/battle/eft_rays.h	EftOBoltPool	unkC	segNext	HIGH	same object as EftBoltPool (gEftBoltPool, eft_aura.h:650 segNext): the free-joint search starts there and advances it (eft_aura.c:2681-2695)
+include/battle/eft_rays.h	EftOBolt	unk0	SPLIT: 0x00 void *head; 0x04 s32 shown; 0x08 s32 count	MEDIUM	EftBolt (eft_aura.h:576-578), the same 0x90-byte bolt (EftBoltWork.bolt[10] at 0x10); used by EftBolt_* in eft_aura.c
+include/battle/eft_rays.h	EftOBolt	unk10	SPLIT: 0x10 s32 kind; 0x14 s32 nodeA; 0x18 s32 nodeB; 0x1C f32 life; 0x20 f32 follow; 0x24 u8 unk24[0xC]; 0x30 Vec4 pos; 0x40 Vec4 unk40; 0x50 Vec4 start; 0x60 Vec4 end; 0x70 Vec4 dir; 0x80 Vec4 normal	MEDIUM	EftBolt 0x10..0x90 (eft_aura.h:580-592)
+include/battle/eft_rays.h	EftOBoltFlash	unk4	SPLIT: 0x04 s32 nodeA; 0x08 s32 nodeB; 0x0C s32 frame; 0x10 s32 kind; 0x14 f32 life; 0x18 f32 size; 0x1C f32 sizeRate; 0x20 f32 alphaRate; 0x24 f32 follow; 0x28 f32 rot; 0x2C f32 unk2C; 0x30 Vec4 pos; 0x40 Vec4 vel; 0x50 f32 r; 0x54 f32 g; 0x58 f32 b; 0x5C f32 a; 0x60 Vec4 uv	MEDIUM	EftBoltFlash (eft_aura.h:597-615), same 0x70-byte record (EftBoltWork.flash[20] at 0x5B0)
+include/battle/eft_rays.h	EftOBoltWork	unk8	KEEP	KEEP	no code reads or writes it; EftBoltWork.unk8 (eft_aura.h:622) unknown too
+include/battle/eft_rays.h	EftOBoltWork	unkE74	SPLIT: 0xE74 s32 side; 0xE78 s32 boltCount; 0xE7C s32 orderPos; 0xE80 s32 order[4]; 0xE90 f32 angle[2]	HIGH	EftBoltWork 0xE74..0xE98 (eft_aura.h:625-629), the same work; boltCount used at eft_aura.c:3204, 3252, 3431
+include/battle/eft_rays.h	EftRaysArg	unk3	KEEP	KEEP	never read by EftRays_Init; EftEmitArg2 (eft_emit.h) leaves 0x03 unnamed too
+include/battle/eft_rays.h	EftRaysKey	unk8	KEEP	KEEP	EftRays_SetKey / LerpKey read only height, width and color of a key
+include/battle/eft_rays.h	EftRay	unk24	KEEP	KEEP	never accessed
+include/battle/eft_rays.h	EftRay	unk44	KEEP	KEEP	never accessed
+include/battle/eft_rays.h	EftRay	unk74	KEEP	KEEP	never accessed; tail of the 0x80-byte ray
+include/battle/eft_rays.h	EftRays	unk0	KEEP	KEEP	never accessed
+include/battle/eft_rays.h	EftRays	unk58	KEEP	KEEP	never accessed; tail of the 0x60 work
+include/battle/eft_rays.h	EftOEmitNodes	unkC	KEEP	KEEP	unnamed in EftEmitNodes (eft_sweep.h:209) too; never accessed
+include/battle/eft_rays.h	EftOPart	unk9	endPhase	HIGH	EftEmitDef.endPhase (eft_sweep.h:64) / EftSetDef.endPhase (eft_emit.h:269), the event that stops the part; tested at eft_sweep.c:553, 561, 569
+include/battle/eft_rays.h	EftOGroupDef	unk0	kind	HIGH	EftSetGroupDef.kind / EftEmitGroupDef.kind: EftEmit_LoadSet indexes the group table by it (eft_emit.c:973)
+include/battle/eft_rays.h	EftOGroup	unk4	parts	HIGH	EftSetGroup.parts (eft_emit.h:285) / EftEmitGroup.parts (eft_sweep.h:92): EftEmit_LoadSet stores the group part definitions there (eft_emit.c:974); s32 in this view
+include/battle/eft_rays.h	EftOGroup	unk9	SPLIT: 0x09 u8 firstPair; 0x0A u8 firstRes; 0x0B u8 cat; 0x0C u8 catFirst; 0x0D u8 unkD[3]	MEDIUM	EftSetGroup 0x09..0x10 (eft_emit.h:287-290), written by EftEmit_LoadSet; not accessed through this view
+include/battle/eft_rays.h	EftOSet	unk4	entries	HIGH	EftSet.entries (eft_emit.h:309): EftEmit_LoadSet stores the group-definition table there (eft_emit.c:958-959)
+include/battle/eft_rays.h	EftOSet	unk13C	SPLIT: 0x13C s32 *res[32]; 0x1BC s32 *pair[40][2]; 0x2FC u8 *array[4]; 0x30C s32 count[4]; 0x31C void *owner	MEDIUM	tail of EftSet (eft_emit.h:313-320); not accessed through this view
+include/battle/eft_rays.h	EftBlastObjModel	unk37	KEEP	KEEP	never accessed; byte after step
+include/battle/eft_rays.h	EftBlastObjModel	unk3C	KEEP	KEEP	never accessed; last word of the 0x40 block
+include/battle/eft_rays.h	EftBlastObj	unk34	KEEP	KEEP	never accessed
+include/battle/eft_rays.h	EftBlastObj	unk55C	KEEP	KEEP	alignment gap between the emitter state and dir; never accessed
+include/battle/eft_rays.h	EftBlastObj	unk594	KEEP	KEEP	never accessed; gap before pose
+include/battle/eft_rays.h	EftBodyFx	unk2FC	KEEP	KEEP	alignment gap after the emitter state; never accessed
+include/battle/eft_rays.h	EftBodyFx	unk564	KEEP	KEEP	never accessed; tail of the 0x570 work
+include/battle/eft_rays.h	EftODiscRes	unk410	KEEP	KEEP	only zeroed in EftDiscMgr_Init (eft_body_fx.c:314), never read
+include/battle/eft_rays.h	EftODiscArg	unk8	KEEP	KEEP	padding before the aligned dir; EftDiscArg (eft_disc.h) has nothing there
+include/battle/eft_rays.h	EftODisc	unk0	SPLIT: 0x000 void *texSet; 0x004 s32 pad4; 0x008 EftOTexEntry texA; 0x018 EftOTexEntry texB; 0x028 u8 unk28[8]	MEDIUM	EftDisc (eft_disc.h:138-140): texture set pointer and working copies of the two entries, written by EftDisc_SetTex (eft_disc.c:316-318); `tex` is taken in this view by +0x3F8, hence texSet
+include/battle/eft_rays.h	EftODisc	unk3AC	KEEP	KEEP	alignment gap after the emitter state; never accessed
+PARAM	src/battle/eft_orb_tail.c	EftPrim_DrawQuadDepthScaled	arg2	layer	HIGH	extern at eft_orb_tail.c:78; the definition eft_stage_1.c:476-477 names it layer (caller passes prm->otZ)
+PARAM	src/battle/eft_orb_tail.c	EftPrim_DrawQuadDepthScaled	arg3	front	HIGH	the definition eft_stage_1.c:477 names it front
+PARAM	src/battle/eft_quad_2.c	EftQuad_DrawFacing	arg6	unused	MEDIUM	never read in the body (eft_quad_2.c:704-726); both callers pass 0 (:316, :329); same in the prototype eft_quad_2.h:533
+PARAM	include/battle/eft_quad_2.h	EftQuad_DrawFacing	arg6	unused	MEDIUM	prototype of the above
+PARAM	include/battle/eft_particle_ext.h	EftEmit_Spawn	arg7	srcKind	HIGH	the definition eft_sweep.c:518-519 and eft_sweep.h:341 name the eighth parameter srcKind
+PARAM	include/battle/eft_particle_ext.h	EftLink_DrawBillboardClipped	unk	scale	HIGH	the definition eft_link_2.c:690 takes (pos, w, h, color, scale, ...): the third pointer is `scale` (pointer and float arguments go in separate registers, so the extern order differs harmlessly)
+include/battle/eft_ribbon.h	EftRibbon	unk8	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); two words between tail and arg, probably padding before the 16-byte aligned arg
+include/battle/eft_ribbon.h	EftRibbon	unkD8	node	MEDIUM	eft_ribbon.c:878 initialises it from arg->texBase, but its only setter EftRibbon_SetUnkD8 (eft_ribbon.c:1362) is called once, eft_emit.c:1739 EftRibbon_SetUnkD8(H(n), node), with the model node EftEmit_SpawnType17 was given (comment eft_emit.c:1700-1701); nothing reads it, hence MEDIUM. The prior KEEP said the setter had no caller: it has one
+include/battle/eft_ribbon.h	EftZapStrand	unk128	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); eft_zap.h leaves 0x128 unnamed too
+include/battle/eft_ribbon.h	EftZapWork	unk188	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); tail words
+include/battle/eft_ribbon.h	EftZapPool	unk4	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); words after the first field
+include/battle/eft_shot.h	EftStormBolt	unk28	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); pads the bolt to 0x30
+include/battle/eft_shot.h	EftStorm	unk208	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); two words after the 0x208-byte texture set
+include/battle/eft_shot.h	EftSmokeArg	unk4C	KEEP	KEEP	EftSmokeMgr_Init (eft_shot.c:843-881) and EftGeyser_StartSmoke (eft_stage_2.c, local EftGeyserSmokeInit stops at rate 0x48) never set it, EftSmoke_Init does not read it: tail padding of the 16-byte aligned 0x50 block
+include/battle/eft_shot.h	EftSmoke	unk4	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); gap between tex and the 16-byte aligned arg
+include/battle/eft_shot.h	EftSmoke	unk64	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); gap between flags and the 16-byte aligned part[]
+include/battle/eft_shot.h	EftSmokeMgr	unk4	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); 
+include/battle/eft_shot.h	EftBoundVtx	unk10	KEEP	KEEP	EftBound_BuildWall fills pos, st, col only; nothing reads the second vector (no ->unk10 / .unk10 use on a vertex)
+include/battle/eft_shot.h	EftBoundMesh	unk6	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); 
+include/battle/eft_shot.h	EftBoundMesh	unk24	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); pads center to 16 bytes
+include/battle/eft_shot.h	EftBoundParam	unk8	KEEP	KEEP	never read (eft_shot.c:1335 reads the EftBoundChar unk8, not this)
+include/battle/eft_shot.h	EftBoundParam	unk10	KEEP	KEEP	read once, eft_shot.c:1335 work->unk8 = param->unk10 - BtlStage_GetTop(), into a value nothing uses; a height of some kind
+include/battle/eft_shot.h	EftBoundParam	unk28	KEEP	KEEP	never read
+include/battle/eft_shot.h	EftBoundChar	unk8	KEEP	KEEP	eft_shot.c:1335 param->unk10 - BtlStage_GetTop(); only used to compute unkC (1337); never read later
+include/battle/eft_shot.h	EftBoundChar	unkC	KEEP	KEEP	eft_shot.c:1337 BtlStage_GetBottom() - unk8; never read
+include/battle/eft_shot.h	EftBoundChar	unk1C	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); 
+include/battle/eft_shot.h	EftBoundChar	unk850	KEEP	KEEP	second EftBoundMesh: cleared (eft_shot.c:1340-1343), tested (1361) and drawn unculled (1406-1407) but never activated; which surface it was for is not shown
+include/battle/eft_shot.h	EftBound	unk8	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); 
+include/battle/eft_shot.h	EftShotChar	unk534	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); tail words of the 0x540 block
+src/battle/eft_shot.c	EftStageView	unk0	KEEP	KEEP	covers BtlStage.unk0 and data (stg.h:205-206); only flags is read through this view; a split (s32 unk0; void *data) would need the stg.h unk0 named first
+include/battle/eft_shot_fx_particle.h	EftShotFxWork	unkC	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); 
+include/battle/eft_shot_fx_particle.h	EftShotFxWork	unk5C	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); 
+include/battle/eft_shot_fx_particle.h	EftUPtcl	unk124	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); tail words
+include/battle/eft_shot_fx_particle.h	EftUPtclWork	unk1DF	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); eft_particle_unused.h:239 EftPtclWork leaves it unnamed too
+include/battle/eft_shot_fx_particle.h	EftUPtclWork	unk1EC	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); eft_particle_unused.h:243 unnamed too
+include/battle/eft_shot_fx_particle.h	EftUPtclWork	unk218	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); eft_particle_unused.h:254 unnamed too
+include/battle/eft_shot_fx_particle.h	EftUPtclMgr	unk4C	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); eft_particle_unused.h:268 unnamed too
+include/battle/eft_shot_tech.h	EftJTask	unk3C	KEEP	KEEP	last word of the 0x40-byte task; BtlTask (eft_sprite_anim.h:67) and every other task view leave it unk3C; the task code in eft_sprite_anim.c never touches it
+include/battle/eft_shot_tech.h	EftJDef	unk6	node	HIGH	same record as EftShotParam (eft_emit.h:65-106: id, level, kind@4, sub@5, shape@8, count/shots@9, life@0x28 .. blurOn@0x48, subKind@0x58 all agree), whose 0x06 is `s8 node` filled from skill +0x38 / super +0x90 by EftShot_BuildParam; not read in eft_shot_tech.c
+include/battle/eft_shot_tech.h	EftJDef	unk7	KEEP	KEEP	unk7 in EftShotParam (eft_emit.h:71) too; never read
+include/battle/eft_shot_tech.h	EftJDef	unk40	SPLIT: 0x40 s16 impactFx; 0x42 s16 groundFx	MEDIUM	EftShotParam (eft_emit.h:91-92), the same record, has s16 impactFx (skill +0x46 / super +0xA5) at 0x40 and s16 groundFx at 0x42; this view never reads the word, so MEDIUM
+include/battle/eft_shot_tech.h	EftJDef	unk46	KEEP	KEEP	unk46 in EftShotParam (eft_emit.h:94) too; never read
+include/battle/eft_shot_tech.h	EftJSrc	unk8	area	HIGH	same slot object as EftHitSrc / EftHSlot (objId, slot, pack 0x1C, chr 0x20, def 0x24); +0x08 is EftHStartArg +0x08 copied by EftShot_Start (eft_emit.c:337), set to the fighter object's area in BtlChar_SpawnFxBits3C (btl_char_fx_1.c:176-178); never read through this view
+include/battle/eft_shot_tech.h	EftJPart	unk9	endPhase	HIGH	the record is EftSetDef (eft_emit.h:268-270: phase@8, endPhase@9, node@0xA), which this struct's own comments cite for phase and node; endPhase = "event that stops it"; not read in eft_shot_tech.c
+include/battle/eft_shot_tech.h	EftJGroup	unk4	parts	HIGH	the record is EftSetGroup (eft_emit.h:283-292): entry@0 (info here), EftSetDef *parts@4, firstPart@8 (base here); EftEmitGroup (eft_sweep.h:92) also names 0x04 parts; type here is s32, there a pointer / count
+include/battle/eft_shot_tech.h	EftJSet	unk4	entries	HIGH	the block is EftSet (eft_emit.h:306-309) / EftEmitSet (eft_sweep.h:160-162): head@0, entries@4, parts@8, group[]@0xC as here (mask, unk4, parts, grp)
+include/battle/eft_shot_tech.h	EftMulti	unk1C	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); 
+include/battle/eft_shot_tech.h	EftMulti	unk390	SPLIT: 0x390 Vec4 hand; 0x3A0 Vec4 unk3A0[3]	HIGH	applied; EftMulti_Update passes &w->hand. emit (0xA4, 0x2CC bytes) is followed by an EftEmitNodes block at 0x370 (eft_sweep.h:205-212): 0x390 is slot 0's position, which EftBlast (0x380) and EftPropShot (0x370) name hand at the same place after node[2]; eft_shot_tech.c:504 passes w->unk390 to EftAim_GetDir as the start point, as eft_obj_tech.c:1281 does with startNodePos. 0x3A0..0x3CF are slot 0's second node and slot 1's id, not read
+include/battle/eft_shot_tech.h	EftMulti	unk618	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); tail words
+include/battle/eft_shot_tech.h	EftProp	unk6C	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); tail word
+include/battle/eft_shot_tech.h	EftPropShotMgr	unk0	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); 
+include/battle/eft_shot_tech.h	EftPropShot	unk14	KEEP	KEEP	never accessed (EftBlast has ratio at 0x14 but nothing shows it here)
+include/battle/eft_shot_tech.h	EftPropShot	unk380	KEEP	KEEP	EftEmitNodes slot 0 second node id/position and slot 1 id (block at 0x350); never read individually
+include/battle/eft_shot_tech.h	EftJHitRec	unk4	KEEP	KEEP	eft_core.h EftHitRec has three different fields here (unk4, level, type); never written in this view, so one array name would be wrong
+include/battle/eft_shot_tech.h	EftBlastMgr	unk0	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); 
+include/battle/eft_shot_tech.h	EftBlast	unk390	KEEP	KEEP	EftEmitNodes slot 0 second node id/position and slot 1 id (block at 0x360); never read individually
+include/battle/eft_shot_tech.h	EftJShotModel	unk36	step	MEDIUM	eft_shot_tech.c:1513 sets it to -1 at init; the same block is EftKModel in eft_obj_tech.h (header comment above EftJShotMgr says so), which names 0x36 `s8 step` (eft_obj_tech.h:102); nothing reads it, so MEDIUM
+include/battle/eft_shot_tech.h	EftJShotModel	unk37	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); unk37 in EftKModel too
+include/battle/eft_shot_tech.h	EftJShotSlot	unk14	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); eft_obj_tech.h keeps the slots as u8 shots[14][0x30]
+include/battle/eft_shot_tech.h	EftJShotSlot	unk1C	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); 
+src/battle/eft_shot_tech.c	EftJFollowGroup	unk0	KEEP	KEEP	word before the set in the follow manager's work; no code touches it
+include/battle/eft_sprite_anim.h	BtlTask	unkC	KEEP	KEEP	never accessed by the task code (eft_sprite_anim.c:1235-1513) or any task view
+include/battle/eft_sprite_anim.h	BtlTask	unk3C	KEEP	KEEP	never accessed by the task code or any of the 13 task views (all unk3C); probably padding to 0x40
+include/battle/eft_sprite_anim.h	EftAeTex	unkC	KEEP	KEEP	never accessed; unk in EftBTex / EftTexEntry / EftSurfSlot too; pads the entry to 0x10
+include/battle/eft_sprite_anim.h	EftAeTexPack	unk4	KEEP	KEEP	header words between count and images that the loader (eft_sprite_anim.c:1686-1704) never reads
+include/battle/eft_sprite_anim.h	EftSprKey	unk38	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); pads the key to 0x40
+include/battle/eft_sprite_anim.h	EftSprLayerDef	unk1	KEEP	KEEP	never read by the player
+include/battle/eft_sprite_anim.h	EftSprLayer	unk54	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); 
+include/battle/eft_sprite_anim.h	EftSprSlot	unk608	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); 
+include/battle/eft_stage_1.h	EftBTask	unk3C	KEEP	KEEP	last word of the 0x40-byte task; unk3C in BtlTask too
+include/battle/eft_stage_1.h	EftBTex	unkC	KEEP	KEEP	fourth word of a texture entry, unk in EftAeTex too
+include/battle/eft_stage_1.h	EftBubbleChr	unk4	KEEP	KEEP	only zeroed in EftBubble_StartBurst (eft_stage_1.c:632); never read
+include/battle/eft_stage_1.h	EftStageScroll	unk2B8	KEEP	KEEP	second integer of the stage file's scroll block, stored as a float at eft_stage_1.c:1354 between size and speed; never read
+include/battle/eft_stage_1.h	EftGeyserParam	unk48	KEEP	KEEP	set to 1.0 by EftGeyserMgr_Init (eft_stage_1.c:1435) and never read
+include/battle/eft_stage_1.h	EftGeyserParam	unk4C	KEEP	KEEP	set to 1.0 (eft_stage_1.c:1436) and never read
+include/battle/eft_stage_1.h	EftGeyserMgr	unk4	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); 
+include/battle/eft_stage_2.h	EftTask	unk3C	KEEP	KEEP	last word of the 0x40-byte task; unk3C in BtlTask too
+include/battle/eft_stage_2.h	EftGeyserSmokeArg	unk4C	KEEP	KEEP	tail padding of the 16-byte aligned 0x50 block; EftSmokeArg also leaves it unnamed; the local EftGeyserSmokeInit (eft_stage_2.c) ends at rate
+include/battle/eft_stage_2.h	EftGeyserSteamArg	unk54	KEEP	KEEP	tail padding; the local EftGeyserSteamInit ends at lifeRange 0x50
+include/battle/eft_stage_2.h	EftWeatherPtcl	unk38	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); pads the particle to 0x40
+include/battle/eft_stage_2.h	EftTexEntry	unkC	KEEP	KEEP	fourth word of a texture set entry; unkC in EftAeTex too
+include/battle/eft_stage_2.h	EftWeather	unk4	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); alignment gap before the 8-byte aligned texture table
+include/battle/eft_stage_2.h	EftWeather	unk2B4	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); tail words of the 0x2C0 block
+include/battle/eft_stage_2.h	EftStage	unkC	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); gap before the 8-byte aligned sprite entry
+include/battle/eft_stage_2.h	EftSurfMesh	unk24	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); aligns boxMin to 16
+include/battle/eft_stage_2.h	EftSurfFile	unk0	KEEP	KEEP	first word of the surface file, never read (perhaps a magic)
+include/battle/eft_stage_2.h	EftSurfFile	unk8	KEEP	KEEP	never read
+include/battle/eft_stage_2.h	EftSurfFile	unkC	KEEP	KEEP	file offset made a pointer and back (eft_stage_2.c:1060, 1098) but nothing follows it
+include/battle/eft_stage_2.h	EftSurfParam	unk3C	KEEP	KEEP	last word of the parameter block, never read
+include/battle/eft_stage_2.h	StgSurfRec	unk16	KEEP	KEEP	byte between animSpeed and colorA, never read
+include/battle/eft_stage_2.h	EftSurfTexTbl	unk224	KEEP	KEEP	tail word after the 34-texture set; never read
+include/battle/eft_stage_2.h	EftSurfRt	unk107C	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); alignment gap before param
+include/battle/eft_stage_2.h	EftSurfSlot	unkC	KEEP	KEEP	fourth word of the texture entry; unkC in EftAeTex too
+include/battle/eft_stage_2.h	EftSurf	unkC	KEEP	KEEP	u.s.unkC (anonymous struct `s` inside EftSurf): the high word of slot[0].tex0; not used
+include/battle/eft_stage_2.h	EftSurf	unk14	KEEP	KEEP	u.s.unk14: slot[0].unkC; not used
+include/battle/eft_stage_2.h	EftSurf	unk238	KEEP	KEEP	no reader or writer in the files that include the header (searched ->/. uses); two words between the slots and rt
+src/battle/eft_stage_2.c	EftStageMgrView	unk0	KEEP	KEEP	covers BtlStage.unk0 and data (stg.h:205-206); only flags is read
+PARAM	src/battle/eft_ribbon.c	EftGfx_DrawPolyScaledZ	arg1	layer	HIGH	the cast macro at eft_ribbon.c:593 for EftGfx_DrawPolyScaledZ; the definition (eft_core.c:1640) names the second parameter layer and passes it as the layer of EftPrim_DrawTriangle
+PARAM	src/battle/eft_ribbon.c	EftGfx_DrawPolyScaledZ	arg2	unusedA	HIGH	passed through to EftPrim_DrawTriangle, whose definition (eft_stage_1.c:520-521) ignores it (unused1); eft_part10.c:141 and eft_ground_dust.c:48 declare it unusedA
+PARAM	src/battle/eft_ribbon.c	EftGfx_DrawPolyScaledZ	arg3	unusedB	HIGH	same as arg2: ignored by EftPrim_DrawTriangle (unused2); unusedB in eft_part10.c:141
+PARAM	src/battle/eft_ribbon.c	EftRibbon_SetUnkD8	value	node	MEDIUM	stored in EftRibbon.unkD8; the only caller (eft_emit.c:1739) passes the model node; goes with the field rename above (the function name would then want EftRibbon_SetNode)
+include/battle/eft_struggle.h	EftRTask	unk8	KEEP	KEEP	task +0x08..0x0F: s16 result / s8 countA / s8 hitCount / unkC in EftHitTask (eft_core.h); an s32 pair here that the struggle code never touches, cannot take one name
+include/battle/eft_struggle.h	EftRTask	unk20	KEEP	KEEP	task +0x20 / +0x24 are BtlTask.list and BtlTask.child (eft_sprite_anim.h); declared as one s32 pair here and not used, so no single name fits
+include/battle/eft_struggle.h	EftRTask	unk2C	KEEP	KEEP	task +0x2C..0x37 are BtlTask.prev / next / nextFree; one s32 triple here, not used
+include/battle/eft_struggle.h	EftRTask	unk3C	KEEP	KEEP	last word of the task, unknown in the full BtlTask as well
+include/battle/eft_struggle.h	EftRBox	unk0	KEEP	KEEP	first vector of the capsule built by ColCapsule_Set; EftHitBox (eft_core.h) also leaves it unk0 and this file does not read it
+include/battle/eft_struggle.h	EftRRec	unk4	KEEP	KEEP	record +0x04 / +0x08 / +0x0C are unk4 / level / type in EftHitRec (eft_core.h); one s32 triple here that the code does not use
+include/battle/eft_struggle.h	EftRRec	unk58	KEEP	KEEP	not used here; unk58 in EftHitRec too
+include/battle/eft_struggle.h	EftRRec	unk6C	KEEP	KEEP	not used here; unk6C in EftHitRec too
+include/battle/eft_struggle.h	EftRRec	unk74	KEEP	KEEP	shape.scale and shape.unk8 of EftHitShape (eft_core.h; +0x78 receives the speed in EftHit_Add); a float pair here, not used by this file
+include/battle/eft_struggle.h	EftStruggleArg	unk14	KEEP	KEEP	padding up to the 16-byte aligned record copies
+include/battle/eft_struggle.h	EftStruggle	unk10	KEEP	KEEP	a vector the struggle code never reads or writes
+include/battle/eft_struggle.h	EftStruggle	unk2C	KEEP	KEEP	padding word before the argument copy
+include/battle/eft_struggle.h	EftStruggle	unk374	KEEP	KEEP	tail padding
+include/battle/eft_struggle.h	EftClashSparkArg	unk2C	KEEP	KEEP	tail padding of the argument
+include/battle/eft_struggle.h	EftClashSpark	unk547	KEEP	KEEP	byte after objId, never used
+include/battle/eft_struggle.h	EftClashSpark	unk54C	KEEP	KEEP	float between scale and timer, never used
+include/battle/eft_struggle.h	EftClashSpark	unk558	KEEP	KEEP	tail padding
+include/battle/eft_struggle.h	EftCharge	unk2E4	KEEP	KEEP	padding before the 16-byte aligned node slots
+include/battle/eft_struggle.h	EftCharge	unk554	KEEP	KEEP	tail padding
+include/battle/eft_struggle.h	EftRArg	unk1B	KEEP	KEEP	BtlKiBlast_GetUnk3 (BtlKiBlastData.unk3); copied to record +0x04, unknown everywhere
+include/battle/eft_struggle.h	EftRArg	unk1E	KEEP	KEEP	never written or read
+include/battle/eft_struggle.h	EftRArg	unk2C	KEEP	KEEP	BtlKiBlastData.unk2C; only copied into the blast work, never read
+include/battle/eft_struggle.h	EftRArg	unk34	KEEP	KEEP	always 1 from BtlFx_FireKiBlast, not read here
+include/battle/eft_struggle.h	EftRArg	unk3C	KEEP	KEEP	bit 0x20 of the ki blast flags, whose meaning is not known (btl_tech.h: copied into the spawn request)
+include/battle/eft_struggle.h	EftKiBlast	unk5B8	KEEP	KEEP	copy of arg.unk1B, never read
+include/battle/eft_struggle.h	EftKiBlast	unk5C0	KEEP	KEEP	copy of arg.unk2C, never read
+include/battle/eft_struggle.h	EftKiBlast	unk5D4	KEEP	KEEP	tail padding
+include/battle/eft_struggle.h	EftBlastChargeArg	unk18	KEEP	KEEP	FxHitArg.unk18 (btl_char_fx_1.h); only copied to work +0x564
+include/battle/eft_struggle.h	EftBlastChargeArg	unk1C	KEEP	KEEP	FxHitArg has f32 scale here but this file never reads it and declares it s32
+include/battle/eft_struggle.h	EftBlastCharge	unk564	KEEP	KEEP	copy of arg.unk18, never read
+include/battle/eft_struggle.h	EftBlastCharge	unk570	KEEP	KEEP	sits where the sibling works have their end timer (mask, timer, life) but this module never touches it
+include/battle/eft_struggle.h	EftBlastCharge	unk578	KEEP	KEEP	tail padding
+include/battle/eft_struggle.h	EftKiBomb	unkD8	KEEP	KEEP	set to 3 for the bomb and 0 for the object and never read (the bounce limit 3 is a literal in the code); eft_chain.h keeps unkD8 too
+include/battle/eft_struggle.h	EftKiObj	unk1D6	KEEP	KEEP	not used; eft_chain.h has a byte gap here
+include/battle/eft_struggle.h	EftKiObj	unk1D8	KEEP	KEEP	tail padding
+include/battle/eft_struggle.h	EftRBlastFx	unk28	KEEP	KEEP	EftImpactArg.unk28 in eft_particle_unused.h, unknown there too
+include/battle/eft_surface_out.h	EftScrPos	unkC	KEEP	KEEP	fourth word of a projected vertex, never read (eft_stage_2.h calls it w in EftScreenPos, without evidence)
+include/battle/eft_surface_out.h	EftBurstPtcl	unk6C	KEEP	KEEP	tail padding of the 0x70 particle
+include/battle/eft_surface_out.h	EftBurstWork	unkC	KEEP	KEEP	EftBurst sets it to 20 and multiplies by 0.995 each frame but nothing reads it
+include/battle/eft_surface_out.h	EftBurstGroup	unk16	KEEP	KEEP	padding after triCount
+include/battle/eft_surface_out.h	EftBurstModel	unk0	KEEP	KEEP	first word of the model file, never read
+include/battle/eft_sweep.h	EftEmitDef	unk3	KEEP	KEEP	not used
+include/battle/eft_sweep.h	EftEmitDef	unk4	KEEP	KEEP	not used here (eft_emit.h: kind 0 parts, which light)
+include/battle/eft_sweep.h	EftOwnerParam	unk5	KEEP	KEEP	EftShotParam.unk5; EftHitDef calls it kind (0..2, 4, 7, 8, 9 tested) but that clashes with the name proposed for +0x04, and this file does not read it
+include/battle/eft_sweep.h	EftOwnerParam	unk7	KEEP	KEEP	always 0 from EftShot_BuildParam, not read
+include/battle/eft_sweep.h	EftEmitHdr	unk4	KEEP	KEEP	covers four bytes that eft_emit.h names separately (nGroups, nParts, unk6, unk7); declared s32 and not read here
+include/battle/eft_sweep.h	EftEmitNodes	unkC	KEEP	KEEP	padding word before the 16-byte aligned node table
+include/battle/eft_sweep.h	EftTask	unk3C	KEEP	KEEP	last word of the task, unknown everywhere
+include/battle/eft_sweep.h	EftSetWork	unk0	KEEP	KEEP	word in front of the set in the group task work, never written after the memset
+include/battle/eft_sweep.h	EftSweepWork	unk584	KEEP	KEEP	padding before the marks
+include/battle/eft_sweep.h	EftSweepWork	unk790	KEEP	KEEP	never used
+include/battle/eft_sweep.h	EftSweepWork	unk79C	KEEP	KEEP	tail padding
+include/battle/eft_sweep.h	EftFollowWork	unk14	KEEP	KEEP	never used
+include/battle/eft_sweep.h	EftFollowWork	unk24	KEEP	KEEP	padding
+include/battle/eft_sweep.h	EftFollowWork	unk5A4	KEEP	KEEP	tail padding
+include/battle/eft_tech_modules.h	EftTask	unkA	KEEP	KEEP	two s8 counters in EftHitTask (countA, hitCount) but one u16 here, not used
+include/battle/eft_tech_modules.h	EftTask	unkC	KEEP	KEEP	unknown in every view
+include/battle/eft_tech_modules.h	EftTask	unk3C	KEEP	KEEP	last word of the task, unknown everywhere
+include/battle/eft_tech_modules.h	EftTechDef	unk40	KEEP	KEEP	EftShotParam.unk40 / EftJDef.unk40, not read here
+include/battle/eft_tech_modules.h	EftRushShotWork	unk59C	KEEP	KEEP	never used
+include/battle/eft_tech_modules.h	EftRingShotMgr	unk0	KEEP	KEEP	word in front of the set, only cleared
+include/battle/eft_tech_modules.h	EftRingShotOne	unk20	KEEP	KEEP	a vector no code reads or writes
+include/battle/eft_tech_modules.h	EftRingShot	unk2CC	KEEP	KEEP	padding before the 16-byte aligned node slots
+include/battle/eft_tech_modules.h	EftRingShot	unk5DC	KEEP	KEEP	never used
+include/battle/eft_tech_modules.h	EftRingShot	unk5EC	KEEP	KEEP	never used
+include/battle/eft_trail.h	EftQTex	unk8	KEEP	KEEP	covers EftAeTex.image (pointer) and unkC as one u64; cannot take the name of one of them
+include/battle/eft_trail.h	EftGlowRes	unk1C	KEEP	KEEP	padding before the 8-byte aligned texture set
+include/battle/eft_trail.h	EftRushBurstArg	unk1C	KEEP	KEEP	tail word of the argument, never read
+include/battle/eft_trail.h	EftQScr	unkC	KEEP	KEEP	fourth word of a projected vertex, never read
+include/battle/eft_trail.h	EftTrailTexTbl	unk100	KEEP	KEEP	sits where a 16-texture set has its count but the trail code never loads a set into the table or reads the word
+include/battle/eft_trail.h	EftTrailMgr	unk4	KEEP	KEEP	alignment word before the table
+include/battle/eft_trail.h	EftTrail	unk1BC	KEEP	KEEP	padding before the 8-byte aligned textures
+include/battle/eft_trail.h	EftCharaFx	unk83C	KEEP	KEEP	sits where the sibling works have their end timer (phase, timer, life) but this module never touches it
+src/battle/eft_burst.c	EftStageState	unk0	KEEP	KEEP	two words standing for BtlStage.unk0 and data (stg.h); only flags is read
+src/battle/eft_burst.c	EftSteamScr	unkC	KEEP	KEEP	fourth word Vu0Cur_ProjectPoints writes after x, y, z; the drawing code never reads it
+src/battle/eft_sweep.c	EftIMarkArg	unk28	KEEP	KEEP	same block as EftImpactArg / EftRBlastFx, where +0x28 is unknown everywhere
+include/battle/eft_struggle.h	EftRArg	unk16	area	HIGH	btl_char_fx_1.c:1319 BtlFx_FireKiBlast stores obj->area (fighter +0xA24, the stage zone; btl_char_member.h:153) here; the caller's view FxHitArg2 (btl_char_fx_1.h:153) already names +0x16 area; EftHit_Add copies it to record +0xF0 (eft_core.c:134)
+include/battle/eft_struggle.h	EftRArg	unk40	SPLIT: 0x40 u8 unk40; 0x41 u8 hits; 0x42 u8 unk42[0xE]	HIGH	the ki blast record's atk is &w->arg (eft_struggle.c:1046) and the collision code divides the damage by hit->atk->hits, BtlCollAtk +0x41 (btl_char_coll.h:36, btl_hit_reaction.c:407-408); BtlFx_FireKiBlast fills it (arg.unk41 = BtlObjAnim_QueryEvent(obj, 4, 0, 3), btl_char_fx_1.c:1331); +0x40 is not written by the caller
+include/battle/eft_struggle.h	EftRRec	unk54	stationary	MEDIUM	one word of the hit record (EftHitRec / EftPHitRec / EftRRec are views of it): 0 for a ki blast, (flags >> 9) & 1 = EFT_KIBOMB_REST (the ki bomb came to rest) at eft_struggle.c:1550, def->flags bit 1 for a technique (eft_core.c:123); btl_hit_reaction.c:297 takes the reaction direction from the hit position (as for a zero velocity) when non-zero, and :1232 / :1319 / :1371 refuse deflect / reflect / absorb when == 1. Name reconciles the two readings (dirFromPos / noDeflect proposed separately)
+include/battle/eft_sweep.h	EftEmitDef	unk2	texIdx	HIGH	eft_sweep.c:281 passes it as both image and palette index to EftQuad_SetTexPair(task, tex, image, palette); :333, :397, :458 put it into texIdxA / texIdxB of EftArg10 / EftArg15 and texIdx of EftArg12 (eft_sweep.c:161, 186, 211), which the modules turn into the TEX0 of entry texIdx (EFTW_TEX0, eft_link_2.c:200). The field tex at +0x01 picks the texture set entry, this the image inside it
+PARAM	src/battle/eft_trail.c	EftGfx_DrawPolyAvgZ	arg1	layer	HIGH	extern prototype at eft_trail.c:44; the definition (eft_core.c:1555) names it layer and passes it as EftPrim_DrawTriangle's layer
+PARAM	src/battle/eft_trail.c	EftGfx_DrawPolyAvgZ	arg2	unused1	HIGH	extern prototype at eft_trail.c:44; eft_core.c:1578 forwards it to EftPrim_DrawTriangle's unused1 (eft_stage_1.c:521, never read); the only call here passes 0 (eft_trail.c:1588)
+PARAM	src/battle/eft_trail.c	EftGfx_DrawPolyAvgZ	arg3	unused2	HIGH	same: forwarded to EftPrim_DrawTriangle's unused2 (eft_stage_1.c:521), never read; 0 at eft_trail.c:1588
+include/battle/eft_water.h	EftTransPart	unk6C	KEEP	KEEP	tail word of the 0x70-byte particle; no reader or writer in eft_burst.c (EftBurstPtcl, eft_surface_out.h, leaves +0x6C unnamed too)
+include/battle/eft_water.h	EftTransWork	unkC	KEEP	KEEP	written only: set to 20 at eft_burst.c:1301 and multiplied by 0.995 each frame at eft_burst.c:1451; nothing reads it (EftBurstWork.unkC in eft_surface_out.h:113 is unread too)
+include/battle/eft_water.h	EftTransWork	unk24	SPLIT: 0x24 u8 unk24[0x20C]; 0x230 void *curTex; 0x234 u8 unk234[0xC]	HIGH	the same Heap_Alloc(0x9B70) block gEftBurst is also seen as EftBurstWork (eft_surface_out.h:116 curTex at +0x230); EftBurst_SetTexture in the same file (eft_burst.c:749-752) reads and writes +0x230 as the last uploaded texture
+include/battle/eft_water.h	EftSteamTask	unk3C	KEEP	KEEP	last word of the 0x40-byte task; BtlTask (eft_sprite_anim.h:67) also leaves +0x3C unnamed; no reader found
+include/battle/eft_water.h	EftSteamShared	unk4	KEEP	KEEP	word between the list and the texture set; no reader or writer in eft_water.c
+include/battle/eft_water.h	EftWaterBlastTask	unk0	KEEP	KEEP	covers BtlTask bits / chr / index (eft_sprite_anim.h:51-53) as one s32; not read in this view
+include/battle/eft_water.h	EftWaterBlastTask	unk8	KEEP	KEEP	covers BtlTask result / countA / hitCount / unkC (eft_sprite_anim.h:55-58); not read in this view
+include/battle/eft_water.h	EftWaterBlast	unk4	KEEP	KEEP	hit record +0x04 / +0x08 as an s32 pair; not read in eft_water.c
+include/battle/eft_water.h	EftWater	unk20	SPLIT: 0x20 s32 trailCount; 0x24 s32 unk24; 0x28 s32 trailFading; 0x2C s32 dropCount; 0x30 s32 ringCount; 0x34 s32 sprayCount; 0x38 s32 mistCount	HIGH	eft_water.c reads the same gEftDust block through EftWaterView (macro at eft_water.c:1302; fields at eft_water_part2.h:220-226); e.g. EftWater_UpdateTextures (eft_water.c:2864) tests dropCount + ringCount + sprayCount; unk24 stays unknown (only zeroed at eft_water.c:1481)
+src/battle/eft_water.c	EftStageState	unk0	KEEP	KEEP	covers BtlStage.unk0 and .data (stg.h:205-206) as s32[2]; this view only reads flags
+src/battle/eft_water.c	EftSteamScr	unkC	w	HIGH	output of Vu0Cur_ProjectPoints (eft_water.c:186, 523); every other view of that projected point names word +0x0C `w` (EftVIVec eft_particle_unused.h:58, EftXIVec eft_part10.h:62, EftBIVec eft_stage_1.h:78, EftAcScr eft_ribbon.h:54); written only
+include/battle/eft_water_part2.h	EftWaterMist	unk93	KEEP	KEEP	alignment byte; never read or written in eft_water.c
+include/battle/eft_water_part2.h	EftWaterView	unk24	KEEP	KEEP	only zeroed at the start of EftWaterSplash_UpdateList (eft_water.c:1481), never read
+include/battle/eft_water_part2.h	EftWaterView	unk8	image	HIGH	in the anonymous tex[5] entries (eft_water_part2.h:231): EftWater_UpdateTextures passes &tex[i] to EftVram_AddTex (eft_water.c:2866), which reads tex->image->imageBlocks at +0x08 (eft_sprite_anim.c:1559; EftAeTex.image eft_sprite_anim.h:94; EftTexEntry.image eft_shot.h:42). Type should be a pointer + padding; name only here. Only field named unk8 in EftWaterView
+include/battle/eft_zap.h	EftZapTexObj	unk100	count	MEDIUM	same 0x108-byte 16-entry texture record as EftAbTex (eft_orb_tail.h:45), EftArcTexSet (eft_chain.h:141), EftUPtclRes (eft_shot_fx_particle.h:239), EftAeTexSet16 (eft_sprite_anim.h:110): +0x100 is the entry count there; not read in eft_zap.c / eft_ribbon.c
+include/battle/eft_zap.h	EftMeshGroup	unk4	KEEP	KEEP	not read by eft_mesh.c; no other view of the mesh group
+include/battle/eft_zap.h	EftMeshGroup	unkC	KEEP	KEEP	not read by eft_mesh.c
+include/battle/eft_zap.h	EftMeshData	unk0	KEEP	KEEP	first word of the mesh data, not read by eft_mesh.c
+include/battle/stg.h	StgOfsTable	unk0	KEEP	KEEP	header word of the offset table, never read (StgAnimTable.unk0 in stg_model_anim.c too)
+include/battle/stg.h	StgOfsTable	unk4	KEEP	KEEP	header word, never read
+include/battle/stg.h	StgPath	unkC	KEEP	KEEP	not read by stg.c / stg_parts.c
+include/battle/stg.h	StgPathTable	unk0	KEEP	KEEP	header word, never read
+include/battle/stg.h	StgPathTable	unk4	KEEP	KEEP	header word, never read
+include/battle/stg.h	StgMef	unk4	KEEP	KEEP	word after the MEF0 magic, never read (StgFxRes.unk4 in stg_ambient.h is the same word)
+include/battle/stg.h	StgDataA	unk0	KEEP	KEEP	first word of the stage parameter block, unread in every view (StgData, StgMData, StgAnimData)
+include/battle/stg.h	StgDataA	unk4	KEEP	KEEP	second word, unread in every view
+include/battle/stg.h	StgKey	unk1C	KEEP	KEEP	not read by stg.c / stg_parts.c; StgRelocC only relocates keys
+include/battle/stg.h	StgObj	unk4	KEEP	KEEP	not read; inside StgRelocE.unk00 / StgColObj.unk4 gaps in the other views
+include/battle/stg.h	StgObj	unk3C	KEEP	KEEP	not read; inside StgRelocE.unk2C gap
+include/battle/stg.h	BtlStage	unk0	KEEP	KEEP	first word of the stage header; StgRelocHdr (obj_gs_env.h:255) has it in unk00[0x10]; unread in every view
+include/battle/stg.h	BtlStage	unkC	KEEP	KEEP	unread in every view (BtlStageMgr.unkC, StgRelocHdr.unk00, BtlStageM.unkC)
+include/battle/stg.h	StgBreakInfo	unk1C	KEEP	KEEP	tail word of the 0x20-byte record, never written or read
+include/battle/stg_ambient.h	StgTimer	unk2	KEEP	KEEP	not read by stg_ambient.c
+include/battle/stg_ambient.h	StgTimer	unk4	KEEP	KEEP	file offset that BtlStage_Relocate turns into a pointer (stg_reloc.c:68, StgRelocTimer.ptr) but nothing reads the target
+include/battle/stg_ambient.h	BtlStageMgr	unk0	KEEP	KEEP	first word of the stage header, unread in every view
+include/battle/stg_ambient.h	BtlStageMgr	unkC	KEEP	KEEP	unread in every view
+include/battle/stg_ambient.h	StgFxRes	unk0	magic	HIGH	gBtlStageFxRes is the MEF0 block: BtlStage_BindMef reads the same word as StgMef.magic and compares it with 'MEF0' 0x3046454D (stg_parts.c:635-639; stg.h:56)
+include/battle/stg_ambient.h	StgFxRes	unk4	KEEP	KEEP	StgMef.unk4, never read
+include/battle/stg_ambient.h	StgFxRes	a	count0	HIGH	WRONG: +0x08 is StgMef.count0, the loop bound of BtlStage_BindMef (stg_parts.c:643); the callers of BtlStage_GetFxResA take it as a count (eft_stage_1.c:1417 `s32 count = BtlStage_GetFxResA()`, extern s32 at eft_shot.c:104, eft_burst.c:1109)
+include/battle/stg_ambient.h	StgFxRes	a2	list0	HIGH	WRONG: +0x0C is StgMef.list0, relocated at stg_parts.c:640; BtlStage_GetFxResA2 returns it as the record array (eft_stage_1.c:1426 EftGeyserRec *)
+include/battle/stg_ambient.h	StgFxRes	b	count1	HIGH	WRONG: +0x10 is StgMef.count1 (loop bound, stg_parts.c:647); extern s32 BtlStage_GetFxResB at eft_shot.c:103
+include/battle/stg_ambient.h	StgFxRes	b2	list1	HIGH	WRONG: +0x14 is StgMef.list1 (relocated stg_parts.c:641); BtlStage_GetFxResB2 returns EftSmokeSrc * (eft_shot.c:105)
+include/battle/stg_ambient.h	StgFxRes	c	count2	HIGH	WRONG: +0x18 is StgMef.count2 (loop bound, stg_parts.c:652); extern s32 BtlStage_GetFxResC at eft_burst.c:1108
+include/battle/stg_ambient.h	StgFxRes	c2	list2	HIGH	WRONG: +0x1C is StgMef.list2 (relocated stg_parts.c:642); BtlStage_GetFxResC2 returns EftStageMarker * (eft_burst.c:1110)
+include/battle/stg_ambient.h	StgAmb	unk4	KEEP	KEEP	not read or written by stg_ambient.c
+include/battle/stg_ambient.h	StgAmb	unk10	KEEP	KEEP	two unread words
+include/battle/stg_ambient.h	ScrXfade	unk8	KEEP	KEEP	two unread words (padding before the 16-byte aligned chains)
+include/battle/stg_ambient.h	ScrWarpObj	unk28	KEEP	KEEP	two unread words (padding before a Vec4)
+include/battle/stg_ambient.h	ScrWarpObj	unk58	KEEP	KEEP	two unread words
+include/battle/stg_collision.h	StgColSphere	unk18	KEEP	KEEP	tail padding of the 0x20-byte sphere, never read
+include/battle/stg_collision.h	StgColSweep	unk24	KEEP	KEEP	tail padding after radius, never read
+include/battle/stg_collision.h	StgColPoly	unk4	SPLIT: 0x04 s32 vtx[3] (with unk8)	HIGH	applied as one array vtx[3] over unk4 and unk8, not vtx0 / vtx12. same record as ColPoly (col_box.h:86 `s32 vtx[3]` at +0x04, indices into the mesh vertex array): stg_collision.c:181 / :301 pass the StgColPoly to ColMesh_GetPolyVerts, which reads poly->vtx[0..2] (col_box.c:156-158). Better merged with unk8 into s32 vtx[3]
+include/battle/stg_collision.h	StgColPoly	unk8	SPLIT: 0x04 s32 vtx[3] (with unk4)	HIGH	applied as one array vtx[3] over unk4 and unk8, not vtx0 / vtx12. ColPoly.vtx[1] / vtx[2] (col_box.h:86), read by ColMesh_GetPolyVerts (col_box.c:157-158) on the StgColPoly that stg_collision.c:181 / :301 pass; better merged with unk4 into s32 vtx[3]
+include/battle/stg_collision.h	StgColRec	unkC	KEEP	KEEP	StgRelocD1.unk0C in obj_gs_env.h; not read by stg_collision.c
+include/battle/stg_collision.h	StgColZone	unk10	KEEP	KEEP	BtlStage_Relocate turns it into a pointer (stg_reloc.c:123, StgRelocD.ptr10) but nothing reads the target
+include/battle/stg_collision.h	StgColZone	unk1C	KEEP	KEEP	not read; StgRelocD.unk1C gap
+include/battle/stg_collision.h	StgColSweepCtx	unk74	KEEP	KEEP	padding after length up to the next 16-byte boundary
+include/battle/stg_collision.h	StgColSweepCtx	unk84	KEEP	KEEP	padding after dist
+include/battle/stg_collision.h	StgColCtx	unk84	KEEP	KEEP	padding after dist
+include/battle/stg_collision.h	StgNavNode	unk18	KEEP	KEEP	only zeroed by StgNavNode_Clear (stg_nav.c:148-150, no caller); the loop clears three words (i = 2..0), one more than the declared [2], so it also writes link[0..1] before they are set to -1
+include/battle/stg_collision.h	StgNavData	unk8	KEEP	KEEP	not read by stg_nav.c
+include/battle/stg_collision.h	DetAiRule	unk4	KEEP	KEEP	not applied: the code reads act[] / arg[] as unk4[i + 16] / unk8[i + 16] to match, so a cond name would read wrongly there. AiThRule (btl_ai_think.h:131) has cond[8] at +0x04: this is its first half. The code only uses it out of range (unk4[i + 16] = act[i], btl_ai_seq.c:50-59) to match; the name does not change that
+include/battle/stg_collision.h	DetAiRule	unk8	KEEP	KEEP	not applied: as unk4. second half of AiThRule.cond[8] (+0x08, btl_ai_think.h:131); used only as unk8[i + 16] = arg[i] (btl_ai_seq.c:53, 60)
+include/battle/stg_model_draw.h	StgMMesh	unk2	KEEP	KEEP	not read by stg_model_draw.c
+include/battle/stg_model_draw.h	StgMMat	unkE	KEEP	KEEP	not read (padding after cur)
+include/battle/stg_model_draw.h	StgMGroup	unk0	KEEP	KEEP	not read; StgRelocA.unk00 in obj_gs_env.h:202 is unnamed too
+include/battle/stg_model_draw.h	StgMPart	unk1C	KEEP	KEEP	not read
+include/battle/stg_model_draw.h	StgMCell	unk0	KEEP	KEEP	StgOctree_Relocate turns it into a pointer when not 0 (stg_reloc.c:22-24) but nothing reads the target
+include/battle/stg_model_draw.h	StgMData	unk0	KEEP	KEEP	first word of the stage parameter block, unread in every view
+include/battle/stg_model_draw.h	StgMData	unk4	KEEP	KEEP	second word, unread in every view
+include/battle/stg_model_draw.h	BtlStageM	unk0	KEEP	KEEP	first word of the stage header, unread in every view
+include/battle/stg_rigid_types.h	StgRigidHits	unk4	KEEP	KEEP	padding between count and the 16-byte aligned triangles
+include/battle/stg_rigid_types.h	StgRigidNode	unk234	KEEP	KEEP	tail padding of the 0x240-byte node, never read
+src/battle/stg_model_anim.c	StgAnimTable	unk0	KEEP	KEEP	StgOfsTable.unk0 (stg.h:23); not read
+src/battle/stg_model_anim.c	StgAnimTable	unk4	KEEP	KEEP	StgOfsTable.unk4; not read
+src/battle/stg_model_anim.c	StgAnimData	unk0	KEEP	KEEP	first word of the stage parameter block, unread in every view
+src/battle/stg_model_anim.c	StgAnimData	unk4	KEEP	KEEP	second word, unread in every view
+src/battle/stg_model_anim.c	StgAnimStage	unk0	KEEP	KEEP	first word of the stage header, unread in every view
+PARAM	src/battle/stg.c	File_Request	arg	unused	MEDIUM	local extern (stg.c:55); the definition File_Request(s32 id, void *buf) in src/sys/file.c:322 has no third parameter and battle_work.h:25-26 says the third argument is ignored
+PARAM	src/battle/stg_parts.c	File_Request	arg	unused	MEDIUM	local extern (stg_parts.c:35); see src/sys/file.c:322: the real function takes two parameters, the third argument is ignored

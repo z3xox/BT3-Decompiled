@@ -1,0 +1,119 @@
+include/sys/save.h	SaveCustom	unk36	KEEP	KEEP	no reader or writer found; every menu view (tournament.h LSaveCustom, evo_z.h USaveCustom, char_select.h, item_panel.c) also leaves +0x36 unnamed; looks like padding to 0x38
+include/sys/save.h	SaveRec	unk16	KEEP	KEEP	no reader or writer found (also unk16 in menu/dc.h ZSaveRec); padding after the u16 level
+include/sys/save.h	SaveData	unk210	SPLIT: 0x210 SaveSimRank simRank[10] (s32 chara, s32 score, u8 cleared, u8 pad[3]); 0x288 s32 simCleared; 0x28C SaveBest mission[100] (u8 cleared, u8 rank, u8 hours, u8 minutes, u8 seconds, u8 pad[3], s32 total); 0x73C SaveSurvBest survival[5] (s32 defeated, s32 total, u8 rank, u8 hours, u8 minutes, u8 seconds); 0x778 s32 unk778	HIGH	applied: simRank, simCleared, mission, unk778 typed; survival[5] kept as u8 survival[5][0xC] (declaring SaveSurvBest in sys/save.h changes the code of src/menu/team_select.c). menu views agree: sim_day.h:110 QSaveBody / ub_score.h:210 UbSaveBody (rank[10] @0x210, simCleared @0x288, mission[100] @0x28C, bestB[5] @0x73C, unk778); sim_top.h:111 SimRankRec rank[10] + simCleared (sim_result.c:134 sets it once); ub.h UoMissionRec mission[100] (mission_select.c:271-309); survival.h:88 surv[5] (survival_select.c:185-225); ub_score.c:253-279 writes mission[] and bestB[]. simCleared is u8 in sim_top.h, s32 elsewhere. Ends at 0x77C = rank
+include/sys/save.h	SaveData	unk780	SPLIT: 0x780 SaveBest course[5]; 0x7BC u8 unk7BC[0x24C]	HIGH	applied with the name course (not ubzCourse). ub.h:130 UoSave course[UO_COURSE_NUM=5] @0x780 and ub_rank.h:98 NSave course[5]: ub_result.c:28-30 sets/reads course[i].cleared, ubz_select.c:203-235 shows rank and time[0..2]; ub_score.c:287 UbScore_SaveBestC writes the same record ("courses of modes 24..30"). sim_day.h / ub_score.h size it bestC[54] (to 0xA08), which nothing confirms: only 5 courses are indexed
+include/sys/save.h	SaveData	unkC4C	SPLIT: 0xC4C u8 unkC4C[0x1C0]; 0xE0C s32 trainClear[3]; 0xE18 u8 unkE18[0x1F0]	HIGH	training.h:192-194 MSaveTrain trainClear[TRAIN_CLASS_NUM=3] @0xE0C; training.c:17 tests `trainClear[class] & (1 << lesson)`, training.c:1103 sets the bit when a lesson is cleared (also the save.h:90 comment "s32 array at 0xE0C")
+include/sys/save.h	SaveData	unk168C	KEEP	KEEP	no reader or writer of 0x168C / 0x1690 found in main or menu C (option.c touches 0x1694 on)
+include/sys/save.h	SaveData	unk3026	KEEP	KEEP	alignment gap between item[350] (ends 0x3026) and money (0x3028); unnamed in every menu view
+include/sys/save.h	ItemFile	unk0	KEEP	KEEP	no reader (save.c:62 reads only itemOffset; ChrTblFile in ui/menu_support.h also leaves word 0 unnamed); probably the section count of the pack, unverified
+include/sys/save.h	ItemInfo	unk0	SPLIT: 0x00 u8 type; 0x01 u8 unk1[2]; 0x03 u8 slots; 0x04 u8 unk4[8]; 0x0C s16 stat[4]	HIGH	same 0x28-byte record as ItemTblEntry (ui/menu_support.h:120: type, slots, stat[4]); battle.h:140-141 reads "the four s16 at ItemInfo + 0xC" and "ItemInfo byte 0 is 2" (type)
+include/sys/save.h	ItemInfo	unk18	SPLIT: 0x18 s32 ability[4]	HIGH	battle.h:143 BattleMember.ability = OR of the four words at ItemInfo + 0x18; ItemTblEntry.ability[4] in ui/menu_support.h
+include/sys/memcard.h	McCardFile	unk4	KEEP	KEEP	never read or written (memcard.c uses icon/iconSize only; McFlowReq.unk004 is the same pair). With iconPath[3] / iconName[3] probably icon pointers of the copy / delete icons, unverified
+include/sys/memcard.h	McCardFile	unk8	KEEP	KEEP	as unk4
+include/sys/memcard.h	McCardFile	unk10	KEEP	KEEP	never read or written; probably the sizes of the other two icons (next to iconSize), unverified
+include/sys/memcard.h	McCardFile	unk14	KEEP	KEEP	as unk10
+include/sys/memcard.h	McCardIconSys	unk1C4	reserved3	HIGH	the struct is Sony's sceMcIconSys (header comment): FnameView/FnameCopy/FnameDel[64] then Reserve3[512]; neighbours already use Sony's reserved1 / reserved2; size 0x3C4 matches
+src/sys/memcard_flow.c	McFlowProgress	unk8	loadBuf	HIGH	same progress block as MenuProgress (menu/overlay_common.h: `void *loadBuf[3]` @0x008) and ViewProgress (ui/reward_window.h: loadPack / loadRes / loadSprites @0x08..0x10); unused in this file
+src/sys/memcard_flow.c	McFlowProgress	unk690	KEEP	KEEP	not used in memcard_flow.c; no other view names 0x690..0x69B
+include/sys/memcard_flow.h	McFlowReq	unk004	KEEP	KEEP	McCardFile.unk4 / unk8 seen here; never used
+include/sys/memcard_flow.h	McFlow	unk08	KEEP	KEEP	no reader or writer in memcard_flow.c (only the whole-struct clear)
+include/sys/memcard_flow.h	McFlow	unk10	KEEP	KEEP	no reader or writer in memcard_flow.c
+include/sys/memcard_flow.h	McFlow	unk18	KEEP	KEEP	no reader or writer in memcard_flow.c
+include/sys/memcard_flow.h	McFlow	unk34	KEEP	KEEP	no reader or writer in memcard_flow.c
+include/sys/memcard_flow.h	McFlow	unk39F84	KEEP	KEEP	no reader or writer in memcard_flow.c
+include/sys/password_old.h	OldPassChar	unk20	KEEP	KEEP	3-bit field of the previous game's password; menu password_check.c:125 PassChk_IsOldValid only rejects >= 3, meaning not known
+include/sys/password_old.h	OldPassChar	unk24	KEEP	KEEP	1 bit; no menu reader (PassChk_ConvertOld uses charId and item[] only)
+include/sys/password_old.h	OldPassChar	unk28	KEEP	KEEP	4 bits; no menu reader
+include/sys/password_old.h	OldPassChar	unk2C	KEEP	KEEP	1 bit; no menu reader
+include/sys/password_old.h	OldPassShort	unk04	KEEP	KEEP	the 20-character half has no caller; not part of the password
+include/sys/password_old.h	OldPassShort	unk0C	KEEP	KEEP	no caller of the 20-character half
+include/sys/password_old.h	OldPassShort	unk10	KEEP	KEEP	no caller of the 20-character half
+include/sys/password_old.h	OldPassShort	unk14	KEEP	KEEP	no caller of the 20-character half
+include/sys/password_old.h	OldPassShort	unk18	KEEP	KEEP	no caller of the 20-character half
+include/sys/password_old.h	ChrPassData	unk28	KEEP	KEEP	1 bit at 0x74; no menu reader (dc_password.c:493-499 copies charId, item[], extraSlots only); password_window.c never sets it
+include/sys/heap.h	HeapBlock	unk1C	KEEP	KEEP	no reader or writer in heap.c / heap_info.c; fills the header to 0x20 (dataSize = size - 0x20, heap.c:28)
+include/sys/common.h	CommonRes	unk10	KEEP	KEEP	common.c touches data[0..2] / size[0..2] only; no other gCommonRes view names +0x10
+include/sys/job.h	Job	unk0	link	MEDIUM	job.c only calls step; the owners use word 0 as their own list link: BtlJob.node (battle_work.h:140, SListNode free-list link); ChrViewJob / ShenJob leave it unused
+include/sys/ramp.h	Ramp	unk0	KEEP	KEEP	not touched by Ramp_Stop / Ramp_Start / Ramp_Step (header comment); no `.unk0` of a Ramp found in fade or HUD code
+include/ui/menu_support.h	TextBoxFull	unk8	KEEP	KEEP	no reader or writer besides the memset in TextBox_Init (src/ui/menu_util_1.c:977); none of the TextBox_Set* functions or TB_ATTACH (menu_util_1.c:1177) touch +0x08
+include/ui/menu_support.h	TextBoxClipProp	unk3C	KEEP	KEEP	entries m[3], m[4] of FlashProp.mtx (include/sys/flash.h:159, matrix at +0x30); TextBox_DrawClip (menu_util_1.c:1141) only reads x / y / mul / add. Better: replace this view with FlashProp
+include/ui/menu_support.h	TextBoxClipProp	unk48	KEEP	KEEP	entries m[6..8] of FlashProp.mtx (include/sys/flash.h:159); not read by TextBox_DrawClip
+include/ui/menu_support.h	ChrTblEntry	unk4	KEEP	KEEP	not read in src/ui/char_table.c; the menu views (VChrEntry evo_z_items.h:74 unk0[2], ZaChrEntry dc_password_replay.h:92 unk0[8]) leave +0x04 unnamed too
+include/ui/menu_support.h	ItemTblEntry	unk1	SPLIT: 0x01 u8 group; 0x02 u8 picture	HIGH	VItemEntry (include/menu/evo_z_items.h:32-33) and ZaItemEntry (dc_password_replay.h:102-103) name +0x01 group/kind ("two items of the same type and group cannot be in one set") and +0x02 picture (texture of the details page); same 0x28-byte item entry of common file 4
+include/ui/menu_support.h	ItemTblEntry	unk4	SPLIT: 0x04 u8 unk4[4]; 0x08 u32 stockLevel	HIGH	src/menu/shop.c:283 compares gSaveData->stockLevel with items[i].stockLevel (VItemEntry +0x08, include/menu/evo_z_items.h:36): the shop sells the item once the save's shop level reaches it; +0x04..0x07 unread
+include/ui/menu_support.h	ChrTblFile	unk0	KEEP	KEEP	never read: char_table.c only uses charaOffset / itemOffset; likely the section count of the pack header (text files keep line n at word n + 1) but nothing shows it; ItemFile.unk0 in sys/save.h is the same word
+include/ui/menu_support.h	LipPack	unk0	KEEP	KEEP	Voice_PlayWithSubtitle (src/ui/menu_util_2.c:36) reads words line*2+1 / line*2+2 only; word 0 is the pack header (probably a count), never read
+include/ui/menu_support.h	ShenActor	unk0	KEEP	KEEP	no access in src/ui/shen_scene.c (actors are reached only through id / obj / ramp, lines 166-372)
+include/ui/menu_support.h	ShenJob	unk0	KEEP	KEEP	first word of a Job (include/sys/job.h:11, also unk0 there); src/sys/job.c only calls job->step
+include/ui/reward_window.h	Flash	unk0	SPLIT: 0x00 void *data; 0x04 void *tex; 0x08 s32 flags	HIGH	applied with void * / s32 types; shen_wish.c reads flash[0].flags. src/ui/shen_wish.c:678 and :725 read flash[0].unk0[2] & 2 (FLASH_PAD); full layout in include/sys/flash.h:198-202 (data, tex, flags); the header comment on the field already says [2] is Flash.flags
+include/ui/reward_window.h	Flash	unk10	KEEP	KEEP	not read in src/ui; sys/flash.h:203-208 has the names (se, speed, ofs[2], root, clips, shapes) if the view is ever split or replaced by the real Flash
+include/ui/reward_window.h	FlashUv	unk10	tex	HIGH	sys/flash.h:146 FlashUv +0x10 is tex (texture index; FLASH_OV_UV "replace the texture rectangle (and index 0)", flash.h:127); FlashAnim_Sheet sets it to 0 before Flash_ClipSetUv (src/ui/menu_util_1.c:194)
+include/ui/reward_window.h	FlashTexRes	unk0	KEEP	KEEP	only ->tex (+0x10) is read (message_window.c:38, icon_window.c:36/76); the four header words are never touched
+include/ui/reward_window.h	TextBox	unk8	KEEP	KEEP	same word as TextBoxFull.unk8: only cleared by the memset in TextBox_Init (menu_util_1.c:977)
+include/ui/reward_window.h	TextBox	unk14	SPLIT: 0x14 s32 lineY[5]; 0x28 s32 maxW; 0x2C s32 maxH	HIGH	read and written through the TextBoxFull cast TB(box): TextBox_SetLineOffsets / SetMaxWidth / SetMaxHeight (menu_util_1.c:1096-1121), TB_ATTACH (menu_util_1.c:1181-1215)
+include/ui/reward_window.h	TextBox	unk48	SPLIT: 0x48 s32 spacingX; 0x4C s32 spacingY	HIGH	TextBox_SetSpacing (menu_util_1.c:1124-1128) through TB(box); copied to draw.spacingX/Y in TB_ATTACH
+include/ui/reward_window.h	TextBox	unk54	SPLIT: 0x54 u16 *drawStr; 0x58 s32 drawX; 0x5C s32 drawY; 0x60 f32 drawScaleX; 0x64 f32 drawScaleY; 0x68 u8 drawColor[4]; 0x6C u8 drawShadow[4]; 0x70 s32 drawClip[4]	MEDIUM	the TextBoxDraw block at +0x50 (menu_support.h:28-41, :57), filled by TB_ATTACH (menu_util_1.c:1216-1268) and read by TextBox_DrawClip; the names are certain, but replacing +0x50..0x8C of this view with `TextBoxDraw draw` (as TextBoxFull does) is cleaner than flat draw* names (align and noFlush would become draw.align / draw.noFlush)
+include/ui/reward_window.h	TextBox	unk84	SPLIT: 0x84 s32 drawSpacingX; 0x88 s32 drawSpacingY	MEDIUM	TextBoxDraw.spacingX/Y at +0x50+0x34 (menu_support.h:39-40); see the unk54 row about using TextBoxDraw instead
+include/ui/reward_window.h	IconWin	unk44	KEEP	KEEP	no access in src/ui/icon_window.c (only flash, icons, tex[4])
+include/ui/reward_window.h	ChrViewJob	unk0	KEEP	KEEP	first word of a Job (include/sys/job.h:11); src/sys/job.c only calls job->step; not touched in src/ui/char_viewer.c
+include/ui/reward_window.h	ProgressEntry	unk0	col	HIGH	the 0x30-byte pick record of a team member: UbMember.col (include/menu/ub_team_select.h:81), CharSelSide.col (char_select.h:61), UPick.col (evo_z.h:76), all at gProgress + 0x440 / 0x530; Progress_ClearSession (menu_util_1.c:71-72) sets it 0 for side 0 and 1 for side 1
+include/ui/reward_window.h	ProgressEntry	unk4	SPLIT: 0x04 s32 row; 0x08 s32 form; 0x0C s32 customCol; 0x10 s32 customRow; 0x14 s32 plate; 0x18 s32 color; 0x1C s32 chara; 0x20 u16 items[8]	MEDIUM	layout from UbMember (ub_team_select.h:81-89), CharSelSide (char_select.h:61-69), QMember (sim_day.h:123-127); not read in src/ui, the menu reads it through its own views
+include/ui/reward_window.h	ViewProgress	unk1C	SPLIT: 0x1C s32 prevMode; 0x20 s32 lastLoadType	MEDIUM	prevMode is sure: history_outro.c:822 / 845 store gProgress->mode in it, history_save.c:100 switches on it (HistProgress, history.h:39); lastLoadType only from MenuProgress (overlay_common.h:65), no use checked
+include/ui/reward_window.h	ViewProgress	unk28	SPLIT: 0x28 s32 demoCount; 0x2C s32 mainMenuItem	HIGH	MenuProgress (include/menu/overlay_common.h:67-68): attract demos shown since the opening movie, item the main menu was left on
+include/ui/reward_window.h	ViewProgress	unk30	SPLIT: 0x30 s32 unk30; 0x34 s32 subMenu; 0x38 s32 subMenuItem; 0x3C s32 level; 0x40 s32 reward[15]	MEDIUM	applied; the clear is memset(&unk30, 0, 0x4C). MenuProgress (overlay_common.h:69-71) subMenu / subMenuItem; HistProgress (history.h:41-43) level and HistReward (0x3C bytes, filled by script command 16 at gProgress + 0x40, btl_script_cmd.h:164); level also read by the battle (btl_char_flag.h:93). Block is memset by Progress_ClearSession (menu_util_1.c:63): the memset must keep the same range after a split
+include/ui/reward_window.h	ViewProgress	unk7C	KEEP	KEEP	0x7C..0x440 is used differently per mode (the tournament's TourProgress2 0x80..0x440, bracket.h:133-142); only memset here (menu_util_1.c:64), a union rather than one set of names
+include/ui/reward_window.h	ViewProgress	unk440	team0	HIGH	five 0x30-byte member picks of side 0: UbProgress.team at 0x440 (ub_team_select.h:105), CharSelProgress.side[0] (char_select.h:120); Progress_ClearSession sets [i].col = 0. WRONG: the comment "language = 0" describes that col write, not a language
+include/ui/reward_window.h	ViewProgress	unk530	team1	HIGH	side 1 of the same pair: CharSelProgress.side[1] at 0x440 + 0xF0 (char_select.h:120-123); Progress_ClearSession sets [i].col = 1 (menu_util_1.c:72). WRONG: the comment "language = 1" is that col write
+include/ui/reward_window.h	ViewProgress	unk620	players	HIGH	duel.h:93 players (0 1P vs COM, 1 1P vs 2P, 2 COM vs COM), CharSelProgress.players (char_select.h:124), team_select.h:278 TeamSel.players (gProgress + 0x620), pad_watch.h:16 tests it for 1
+include/ui/reward_window.h	ViewProgress	unk628	SPLIT: 0x628 s32 stage; 0x62C s32 bgm; 0x630 s32 unk630	HIGH	CharSelProgress (include/menu/char_select.h:126-127): index in the stage grid and id in the music list
+include/ui/reward_window.h	ViewProgress	unk634	KEEP	KEEP	0x634..0x68C is shared by the Ultimate Battle (NProgress 0x640 cursor / 0x644 teamSize / 0x648 dpRule / 0x684 ubFlags, ub_rank.h:71-76) and the Sim Dragon state at 0x64C (sim_day.h, sim_top.h:60) which overlap; only memset here
+include/ui/reward_window.h	ViewProgress	unk68C	SPLIT: 0x68C s32 replayFlags; 0x690 s32 dcVisits; 0x694 s32 dcCursor; 0x698 s32 replayCursor; 0x69C ProgressTeam replaySlot[7]	HIGH	applied; replaySlot is s32[7][11] (ProgressTeam is not visible from ui/reward_window.h); the clear is memset(&replayFlags, 0, 0x144). ZaProgress (include/menu/dc_password_replay.h:170-174), MenuProgress.replayFlags (overlay_common.h:75), MenuUtilProgress.replaySlot (menu_support.h:202). NOTE: Progress_ClearSession memsets it with sizeof (menu_util_1.c:67); after the split the clear needs an explicit 0x144-byte range starting at replayFlags (check the match)
+include/ui/reward_window.h	ViewProgress	unk7D0	evoCursor	HIGH	EVO_PROGRESS_CURSOR = gProgress + 0x7D0 (include/menu/evo_top.h:22, shop.h:39): the plate the Evolution Z top menu was left on, -1 on entering; cleared at menu_util_1.c:68
+include/ui/reward_window.h	ViewProgress	unk7D4	SPLIT: 0x7D4 s32 trainFlags; 0x7D8 s32 unk7D8; 0x7DC s32 trainCursor[5]; 0x7F0 s32 unk7F0; 0x7F4 s32 tutorial; 0x7F8 s32 unk7F8	MEDIUM	applied; the clear is memset(&trainFlags, 0, 0x28). MenuProgressTrain (include/menu/training.h:173-181): MPTRAIN_ flags, Train.sel/saved cursor, tutorial number (also btl_param.h:249 and btl_seq.c:23 read +0x7F4). Memset with sizeof at menu_util_1.c:69: keep the 0x28-byte range after a split
+include/ui/reward_window.h	NumStyle	unk4	KEEP	KEEP	Num_DrawEx (menu_util_1.c:450) reads flags, w, h, first, count only; Num_DrawEx has no caller in src/ or include/menu
+include/ui/shen_wish.h	ShenWork	unk34	KEEP	KEEP	no access in src/ui/shen_wish.c; the word right after flash[1] (0x08 + 0x2C)
+include/ui/shen_wish.h	ShenWork	unk398	KEEP	KEEP	only written (= 30 in Shen_UpdateExit, src/ui/shen_wish.c:817, when SHEN_FLAG_FADING is set); never read, so whether it is a timer cannot be told
+src/ui/char_viewer.c	ChrViewStage	unk0	KEEP	KEEP	local view of gBtlStage; +0x00 / +0x04 are BtlStage.unk0 and data (include/battle/stg.h:205-206); only flags is read here
+src/ui/char_viewer.c	ChrViewCommon	unk0	KEEP	KEEP	view of gCommonRes->battleRes = BattleRes (include/battle/battle_work.h:97, unk0 there too); only stage (+0x04) is used (char_viewer.c:226, 395)
+src/ui/shen_scene.c	ShenCommon	unk0	KEEP	KEEP	same BattleRes word as ChrViewCommon.unk0 (battle_work.h:97); only stage is used (shen_scene.c:330, 555)
+PARAM	src/ui/menu_util_1.c	Num_DrawEx	a	parent	MEDIUM	menu_util_1.c:483-491: with b == NULL it is the sprintf format of the digit clip names; with NUM_FLAG_PARENT_FMT the format of the parent clip; with NUM_FLAG_CHILD_FMT the parent clip's name. NUM_FLAG_* comments (reward_window.h:317-321) say clip `a` / `b` and would follow
+PARAM	src/ui/menu_util_1.c	Num_DrawEx	b	child	MEDIUM	same lines: NULL = digit clips at the root; otherwise the child clip's name (PARENT_FMT) or the child name format (CHILD_FMT)
+include/sys/gfx_ot.h	Ot	unkC	KEEP	KEEP	no reader or writer in src/ (gfx_ot.c only uses slots/alpha1/alpha2/headBuf/buf/cur/bufSize); gOt is file-local and every function is C
+include/sys/gfx_ot.h	Ot	unk44	KEEP	KEEP	same: never referenced after the struct is allocated
+include/sys/gfx_post.h	StgPanBlurView	unk8C	KEEP	KEEP	no reference in gfx_post.c (StgPanBlur_UpdateView and the StgPanBlurViewF cast at gfx_post.c:220 touch only cur/prev/maxAlpha/strength/side/index/rect/layer)
+include/sys/gfx_post.h	StgGlare	unk4C0	KEEP	KEEP	no reference anywhere in src/
+include/sys/gfx_post.h	StgGlare	unk4CC	KEEP	KEEP	no reference anywhere in src/
+include/sys/gfx_post.h	StgGlare	unk4D8	KEEP	KEEP	no reference anywhere in src/
+include/sys/gfx_post.h	StgGlare	unk4DC	KEEP	KEEP	gfx_post.c:1485/1489/1493 store `step` into it when the level is reset or the light leaves the screen; nothing reads it, so its purpose cannot be told (header comment already says so)
+include/sys/gfx_screen.h	GfxLens	unk28	KEEP	KEEP	no reference in gfx_screen.c (GfxLens_Add / GfxLens_DrawAll use pos/life/lifeMax/rgba/size/blend/hold only); likely tail padding of the 0x30 slot
+include/sys/gfx_screen.h	GfxLensWork	unk184	KEEP	KEEP	no reference; memset at gfx_screen.c:314 clears only sizeof(slot); looks like padding to 0x190
+include/sys/flash.h	FlashTag	unk01	KEEP	KEEP	tag headers are copied out at flash.c:40/56/630/1654 but only code / count / size are read
+include/sys/flash.h	FlashTl	unk14	KEEP	KEEP	only cleared (FlashTl_Rewind, flash.c:660, and the memset at :651); never read
+include/sys/flash.h	FlashShapeQuad	unk02	KEEP	KEEP	shape quad readers in flash.c use image / rgba / x0..y1 only; likely padding after the s16 image
+include/sys/font.h	FontData	unk10	KEEP	KEEP	font file header word; Font_SetFont (font.c:1080-1097) relocates tex/glyphs and reads unk1C / lineHeight, never +0x10
+include/sys/font.h	FontData	unk1C	KEEP	KEEP	only copied to FontSlot.unk0C (font.c:1093), which nothing reads; meaning not determinable from code
+include/sys/font.h	FontSlot	unk0C	KEEP	KEEP	written once from data->unk1C (font.c:1093), never read; gFontSlots is not used outside font.c
+include/sys/font.h	FontIconDef	unk03	KEEP	KEEP	FontIcon_* (font.c:1326-1600) read tex / size / advance / frameCount / frameTime only; table gFontIconDefs is data
+include/sys/vu1_packet.h	Vu1Track	unk0C	KEEP	KEEP	Vu1Node_Animate (vu1_packet.c:276-329) reads keyCount and key[] only
+include/sys/rigid.h	RigidBody	unkC	KEEP	KEEP	no reference in rigid.c or the stage users (stg_rigid.c / stg_parts.c / stg.c / stg_ambient.c); possibly padding after mass before the Vec4 inertia
+include/sys/rigid.h	RigidBody	unkE0	KEEP	KEEP	no reference in rigid.c or the stage users
+include/sys/rigid.h	RigidBody	unkE8	KEEP	KEEP	no reference; pads `user` up to the 16-byte aligned prevPos
+include/sys/rigid.h	RigidBody	unk210	KEEP	KEEP	only cleared by Rigid_BeginFrame (rigid.c:331); never read, so not determinable
+include/sys/rigid.h	RigidBody	unk21C	KEEP	KEEP	no reference; tail of the 0x220 body
+include/sys/loading.h	Progress	unk0	SPLIT: 0x00 s32 language; 0x04 s32 baseFile	HIGH	battle_load.c:540 reads gProgress->unk0[0] (+6 = HUD file); other views of the same gProgress name +0x00 language and +0x04 baseFile (menu/ub_rank.h:61-62, menu/sim_day.h:153-154); btl_obj_anim.c:2327 uses language + 0x2D as a file index the same way
+include/sys/dialog.h	DialogFlash	unk0	KEEP	KEEP	not read in dialog.c; the struct is a view of Flash (sys/flash.h:198): +0x00 data, +0x04 tex. Better fix: replace DialogFlash with Flash
+include/sys/dialog.h	DialogFlash	unkC	KEEP	KEEP	not read in dialog.c; Flash +0x0C..+0x2B = trig, se, speed, ofs[2], root, clips, shapes (sys/flash.h:202-208)
+include/sys/dialog.h	DialogFlashRes	unkC	KEEP	KEEP	never written (dialog.c:244-257 fill only the other words); the struct is the FlashTex *tex[11] array of Flash_Create (flash.c:1252), so these are image records 3..5, left NULL
+include/sys/dialog.h	DialogFlashRes	unk28	KEEP	KEEP	never written; image record 10 of the same FlashTex * array, left NULL
+include/sys/dialog.h	Dialog	unk80	KEEP	KEEP	no reader or writer in dialog.c (the only user of gDialog) besides the allocation memset
+include/sys/file.h	AdxDvdFsParam	unk4	KEEP	KEEP	only cleared by the memset in File_InitAdx (file.c:115) before ADXPS2_SetupDvdFs; CRI library parameter block, meaning not visible in this code
+include/sys/fade.h	Fade	unk5C	KEEP	KEEP	no access in fade.c or loading.c (the gFade users); likely padding to the 0x60 size
+include/sys/gsc.h	GscFile	unk8	KEEP	KEEP	never read or written in gsc.c (comment "never written" is right); follows the 8-byte ListNode (list.h:7)
+include/sys/gsc.h	GscTask	unk8	KEEP	KEEP	same as GscFile.unk8: no access in gsc.c
+include/sys/pad.h	Pad	unk140	KEEP	KEEP	only cleared in Pad_Reset (pad.c:238); no reader anywhere
+include/sys/pad.h	Pad	unk144	KEEP	KEEP	only cleared in Pad_Reset (pad.c:239); no reader anywhere
+include/sys/snd.h	SndBankFile	unk00	KEEP	KEEP	never read: Snd_SetupBank (snd.c:360) and the SndHd_* readers use only bodyOfs / hdOfs / seqOfs / endOfs; snd.c:42 also calls it "?"
+include/sys/movie.h	Movie	unkC	KEEP	KEEP	no access in movie.c besides the memset of Movie_Open
+include/sys/movie.h	Movie	unkC8	KEEP	KEEP	no access in movie.c besides the memset
+include/sys/movie.h	Movie	unkF4	KEEP	KEEP	no access in movie.c at all (only the memset); probably padding of the 0xF8 block
+include/cri/adxt.h	ADXT	unk2	KEEP	KEEP	not used by game code; in CRI's ADXT object the bytes after used / stat are probably s8 pmode, s8 maxnch (from memory of the SDK, not checked against the binary)

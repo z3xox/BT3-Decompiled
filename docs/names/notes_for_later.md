@@ -262,3 +262,34 @@ Group 13 (movie.h .. shen_scene.c; sys, ui, and the structures local to C files)
 - sys/save.h:63: SaveRec.unk0[0x14] hides u16 item[8] and a word at +0x10 (ZSaveRec in dc.h:81).
 - Type differences behind a name: McCardInfo.unk20 (s32 / void *buf), BObjCommon.unk00 (s32 / void *boot), EftFlashArg.unk14 (s32 / f32 hold),
   HudPromptObj.unkBC (s32 / pointer), EftArg12.unk40 (a u8[1] array).
+
+Group 20 (names pass 3: engine, menu, effects / stages, battle; lists in docs/names/fields/group20_*.tsv):
+- The compiler's output can depend on declarations a file does not use: declaring the survival record type
+  (SaveSurvBest) in sys/save.h changed one address computation in src/menu/team_select.c (`gPad+396` became
+  `addu 384` + `gPad+12`), though team_select.c never names it; one or two typedefs fewer and the code is the
+  same again. SaveData.survival stays u8[5][0xC]. A header change that builds is not proof that the next one
+  will: always build.
+- SaveData.course (+0x780) is sized 5 (the courses ub.h / ub_rank.h index); menu sim_day.h / ub_score.h size the
+  same array bestC[54] and UbScore_SaveBestC is "the courses of modes 24..30". To be reconciled. SaveData.simCleared
+  is u8 in menu/sim_top.h, s32 elsewhere.
+- Not applied: DetAiRule.unk4 / unk8 (cond halves of AiThRule.cond[8], but BtlAiSeq_PushRule reads act[] / arg[]
+  through them out of range), BtlTechBParam.unkC7 (damage percent of technique 0x2D5 against the character; which
+  technique that is was not found), BtlReplayData.unk0 (two BtlReplayTrack; the u64 view is kept for the copy's
+  alignment).
+- Names applied on one reading (MEDIUM): Job.link, ViewProgress.prevMode / lastLoadType, Option.exitSaving,
+  EftAuraCfg.powerPush, EftAuraPrm.nearWeight, EftSetHead.moveFlags (mixed movement and firing bits),
+  EftRibbon.node (nothing reads it), the record word `stationary` (+0x54 of the hit record, five views; held
+  technique or ki bomb at rest), FxHitArg.texVariant / FxHitArg2.texVariant, BtlObjBound / BobjBone / BObjBound
+  drawFlags (s32 over ObjDrawPart's u16 flags + u16), ObjDrawPkt.texRegHi, DemoCamAnim.extraData, the
+  TextBox draw* fields (0x50..0x8B is a TextBoxDraw; replacing the flat fields by `TextBoxDraw draw` would be
+  cleaner), Num_DrawEx parent / child (with child NULL, parent is the format of the digit clips themselves).
+- Types the new names show to be wrong (not changed): StgFxRes.count0..2 are counts typed void * (their getters
+  BtlStage_GetFxResA / B / C return void *); EftHStartArg.scale is s32, f32 at the sender; EftKGroup.parts /
+  EftOGroup.parts / EftJGroup.parts are s32 for an EftSetDef *; EftWaterView.tex[].image is a u64.
+- Function names left: EftRibbon_SetUnkD8 sets the node (EftRibbon_SetNode); BtlStage_GetFxResA / B / C / A2 / B2 /
+  C2 return count0 / list0 ...; BtlSkill_GetShotUnk30 / BtlSuper_GetShotUnk6C return the shot scale;
+  BtlSkill_GetUnk14 the clash power; BtlParam_GetUnkC7Scale.
+- Views that should be replaced by the real structure: TextBoxClipProp (FlashProp), DialogFlash (Flash), the ui
+  Flash view (sys/flash.h Flash).
+- Reported, not changed (would change what the compiler sees): a possible argument swap in an EftPrim_DrawTriangle
+  call near src/battle/eft_core.c:1663 (EftGfx_DrawPolyScaledZ).
